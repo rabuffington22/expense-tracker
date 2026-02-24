@@ -11,7 +11,7 @@
         <string>run</string>
         <string>app/main.py</string>
         <string>--server.address</string>
-        <string>192.168.3.10</string>
+        <string>100.79.127.29</string>
         <string>--server.port</string>
         <string>8501</string>
     </array>
