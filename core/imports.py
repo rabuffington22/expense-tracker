@@ -181,19 +181,24 @@ def _merge_debit_credit(df: pd.DataFrame) -> pd.DataFrame:
 
 # ── PDF parsing ───────────────────────────────────────────────────────────────
 
-# Regex for a dollar amount at end of line: $1,234.56 or 1234.56
-_AMOUNT_RE = re.compile(r"\$?([\d,]+\.\d{2})\s*$")
-# Regex for a date at start of line: MM/DD/YYYY
-_DATE_LINE_RE = re.compile(r"^(\d{2}/\d{2}/\d{4})\s+(.+?)\s+\$?([\d,]+\.\d{2})\s*$")
+# Regex for a transaction line: MM/DD/YY(YY) description amount
+# Amount may be negative and/or prefixed with $
+_DATE_LINE_RE = re.compile(
+    r"^(\d{2}/\d{2}/\d{2,4})\s+(.+?)\s+(-?\$?[\d,]+\.\d{2})\s*$"
+)
 # Regex for a check line: check# MM-DD $amount
-_CHECK_LINE_RE = re.compile(r"^(\d{4,6})\s+(\d{2}-\d{2})\s+\$?([\d,]+\.\d{2})\s*$")
+_CHECK_LINE_RE = re.compile(
+    r"^(\d{4,6})\s+(\d{2}-\d{2})\s+(-?\$?[\d,]+\.\d{2})\s*$"
+)
 
 # Section headers that indicate sign of transactions
-_CREDIT_SECTIONS = {"DEPOSITS/OTHER CREDITS", "DEPOSITS", "CREDITS", "OTHER CREDITS"}
+_CREDIT_SECTIONS = {"DEPOSITS/OTHER CREDITS", "DEPOSITS", "CREDITS",
+                    "OTHER CREDITS", "ADDITIONS"}
 _DEBIT_SECTIONS = {"OTHER DEBITS", "DEBITS", "CHECKS", "CHECKS/OTHER DEBITS",
-                   "WITHDRAWALS", "PAYMENTS"}
+                   "WITHDRAWALS", "PAYMENTS", "SUBTRACTIONS"}
 _STOP_SECTIONS = {"DAILY ENDING BALANCE", "DAILY BALANCE", "TOTAL OVERDRAFT",
-                  "EARNINGS SUMMARY", "STATEMENT SUMMARY", "TOTAL FOR THIS PERIOD"}
+                  "EARNINGS SUMMARY", "STATEMENT SUMMARY", "TOTAL FOR THIS PERIOD",
+                  "ACCOUNT SUMMARY"}
 
 
 def parse_pdf(path: str | Path) -> tuple[pd.DataFrame, list[str]]:
@@ -259,6 +264,31 @@ def parse_pdf(path: str | Path) -> tuple[pd.DataFrame, list[str]]:
     return df, errors
 
 
+def _normalise_pdf_date(date_str: str) -> str:
+    """Convert MM/DD/YY to MM/DD/YYYY if needed."""
+    parts = date_str.split("/")
+    if len(parts) == 3 and len(parts[2]) == 2:
+        year = int(parts[2])
+        parts[2] = str(2000 + year if year < 100 else year)
+    return "/".join(parts)
+
+
+def _parse_pdf_amount(amt_str: str, section_sign: int) -> float:
+    """
+    Parse an amount string from a PDF line, applying section sign correctly.
+
+    If the amount already has a negative sign in the text (e.g. BofA debits),
+    we keep that sign.  If it's positive and the section is debit, we negate it
+    (e.g. Prosperity debits shown as positive under a "DEBITS" header).
+    """
+    cleaned = amt_str.replace(",", "").replace("$", "")
+    amount = float(cleaned)
+    # Only apply section sign if the text amount is positive — avoids double-negating
+    if section_sign == -1 and amount > 0:
+        amount = -amount
+    return amount
+
+
 def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
     """
     Extract transactions from PDF text by finding dated lines with
@@ -278,25 +308,18 @@ def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
             if not stripped:
                 continue
 
-            # Check for section headers
-            upper = stripped.upper()
-            if any(s in upper for s in _STOP_SECTIONS):
-                sign = 0
-                continue
-            if any(s in upper for s in _CREDIT_SECTIONS):
-                sign = 1
-                continue
-            if any(s in upper for s in _DEBIT_SECTIONS):
-                sign = -1
-                continue
-
-            # Try to match a standard transaction line: MM/DD/YYYY description $amount
+            # ── 1. Try transaction match FIRST ────────────────────────────
+            # This prevents descriptions containing words like "PAYMENTS"
+            # from being misidentified as section headers.
             m = _DATE_LINE_RE.match(stripped)
             if m:
                 date_str, desc, amt_str = m.group(1), m.group(2), m.group(3)
-                amount = float(amt_str.replace(",", ""))
-                if sign == -1:
-                    amount = -amount
+                # Skip balance summary lines (not real transactions)
+                desc_lower = desc.lower()
+                if "beginning balance" in desc_lower or "ending balance" in desc_lower:
+                    continue
+                date_str = _normalise_pdf_date(date_str)
+                amount = _parse_pdf_amount(amt_str, sign)
                 rows.append({
                     "date": date_str,
                     "description_raw": desc.strip(),
@@ -306,12 +329,10 @@ def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
                 current_year = date_str.split("/")[-1]
                 continue
 
-            # Try to match a check line: checknum MM-DD $amount
             m = _CHECK_LINE_RE.match(stripped)
             if m:
                 check_num, date_short, amt_str = m.group(1), m.group(2), m.group(3)
-                amount = -float(amt_str.replace(",", ""))  # checks are always debits
-                # Convert MM-DD to MM/DD/YYYY
+                amount = -abs(_parse_pdf_amount(amt_str, sign))  # checks always debits
                 month, day = date_short.split("-")
                 year = current_year or "2026"
                 date_str = f"{month}/{day}/{year}"
@@ -321,6 +342,21 @@ def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
                     "amount": str(amount),
                 })
                 continue
+
+            # ── 2. Check section headers (only short, non-transaction lines)
+            # Long boilerplate (deposit agreements, disclosures) can contain
+            # words like "deposits" and "withdrawals" — ignore those.
+            if len(stripped) <= 70:
+                upper = stripped.upper()
+                if any(s in upper for s in _STOP_SECTIONS):
+                    sign = 0
+                    continue
+                if any(s in upper for s in _CREDIT_SECTIONS):
+                    sign = 1
+                    continue
+                if any(s in upper for s in _DEBIT_SECTIONS):
+                    sign = -1
+                    continue
 
     if not rows:
         return pd.DataFrame(), errors + ["No transaction lines found in PDF text"]
