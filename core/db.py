@@ -86,8 +86,17 @@ CREATE INDEX IF NOT EXISTS idx_txn_date     ON transactions(date);
 CREATE INDEX IF NOT EXISTS idx_txn_category ON transactions(category);
 """
 
+_MIGRATION_2 = """
+INSERT OR IGNORE INTO import_profiles
+    (name, date_col, description_col, amount_col, merchant_col, account_col, currency_col, amount_negate, date_format, created_at)
+VALUES
+    ('Amex Credit Card', 'Date', 'Merchant', 'Amount', NULL, NULL, NULL, 1, NULL, datetime('now')),
+    ('Bank Checking (Debit/Credit)', 'Transaction Date', 'Details', 'Debit', NULL, 'Account', NULL, 0, NULL, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
+    (2, _MIGRATION_2),
 ]
 
 _DEFAULT_CATEGORIES = [
