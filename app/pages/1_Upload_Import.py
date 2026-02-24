@@ -22,7 +22,6 @@ from core.imports import (  # noqa: E402
     normalize_transactions,
     parse_csv,
     parse_pdf,
-    save_upload,
 )
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -71,14 +70,152 @@ def delete_profile(name: str) -> None:
         conn.close()
 
 
+# ── Checklist helpers ─────────────────────────────────────────────────────────
+
+def current_month() -> str:
+    return datetime.now().strftime("%Y-%m")
+
+
+def load_checklist() -> list[dict]:
+    conn = get_connection(entity_lower)
+    try:
+        rows = conn.execute(
+            "SELECT * FROM import_checklist ORDER BY sort_order, id"
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+def load_checklist_status(month: str) -> dict:
+    """Return {checklist_item_id: status_row} for the given month."""
+    conn = get_connection(entity_lower)
+    try:
+        rows = conn.execute(
+            "SELECT * FROM import_checklist_status WHERE month=?", (month,)
+        ).fetchall()
+        return {r["checklist_item_id"]: dict(r) for r in rows}
+    finally:
+        conn.close()
+
+
+def set_checklist_status(item_id: int, month: str, completed: bool, filename: str = "") -> None:
+    now = datetime.now(timezone.utc).isoformat() if completed else None
+    conn = get_connection(entity_lower)
+    try:
+        conn.execute(
+            """INSERT INTO import_checklist_status
+               (checklist_item_id, month, completed, completed_at, source_filename)
+               VALUES (?, ?, ?, ?, ?)
+               ON CONFLICT(checklist_item_id, month)
+               DO UPDATE SET completed=?, completed_at=?, source_filename=?""",
+            (item_id, month, int(completed), now, filename,
+             int(completed), now, filename),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def auto_check_by_filename(filenames: list, month: str) -> list:
+    """Auto-check items whose filename_pattern matches any imported file."""
+    items = load_checklist()
+    matched = []
+    for item in items:
+        pattern = (item.get("filename_pattern") or "").strip().lower()
+        if not pattern:
+            continue
+        for fname in filenames:
+            if pattern in fname.lower():
+                set_checklist_status(item["id"], month, True, fname)
+                matched.append(item["label"])
+                break
+    return matched
+
+
+def save_checklist_item(label: str, filename_pattern: str = "", profile_name: str = "",
+                        url: str = "", notes: str = "") -> None:
+    now = datetime.now(timezone.utc).isoformat()
+    conn = get_connection(entity_lower)
+    try:
+        max_order = conn.execute("SELECT COALESCE(MAX(sort_order),0) FROM import_checklist").fetchone()[0]
+        conn.execute(
+            """INSERT INTO import_checklist
+               (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
+               VALUES (?,?,?,?,?,?,?)""",
+            (label, filename_pattern or None, profile_name or None,
+             url or None, notes or None, max_order + 1, now),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def delete_checklist_item(item_id: int) -> None:
+    conn = get_connection(entity_lower)
+    try:
+        conn.execute("DELETE FROM import_checklist WHERE id=?", (item_id,))
+        conn.execute("DELETE FROM import_checklist_status WHERE checklist_item_id=?", (item_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
+
 # ── Tabs ──────────────────────────────────────────────────────────────────────
-tab_upload, tab_profiles = st.tabs(["Upload Files", "Manage Profiles"])
+tab_upload, tab_profiles, tab_checklist = st.tabs(["Upload Files", "Manage Profiles", "Monthly Sources"])
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TAB 1 — Upload Files
 # ═══════════════════════════════════════════════════════════════════════════════
 with tab_upload:
+    # ── Monthly checklist ─────────────────────────────────────────────────────
+    month = current_month()
+    items = load_checklist()
+
+    if items:
+        status = load_checklist_status(month)
+        done_count = sum(1 for i in items if status.get(i["id"], {}).get("completed", 0))
+        total_count = len(items)
+
+        if done_count == total_count:
+            st.success(f"All {total_count} sources imported for **{month}**")
+        else:
+            st.info(f"**{month}** — {done_count}/{total_count} sources imported")
+
+        for item in items:
+            item_status = status.get(item["id"], {})
+            is_done = bool(item_status.get("completed", 0))
+
+            col_check, col_label, col_info = st.columns([0.5, 3, 3])
+            with col_check:
+                new_val = st.checkbox(
+                    "done", value=is_done, key=f"ck_{item['id']}_{month}",
+                    label_visibility="collapsed",
+                )
+                if new_val != is_done:
+                    set_checklist_status(item["id"], month, new_val)
+                    st.rerun()
+
+            with col_label:
+                label_text = f"~~{item['label']}~~" if is_done else f"**{item['label']}**"
+                st.markdown(label_text)
+
+            with col_info:
+                hints = []
+                if item.get("profile_name"):
+                    hints.append(f"Profile: {item['profile_name']}")
+                if item.get("url"):
+                    hints.append(f"[Download]({item['url']})")
+                if item.get("notes"):
+                    hints.append(item["notes"])
+                if item_status.get("source_filename"):
+                    hints.append(f"_{item_status['source_filename']}_")
+                st.caption(" · ".join(hints) if hints else "")
+
+        st.markdown("---")
+
+    # ── File upload ───────────────────────────────────────────────────────────
     profiles = load_profiles()
     profile_names = ["(auto-detect)"] + [p["name"] for p in profiles]
 
@@ -101,13 +238,25 @@ with tab_upload:
     # ── Per-file profile selectors ────────────────────────────────────────────
     st.markdown("---")
     st.subheader("Assign profiles")
-    st.caption("Choose an import profile for each file. Use auto-detect for standard formats.")
+    st.caption("Choose an import profile for each file.")
 
-    file_profiles: dict[str, dict | None] = {}
+    file_profiles = {}
     for f in all_files:
+        # Auto-suggest profile based on checklist filename_pattern
+        default_idx = 0
+        for item in items:
+            pattern = (item.get("filename_pattern") or "").strip().lower()
+            if pattern and pattern in f.name.lower() and item.get("profile_name"):
+                try:
+                    default_idx = profile_names.index(item["profile_name"])
+                except ValueError:
+                    pass
+                break
+
         selected = st.selectbox(
             f"**{f.name}**",
             profile_names,
+            index=default_idx,
             key=f"profile_{f.name}",
         )
         file_profiles[f.name] = next(
@@ -151,7 +300,7 @@ with tab_upload:
     if not parsed:
         st.stop()
 
-    all_ok: dict[str, pd.DataFrame] = {}
+    all_ok = {}
     for fname, (ftype, df, err) in parsed.items():
         with st.expander(f"📄 {fname}", expanded=True):
             if err:
@@ -180,7 +329,15 @@ with tab_upload:
             inserted, skipped = commit_transactions(df, entity_lower)
             total_new  += inserted
             total_skip += skipped
-        st.success(f"✅ Imported **{total_new} new** / skipped **{total_skip} duplicates**")
+
+        # Auto-check matching checklist items
+        imported_names = list(all_ok.keys())
+        matched = auto_check_by_filename(imported_names, month)
+
+        msg = f"Imported **{total_new} new** / skipped **{total_skip} duplicates**"
+        if matched:
+            msg += f"  \nAuto-checked: {', '.join(matched)}"
+        st.success(msg)
         st.session_state.parsed_dfs = {}
         st.rerun()
 
@@ -239,4 +396,60 @@ with tab_profiles:
                     "date_format": date_fmt.strip() or None,
                 })
                 st.success(f"Profile '{name}' saved.")
+                st.rerun()
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TAB 3 — Monthly Sources
+# ═══════════════════════════════════════════════════════════════════════════════
+with tab_checklist:
+    st.subheader("Monthly Import Sources")
+    st.caption(
+        "Define which statements you expect to import each month. "
+        "Items auto-check when an uploaded filename matches the pattern."
+    )
+
+    profiles = load_profiles()
+    profile_options = ["(none)"] + [p["name"] for p in profiles]
+    items = load_checklist()
+
+    if items:
+        for item in items:
+            with st.expander(item["label"]):
+                st.write(f"**Filename pattern:** {item.get('filename_pattern') or '—'}")
+                st.write(f"**Linked profile:** {item.get('profile_name') or '—'}")
+                st.write(f"**URL:** {item.get('url') or '—'}")
+                st.write(f"**Notes:** {item.get('notes') or '—'}")
+                if st.button("Delete", key=f"delcl_{item['id']}"):
+                    delete_checklist_item(item["id"])
+                    st.rerun()
+    else:
+        st.info("No sources defined yet. Add your recurring bank/card statements below.")
+
+    st.markdown("---")
+    st.subheader("Add Source")
+    with st.form("add_checklist"):
+        cl_label    = st.text_input("Source name *", placeholder="e.g. Chase Checking")
+        c1, c2 = st.columns(2)
+        cl_pattern  = c1.text_input(
+            "Filename pattern",
+            placeholder="e.g. chase",
+            help="Case-insensitive substring to match uploaded filenames for auto-check",
+        )
+        cl_profile  = c1.selectbox("Auto-select profile", profile_options)
+        cl_url      = c2.text_input("Download URL", placeholder="e.g. https://chase.com/statements")
+        cl_notes    = c2.text_input("Notes", placeholder="e.g. Export last 30 days as CSV")
+
+        if st.form_submit_button("Add Source"):
+            if not cl_label.strip():
+                st.error("Source name is required.")
+            else:
+                save_checklist_item(
+                    label=cl_label.strip(),
+                    filename_pattern=cl_pattern.strip(),
+                    profile_name="" if cl_profile == "(none)" else cl_profile,
+                    url=cl_url.strip(),
+                    notes=cl_notes.strip(),
+                )
+                st.success(f"Source '{cl_label.strip()}' added.")
                 st.rerun()

@@ -94,9 +94,33 @@ VALUES
     ('Bank Checking (Debit/Credit)', 'Transaction Date', 'Details', 'Debit', NULL, 'Account', NULL, 0, NULL, datetime('now'));
 """
 
+_MIGRATION_3 = """
+CREATE TABLE IF NOT EXISTS import_checklist (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    label             TEXT NOT NULL,
+    filename_pattern  TEXT,
+    profile_name      TEXT,
+    url               TEXT,
+    notes             TEXT,
+    sort_order        INTEGER NOT NULL DEFAULT 0,
+    created_at        TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS import_checklist_status (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    checklist_item_id INTEGER NOT NULL REFERENCES import_checklist(id) ON DELETE CASCADE,
+    month             TEXT NOT NULL,
+    completed         INTEGER NOT NULL DEFAULT 0,
+    completed_at      TEXT,
+    source_filename   TEXT,
+    UNIQUE(checklist_item_id, month)
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
+    (3, _MIGRATION_3),
 ]
 
 _DEFAULT_CATEGORIES = [
