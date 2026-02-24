@@ -178,6 +178,13 @@ VALUES
     ('BofA Second Acct', 'BOA second', 'BofA Checking', NULL, 'Filename is "stmt BOA second acct.csv" — same summary header format', 8, datetime('now'));
 """
 
+_MIGRATION_9 = """
+INSERT OR IGNORE INTO import_checklist
+    (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
+VALUES
+    ('Prosperity Business Checking', 'prosperity', NULL, NULL, 'PDF statement — filename is "prosperity statement_MMDDYYYY.pdf". No CSV available; text-based PDF parser extracts transactions automatically.', 9, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -187,6 +194,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (6, _MIGRATION_6),
     (7, _MIGRATION_7),
     (8, _MIGRATION_8),
+    (9, _MIGRATION_9),
 ]
 
 _DEFAULT_CATEGORIES = [

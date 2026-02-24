@@ -181,12 +181,29 @@ def _merge_debit_credit(df: pd.DataFrame) -> pd.DataFrame:
 
 # ── PDF parsing ───────────────────────────────────────────────────────────────
 
+# Regex for a dollar amount at end of line: $1,234.56 or 1234.56
+_AMOUNT_RE = re.compile(r"\$?([\d,]+\.\d{2})\s*$")
+# Regex for a date at start of line: MM/DD/YYYY
+_DATE_LINE_RE = re.compile(r"^(\d{2}/\d{2}/\d{4})\s+(.+?)\s+\$?([\d,]+\.\d{2})\s*$")
+# Regex for a check line: check# MM-DD $amount
+_CHECK_LINE_RE = re.compile(r"^(\d{4,6})\s+(\d{2}-\d{2})\s+\$?([\d,]+\.\d{2})\s*$")
+
+# Section headers that indicate sign of transactions
+_CREDIT_SECTIONS = {"DEPOSITS/OTHER CREDITS", "DEPOSITS", "CREDITS", "OTHER CREDITS"}
+_DEBIT_SECTIONS = {"OTHER DEBITS", "DEBITS", "CHECKS", "CHECKS/OTHER DEBITS",
+                   "WITHDRAWALS", "PAYMENTS"}
+_STOP_SECTIONS = {"DAILY ENDING BALANCE", "DAILY BALANCE", "TOTAL OVERDRAFT",
+                  "EARNINGS SUMMARY", "STATEMENT SUMMARY", "TOTAL FOR THIS PERIOD"}
+
+
 def parse_pdf(path: str | Path) -> tuple[pd.DataFrame, list[str]]:
     """
     Best-effort transaction extraction from a PDF bank statement.
 
-    Returns (DataFrame, error_list).  DataFrame may be empty if no tables
-    are found or pdfplumber is not installed.
+    Tries table extraction first; falls back to text-based line parsing
+    (which handles statements like Prosperity that use plain text layout).
+    Returns (DataFrame, error_list).  DataFrame may be empty if nothing
+    could be extracted or pdfplumber is not installed.
     """
     try:
         import pdfplumber  # noqa: PLC0415  (optional dep)
@@ -194,26 +211,121 @@ def parse_pdf(path: str | Path) -> tuple[pd.DataFrame, list[str]]:
         return pd.DataFrame(), ["pdfplumber not installed; run: pip install pdfplumber"]
 
     errors: list[str] = []
-    chunks: list[pd.DataFrame] = []
 
     try:
-        with pdfplumber.open(str(path)) as pdf:
-            for page_num, page in enumerate(pdf.pages, 1):
-                for tbl in page.extract_tables() or []:
-                    try:
-                        chunk = _table_to_df(tbl)
-                        if chunk is not None and not chunk.empty:
-                            chunks.append(chunk)
-                    except Exception as exc:
-                        errors.append(f"Page {page_num}: {exc}")
+        pdf = pdfplumber.open(str(path))
     except Exception as exc:
         return pd.DataFrame(), [f"Failed to open PDF: {exc}"]
 
-    if not chunks:
-        return pd.DataFrame(), errors + ["No extractable tables found in PDF"]
+    # ── Strategy 1: table extraction ──────────────────────────────────────
+    chunks: list[pd.DataFrame] = []
+    try:
+        for page_num, page in enumerate(pdf.pages, 1):
+            for tbl in page.extract_tables() or []:
+                try:
+                    chunk = _table_to_df(tbl)
+                    if chunk is not None and not chunk.empty:
+                        chunks.append(chunk)
+                except Exception as exc:
+                    errors.append(f"Page {page_num} table: {exc}")
+    except Exception as exc:
+        errors.append(f"Table extraction failed: {exc}")
 
-    df = pd.concat(chunks, ignore_index=True)
-    df = _auto_detect_columns(df)
+    if chunks:
+        df = pd.concat(chunks, ignore_index=True)
+        df = _auto_detect_columns(df)
+        # Only trust table extraction if it produced recognisable columns
+        has_date = "date" in df.columns or any(
+            c.lower().strip() in {"date", "transaction date", "posted date"}
+            for c in df.columns
+        )
+        if has_date and len(df) >= 2:
+            pdf.close()
+            return df, errors
+
+    # ── Strategy 2: text-based line parsing ───────────────────────────────
+    try:
+        df, text_errors = _parse_pdf_text(pdf)
+        errors.extend(text_errors)
+    except Exception as exc:
+        errors.append(f"Text extraction failed: {exc}")
+        df = pd.DataFrame()
+    finally:
+        pdf.close()
+
+    if df.empty:
+        errors.append("No transactions could be extracted from PDF")
+
+    return df, errors
+
+
+def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
+    """
+    Extract transactions from PDF text by finding dated lines with
+    dollar amounts, using section headers to determine sign (credit/debit).
+    """
+    errors: list[str] = []
+    rows: list[dict] = []
+
+    # Current section sign: 1 for credits, -1 for debits, 0 for unknown
+    sign = 0
+    current_year = None
+
+    for page in pdf.pages:
+        text = page.extract_text() or ""
+        for line in text.split("\n"):
+            stripped = line.strip()
+            if not stripped:
+                continue
+
+            # Check for section headers
+            upper = stripped.upper()
+            if any(s in upper for s in _STOP_SECTIONS):
+                sign = 0
+                continue
+            if any(s in upper for s in _CREDIT_SECTIONS):
+                sign = 1
+                continue
+            if any(s in upper for s in _DEBIT_SECTIONS):
+                sign = -1
+                continue
+
+            # Try to match a standard transaction line: MM/DD/YYYY description $amount
+            m = _DATE_LINE_RE.match(stripped)
+            if m:
+                date_str, desc, amt_str = m.group(1), m.group(2), m.group(3)
+                amount = float(amt_str.replace(",", ""))
+                if sign == -1:
+                    amount = -amount
+                rows.append({
+                    "date": date_str,
+                    "description_raw": desc.strip(),
+                    "amount": str(amount),
+                })
+                # Remember the year for check lines that only have MM-DD
+                current_year = date_str.split("/")[-1]
+                continue
+
+            # Try to match a check line: checknum MM-DD $amount
+            m = _CHECK_LINE_RE.match(stripped)
+            if m:
+                check_num, date_short, amt_str = m.group(1), m.group(2), m.group(3)
+                amount = -float(amt_str.replace(",", ""))  # checks are always debits
+                # Convert MM-DD to MM/DD/YYYY
+                month, day = date_short.split("-")
+                year = current_year or "2026"
+                date_str = f"{month}/{day}/{year}"
+                rows.append({
+                    "date": date_str,
+                    "description_raw": f"Check #{check_num}",
+                    "amount": str(amount),
+                })
+                continue
+
+    if not rows:
+        return pd.DataFrame(), errors + ["No transaction lines found in PDF text"]
+
+    df = pd.DataFrame(rows)
     return df, errors
 
 
