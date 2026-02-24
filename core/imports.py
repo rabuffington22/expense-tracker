@@ -53,6 +53,10 @@ def parse_csv(
 
     df = _auto_detect_columns(df)
 
+    # Fallback: if no description column but merchant exists, use merchant as description
+    if "description_raw" not in df.columns and "merchant_raw" in df.columns:
+        df["description_raw"] = df["merchant_raw"]
+
     missing = {"date", "description_raw", "amount"} - set(df.columns)
     if missing:
         raise ValueError(
