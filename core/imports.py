@@ -122,13 +122,13 @@ def _merge_debit_credit(df: pd.DataFrame) -> pd.DataFrame:
             return 0.0
 
     if debit_col and credit_col:
-        debits  = df[debit_col].apply(_to_float)
-        credits = df[credit_col].apply(_to_float)
+        debits  = df[debit_col].apply(_to_float).abs()
+        credits = df[credit_col].apply(_to_float).abs()
         df["amount"] = credits - debits
     elif debit_col:
-        df["amount"] = -df[debit_col].apply(_to_float)
+        df["amount"] = -df[debit_col].apply(_to_float).abs()
     else:
-        df["amount"] = df[credit_col].apply(_to_float)
+        df["amount"] = df[credit_col].apply(_to_float).abs()
 
     # Convert back to string so _parse_amount handles it downstream
     df["amount"] = df["amount"].apply(lambda x: str(x))

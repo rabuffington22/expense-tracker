@@ -131,11 +131,24 @@ VALUES
     ('Chase Amazon CC', 'chase-amazon', NULL, NULL, 'Personal card — need to regain login access. Profile TBD once CSV format is known.', 3, datetime('now'));
 """
 
+_MIGRATION_5 = """
+INSERT OR IGNORE INTO import_profiles
+    (name, date_col, description_col, amount_col, merchant_col, account_col, currency_col, amount_negate, date_format, created_at)
+VALUES
+    ('Citi Credit Card', 'Date', 'Description', '(auto-merge Debit/Credit)', NULL, 'Member Name', NULL, 0, '%m/%d/%Y', datetime('now'));
+
+INSERT OR IGNORE INTO import_checklist
+    (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
+VALUES
+    ('Citi Personal CC', 'statement closed', 'Citi Credit Card', NULL, 'Filename is "Statement closed [date].CSV"', 4, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
     (3, _MIGRATION_3),
     (4, _MIGRATION_4),
+    (5, _MIGRATION_5),
 ]
 
 _DEFAULT_CATEGORIES = [
