@@ -117,10 +117,23 @@ CREATE TABLE IF NOT EXISTS import_checklist_status (
 );
 """
 
+_MIGRATION_4 = """
+INSERT OR IGNORE INTO import_profiles
+    (name, date_col, description_col, amount_col, merchant_col, account_col, currency_col, amount_negate, date_format, created_at)
+VALUES
+    ('Capital One Business', 'Transaction Date', 'Description', '(auto-merge Debit/Credit)', NULL, 'Card No.', NULL, 0, NULL, datetime('now'));
+
+INSERT OR IGNORE INTO import_checklist
+    (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
+VALUES
+    ('Capital One Business', 'transaction_download', 'Capital One Business', NULL, 'Export by statement from Capital One', 1, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
     (3, _MIGRATION_3),
+    (4, _MIGRATION_4),
 ]
 
 _DEFAULT_CATEGORIES = [
