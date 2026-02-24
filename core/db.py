@@ -167,6 +167,17 @@ VALUES
     ('BofA Personal Checking', 'stmt', 'BofA Checking', NULL, 'Filename is "stmt.csv" — has summary header that is auto-skipped', 6, datetime('now'));
 """
 
+_MIGRATION_8 = """
+UPDATE import_checklist SET filename_pattern = 'stmt.csv'
+    WHERE label = 'BofA Personal Checking' AND filename_pattern = 'stmt';
+
+INSERT OR IGNORE INTO import_checklist
+    (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
+VALUES
+    ('BofA Emergency Acct', 'BOA Emergency', 'BofA Checking', NULL, 'Filename is "BOA Emergency acct.csv" — same summary header format', 7, datetime('now')),
+    ('BofA Second Acct', 'BOA second', 'BofA Checking', NULL, 'Filename is "stmt BOA second acct.csv" — same summary header format', 8, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -175,6 +186,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (5, _MIGRATION_5),
     (6, _MIGRATION_6),
     (7, _MIGRATION_7),
+    (8, _MIGRATION_8),
 ]
 
 _DEFAULT_CATEGORIES = [
