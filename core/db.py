@@ -143,12 +143,25 @@ VALUES
     ('Citi Personal CC', 'statement closed', 'Citi Credit Card', NULL, 'Filename is "Statement closed [date].CSV"', 4, datetime('now'));
 """
 
+_MIGRATION_6 = """
+INSERT OR IGNORE INTO import_profiles
+    (name, date_col, description_col, amount_col, merchant_col, account_col, currency_col, amount_negate, date_format, created_at)
+VALUES
+    ('BofA Credit Card', 'Posted Date', 'Payee', 'Amount', NULL, NULL, NULL, 0, '%m/%d/%Y', datetime('now'));
+
+INSERT OR IGNORE INTO import_checklist
+    (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
+VALUES
+    ('BofA Personal CC', '_5625', 'BofA Credit Card', NULL, 'Filename is "MonthYear_5625.csv"', 5, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
     (3, _MIGRATION_3),
     (4, _MIGRATION_4),
     (5, _MIGRATION_5),
+    (6, _MIGRATION_6),
 ]
 
 _DEFAULT_CATEGORIES = [
