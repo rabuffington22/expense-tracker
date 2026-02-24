@@ -121,12 +121,13 @@ _MIGRATION_4 = """
 INSERT OR IGNORE INTO import_profiles
     (name, date_col, description_col, amount_col, merchant_col, account_col, currency_col, amount_negate, date_format, created_at)
 VALUES
-    ('Capital One Business', 'Transaction Date', 'Description', '(auto-merge Debit/Credit)', NULL, 'Card No.', NULL, 0, NULL, datetime('now'));
+    ('Capital One (Debit/Credit)', 'Transaction Date', 'Description', '(auto-merge Debit/Credit)', NULL, 'Card No.', NULL, 0, NULL, datetime('now'));
 
 INSERT OR IGNORE INTO import_checklist
     (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
 VALUES
-    ('Capital One Business', 'transaction_download', 'Capital One Business', NULL, 'Export by statement from Capital One', 1, datetime('now'));
+    ('Capital One Business CC', 'capone-business', 'Capital One (Debit/Credit)', NULL, 'Rename to capone-business.csv when downloading', 1, datetime('now')),
+    ('Capital One Personal CC', 'capone-personal', 'Capital One (Debit/Credit)', NULL, 'Rename to capone-personal.csv when downloading', 2, datetime('now'));
 """
 
 _MIGRATIONS: list[tuple[int, str]] = [
