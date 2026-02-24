@@ -127,7 +127,8 @@ INSERT OR IGNORE INTO import_checklist
     (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
 VALUES
     ('Capital One Business CC', 'capone-business', 'Capital One (Debit/Credit)', NULL, 'Rename to capone-business.csv when downloading', 1, datetime('now')),
-    ('Capital One Personal CC', 'capone-personal', 'Capital One (Debit/Credit)', NULL, 'Rename to capone-personal.csv when downloading', 2, datetime('now'));
+    ('Capital One Personal CC', 'capone-personal', 'Capital One (Debit/Credit)', NULL, 'Rename to capone-personal.csv when downloading', 2, datetime('now')),
+    ('Chase Amazon CC', 'chase-amazon', NULL, NULL, 'Personal card — need to regain login access. Profile TBD once CSV format is known.', 3, datetime('now'));
 """
 
 _MIGRATIONS: list[tuple[int, str]] = [
