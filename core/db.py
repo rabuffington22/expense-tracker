@@ -97,6 +97,23 @@ _DEFAULT_CATEGORIES = [
 ]
 
 
+_DEFAULT_PROFILES = [
+    {
+        "name": "Amex Credit Card",
+        "date_col": "Date",
+        "description_col": "Merchant",
+        "amount_col": "Amount",
+        "amount_negate": 1,
+    },
+    {
+        "name": "Bank Checking (Debit/Credit)",
+        "date_col": "Transaction Date",
+        "description_col": "Details",
+        "amount_col": "Debit",  # auto-merge handles Debit+Credit
+    },
+]
+
+
 def init_db(entity: str) -> None:
     """Initialize (or migrate) the database for the given entity."""
     conn = get_connection(entity)
@@ -127,6 +144,21 @@ def init_db(entity: str) -> None:
                 "INSERT OR IGNORE INTO categories (name, created_at) VALUES (?,?)",
                 [(c, now) for c in _DEFAULT_CATEGORIES],
             )
+            conn.commit()
+
+        # Seed default import profiles once
+        if conn.execute("SELECT COUNT(*) FROM import_profiles").fetchone()[0] == 0:
+            now = datetime.now(timezone.utc).isoformat()
+            for p in _DEFAULT_PROFILES:
+                conn.execute(
+                    "INSERT OR IGNORE INTO import_profiles "
+                    "(name, date_col, description_col, amount_col, merchant_col, "
+                    "account_col, currency_col, amount_negate, date_format, created_at) "
+                    "VALUES (?,?,?,?,?,?,?,?,?,?)",
+                    (p["name"], p["date_col"], p["description_col"], p["amount_col"],
+                     p.get("merchant_col"), p.get("account_col"), p.get("currency_col"),
+                     int(p.get("amount_negate", 0)), p.get("date_format"), now),
+                )
             conn.commit()
     finally:
         conn.close()

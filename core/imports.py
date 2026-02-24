@@ -57,6 +57,9 @@ def parse_csv(
     if "description_raw" not in df.columns and "merchant_raw" in df.columns:
         df["description_raw"] = df["merchant_raw"]
 
+    # Merge split Debit/Credit columns into a single "amount" column
+    df = _merge_debit_credit(df)
+
     missing = {"date", "description_raw", "amount"} - set(df.columns)
     if missing:
         raise ValueError(
@@ -77,8 +80,7 @@ def _auto_detect_columns(df: pd.DataFrame) -> pd.DataFrame:
         elif lc in {"description", "memo", "narrative", "transaction description",
                     "details", "payee", "merchant name", "name"}:
             mapping.setdefault("description_raw", col)
-        elif lc in {"amount", "transaction amount", "debit", "credit",
-                    "value", "amt"}:
+        elif lc in {"amount", "transaction amount", "value", "amt"}:
             mapping.setdefault("amount", col)
         elif lc in {"merchant", "vendor"}:
             mapping.setdefault("merchant_raw", col)
@@ -88,6 +90,49 @@ def _auto_detect_columns(df: pd.DataFrame) -> pd.DataFrame:
             mapping.setdefault("currency", col)
 
     return df.rename(columns={v: k for k, v in mapping.items()})
+
+
+def _merge_debit_credit(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    If the CSV has separate Debit/Credit columns but no Amount column,
+    merge them: debits become negative, credits become positive.
+    """
+    if "amount" in df.columns:
+        return df
+
+    # Find debit and credit columns
+    debit_col = credit_col = None
+    for col in df.columns:
+        lc = col.lower().strip()
+        if lc in {"debit", "debit amount", "debits", "withdrawal"}:
+            debit_col = col
+        elif lc in {"credit", "credit amount", "credits", "deposit"}:
+            credit_col = col
+
+    if not debit_col and not credit_col:
+        return df
+
+    def _to_float(val):
+        if not isinstance(val, str) or not val.strip():
+            return 0.0
+        cleaned = re.sub(r"[^\d.\-]", "", val.strip())
+        try:
+            return float(cleaned)
+        except ValueError:
+            return 0.0
+
+    if debit_col and credit_col:
+        debits  = df[debit_col].apply(_to_float)
+        credits = df[credit_col].apply(_to_float)
+        df["amount"] = credits - debits
+    elif debit_col:
+        df["amount"] = -df[debit_col].apply(_to_float)
+    else:
+        df["amount"] = df[credit_col].apply(_to_float)
+
+    # Convert back to string so _parse_amount handles it downstream
+    df["amount"] = df["amount"].apply(lambda x: str(x))
+    return df
 
 
 # ── PDF parsing ───────────────────────────────────────────────────────────────
