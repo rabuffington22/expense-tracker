@@ -81,10 +81,6 @@ tab_upload, tab_profiles = st.tabs(["Upload Files", "Manage Profiles"])
 with tab_upload:
     profiles = load_profiles()
     profile_names = ["(auto-detect)"] + [p["name"] for p in profiles]
-    selected_profile_name = st.selectbox("Import profile", profile_names)
-    selected_profile = next(
-        (p for p in profiles if p["name"] == selected_profile_name), None
-    )
 
     col_csv, col_pdf = st.columns(2)
     with col_csv:
@@ -96,37 +92,59 @@ with tab_upload:
             "Upload PDF statements", type=["pdf"], accept_multiple_files=True, key="pdf_up"
         )
 
-    if not csv_files and not pdf_files:
+    all_files = list(csv_files or []) + list(pdf_files or [])
+
+    if not all_files:
         st.info("Upload one or more CSV or PDF files to get started.")
         st.stop()
+
+    # ── Per-file profile selectors ────────────────────────────────────────────
+    st.markdown("---")
+    st.subheader("Assign profiles")
+    st.caption("Choose an import profile for each file. Use auto-detect for standard formats.")
+
+    file_profiles: dict[str, dict | None] = {}
+    for f in all_files:
+        selected = st.selectbox(
+            f"**{f.name}**",
+            profile_names,
+            key=f"profile_{f.name}",
+        )
+        file_profiles[f.name] = next(
+            (p for p in profiles if p["name"] == selected), None
+        )
 
     # ── Parse & preview ───────────────────────────────────────────────────────
     if "parsed_dfs" not in st.session_state:
         st.session_state.parsed_dfs = {}
 
+    st.markdown("---")
     if st.button("Parse & Preview", type="primary"):
         st.session_state.parsed_dfs = {}
 
-        # CSV
-        for f in csv_files or []:
-            try:
-                raw = parse_csv(f, profile=selected_profile)
-                norm = normalize_transactions(raw, source_filename=f.name, profile=selected_profile)
-                st.session_state.parsed_dfs[f.name] = ("csv", norm, None)
-            except Exception as exc:
-                st.session_state.parsed_dfs[f.name] = ("csv", None, str(exc))
+        for f in all_files:
+            prof = file_profiles.get(f.name)
+            is_pdf = f.name.lower().endswith(".pdf")
 
-        # PDF
-        for f in pdf_files or []:
-            raw, errors = parse_pdf(f)
-            if raw.empty:
-                st.session_state.parsed_dfs[f.name] = ("pdf", None, "; ".join(errors))
+            if is_pdf:
+                raw, errors = parse_pdf(f)
+                if raw.empty:
+                    st.session_state.parsed_dfs[f.name] = ("pdf", None, "; ".join(errors))
+                else:
+                    try:
+                        norm = normalize_transactions(raw, source_filename=f.name, profile=prof)
+                        st.session_state.parsed_dfs[f.name] = (
+                            "pdf", norm, "; ".join(errors) if errors else None
+                        )
+                    except Exception as exc:
+                        st.session_state.parsed_dfs[f.name] = ("pdf", None, str(exc))
             else:
                 try:
-                    norm = normalize_transactions(raw, source_filename=f.name, profile=selected_profile)
-                    st.session_state.parsed_dfs[f.name] = ("pdf", norm, "; ".join(errors) if errors else None)
+                    raw = parse_csv(f, profile=prof)
+                    norm = normalize_transactions(raw, source_filename=f.name, profile=prof)
+                    st.session_state.parsed_dfs[f.name] = ("csv", norm, None)
                 except Exception as exc:
-                    st.session_state.parsed_dfs[f.name] = ("pdf", None, str(exc))
+                    st.session_state.parsed_dfs[f.name] = ("csv", None, str(exc))
 
     # ── Show previews ──────────────────────────────────────────────────────────
     parsed = st.session_state.get("parsed_dfs", {})
@@ -159,10 +177,6 @@ with tab_upload:
     if st.button("Import All", type="primary"):
         total_new = total_skip = 0
         for fname, df in all_ok.items():
-            path = save_upload(
-                b"",  # bytes already parsed; just record filename
-                fname,
-            ) if False else None  # save_upload only for actual file objects
             inserted, skipped = commit_transactions(df, entity_lower)
             total_new  += inserted
             total_skip += skipped
