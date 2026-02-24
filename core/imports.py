@@ -1,4 +1,5 @@
 """CSV and PDF ingestion, normalization, deduplication, and commit."""
+from __future__ import annotations
 
 import hashlib
 import re
