@@ -155,6 +155,18 @@ VALUES
     ('BofA Personal CC', '_5625', 'BofA Credit Card', NULL, 'Filename is "MonthYear_5625.csv"', 5, datetime('now'));
 """
 
+_MIGRATION_7 = """
+INSERT OR IGNORE INTO import_profiles
+    (name, date_col, description_col, amount_col, merchant_col, account_col, currency_col, amount_negate, date_format, created_at)
+VALUES
+    ('BofA Checking', 'Date', 'Description', 'Amount', NULL, NULL, NULL, 0, '%m/%d/%Y', datetime('now'));
+
+INSERT OR IGNORE INTO import_checklist
+    (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
+VALUES
+    ('BofA Personal Checking', 'stmt', 'BofA Checking', NULL, 'Filename is "stmt.csv" — has summary header that is auto-skipped', 6, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -162,6 +174,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (4, _MIGRATION_4),
     (5, _MIGRATION_5),
     (6, _MIGRATION_6),
+    (7, _MIGRATION_7),
 ]
 
 _DEFAULT_CATEGORIES = [

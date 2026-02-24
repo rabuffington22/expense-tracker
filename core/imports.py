@@ -20,6 +20,31 @@ def compute_transaction_id(date: str, amount: float, description_raw: str) -> st
     return hashlib.sha256(key.encode()).hexdigest()[:24]
 
 
+# ── CSV helpers ───────────────────────────────────────────────────────────────
+
+def _try_read_csv(path) -> Optional[pd.DataFrame]:
+    """Attempt a normal pd.read_csv; return None on parse errors."""
+    try:
+        df = pd.read_csv(path, dtype=str, skip_blank_lines=True)
+        df.columns = [c.strip() for c in df.columns]
+        return df
+    except Exception:
+        return None
+
+
+def _read_raw_lines(path) -> list[str]:
+    """Read all lines from a path or file-like object."""
+    if hasattr(path, "read"):
+        if hasattr(path, "seek"):
+            path.seek(0)
+        data = path.read()
+        if isinstance(data, bytes):
+            data = data.decode("utf-8", errors="replace")
+        return data.splitlines(keepends=True)
+    with open(path, "r", encoding="utf-8", errors="replace") as f:
+        return f.readlines()
+
+
 # ── CSV parsing ───────────────────────────────────────────────────────────────
 
 def parse_csv(
@@ -34,8 +59,27 @@ def parse_csv(
     Raises ValueError if required columns (date, description_raw, amount)
     cannot be resolved.
     """
-    df = pd.read_csv(path, dtype=str, skip_blank_lines=True)
-    df.columns = [c.strip() for c in df.columns]
+    # Some bank CSVs (e.g. BofA checking) have a summary header section
+    # with fewer columns than the data, causing a parse error.  We try a
+    # normal read first; if that fails or produces no recognisable date
+    # column, scan for the real header row and re-read from there.
+    import io as _io
+
+    df = _try_read_csv(path)
+
+    if df is None or ("Date" not in df.columns and "date" not in [c.lower() for c in df.columns]):
+        raw_lines = _read_raw_lines(path)
+        header_idx = None
+        for i, line in enumerate(raw_lines):
+            if "Date" in line and "Description" in line:
+                header_idx = i
+                break
+        if header_idx is not None:
+            csv_text = "".join(raw_lines[header_idx:])
+            df = pd.read_csv(_io.StringIO(csv_text), dtype=str, skip_blank_lines=True)
+            df.columns = [c.strip() for c in df.columns]
+        elif df is None:
+            raise ValueError("Could not parse CSV — mixed column counts and no recognisable header found.")
 
     if profile:
         rename: dict[str, str] = {}
