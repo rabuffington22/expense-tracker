@@ -53,8 +53,8 @@ with st.sidebar:
         (match, "FOUR", "Match"),
         (categorize, "FIVE", "Categorize Remaining"),
     ]
+    _NBSP6 = "\u00a0" * 6  # 6 non-breaking spaces
     for _page, _num, _label in _STEPS:
-        st.caption(_num)
-        st.page_link(_page, label=_label)
+        st.page_link(_page, label=f"{_num}{_NBSP6}{_label}")
 
 pg.run()
