@@ -289,149 +289,144 @@ with tab_upload:
 
     if not all_files:
         st.info("Upload one or more CSV or PDF files to get started.")
-        st.stop()
+    else:
+        # ── Entity mismatch warnings ──────────────────────────────────────
+        for f in all_files:
+            suggested_entity, match_label = suggest_entity_for_file(f.name, all_items)
+            if suggested_entity and suggested_entity != entity_lower:
+                st.warning(
+                    f"**{f.name}** matches **{match_label}** "
+                    f"({suggested_entity.title()} entity). "
+                    f"Switch to {suggested_entity.title()} to import correctly."
+                )
 
-    # ── Entity mismatch warnings ──────────────────────────────────────────────
-    for f in all_files:
-        suggested_entity, match_label = suggest_entity_for_file(f.name, all_items)
-        if suggested_entity and suggested_entity != entity_lower:
-            st.warning(
-                f"**{f.name}** matches **{match_label}** "
-                f"({suggested_entity.title()} entity). "
-                f"Switch to {suggested_entity.title()} to import correctly."
+        # ── Per-file profile selectors ────────────────────────────────────
+        st.markdown("---")
+        st.subheader("Assign profiles")
+        st.caption("Choose an import profile for each file.")
+
+        file_profiles = {}
+        for f in all_files:
+            # Auto-suggest profile based on checklist filename_pattern
+            default_idx = 0
+            for item in all_items:
+                pattern = (item.get("filename_pattern") or "").strip().lower()
+                if pattern and pattern in f.name.lower() and item.get("profile_name"):
+                    try:
+                        default_idx = profile_names.index(item["profile_name"])
+                    except ValueError:
+                        pass
+                    break
+
+            selected = st.selectbox(
+                f"**{f.name}**",
+                profile_names,
+                index=default_idx,
+                key=f"profile_{f.name}",
+            )
+            file_profiles[f.name] = next(
+                (p for p in profiles if p["name"] == selected), None
             )
 
-    # ── Per-file profile selectors ────────────────────────────────────────────
-    st.markdown("---")
-    st.subheader("Assign profiles")
-    st.caption("Choose an import profile for each file.")
+        # ── Parse & preview ───────────────────────────────────────────────
+        if "parsed_dfs" not in st.session_state:
+            st.session_state.parsed_dfs = {}
 
-    file_profiles = {}
-    for f in all_files:
-        # Auto-suggest profile based on checklist filename_pattern
-        default_idx = 0
-        for item in all_items:
-            pattern = (item.get("filename_pattern") or "").strip().lower()
-            if pattern and pattern in f.name.lower() and item.get("profile_name"):
-                try:
-                    default_idx = profile_names.index(item["profile_name"])
-                except ValueError:
-                    pass
-                break
+        st.markdown("---")
+        if st.button("Parse & Preview", type="primary"):
+            st.session_state.parsed_dfs = {}
 
-        selected = st.selectbox(
-            f"**{f.name}**",
-            profile_names,
-            index=default_idx,
-            key=f"profile_{f.name}",
-        )
-        file_profiles[f.name] = next(
-            (p for p in profiles if p["name"] == selected), None
-        )
+            for f in all_files:
+                prof = file_profiles.get(f.name)
+                is_pdf = f.name.lower().endswith(".pdf")
 
-    # ── Parse & preview ───────────────────────────────────────────────────────
-    if "parsed_dfs" not in st.session_state:
-        st.session_state.parsed_dfs = {}
-
-    st.markdown("---")
-    if st.button("Parse & Preview", type="primary"):
-        st.session_state.parsed_dfs = {}
-
-        for f in all_files:
-            prof = file_profiles.get(f.name)
-            is_pdf = f.name.lower().endswith(".pdf")
-
-            if is_pdf:
-                raw, errors = parse_pdf(f)
-                if raw.empty:
-                    st.session_state.parsed_dfs[f.name] = ("pdf", None, "; ".join(errors))
+                if is_pdf:
+                    raw, errors = parse_pdf(f)
+                    if raw.empty:
+                        st.session_state.parsed_dfs[f.name] = ("pdf", None, "; ".join(errors))
+                    else:
+                        try:
+                            norm = normalize_transactions(raw, source_filename=f.name, profile=prof)
+                            st.session_state.parsed_dfs[f.name] = (
+                                "pdf", norm, "; ".join(errors) if errors else None
+                            )
+                        except Exception as exc:
+                            st.session_state.parsed_dfs[f.name] = ("pdf", None, str(exc))
                 else:
                     try:
+                        raw = parse_csv(f, profile=prof)
                         norm = normalize_transactions(raw, source_filename=f.name, profile=prof)
-                        st.session_state.parsed_dfs[f.name] = (
-                            "pdf", norm, "; ".join(errors) if errors else None
-                        )
+                        st.session_state.parsed_dfs[f.name] = ("csv", norm, None)
                     except Exception as exc:
-                        st.session_state.parsed_dfs[f.name] = ("pdf", None, str(exc))
-            else:
-                try:
-                    raw = parse_csv(f, profile=prof)
-                    norm = normalize_transactions(raw, source_filename=f.name, profile=prof)
-                    st.session_state.parsed_dfs[f.name] = ("csv", norm, None)
-                except Exception as exc:
-                    st.session_state.parsed_dfs[f.name] = ("csv", None, str(exc))
+                        st.session_state.parsed_dfs[f.name] = ("csv", None, str(exc))
 
-    # ── Show previews ──────────────────────────────────────────────────────────
-    parsed = st.session_state.get("parsed_dfs", {})
-    if not parsed:
-        st.stop()
+        # ── Show previews ─────────────────────────────────────────────────
+        parsed = st.session_state.get("parsed_dfs", {})
+        if parsed:
+            all_ok = {}
+            for fname, (ftype, df, err) in parsed.items():
+                with st.expander(f"📄 {fname}", expanded=True):
+                    if err:
+                        st.warning(f"Extraction warnings: {err}")
+                    if df is None or df.empty:
+                        st.error("Could not extract any transactions from this file.")
+                        continue
 
-    all_ok = {}
-    for fname, (ftype, df, err) in parsed.items():
-        with st.expander(f"📄 {fname}", expanded=True):
-            if err:
-                st.warning(f"Extraction warnings: {err}")
-            if df is None or df.empty:
-                st.error("Could not extract any transactions from this file.")
-                continue
+                    # ── Summary stats ─────────────────────────────────────
+                    stat_parts = [f"**{len(df)} transactions**"]
 
-            # ── Summary stats ─────────────────────────────────────────────
-            stat_parts = [f"**{len(df)} transactions**"]
+                    if "date" in df.columns:
+                        dates = pd.to_datetime(df["date"], errors="coerce").dropna()
+                        if not dates.empty:
+                            min_d = dates.min().strftime("%b %d")
+                            max_d = dates.max().strftime("%b %d, %Y")
+                            stat_parts.append(f"{min_d} – {max_d}")
 
-            if "date" in df.columns:
-                dates = pd.to_datetime(df["date"], errors="coerce").dropna()
-                if not dates.empty:
-                    min_d = dates.min().strftime("%b %d")
-                    max_d = dates.max().strftime("%b %d, %Y")
-                    stat_parts.append(f"{min_d} – {max_d}")
+                    st.write(" · ".join(stat_parts))
 
-            st.write(" · ".join(stat_parts))
+                    # Credits / debits summary
+                    if "amount" in df.columns:
+                        amounts = pd.to_numeric(df["amount"], errors="coerce").dropna()
+                        credits = amounts[amounts > 0].sum()
+                        debits = abs(amounts[amounts < 0].sum())
+                        net = credits - debits
 
-            # Credits / debits summary
-            if "amount" in df.columns:
-                amounts = pd.to_numeric(df["amount"], errors="coerce").dropna()
-                credits = amounts[amounts > 0].sum()
-                debits = abs(amounts[amounts < 0].sum())
-                net = credits - debits
+                        mc1, mc2, mc3 = st.columns(3)
+                        mc1.metric("Credits", f"${credits:,.2f}")
+                        mc2.metric("Debits", f"${debits:,.2f}")
+                        net_label = f"${net:,.2f}" if net >= 0 else f"-${abs(net):,.2f}"
+                        mc3.metric("Net", net_label)
 
-                mc1, mc2, mc3 = st.columns(3)
-                mc1.metric("Credits", f"${credits:,.2f}")
-                mc2.metric("Debits", f"${debits:,.2f}")
-                net_label = f"${net:,.2f}" if net >= 0 else f"-${abs(net):,.2f}"
-                mc3.metric("Net", net_label)
+                    # ── Data table ────────────────────────────────────────
+                    display_cols = ["date", "description_raw", "amount", "account", "currency"]
+                    st.dataframe(
+                        df[[c for c in display_cols if c in df.columns]],
+                        use_container_width=True,
+                        height=220,
+                    )
+                    all_ok[fname] = df
 
-            # ── Data table ────────────────────────────────────────────────
-            display_cols = ["date", "description_raw", "amount", "account", "currency"]
-            st.dataframe(
-                df[[c for c in display_cols if c in df.columns]],
-                use_container_width=True,
-                height=220,
-            )
-            all_ok[fname] = df
+            # ── Import button ─────────────────────────────────────────────
+            if all_ok:
+                st.markdown("---")
+                st.write(f"Ready to import **{sum(len(d) for d in all_ok.values())} total transactions**")
+                if st.button("Import All", type="primary"):
+                    total_new = total_skip = 0
+                    for fname, df in all_ok.items():
+                        inserted, skipped = commit_transactions(df, entity_lower)
+                        total_new  += inserted
+                        total_skip += skipped
 
-    if not all_ok:
-        st.stop()
+                    # Auto-check matching checklist items
+                    imported_names = list(all_ok.keys())
+                    matched = auto_check_by_filename(imported_names, month)
 
-    # ── Import button ─────────────────────────────────────────────────────────
-    st.markdown("---")
-    st.write(f"Ready to import **{sum(len(d) for d in all_ok.values())} total transactions**")
-    if st.button("Import All", type="primary"):
-        total_new = total_skip = 0
-        for fname, df in all_ok.items():
-            inserted, skipped = commit_transactions(df, entity_lower)
-            total_new  += inserted
-            total_skip += skipped
-
-        # Auto-check matching checklist items
-        imported_names = list(all_ok.keys())
-        matched = auto_check_by_filename(imported_names, month)
-
-        msg = f"Imported **{total_new} new** / skipped **{total_skip} duplicates**"
-        if matched:
-            msg += f"  \nAuto-checked: {', '.join(matched)}"
-        st.success(msg)
-        st.session_state.parsed_dfs = {}
-        st.rerun()
+                    msg = f"Imported **{total_new} new** / skipped **{total_skip} duplicates**"
+                    if matched:
+                        msg += f"  \nAuto-checked: {', '.join(matched)}"
+                    st.success(msg)
+                    st.session_state.parsed_dfs = {}
+                    st.rerun()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
