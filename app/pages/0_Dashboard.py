@@ -12,7 +12,7 @@ from datetime import datetime
 import streamlit as st
 
 from core.db import get_connection, init_db
-from app.shared import get_entity, entity_display
+from app.shared import get_entity
 
 entity, entity_lower = get_entity()
 
@@ -63,20 +63,14 @@ c6.metric("Active Aliases", f"{alias_count}")
 # ── Import progress ──────────────────────────────────────────────────────────
 st.markdown("---")
 
-# Check import progress across both entities
-other_entity = "company" if entity_lower == "personal" else "personal"
-init_db(other_entity)
-
+# Check import progress for active entity only
 month = datetime.now().strftime("%Y-%m")
-progress_parts = []
-for ent in ["personal", "company"]:
-    ent_conn = get_connection(ent)
-    try:
-        ent_items = ent_conn.execute(
-            "SELECT id FROM import_checklist WHERE entity=?", (ent,)
-        ).fetchall()
-        if not ent_items:
-            continue
+ent_conn = get_connection(entity_lower)
+try:
+    ent_items = ent_conn.execute(
+        "SELECT id FROM import_checklist WHERE entity=?", (entity_lower,)
+    ).fetchall()
+    if ent_items:
         item_ids = [r[0] for r in ent_items]
         placeholders = ",".join("?" * len(item_ids))
         done = ent_conn.execute(
@@ -85,14 +79,10 @@ for ent in ["personal", "company"]:
             [month] + item_ids,
         ).fetchone()[0]
         total = len(ent_items)
-        icon = "Done" if done == total else "-"
-        progress_parts.append(f"{icon} {entity_display(ent)}: {done}/{total}")
-    finally:
-        ent_conn.close()
-
-if progress_parts:
-    st.subheader(f"Import Progress — {month}")
-    st.write(" · ".join(progress_parts))
+        st.subheader(f"Import Progress — {month}")
+        st.write(f"{done}/{total} sources imported")
+finally:
+    ent_conn.close()
 
 # ── Top spending categories this month ────────────────────────────────────────
 conn = get_connection(entity_lower)

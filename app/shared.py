@@ -70,6 +70,8 @@ def entity_selector() -> tuple[str, str]:
         background: transparent !important;
         cursor: pointer !important;
         transition: all 0.15s ease !important;
+        text-align: center !important;
+        justify-content: center !important;
     }}
     /* Active option — colored text + colored border, no fill */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
