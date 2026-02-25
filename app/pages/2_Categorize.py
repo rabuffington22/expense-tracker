@@ -313,16 +313,23 @@ with tab_amazon:
 
             if review:
                 st.markdown("---")
-                st.write(f"**{len(review)}** matches to review")
+
+                # Track progress through the queue
+                if "amazon_review_idx" not in st.session_state:
+                    st.session_state.amazon_review_idx = 0
+                idx = st.session_state.amazon_review_idx
 
                 categories = get_categories(entity_lower) + ["Shopping"]
 
-                # Initialize accept/category state per match
-                if "amazon_review_state" not in st.session_state:
-                    st.session_state.amazon_review_state = {}
-                review_state = st.session_state.amazon_review_state
-
-                for i, m in enumerate(review):
+                if idx >= len(review):
+                    st.success(f"Done! Reviewed all **{len(review)}** matches.")
+                    if st.button("Finish"):
+                        st.session_state.pop("amazon_matches", None)
+                        st.session_state.pop("amazon_no_match", None)
+                        st.session_state.pop("amazon_review_idx", None)
+                        st.rerun()
+                else:
+                    m = review[idx]
                     tid = m["transaction_id"]
                     order = m.get("matched_order", {})
                     txn_amt = abs(m["txn_amount"])
@@ -338,152 +345,110 @@ with tab_amazon:
                     except (ValueError, TypeError):
                         days_apart = 0
 
-                    # Summary line for expander header
-                    header = f"${txn_amt:,.2f} — {m['product_summary'][:50]}"
+                    # Progress counter
+                    st.write(f"**Card {idx + 1} of {len(review)}**")
+                    st.progress((idx) / len(review))
 
-                    with st.expander(header):
-                        col_bank, col_order = st.columns(2)
-                        with col_bank:
-                            st.write("**Bank Charge**")
-                            st.write(f"Date: {m['txn_date']}")
-                            st.write(f"Amount: **${txn_amt:,.2f}**")
-                            st.write(f"Description: {m['txn_description'][:60]}")
-                        with col_order:
-                            st.write("**Amazon Order**")
-                            st.write(f"Date: {order.get('order_date', '?')}")
-                            st.write(f"Amount: **${order_amt:,.2f}**")
-                            st.write(f"Product: {m['product_summary'][:80]}")
+                    # Card content
+                    col_bank, col_order = st.columns(2)
+                    with col_bank:
+                        st.write("**Bank Charge**")
+                        st.write(f"Date: {m['txn_date']}")
+                        st.write(f"Amount: **${txn_amt:,.2f}**")
+                        st.write(f"Description: {m['txn_description'][:60]}")
+                    with col_order:
+                        st.write("**Amazon Order**")
+                        st.write(f"Date: {order.get('order_date', '?')}")
+                        st.write(f"Amount: **${order_amt:,.2f}**")
+                        st.write(f"Product: {m['product_summary'][:80]}")
 
-                        # Comparison stats — highlight problem values in red
-                        pct_color = "red" if amt_pct > 3 else "inherit"
-                        days_color = "red" if days_apart > 3 else "inherit"
-                        st.markdown(
-                            f"<span style='font-size:0.95rem'>"
-                            f"Match type: <b>{m['match_type'].replace('_', ' ').title()}</b> · "
-                            f"Amount diff: <span style='color:{pct_color};font-size:1.1rem;font-weight:600'>"
-                            f"${amt_diff:.2f} ({amt_pct:.1f}%)</span> · "
-                            f"Days apart: <span style='color:{days_color};font-size:1.1rem;font-weight:600'>"
-                            f"{days_apart}</span>"
-                            f"</span>",
-                            unsafe_allow_html=True,
-                        )
+                    # Comparison stats — highlight problem values in red
+                    pct_color = "red" if amt_pct > 3 else "inherit"
+                    days_color = "red" if days_apart > 3 else "inherit"
+                    st.markdown(
+                        f"<span style='font-size:0.95rem'>"
+                        f"Match type: <b>{m['match_type'].replace('_', ' ').title()}</b> · "
+                        f"Amount diff: <span style='color:{pct_color};font-size:1.1rem;font-weight:600'>"
+                        f"${amt_diff:.2f} ({amt_pct:.1f}%)</span> · "
+                        f"Days apart: <span style='color:{days_color};font-size:1.1rem;font-weight:600'>"
+                        f"{days_apart}</span>"
+                        f"</span>",
+                        unsafe_allow_html=True,
+                    )
 
-                        # Accept / Not a match checkboxes + category + subcategory
-                        c_accept, c_reject, c_cat, c_sub = st.columns([1, 1, 2, 2])
-                        accepted = c_accept.checkbox(
-                            "Accept",
-                            value=review_state.get(tid, {}).get("accept", False),
-                            key=f"accept_{tid}",
-                        )
-                        rejected = c_reject.checkbox(
-                            "Not a match",
-                            value=review_state.get(tid, {}).get("reject", False),
-                            key=f"reject_{tid}",
-                        )
-                        cat_default = review_state.get(tid, {}).get("category", m["suggested_category"])
-                        cat_idx = categories.index(cat_default) if cat_default in categories else 0
-                        category = c_cat.selectbox(
-                            "Category",
-                            categories,
-                            index=cat_idx,
-                            key=f"cat_{tid}",
-                        )
-                        # Subcategory dropdown + custom input
-                        subs = get_subcategories(entity_lower, category)
-                        sub_default = review_state.get(tid, {}).get("subcategory", m.get("suggested_subcategory", "Unknown"))
-                        sub_idx = subs.index(sub_default) if sub_default in subs else (subs.index("Unknown") if "Unknown" in subs else 0)
-                        subcategory = c_sub.selectbox(
-                            "Subcategory",
-                            subs,
-                            index=sub_idx,
-                            key=f"sub_{tid}",
-                        )
-                        custom_sub = c_sub.text_input(
-                            "Or new subcategory",
-                            key=f"newsub_{tid}",
-                            placeholder="Type to create new...",
-                        )
-                        final_sub = custom_sub.strip() if custom_sub.strip() else subcategory
-                        review_state[tid] = {
-                            "accept": accepted,
-                            "reject": rejected,
-                            "category": category,
-                            "subcategory": final_sub,
-                            "product": m["product_summary"],
-                            "order_id": m["order_id"],
-                            "amount": m["txn_amount"],
-                            "confidence": m["confidence"],
-                        }
+                    # Category + Subcategory
+                    c_cat, c_sub = st.columns(2)
+                    category = c_cat.selectbox(
+                        "Category",
+                        categories,
+                        index=categories.index(m["suggested_category"]) if m["suggested_category"] in categories else 0,
+                        key=f"card_cat_{idx}",
+                    )
+                    subs = get_subcategories(entity_lower, category)
+                    subcategory = c_sub.selectbox(
+                        "Subcategory",
+                        subs,
+                        index=subs.index(m.get("suggested_subcategory", "Unknown")) if m.get("suggested_subcategory", "Unknown") in subs else (subs.index("Unknown") if "Unknown" in subs else 0),
+                        key=f"card_sub_{idx}",
+                    )
+                    custom_sub = c_sub.text_input(
+                        "Or new subcategory",
+                        key=f"card_newsub_{idx}",
+                        placeholder="Type to create new...",
+                    )
+                    final_sub = custom_sub.strip() if custom_sub.strip() else subcategory
 
-                # Apply button
-                st.markdown("---")
-                accepted_items = {k: v for k, v in review_state.items() if v.get("accept")}
-                rejected_items = {k: v for k, v in review_state.items() if v.get("reject") and not v.get("accept")}
-                skipped = len(review_state) - len(accepted_items) - len(rejected_items)
-                st.write(
-                    f"**{len(accepted_items)}** accepted · "
-                    f"**{len(rejected_items)}** not a match (save category only) · "
-                    f"**{skipped}** skipped"
-                )
+                    # Action buttons
+                    c1, c2, c3 = st.columns(3)
 
-                if st.button("Apply All", type="primary"):
-                    total_updated = 0
-
-                    # 0. Auto-save any custom subcategories to DB
-                    all_items = {**accepted_items, **rejected_items}
-                    conn = get_connection(entity_lower)
-                    try:
-                        now = datetime.now(timezone.utc).isoformat()
-                        for info in all_items.values():
-                            cat = info.get("category", "")
-                            sub = info.get("subcategory", "Unknown")
-                            if cat and sub and sub != "Unknown":
+                    def _save_subcategory(cat, sub):
+                        """Auto-save custom subcategory to DB."""
+                        if cat and sub and sub != "Unknown":
+                            conn = get_connection(entity_lower)
+                            try:
                                 conn.execute(
                                     "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
                                     "VALUES (?,?,?)",
-                                    (cat, sub, now),
+                                    (cat, sub, datetime.now(timezone.utc).isoformat()),
                                 )
-                        conn.commit()
-                    finally:
-                        conn.close()
-                    get_subcategories.clear()
+                                conn.commit()
+                            finally:
+                                conn.close()
+                            get_subcategories.clear()
 
-                    # 1. Apply accepted matches (full Amazon link)
-                    if accepted_items:
-                        to_apply = []
-                        for tid, info in accepted_items.items():
-                            to_apply.append({
-                                "transaction_id": tid,
-                                "product_summary": info["product"],
-                                "suggested_category": info["category"],
-                                "suggested_subcategory": info.get("subcategory", "Unknown"),
-                                "order_id": info["order_id"],
-                                "order_total": info["amount"],
-                                "confidence": info["confidence"],
-                            })
-                        total_updated += apply_matches(entity_lower, to_apply)
+                    if c1.button("✅ Accept", type="primary", use_container_width=True):
+                        _save_subcategory(category, final_sub)
+                        apply_matches(entity_lower, [{
+                            "transaction_id": tid,
+                            "product_summary": m["product_summary"],
+                            "suggested_category": category,
+                            "suggested_subcategory": final_sub,
+                            "order_id": m["order_id"],
+                            "order_total": m["txn_amount"],
+                            "confidence": m["confidence"],
+                        }])
+                        st.session_state.amazon_review_idx = idx + 1
+                        st.rerun()
 
-                    # 2. Save category/subcategory for explicitly rejected items
-                    if rejected_items:
+                    if c2.button("❌ Not a match", use_container_width=True):
+                        _save_subcategory(category, final_sub)
                         conn = get_connection(entity_lower)
                         try:
-                            for tid, info in rejected_items.items():
-                                conn.execute(
-                                    "UPDATE transactions "
-                                    "SET category = ?, subcategory = ?, confidence = 1.0 "
-                                    "WHERE transaction_id = ?",
-                                    (info["category"], info.get("subcategory", "Unknown"), tid),
-                                )
-                                total_updated += 1
+                            conn.execute(
+                                "UPDATE transactions "
+                                "SET category = ?, subcategory = ?, confidence = 1.0 "
+                                "WHERE transaction_id = ?",
+                                (category, final_sub, tid),
+                            )
                             conn.commit()
                         finally:
                             conn.close()
+                        st.session_state.amazon_review_idx = idx + 1
+                        st.rerun()
 
-                    st.success(f"Updated **{total_updated}** transactions.")
-                    st.session_state.pop("amazon_matches", None)
-                    st.session_state.pop("amazon_no_match", None)
-                    st.session_state.pop("amazon_review_state", None)
-                    st.rerun()
+                    if c3.button("⏭️ Skip", use_container_width=True):
+                        st.session_state.amazon_review_idx = idx + 1
+                        st.rerun()
 
             if no_match:
                 with st.expander(f"{len(no_match)} unmatched bank transactions"):
