@@ -316,67 +316,99 @@ with tab_amazon:
 
                 categories = get_categories(entity_lower) + ["Shopping"]
 
-                edit_rows = []
-                for m in review:
-                    conf_label = m["match_type"]  # likely, multi_order, date_only
-                    edit_rows.append({
-                        "accept": False,
-                        "date": m["txn_date"],
-                        "description": m["txn_description"],
-                        "amount": m["txn_amount"],
-                        "match": conf_label,
-                        "product": m["product_summary"],
-                        "category": m["suggested_category"],
-                        "order_id": m["order_id"],
-                        "transaction_id": m["transaction_id"],
-                    })
+                # Initialize accept/category state per match
+                if "amazon_review_state" not in st.session_state:
+                    st.session_state.amazon_review_state = {}
+                review_state = st.session_state.amazon_review_state
 
-                df_edit = pd.DataFrame(edit_rows)
-                edited = st.data_editor(
-                    df_edit,
-                    column_config={
-                        "accept": st.column_config.CheckboxColumn("Accept", width="small"),
-                        "date": st.column_config.TextColumn("Date", disabled=True, width="small"),
-                        "description": st.column_config.TextColumn("Bank Desc", disabled=True, width="medium"),
-                        "amount": st.column_config.NumberColumn("Amount", format="$%.2f", disabled=True, width="small"),
-                        "match": st.column_config.TextColumn("Match", disabled=True, width="small"),
-                        "product": st.column_config.TextColumn("Product", width="large"),
-                        "category": st.column_config.SelectboxColumn("Category", options=categories, width="medium"),
-                        "order_id": st.column_config.TextColumn("Order ID", disabled=True, width="small"),
-                        "transaction_id": None,
-                    },
-                    use_container_width=True,
-                    hide_index=True,
-                    height=min(520, 42 + 35 * len(edit_rows)),
-                    key="amazon_match_editor",
-                )
+                for i, m in enumerate(review):
+                    tid = m["transaction_id"]
+                    order = m.get("matched_order", {})
+                    txn_amt = abs(m["txn_amount"])
+                    order_amt = order.get("order_total", 0)
+                    amt_diff = abs(txn_amt - order_amt)
+                    amt_pct = (amt_diff / txn_amt * 100) if txn_amt else 0
 
+                    try:
+                        from datetime import datetime as _dt
+                        txn_d = _dt.strptime(m["txn_date"], "%Y-%m-%d")
+                        ord_d = _dt.strptime(order.get("order_date", m["txn_date"]), "%Y-%m-%d")
+                        days_apart = abs((txn_d - ord_d).days)
+                    except (ValueError, TypeError):
+                        days_apart = 0
+
+                    # Summary line for expander header
+                    header = f"${txn_amt:,.2f} — {m['product_summary'][:50]}"
+
+                    with st.expander(header):
+                        col_bank, col_order = st.columns(2)
+                        with col_bank:
+                            st.write("**Bank Charge**")
+                            st.write(f"Date: {m['txn_date']}")
+                            st.write(f"Amount: **${txn_amt:,.2f}**")
+                            st.write(f"Description: {m['txn_description'][:60]}")
+                        with col_order:
+                            st.write("**Amazon Order**")
+                            st.write(f"Date: {order.get('order_date', '?')}")
+                            st.write(f"Amount: **${order_amt:,.2f}**")
+                            st.write(f"Product: {m['product_summary'][:80]}")
+
+                        # Comparison stats
+                        match_label = m["match_type"].replace("_", " ").title()
+                        st.caption(
+                            f"Match type: **{match_label}** · "
+                            f"Amount diff: ${amt_diff:.2f} ({amt_pct:.1f}%) · "
+                            f"Days apart: {days_apart}"
+                        )
+
+                        # Accept checkbox + category
+                        c_accept, c_cat = st.columns([1, 2])
+                        accepted = c_accept.checkbox(
+                            "Accept this match",
+                            value=review_state.get(tid, {}).get("accept", False),
+                            key=f"accept_{tid}",
+                        )
+                        cat_default = review_state.get(tid, {}).get("category", m["suggested_category"])
+                        cat_idx = categories.index(cat_default) if cat_default in categories else 0
+                        category = c_cat.selectbox(
+                            "Category",
+                            categories,
+                            index=cat_idx,
+                            key=f"cat_{tid}",
+                        )
+                        review_state[tid] = {
+                            "accept": accepted,
+                            "category": category,
+                            "product": m["product_summary"],
+                            "order_id": m["order_id"],
+                            "amount": m["txn_amount"],
+                            "confidence": m["confidence"],
+                        }
+
+                # Apply button
                 st.markdown("---")
-                accepted = edited[edited["accept"] == True]  # noqa: E712
-                st.write(f"**{len(accepted)}** matches selected")
+                accepted_items = {k: v for k, v in review_state.items() if v.get("accept")}
+                st.write(f"**{len(accepted_items)}** matches selected")
 
                 if st.button("Apply Matches", type="primary"):
-                    if accepted.empty:
+                    if not accepted_items:
                         st.warning("No matches selected.")
                     else:
                         to_apply = []
-                        for _, row in accepted.iterrows():
+                        for tid, info in accepted_items.items():
                             to_apply.append({
-                                "transaction_id": row["transaction_id"],
-                                "product_summary": row["product"],
-                                "suggested_category": row["category"],
-                                "order_id": row["order_id"],
-                                "order_total": row["amount"],
-                                "confidence": next(
-                                    (m["confidence"] for m in review
-                                     if m["transaction_id"] == row["transaction_id"]),
-                                    0.8,
-                                ),
+                                "transaction_id": tid,
+                                "product_summary": info["product"],
+                                "suggested_category": info["category"],
+                                "order_id": info["order_id"],
+                                "order_total": info["amount"],
+                                "confidence": info["confidence"],
                             })
                         updated = apply_matches(entity_lower, to_apply)
                         st.success(f"Applied **{updated}** matches.")
                         st.session_state.pop("amazon_matches", None)
                         st.session_state.pop("amazon_no_match", None)
+                        st.session_state.pop("amazon_review_state", None)
                         st.rerun()
 
             if no_match:
