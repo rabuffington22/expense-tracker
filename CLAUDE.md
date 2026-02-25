@@ -32,10 +32,11 @@ app/
   pages/
     0_Dashboard.py     # Quick stats, import progress
     1_Upload.py        # Source-by-source CSV/PDF import (modal dialog)
-    2_Categorize.py    # Review suggestions, Amazon match, alias settings
-    3_Reports.py       # Monthly charts, drill-down, CSV export
+    2_Categorize.py    # Review suggestions, Amazon order upload + categorize, alias settings
+    3_Match.py         # Match pre-categorized Amazon orders to bank transactions
+    4_Reports.py       # Monthly charts, drill-down, CSV export
 core/
-  db.py                # Schema migrations (14 so far), DB init, connections
+  db.py                # Schema migrations (16 so far), DB init, connections
   imports.py           # CSV/PDF parsing, normalization, dedup
   categorize.py        # Alias matching, keyword heuristics
   amazon.py            # Amazon order CSV parsing + matching
@@ -45,16 +46,23 @@ scripts/
   smoke_test.py        # Automated verification
 ```
 
-## Database (14 Migrations)
+## Database (16 Migrations)
 Key tables:
 - **`transactions`** — Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
-- **`categories`** — Seeded defaults + subcategories (Baby & Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
+- **`categories`** — Seeded defaults (Baby & Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
+- **`subcategories`** — Two-level categorization (Migration 15). Each subcategory belongs to a parent category. "Unknown" always available.
 - **`merchant_aliases`** — Pattern-based auto-categorization (contains/regex → merchant + category)
 - **`import_profiles`** — Saved CSV column mappings per bank (Amex, Chase, Capital One, Citi, BofA)
 - **`import_checklist` / `import_checklist_status`** — Monthly source tracking
-- **`amazon_orders`** — Persisted Amazon orders for deferred matching. `matched_transaction_id` tracks matches.
+- **`amazon_orders`** — Persisted Amazon orders for deferred matching. `matched_transaction_id` tracks matches. Has `category`/`subcategory` columns (Migration 16) for pre-categorization before matching.
 
-## Amazon Matching
+## Amazon Workflow (Two-Phase)
+**Phase 1 — Categorize (on Categorize page, Amazon tab):**
+Upload Amazon order CSV → categorize each order one-by-one in a card queue (product name, date, amount shown; pick category + subcategory). Uses `infer_category()` for smart defaults. Categories saved to `amazon_orders` table.
+
+**Phase 2 — Match (on Match page):**
+Link pre-categorized Amazon orders to bank transactions. Matching uses the order's saved category (via `_get_order_category()`).
+
 Two CSV formats: **Business** (groups by `payment_ref_id`) and **Privacy Central** (groups by `order_id`).
 
 Multi-pass algorithm:
@@ -63,13 +71,14 @@ Multi-pass algorithm:
 3. **Multi-order** (Business format only — 2-3 orders summing to txn) → confidence 0.75
 4. **Date-only fallback** → confidence 0.50
 
-Exact matches auto-apply. Uncertain matches shown in expandable review cards.
+Exact matches auto-apply. Uncertain matches shown in single-card review queue (Accept/Skip).
 
-Multi-order matching is disabled for Personal (Privacy Central) orders.
+Subscription charges (Audible, Kindle Unlimited, Amazon Music, etc.) excluded via `_AMAZON_EXCLUDE_PATTERNS`.
 
 ## Categorization
 1. **Alias rules** (confidence 0.95) — `merchant_aliases` table
 2. **Keyword heuristics** (confidence 0.5–0.8) — fallback for common merchants
+3. **Subcategories** — Two-level system. `infer_category()` returns `(category, subcategory)` tuple. Users can create new subcategories inline during review. Cached with `@st.cache_data(ttl=120)`.
 
 ## Important Patterns
 - `DATA_DIR` env var controls where DBs and uploads go (default: `./local_state`)
