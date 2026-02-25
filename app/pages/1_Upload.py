@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 import pandas as pd
 import streamlit as st
 
-from core.db import get_connection, init_db
+from core.db import get_connection
 from core.imports import (
     commit_transactions,
     normalize_transactions,
@@ -22,10 +22,6 @@ from core.imports import (
 from app.shared import get_entity, entity_display
 
 entity, entity_lower = get_entity()
-other_entity = "company" if entity_lower == "personal" else "personal"
-
-# Ensure other entity DB is initialized too (for cross-entity progress)
-init_db(other_entity)
 
 st.title("Upload")
 
@@ -97,28 +93,6 @@ def load_checklist_status(month: str) -> dict:
     finally:
         conn.close()
 
-
-def get_checklist_progress(month: str, all_items: list[dict]) -> dict:
-    """Get import progress for both entities by querying each entity's DB."""
-    result = {}
-    for ent in ["personal", "company"]:
-        ent_items = [i for i in all_items if i.get("entity", "personal") == ent]
-        if not ent_items:
-            result[ent] = (0, 0)
-            continue
-        conn = get_connection(ent)
-        try:
-            item_ids = [i["id"] for i in ent_items]
-            placeholders = ",".join("?" * len(item_ids))
-            done = conn.execute(
-                f"SELECT COUNT(*) FROM import_checklist_status "
-                f"WHERE month=? AND completed=1 AND checklist_item_id IN ({placeholders})",
-                [month] + item_ids,
-            ).fetchone()[0]
-            result[ent] = (done, len(ent_items))
-        finally:
-            conn.close()
-    return result
 
 
 def set_checklist_status(item_id: int, month: str, completed: bool, filename: str = "") -> None:
@@ -206,32 +180,21 @@ tab_upload, tab_profiles, tab_checklist = st.tabs(["Upload Files", "Manage Profi
 # TAB 1 — Upload Files
 # ═══════════════════════════════════════════════════════════════════════════════
 with tab_upload:
-    # ── Cross-entity import progress ──────────────────────────────────────────
+    # ── Import progress (active entity only) ─────────────────────────────────
     month = current_month()
     all_items = load_checklist_all()
+    items = [i for i in all_items if i.get("entity", "personal") == entity_lower]
 
-    if all_items:
-        progress = get_checklist_progress(month, all_items)
-        p_done, p_total = progress.get("personal", (0, 0))
-        c_done, c_total = progress.get("company", (0, 0))
-        total_done = p_done + c_done
-        total_all = p_total + c_total
-
-        if total_all > 0 and total_done == total_all:
-            st.success(f"All {total_all} sources imported for **{month}**")
-        else:
-            parts = []
-            if p_total > 0:
-                status = "Done" if p_done == p_total else f"{p_done}/{p_total}"
-                parts.append(f"Personal: {status}")
-            if c_total > 0:
-                status = "Done" if c_done == c_total else f"{c_done}/{c_total}"
-                parts.append(f"BFM: {status}")
-            st.info(f"**{month}** — {' · '.join(parts)}")
-
-        # Show only current entity's items
-        items = [i for i in all_items if i.get("entity", "personal") == entity_lower]
+    if items:
         status = load_checklist_status(month)
+        item_ids = [i["id"] for i in items]
+        done = sum(1 for i in item_ids if status.get(i, {}).get("completed", 0))
+        total = len(items)
+
+        if done == total:
+            st.success(f"All {total} sources imported for **{month}**")
+        else:
+            st.info(f"**{month}** — {done}/{total} sources imported")
 
         for item in items:
             item_status = status.get(item["id"], {})
@@ -493,12 +456,11 @@ with tab_checklist:
     profiles = load_profiles()
     profile_options = ["(none)"] + [p["name"] for p in profiles]
     all_items_tab = load_checklist_all()
+    entity_items = [i for i in all_items_tab if i.get("entity", "personal") == entity_lower]
 
-    if all_items_tab:
-        for item in all_items_tab:
-            item_ent = entity_display(item.get("entity", "personal"))
-            with st.expander(f"{item['label']}  ({item_ent})"):
-                st.write(f"**Entity:** {item_ent}")
+    if entity_items:
+        for item in entity_items:
+            with st.expander(item["label"]):
                 st.write(f"**Filename pattern:** {item.get('filename_pattern') or '—'}")
                 st.write(f"**Linked profile:** {item.get('profile_name') or '—'}")
                 st.write(f"**URL:** {item.get('url') or '—'}")
@@ -520,10 +482,6 @@ with tab_checklist:
             help="Case-insensitive substring to match uploaded filenames for auto-check",
         )
         cl_profile  = c1.selectbox("Auto-select profile", profile_options)
-        _ent_options = ["Personal", "BFM"]
-        _ent_db_map  = {"Personal": "personal", "BFM": "company"}
-        cl_entity   = c1.selectbox("Entity", _ent_options,
-                                   index=0 if entity_lower == "personal" else 1)
         cl_url      = c2.text_input("Download URL", placeholder="e.g. https://chase.com/statements")
         cl_notes    = c2.text_input("Notes", placeholder="e.g. Export last 30 days as CSV")
 
@@ -537,7 +495,7 @@ with tab_checklist:
                     profile_name="" if cl_profile == "(none)" else cl_profile,
                     url=cl_url.strip(),
                     notes=cl_notes.strip(),
-                    item_entity=_ent_db_map[cl_entity],
+                    item_entity=entity_lower,
                 )
                 st.success(f"Source '{cl_label.strip()}' added.")
                 st.rerun()
