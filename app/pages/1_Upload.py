@@ -221,8 +221,15 @@ with tab_import:
             conn.close()
 
         # ── Upload dialog ─────────────────────────────────────────────────────
-        @st.dialog("Import", width="small")
+        @st.dialog("Import", width="large")
         def upload_dialog(item: dict):
+            # Narrow the large dialog to ~50% viewport width
+            st.markdown(
+                """<style>
+                div[data-testid="stDialog"] > div {max-width: 50vw;}
+                </style>""",
+                unsafe_allow_html=True,
+            )
             st.subheader(item["label"])
 
             # Resolve profile for this source
@@ -309,21 +316,35 @@ with tab_import:
                         f"from **{file_count} file{'s' if file_count > 1 else ''}**"
                     )
 
-                    # Rename files before import
+                    # Rename files before import — detect month from transaction dates
                     rename_map = {}
-                    month_label = format_month(selected_month)
                     source_label = item["label"]
+
+                    def _detect_month(df) -> str:
+                        """Return 'Mon YYYY' from the most common month in the data."""
+                        if "date" in df.columns:
+                            dates = pd.to_datetime(df["date"], errors="coerce").dropna()
+                            if not dates.empty:
+                                # Use the most frequent month
+                                months = dates.dt.to_period("M")
+                                most_common = months.mode()
+                                if len(most_common):
+                                    return most_common[0].strftime("%b %Y")
+                        return format_month(selected_month)  # fallback
+
                     if file_count == 1:
                         orig = list(good_dfs.keys())[0]
                         ext = Path(orig).suffix
-                        auto_name = f"{source_label} - {month_label}{ext}"
+                        detected = _detect_month(good_dfs[orig])
+                        auto_name = f"{source_label} - {detected}{ext}"
                         rename_map[orig] = st.text_input(
                             "Save as", value=auto_name, key="rename_single",
                         )
                     else:
                         for i, orig in enumerate(good_dfs.keys()):
                             ext = Path(orig).suffix
-                            auto_name = f"{source_label} - {month_label} ({i + 1}){ext}"
+                            detected = _detect_month(good_dfs[orig])
+                            auto_name = f"{source_label} - {detected}{ext}"
                             rename_map[orig] = st.text_input(
                                 f"Save as ({orig})", value=auto_name, key=f"rename_{i}",
                             )
