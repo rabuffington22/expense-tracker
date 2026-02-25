@@ -377,7 +377,7 @@ with tab_amazon:
                             index=cat_idx,
                             key=f"cat_{tid}",
                         )
-                        # Subcategory dropdown based on selected category
+                        # Subcategory dropdown + custom input
                         subs = get_subcategories(entity_lower, category)
                         sub_default = review_state.get(tid, {}).get("subcategory", m.get("suggested_subcategory", "Unknown"))
                         sub_idx = subs.index(sub_default) if sub_default in subs else (subs.index("Unknown") if "Unknown" in subs else 0)
@@ -387,10 +387,16 @@ with tab_amazon:
                             index=sub_idx,
                             key=f"sub_{tid}",
                         )
+                        custom_sub = c_sub.text_input(
+                            "Or new subcategory",
+                            key=f"newsub_{tid}",
+                            placeholder="Type to create new...",
+                        )
+                        final_sub = custom_sub.strip() if custom_sub.strip() else subcategory
                         review_state[tid] = {
                             "accept": accepted,
                             "category": category,
-                            "subcategory": subcategory,
+                            "subcategory": final_sub,
                             "product": m["product_summary"],
                             "order_id": m["order_id"],
                             "amount": m["txn_amount"],
@@ -410,6 +416,25 @@ with tab_amazon:
 
                 if st.button("Apply All", type="primary"):
                     total_updated = 0
+
+                    # 0. Auto-save any custom subcategories to DB
+                    all_items = {**accepted_items, **rejected_with_cat}
+                    conn = get_connection(entity_lower)
+                    try:
+                        now = datetime.now(timezone.utc).isoformat()
+                        for info in all_items.values():
+                            cat = info.get("category", "")
+                            sub = info.get("subcategory", "Unknown")
+                            if cat and sub and sub != "Unknown":
+                                conn.execute(
+                                    "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
+                                    "VALUES (?,?,?)",
+                                    (cat, sub, now),
+                                )
+                        conn.commit()
+                    finally:
+                        conn.close()
+                    get_subcategories.clear()
 
                     # 1. Apply accepted matches (full Amazon link)
                     if accepted_items:
