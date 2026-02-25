@@ -56,21 +56,27 @@ def entity_selector() -> tuple[str, str]:
 
     /* ── Apple-style segmented control ───────────────────────────────────── */
 
-    /* Outer capsule — the radio group container */
+    /* Outer capsule — force horizontal row, full sidebar width */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div {{
+        display: flex !important;
+        flex-direction: row !important;
         background: #1c1c1e !important;
         border-radius: 8px !important;
         padding: 2px !important;
         gap: 0 !important;
+        width: 100% !important;
     }}
-    /* Kill the radio dot */
+    /* Kill the radio dot — remove from flow entirely */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:first-child {{
-        display: none !important;
+        position: absolute !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
     }}
-    /* Each segment — equal width, centered text, no individual border */
+    /* Each segment — equal width, no border */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label {{
-        flex: 1 1 50% !important;
-        display: block !important;
+        flex: 1 !important;
         text-align: center !important;
         padding: 0.4rem 0 !important;
         margin: 0 !important;
@@ -84,12 +90,13 @@ def entity_selector() -> tuple[str, str]:
         transition: all 0.2s ease !important;
         white-space: nowrap !important;
     }}
-    /* Center the text inside */
-    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label p {{
+    /* Center the text inside — override any inner element alignment */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label * {{
         text-align: center !important;
-        margin: 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }}
-    /* Active segment — filled background + white text */
+    /* Active segment — filled background + accent text */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:has(input:checked) {{
         background: #38383a !important;
