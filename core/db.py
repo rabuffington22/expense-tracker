@@ -269,6 +269,15 @@ CREATE TABLE IF NOT EXISTS amazon_orders (
 );
 """
 
+_MIGRATION_14 = """
+INSERT OR IGNORE INTO categories (name) VALUES ('Baby & Kids');
+INSERT OR IGNORE INTO categories (name) VALUES ('Household');
+INSERT OR IGNORE INTO categories (name) VALUES ('Health & Beauty');
+INSERT OR IGNORE INTO categories (name) VALUES ('Clothing');
+INSERT OR IGNORE INTO categories (name) VALUES ('Pet Supplies');
+INSERT OR IGNORE INTO categories (name) VALUES ('Office');
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -283,6 +292,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (11, _MIGRATION_11),
     (12, _MIGRATION_12),
     (13, _MIGRATION_13),
+    (14, _MIGRATION_14),
 ]
 
 _DEFAULT_CATEGORIES = [

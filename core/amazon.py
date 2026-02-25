@@ -59,32 +59,90 @@ _AMAZON_COL_MAP = {
 # ── Category inference from product names ────────────────────────────────────
 
 _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
-    (["book", "kindle", "paperback", "hardcover", "novel", "edition"], "Entertainment"),
+    # Baby & Kids
+    (["diaper", "huggies", "pampers", "baby wipe", "formula", "enfamil",
+      "similac", "stroller", "car seat", "pacifier", "sippy cup", "bib",
+      "onesie", "toddler", "infant", "nursery", "baby monitor", "teething",
+      "baby gate", "highchair", "kids ", "children", "child ", "kid "],
+     "Baby & Kids"),
+
+    # Household
+    (["paper towel", "bounty", "toilet paper", "charmin", "trash bag",
+      "glad ", "ziploc", "sponge", "cleaning", "clorox", "lysol", "windex",
+      "detergent", "tide ", "downy", "dryer sheet", "laundry", "dish soap",
+      "dawn ", "air freshener", "candle", "light bulb", "batteries",
+      "garbage bag", "aluminum foil", "plastic wrap", "napkin",
+      "scotch tape", "packing tape"],
+     "Household"),
+
+    # Health & Beauty
+    (["vitamin", "supplement", "medicine", "bandage", "first aid",
+      "thermometer", "allergy", "ibuprofen", "tylenol", "advil",
+      "cough", "cold medicine", "inhaler", "pulse oximeter", "monistat",
+      "mouthwash", "crest", "colgate", "floss", "toothbrush",
+      "soap", "shampoo", "toothpaste", "razor", "deodorant", "lotion",
+      "moisturizer", "sunscreen", "body wash", "conditioner", "hair ",
+      "makeup", "cosmetic", "nail polish", "face wash", "skincare"],
+     "Health & Beauty"),
+
+    # Electronics
     (["cable", "charger", "adapter", "hub", "usb", "hdmi", "phone case",
-      "screen protector", "earbuds", "headphone", "speaker", "battery",
-      "bluetooth", "wireless", "mouse", "keyboard", "monitor", "laptop"],
+      "screen protector", "earbuds", "headphone", "speaker", "battery pack",
+      "bluetooth", "mouse", "keyboard", "monitor", "laptop", "tablet",
+      "apple tv", "remote", "siri remote", "roku", "fire stick",
+      "sd card", "flash drive", "hard drive", "ssd", "camera", "ring ",
+      "smart plug", "echo ", "alexa"],
      "Electronics"),
-    (["vitamin", "supplement", "medicine", "health", "bandage", "first aid",
-      "thermometer", "allergy", "ibuprofen", "tylenol"],
-     "Healthcare"),
-    (["dog", "cat", "pet", "treats", "leash", "litter", "kibble"], "Pet Supplies"),
-    (["soap", "shampoo", "toothpaste", "razor", "deodorant", "lotion",
-      "moisturizer", "sunscreen", "body wash"],
-     "Personal Care"),
+
+    # Pet Supplies
+    (["dog ", "cat ", "pet ", "treats", "leash", "litter", "kibble",
+      "bird food", "bird seed", "aquarium", "fish tank", "collar",
+      "chew toy", "puppy", "kitten", "flea", "tick"],
+     "Pet Supplies"),
+
+    # Clothing
+    (["shirt", "pants", "shoes", "socks", "jacket", "clothing", "dress",
+      "shorts", "underwear", "hat ", "gloves", "boots", "sneaker",
+      "sandal", "hoodie", "sweater", "coat", "vest", "legging",
+      "pajama", "costume", "t-shirt", "jeans", "belt"],
+     "Clothing"),
+
+    # Home Improvement
+    (["tool", "drill", "screw", "nail", "paint", "sandpaper",
+      "wrench", "pliers", "saw", "level", "hammer", "bolt", "nut ",
+      "washer", "bracket", "hinge", "clamp", "beam clamp", "lag ",
+      "caulk", "putty", "drywall", "stud finder", "wire nut",
+      "outlet", "switch plate", "wall plate", "electrical",
+      "flood light", "handrail", "fence"],
+     "Home Improvement"),
+
+    # Household (home goods / kitchen / furniture)
     (["pan", "pot", "kitchen", "utensil", "plate", "cup", "mug", "spatula",
       "cutting board", "container", "storage", "organizer", "shelf",
-      "curtain", "pillow", "blanket", "towel", "mat"],
-     "Home"),
-    (["shirt", "pants", "shoes", "socks", "jacket", "clothing", "dress",
-      "shorts", "underwear", "hat", "gloves", "boots"],
-     "Clothing"),
-    (["tool", "drill", "screw", "nail", "tape", "paint", "sandpaper",
-      "wrench", "pliers", "saw", "level", "hammer"],
-     "Home Improvement"),
-    (["toy", "game", "puzzle", "lego", "doll", "action figure", "board game"],
+      "curtain", "pillow", "blanket", "mat", "rug", "hook",
+      "hanger", "basket", "bin", "dinnerware", "silverware", "fork",
+      "spoon", "knife set"],
+     "Household"),
+
+    # Entertainment (books, toys, games, media)
+    (["book", "kindle", "paperback", "hardcover", "novel", "edition",
+      "toy", "game", "puzzle", "lego", "doll", "action figure",
+      "board game", "stuffed animal", "walkie talkie", "coloring",
+      "craft", "sticker", "balloon", "party supplies", "decoration",
+      "sprinkles", "princess"],
      "Entertainment"),
-    (["snack", "food", "coffee", "tea", "protein", "granola", "cereal",
-      "candy", "chocolate", "nuts"],
+
+    # Office
+    (["office", "printer", "ink ", "toner", "paper ", "envelope",
+      "label", "binder", "folder", "stapler", "pen ", "pencil",
+      "marker", "sticky note", "desk", "chair"],
+     "Office"),
+
+    # Groceries
+    (["snack", "food", "coffee", "tea ", "protein", "granola", "cereal",
+      "candy", "chocolate", "nuts", "pretzel", "cracker", "cookie",
+      "chip", "popcorn", "jerky", "fruit", "vegetable", "organic",
+      "gluten", "kind bar", "cliff bar"],
      "Groceries"),
 ]
 
@@ -94,19 +152,28 @@ _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
 
 _AMAZON_BIZ_CATEGORY_MAP = {
     "grocery": "Groceries",
-    "health and beauty": "Shopping",
-    "beauty": "Shopping",
-    "office product": "Shopping",
+    "health and beauty": "Health & Beauty",
+    "beauty": "Health & Beauty",
+    "office product": "Office",
     "home improvement": "Home Improvement",
-    "home": "Shopping",
-    "kitchen": "Shopping",
+    "home": "Household",
+    "kitchen": "Household",
     "lighting": "Home Improvement",
     "ce": "Electronics",
     "personal computer": "Electronics",
     "speakers": "Electronics",
     "wireless": "Electronics",
-    "video games": "Electronics",
-    "business, industrial, & scientific supplies basic": "Shopping",
+    "video games": "Entertainment",
+    "business, industrial, & scientific supplies basic": "Office",
+    "baby product": "Baby & Kids",
+    "toys": "Entertainment",
+    "apparel": "Clothing",
+    "shoes": "Clothing",
+    "pet supplies": "Pet Supplies",
+    "lawn & garden": "Home Improvement",
+    "automotive": "Transportation",
+    "sports": "Entertainment",
+    "books": "Entertainment",
 }
 
 
