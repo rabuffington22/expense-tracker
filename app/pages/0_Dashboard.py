@@ -17,10 +17,13 @@ from app.shared import get_entity
 entity, entity_lower = get_entity()
 
 # ── Header ────────────────────────────────────────────────────────────────────
-st.markdown(
-    "<style>[data-testid='stAppViewBlockContainer'] { padding-top: 1rem !important; }</style>",
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<style>
+    .stMainBlockContainer { padding-top: 1rem !important; }
+    [data-testid='stAppViewBlockContainer'] { padding-top: 1rem !important; }
+    .block-container { padding-top: 1rem !important; }
+</style>
+""", unsafe_allow_html=True)
 st.title(f"{entity} Dashboard")
 
 # ── Top row: Need Review + Latest Transaction ─────────────────────────────────
