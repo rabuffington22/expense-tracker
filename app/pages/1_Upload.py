@@ -364,6 +364,20 @@ with tab_import:
                             f"from **{file_count} file{'s' if file_count > 1 else ''}**"
                         )
 
+                        # Rename files before import
+                        rename_map = {}
+                        if file_count == 1:
+                            orig = list(good_dfs.keys())[0]
+                            ext = Path(orig).suffix
+                            rename_map[orig] = st.text_input(
+                                "Save as", value=orig, key="rename_single",
+                            )
+                        else:
+                            for i, orig in enumerate(good_dfs.keys()):
+                                rename_map[orig] = st.text_input(
+                                    f"Save as ({orig})", value=orig, key=f"rename_{i}",
+                                )
+
                         if st.button(f"Import {total_txns} transactions", type="primary"):
                             total_new = total_skip = 0
                             for fname, df in good_dfs.items():
@@ -371,8 +385,24 @@ with tab_import:
                                 total_new += inserted
                                 total_skip += skipped
 
+                            # Save original files to uploads/
+                            upload_dir = _ROOT / "uploads" / entity_lower / selected_month
+                            upload_dir.mkdir(parents=True, exist_ok=True)
+                            saved_names = []
+                            for orig_file in uploaded_files:
+                                save_name = rename_map.get(orig_file.name, orig_file.name).strip()
+                                if not save_name:
+                                    save_name = orig_file.name
+                                # Preserve original extension if user removed it
+                                if not Path(save_name).suffix:
+                                    save_name += Path(orig_file.name).suffix
+                                dest = upload_dir / save_name
+                                orig_file.seek(0)
+                                dest.write_bytes(orig_file.read())
+                                saved_names.append(save_name)
+
                             # Mark source complete
-                            all_filenames = ", ".join(good_dfs.keys())
+                            all_filenames = ", ".join(saved_names)
                             set_checklist_status(
                                 active_item["id"],
                                 selected_month,
