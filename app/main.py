@@ -43,7 +43,7 @@ with st.sidebar:
     _title_color = get_accent()
     st.markdown(
         f'<p style="color:{_title_color};font-weight:700;font-size:1.6rem;'
-        f'margin:-0.5rem 0 0.4rem 0;letter-spacing:0.04em;">'
+        f'margin:-0.5rem 0 1rem 0;letter-spacing:0.04em;">'
         f'EXPENSE TRACKER</p>',
         unsafe_allow_html=True,
     )
