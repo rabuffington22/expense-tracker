@@ -120,6 +120,12 @@ def get_entity() -> tuple[str, str]:
     return choice, db_key
 
 
+def get_accent() -> str:
+    """Return the accent color hex for the current entity."""
+    choice = st.session_state.get("entity", "Personal")
+    return _ENTITY_COLORS.get(choice, {}).get("accent", "#30d158")
+
+
 def entity_display(db_key: str) -> str:
     """Convert a DB key ('personal' or 'company') to its display name."""
     _REVERSE = {v: k for k, v in _ENTITY_MAP.items()}

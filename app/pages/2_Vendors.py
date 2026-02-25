@@ -23,7 +23,7 @@ from app.shared import get_entity
 
 entity, entity_lower = get_entity()
 
-st.title("Vendors")
+st.title("Upload from Vendors")
 st.caption(
     "Upload vendor order data. Orders are saved here, categorized on the next page, "
     "then matched to bank transactions on the Match page."

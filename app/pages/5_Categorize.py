@@ -18,7 +18,7 @@ from app.shared import get_entity, get_categories, get_subcategories
 
 entity, entity_lower = get_entity()
 
-st.title("Categorize")
+st.title("Categorize Remaining")
 
 tab_review, tab_settings = st.tabs(["Review", "Settings"])
 

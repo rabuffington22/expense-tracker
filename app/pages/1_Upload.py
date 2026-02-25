@@ -23,7 +23,7 @@ from app.shared import get_entity
 
 entity, entity_lower = get_entity()
 
-st.title("Upload")
+st.title("Upload from Bank/CC")
 
 
 # ── Profile helpers ───────────────────────────────────────────────────────────

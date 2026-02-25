@@ -14,7 +14,7 @@ if str(_ROOT) not in sys.path:
 
 import streamlit as st
 
-from app.shared import entity_selector
+from app.shared import entity_selector, get_accent
 
 st.set_page_config(
     page_title="Expense Tracker",
@@ -53,10 +53,11 @@ with st.sidebar:
         (match, "FOUR", "Match"),
         (categorize, "FIVE", "Categorize Remaining"),
     ]
+    _accent = get_accent()
     for _page, _num, _label in _STEPS:
         c_num, c_link = st.columns([1, 3])
         c_num.markdown(
-            f'<span style="color:#98989d;font-weight:600;font-size:1.1rem">{_num}</span>',
+            f'<span style="color:{_accent};font-weight:600;font-size:1.1rem">{_num}</span>',
             unsafe_allow_html=True,
         )
         c_link.page_link(_page, label=_label)
