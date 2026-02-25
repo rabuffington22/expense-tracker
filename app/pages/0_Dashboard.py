@@ -34,9 +34,13 @@ try:
     uncat_count = conn.execute(
         "SELECT COUNT(*) FROM transactions WHERE category IS NULL OR category = '' OR confidence < 0.6"
     ).fetchone()[0]
-    latest_date = conn.execute(
+    latest_raw = conn.execute(
         "SELECT MAX(date) FROM transactions"
-    ).fetchone()[0] or "—"
+    ).fetchone()[0]
+    if latest_raw:
+        latest_date = datetime.strptime(latest_raw, "%Y-%m-%d").strftime("%b %-d, %Y")
+    else:
+        latest_date = "—"
 finally:
     conn.close()
 
