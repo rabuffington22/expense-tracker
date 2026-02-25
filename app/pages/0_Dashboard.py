@@ -50,11 +50,11 @@ c2.metric("Latest Transaction", latest_date)
 
 st.markdown("---")
 
-# ── Month selector ────────────────────────────────────────────────────────────
+# ── Import progress — last 3 months ──────────────────────────────────────────
 now = datetime.now()
 y, m = now.year, now.month
 months = []
-for _ in range(12):
+for _ in range(3):
     months.append(f"{y:04d}-{m:02d}")
     m -= 1
     if m == 0:
@@ -66,22 +66,10 @@ def format_month(ym: str) -> str:
     return datetime.strptime(ym, "%Y-%m").strftime("%b %Y")
 
 
-col_month, _ = st.columns([1, 7])
-with col_month:
-    selected_month = st.selectbox(
-        "Month",
-        months,
-        index=0,
-        format_func=format_month,
-        key="dash_month",
-        label_visibility="collapsed",
-    )
-
-# ── Import progress for selected month ────────────────────────────────────────
 conn = get_connection(entity_lower)
 try:
     all_sources = conn.execute(
-        "SELECT id, label FROM import_checklist WHERE entity=? ORDER BY sort_order, id",
+        "SELECT id FROM import_checklist WHERE entity=? ORDER BY sort_order, id",
         (entity_lower,),
     ).fetchall()
     all_sources = [dict(r) for r in all_sources]
@@ -89,30 +77,16 @@ try:
     if all_sources:
         item_ids = [s["id"] for s in all_sources]
         placeholders = ",".join("?" * len(item_ids))
-        status_rows = conn.execute(
-            f"SELECT checklist_item_id, completed FROM import_checklist_status "
-            f"WHERE month=? AND checklist_item_id IN ({placeholders})",
-            [selected_month] + item_ids,
-        ).fetchall()
-        status_map = {r["checklist_item_id"]: bool(r["completed"]) for r in status_rows}
-
-        done = sum(1 for s in all_sources if status_map.get(s["id"], False))
         total = len(all_sources)
 
-        st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
-
-        st.write(f"{done}/{total} sources imported")
-
-        # Last transaction date for this month
-        last_txn = conn.execute(
-            "SELECT MAX(date) FROM transactions WHERE strftime('%Y-%m', date) = ?",
-            (selected_month,),
-        ).fetchone()[0]
-        if last_txn:
-            st.caption(f"Last transaction on file: {last_txn}")
-        else:
-            st.caption("No transactions on file for this month")
-
+        for mo in months:
+            status_rows = conn.execute(
+                f"SELECT checklist_item_id, completed FROM import_checklist_status "
+                f"WHERE month=? AND checklist_item_id IN ({placeholders})",
+                [mo] + item_ids,
+            ).fetchall()
+            done = sum(1 for r in status_rows if bool(r["completed"]))
+            st.write(f"**{format_month(mo)}** — {done}/{total} sources imported")
     else:
         st.info("No import sources defined. Go to Upload > Settings to add your bank/card sources.")
 finally:
