@@ -95,16 +95,9 @@ try:
         done = sum(1 for s in all_sources if status_map.get(s["id"], False))
         total = len(all_sources)
 
-        st.write(f"{done}/{total} sources imported")
+        st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
-        # List sources still needed
-        missing = [s for s in all_sources if not status_map.get(s["id"], False)]
-        for s in missing:
-            url = s.get("url")
-            if url:
-                st.write(f"- {s['label']} · [Download]({url})")
-            else:
-                st.write(f"- {s['label']}")
+        st.write(f"{done}/{total} sources imported")
 
         # Last transaction date for this month
         last_txn = conn.execute(
@@ -115,6 +108,18 @@ try:
             st.caption(f"Last transaction on file: {last_txn}")
         else:
             st.caption("No transactions on file for this month")
+
+        # List sources still needed
+        missing = [s for s in all_sources if not status_map.get(s["id"], False)]
+        if missing:
+            st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
+            st.subheader("Missing")
+            for s in missing:
+                url = s.get("url")
+                if url:
+                    st.write(f"- {s['label']} · [Download]({url})")
+                else:
+                    st.write(f"- {s['label']}")
     else:
         st.info("No import sources defined. Go to Upload > Settings to add your bank/card sources.")
 finally:
