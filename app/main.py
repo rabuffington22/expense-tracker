@@ -55,8 +55,9 @@ with st.sidebar:
     ]
     for _page, _num, _label in _STEPS:
         st.markdown(
-            f'<span style="font-family:SF Mono,Fira Code,monospace;font-size:0.7rem;'
-            f'font-weight:700;letter-spacing:0.05em;opacity:0.5">{_num}</span>',
+            f'<div style="font-family:SF Mono,Fira Code,monospace;font-size:0.7rem;'
+            f'font-weight:700;letter-spacing:0.05em;opacity:0.5;'
+            f'margin-bottom:-0.5rem">{_num}</div>',
             unsafe_allow_html=True,
         )
         st.page_link(_page, label=_label)
