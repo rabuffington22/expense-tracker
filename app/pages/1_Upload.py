@@ -258,6 +258,7 @@ with tab_import:
                 else:
                     if st.button("Upload", key=f"upload_{item['id']}", type="primary"):
                         st.session_state.active_upload_source = item["id"]
+                        st.rerun()
 
         # ── Upload panel for active source ────────────────────────────────────
         active_source_id = st.session_state.get("active_upload_source")
