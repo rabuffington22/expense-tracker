@@ -45,18 +45,7 @@ with st.sidebar:
     st.page_link(dashboard, label="Dashboard")
     st.page_link(reports, label="Reports")
     st.markdown("---")
-    st.markdown(
-        """
-<style>
-.step-link { display: block; padding: 4px 0; text-decoration: none; color: inherit; }
-.step-link:hover { color: #ff4b4b; }
-.step-num { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.7rem;
-            font-weight: 700; letter-spacing: 0.05em; opacity: 0.5; }
-.step-name { font-size: 0.9rem; }
-</style>
-        """,
-        unsafe_allow_html=True,
-    )
+
     _STEPS = [
         (upload, "ONE", "Upload from Bank/CC"),
         (vendors, "TWO", "Upload from Vendors"),
@@ -65,6 +54,11 @@ with st.sidebar:
         (categorize, "FIVE", "Categorize Remaining"),
     ]
     for _page, _num, _label in _STEPS:
-        st.page_link(_page, label=f"{_num}  {_label}")
+        st.markdown(
+            f'<span style="font-family:SF Mono,Fira Code,monospace;font-size:0.7rem;'
+            f'font-weight:700;letter-spacing:0.05em;opacity:0.5">{_num}</span>',
+            unsafe_allow_html=True,
+        )
+        st.page_link(_page, label=_label)
 
 pg.run()
