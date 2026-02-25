@@ -270,12 +270,13 @@ CREATE TABLE IF NOT EXISTS amazon_orders (
 """
 
 _MIGRATION_14 = """
-INSERT OR IGNORE INTO categories (name) VALUES ('Baby & Kids');
-INSERT OR IGNORE INTO categories (name) VALUES ('Household');
-INSERT OR IGNORE INTO categories (name) VALUES ('Health & Beauty');
-INSERT OR IGNORE INTO categories (name) VALUES ('Clothing');
-INSERT OR IGNORE INTO categories (name) VALUES ('Pet Supplies');
-INSERT OR IGNORE INTO categories (name) VALUES ('Office');
+INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Baby & Kids', datetime('now'));
+INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Household', datetime('now'));
+INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Health & Beauty', datetime('now'));
+INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Clothing', datetime('now'));
+INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Pet Supplies', datetime('now'));
+INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Office', datetime('now'));
+INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Kristine Business', datetime('now'));
 """
 
 _MIGRATIONS: list[tuple[int, str]] = [
