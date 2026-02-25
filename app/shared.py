@@ -56,27 +56,17 @@ def entity_selector() -> tuple[str, str]:
 
     /* ── Entity toggle styling (sidebar) ─────────────────────────────────── */
 
-    /* Hide the default radio dot completely */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label > div:first-child {{
+    /* Hide the default radio dot */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:first-child {{
         display: none !important;
-        width: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }}
-    /* Also try baseweb selector for the radio indicator */
-    [data-testid="stSidebar"] [data-testid="stRadio"] [data-baseweb="radio"] > div:first-child {{
-        display: none !important;
-        width: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
     }}
     /* Center the row of options */
-    [data-testid="stSidebar"] [data-testid="stRadio"] > div {{
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div {{
         gap: 0.5rem !important;
         justify-content: center !important;
     }}
     /* Base style for both options */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label {{
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label {{
         padding: 0.35rem 1.2rem !important;
         border: 1.5px solid #444 !important;
         border-radius: 6px !important;
@@ -87,10 +77,15 @@ def entity_selector() -> tuple[str, str]:
         cursor: pointer !important;
         transition: all 0.15s ease !important;
         white-space: nowrap !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
         gap: 0 !important;
+    }}
+    /* Force the text content to take full width and center */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:last-child {{
+        width: 100% !important;
+        text-align: center !important;
+    }}
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:last-child p {{
+        text-align: center !important;
     }}
     /* Active option — colored text + colored border, no fill */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
