@@ -279,6 +279,18 @@ INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Office', datetime('
 INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Kristine Business', datetime('now'));
 """
 
+_MIGRATION_15 = """
+CREATE TABLE IF NOT EXISTS subcategories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_name TEXT NOT NULL,
+    name TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    UNIQUE(category_name, name)
+);
+
+ALTER TABLE transactions ADD COLUMN subcategory TEXT;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -294,6 +306,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (12, _MIGRATION_12),
     (13, _MIGRATION_13),
     (14, _MIGRATION_14),
+    (15, _MIGRATION_15),
 ]
 
 _DEFAULT_CATEGORIES = [
@@ -304,6 +317,23 @@ _DEFAULT_CATEGORIES = [
     "Pet Supplies", "Office", "Kristine Business",
     "Home Improvement", "Personal Care",
 ]
+
+
+_DEFAULT_SUBCATEGORIES = {
+    "Entertainment": ["Audible", "Streaming", "Movies", "Books", "Games"],
+    "Groceries": ["Grocery Store", "Specialty Food"],
+    "Dining": ["Fast Food", "Restaurant", "Coffee", "Delivery"],
+    "Shopping": ["Online", "In-Store"],
+    "Baby & Kids": ["Diapers & Wipes", "Toys", "Gear", "Clothing"],
+    "Clothing": ["Women", "Men", "Kids"],
+    "Household": ["Cleaning", "Kitchen", "Storage"],
+    "Health & Beauty": ["Vitamins", "Skincare", "Haircare"],
+    "Subscriptions": ["Streaming", "Software", "Membership"],
+    "Transportation": ["Gas", "Parking", "Rideshare", "Maintenance"],
+    "Home Improvement": ["Tools", "Hardware", "Decor"],
+    "Pet Supplies": ["Food", "Toys", "Health"],
+    "Electronics": ["Accessories", "Devices"],
+}
 
 
 _DEFAULT_PROFILES = [
@@ -354,6 +384,21 @@ def init_db(entity: str) -> None:
                 [(c, now) for c in _DEFAULT_CATEGORIES],
             )
             conn.commit()
+
+        # Seed default subcategories once
+        try:
+            if conn.execute("SELECT COUNT(*) FROM subcategories").fetchone()[0] == 0:
+                now = datetime.now(timezone.utc).isoformat()
+                for cat, subs in _DEFAULT_SUBCATEGORIES.items():
+                    for sub in subs:
+                        conn.execute(
+                            "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
+                            "VALUES (?,?,?)",
+                            (cat, sub, now),
+                        )
+                conn.commit()
+        except sqlite3.OperationalError:
+            pass  # subcategories table may not exist yet on older schema
 
         # Seed default import profiles once
         if conn.execute("SELECT COUNT(*) FROM import_profiles").fetchone()[0] == 0:

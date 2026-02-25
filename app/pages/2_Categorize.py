@@ -25,7 +25,7 @@ from core.amazon import (
     load_orders_from_db,
     get_order_counts,
 )
-from app.shared import get_entity, get_categories
+from app.shared import get_entity, get_categories, get_subcategories
 
 entity, entity_lower = get_entity()
 
@@ -294,6 +294,7 @@ with tab_amazon:
                             "transaction_id": m["transaction_id"],
                             "product_summary": m["product_summary"],
                             "suggested_category": m["suggested_category"],
+                            "suggested_subcategory": m.get("suggested_subcategory", "Unknown"),
                             "order_id": m["order_id"],
                             "order_total": m["matched_order"]["order_total"],
                             "confidence": m["confidence"],
@@ -361,8 +362,8 @@ with tab_amazon:
                             f"Days apart: {days_apart}"
                         )
 
-                        # Accept checkbox + category
-                        c_accept, c_cat = st.columns([1, 2])
+                        # Accept checkbox + category + subcategory
+                        c_accept, c_cat, c_sub = st.columns([1, 2, 2])
                         accepted = c_accept.checkbox(
                             "Accept this match",
                             value=review_state.get(tid, {}).get("accept", False),
@@ -376,9 +377,20 @@ with tab_amazon:
                             index=cat_idx,
                             key=f"cat_{tid}",
                         )
+                        # Subcategory dropdown based on selected category
+                        subs = get_subcategories(entity_lower, category)
+                        sub_default = review_state.get(tid, {}).get("subcategory", m.get("suggested_subcategory", "Unknown"))
+                        sub_idx = subs.index(sub_default) if sub_default in subs else (subs.index("Unknown") if "Unknown" in subs else 0)
+                        subcategory = c_sub.selectbox(
+                            "Subcategory",
+                            subs,
+                            index=sub_idx,
+                            key=f"sub_{tid}",
+                        )
                         review_state[tid] = {
                             "accept": accepted,
                             "category": category,
+                            "subcategory": subcategory,
                             "product": m["product_summary"],
                             "order_id": m["order_id"],
                             "amount": m["txn_amount"],
@@ -400,6 +412,7 @@ with tab_amazon:
                                 "transaction_id": tid,
                                 "product_summary": info["product"],
                                 "suggested_category": info["category"],
+                                "suggested_subcategory": info.get("subcategory", "Unknown"),
                                 "order_id": info["order_id"],
                                 "order_total": info["amount"],
                                 "confidence": info["confidence"],

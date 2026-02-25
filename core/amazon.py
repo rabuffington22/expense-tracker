@@ -177,21 +177,25 @@ _AMAZON_BIZ_CATEGORY_MAP = {
 }
 
 
-def infer_category(product_name: str, amazon_category: str = "") -> str:
-    """Return a category guess. Uses Amazon's built-in category if available,
-    otherwise falls back to keyword matching on the product name."""
+def infer_category(product_name: str, amazon_category: str = "") -> tuple[str, str]:
+    """Return a (category, subcategory) guess.
+
+    Uses Amazon's built-in category if available,
+    otherwise falls back to keyword matching on the product name.
+    Subcategory defaults to 'Unknown' when not inferable.
+    """
     # Try Amazon's own category first (Business CSV)
     if amazon_category:
         key = amazon_category.strip().lower()
         if key in _AMAZON_BIZ_CATEGORY_MAP:
-            return _AMAZON_BIZ_CATEGORY_MAP[key]
+            return (_AMAZON_BIZ_CATEGORY_MAP[key], "Unknown")
 
     # Fall back to keyword matching on product name
     lower = product_name.lower()
     for keywords, category in _AMAZON_CATEGORY_HINTS:
         if any(kw in lower for kw in keywords):
-            return category
-    return "Shopping"
+            return (category, "Unknown")
+    return ("Shopping", "Unknown")
 
 
 # ── CSV parsing ──────────────────────────────────────────────────────────────
@@ -506,6 +510,7 @@ def match_orders_to_transactions(
             "confidence": 0.0,
             "product_summary": "",
             "suggested_category": "",
+            "suggested_subcategory": "Unknown",
             "order_id": "",
         }
 
@@ -532,7 +537,9 @@ def match_orders_to_transactions(
             result["matched_order"] = order
             result["confidence"] = 0.95
             result["product_summary"] = order["product_summary"]
-            result["suggested_category"] = infer_category(order["product_summary"], order.get("amazon_category", ""))
+            cat, subcat = infer_category(order["product_summary"], order.get("amazon_category", ""))
+            result["suggested_category"] = cat
+            result["suggested_subcategory"] = subcat
             result["order_id"] = order["order_id"]
             results.append(result)
             continue
@@ -554,7 +561,9 @@ def match_orders_to_transactions(
             result["matched_order"] = order
             result["confidence"] = 0.80
             result["product_summary"] = order["product_summary"]
-            result["suggested_category"] = infer_category(order["product_summary"], order.get("amazon_category", ""))
+            cat, subcat = infer_category(order["product_summary"], order.get("amazon_category", ""))
+            result["suggested_category"] = cat
+            result["suggested_subcategory"] = subcat
             result["order_id"] = order["order_id"]
             results.append(result)
             continue
@@ -585,7 +594,9 @@ def match_orders_to_transactions(
                     result["matched_order"] = combo[0]  # primary
                     result["confidence"] = 0.75
                     result["product_summary"] = summary
-                    result["suggested_category"] = infer_category(summary, combo[0].get("amazon_category", ""))
+                    cat, subcat = infer_category(summary, combo[0].get("amazon_category", ""))
+                    result["suggested_category"] = cat
+                    result["suggested_subcategory"] = subcat
                     result["order_id"] = ", ".join(o["order_id"] for o in combo)
                     found_combo = True
                     break
@@ -607,7 +618,9 @@ def match_orders_to_transactions(
             result["matched_order"] = best
             result["confidence"] = 0.50
             result["product_summary"] = best["product_summary"]
-            result["suggested_category"] = infer_category(best["product_summary"], best.get("amazon_category", ""))
+            cat, subcat = infer_category(best["product_summary"], best.get("amazon_category", ""))
+            result["suggested_category"] = cat
+            result["suggested_subcategory"] = subcat
             result["order_id"] = best["order_id"]
             best["matched"] = True  # prevent same order matching multiple txns
             results.append(result)
@@ -760,11 +773,13 @@ def apply_matches(entity: str, matches: list[dict]) -> int:
                 "SET notes = ?, "
                 "    merchant_canonical = 'Amazon', "
                 "    category = COALESCE(NULLIF(?, ''), category), "
+                "    subcategory = ?, "
                 "    confidence = ? "
                 "WHERE transaction_id = ?",
                 (
                     m["product_summary"],
                     m.get("suggested_category", ""),
+                    m.get("suggested_subcategory", "Unknown"),
                     m.get("confidence", 0.0),
                     m["transaction_id"],
                 ),

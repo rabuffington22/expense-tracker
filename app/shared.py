@@ -134,3 +134,21 @@ def get_categories(entity: str) -> list[str]:
         return [r[0] for r in rows]
     finally:
         conn.close()
+
+
+def get_subcategories(entity: str, category: str) -> list[str]:
+    """Return subcategory names for a given category. Always includes 'Unknown'."""
+    conn = get_connection(entity.lower())
+    try:
+        rows = conn.execute(
+            "SELECT name FROM subcategories WHERE category_name = ? ORDER BY name",
+            (category,),
+        ).fetchall()
+        subs = [r[0] for r in rows]
+        if "Unknown" not in subs:
+            subs.append("Unknown")
+        return subs
+    except Exception:
+        return ["Unknown"]
+    finally:
+        conn.close()
