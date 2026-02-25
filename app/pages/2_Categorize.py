@@ -400,12 +400,19 @@ with tab_amazon:
                 # Apply button
                 st.markdown("---")
                 accepted_items = {k: v for k, v in review_state.items() if v.get("accept")}
-                st.write(f"**{len(accepted_items)}** matches selected")
+                # Count rejected items that have a category set (categorize-only)
+                rejected_with_cat = {k: v for k, v in review_state.items()
+                                     if not v.get("accept") and v.get("category")}
+                st.write(
+                    f"**{len(accepted_items)}** matches accepted · "
+                    f"**{len(rejected_with_cat)}** rejected (will still save category)"
+                )
 
-                if st.button("Apply Matches", type="primary"):
-                    if not accepted_items:
-                        st.warning("No matches selected.")
-                    else:
+                if st.button("Apply All", type="primary"):
+                    total_updated = 0
+
+                    # 1. Apply accepted matches (full Amazon link)
+                    if accepted_items:
                         to_apply = []
                         for tid, info in accepted_items.items():
                             to_apply.append({
@@ -417,12 +424,29 @@ with tab_amazon:
                                 "order_total": info["amount"],
                                 "confidence": info["confidence"],
                             })
-                        updated = apply_matches(entity_lower, to_apply)
-                        st.success(f"Applied **{updated}** matches.")
-                        st.session_state.pop("amazon_matches", None)
-                        st.session_state.pop("amazon_no_match", None)
-                        st.session_state.pop("amazon_review_state", None)
-                        st.rerun()
+                        total_updated += apply_matches(entity_lower, to_apply)
+
+                    # 2. Save category/subcategory for rejected items
+                    if rejected_with_cat:
+                        conn = get_connection(entity_lower)
+                        try:
+                            for tid, info in rejected_with_cat.items():
+                                conn.execute(
+                                    "UPDATE transactions "
+                                    "SET category = ?, subcategory = ?, confidence = 1.0 "
+                                    "WHERE transaction_id = ?",
+                                    (info["category"], info.get("subcategory", "Unknown"), tid),
+                                )
+                                total_updated += 1
+                            conn.commit()
+                        finally:
+                            conn.close()
+
+                    st.success(f"Updated **{total_updated}** transactions.")
+                    st.session_state.pop("amazon_matches", None)
+                    st.session_state.pop("amazon_no_match", None)
+                    st.session_state.pop("amazon_review_state", None)
+                    st.rerun()
 
             if no_match:
                 with st.expander(f"{len(no_match)} unmatched bank transactions"):
