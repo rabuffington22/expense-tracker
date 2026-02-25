@@ -376,7 +376,7 @@ with tab_import:
 
             with col_label:
                 if is_done:
-                    st.markdown(f"~~{item['label']}~~")
+                    st.markdown(f"{item['label']} :white_check_mark:")
                     fname = item_status.get("source_filename", "")
                     if fname:
                         st.caption(fname)
