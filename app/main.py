@@ -47,22 +47,18 @@ with st.sidebar:
     st.markdown("---")
 
     _STEPS = [
-        (upload, "ONE", "Upload from Bank/CC", "/upload"),
-        (vendors, "TWO", "Upload from Vendors", "/vendors"),
-        (cat_vendors, "THREE", "Categorize Vendors", "/categorize_vendors"),
-        (match, "FOUR", "Match", "/match"),
-        (categorize, "FIVE", "Categorize Remaining", "/categorize"),
+        (upload, "ONE", "Upload from Bank/CC"),
+        (vendors, "TWO", "Upload from Vendors"),
+        (cat_vendors, "THREE", "Categorize Vendors"),
+        (match, "FOUR", "Match"),
+        (categorize, "FIVE", "Categorize Remaining"),
     ]
-    _SP = "\u00a0" * 6
-    _links_html = ""
-    for _page, _num, _label, _url in _STEPS:
-        _links_html += (
-            f'<a href="{_url}" target="_self" style="display:block;padding:6px 8px;'
-            f'margin:2px 0;border-radius:6px;text-decoration:none;'
-            f'color:rgba(250,250,250,0.9);font-size:0.875rem">'
-            f'<span style="color:#98989d;font-weight:600">{_num}</span>'
-            f'{_SP}{_label}</a>'
+    for _page, _num, _label in _STEPS:
+        c_num, c_link = st.columns([1, 3])
+        c_num.markdown(
+            f'<span style="color:#98989d;font-weight:600;font-size:0.85rem">{_num}</span>',
+            unsafe_allow_html=True,
         )
-    st.markdown(_links_html, unsafe_allow_html=True)
+        c_link.page_link(_page, label=_label)
 
 pg.run()
