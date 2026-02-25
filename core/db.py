@@ -315,7 +315,7 @@ _DEFAULT_CATEGORIES = [
     "Transfers", "Fees", "Subscriptions", "Other",
     "Baby & Kids", "Household", "Health & Beauty", "Clothing",
     "Pet Supplies", "Office", "Kristine Business",
-    "Home Improvement", "Personal Care",
+    "Home Improvement", "Personal Care", "Unknown",
 ]
 
 
