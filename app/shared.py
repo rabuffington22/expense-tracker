@@ -54,43 +54,45 @@ def entity_selector() -> tuple[str, str]:
         padding-top: 1rem !important;
     }}
 
-    /* ── Entity toggle styling (sidebar) ─────────────────────────────────── */
+    /* ── Apple-style segmented control ───────────────────────────────────── */
 
-    /* Hide the default radio dot */
+    /* Outer capsule — the radio group container */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div {{
+        background: #1c1c1e !important;
+        border-radius: 8px !important;
+        padding: 2px !important;
+        gap: 0 !important;
+    }}
+    /* Kill the radio dot */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:first-child {{
         display: none !important;
     }}
-    /* Center the row of options */
-    [data-testid="stSidebar"] div[data-testid="stRadio"] > div {{
-        gap: 0.5rem !important;
-        justify-content: center !important;
-    }}
-    /* Base style for both options */
+    /* Each segment — equal width, centered text, no individual border */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label {{
-        padding: 0.35rem 1.2rem !important;
-        border: 1.5px solid #444 !important;
+        flex: 1 1 50% !important;
+        display: block !important;
+        text-align: center !important;
+        padding: 0.4rem 0 !important;
+        margin: 0 !important;
+        border: none !important;
         border-radius: 6px !important;
         font-weight: 600 !important;
-        font-size: 0.9rem !important;
-        color: #666 !important;
+        font-size: 0.85rem !important;
+        color: #98989d !important;
         background: transparent !important;
         cursor: pointer !important;
-        transition: all 0.15s ease !important;
+        transition: all 0.2s ease !important;
         white-space: nowrap !important;
-        gap: 0 !important;
     }}
-    /* Force the text content to take full width and center */
-    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:last-child {{
-        width: 100% !important;
+    /* Center the text inside */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label p {{
         text-align: center !important;
+        margin: 0 !important;
     }}
-    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:last-child p {{
-        text-align: center !important;
-    }}
-    /* Active option — colored text + colored border, no fill */
+    /* Active segment — filled background + white text */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:has(input:checked) {{
-        border-color: {accent} !important;
+        background: #38383a !important;
         color: {accent} !important;
     }}
     </style>
