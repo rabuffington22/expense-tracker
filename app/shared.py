@@ -84,7 +84,7 @@ def entity_selector() -> tuple[str, str]:
         border-radius: 6px !important;
         font-weight: 600 !important;
         font-size: 0.85rem !important;
-        color: #98989d !important;
+        color: rgba(255,255,255,0.85) !important;
         background: transparent !important;
         cursor: pointer !important;
         transition: all 0.2s ease !important;
