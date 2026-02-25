@@ -362,12 +362,17 @@ with tab_amazon:
                             f"Days apart: {days_apart}"
                         )
 
-                        # Accept checkbox + category + subcategory
-                        c_accept, c_cat, c_sub = st.columns([1, 2, 2])
+                        # Accept / Not a match checkboxes + category + subcategory
+                        c_accept, c_reject, c_cat, c_sub = st.columns([1, 1, 2, 2])
                         accepted = c_accept.checkbox(
-                            "Accept this match",
+                            "Accept",
                             value=review_state.get(tid, {}).get("accept", False),
                             key=f"accept_{tid}",
+                        )
+                        rejected = c_reject.checkbox(
+                            "Not a match",
+                            value=review_state.get(tid, {}).get("reject", False),
+                            key=f"reject_{tid}",
                         )
                         cat_default = review_state.get(tid, {}).get("category", m["suggested_category"])
                         cat_idx = categories.index(cat_default) if cat_default in categories else 0
@@ -395,6 +400,7 @@ with tab_amazon:
                         final_sub = custom_sub.strip() if custom_sub.strip() else subcategory
                         review_state[tid] = {
                             "accept": accepted,
+                            "reject": rejected,
                             "category": category,
                             "subcategory": final_sub,
                             "product": m["product_summary"],
@@ -406,19 +412,19 @@ with tab_amazon:
                 # Apply button
                 st.markdown("---")
                 accepted_items = {k: v for k, v in review_state.items() if v.get("accept")}
-                # Count rejected items that have a category set (categorize-only)
-                rejected_with_cat = {k: v for k, v in review_state.items()
-                                     if not v.get("accept") and v.get("category")}
+                rejected_items = {k: v for k, v in review_state.items() if v.get("reject") and not v.get("accept")}
+                skipped = len(review_state) - len(accepted_items) - len(rejected_items)
                 st.write(
-                    f"**{len(accepted_items)}** matches accepted · "
-                    f"**{len(rejected_with_cat)}** rejected (will still save category)"
+                    f"**{len(accepted_items)}** accepted · "
+                    f"**{len(rejected_items)}** not a match (save category only) · "
+                    f"**{skipped}** skipped"
                 )
 
                 if st.button("Apply All", type="primary"):
                     total_updated = 0
 
                     # 0. Auto-save any custom subcategories to DB
-                    all_items = {**accepted_items, **rejected_with_cat}
+                    all_items = {**accepted_items, **rejected_items}
                     conn = get_connection(entity_lower)
                     try:
                         now = datetime.now(timezone.utc).isoformat()
@@ -451,11 +457,11 @@ with tab_amazon:
                             })
                         total_updated += apply_matches(entity_lower, to_apply)
 
-                    # 2. Save category/subcategory for rejected items
-                    if rejected_with_cat:
+                    # 2. Save category/subcategory for explicitly rejected items
+                    if rejected_items:
                         conn = get_connection(entity_lower)
                         try:
-                            for tid, info in rejected_with_cat.items():
+                            for tid, info in rejected_items.items():
                                 conn.execute(
                                     "UPDATE transactions "
                                     "SET category = ?, subcategory = ?, confidence = 1.0 "
