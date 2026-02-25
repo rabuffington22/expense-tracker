@@ -296,6 +296,10 @@ ALTER TABLE amazon_orders ADD COLUMN category TEXT;
 ALTER TABLE amazon_orders ADD COLUMN subcategory TEXT;
 """
 
+_MIGRATION_17 = """
+ALTER TABLE amazon_orders ADD COLUMN vendor TEXT DEFAULT 'amazon';
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -313,6 +317,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (14, _MIGRATION_14),
     (15, _MIGRATION_15),
     (16, _MIGRATION_16),
+    (17, _MIGRATION_17),
 ]
 
 _DEFAULT_CATEGORIES = [

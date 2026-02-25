@@ -24,14 +24,19 @@ st.set_page_config(
 )
 
 # Define pages
-dashboard  = st.Page("pages/0_Dashboard.py", title="Dashboard", default=True)
-upload     = st.Page("pages/1_Upload.py", title="Upload")
-categorize = st.Page("pages/2_Categorize.py", title="Categorize")
-match      = st.Page("pages/3_Match.py", title="Match")
-reports    = st.Page("pages/4_Reports.py", title="Reports")
+dashboard   = st.Page("pages/0_Dashboard.py", title="Dashboard", default=True)
+upload      = st.Page("pages/1_Upload.py", title="Upload")
+vendors     = st.Page("pages/2_Vendors.py", title="Vendors")
+cat_vendors = st.Page("pages/3_Categorize_Vendors.py", title="Categorize Vendors")
+match       = st.Page("pages/4_Match.py", title="Match")
+categorize  = st.Page("pages/5_Categorize.py", title="Categorize")
+reports     = st.Page("pages/6_Reports.py", title="Reports")
 
 # Hide the auto-generated nav so we can build sidebar ourselves
-pg = st.navigation([dashboard, upload, categorize, match, reports], position="hidden")
+pg = st.navigation(
+    [dashboard, upload, vendors, cat_vendors, match, categorize, reports],
+    position="hidden",
+)
 
 # Build sidebar: entity toggle first, then page links
 entity_selector()
@@ -39,8 +44,10 @@ entity_selector()
 with st.sidebar:
     st.page_link(dashboard, label="Dashboard")
     st.page_link(upload, label="Upload")
-    st.page_link(categorize, label="Categorize")
+    st.page_link(vendors, label="Vendors")
+    st.page_link(cat_vendors, label="Categorize Vendors")
     st.page_link(match, label="Match")
+    st.page_link(categorize, label="Categorize")
     st.page_link(reports, label="Reports")
 
 pg.run()

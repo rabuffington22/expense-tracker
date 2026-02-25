@@ -10,27 +10,17 @@ if str(_ROOT) not in sys.path:
 from datetime import datetime, timezone
 
 import streamlit as st
-import pandas as pd
 
 from core.db import get_connection
 from core.categorize import suggest_categories, apply_aliases_to_db
 from core.reporting import get_uncategorized
-from core.amazon import (
-    parse_amazon_csv,
-    group_orders,
-    save_orders_to_db,
-    get_order_counts,
-    get_uncategorized_orders,
-    categorize_order,
-    infer_category,
-)
 from app.shared import get_entity, get_categories, get_subcategories
 
 entity, entity_lower = get_entity()
 
 st.title("Categorize")
 
-tab_review, tab_amazon, tab_settings = st.tabs(["Review", "Amazon Match", "Settings"])
+tab_review, tab_settings = st.tabs(["Review", "Settings"])
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -176,184 +166,7 @@ with tab_review:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# TAB 2 — Amazon Orders (upload + categorize)
-# ═══════════════════════════════════════════════════════════════════════════════
-with tab_amazon:
-
-    # ── Section A: Upload Amazon Orders ────────────────────────────────────
-    st.subheader("Upload Amazon Orders")
-    st.caption(
-        "Upload your Amazon order history CSV. Orders are saved and "
-        "categorized here, then matched to bank transactions on the Match page."
-    )
-
-    amazon_file = st.file_uploader(
-        "Amazon Order History CSV",
-        type=["csv"],
-        key="amazon_csv_upload",
-        label_visibility="collapsed",
-    )
-
-    if amazon_file:
-        df_amazon, parse_warnings = parse_amazon_csv(amazon_file)
-        if parse_warnings:
-            for w in parse_warnings:
-                st.warning(w)
-
-        if df_amazon.empty:
-            st.error("Could not parse any orders from the CSV.")
-        else:
-            orders = group_orders(df_amazon)
-            dates = df_amazon["order_date"].dropna()
-            min_d = dates.min() if not dates.empty else "?"
-            max_d = dates.max() if not dates.empty else "?"
-            total_spent = sum(o["order_total"] for o in orders)
-            st.write(
-                f"**{len(orders)} orders** parsed "
-                f"({min_d} to {max_d}) "
-                f"totaling **${total_spent:,.2f}**"
-            )
-
-            # Date range filter
-            st.markdown("---")
-            st.write("**Filter by date range**")
-            from datetime import date as _date
-            _parsed_dates = pd.to_datetime(dates, errors="coerce").dropna()
-            _d_min = _parsed_dates.min().date() if not _parsed_dates.empty else _date.today()
-            _d_max = _parsed_dates.max().date() if not _parsed_dates.empty else _date.today()
-            _default_start = _date(_d_max.year - 1, _d_max.month, _d_max.day) if _d_max.year > _d_min.year or _d_max.month > _d_min.month else _d_min
-            if _default_start < _d_min:
-                _default_start = _d_min
-            c_from, c_to = st.columns(2)
-            filter_from = c_from.date_input("From", value=_default_start, min_value=_d_min, max_value=_d_max)
-            filter_to = c_to.date_input("To", value=_d_max, min_value=_d_min, max_value=_d_max)
-
-            filtered_orders = [
-                o for o in orders
-                if o.get("order_date") and filter_from <= pd.to_datetime(o["order_date"]).date() <= filter_to
-            ]
-            filtered_total = sum(o["order_total"] for o in filtered_orders)
-            st.write(
-                f"**{len(filtered_orders)}** of {len(orders)} orders in range, "
-                f"totaling **${filtered_total:,.2f}**"
-            )
-
-            if st.button(f"Save {len(filtered_orders)} orders", type="primary", disabled=len(filtered_orders) == 0):
-                inserted, skipped = save_orders_to_db(entity_lower, filtered_orders)
-                msg = f"Saved **{inserted}** orders."
-                if skipped:
-                    msg += f" Skipped **{skipped}** duplicates."
-                st.success(msg)
-                st.rerun()
-
-    # Show stored order summary
-    total_orders, unmatched_orders = get_order_counts(entity_lower)
-    if total_orders:
-        matched = total_orders - unmatched_orders
-        st.write(
-            f"**{total_orders}** Amazon orders on file — "
-            f"**{matched}** matched, **{unmatched_orders}** unmatched"
-        )
-    else:
-        st.caption("No Amazon orders saved yet.")
-
-    st.markdown("---")
-
-    # ── Section B: Categorize Orders (card queue) ──────────────────────────
-    st.subheader("Categorize Orders")
-
-    uncategorized = get_uncategorized_orders(entity_lower)
-
-    if not uncategorized and total_orders > 0:
-        st.success("All orders are categorized! Head to the **Match** page to link them to bank charges.")
-    elif not uncategorized:
-        st.info("Upload an Amazon order CSV above to get started.")
-    else:
-        st.write(f"**{len(uncategorized)} orders** need categorization.")
-
-        # Track progress through the queue
-        if "amazon_cat_idx" not in st.session_state:
-            st.session_state.amazon_cat_idx = 0
-        idx = st.session_state.amazon_cat_idx
-
-        categories = get_categories(entity_lower)
-        if "Shopping" not in categories:
-            categories = categories + ["Shopping"]
-
-        if idx >= len(uncategorized):
-            st.success(f"Done! Categorized all **{len(uncategorized)}** orders.")
-            if st.button("Finish"):
-                st.session_state.pop("amazon_cat_idx", None)
-                st.rerun()
-        else:
-            order = uncategorized[idx]
-
-            # Progress counter
-            st.write(f"**Order {idx + 1} of {len(uncategorized)}**")
-            st.progress(idx / len(uncategorized))
-
-            # Product name — prominent
-            st.markdown(f"### {order['product_summary'][:120]}")
-            st.write(f"Date: {order['order_date']}  ·  Amount: **${order['order_total']:,.2f}**")
-
-            # Infer a default
-            inferred_cat, inferred_sub = infer_category(
-                order.get("product_summary", ""),
-                order.get("amazon_category", ""),
-            )
-
-            # Category + Subcategory
-            c_cat, c_sub = st.columns(2)
-            category = c_cat.selectbox(
-                "Category",
-                categories,
-                index=categories.index(inferred_cat) if inferred_cat in categories else 0,
-                key=f"ocat_{idx}",
-            )
-            subs = get_subcategories(entity_lower, category)
-            subcategory = c_sub.selectbox(
-                "Subcategory",
-                subs,
-                index=subs.index(inferred_sub) if inferred_sub in subs else (subs.index("Unknown") if "Unknown" in subs else 0),
-                key=f"osub_{idx}",
-            )
-            custom_sub = c_sub.text_input(
-                "Or new subcategory",
-                key=f"onewsub_{idx}",
-                placeholder="Type to create new...",
-            )
-            final_sub = custom_sub.strip() if custom_sub.strip() else subcategory
-
-            # Helper to persist a custom subcategory
-            def _save_subcategory(cat, sub):
-                if cat and sub and sub != "Unknown":
-                    conn = get_connection(entity_lower)
-                    try:
-                        conn.execute(
-                            "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
-                            "VALUES (?,?,?)",
-                            (cat, sub, datetime.now(timezone.utc).isoformat()),
-                        )
-                        conn.commit()
-                    finally:
-                        conn.close()
-                    get_subcategories.clear()
-
-            c1, c2 = st.columns(2)
-
-            if c1.button("💾 Save", type="primary", use_container_width=True):
-                _save_subcategory(category, final_sub)
-                categorize_order(entity_lower, order["id"], category, final_sub)
-                st.session_state.amazon_cat_idx = idx + 1
-                st.rerun()
-
-            if c2.button("⏭️ Skip", use_container_width=True):
-                st.session_state.amazon_cat_idx = idx + 1
-                st.rerun()
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# TAB 3 — Settings (categories + merchant aliases)
+# TAB 2 — Settings (categories + merchant aliases)
 # ═══════════════════════════════════════════════════════════════════════════════
 with tab_settings:
 

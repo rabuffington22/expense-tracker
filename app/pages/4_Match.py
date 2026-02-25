@@ -1,4 +1,4 @@
-"""Match page — link bank transactions to pre-categorized Amazon orders."""
+"""Match page — link bank transactions to pre-categorized vendor orders."""
 
 import sys
 from pathlib import Path
@@ -30,18 +30,18 @@ matched_orders = total_orders - unmatched_orders
 
 if total_orders:
     st.write(
-        f"**{total_orders}** Amazon orders on file — "
+        f"**{total_orders}** vendor orders on file — "
         f"**{matched_orders}** matched, **{unmatched_orders}** unmatched"
     )
 else:
     st.info(
-        "No Amazon orders saved yet. Upload and categorize orders on the "
-        "**Categorize** page first."
+        "No vendor orders saved yet. Upload orders on the "
+        "**Vendors** page first."
     )
     st.stop()
 
 if unmatched_orders == 0:
-    st.success("All Amazon orders have been matched to bank transactions!")
+    st.success("All vendor orders have been matched to bank transactions!")
     st.stop()
 
 # ── Find Amazon bank transactions ────────────────────────────────────────────
@@ -131,7 +131,7 @@ if review:
             st.write(f"Amount: **${txn_amt:,.2f}**")
             st.write(f"Description: {m['txn_description'][:60]}")
         with col_order:
-            st.write("**Amazon Order**")
+            st.write("**Vendor Order**")
             st.write(f"Date: {order.get('order_date', '?')}")
             st.write(f"Amount: **${order_amt:,.2f}**")
             st.write(f"Product: {m['product_summary'][:80]}")
@@ -177,7 +177,7 @@ if review:
             st.rerun()
 
 if no_match:
-    with st.expander(f"{len(no_match)} unmatched Amazon bank transactions"):
+    with st.expander(f"{len(no_match)} unmatched bank transactions"):
         for m in no_match:
             st.write(
                 f"**{m['txn_date']}** — {m['txn_description']} — "

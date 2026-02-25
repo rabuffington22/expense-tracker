@@ -1,7 +1,7 @@
 # Expense Tracker
 
 ## What This Is
-Streamlit + SQLite personal/business expense tracker. Runs locally on Atlas Mac Mini. No cloud sync, no bank linking — CSV/PDF bank statements uploaded manually, categorized via alias rules and keyword heuristics. Amazon order CSVs matched to bank transactions for real product names.
+Streamlit + SQLite personal/business expense tracker. Runs locally on Atlas Mac Mini. No cloud sync, no bank linking — CSV/PDF bank statements uploaded manually, categorized via alias rules and keyword heuristics. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
 
 ## Two Entities (Fully Isolated)
 - **Personal** → `personal.sqlite`
@@ -27,26 +27,29 @@ If LAN times out, try Tailscale IP `100.79.127.29` instead. Just push to `main` 
 ## Directory Structure
 ```
 app/
-  main.py              # Streamlit multi-page router
-  shared.py            # Entity selector, helpers
+  main.py                      # Streamlit multi-page router (7 pages)
+  shared.py                    # Entity selector, helpers
   pages/
-    0_Dashboard.py     # Quick stats, import progress
-    1_Upload.py        # Source-by-source CSV/PDF import (modal dialog)
-    2_Categorize.py    # Review suggestions, Amazon order upload + categorize, alias settings
-    3_Match.py         # Match pre-categorized Amazon orders to bank transactions
-    4_Reports.py       # Monthly charts, drill-down, CSV export
+    0_Dashboard.py             # Quick stats, import progress
+    1_Upload.py                # Source-by-source CSV/PDF import (modal dialog)
+    2_Vendors.py               # Upload vendor orders (Amazon CSV, Henry Schein XLSX)
+    3_Categorize_Vendors.py    # Card queue to label each vendor order
+    4_Match.py                 # Match vendor orders to bank transactions
+    5_Categorize.py            # Review remaining transactions + alias/category settings
+    6_Reports.py               # Monthly charts, drill-down, CSV export
 core/
-  db.py                # Schema migrations (16 so far), DB init, connections
-  imports.py           # CSV/PDF parsing, normalization, dedup
-  categorize.py        # Alias matching, keyword heuristics
-  amazon.py            # Amazon order CSV parsing + matching
-  reporting.py         # Query helpers for Reports page
+  db.py                        # Schema migrations (17 so far), DB init, connections
+  imports.py                   # CSV/PDF parsing, normalization, dedup
+  categorize.py                # Alias matching, keyword heuristics
+  amazon.py                    # Amazon order CSV parsing + vendor order matching
+  henryschein.py               # Henry Schein XLSX parsing
+  reporting.py                 # Query helpers for Reports page
 scripts/
-  setup-atlas.sh       # One-time Atlas setup
-  smoke_test.py        # Automated verification
+  setup-atlas.sh               # One-time Atlas setup
+  smoke_test.py                # Automated verification
 ```
 
-## Database (16 Migrations)
+## Database (17 Migrations)
 Key tables:
 - **`transactions`** — Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** — Seeded defaults (Baby & Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
@@ -54,18 +57,26 @@ Key tables:
 - **`merchant_aliases`** — Pattern-based auto-categorization (contains/regex → merchant + category)
 - **`import_profiles`** — Saved CSV column mappings per bank (Amex, Chase, Capital One, Citi, BofA)
 - **`import_checklist` / `import_checklist_status`** — Monthly source tracking
-- **`amazon_orders`** — Persisted Amazon orders for deferred matching. `matched_transaction_id` tracks matches. Has `category`/`subcategory` columns (Migration 16) for pre-categorization before matching.
+- **`amazon_orders`** — Vendor orders for deferred matching. `matched_transaction_id` tracks matches. Has `category`/`subcategory` (Migration 16) and `vendor` (Migration 17, default `'amazon'`). Stores both Amazon and Henry Schein orders.
 
-## Amazon Workflow (Two-Phase)
-**Phase 1 — Categorize (on Categorize page, Amazon tab):**
-Upload Amazon order CSV → categorize each order one-by-one in a card queue (product name, date, amount shown; pick category + subcategory). Uses `infer_category()` for smart defaults. Categories saved to `amazon_orders` table.
+## Vendor Workflow (Three-Phase, 3 pages)
 
-**Phase 2 — Match (on Match page):**
-Link pre-categorized Amazon orders to bank transactions. Matching uses the order's saved category (via `_get_order_category()`).
+**Phase 1 — Upload (Vendors page):**
+Select vendor from dropdown (Amazon or Henry Schein) → upload file (CSV for Amazon, XLSX for Henry Schein) → preview order count/date range/total → filter by date range → save to `amazon_orders` table with `vendor` tag.
 
-Two CSV formats: **Business** (groups by `payment_ref_id`) and **Privacy Central** (groups by `order_id`).
+**Phase 2 — Categorize (Categorize Vendors page):**
+Card queue shows uncategorized orders across all vendors. Product name, date, amount displayed; pick category + subcategory. Uses `infer_category()` for smart defaults. Categories saved to `amazon_orders` table.
 
-Multi-pass algorithm:
+**Phase 3 — Match (Match page):**
+Link pre-categorized vendor orders to bank transactions. Matching uses the order's saved category (via `_get_order_category()`).
+
+### Amazon CSV Formats
+Two formats: **Business** (groups by `payment_ref_id`) and **Privacy Central** (groups by `order_id`).
+
+### Henry Schein XLSX Format
+"Items Purchased" export. Groups by Invoice No (one invoice = one bank charge). Key columns: Short Description, Invoice No, Invoice Date, Amount, Category/Sub Category1, Manufacturer.
+
+### Matching Algorithm (Amazon only for now)
 1. **Exact** (amount within 8% + date within 5 days) → auto-applied, confidence 0.95
 2. **Likely** (amount within 8% + date within 10 days) → shown for review, confidence 0.80
 3. **Multi-order** (Business format only — 2-3 orders summing to txn) → confidence 0.75

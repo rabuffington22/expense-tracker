@@ -643,11 +643,11 @@ def match_orders_to_transactions(
 
 # ── DB persistence for Amazon orders ─────────────────────────────────────────
 
-def save_orders_to_db(entity: str, orders: list[dict]) -> tuple[int, int]:
+def save_orders_to_db(entity: str, orders: list[dict], vendor: str = "amazon") -> tuple[int, int]:
     """
-    Save grouped Amazon orders to the amazon_orders table.
+    Save grouped vendor orders to the amazon_orders table.
 
-    Skips duplicates (same order_id + order_total within $0.01).
+    Skips duplicates (same order_id + order_total within $0.01 + same vendor).
     Returns (inserted, skipped) counts.
     """
     now = datetime.now().isoformat()
@@ -655,11 +655,12 @@ def save_orders_to_db(entity: str, orders: list[dict]) -> tuple[int, int]:
     try:
         inserted = skipped = 0
         for o in orders:
-            # Check for duplicates
+            # Check for duplicates (scoped to vendor)
             existing = conn.execute(
                 "SELECT id FROM amazon_orders "
-                "WHERE order_id = ? AND ABS(order_total - ?) < 0.02",
-                (o["order_id"], o["order_total"]),
+                "WHERE order_id = ? AND ABS(order_total - ?) < 0.02 "
+                "AND COALESCE(vendor, 'amazon') = ?",
+                (o["order_id"], o["order_total"], vendor),
             ).fetchone()
             if existing:
                 skipped += 1
@@ -668,16 +669,17 @@ def save_orders_to_db(entity: str, orders: list[dict]) -> tuple[int, int]:
             conn.execute(
                 "INSERT INTO amazon_orders "
                 "(order_id, payment_ref_id, order_date, charge_date, "
-                " product_summary, amazon_category, order_total, imported_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                " product_summary, amazon_category, order_total, vendor, imported_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     o["order_id"],
                     o.get("payment_ref_id"),
                     o["order_date"],
-                    o["order_date"],  # charge_date = order_date for grouped orders
+                    o["order_date"],
                     o["product_summary"],
                     o.get("amazon_category", ""),
                     o["order_total"],
+                    vendor,
                     now,
                 ),
             )
