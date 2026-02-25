@@ -453,6 +453,7 @@ with tab_settings:
                     conn.commit()
                 finally:
                     conn.close()
+                get_categories.clear()
                 st.rerun()
     else:
         st.info("No categories defined.")
@@ -477,6 +478,7 @@ with tab_settings:
                 finally:
                     conn.close()
                 st.success(f"Category '{new_name.strip()}' added.")
+                get_categories.clear()
                 st.rerun()
 
     with st.expander("Rename a category"):
@@ -499,6 +501,7 @@ with tab_settings:
                     finally:
                         conn.close()
                     st.success(f"Renamed '{old_name}' → '{new_rename.strip()}'.")
+                    get_categories.clear()
                     st.rerun()
 
     st.markdown("---")
@@ -535,6 +538,7 @@ with tab_settings:
                         conn.commit()
                     finally:
                         conn.close()
+                    get_subcategories.clear()
                     st.rerun()
         else:
             st.caption("No subcategories defined yet. 'Unknown' is always available.")
@@ -556,6 +560,7 @@ with tab_settings:
                     finally:
                         conn.close()
                     st.success(f"Subcategory '{new_sub.strip()}' added to {sub_cat_filter}.")
+                    get_subcategories.clear()
                     st.rerun()
 
     st.markdown("---")

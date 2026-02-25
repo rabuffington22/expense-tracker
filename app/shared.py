@@ -126,8 +126,9 @@ def entity_display(db_key: str) -> str:
     return _REVERSE.get(db_key, db_key.title())
 
 
+@st.cache_data(ttl=120)
 def get_categories(entity: str) -> list[str]:
-    """Return sorted list of category names for the given entity."""
+    """Return sorted list of category names for the given entity (cached 2 min)."""
     conn = get_connection(entity.lower())
     try:
         rows = conn.execute("SELECT name FROM categories ORDER BY name").fetchall()
@@ -136,8 +137,9 @@ def get_categories(entity: str) -> list[str]:
         conn.close()
 
 
+@st.cache_data(ttl=120)
 def get_subcategories(entity: str, category: str) -> list[str]:
-    """Return subcategory names for a given category. Always includes 'Unknown'."""
+    """Return subcategory names for a given category (cached 2 min). Always includes 'Unknown'."""
     conn = get_connection(entity.lower())
     try:
         rows = conn.execute(
