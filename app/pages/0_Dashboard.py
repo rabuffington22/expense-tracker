@@ -53,7 +53,7 @@ def format_month(ym: str) -> str:
     return datetime.strptime(ym, "%Y-%m").strftime("%b %Y")
 
 
-col_month, _ = st.columns([1, 3])
+col_month, _ = st.columns([1, 7])
 with col_month:
     selected_month = st.selectbox(
         "Month",

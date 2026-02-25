@@ -172,7 +172,7 @@ with tab_import:
 
     # ── Month selector ────────────────────────────────────────────────────────
     months = month_options()
-    col_month, _ = st.columns([1, 3])
+    col_month, _ = st.columns([1, 7])
     with col_month:
         selected_month = st.selectbox(
             "Month",
