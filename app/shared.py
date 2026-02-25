@@ -78,7 +78,7 @@ def entity_selector() -> tuple[str, str]:
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label {{
         flex: 1 !important;
         text-align: center !important;
-        padding: 0.4rem 0 !important;
+        padding: 0.4rem 1rem !important;
         margin: 0 !important;
         border: none !important;
         border-radius: 6px !important;
