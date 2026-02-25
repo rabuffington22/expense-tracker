@@ -25,6 +25,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 st.title(f"{entity} Dashboard")
+st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
 # ── Top row: Need Review + Latest Transaction ─────────────────────────────────
 conn = get_connection(entity_lower)
