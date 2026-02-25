@@ -244,11 +244,12 @@ with tab_import:
                         st.caption(fname)
                 else:
                     st.markdown(f"**{item['label']}**")
+                    parts = []
                     last_date = source_last_dates.get(item["id"])
-                    if last_date:
-                        st.caption(f"Last: {last_date}")
-                    else:
-                        st.caption("No data yet")
+                    parts.append(f"Last: {last_date}" if last_date else "No data yet")
+                    if item.get("url"):
+                        parts.append(f"[Download]({item['url']})")
+                    st.caption(" · ".join(parts))
 
             with col_action:
                 if is_done:
