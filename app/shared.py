@@ -49,6 +49,11 @@ def entity_selector() -> tuple[str, str]:
     # ── Inject entity-aware theme CSS ─────────────────────────────────────────
     st.markdown(f"""
     <style>
+    /* ── Reduce sidebar top padding ──────────────────────────────────────── */
+    [data-testid="stSidebar"] > div:first-child {{
+        padding-top: 1rem !important;
+    }}
+
     /* ── Entity toggle styling (sidebar) ─────────────────────────────────── */
 
     /* Hide the default radio dot */
@@ -72,6 +77,13 @@ def entity_selector() -> tuple[str, str]:
         transition: all 0.15s ease !important;
         text-align: center !important;
         justify-content: center !important;
+        flex: 1 !important;
+    }}
+    /* Center the text span inside labels */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label p,
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label span {{
+        text-align: center !important;
+        width: 100% !important;
     }}
     /* Active option — colored text + colored border, no fill */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
