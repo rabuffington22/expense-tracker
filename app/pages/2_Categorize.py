@@ -349,34 +349,8 @@ with tab_amazon:
                     st.write(f"**Card {idx + 1} of {len(review)}**")
                     st.progress((idx) / len(review))
 
-                    # Card content
-                    col_bank, col_order = st.columns(2)
-                    with col_bank:
-                        st.write("**Bank Charge**")
-                        st.write(f"Date: {m['txn_date']}")
-                        st.write(f"Amount: **${txn_amt:,.2f}**")
-                        st.write(f"Description: {m['txn_description'][:60]}")
-                    with col_order:
-                        st.write("**Amazon Order**")
-                        st.write(f"Date: {order.get('order_date', '?')}")
-                        st.write(f"Amount: **${order_amt:,.2f}**")
-                        st.write(f"Product: {m['product_summary'][:80]}")
-
-                    # Comparison stats — highlight problem values in red
-                    pct_color = "red" if amt_pct > 3 else "inherit"
-                    days_color = "red" if days_apart > 3 else "inherit"
-                    st.markdown(
-                        f"<span style='font-size:0.95rem'>"
-                        f"Match type: <b>{m['match_type'].replace('_', ' ').title()}</b> · "
-                        f"Amount diff: <span style='color:{pct_color};font-size:1.1rem;font-weight:600'>"
-                        f"${amt_diff:.2f} ({amt_pct:.1f}%)</span> · "
-                        f"Days apart: <span style='color:{days_color};font-size:1.1rem;font-weight:600'>"
-                        f"{days_apart}</span>"
-                        f"</span>",
-                        unsafe_allow_html=True,
-                    )
-
-                    # Category + Subcategory
+                    # ── Step 1: Categorize this transaction ──
+                    st.markdown("**Step 1 — Categorize this charge**")
                     c_cat, c_sub = st.columns(2)
                     category = c_cat.selectbox(
                         "Category",
@@ -398,7 +372,35 @@ with tab_amazon:
                     )
                     final_sub = custom_sub.strip() if custom_sub.strip() else subcategory
 
-                    # Action buttons
+                    # ── Step 2: Is this the right Amazon match? ──
+                    st.markdown("---")
+                    st.markdown("**Step 2 — Is this the right Amazon order?**")
+
+                    col_bank, col_order = st.columns(2)
+                    with col_bank:
+                        st.write("**Bank Charge**")
+                        st.write(f"Date: {m['txn_date']}")
+                        st.write(f"Amount: **${txn_amt:,.2f}**")
+                        st.write(f"Description: {m['txn_description'][:60]}")
+                    with col_order:
+                        st.write("**Amazon Order**")
+                        st.write(f"Date: {order.get('order_date', '?')}")
+                        st.write(f"Amount: **${order_amt:,.2f}**")
+                        st.write(f"Product: {m['product_summary'][:80]}")
+
+                    # Comparison stats — highlight problem values in red
+                    pct_color = "red" if amt_pct > 3 else "inherit"
+                    days_color = "red" if days_apart > 3 else "inherit"
+                    st.markdown(
+                        f"<span style='font-size:0.95rem'>"
+                        f"Amount diff: <span style='color:{pct_color};font-size:1.1rem;font-weight:600'>"
+                        f"${amt_diff:.2f} ({amt_pct:.1f}%)</span> · "
+                        f"Days apart: <span style='color:{days_color};font-size:1.1rem;font-weight:600'>"
+                        f"{days_apart}</span>"
+                        f"</span>",
+                        unsafe_allow_html=True,
+                    )
+
                     c1, c2, c3 = st.columns(3)
 
                     def _save_subcategory(cat, sub):
