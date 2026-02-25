@@ -220,15 +220,154 @@ with tab_import:
         finally:
             conn.close()
 
-        # ── Source list ───────────────────────────────────────────────────────
-        # Clear active upload if entity or month changed
-        if st.session_state.get("_upload_entity") != entity_lower:
-            st.session_state.pop("active_upload_source", None)
-            st.session_state["_upload_entity"] = entity_lower
-        if st.session_state.get("_upload_month") != selected_month:
-            st.session_state.pop("active_upload_source", None)
-            st.session_state["_upload_month"] = selected_month
+        # ── Upload dialog ─────────────────────────────────────────────────────
+        @st.dialog("Import", width="large")
+        def upload_dialog(item: dict):
+            st.subheader(item["label"])
 
+            # Resolve profile for this source
+            prof_name = item.get("profile_name")
+            prof = profile_map.get(prof_name) if prof_name else None
+
+            # Multi-file uploader
+            uploaded_files = st.file_uploader(
+                f"Drop files for {item['label']}",
+                type=["csv", "pdf"],
+                accept_multiple_files=True,
+                key=f"fu_{item['id']}",
+                label_visibility="collapsed",
+            )
+
+            if uploaded_files:
+                # Parse each file
+                all_parsed = {}
+                for f in uploaded_files:
+                    is_pdf = f.name.lower().endswith(".pdf")
+                    try:
+                        if is_pdf:
+                            raw, errors = parse_pdf(f)
+                            if raw.empty:
+                                all_parsed[f.name] = (None, "; ".join(errors))
+                            else:
+                                norm = normalize_transactions(raw, source_filename=f.name, profile=None)
+                                all_parsed[f.name] = (norm, "; ".join(errors) if errors else None)
+                        else:
+                            raw = parse_csv(f, profile=prof)
+                            norm = normalize_transactions(raw, source_filename=f.name, profile=prof)
+                            all_parsed[f.name] = (norm, None)
+                    except Exception as exc:
+                        all_parsed[f.name] = (None, str(exc))
+
+                # Show per-file previews
+                good_dfs = {}
+                for fname, (df, err) in all_parsed.items():
+                    with st.expander(fname, expanded=True):
+                        if err:
+                            st.warning(f"Extraction notes: {err}")
+                        if df is None or df.empty:
+                            st.error("Could not extract any transactions.")
+                            continue
+
+                        # Summary
+                        stat_parts = [f"**{len(df)} transactions**"]
+                        if "date" in df.columns:
+                            dates = pd.to_datetime(df["date"], errors="coerce").dropna()
+                            if not dates.empty:
+                                min_d = dates.min().strftime("%b %d")
+                                max_d = dates.max().strftime("%b %d, %Y")
+                                stat_parts.append(f"{min_d} – {max_d}")
+                        st.write(" · ".join(stat_parts))
+
+                        # Credits / debits
+                        if "amount" in df.columns:
+                            amounts = pd.to_numeric(df["amount"], errors="coerce").dropna()
+                            credits = amounts[amounts > 0].sum()
+                            debits = abs(amounts[amounts < 0].sum())
+                            net = credits - debits
+                            mc1, mc2, mc3 = st.columns(3)
+                            mc1.metric("Credits", f"${credits:,.2f}")
+                            mc2.metric("Debits", f"${debits:,.2f}")
+                            net_label = f"${net:,.2f}" if net >= 0 else f"-${abs(net):,.2f}"
+                            mc3.metric("Net", net_label)
+
+                        # Data table
+                        display_cols = ["date", "description_raw", "amount", "account", "currency"]
+                        st.dataframe(
+                            df[[c for c in display_cols if c in df.columns]],
+                            use_container_width=True,
+                            height=220,
+                        )
+                        good_dfs[fname] = df
+
+                # Import button
+                if good_dfs:
+                    total_txns = sum(len(d) for d in good_dfs.values())
+                    file_count = len(good_dfs)
+                    st.markdown("---")
+                    st.write(
+                        f"Ready to import **{total_txns} transactions** "
+                        f"from **{file_count} file{'s' if file_count > 1 else ''}**"
+                    )
+
+                    # Rename files before import
+                    rename_map = {}
+                    month_label = format_month(selected_month)
+                    source_label = item["label"]
+                    if file_count == 1:
+                        orig = list(good_dfs.keys())[0]
+                        ext = Path(orig).suffix
+                        auto_name = f"{source_label} - {month_label}{ext}"
+                        rename_map[orig] = st.text_input(
+                            "Save as", value=auto_name, key="rename_single",
+                        )
+                    else:
+                        for i, orig in enumerate(good_dfs.keys()):
+                            ext = Path(orig).suffix
+                            auto_name = f"{source_label} - {month_label} ({i + 1}){ext}"
+                            rename_map[orig] = st.text_input(
+                                f"Save as ({orig})", value=auto_name, key=f"rename_{i}",
+                            )
+
+                    if st.button(f"Import {total_txns} transactions", type="primary"):
+                        total_new = total_skip = 0
+                        for fname, df in good_dfs.items():
+                            inserted, skipped = commit_transactions(df, entity_lower)
+                            total_new += inserted
+                            total_skip += skipped
+
+                        # Save original files to uploads/
+                        import os
+                        data_dir = os.environ.get("DATA_DIR", str(_ROOT))
+                        upload_dir = Path(data_dir) / "uploads" / entity_lower / selected_month
+                        upload_dir.mkdir(parents=True, exist_ok=True)
+                        saved_names = []
+                        for orig_file in uploaded_files:
+                            save_name = rename_map.get(orig_file.name, orig_file.name).strip()
+                            if not save_name:
+                                save_name = orig_file.name
+                            if not Path(save_name).suffix:
+                                save_name += Path(orig_file.name).suffix
+                            dest = upload_dir / save_name
+                            orig_file.seek(0)
+                            dest.write_bytes(orig_file.read())
+                            saved_names.append(save_name)
+
+                        # Mark source complete
+                        all_filenames = ", ".join(saved_names)
+                        set_checklist_status(
+                            item["id"],
+                            selected_month,
+                            True,
+                            all_filenames,
+                        )
+
+                        st.success(
+                            f"Imported **{total_new} new** / "
+                            f"skipped **{total_skip} duplicates**"
+                        )
+                        st.rerun()
+
+        # ── Source list ───────────────────────────────────────────────────────
         for item in items:
             item_status = status.get(item["id"], {})
             is_done = bool(item_status.get("completed", 0))
@@ -257,170 +396,7 @@ with tab_import:
                         st.rerun()
                 else:
                     if st.button("Upload", key=f"upload_{item['id']}", type="primary"):
-                        st.session_state.active_upload_source = item["id"]
-                        st.rerun()
-
-        # ── Upload panel for active source ────────────────────────────────────
-        active_source_id = st.session_state.get("active_upload_source")
-
-        if active_source_id:
-            active_item = next((i for i in items if i["id"] == active_source_id), None)
-
-            if active_item is None:
-                st.session_state.pop("active_upload_source", None)
-                st.rerun()
-            else:
-                st.markdown("---")
-                col_hdr, col_cancel = st.columns([4, 1])
-                with col_hdr:
-                    st.subheader(f"Import: {active_item['label']}")
-                with col_cancel:
-                    if st.button("Cancel"):
-                        st.session_state.pop("active_upload_source", None)
-                        st.session_state.pop("source_parsed", None)
-                        st.rerun()
-
-                # Resolve profile for this source
-                profile_name = active_item.get("profile_name")
-                profile = profile_map.get(profile_name) if profile_name else None
-
-                # Multi-file uploader
-                uploaded_files = st.file_uploader(
-                    f"Drop files for {active_item['label']}",
-                    type=["csv", "pdf"],
-                    accept_multiple_files=True,
-                    key=f"fu_{active_source_id}",
-                    label_visibility="collapsed",
-                )
-
-                if uploaded_files:
-                    # Parse each file
-                    all_parsed = {}
-                    for f in uploaded_files:
-                        is_pdf = f.name.lower().endswith(".pdf")
-                        try:
-                            if is_pdf:
-                                raw, errors = parse_pdf(f)
-                                if raw.empty:
-                                    all_parsed[f.name] = (None, "; ".join(errors))
-                                else:
-                                    norm = normalize_transactions(raw, source_filename=f.name, profile=None)
-                                    all_parsed[f.name] = (norm, "; ".join(errors) if errors else None)
-                            else:
-                                raw = parse_csv(f, profile=profile)
-                                norm = normalize_transactions(raw, source_filename=f.name, profile=profile)
-                                all_parsed[f.name] = (norm, None)
-                        except Exception as exc:
-                            all_parsed[f.name] = (None, str(exc))
-
-                    # Show per-file previews
-                    good_dfs = {}
-                    for fname, (df, err) in all_parsed.items():
-                        with st.expander(fname, expanded=True):
-                            if err:
-                                st.warning(f"Extraction notes: {err}")
-                            if df is None or df.empty:
-                                st.error("Could not extract any transactions.")
-                                continue
-
-                            # Summary
-                            stat_parts = [f"**{len(df)} transactions**"]
-                            if "date" in df.columns:
-                                dates = pd.to_datetime(df["date"], errors="coerce").dropna()
-                                if not dates.empty:
-                                    min_d = dates.min().strftime("%b %d")
-                                    max_d = dates.max().strftime("%b %d, %Y")
-                                    stat_parts.append(f"{min_d} – {max_d}")
-                            st.write(" · ".join(stat_parts))
-
-                            # Credits / debits
-                            if "amount" in df.columns:
-                                amounts = pd.to_numeric(df["amount"], errors="coerce").dropna()
-                                credits = amounts[amounts > 0].sum()
-                                debits = abs(amounts[amounts < 0].sum())
-                                net = credits - debits
-                                mc1, mc2, mc3 = st.columns(3)
-                                mc1.metric("Credits", f"${credits:,.2f}")
-                                mc2.metric("Debits", f"${debits:,.2f}")
-                                net_label = f"${net:,.2f}" if net >= 0 else f"-${abs(net):,.2f}"
-                                mc3.metric("Net", net_label)
-
-                            # Data table
-                            display_cols = ["date", "description_raw", "amount", "account", "currency"]
-                            st.dataframe(
-                                df[[c for c in display_cols if c in df.columns]],
-                                use_container_width=True,
-                                height=220,
-                            )
-                            good_dfs[fname] = df
-
-                    # Import button
-                    if good_dfs:
-                        total_txns = sum(len(d) for d in good_dfs.values())
-                        file_count = len(good_dfs)
-                        st.markdown("---")
-                        st.write(
-                            f"Ready to import **{total_txns} transactions** "
-                            f"from **{file_count} file{'s' if file_count > 1 else ''}**"
-                        )
-
-                        # Rename files before import
-                        rename_map = {}
-                        month_label = format_month(selected_month)  # e.g. "Feb 2026"
-                        source_label = active_item["label"]         # e.g. "Capital One Personal CC"
-                        if file_count == 1:
-                            orig = list(good_dfs.keys())[0]
-                            ext = Path(orig).suffix
-                            auto_name = f"{source_label} - {month_label}{ext}"
-                            rename_map[orig] = st.text_input(
-                                "Save as", value=auto_name, key="rename_single",
-                            )
-                        else:
-                            for i, orig in enumerate(good_dfs.keys()):
-                                ext = Path(orig).suffix
-                                auto_name = f"{source_label} - {month_label} ({i + 1}){ext}"
-                                rename_map[orig] = st.text_input(
-                                    f"Save as ({orig})", value=auto_name, key=f"rename_{i}",
-                                )
-
-                        if st.button(f"Import {total_txns} transactions", type="primary"):
-                            total_new = total_skip = 0
-                            for fname, df in good_dfs.items():
-                                inserted, skipped = commit_transactions(df, entity_lower)
-                                total_new += inserted
-                                total_skip += skipped
-
-                            # Save original files to uploads/
-                            upload_dir = _ROOT / "uploads" / entity_lower / selected_month
-                            upload_dir.mkdir(parents=True, exist_ok=True)
-                            saved_names = []
-                            for orig_file in uploaded_files:
-                                save_name = rename_map.get(orig_file.name, orig_file.name).strip()
-                                if not save_name:
-                                    save_name = orig_file.name
-                                # Preserve original extension if user removed it
-                                if not Path(save_name).suffix:
-                                    save_name += Path(orig_file.name).suffix
-                                dest = upload_dir / save_name
-                                orig_file.seek(0)
-                                dest.write_bytes(orig_file.read())
-                                saved_names.append(save_name)
-
-                            # Mark source complete
-                            all_filenames = ", ".join(saved_names)
-                            set_checklist_status(
-                                active_item["id"],
-                                selected_month,
-                                True,
-                                all_filenames,
-                            )
-
-                            st.success(
-                                f"Imported **{total_new} new** / "
-                                f"skipped **{total_skip} duplicates**"
-                            )
-                            st.session_state.pop("active_upload_source", None)
-                            st.rerun()
+                        upload_dialog(item)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
