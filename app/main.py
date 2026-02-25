@@ -43,11 +43,11 @@ entity_selector()
 
 with st.sidebar:
     st.page_link(dashboard, label="Dashboard")
-    st.page_link(upload, label="Upload")
-    st.page_link(vendors, label="Vendors")
-    st.page_link(cat_vendors, label="Categorize Vendors")
-    st.page_link(match, label="Match")
-    st.page_link(categorize, label="Categorize")
+    st.page_link(upload, label="1. Upload from Bank/CC")
+    st.page_link(vendors, label="2. Upload from Vendors")
+    st.page_link(cat_vendors, label="3. Categorize Vendors")
+    st.page_link(match, label="4. Match")
+    st.page_link(categorize, label="5. Categorize Remaining")
     st.page_link(reports, label="Reports")
 
 pg.run()
