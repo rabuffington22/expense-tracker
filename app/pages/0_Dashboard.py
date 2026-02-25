@@ -1,4 +1,4 @@
-"""Dashboard — quick stats and overview."""
+"""Dashboard — quick stats and import status overview."""
 
 import sys
 from pathlib import Path
@@ -11,7 +11,7 @@ from datetime import datetime
 
 import streamlit as st
 
-from core.db import get_connection, init_db
+from core.db import get_connection
 from app.shared import get_entity
 
 entity, entity_lower = get_entity()
@@ -19,88 +19,91 @@ entity, entity_lower = get_entity()
 # ── Header ────────────────────────────────────────────────────────────────────
 st.title("Dashboard")
 
-st.markdown("---")
-
-# ── Quick stats ───────────────────────────────────────────────────────────────
+# ── Top row: Need Review + Latest Transaction ─────────────────────────────────
 conn = get_connection(entity_lower)
 try:
-    total_txn   = conn.execute("SELECT COUNT(*) FROM transactions").fetchone()[0]
     uncat_count = conn.execute(
         "SELECT COUNT(*) FROM transactions WHERE category IS NULL OR category = '' OR confidence < 0.6"
     ).fetchone()[0]
     latest_date = conn.execute(
         "SELECT MAX(date) FROM transactions"
     ).fetchone()[0] or "—"
-
-    # Current month spend
-    cur_month = datetime.now().strftime("%Y-%m")
-    month_spend = conn.execute(
-        "SELECT COALESCE(ABS(SUM(amount)), 0) FROM transactions "
-        "WHERE strftime('%Y-%m', date) = ? AND amount < 0",
-        (cur_month,),
-    ).fetchone()[0]
-    month_income = conn.execute(
-        "SELECT COALESCE(SUM(amount), 0) FROM transactions "
-        "WHERE strftime('%Y-%m', date) = ? AND amount > 0",
-        (cur_month,),
-    ).fetchone()[0]
-
-    # Alias count
-    alias_count = conn.execute("SELECT COUNT(*) FROM merchant_aliases WHERE active=1").fetchone()[0]
 finally:
     conn.close()
 
-c1, c2, c3 = st.columns(3)
-c1.metric("Total Transactions", f"{total_txn:,}")
-c2.metric("Need Review", f"{uncat_count:,}", help="Uncategorized or low-confidence")
-c3.metric("Latest Transaction", latest_date)
+c1, c2 = st.columns(2)
+c1.metric("Need Review", f"{uncat_count:,}", help="Uncategorized or low-confidence")
+c2.metric("Latest Transaction", latest_date)
 
-c4, c5, c6 = st.columns(3)
-c4.metric(f"{datetime.now().strftime('%b %Y')} Spend", f"${month_spend:,.2f}")
-c5.metric(f"{datetime.now().strftime('%b %Y')} Income", f"${month_income:,.2f}")
-c6.metric("Active Aliases", f"{alias_count}")
-
-# ── Import progress ──────────────────────────────────────────────────────────
 st.markdown("---")
 
-# Check import progress for active entity only
-month = datetime.now().strftime("%Y-%m")
-ent_conn = get_connection(entity_lower)
-try:
-    ent_items = ent_conn.execute(
-        "SELECT id FROM import_checklist WHERE entity=?", (entity_lower,)
-    ).fetchall()
-    if ent_items:
-        item_ids = [r[0] for r in ent_items]
-        placeholders = ",".join("?" * len(item_ids))
-        done = ent_conn.execute(
-            f"SELECT COUNT(*) FROM import_checklist_status "
-            f"WHERE month=? AND completed=1 AND checklist_item_id IN ({placeholders})",
-            [month] + item_ids,
-        ).fetchone()[0]
-        total = len(ent_items)
-        st.subheader(f"Import Progress — {month}")
-        st.write(f"{done}/{total} sources imported")
-finally:
-    ent_conn.close()
+# ── Month selector ────────────────────────────────────────────────────────────
+now = datetime.now()
+y, m = now.year, now.month
+months = []
+for _ in range(12):
+    months.append(f"{y:04d}-{m:02d}")
+    m -= 1
+    if m == 0:
+        m = 12
+        y -= 1
 
-# ── Top spending categories this month ────────────────────────────────────────
+
+def format_month(ym: str) -> str:
+    return datetime.strptime(ym, "%Y-%m").strftime("%B %Y")
+
+
+selected_month = st.selectbox(
+    "Month",
+    months,
+    index=0,
+    format_func=format_month,
+    key="dash_month",
+    label_visibility="collapsed",
+)
+
+# ── Import progress for selected month ────────────────────────────────────────
 conn = get_connection(entity_lower)
 try:
-    top_cats = conn.execute(
-        "SELECT COALESCE(NULLIF(category,''), 'Uncategorized') AS cat, "
-        "ABS(SUM(amount)) AS total "
-        "FROM transactions "
-        "WHERE strftime('%Y-%m', date) = ? AND amount < 0 "
-        "GROUP BY cat ORDER BY total DESC LIMIT 5",
-        (cur_month,),
+    all_sources = conn.execute(
+        "SELECT id, label FROM import_checklist WHERE entity=? ORDER BY sort_order, id",
+        (entity_lower,),
     ).fetchall()
+    all_sources = [dict(r) for r in all_sources]
+
+    if all_sources:
+        item_ids = [s["id"] for s in all_sources]
+        placeholders = ",".join("?" * len(item_ids))
+        status_rows = conn.execute(
+            f"SELECT checklist_item_id, completed FROM import_checklist_status "
+            f"WHERE month=? AND checklist_item_id IN ({placeholders})",
+            [selected_month] + item_ids,
+        ).fetchall()
+        status_map = {r["checklist_item_id"]: bool(r["completed"]) for r in status_rows}
+
+        done = sum(1 for s in all_sources if status_map.get(s["id"], False))
+        total = len(all_sources)
+
+        if done == total:
+            st.success(f"All {total} sources imported for **{format_month(selected_month)}**")
+        else:
+            st.info(f"**{done}/{total}** sources imported for **{format_month(selected_month)}**")
+
+            # List sources still needed
+            missing = [s for s in all_sources if not status_map.get(s["id"], False)]
+            for s in missing:
+                st.write(f"- {s['label']}")
+
+        # Last transaction date for this month
+        last_txn = conn.execute(
+            "SELECT MAX(date) FROM transactions WHERE strftime('%Y-%m', date) = ?",
+            (selected_month,),
+        ).fetchone()[0]
+        if last_txn:
+            st.caption(f"Last transaction on file: {last_txn}")
+        else:
+            st.caption("No transactions on file for this month")
+    else:
+        st.info("No import sources defined. Go to Upload > Settings to add your bank/card sources.")
 finally:
     conn.close()
-
-if top_cats:
-    st.subheader(f"Top Categories — {datetime.now().strftime('%b %Y')}")
-    for row in top_cats:
-        col_name, col_amt = st.columns([3, 1])
-        col_name.write(row["cat"])
-        col_amt.write(f"${row['total']:,.2f}")
