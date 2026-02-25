@@ -47,14 +47,22 @@ with st.sidebar:
     st.markdown("---")
 
     _STEPS = [
-        (upload, "ONE", "Upload from Bank/CC"),
-        (vendors, "TWO", "Upload from Vendors"),
-        (cat_vendors, "THREE", "Categorize Vendors"),
-        (match, "FOUR", "Match"),
-        (categorize, "FIVE", "Categorize Remaining"),
+        (upload, "ONE", "Upload from Bank/CC", "/upload"),
+        (vendors, "TWO", "Upload from Vendors", "/vendors"),
+        (cat_vendors, "THREE", "Categorize Vendors", "/categorize_vendors"),
+        (match, "FOUR", "Match", "/match"),
+        (categorize, "FIVE", "Categorize Remaining", "/categorize"),
     ]
-    _NBSP6 = "\u00a0" * 6  # 6 non-breaking spaces
-    for _page, _num, _label in _STEPS:
-        st.page_link(_page, label=f"{_num}{_NBSP6}{_label}")
+    _SP = "\u00a0" * 6
+    _links_html = ""
+    for _page, _num, _label, _url in _STEPS:
+        _links_html += (
+            f'<a href="{_url}" target="_self" style="display:block;padding:6px 8px;'
+            f'margin:2px 0;border-radius:6px;text-decoration:none;'
+            f'color:rgba(250,250,250,0.9);font-size:0.875rem">'
+            f'<span style="color:#98989d;font-weight:600">{_num}</span>'
+            f'{_SP}{_label}</a>'
+        )
+    st.markdown(_links_html, unsafe_allow_html=True)
 
 pg.run()
