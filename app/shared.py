@@ -51,101 +51,40 @@ def entity_selector() -> tuple[str, str]:
         )
 
     db_key = _ENTITY_MAP[choice]
-    theme = _ENTITY_COLORS[choice]
-    accent = theme["accent"]
-    accent_hover = theme["accent_hover"]
-    glow = theme["glow"]
+    accent = _ENTITY_COLORS[choice]["accent"]
 
     init_db(db_key)
 
     # ── Inject entity-aware theme CSS ─────────────────────────────────────────
     st.markdown(f"""
     <style>
-    /* ── Entity theme: {choice} ──────────────────────────────────────────── */
+    /* ── Entity toggle styling ────────────────────────────────────────────── */
 
-    /* Colored accent bar at top of app */
-    [data-testid="stHeader"] {{
-        border-top: 4px solid {accent};
-    }}
-
-    /* Style the entity radio as a prominent segmented control */
-    div[data-testid="stRadio"] > div {{
-        gap: 0 !important;
-    }}
-    div[data-testid="stRadio"] > div > label {{
-        padding: 0.45rem 1.4rem !important;
-        border: 2px solid {accent} !important;
-        font-weight: 700 !important;
-        font-size: 0.95rem !important;
-        cursor: pointer !important;
-        transition: all 0.15s ease !important;
-        background: transparent !important;
-    }}
-    div[data-testid="stRadio"] > div > label:first-child {{
-        border-radius: 8px 0 0 8px !important;
-        border-right: 1px solid {accent} !important;
-    }}
-    div[data-testid="stRadio"] > div > label:last-child {{
-        border-radius: 0 8px 8px 0 !important;
-        border-left: 1px solid {accent} !important;
-    }}
-    /* Active / selected option */
-    div[data-testid="stRadio"] > div > label[data-checked="true"],
-    div[data-testid="stRadio"] > div > label:has(input:checked) {{
-        background: {accent} !important;
-        color: white !important;
-        box-shadow: 0 0 12px {glow} !important;
-    }}
     /* Hide the default radio dot */
     div[data-testid="stRadio"] > div > label > div:first-child {{
         display: none !important;
     }}
-
-    /* ── Primary buttons ─────────────────────────────────────────────────── */
-    button[kind="primary"],
-    [data-testid="baseButton-primary"] {{
-        background-color: {accent} !important;
+    /* Space between the two options */
+    div[data-testid="stRadio"] > div {{
+        gap: 0.5rem !important;
+    }}
+    /* Base style for both options */
+    div[data-testid="stRadio"] > div > label {{
+        padding: 0.35rem 1.2rem !important;
+        border: 1.5px solid #444 !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        color: #666 !important;
+        background: transparent !important;
+        cursor: pointer !important;
+        transition: all 0.15s ease !important;
+    }}
+    /* Active option — colored text + colored border, no fill */
+    div[data-testid="stRadio"] > div > label[data-checked="true"],
+    div[data-testid="stRadio"] > div > label:has(input:checked) {{
         border-color: {accent} !important;
-    }}
-    button[kind="primary"]:hover,
-    [data-testid="baseButton-primary"]:hover {{
-        background-color: {accent_hover} !important;
-        border-color: {accent_hover} !important;
-    }}
-
-    /* ── Form submit buttons ─────────────────────────────────────────────── */
-    button[kind="primaryFormSubmit"],
-    [data-testid="baseButton-primaryFormSubmit"] {{
-        background-color: {accent} !important;
-        border-color: {accent} !important;
-    }}
-    button[kind="primaryFormSubmit"]:hover,
-    [data-testid="baseButton-primaryFormSubmit"]:hover {{
-        background-color: {accent_hover} !important;
-        border-color: {accent_hover} !important;
-    }}
-
-    /* ── Tabs ─────────────────────────────────────────────────────────────── */
-    button[data-baseweb="tab"][aria-selected="true"] {{
-        border-bottom-color: {accent} !important;
         color: {accent} !important;
-    }}
-
-    /* ── Progress bars ────────────────────────────────────────────────────── */
-    [data-testid="stProgress"] > div > div > div {{
-        background-color: {accent} !important;
-    }}
-
-    /* ── Metric values ────────────────────────────────────────────────────── */
-    [data-testid="stMetricValue"] {{
-        color: {accent} !important;
-    }}
-
-    /* ── Checkboxes & toggles ─────────────────────────────────────────────── */
-    input[type="checkbox"]:checked + label > span,
-    [data-baseweb="checkbox"] input:checked ~ div {{
-        background-color: {accent} !important;
-        border-color: {accent} !important;
     }}
     </style>
     """, unsafe_allow_html=True)
