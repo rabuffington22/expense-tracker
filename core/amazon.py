@@ -437,8 +437,11 @@ def match_orders_to_transactions(
             and _amounts_match(txn_amount, o["order_total"], amount_tolerance)
             and _dates_within_window(txn_date, o["order_date"], date_window)
         ]
-        if len(exact_matches) == 1:
-            order = exact_matches[0]
+        if exact_matches:
+            # Pick closest date when multiple exact matches
+            order = min(exact_matches, key=lambda o: abs(
+                (datetime.strptime(txn_date, "%Y-%m-%d") - datetime.strptime(o["order_date"], "%Y-%m-%d")).days
+            ))
             order["matched"] = True
             result["match_type"] = "exact"
             result["matched_order"] = order
@@ -455,10 +458,13 @@ def match_orders_to_transactions(
             if not o["matched"]
             and _amounts_match(txn_amount, o["order_total"], amount_tolerance)
         ]
-        if len(amount_matches) == 1:
-            order = amount_matches[0]
+        if amount_matches:
+            # Pick closest date when multiple amount matches
+            order = min(amount_matches, key=lambda o: abs(
+                (datetime.strptime(txn_date, "%Y-%m-%d") - datetime.strptime(o["order_date"], "%Y-%m-%d")).days
+            ))
             order["matched"] = True
-            result["match_type"] = "amount_only"
+            result["match_type"] = "amount_only" if len(amount_matches) == 1 else "likely"
             result["matched_order"] = order
             result["confidence"] = 0.80
             result["product_summary"] = order["product_summary"]
