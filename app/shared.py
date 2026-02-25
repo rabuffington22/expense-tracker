@@ -34,14 +34,13 @@ def page_config(title: str = "Expense Tracker") -> None:
 
 def entity_selector() -> tuple[str, str]:
     """
-    Render a prominent entity toggle at the top-left of the page.
+    Render entity toggle in the sidebar, above the page navigation.
 
     Returns (display_name, db_key) where:
       - display_name is "Personal" or "BFM"
       - db_key is "personal" or "company" (for DB operations)
     """
-    col_toggle, _ = st.columns([2, 5])
-    with col_toggle:
+    with st.sidebar:
         choice = st.radio(
             "Entity",
             list(_ENTITY_MAP.keys()),
@@ -49,6 +48,7 @@ def entity_selector() -> tuple[str, str]:
             key="entity",
             label_visibility="collapsed",
         )
+        st.markdown("---")
 
     db_key = _ENTITY_MAP[choice]
     accent = _ENTITY_COLORS[choice]["accent"]
@@ -58,18 +58,18 @@ def entity_selector() -> tuple[str, str]:
     # ── Inject entity-aware theme CSS ─────────────────────────────────────────
     st.markdown(f"""
     <style>
-    /* ── Entity toggle styling ────────────────────────────────────────────── */
+    /* ── Entity toggle styling (sidebar) ─────────────────────────────────── */
 
     /* Hide the default radio dot */
-    div[data-testid="stRadio"] > div > label > div:first-child {{
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:first-child {{
         display: none !important;
     }}
     /* Space between the two options */
-    div[data-testid="stRadio"] > div {{
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div {{
         gap: 0.5rem !important;
     }}
     /* Base style for both options */
-    div[data-testid="stRadio"] > div > label {{
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label {{
         padding: 0.35rem 1.2rem !important;
         border: 1.5px solid #444 !important;
         border-radius: 6px !important;
@@ -81,8 +81,8 @@ def entity_selector() -> tuple[str, str]:
         transition: all 0.15s ease !important;
     }}
     /* Active option — colored text + colored border, no fill */
-    div[data-testid="stRadio"] > div > label[data-checked="true"],
-    div[data-testid="stRadio"] > div > label:has(input:checked) {{
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:has(input:checked) {{
         border-color: {accent} !important;
         color: {accent} !important;
     }}
