@@ -86,10 +86,10 @@ try:
 
         st.write(f"{done}/{total} sources imported")
 
-            # List sources still needed
-            missing = [s for s in all_sources if not status_map.get(s["id"], False)]
-            for s in missing:
-                st.write(f"- {s['label']}")
+        # List sources still needed
+        missing = [s for s in all_sources if not status_map.get(s["id"], False)]
+        for s in missing:
+            st.write(f"- {s['label']}")
 
         # Last transaction date for this month
         last_txn = conn.execute(
