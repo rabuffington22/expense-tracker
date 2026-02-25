@@ -1,4 +1,4 @@
-"""Upload & Import page — ingest CSV and PDF bank statements."""
+"""Upload page — ingest CSV and PDF bank statements."""
 
 import sys
 from pathlib import Path
@@ -9,7 +9,7 @@ if str(_ROOT) not in sys.path:
 
 from app.shared import page_config, entity_selector, entity_display  # noqa: E402
 
-page_config("Upload & Import")
+page_config("Upload")
 
 from datetime import datetime, timezone  # noqa: E402
 
@@ -31,7 +31,7 @@ other_entity = "company" if entity_lower == "personal" else "personal"
 # Ensure other entity DB is initialized too (for cross-entity progress)
 init_db(other_entity)
 
-st.title("Upload & Import")
+st.title("Upload")
 
 
 # ── Profile helpers ───────────────────────────────────────────────────────────

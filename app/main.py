@@ -1,5 +1,5 @@
 """
-Expense Tracker — Home
+Expense Tracker — Dashboard
 
 Run with:
     streamlit run app/main.py --server.address 127.0.0.1 --server.port 8501
@@ -14,7 +14,7 @@ if str(_ROOT) not in sys.path:
 
 from app.shared import page_config, entity_selector, entity_display  # noqa: E402
 
-page_config("Expense Tracker — Home")
+page_config("Dashboard")
 
 from datetime import datetime  # noqa: E402
 
@@ -26,8 +26,7 @@ from core.db import get_connection, init_db  # noqa: E402
 entity, entity_lower = entity_selector()
 
 # ── Header ────────────────────────────────────────────────────────────────────
-st.title("💰 Expense Tracker")
-st.caption("Use the sidebar to navigate pages")
+st.title("💰 Dashboard")
 
 st.markdown("---")
 
@@ -133,7 +132,7 @@ st.markdown(
 
 | Page | Purpose |
 |------|---------|
-| **Upload & Import** | Import CSV and PDF bank statements |
+| **Upload** | Import CSV and PDF bank statements |
 | **Categorize** | Review/accept categories · Manage categories & aliases |
 | **Reports** | Monthly spend charts and drill-downs |
 """
