@@ -475,6 +475,15 @@ def _amounts_match(txn_amount: float, order_total: float, tolerance_pct: float =
     return diff <= max(ref * tolerance_pct, 0.10)
 
 
+def _get_order_category(order: dict) -> tuple[str, str]:
+    """Get category from order — prefer user-set, fall back to infer."""
+    cat = order.get("category", "")
+    subcat = order.get("subcategory", "")
+    if cat:
+        return (cat, subcat or "Unknown")
+    return infer_category(order.get("product_summary", ""), order.get("amazon_category", ""))
+
+
 def match_orders_to_transactions(
     orders: list[dict],
     transactions: pd.DataFrame,
@@ -537,7 +546,7 @@ def match_orders_to_transactions(
             result["matched_order"] = order
             result["confidence"] = 0.95
             result["product_summary"] = order["product_summary"]
-            cat, subcat = infer_category(order["product_summary"], order.get("amazon_category", ""))
+            cat, subcat = _get_order_category(order)
             result["suggested_category"] = cat
             result["suggested_subcategory"] = subcat
             result["order_id"] = order["order_id"]
@@ -561,7 +570,7 @@ def match_orders_to_transactions(
             result["matched_order"] = order
             result["confidence"] = 0.80
             result["product_summary"] = order["product_summary"]
-            cat, subcat = infer_category(order["product_summary"], order.get("amazon_category", ""))
+            cat, subcat = _get_order_category(order)
             result["suggested_category"] = cat
             result["suggested_subcategory"] = subcat
             result["order_id"] = order["order_id"]
@@ -594,7 +603,7 @@ def match_orders_to_transactions(
                     result["matched_order"] = combo[0]  # primary
                     result["confidence"] = 0.75
                     result["product_summary"] = summary
-                    cat, subcat = infer_category(summary, combo[0].get("amazon_category", ""))
+                    cat, subcat = _get_order_category(combo[0])
                     result["suggested_category"] = cat
                     result["suggested_subcategory"] = subcat
                     result["order_id"] = ", ".join(o["order_id"] for o in combo)
@@ -618,7 +627,7 @@ def match_orders_to_transactions(
             result["matched_order"] = best
             result["confidence"] = 0.50
             result["product_summary"] = best["product_summary"]
-            cat, subcat = infer_category(best["product_summary"], best.get("amazon_category", ""))
+            cat, subcat = _get_order_category(best)
             result["suggested_category"] = cat
             result["suggested_subcategory"] = subcat
             result["order_id"] = best["order_id"]
@@ -701,6 +710,8 @@ def load_orders_from_db(entity: str, unmatched_only: bool = False) -> list[dict]
                 "order_total": r["order_total"],
                 "product_summary": r["product_summary"],
                 "amazon_category": r["amazon_category"] or "",
+                "category": r["category"] or "",
+                "subcategory": r["subcategory"] or "",
                 "matched": False,
                 "items": [],  # not stored per-item, but matching doesn't need it
             })
@@ -718,6 +729,35 @@ def get_order_counts(entity: str) -> tuple[int, int]:
             "SELECT COUNT(*) FROM amazon_orders WHERE matched_transaction_id IS NULL"
         ).fetchone()[0]
         return total, unmatched
+    finally:
+        conn.close()
+
+
+def get_uncategorized_orders(entity: str) -> list[dict]:
+    """Return orders that haven't been categorized yet."""
+    conn = get_connection(entity)
+    try:
+        rows = conn.execute(
+            "SELECT id, order_id, order_date, product_summary, amazon_category, "
+            "       order_total, category, subcategory "
+            "FROM amazon_orders "
+            "WHERE category IS NULL "
+            "ORDER BY order_date DESC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+def categorize_order(entity: str, order_db_id: int, category: str, subcategory: str) -> None:
+    """Save user's category choice on an amazon_order."""
+    conn = get_connection(entity)
+    try:
+        conn.execute(
+            "UPDATE amazon_orders SET category = ?, subcategory = ? WHERE id = ?",
+            (category, subcategory, order_db_id),
+        )
+        conn.commit()
     finally:
         conn.close()
 

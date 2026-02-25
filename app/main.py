@@ -27,10 +27,11 @@ st.set_page_config(
 dashboard  = st.Page("pages/0_Dashboard.py", title="Dashboard", default=True)
 upload     = st.Page("pages/1_Upload.py", title="Upload")
 categorize = st.Page("pages/2_Categorize.py", title="Categorize")
-reports    = st.Page("pages/3_Reports.py", title="Reports")
+match      = st.Page("pages/3_Match.py", title="Match")
+reports    = st.Page("pages/4_Reports.py", title="Reports")
 
 # Hide the auto-generated nav so we can build sidebar ourselves
-pg = st.navigation([dashboard, upload, categorize, reports], position="hidden")
+pg = st.navigation([dashboard, upload, categorize, match, reports], position="hidden")
 
 # Build sidebar: entity toggle first, then page links
 entity_selector()
@@ -39,6 +40,7 @@ with st.sidebar:
     st.page_link(dashboard, label="Dashboard")
     st.page_link(upload, label="Upload")
     st.page_link(categorize, label="Categorize")
+    st.page_link(match, label="Match")
     st.page_link(reports, label="Reports")
 
 pg.run()

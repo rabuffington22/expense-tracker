@@ -18,12 +18,11 @@ from core.reporting import get_uncategorized
 from core.amazon import (
     parse_amazon_csv,
     group_orders,
-    find_amazon_transactions,
-    match_orders_to_transactions,
-    apply_matches,
     save_orders_to_db,
-    load_orders_from_db,
     get_order_counts,
+    get_uncategorized_orders,
+    categorize_order,
+    infer_category,
 )
 from app.shared import get_entity, get_categories, get_subcategories
 
@@ -177,15 +176,15 @@ with tab_review:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# TAB 2 — Amazon Match
+# TAB 2 — Amazon Orders (upload + categorize)
 # ═══════════════════════════════════════════════════════════════════════════════
 with tab_amazon:
 
     # ── Section A: Upload Amazon Orders ────────────────────────────────────
     st.subheader("Upload Amazon Orders")
     st.caption(
-        "Upload your Amazon order history CSV. Orders are saved and can be "
-        "matched to bank transactions later."
+        "Upload your Amazon order history CSV. Orders are saved and "
+        "categorized here, then matched to bank transactions on the Match page."
     )
 
     amazon_file = st.file_uploader(
@@ -219,11 +218,9 @@ with tab_amazon:
             st.markdown("---")
             st.write("**Filter by date range**")
             from datetime import date as _date
-            # Parse min/max as date objects for the picker
             _parsed_dates = pd.to_datetime(dates, errors="coerce").dropna()
             _d_min = _parsed_dates.min().date() if not _parsed_dates.empty else _date.today()
             _d_max = _parsed_dates.max().date() if not _parsed_dates.empty else _date.today()
-            # Default start: 12 months ago or data min, whichever is later
             _default_start = _date(_d_max.year - 1, _d_max.month, _d_max.day) if _d_max.year > _d_min.year or _d_max.month > _d_min.month else _d_min
             if _default_start < _d_min:
                 _default_start = _d_min
@@ -231,7 +228,6 @@ with tab_amazon:
             filter_from = c_from.date_input("From", value=_default_start, min_value=_d_min, max_value=_d_max)
             filter_to = c_to.date_input("To", value=_d_max, min_value=_d_min, max_value=_d_max)
 
-            # Apply filter
             filtered_orders = [
                 o for o in orders
                 if o.get("order_date") and filter_from <= pd.to_datetime(o["order_date"]).date() <= filter_to
@@ -263,202 +259,97 @@ with tab_amazon:
 
     st.markdown("---")
 
-    # ── Section B: Match to Bank Transactions ──────────────────────────────
-    st.subheader("Match to Bank Transactions")
+    # ── Section B: Categorize Orders (card queue) ──────────────────────────
+    st.subheader("Categorize Orders")
 
-    if unmatched_orders == 0 and total_orders > 0:
-        st.success("All Amazon orders have been matched.")
-    elif total_orders == 0:
-        st.info("Upload an Amazon order CSV above first.")
+    uncategorized = get_uncategorized_orders(entity_lower)
+
+    if not uncategorized and total_orders > 0:
+        st.success("All orders are categorized! Head to the **Match** page to link them to bank charges.")
+    elif not uncategorized:
+        st.info("Upload an Amazon order CSV above to get started.")
     else:
-        amazon_txns = find_amazon_transactions(entity_lower)
+        st.write(f"**{len(uncategorized)} orders** need categorization.")
 
-        if amazon_txns.empty:
-            st.info(
-                "No Amazon transactions found in your imported bank data. "
-                "Import your bank statements first, then come back here."
-            )
+        # Track progress through the queue
+        if "amazon_cat_idx" not in st.session_state:
+            st.session_state.amazon_cat_idx = 0
+        idx = st.session_state.amazon_cat_idx
+
+        categories = get_categories(entity_lower)
+        if "Shopping" not in categories:
+            categories = categories + ["Shopping"]
+
+        if idx >= len(uncategorized):
+            st.success(f"Done! Categorized all **{len(uncategorized)}** orders.")
+            if st.button("Finish"):
+                st.session_state.pop("amazon_cat_idx", None)
+                st.rerun()
         else:
-            st.write(f"Found **{len(amazon_txns)} Amazon transactions** in your bank data.")
+            order = uncategorized[idx]
 
-            if st.button("Run Matching", type="primary"):
-                db_orders = load_orders_from_db(entity_lower, unmatched_only=True)
-                matches = match_orders_to_transactions(db_orders, amazon_txns)
+            # Progress counter
+            st.write(f"**Order {idx + 1} of {len(uncategorized)}**")
+            st.progress(idx / len(uncategorized))
 
-                # Auto-apply exact matches immediately
-                exact = [m for m in matches if m["match_type"] == "exact"]
-                if exact:
-                    auto_apply = []
-                    for m in exact:
-                        auto_apply.append({
-                            "transaction_id": m["transaction_id"],
-                            "product_summary": m["product_summary"],
-                            "suggested_category": m["suggested_category"],
-                            "suggested_subcategory": m.get("suggested_subcategory", "Unknown"),
-                            "order_id": m["order_id"],
-                            "order_total": m["matched_order"]["order_total"],
-                            "confidence": m["confidence"],
-                        })
-                    auto_count = apply_matches(entity_lower, auto_apply)
-                    st.success(f"Auto-applied **{auto_count}** exact matches.")
+            # Product name — prominent
+            st.markdown(f"### {order['product_summary'][:120]}")
+            st.write(f"Date: {order['order_date']}  ·  Amount: **${order['order_total']:,.2f}**")
 
-                # Keep non-exact matches for review
-                review = [m for m in matches if m["match_type"] not in ("exact", "skip", "none")]
-                no_match = [m for m in matches if m["match_type"] == "none"]
-                st.session_state.amazon_matches = review
-                st.session_state.amazon_no_match = no_match
+            # Infer a default
+            inferred_cat, inferred_sub = infer_category(
+                order.get("product_summary", ""),
+                order.get("amazon_category", ""),
+            )
 
-            review = st.session_state.get("amazon_matches")
-            no_match = st.session_state.get("amazon_no_match", [])
+            # Category + Subcategory
+            c_cat, c_sub = st.columns(2)
+            category = c_cat.selectbox(
+                "Category",
+                categories,
+                index=categories.index(inferred_cat) if inferred_cat in categories else 0,
+                key=f"ocat_{idx}",
+            )
+            subs = get_subcategories(entity_lower, category)
+            subcategory = c_sub.selectbox(
+                "Subcategory",
+                subs,
+                index=subs.index(inferred_sub) if inferred_sub in subs else (subs.index("Unknown") if "Unknown" in subs else 0),
+                key=f"osub_{idx}",
+            )
+            custom_sub = c_sub.text_input(
+                "Or new subcategory",
+                key=f"onewsub_{idx}",
+                placeholder="Type to create new...",
+            )
+            final_sub = custom_sub.strip() if custom_sub.strip() else subcategory
 
-            if review:
-                st.markdown("---")
-
-                # Track progress through the queue
-                if "amazon_review_idx" not in st.session_state:
-                    st.session_state.amazon_review_idx = 0
-                idx = st.session_state.amazon_review_idx
-
-                categories = get_categories(entity_lower) + ["Shopping"]
-
-                if idx >= len(review):
-                    st.success(f"Done! Reviewed all **{len(review)}** matches.")
-                    if st.button("Finish"):
-                        st.session_state.pop("amazon_matches", None)
-                        st.session_state.pop("amazon_no_match", None)
-                        st.session_state.pop("amazon_review_idx", None)
-                        st.rerun()
-                else:
-                    m = review[idx]
-                    tid = m["transaction_id"]
-                    order = m.get("matched_order", {})
-                    txn_amt = abs(m["txn_amount"])
-                    order_amt = order.get("order_total", 0)
-                    amt_diff = abs(txn_amt - order_amt)
-                    amt_pct = (amt_diff / txn_amt * 100) if txn_amt else 0
-
+            # Helper to persist a custom subcategory
+            def _save_subcategory(cat, sub):
+                if cat and sub and sub != "Unknown":
+                    conn = get_connection(entity_lower)
                     try:
-                        from datetime import datetime as _dt
-                        txn_d = _dt.strptime(m["txn_date"], "%Y-%m-%d")
-                        ord_d = _dt.strptime(order.get("order_date", m["txn_date"]), "%Y-%m-%d")
-                        days_apart = abs((txn_d - ord_d).days)
-                    except (ValueError, TypeError):
-                        days_apart = 0
-
-                    # Progress counter
-                    st.write(f"**Card {idx + 1} of {len(review)}**")
-                    st.progress((idx) / len(review))
-
-                    # ── Step 1: Categorize this transaction ──
-                    st.markdown("**Step 1 — Categorize this charge**")
-                    c_cat, c_sub = st.columns(2)
-                    category = c_cat.selectbox(
-                        "Category",
-                        categories,
-                        index=categories.index(m["suggested_category"]) if m["suggested_category"] in categories else 0,
-                        key=f"card_cat_{idx}",
-                    )
-                    subs = get_subcategories(entity_lower, category)
-                    subcategory = c_sub.selectbox(
-                        "Subcategory",
-                        subs,
-                        index=subs.index(m.get("suggested_subcategory", "Unknown")) if m.get("suggested_subcategory", "Unknown") in subs else (subs.index("Unknown") if "Unknown" in subs else 0),
-                        key=f"card_sub_{idx}",
-                    )
-                    custom_sub = c_sub.text_input(
-                        "Or new subcategory",
-                        key=f"card_newsub_{idx}",
-                        placeholder="Type to create new...",
-                    )
-                    final_sub = custom_sub.strip() if custom_sub.strip() else subcategory
-
-                    # ── Step 2: Is this the right Amazon match? ──
-                    st.markdown("---")
-                    st.markdown("**Step 2 — Is this the right Amazon order?**")
-
-                    col_bank, col_order = st.columns(2)
-                    with col_bank:
-                        st.write("**Bank Charge**")
-                        st.write(f"Date: {m['txn_date']}")
-                        st.write(f"Amount: **${txn_amt:,.2f}**")
-                        st.write(f"Description: {m['txn_description'][:60]}")
-                    with col_order:
-                        st.write("**Amazon Order**")
-                        st.write(f"Date: {order.get('order_date', '?')}")
-                        st.write(f"Amount: **${order_amt:,.2f}**")
-                        st.write(f"Product: {m['product_summary'][:80]}")
-
-                    # Comparison stats — highlight problem values in red
-                    pct_color = "red" if amt_pct > 3 else "inherit"
-                    days_color = "red" if days_apart > 3 else "inherit"
-                    st.markdown(
-                        f"<span style='font-size:0.95rem'>"
-                        f"Amount diff: <span style='color:{pct_color};font-size:1.1rem;font-weight:600'>"
-                        f"${amt_diff:.2f} ({amt_pct:.1f}%)</span> · "
-                        f"Days apart: <span style='color:{days_color};font-size:1.1rem;font-weight:600'>"
-                        f"{days_apart}</span>"
-                        f"</span>",
-                        unsafe_allow_html=True,
-                    )
-
-                    c1, c2, c3 = st.columns(3)
-
-                    def _save_subcategory(cat, sub):
-                        """Auto-save custom subcategory to DB."""
-                        if cat and sub and sub != "Unknown":
-                            conn = get_connection(entity_lower)
-                            try:
-                                conn.execute(
-                                    "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
-                                    "VALUES (?,?,?)",
-                                    (cat, sub, datetime.now(timezone.utc).isoformat()),
-                                )
-                                conn.commit()
-                            finally:
-                                conn.close()
-                            get_subcategories.clear()
-
-                    if c1.button("✅ Accept", type="primary", use_container_width=True):
-                        _save_subcategory(category, final_sub)
-                        apply_matches(entity_lower, [{
-                            "transaction_id": tid,
-                            "product_summary": m["product_summary"],
-                            "suggested_category": category,
-                            "suggested_subcategory": final_sub,
-                            "order_id": m["order_id"],
-                            "order_total": m["txn_amount"],
-                            "confidence": m["confidence"],
-                        }])
-                        st.session_state.amazon_review_idx = idx + 1
-                        st.rerun()
-
-                    if c2.button("❌ Not a match", use_container_width=True):
-                        _save_subcategory(category, final_sub)
-                        conn = get_connection(entity_lower)
-                        try:
-                            conn.execute(
-                                "UPDATE transactions "
-                                "SET category = ?, subcategory = ?, confidence = 1.0 "
-                                "WHERE transaction_id = ?",
-                                (category, final_sub, tid),
-                            )
-                            conn.commit()
-                        finally:
-                            conn.close()
-                        st.session_state.amazon_review_idx = idx + 1
-                        st.rerun()
-
-                    if c3.button("⏭️ Skip", use_container_width=True):
-                        st.session_state.amazon_review_idx = idx + 1
-                        st.rerun()
-
-            if no_match:
-                with st.expander(f"{len(no_match)} unmatched bank transactions"):
-                    for m in no_match:
-                        st.write(
-                            f"**{m['txn_date']}** — {m['txn_description']} — "
-                            f"${abs(m['txn_amount']):,.2f}"
+                        conn.execute(
+                            "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
+                            "VALUES (?,?,?)",
+                            (cat, sub, datetime.now(timezone.utc).isoformat()),
                         )
+                        conn.commit()
+                    finally:
+                        conn.close()
+                    get_subcategories.clear()
+
+            c1, c2 = st.columns(2)
+
+            if c1.button("💾 Save", type="primary", use_container_width=True):
+                _save_subcategory(category, final_sub)
+                categorize_order(entity_lower, order["id"], category, final_sub)
+                st.session_state.amazon_cat_idx = idx + 1
+                st.rerun()
+
+            if c2.button("⏭️ Skip", use_container_width=True):
+                st.session_state.amazon_cat_idx = idx + 1
+                st.rerun()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
