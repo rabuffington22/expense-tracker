@@ -354,12 +354,18 @@ with tab_amazon:
                             st.write(f"Amount: **${order_amt:,.2f}**")
                             st.write(f"Product: {m['product_summary'][:80]}")
 
-                        # Comparison stats
-                        match_label = m["match_type"].replace("_", " ").title()
-                        st.caption(
-                            f"Match type: **{match_label}** · "
-                            f"Amount diff: ${amt_diff:.2f} ({amt_pct:.1f}%) · "
-                            f"Days apart: {days_apart}"
+                        # Comparison stats — highlight problem values in red
+                        pct_color = "red" if amt_pct > 3 else "inherit"
+                        days_color = "red" if days_apart > 3 else "inherit"
+                        st.markdown(
+                            f"<span style='font-size:0.95rem'>"
+                            f"Match type: <b>{m['match_type'].replace('_', ' ').title()}</b> · "
+                            f"Amount diff: <span style='color:{pct_color};font-size:1.1rem;font-weight:600'>"
+                            f"${amt_diff:.2f} ({amt_pct:.1f}%)</span> · "
+                            f"Days apart: <span style='color:{days_color};font-size:1.1rem;font-weight:600'>"
+                            f"{days_apart}</span>"
+                            f"</span>",
+                            unsafe_allow_html=True,
                         )
 
                         # Accept / Not a match checkboxes + category + subcategory
