@@ -380,8 +380,8 @@ def _dates_within_window(txn_date: str, order_date: str, window: int = 5) -> boo
         return False
 
 
-def _amounts_match(txn_amount: float, order_total: float, tolerance_pct: float = 0.10) -> bool:
-    """Check if amounts match within percentage tolerance (default 10%)."""
+def _amounts_match(txn_amount: float, order_total: float, tolerance_pct: float = 0.08) -> bool:
+    """Check if amounts match within percentage tolerance (default 8%)."""
     txn_abs = abs(txn_amount)
     diff = abs(txn_abs - order_total)
     # Use percentage of the larger value, with a $0.10 minimum floor
@@ -460,7 +460,7 @@ def match_orders_to_transactions(
             o for o in unmatched_orders
             if not o["matched"]
             and _amounts_match(txn_amount, o["order_total"])
-            and _dates_within_window(txn_date, o["order_date"], 30)
+            and _dates_within_window(txn_date, o["order_date"], 10)
         ]
         if amount_matches:
             # Pick closest date when multiple amount matches
