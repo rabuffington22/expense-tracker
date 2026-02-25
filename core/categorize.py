@@ -51,7 +51,7 @@ _KEYWORD_RULES: list[tuple[list[str], str, float]] = [
      "Shopping", 0.6),
     (["home depot", "lowes", "lowe's", "menards", "ace hardware", "spray paint",
       "lumber", "paint", "hardware"],
-     "DIY", 0.6),
+     "Home Improvement", 0.6),
     (["airline", "hotel", "airbnb", "expedia", "booking.com", "marriott",
       "hilton", "delta", "united", "southwest", "american air", "spirit",
       "vrbo"],
