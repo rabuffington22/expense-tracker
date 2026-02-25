@@ -424,8 +424,8 @@ def match_orders_to_transactions(
             "order_id": "",
         }
 
-        # Skip positive amounts (credits/refunds) for now
-        if txn_amount >= 0:
+        # Skip zero amounts and likely refunds (negative on cards that store charges as positive)
+        if txn_amount == 0:
             result["match_type"] = "skip"
             results.append(result)
             continue
