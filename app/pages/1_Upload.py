@@ -247,8 +247,8 @@ with tab_import:
                     last_date = source_last_dates.get(item["id"])
                     parts.append(f"Last: {last_date}" if last_date else "No data yet")
                     if item.get("url"):
-                        parts.append(f"[Download]({item['url']})")
-                    hint = " · ".join(parts)
+                        parts.append(f"<a href='{item['url']}' target='_blank'>Download</a>")
+                    hint = " &middot; ".join(parts)
                     st.markdown(
                         f"<small style='color: rgba(250,250,250,0.5);'>{hint}</small>",
                         unsafe_allow_html=True,
