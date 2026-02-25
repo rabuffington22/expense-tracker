@@ -204,6 +204,23 @@ with tab_import:
 
         st.markdown("---")
 
+        # ── Look up last transaction date per source ─────────────────────────
+        conn = get_connection(entity_lower)
+        try:
+            source_last_dates = {}
+            for item in items:
+                pattern = (item.get("filename_pattern") or "").strip()
+                if pattern:
+                    row = conn.execute(
+                        "SELECT MAX(date) FROM transactions "
+                        "WHERE LOWER(source_filename) LIKE ?",
+                        (f"%{pattern.lower()}%",),
+                    ).fetchone()
+                    if row and row[0]:
+                        source_last_dates[item["id"]] = row[0]
+        finally:
+            conn.close()
+
         # ── Source list ───────────────────────────────────────────────────────
         # Clear active upload if entity or month changed
         if st.session_state.get("_upload_entity") != entity_lower:
@@ -227,15 +244,11 @@ with tab_import:
                         st.caption(fname)
                 else:
                     st.markdown(f"**{item['label']}**")
-                    hints = []
-                    if item.get("profile_name"):
-                        hints.append(item["profile_name"])
-                    if item.get("url"):
-                        hints.append(f"[Download]({item['url']})")
-                    if item.get("notes"):
-                        hints.append(item["notes"])
-                    if hints:
-                        st.caption(" · ".join(hints))
+                    last_date = source_last_dates.get(item["id"])
+                    if last_date:
+                        st.caption(f"Last: {last_date}")
+                    else:
+                        st.caption("No data yet")
 
             with col_action:
                 if is_done:
