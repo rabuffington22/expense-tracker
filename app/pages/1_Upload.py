@@ -233,11 +233,7 @@ with tab_import:
             item_status = status.get(item["id"], {})
             is_done = bool(item_status.get("completed", 0))
 
-            has_url = not is_done and bool(item.get("url"))
-            if has_url:
-                col_label, col_link, col_action = st.columns([4, 1, 1.5])
-            else:
-                col_label, col_action = st.columns([4, 1.5])
+            col_label, col_link, col_action = st.columns([4, 1, 1.5])
 
             with col_label:
                 if is_done:
@@ -250,9 +246,9 @@ with tab_import:
                     last_date = source_last_dates.get(item["id"])
                     st.caption(f"Last: {last_date}" if last_date else "No data yet")
 
-            if has_url:
-                with col_link:
-                    st.link_button("Download", item["url"])
+            with col_link:
+                if not is_done and item.get("url"):
+                    st.link_button("↗", item["url"], help=item["url"])
 
             with col_action:
                 if is_done:
