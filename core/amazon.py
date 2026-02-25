@@ -163,8 +163,8 @@ def parse_amazon_csv(file_or_path) -> tuple[pd.DataFrame, list[str]]:
             f"Available columns: {available}"
         ]
 
-    # Parse dates
-    df["order_date"] = pd.to_datetime(df["order_date"], errors="coerce")
+    # Parse dates — use format="mixed" to handle ISO timestamps with/without milliseconds
+    df["order_date"] = pd.to_datetime(df["order_date"], format="mixed", errors="coerce")
     bad_dates = df["order_date"].isna().sum()
     if bad_dates:
         warnings.append(f"{bad_dates} rows with unparseable dates dropped.")
