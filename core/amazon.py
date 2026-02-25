@@ -1,7 +1,11 @@
 """Amazon order CSV parsing and transaction matching.
 
-Parses Amazon Privacy Central order history exports (Retail.OrderHistory.1.csv),
-groups items by order, and matches them to Amazon bank transactions by date + amount.
+Parses Amazon order history exports (Business or Privacy Central) and matches
+grouped charges to Amazon bank transactions by date + amount.
+
+Supports:
+  - Amazon Business CSV (groups by Payment Reference ID for exact charge matching)
+  - Amazon Privacy Central CSV (Retail.OrderHistory.1.csv, groups by Order ID)
 """
 
 from datetime import datetime, timedelta
@@ -17,18 +21,35 @@ from core.db import get_connection
 # Amazon exports vary; map known variants to canonical names.
 
 _AMAZON_COL_MAP = {
+    # Identifiers
     "order date": "order_date",
     "order id": "order_id",
     "website order id": "order_id",
+    "payment reference id": "payment_ref_id",
+    "payment date": "payment_date",
+    # Product
     "product name": "product_name",
     "title": "product_name",
+    "asin": "asin",
+    "amazon-internal product category": "amazon_category",
+    # Amounts — Business format (per-item with tax baked in)
+    "item net total": "item_net_total",
+    "item subtotal": "item_subtotal",
+    "item tax": "item_tax",
+    "item shipping & handling": "item_shipping",
+    "item promotion": "item_promotion",
+    "payment amount": "payment_amount",
+    "order net total": "order_net_total",
+    # Amounts — Privacy Central format
     "item total": "item_total",
     "total owed": "total_owed",
     "unit price": "unit_price",
     "unit price tax": "unit_price_tax",
     "shipping charge": "shipping_charge",
+    # Shared
     "quantity": "quantity",
-    "asin": "asin",
+    "item quantity": "item_quantity",
+    "order quantity": "order_quantity",
     "order status": "order_status",
     "shipment status": "shipment_status",
     "currency": "currency",
@@ -68,8 +89,37 @@ _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
 ]
 
 
-def infer_category(product_name: str) -> str:
-    """Return a category guess from the product name, or 'Shopping' as default."""
+# ── Amazon Business category mapping ─────────────────────────────────────────
+# Maps Amazon's internal product categories to our expense categories.
+
+_AMAZON_BIZ_CATEGORY_MAP = {
+    "grocery": "Groceries",
+    "health and beauty": "Shopping",
+    "beauty": "Shopping",
+    "office product": "Shopping",
+    "home improvement": "Home Improvement",
+    "home": "Shopping",
+    "kitchen": "Shopping",
+    "lighting": "Home Improvement",
+    "ce": "Electronics",
+    "personal computer": "Electronics",
+    "speakers": "Electronics",
+    "wireless": "Electronics",
+    "video games": "Electronics",
+    "business, industrial, & scientific supplies basic": "Shopping",
+}
+
+
+def infer_category(product_name: str, amazon_category: str = "") -> str:
+    """Return a category guess. Uses Amazon's built-in category if available,
+    otherwise falls back to keyword matching on the product name."""
+    # Try Amazon's own category first (Business CSV)
+    if amazon_category:
+        key = amazon_category.strip().lower()
+        if key in _AMAZON_BIZ_CATEGORY_MAP:
+            return _AMAZON_BIZ_CATEGORY_MAP[key]
+
+    # Fall back to keyword matching on product name
     lower = product_name.lower()
     for keywords, category in _AMAZON_CATEGORY_HINTS:
         if any(kw in lower for kw in keywords):
@@ -122,53 +172,62 @@ def parse_amazon_csv(file_or_path) -> tuple[pd.DataFrame, list[str]]:
 
     df["order_date"] = df["order_date"].dt.strftime("%Y-%m-%d")
 
-    # Parse amounts — try several possible columns
-    amount_col = None
-    for candidate in ["item_total", "total_owed", "unit_price"]:
-        if candidate in df.columns:
-            amount_col = candidate
-            break
+    # Parse payment_date if available (Business format)
+    if "payment_date" in df.columns:
+        df["payment_date"] = pd.to_datetime(df["payment_date"], errors="coerce")
+        df["payment_date"] = df["payment_date"].dt.strftime("%Y-%m-%d")
 
-    if amount_col is None:
-        # Try to find any column with dollar amounts
-        warnings.append("No recognized amount column found; amounts set to 0.")
-        df["item_amount"] = 0.0
-    else:
-        df["item_amount"] = (
-            df[amount_col]
-            .astype(str)
-            .str.replace(r"[$,]", "", regex=True)
+    # Detect format: Business (has item_net_total) vs Privacy Central
+    is_business = "item_net_total" in df.columns
+
+    def _parse_dollar_col(series: pd.Series) -> pd.Series:
+        return (
+            series.astype(str)
+            .str.replace(r"[$,\"]", "", regex=True)
             .apply(pd.to_numeric, errors="coerce")
             .fillna(0.0)
         )
 
-    # Parse tax if available
-    if "unit_price_tax" in df.columns:
-        df["item_tax"] = (
-            df["unit_price_tax"]
-            .astype(str)
-            .str.replace(r"[$,]", "", regex=True)
-            .apply(pd.to_numeric, errors="coerce")
-            .fillna(0.0)
-        )
-    else:
-        df["item_tax"] = 0.0
-
-    # Parse shipping if available
-    if "shipping_charge" in df.columns:
-        df["item_shipping"] = (
-            df["shipping_charge"]
-            .astype(str)
-            .str.replace(r"[$,]", "", regex=True)
-            .apply(pd.to_numeric, errors="coerce")
-            .fillna(0.0)
-        )
-    else:
+    if is_business:
+        # Business format: item_net_total already includes tax + shipping
+        df["item_amount"] = _parse_dollar_col(df["item_net_total"])
+        df["item_tax"] = 0.0  # already baked into item_net_total
         df["item_shipping"] = 0.0
+        # Parse payment_amount for verification
+        if "payment_amount" in df.columns:
+            df["payment_amount"] = _parse_dollar_col(df["payment_amount"])
+    else:
+        # Privacy Central format: need to sum price + tax + shipping
+        amount_col = None
+        for candidate in ["item_total", "total_owed", "unit_price"]:
+            if candidate in df.columns:
+                amount_col = candidate
+                break
 
-    # Parse quantity
-    if "quantity" in df.columns:
-        df["quantity"] = pd.to_numeric(df["quantity"], errors="coerce").fillna(1).astype(int)
+        if amount_col is None:
+            warnings.append("No recognized amount column found; amounts set to 0.")
+            df["item_amount"] = 0.0
+        else:
+            df["item_amount"] = _parse_dollar_col(df[amount_col])
+
+        if "unit_price_tax" in df.columns:
+            df["item_tax"] = _parse_dollar_col(df["unit_price_tax"])
+        else:
+            df["item_tax"] = 0.0
+
+        if "shipping_charge" in df.columns:
+            df["item_shipping"] = _parse_dollar_col(df["shipping_charge"])
+        else:
+            df["item_shipping"] = 0.0
+
+    # Parse quantity — Business uses "Item Quantity", Privacy Central uses "Quantity"
+    qty_col = None
+    for candidate in ["item_quantity", "quantity", "order_quantity"]:
+        if candidate in df.columns:
+            qty_col = candidate
+            break
+    if qty_col:
+        df["quantity"] = pd.to_numeric(df[qty_col], errors="coerce").fillna(1).astype(int)
     else:
         df["quantity"] = 1
 
@@ -192,7 +251,13 @@ def parse_amazon_csv(file_or_path) -> tuple[pd.DataFrame, list[str]]:
 
 def group_orders(df: pd.DataFrame) -> list[dict]:
     """
-    Group Amazon CSV rows by order_id.
+    Group Amazon CSV rows by charge (payment).
+
+    For Business CSVs (with payment_ref_id), groups by Payment Reference ID
+    so each group corresponds to one bank charge. A single order may produce
+    multiple charges if items ship separately.
+
+    For Privacy Central CSVs, groups by order_id.
 
     Returns list of order dicts, each with:
       order_id, order_date, items, order_total, product_summary
@@ -200,8 +265,21 @@ def group_orders(df: pd.DataFrame) -> list[dict]:
     if df.empty:
         return []
 
+    # Decide grouping key: payment_ref_id for Business, order_id for Privacy Central
+    has_payment_ref = "payment_ref_id" in df.columns
+    if has_payment_ref:
+        # Filter out rows with no payment ref (cancelled orders, etc.)
+        df_valid = df[df["payment_ref_id"].notna() & (df["payment_ref_id"].astype(str) != "N/A")]
+        group_col = "payment_ref_id"
+    else:
+        df_valid = df
+        group_col = "order_id"
+
+    if df_valid.empty:
+        return []
+
     orders = []
-    for order_id, group in df.groupby("order_id"):
+    for group_key, group in df_valid.groupby(group_col):
         items = []
         for _, row in group.iterrows():
             items.append({
@@ -211,12 +289,29 @@ def group_orders(df: pd.DataFrame) -> list[dict]:
                 "shipping": float(row.get("item_shipping", 0)),
                 "quantity": int(row.get("quantity", 1)),
                 "asin": str(row.get("asin", "")),
+                "amazon_category": str(row.get("amazon_category", "")),
             })
 
-        # Total = sum of (price + tax + shipping) for all items
+        # Total = sum of per-item amounts
         order_total = sum(
             i["unit_price"] + i["tax"] + i["shipping"] for i in items
         )
+
+        # For Business format, prefer payment_amount (matches bank charge exactly)
+        if has_payment_ref and "payment_amount" in group.columns:
+            pay_amt = group.iloc[0].get("payment_amount")
+            if pd.notna(pay_amt) and float(pay_amt) > 0:
+                order_total = float(pay_amt)
+
+        # Use payment_date (actual charge date) if available, else order_date
+        if has_payment_ref and "payment_date" in group.columns:
+            pay_date = group.iloc[0].get("payment_date")
+            if pd.notna(pay_date) and str(pay_date) != "N/A":
+                charge_date = str(pay_date)
+            else:
+                charge_date = str(group.iloc[0]["order_date"])
+        else:
+            charge_date = str(group.iloc[0]["order_date"])
 
         # Product summary
         names = [i["product_name"] for i in items]
@@ -231,13 +326,21 @@ def group_orders(df: pd.DataFrame) -> list[dict]:
         if len(product_summary) > 200:
             product_summary = product_summary[:197] + "..."
 
+        # Use order_id for display (more recognizable than payment_ref_id)
+        order_id = str(group.iloc[0].get("order_id", group_key))
+
+        # Pick the most common amazon_category from items (for category inference)
+        item_cats = [i["amazon_category"] for i in items if i["amazon_category"] and i["amazon_category"] != "nan"]
+        primary_amazon_cat = max(set(item_cats), key=item_cats.count) if item_cats else ""
+
         orders.append({
-            "order_id": str(order_id),
-            "order_date": str(group.iloc[0]["order_date"]),
+            "order_id": order_id,
+            "order_date": charge_date,
             "items": items,
             "order_total": round(order_total, 2),
             "product_summary": product_summary,
-            "matched": False,  # tracking flag for matching
+            "amazon_category": primary_amazon_cat,
+            "matched": False,
         })
 
     return orders
@@ -341,7 +444,7 @@ def match_orders_to_transactions(
             result["matched_order"] = order
             result["confidence"] = 0.95
             result["product_summary"] = order["product_summary"]
-            result["suggested_category"] = infer_category(order["product_summary"])
+            result["suggested_category"] = infer_category(order["product_summary"], order.get("amazon_category", ""))
             result["order_id"] = order["order_id"]
             results.append(result)
             continue
@@ -359,7 +462,7 @@ def match_orders_to_transactions(
             result["matched_order"] = order
             result["confidence"] = 0.80
             result["product_summary"] = order["product_summary"]
-            result["suggested_category"] = infer_category(order["product_summary"])
+            result["suggested_category"] = infer_category(order["product_summary"], order.get("amazon_category", ""))
             result["order_id"] = order["order_id"]
             results.append(result)
             continue
@@ -387,7 +490,7 @@ def match_orders_to_transactions(
                     result["matched_order"] = combo[0]  # primary
                     result["confidence"] = 0.75
                     result["product_summary"] = summary
-                    result["suggested_category"] = infer_category(summary)
+                    result["suggested_category"] = infer_category(summary, combo[0].get("amazon_category", ""))
                     result["order_id"] = ", ".join(o["order_id"] for o in combo)
                     found_combo = True
                     break
@@ -409,7 +512,7 @@ def match_orders_to_transactions(
             result["matched_order"] = best
             result["confidence"] = 0.50
             result["product_summary"] = best["product_summary"]
-            result["suggested_category"] = infer_category(best["product_summary"])
+            result["suggested_category"] = infer_category(best["product_summary"], best.get("amazon_category", ""))
             result["order_id"] = best["order_id"]
             # Don't mark as matched — user must confirm
             results.append(result)
