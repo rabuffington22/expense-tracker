@@ -157,8 +157,8 @@ def month_options(count: int = 12) -> list[str]:
 
 
 def format_month(ym: str) -> str:
-    """Convert 'YYYY-MM' to 'February 2026'."""
-    return datetime.strptime(ym, "%Y-%m").strftime("%B %Y")
+    """Convert 'YYYY-MM' to 'Feb 2026'."""
+    return datetime.strptime(ym, "%Y-%m").strftime("%b %Y")
 
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
@@ -197,10 +197,7 @@ with tab_import:
         )
         total_count = len(items)
 
-        if done_count == total_count:
-            st.success(f"All {total_count} sources imported for **{format_month(selected_month)}**")
-        else:
-            st.info(f"**{format_month(selected_month)}** — {done_count}/{total_count} sources imported")
+        st.write(f"{done_count}/{total_count} sources imported")
 
         st.markdown("---")
 

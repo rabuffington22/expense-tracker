@@ -50,7 +50,7 @@ for _ in range(12):
 
 
 def format_month(ym: str) -> str:
-    return datetime.strptime(ym, "%Y-%m").strftime("%B %Y")
+    return datetime.strptime(ym, "%Y-%m").strftime("%b %Y")
 
 
 selected_month = st.selectbox(
@@ -84,10 +84,7 @@ try:
         done = sum(1 for s in all_sources if status_map.get(s["id"], False))
         total = len(all_sources)
 
-        if done == total:
-            st.success(f"All {total} sources imported for **{format_month(selected_month)}**")
-        else:
-            st.info(f"**{done}/{total}** sources imported for **{format_month(selected_month)}**")
+        st.write(f"{done}/{total} sources imported")
 
             # List sources still needed
             missing = [s for s in all_sources if not status_map.get(s["id"], False)]
