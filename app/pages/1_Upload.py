@@ -172,14 +172,16 @@ with tab_import:
 
     # ── Month selector ────────────────────────────────────────────────────────
     months = month_options()
-    selected_month = st.selectbox(
-        "Month",
-        months,
-        index=0,
-        format_func=format_month,
-        key="import_month",
-        label_visibility="collapsed",
-    )
+    col_month, _ = st.columns([1, 3])
+    with col_month:
+        selected_month = st.selectbox(
+            "Month",
+            months,
+            index=0,
+            format_func=format_month,
+            key="import_month",
+            label_visibility="collapsed",
+        )
 
     # ── Load data ─────────────────────────────────────────────────────────────
     all_items = load_checklist_all()

@@ -53,14 +53,16 @@ def format_month(ym: str) -> str:
     return datetime.strptime(ym, "%Y-%m").strftime("%b %Y")
 
 
-selected_month = st.selectbox(
-    "Month",
-    months,
-    index=0,
-    format_func=format_month,
-    key="dash_month",
-    label_visibility="collapsed",
-)
+col_month, _ = st.columns([1, 3])
+with col_month:
+    selected_month = st.selectbox(
+        "Month",
+        months,
+        index=0,
+        format_func=format_month,
+        key="dash_month",
+        label_visibility="collapsed",
+    )
 
 # ── Import progress for selected month ────────────────────────────────────────
 conn = get_connection(entity_lower)
