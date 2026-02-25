@@ -9,7 +9,6 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from core.db import init_db, get_connection
 
@@ -18,28 +17,19 @@ from core.db import init_db, get_connection
 # Display name → database key
 _ENTITY_MAP = {"Personal": "personal", "BFM": "company"}
 _ENTITY_COLORS = {
-    "Personal": {"accent": "#30d158", "accent_hover": "#2ab84d", "glow": "rgba(48,209,88,0.25)"},
-    "BFM":      {"accent": "#0a84ff", "accent_hover": "#0974de", "glow": "rgba(10,132,255,0.25)"},
+    "Personal": {"accent": "#30d158"},
+    "BFM":      {"accent": "#0a84ff"},
 }
-
-
-def page_config(title: str = "Expense Tracker") -> None:
-    """Call once at the top of each page (before any other st.* call)."""
-    st.set_page_config(
-        page_title=title,
-        page_icon="$",
-        layout="wide",
-        initial_sidebar_state="expanded",
-    )
 
 
 def entity_selector() -> tuple[str, str]:
     """
-    Render entity toggle in the sidebar, above the page navigation.
+    Render entity toggle in the sidebar and inject theme CSS.
 
-    Returns (display_name, db_key) where:
-      - display_name is "Personal" or "BFM"
-      - db_key is "personal" or "company" (for DB operations)
+    Called once in the app router (main.py) BEFORE st.navigation()
+    so the toggle appears above the page links.
+
+    Returns (display_name, db_key).
     """
     with st.sidebar:
         choice = st.radio(
@@ -50,31 +40,6 @@ def entity_selector() -> tuple[str, str]:
             label_visibility="collapsed",
         )
         st.markdown("---")
-
-        # Move entity toggle above page nav via JS
-        components.html("""
-        <script>
-        (function() {
-            const doc = window.parent.document;
-            function reorder() {
-                const sidebar = doc.querySelector('[data-testid="stSidebar"]');
-                if (!sidebar) return false;
-                const nav = sidebar.querySelector('nav');
-                const userContent = sidebar.querySelector('[data-testid="stSidebarUserContent"]');
-                if (nav && userContent && nav.parentElement === userContent.parentElement) {
-                    nav.parentElement.insertBefore(userContent, nav);
-                    return true;
-                }
-                return false;
-            }
-            if (!reorder()) {
-                const obs = new MutationObserver(() => { if (reorder()) obs.disconnect(); });
-                obs.observe(doc.body, {childList: true, subtree: true});
-                setTimeout(() => obs.disconnect(), 5000);
-            }
-        })();
-        </script>
-        """, height=0)
 
     db_key = _ENTITY_MAP[choice]
     accent = _ENTITY_COLORS[choice]["accent"]
@@ -112,23 +77,21 @@ def entity_selector() -> tuple[str, str]:
         border-color: {accent} !important;
         color: {accent} !important;
     }}
-
-    /* Hide the JS iframe in sidebar */
-    [data-testid="stSidebar"] iframe {{
-        display: none !important;
-    }}
-
-    /* Rename "Main" to "Dashboard" in sidebar nav */
-    [data-testid="stSidebarNav"] li:first-child a span {{
-        font-size: 0 !important;
-    }}
-    [data-testid="stSidebarNav"] li:first-child a span::after {{
-        content: "Dashboard";
-        font-size: 14px;
-    }}
     </style>
     """, unsafe_allow_html=True)
 
+    return choice, db_key
+
+
+def get_entity() -> tuple[str, str]:
+    """
+    Read the current entity from session state (no rendering).
+
+    Called by individual page files. Returns (display_name, db_key).
+    """
+    choice = st.session_state.get("entity", "Personal")
+    db_key = _ENTITY_MAP.get(choice, "personal")
+    init_db(db_key)
     return choice, db_key
 
 

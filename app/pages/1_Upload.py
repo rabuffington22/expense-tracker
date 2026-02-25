@@ -7,25 +7,21 @@ _ROOT = Path(__file__).parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from app.shared import page_config, entity_selector, entity_display  # noqa: E402
+from datetime import datetime, timezone
 
-page_config("Upload")
+import pandas as pd
+import streamlit as st
 
-from datetime import datetime, timezone  # noqa: E402
-
-import pandas as pd  # noqa: E402
-import streamlit as st  # noqa: E402
-
-from core.db import get_connection, init_db  # noqa: E402
-from core.imports import (  # noqa: E402
+from core.db import get_connection, init_db
+from core.imports import (
     commit_transactions,
     normalize_transactions,
     parse_csv,
     parse_pdf,
 )
+from app.shared import get_entity, entity_display
 
-# ── Entity toggle ─────────────────────────────────────────────────────────────
-entity, entity_lower = entity_selector()
+entity, entity_lower = get_entity()
 other_entity = "company" if entity_lower == "personal" else "personal"
 
 # Ensure other entity DB is initialized too (for cross-entity progress)

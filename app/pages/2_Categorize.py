@@ -7,21 +7,17 @@ _ROOT = Path(__file__).parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from app.shared import page_config, entity_selector, get_categories  # noqa: E402
+from datetime import datetime, timezone
 
-page_config("Categorize")
+import streamlit as st
+import pandas as pd
 
-from datetime import datetime, timezone  # noqa: E402
+from core.db import get_connection
+from core.categorize import suggest_categories, apply_aliases_to_db
+from core.reporting import get_uncategorized
+from app.shared import get_entity, get_categories
 
-import streamlit as st  # noqa: E402
-import pandas as pd  # noqa: E402
-
-from core.db import get_connection  # noqa: E402
-from core.categorize import suggest_categories, apply_aliases_to_db  # noqa: E402
-from core.reporting import get_uncategorized  # noqa: E402
-
-# ── Entity toggle ─────────────────────────────────────────────────────────────
-entity, entity_lower = entity_selector()
+entity, entity_lower = get_entity()
 
 st.title("Categorize")
 

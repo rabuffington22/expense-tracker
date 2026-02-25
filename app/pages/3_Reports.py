@@ -7,24 +7,20 @@ _ROOT = Path(__file__).parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from app.shared import page_config, entity_selector  # noqa: E402
+import io
 
-page_config("Reports")
+import plotly.express as px
+import streamlit as st
 
-import io  # noqa: E402
-
-import plotly.express as px  # noqa: E402
-import streamlit as st  # noqa: E402
-
-from core.reporting import (  # noqa: E402
+from core.reporting import (
     get_available_months,
     get_category_totals,
     get_monthly_totals,
     get_transactions,
 )
+from app.shared import get_entity
 
-# ── Entity toggle ─────────────────────────────────────────────────────────────
-entity, entity_lower = entity_selector()
+entity, entity_lower = get_entity()
 
 st.title("Reports")
 
