@@ -96,11 +96,20 @@ def entity_selector() -> tuple[str, str]:
         margin-left: auto !important;
         margin-right: auto !important;
     }}
-    /* Active segment — filled background + accent text */
+    /* Active segment — filled background */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:has(input:checked) {{
         background: #38383a !important;
-        color: {accent} !important;
+    }}
+    /* Personal (1st label) active = green */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:first-of-type[data-checked="true"],
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:first-of-type:has(input:checked) {{
+        color: #30d158 !important;
+    }}
+    /* BFM (2nd label) active = blue */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:nth-of-type(2)[data-checked="true"],
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:nth-of-type(2):has(input:checked) {{
+        color: #0a84ff !important;
     }}
     </style>
     """, unsafe_allow_html=True)
