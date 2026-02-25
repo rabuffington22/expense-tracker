@@ -96,10 +96,9 @@ def entity_selector() -> tuple[str, str]:
         margin-left: auto !important;
         margin-right: auto !important;
     }}
-    /* Active segment — filled background + accent color */
+    /* Active segment — filled background */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:nth-of-type({1 if choice == "Personal" else 2}) {{
         background: #38383a !important;
-        color: {accent} !important;
     }}
     </style>
     """, unsafe_allow_html=True)

@@ -38,7 +38,16 @@ pg = st.navigation(
     position="hidden",
 )
 
-# Build sidebar: entity toggle first, then page links
+# Build sidebar: title, entity toggle, then page links
+with st.sidebar:
+    _title_color = get_accent()
+    st.markdown(
+        f'<p style="color:{_title_color};font-weight:700;font-size:1.1rem;'
+        f'text-align:center;margin:0 0 0.5rem 0;letter-spacing:0.05em;">'
+        f'EXPENSE TRACKER</p>',
+        unsafe_allow_html=True,
+    )
+
 entity_selector()
 
 with st.sidebar:
