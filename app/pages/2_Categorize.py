@@ -215,8 +215,35 @@ with tab_amazon:
                 f"totaling **${total_spent:,.2f}**"
             )
 
-            if st.button(f"Save {len(orders)} orders", type="primary"):
-                inserted, skipped = save_orders_to_db(entity_lower, orders)
+            # Date range filter
+            st.markdown("---")
+            st.write("**Filter by date range**")
+            from datetime import date as _date
+            # Parse min/max as date objects for the picker
+            _parsed_dates = pd.to_datetime(dates, errors="coerce").dropna()
+            _d_min = _parsed_dates.min().date() if not _parsed_dates.empty else _date.today()
+            _d_max = _parsed_dates.max().date() if not _parsed_dates.empty else _date.today()
+            # Default start: 12 months ago or data min, whichever is later
+            _default_start = _date(_d_max.year - 1, _d_max.month, _d_max.day) if _d_max.year > _d_min.year or _d_max.month > _d_min.month else _d_min
+            if _default_start < _d_min:
+                _default_start = _d_min
+            c_from, c_to = st.columns(2)
+            filter_from = c_from.date_input("From", value=_default_start, min_value=_d_min, max_value=_d_max)
+            filter_to = c_to.date_input("To", value=_d_max, min_value=_d_min, max_value=_d_max)
+
+            # Apply filter
+            filtered_orders = [
+                o for o in orders
+                if o.get("order_date") and filter_from <= pd.to_datetime(o["order_date"]).date() <= filter_to
+            ]
+            filtered_total = sum(o["order_total"] for o in filtered_orders)
+            st.write(
+                f"**{len(filtered_orders)}** of {len(orders)} orders in range, "
+                f"totaling **${filtered_total:,.2f}**"
+            )
+
+            if st.button(f"Save {len(filtered_orders)} orders", type="primary", disabled=len(filtered_orders) == 0):
+                inserted, skipped = save_orders_to_db(entity_lower, filtered_orders)
                 msg = f"Saved **{inserted}** orders."
                 if skipped:
                     msg += f" Skipped **{skipped}** duplicates."
