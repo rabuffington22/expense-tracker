@@ -181,24 +181,48 @@ def _merge_debit_credit(df: pd.DataFrame) -> pd.DataFrame:
 
 # ── PDF parsing ───────────────────────────────────────────────────────────────
 
-# Regex for a transaction line: MM/DD/YY(YY) description amount
-# Amount may be negative and/or prefixed with $
+# Pattern A: full date — MM/DD/YY(YY) description amount
+# Optional asterisk after date handles Amex posting-date notation (e.g. "01/06/26*")
 _DATE_LINE_RE = re.compile(
-    r"^(\d{2}/\d{2}/\d{2,4})\s+(.+?)\s+(-?\$?[\d,]+\.\d{2})\s*$"
+    r"^(\d{2}/\d{2}/\d{2,4})\*?\s+(.+?)\s+(-?\$?[\d,]+\.\d{2})\s*$"
 )
-# Regex for a check line: check# MM-DD $amount
+# Pattern B: short numeric date — MM/DD [MM/DD] description amount
+# Handles BofA CC ("01/21 01/22 PAYMENT ...") and Citi CC ("01/14 01/15 KROGER ...")
+# Note: no end-of-line anchor — credit card PDFs often have sidebar text after the amount
+_SHORT_DATE_LINE_RE = re.compile(
+    r"^(\d{2}/\d{2})\s+(?:\d{2}/\d{2}\s+)?(.+?)\s+(-?\$?[\d,]+\.\d{2})(?:\s|$)"
+)
+# Pattern C: named-month date — Mon DD Mon DD description amount
+# Handles Barclay CC ("Nov 04 Nov 05 Payment Received ...")
+_MONTH_DATE_LINE_RE = re.compile(
+    r"^([A-Z][a-z]{2}\s+\d{2})\s+[A-Z][a-z]{2}\s+\d{2}\s+(.+?)\s+(-?\$?[\d,]+\.\d{2})(?:\s|$)"
+)
+# Check line: check# MM-DD $amount
 _CHECK_LINE_RE = re.compile(
     r"^(\d{4,6})\s+(\d{2}-\d{2})\s+(-?\$?[\d,]+\.\d{2})\s*$"
 )
 
+# Month name → number mapping for named-month dates
+_MONTH_NUMS = {
+    "jan": "01", "feb": "02", "mar": "03", "apr": "04",
+    "may": "05", "jun": "06", "jul": "07", "aug": "08",
+    "sep": "09", "oct": "10", "nov": "11", "dec": "12",
+}
+
 # Section headers that indicate sign of transactions
 _CREDIT_SECTIONS = {"DEPOSITS/OTHER CREDITS", "DEPOSITS", "CREDITS",
-                    "OTHER CREDITS", "ADDITIONS"}
+                    "OTHER CREDITS", "ADDITIONS",
+                    # Credit card charge sections — amounts already have correct sign
+                    # in the text; sign=1 prevents double-negation from a prior
+                    # "PAYMENTS" section.
+                    "FEES CHARGED", "INTEREST CHARGED",
+                    # Amex uses "New Charges" for the purchase/charges section.
+                    "NEW CHARGES"}
 _DEBIT_SECTIONS = {"OTHER DEBITS", "DEBITS", "CHECKS", "CHECKS/OTHER DEBITS",
                    "WITHDRAWALS", "PAYMENTS", "SUBTRACTIONS"}
 _STOP_SECTIONS = {"DAILY ENDING BALANCE", "DAILY BALANCE", "TOTAL OVERDRAFT",
                   "EARNINGS SUMMARY", "STATEMENT SUMMARY", "TOTAL FOR THIS PERIOD",
-                  "ACCOUNT SUMMARY"}
+                  "ACCOUNT SUMMARY", "SHOP WITH POINTS"}
 
 
 def parse_pdf(path: str | Path) -> tuple[pd.DataFrame, list[str]]:
@@ -240,11 +264,12 @@ def parse_pdf(path: str | Path) -> tuple[pd.DataFrame, list[str]]:
         df = pd.concat(chunks, ignore_index=True)
         df = _auto_detect_columns(df)
         # Only trust table extraction if it produced recognisable columns
+        # AND the data actually contains parseable dates/amounts (not NaN/junk).
         has_date = "date" in df.columns or any(
             c.lower().strip() in {"date", "transaction date", "posted date"}
             for c in df.columns
         )
-        if has_date and len(df) >= 2:
+        if has_date and len(df) >= 2 and _table_data_looks_valid(df):
             pdf.close()
             return df, errors
 
@@ -264,6 +289,66 @@ def parse_pdf(path: str | Path) -> tuple[pd.DataFrame, list[str]]:
     return df, errors
 
 
+def _infer_pdf_year(pdf) -> str:
+    """Scan first two pages for the statement year from date-like contexts."""
+    for page in pdf.pages[:2]:
+        text = page.extract_text() or ""
+        # 1. "Month DD, YYYY" or "Month DD - Month DD, YYYY"
+        m = re.search(
+            r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*"
+            r"\s+\d{1,2},?\s+(20\d{2})", text
+        )
+        if m:
+            return m.group(1)
+        # 2. MM/DD/YYYY (4-digit year in a date)
+        m = re.search(r"\d{2}/\d{2}/(20\d{2})", text)
+        if m:
+            return m.group(1)
+        # 3. MM/DD/YY (2-digit year in a date)
+        m = re.search(r"\d{2}/\d{2}/(\d{2})\b", text)
+        if m:
+            return str(2000 + int(m.group(1)))
+    return str(datetime.now().year)
+
+
+def _infer_closing_month(pdf) -> Optional[int]:
+    """
+    Try to find the statement closing month for year-rollback logic.
+
+    Statements that span two calendar years (e.g. Dec 2025 – Jan 2026)
+    need to assign earlier months to the previous year.  Returns the
+    closing month (1-12) or None if it can't be determined.
+    """
+    for page in pdf.pages[:3]:
+        text = page.extract_text() or ""
+        # "Closing Date" with optional opening-closing range:
+        #   Chase:  "Opening/Closing Date 12/21/25 - 01/20/26"
+        #   Amex:   "Closing Date01/22/26"
+        # If there's a hyphen-separated second date, use that (it's the closing).
+        m = re.search(
+            r"[Cc]losing\s+[Dd]ate\D*?"
+            r"(\d{2}/\d{2}/\d{2,4})"
+            r"(?:\s*-\s*(\d{2}/\d{2}/\d{2,4}))?",
+            text,
+        )
+        if m:
+            date_str = m.group(2) or m.group(1)
+            return int(date_str.split("/")[0])
+        # "Statement Date: MM/DD/YY" or "Statement Date MM/DD/YY"
+        m = re.search(r"Statement\s+Date:?\s*(\d{2})/\d{2}/\d{2,4}", text)
+        if m:
+            return int(m.group(1))
+        # Barclay: "Statement Balance as of MM/DD/YY"
+        m = re.search(r"[Ss]tatement.*?as\s+of\s*(\d{2})/\d{2}/\d{2,4}", text)
+        if m:
+            return int(m.group(1))
+        # "through MM/DD/YY" (Citi)
+        m = re.search(r"through\s+(\d{2})/\d{2}/\d{2,4}", text)
+        if m:
+            return int(m.group(1))
+    return None
+
+
 def _normalise_pdf_date(date_str: str) -> str:
     """Convert MM/DD/YY to MM/DD/YYYY if needed."""
     parts = date_str.split("/")
@@ -271,6 +356,27 @@ def _normalise_pdf_date(date_str: str) -> str:
         year = int(parts[2])
         parts[2] = str(2000 + year if year < 100 else year)
     return "/".join(parts)
+
+
+def _month_name_to_date(month_day: str, year: str) -> str:
+    """Convert 'Nov 04' to 'MM/DD/YYYY'."""
+    parts = month_day.split()
+    month_num = _MONTH_NUMS.get(parts[0].lower(), "01")
+    return f"{month_num}/{parts[1]}/{year}"
+
+
+def _year_for_short_date(date_short: str, stmt_year: str, closing_month: Optional[int]) -> str:
+    """
+    Determine the correct year for a short MM/DD date.
+
+    Statements that span two calendar years (e.g. Dec – Jan) need December
+    transactions assigned to the previous year.  If the transaction month is
+    later than the statement closing month, it belongs to the prior year.
+    """
+    txn_month = int(date_short.split("/")[0])
+    if closing_month is not None and txn_month > closing_month:
+        return str(int(stmt_year) - 1)
+    return stmt_year
 
 
 def _parse_pdf_amount(amt_str: str, section_sign: int) -> float:
@@ -293,13 +399,27 @@ def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
     """
     Extract transactions from PDF text by finding dated lines with
     dollar amounts, using section headers to determine sign (credit/debit).
+
+    Handles multiple date formats:
+      - Full dates: MM/DD/YYYY or MM/DD/YY  (checking/savings statements)
+      - Short numeric: MM/DD [MM/DD]        (BofA CC, Citi CC, Chase)
+      - Named month:  Mon DD Mon DD         (Barclay CC)
     """
     errors: list[str] = []
     rows: list[dict] = []
 
     # Current section sign: 1 for credits, -1 for debits, 0 for unknown
     sign = 0
-    current_year = None
+    stmt_year = _infer_pdf_year(pdf)
+    current_year = stmt_year
+
+    # For statements spanning two calendar years (e.g. Dec 2025 – Jan 2026),
+    # short dates like "12/27" need the previous year, not stmt_year.
+    closing_month = _infer_closing_month(pdf)
+
+    # Stop sections (DAILY ENDING BALANCE, SHOP WITH POINTS, etc.) disable
+    # transaction parsing until a credit/debit section header re-enables it.
+    parsing_active = True
 
     for page in pdf.pages:
         text = page.extract_text() or ""
@@ -311,37 +431,71 @@ def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
             # ── 1. Try transaction match FIRST ────────────────────────────
             # This prevents descriptions containing words like "PAYMENTS"
             # from being misidentified as section headers.
-            m = _DATE_LINE_RE.match(stripped)
-            if m:
-                date_str, desc, amt_str = m.group(1), m.group(2), m.group(3)
-                # Skip balance summary lines (not real transactions)
-                desc_lower = desc.lower()
-                if "beginning balance" in desc_lower or "ending balance" in desc_lower:
-                    continue
-                date_str = _normalise_pdf_date(date_str)
-                amount = _parse_pdf_amount(amt_str, sign)
-                rows.append({
-                    "date": date_str,
-                    "description_raw": desc.strip(),
-                    "amount": str(amount),
-                })
-                # Remember the year for check lines that only have MM-DD
-                current_year = date_str.split("/")[-1]
-                continue
+            # Only match transactions when parsing is active (not in a
+            # stop section like "SHOP WITH POINTS ACTIVITY").
 
-            m = _CHECK_LINE_RE.match(stripped)
-            if m:
-                check_num, date_short, amt_str = m.group(1), m.group(2), m.group(3)
-                amount = -abs(_parse_pdf_amount(amt_str, sign))  # checks always debits
-                month, day = date_short.split("-")
-                year = current_year or "2026"
-                date_str = f"{month}/{day}/{year}"
-                rows.append({
-                    "date": date_str,
-                    "description_raw": f"Check #{check_num}",
-                    "amount": str(amount),
-                })
-                continue
+            if parsing_active:
+                # Pattern A: full date — MM/DD/YY(YY)
+                m = _DATE_LINE_RE.match(stripped)
+                if m:
+                    date_str, desc, amt_str = m.group(1), m.group(2), m.group(3)
+                    desc_lower = desc.lower()
+                    if "beginning balance" in desc_lower or "ending balance" in desc_lower:
+                        continue
+                    date_str = _normalise_pdf_date(date_str)
+                    amount = _parse_pdf_amount(amt_str, sign)
+                    rows.append({
+                        "date": date_str,
+                        "description_raw": desc.strip(),
+                        "amount": str(amount),
+                    })
+                    current_year = date_str.split("/")[-1]
+                    continue
+
+                # Pattern B: short numeric — MM/DD [MM/DD] (credit card statements)
+                m = _SHORT_DATE_LINE_RE.match(stripped)
+                if m:
+                    date_short, desc, amt_str = m.group(1), m.group(2), m.group(3)
+                    year = _year_for_short_date(date_short, stmt_year, closing_month)
+                    date_str = f"{date_short}/{year}"
+                    amount = _parse_pdf_amount(amt_str, sign)
+                    rows.append({
+                        "date": date_str,
+                        "description_raw": desc.strip(),
+                        "amount": str(amount),
+                    })
+                    continue
+
+                # Pattern C: named month — Mon DD Mon DD (Barclay)
+                m = _MONTH_DATE_LINE_RE.match(stripped)
+                if m:
+                    month_day, desc, amt_str = m.group(1), m.group(2), m.group(3)
+                    year = _year_for_short_date(
+                        f"{_MONTH_NUMS.get(month_day.split()[0].lower(), '01')}/01",
+                        stmt_year, closing_month,
+                    )
+                    date_str = _month_name_to_date(month_day, year)
+                    amount = _parse_pdf_amount(amt_str, sign)
+                    rows.append({
+                        "date": date_str,
+                        "description_raw": desc.strip(),
+                        "amount": str(amount),
+                    })
+                    continue
+
+                # Check line: checknum MM-DD
+                m = _CHECK_LINE_RE.match(stripped)
+                if m:
+                    check_num, date_short, amt_str = m.group(1), m.group(2), m.group(3)
+                    amount = -abs(_parse_pdf_amount(amt_str, sign))  # checks always debits
+                    month, day = date_short.split("-")
+                    date_str = f"{month}/{day}/{current_year}"
+                    rows.append({
+                        "date": date_str,
+                        "description_raw": f"Check #{check_num}",
+                        "amount": str(amount),
+                    })
+                    continue
 
             # ── 2. Check section headers (only short, non-transaction lines)
             # Long boilerplate (deposit agreements, disclosures) can contain
@@ -350,12 +504,15 @@ def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
                 upper = stripped.upper()
                 if any(s in upper for s in _STOP_SECTIONS):
                     sign = 0
+                    parsing_active = False
                     continue
                 if any(s in upper for s in _CREDIT_SECTIONS):
                     sign = 1
+                    parsing_active = True
                     continue
                 if any(s in upper for s in _DEBIT_SECTIONS):
                     sign = -1
+                    parsing_active = True
                     continue
 
     if not rows:
@@ -363,6 +520,41 @@ def _parse_pdf_text(pdf) -> tuple[pd.DataFrame, list[str]]:
 
     df = pd.DataFrame(rows)
     return df, errors
+
+
+def _table_data_looks_valid(df: pd.DataFrame) -> bool:
+    """
+    Sanity-check table-extracted data: at least 30% of rows should have a
+    parseable date AND a parseable numeric amount.  This catches junk tables
+    (payment coupons, comparison charts) that happen to have columns named
+    "date" or "amount" but contain NaN / empty / non-date text.
+    """
+    date_col = "date" if "date" in df.columns else None
+    amt_col = "amount" if "amount" in df.columns else None
+    if not date_col:
+        return False
+
+    _date_like = re.compile(r"\d{1,2}[/\-]\d{1,2}([/\-]\d{2,4})?")
+    good = 0
+    for _, row in df.iterrows():
+        d = str(row.get(date_col, "")).strip()
+        if not d or d.lower() == "nan":
+            continue
+        if not _date_like.search(d):
+            continue
+        # If we have an amount column, check that too
+        if amt_col:
+            a = str(row.get(amt_col, "")).strip()
+            if not a or a.lower() == "nan":
+                continue
+            cleaned = re.sub(r"[^\d.\-]", "", a)
+            try:
+                float(cleaned)
+            except ValueError:
+                continue
+        good += 1
+
+    return good >= max(2, len(df) * 0.3)
 
 
 def _table_to_df(table: list[list]) -> Optional[pd.DataFrame]:

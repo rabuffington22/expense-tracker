@@ -185,6 +185,23 @@ VALUES
     ('Prosperity Business Checking', 'prosperity', NULL, NULL, 'PDF statement — filename is "prosperity statement_MMDDYYYY.pdf". No CSV available; text-based PDF parser extracts transactions automatically.', 9, datetime('now'));
 """
 
+_MIGRATION_10 = """
+UPDATE import_checklist
+    SET label = 'Chase Amazon Visa',
+        filename_pattern = 'chase amazon',
+        profile_name = NULL,
+        notes = 'PDF statement — personal card. Filenames like "chase amazon 20260120-statements-2357-.pdf". Text-based PDF parser handles short MM/DD dates with year inference.'
+    WHERE label = 'Chase Amazon CC';
+
+INSERT OR IGNORE INTO import_checklist
+    (label, filename_pattern, profile_name, url, notes, sort_order, created_at)
+VALUES
+    ('Barclay CC', 'barclay', NULL, NULL,
+     'PDF statement — personal card, rarely used. Filenames like "barclay cc nov 6.pdf". Named-month date format (Mon DD).', 10, datetime('now')),
+    ('Amex Business Card', 'amex', NULL, NULL,
+     'PDF statement — company card with multiple cardholders (Ryan, Andrea, Sarah). Filenames like "amex 2026-01-22.pdf". Full MM/DD/YY dates with asterisk posting-date notation.', 11, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -195,6 +212,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (7, _MIGRATION_7),
     (8, _MIGRATION_8),
     (9, _MIGRATION_9),
+    (10, _MIGRATION_10),
 ]
 
 _DEFAULT_CATEGORIES = [
