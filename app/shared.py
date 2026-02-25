@@ -58,7 +58,16 @@ def entity_selector() -> tuple[str, str]:
     # ── Inject entity-aware theme CSS ─────────────────────────────────────────
     st.markdown(f"""
     <style>
-    /* ── Entity toggle styling (sidebar) ─────────────────────────────────── */
+    /* ── Push entity toggle above page nav ──────────────────────────────── */
+    [data-testid="stSidebar"] > div > div > div {{
+        display: flex !important;
+        flex-direction: column !important;
+    }}
+    [data-testid="stSidebarNav"] {{
+        order: 2 !important;
+    }}
+
+    /* ── Entity toggle styling ────────────────────────────────────────────── */
 
     /* Hide the default radio dot */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:first-child {{
