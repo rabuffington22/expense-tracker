@@ -135,8 +135,7 @@ st.markdown(
 | Page | Purpose |
 |------|---------|
 | **Upload & Import** | Import CSV and PDF bank statements |
-| **Categorize** | Review and accept category suggestions |
+| **Categorize** | Review/accept categories · Manage categories & aliases |
 | **Reports** | Monthly spend charts and drill-downs |
-| **Categories & Aliases** | Manage categories and merchant rules |
 """
 )
