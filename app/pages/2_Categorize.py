@@ -79,6 +79,7 @@ with tab_review:
                     st.warning("Nothing to save.")
                 else:
                     conn = get_connection(entity_lower)
+                    aliases_created = 0
                     try:
                         for _, row in edited.iterrows():
                             cat = row.get("category") or ""
@@ -89,11 +90,42 @@ with tab_review:
                                 "WHERE transaction_id=?",
                                 (cat, row.get("notes") or "", row["transaction_id"]),
                             )
+
+                            # Auto-create merchant alias so future imports learn
+                            if cat:
+                                desc = str(row.get("description_raw") or "").strip()
+                                if desc:
+                                    # Strip platform prefixes for cleaner patterns
+                                    import re
+                                    pattern = re.sub(
+                                        r"^(paypal\s*\*|venmo\s*\*|zelle\s*\*|sq\s*\*|tst\s*\*|sp\s*\*)\s*",
+                                        "", desc, flags=re.IGNORECASE,
+                                    ).strip()
+                                    if len(pattern) >= 4:
+                                        # Check if alias already exists
+                                        existing = conn.execute(
+                                            "SELECT id FROM merchant_aliases "
+                                            "WHERE pattern_type='contains' AND LOWER(pattern)=LOWER(?)",
+                                            (pattern,),
+                                        ).fetchone()
+                                        if not existing:
+                                            now_ts = datetime.now(timezone.utc).isoformat()
+                                            conn.execute(
+                                                "INSERT INTO merchant_aliases "
+                                                "(pattern_type, pattern, merchant_canonical, "
+                                                " default_category, active, created_at) "
+                                                "VALUES (?, ?, ?, ?, 1, ?)",
+                                                ("contains", pattern, pattern, cat, now_ts),
+                                            )
+                                            aliases_created += 1
                         conn.commit()
                     finally:
                         conn.close()
 
-                    st.success(f"Saved {len(edited)} transaction(s).")
+                    msg = f"Saved {len(edited)} transaction(s)."
+                    if aliases_created:
+                        msg += f" Created {aliases_created} merchant alias(es) for future matching."
+                    st.success(msg)
                     del st.session_state["categorize_df"]
                     st.rerun()
 

@@ -18,12 +18,17 @@ from core.db import get_connection
 # ── Keyword rules (description → category, confidence) ───────────────────────
 
 _KEYWORD_RULES: list[tuple[list[str], str, float]] = [
+    # ── High-confidence specific matches (check first) ───────────────────
+    (["autopay", "auto pay", "pymt", "payment thank you", "card payment",
+      "credit card payment", "pay down"],
+     "Credit Card Payment", 0.8),
     (["grocery", "grocer", "safeway", "kroger", "whole foods", "trader joe",
       "aldi", "costco", "sam's club", "publix", "heb", "wegmans", "sprouts"],
      "Groceries", 0.7),
     (["restaurant", "cafe", "coffee", "starbucks", "mcdonald", "subway",
       "pizza", "taco", "burger", "doordash", "grubhub", "ubereats", "chipotle",
-      "chick-fil", "panera", "denny", "ihop", "waffle house", "wendy"],
+      "chick-fil", "panera", "denny", "ihop", "waffle house", "wendy",
+      "caminos", "wingstop", "panda express", "sonic", "popeyes", "whataburger"],
      "Dining", 0.7),
     (["uber", "lyft", "taxi", "parking", "gas station", "shell", "chevron",
       "bp ", "exxon", "fuel", "toll", "transit", "mta", "bart", "metro",
@@ -34,15 +39,19 @@ _KEYWORD_RULES: list[tuple[list[str], str, float]] = [
       "spectrum"],
      "Utilities", 0.6),
     (["pharmacy", "walgreens", "cvs", "rite aid", "doctor", "hospital",
-      "dental", "vision", "health", "medical", "clinic", "optometrist"],
+      "dental", "vision", "health", "medical", "clinic", "optometrist",
+      "labcorp", "laboratory", "quest diag", "urgent care"],
      "Healthcare", 0.7),
     (["netflix", "spotify", "hulu", "disney", "hbo", "amazon prime",
       "apple tv", "cinema", "movie", "theater", "concert", "ticketmaster",
-      "audible", "kindle"],
+      "audible", "kindle", "peacock"],
      "Entertainment", 0.7),
     (["amazon", "walmart", "target", "ebay", "etsy", "shopify", "clothing",
       "apparel", "bestbuy", "best buy", "apple store", "gap", "zara", "h&m"],
      "Shopping", 0.6),
+    (["home depot", "lowes", "lowe's", "menards", "ace hardware", "spray paint",
+      "lumber", "paint", "hardware"],
+     "DIY", 0.6),
     (["airline", "hotel", "airbnb", "expedia", "booking.com", "marriott",
       "hilton", "delta", "united", "southwest", "american air", "spirit",
       "vrbo"],
@@ -51,19 +60,35 @@ _KEYWORD_RULES: list[tuple[list[str], str, float]] = [
      "Housing", 0.7),
     (["payroll", "direct dep", "salary", "income", "wages"],
      "Income", 0.7),
-    (["transfer", "zelle", "venmo", "paypal", "wire", "ach"],
-     "Transfers", 0.5),
+    (["subscription", "membership", "annual fee", "monthly fee", "saas",
+      "dynastynerd", "dynasty nerd"],
+     "Subscriptions", 0.6),
     (["fee", "interest charge", "penalty", "overdraft", "late fee"],
      "Fees", 0.6),
-    (["subscription", "membership", "annual fee", "monthly fee", "saas"],
-     "Subscriptions", 0.6),
+    # ── Transfers last (low confidence, only if nothing else matched) ────
+    (["transfer", "zelle", "venmo", "wire", "ach"],
+     "Transfers", 0.5),
 ]
+
+
+# Prefixes from payment platforms that obscure the actual merchant name
+_PLATFORM_PREFIXES = re.compile(
+    r"^(paypal\s*\*|venmo\s*\*|zelle\s*\*|sq\s*\*|tst\s*\*|sp\s*\*)\s*",
+    re.IGNORECASE,
+)
+
+
+def _strip_platform_prefix(text: str) -> str:
+    """Remove payment-platform prefixes like 'PAYPAL *' to expose merchant."""
+    return _PLATFORM_PREFIXES.sub("", text).strip()
 
 
 def _keyword_suggest(description: str) -> tuple[Optional[str], float]:
     desc_lower = description.lower()
+    # Also try with platform prefix stripped
+    stripped_lower = _strip_platform_prefix(desc_lower)
     for keywords, category, confidence in _KEYWORD_RULES:
-        if any(kw in desc_lower for kw in keywords):
+        if any(kw in desc_lower or kw in stripped_lower for kw in keywords):
             return category, confidence
     return None, 0.0
 
@@ -113,7 +138,9 @@ def suggest_categories(df: pd.DataFrame, entity: str) -> pd.DataFrame:
         merchant = str(row.get("merchant_raw") or "")
         combined = f"{desc} {merchant}".strip()
 
-        alias = _match_alias(combined, aliases)
+        # Try alias match on both raw and prefix-stripped text
+        stripped = _strip_platform_prefix(combined)
+        alias = _match_alias(combined, aliases) or _match_alias(stripped, aliases)
         if alias:
             result.at[idx, "merchant_canonical"] = alias["merchant_canonical"]
             if alias.get("default_category"):
