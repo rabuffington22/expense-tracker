@@ -284,100 +284,108 @@ with tab_amazon:
             if st.button("Run Matching", type="primary"):
                 db_orders = load_orders_from_db(entity_lower, unmatched_only=True)
                 matches = match_orders_to_transactions(db_orders, amazon_txns)
-                st.session_state.amazon_matches = matches
 
-            matches = st.session_state.get("amazon_matches")
-            if matches:
-                high_conf = [m for m in matches if m["confidence"] >= 0.75]
-                low_conf = [m for m in matches if 0 < m["confidence"] < 0.75]
-                no_match = [m for m in matches if m["confidence"] == 0 and m["match_type"] != "skip"]
+                # Auto-apply exact matches immediately
+                exact = [m for m in matches if m["match_type"] == "exact"]
+                if exact:
+                    auto_apply = []
+                    for m in exact:
+                        auto_apply.append({
+                            "transaction_id": m["transaction_id"],
+                            "product_summary": m["product_summary"],
+                            "suggested_category": m["suggested_category"],
+                            "order_id": m["order_id"],
+                            "order_total": m["matched_order"]["order_total"],
+                            "confidence": m["confidence"],
+                        })
+                    auto_count = apply_matches(entity_lower, auto_apply)
+                    st.success(f"Auto-applied **{auto_count}** exact matches.")
 
+                # Keep non-exact matches for review
+                review = [m for m in matches if m["match_type"] not in ("exact", "skip", "none")]
+                no_match = [m for m in matches if m["match_type"] == "none"]
+                st.session_state.amazon_matches = review
+                st.session_state.amazon_no_match = no_match
+
+            review = st.session_state.get("amazon_matches")
+            no_match = st.session_state.get("amazon_no_match", [])
+
+            if review:
                 st.markdown("---")
-                st.write(
-                    f"**{len(high_conf)}** high-confidence, "
-                    f"**{len(low_conf)}** possible, "
-                    f"**{len(no_match)}** unmatched"
-                )
+                st.write(f"**{len(review)}** matches to review")
 
                 categories = get_categories(entity_lower) + ["Shopping"]
 
-                if high_conf or low_conf:
-                    edit_rows = []
-                    for m in high_conf + low_conf:
-                        conf_label = (
-                            "exact" if m["match_type"] == "exact"
-                            else "likely" if m["match_type"] == "amount_only"
-                            else "multi" if m["match_type"] == "multi_order"
-                            else "possible"
+                edit_rows = []
+                for m in review:
+                    conf_label = m["match_type"]  # likely, multi_order, date_only
+                    edit_rows.append({
+                        "accept": False,
+                        "date": m["txn_date"],
+                        "description": m["txn_description"],
+                        "amount": m["txn_amount"],
+                        "match": conf_label,
+                        "product": m["product_summary"],
+                        "category": m["suggested_category"],
+                        "order_id": m["order_id"],
+                        "transaction_id": m["transaction_id"],
+                    })
+
+                df_edit = pd.DataFrame(edit_rows)
+                edited = st.data_editor(
+                    df_edit,
+                    column_config={
+                        "accept": st.column_config.CheckboxColumn("Accept", width="small"),
+                        "date": st.column_config.TextColumn("Date", disabled=True, width="small"),
+                        "description": st.column_config.TextColumn("Bank Desc", disabled=True, width="medium"),
+                        "amount": st.column_config.NumberColumn("Amount", format="$%.2f", disabled=True, width="small"),
+                        "match": st.column_config.TextColumn("Match", disabled=True, width="small"),
+                        "product": st.column_config.TextColumn("Product", width="large"),
+                        "category": st.column_config.SelectboxColumn("Category", options=categories, width="medium"),
+                        "order_id": st.column_config.TextColumn("Order ID", disabled=True, width="small"),
+                        "transaction_id": None,
+                    },
+                    use_container_width=True,
+                    hide_index=True,
+                    height=min(520, 42 + 35 * len(edit_rows)),
+                    key="amazon_match_editor",
+                )
+
+                st.markdown("---")
+                accepted = edited[edited["accept"] == True]  # noqa: E712
+                st.write(f"**{len(accepted)}** matches selected")
+
+                if st.button("Apply Matches", type="primary"):
+                    if accepted.empty:
+                        st.warning("No matches selected.")
+                    else:
+                        to_apply = []
+                        for _, row in accepted.iterrows():
+                            to_apply.append({
+                                "transaction_id": row["transaction_id"],
+                                "product_summary": row["product"],
+                                "suggested_category": row["category"],
+                                "order_id": row["order_id"],
+                                "order_total": row["amount"],
+                                "confidence": next(
+                                    (m["confidence"] for m in review
+                                     if m["transaction_id"] == row["transaction_id"]),
+                                    0.8,
+                                ),
+                            })
+                        updated = apply_matches(entity_lower, to_apply)
+                        st.success(f"Applied **{updated}** matches.")
+                        st.session_state.pop("amazon_matches", None)
+                        st.session_state.pop("amazon_no_match", None)
+                        st.rerun()
+
+            if no_match:
+                with st.expander(f"{len(no_match)} unmatched bank transactions"):
+                    for m in no_match:
+                        st.write(
+                            f"**{m['txn_date']}** — {m['txn_description']} — "
+                            f"${abs(m['txn_amount']):,.2f}"
                         )
-                        edit_rows.append({
-                            "accept": m["confidence"] >= 0.75,
-                            "date": m["txn_date"],
-                            "description": m["txn_description"],
-                            "amount": m["txn_amount"],
-                            "match": conf_label,
-                            "product": m["product_summary"],
-                            "category": m["suggested_category"],
-                            "order_id": m["order_id"],
-                            "transaction_id": m["transaction_id"],
-                        })
-
-                    df_edit = pd.DataFrame(edit_rows)
-                    edited = st.data_editor(
-                        df_edit,
-                        column_config={
-                            "accept": st.column_config.CheckboxColumn("Accept", width="small"),
-                            "date": st.column_config.TextColumn("Date", disabled=True, width="small"),
-                            "description": st.column_config.TextColumn("Bank Desc", disabled=True, width="medium"),
-                            "amount": st.column_config.NumberColumn("Amount", format="$%.2f", disabled=True, width="small"),
-                            "match": st.column_config.TextColumn("Match", disabled=True, width="small"),
-                            "product": st.column_config.TextColumn("Product", width="large"),
-                            "category": st.column_config.SelectboxColumn("Category", options=categories, width="medium"),
-                            "order_id": st.column_config.TextColumn("Order ID", disabled=True, width="small"),
-                            "transaction_id": None,
-                        },
-                        use_container_width=True,
-                        hide_index=True,
-                        height=min(520, 42 + 35 * len(edit_rows)),
-                        key="amazon_match_editor",
-                    )
-
-                    st.markdown("---")
-                    accepted = edited[edited["accept"] == True]  # noqa: E712
-                    st.write(f"**{len(accepted)}** matches selected")
-
-                    if st.button("Apply Matches", type="primary"):
-                        if accepted.empty:
-                            st.warning("No matches selected.")
-                        else:
-                            to_apply = []
-                            for _, row in accepted.iterrows():
-                                to_apply.append({
-                                    "transaction_id": row["transaction_id"],
-                                    "product_summary": row["product"],
-                                    "suggested_category": row["category"],
-                                    "order_id": row["order_id"],
-                                    "order_total": row["amount"],
-                                    "confidence": next(
-                                        (m["confidence"] for m in matches
-                                         if m["transaction_id"] == row["transaction_id"]),
-                                        0.8,
-                                    ),
-                                })
-                            updated = apply_matches(entity_lower, to_apply)
-                            st.success(f"Updated **{updated}** transactions with product details.")
-                            st.session_state.pop("amazon_matches", None)
-                            st.rerun()
-                else:
-                    st.info("No matches found between Amazon orders and bank transactions.")
-
-                if no_match:
-                    with st.expander(f"{len(no_match)} unmatched bank transactions"):
-                        for m in no_match:
-                            st.write(
-                                f"**{m['txn_date']}** — {m['txn_description']} — "
-                                f"${abs(m['txn_amount']):,.2f}"
-                            )
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

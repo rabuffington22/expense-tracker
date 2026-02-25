@@ -380,16 +380,19 @@ def _dates_within_window(txn_date: str, order_date: str, window: int = 5) -> boo
         return False
 
 
-def _amounts_match(txn_amount: float, order_total: float, tolerance: float = 0.05) -> bool:
-    """Check if amounts match within tolerance."""
-    return abs(abs(txn_amount) - order_total) <= tolerance
+def _amounts_match(txn_amount: float, order_total: float, tolerance_pct: float = 0.10) -> bool:
+    """Check if amounts match within percentage tolerance (default 10%)."""
+    txn_abs = abs(txn_amount)
+    diff = abs(txn_abs - order_total)
+    # Use percentage of the larger value, with a $0.10 minimum floor
+    ref = max(txn_abs, order_total, 0.01)
+    return diff <= max(ref * tolerance_pct, 0.10)
 
 
 def match_orders_to_transactions(
     orders: list[dict],
     transactions: pd.DataFrame,
     date_window: int = 5,
-    amount_tolerance: float = 0.05,
 ) -> list[dict]:
     """
     Multi-pass matching of Amazon orders to bank transactions.
@@ -430,11 +433,11 @@ def match_orders_to_transactions(
             results.append(result)
             continue
 
-        # Pass 1: Exact match (amount + date)
+        # Pass 1: Exact match (amount + date within window)
         exact_matches = [
             o for o in unmatched_orders
             if not o["matched"]
-            and _amounts_match(txn_amount, o["order_total"], amount_tolerance)
+            and _amounts_match(txn_amount, o["order_total"])
             and _dates_within_window(txn_date, o["order_date"], date_window)
         ]
         if exact_matches:
@@ -452,11 +455,12 @@ def match_orders_to_transactions(
             results.append(result)
             continue
 
-        # Pass 2: Amount-only match (ignore date)
+        # Pass 2: Amount match within 30 days (wider date window)
         amount_matches = [
             o for o in unmatched_orders
             if not o["matched"]
-            and _amounts_match(txn_amount, o["order_total"], amount_tolerance)
+            and _amounts_match(txn_amount, o["order_total"])
+            and _dates_within_window(txn_date, o["order_date"], 30)
         ]
         if amount_matches:
             # Pick closest date when multiple amount matches
@@ -464,7 +468,7 @@ def match_orders_to_transactions(
                 (datetime.strptime(txn_date, "%Y-%m-%d") - datetime.strptime(o["order_date"], "%Y-%m-%d")).days
             ))
             order["matched"] = True
-            result["match_type"] = "amount_only" if len(amount_matches) == 1 else "likely"
+            result["match_type"] = "likely"
             result["matched_order"] = order
             result["confidence"] = 0.80
             result["product_summary"] = order["product_summary"]
@@ -485,7 +489,7 @@ def match_orders_to_transactions(
                 break
             for combo in combinations(candidate_orders, combo_size):
                 combo_total = sum(o["order_total"] for o in combo)
-                if _amounts_match(txn_amount, combo_total, amount_tolerance):
+                if _amounts_match(txn_amount, combo_total):
                     for o in combo:
                         o["matched"] = True
                     names = [o["product_summary"] for o in combo]
