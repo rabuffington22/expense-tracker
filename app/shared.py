@@ -77,6 +77,9 @@ def entity_selector() -> tuple[str, str]:
         cursor: pointer !important;
         transition: all 0.15s ease !important;
         white-space: nowrap !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }}
     /* Active option — colored text + colored border, no fill */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
