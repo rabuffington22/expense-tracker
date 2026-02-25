@@ -26,7 +26,7 @@ def page_config(title: str = "Expense Tracker") -> None:
     """Call once at the top of each page (before any other st.* call)."""
     st.set_page_config(
         page_title=title,
-        page_icon="💰",
+        page_icon="$",
         layout="wide",
         initial_sidebar_state="expanded",
     )
@@ -85,6 +85,15 @@ def entity_selector() -> tuple[str, str]:
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:has(input:checked) {{
         border-color: {accent} !important;
         color: {accent} !important;
+    }}
+
+    /* Rename "Main" to "Dashboard" in sidebar nav */
+    [data-testid="stSidebarNav"] li:first-child a span {{
+        font-size: 0 !important;
+    }}
+    [data-testid="stSidebarNav"] li:first-child a span::after {{
+        content: "Dashboard";
+        font-size: 14px;
     }}
     </style>
     """, unsafe_allow_html=True)

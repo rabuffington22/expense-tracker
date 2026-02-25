@@ -35,7 +35,7 @@ with tab_review:
     raw = get_uncategorized(entity_lower)
 
     if raw.empty:
-        st.success("✅ All transactions are categorized.")
+        st.success("All transactions are categorized.")
     else:
         st.write(f"**{len(raw)} transactions** need review (uncategorized or low confidence)")
 
@@ -44,7 +44,7 @@ with tab_review:
             st.session_state.categorize_df = raw.copy()
             st.session_state.categorize_entity = entity_lower
 
-        if st.button("✨ Suggest Categories", type="primary"):
+        if st.button("Suggest Categories", type="primary"):
             with st.spinner("Applying alias rules and keyword heuristics…"):
                 st.session_state.categorize_df = suggest_categories(raw.copy(), entity_lower)
             st.success("Suggestions applied — review and accept below.")
@@ -78,7 +78,7 @@ with tab_review:
         col_accept, col_reset = st.columns([2, 1])
 
         with col_accept:
-            if st.button("✅ Accept Changes", type="primary"):
+            if st.button("Accept Changes", type="primary"):
                 if edited.empty:
                     st.warning("Nothing to save.")
                 else:
@@ -107,7 +107,7 @@ with tab_review:
                 st.rerun()
 
         # ── Quick alias from transaction ──────────────────────────────────────
-        with st.expander("➕ Create merchant alias from a transaction"):
+        with st.expander("Create merchant alias from a transaction"):
             st.caption("Aliases auto-categorize future transactions from the same merchant.")
             with st.form("add_alias_from_cat"):
                 desc_input = st.text_input(
@@ -238,7 +238,7 @@ with tab_settings:
             c2.write(a["pattern"])
             c3.write(a["merchant_canonical"])
             c4.write(a["default_category"] or "—")
-            c5.write("✅" if a["active"] else "⏸")
+            c5.write("Yes" if a["active"] else "No")
             toggle_label = "Pause" if a["active"] else "Enable"
             if c6.button(toggle_label, key=f"tog_{a['id']}"):
                 conn = get_connection(entity_lower)

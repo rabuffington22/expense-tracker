@@ -226,11 +226,11 @@ with tab_upload:
         else:
             parts = []
             if p_total > 0:
-                icon = "✅" if p_done == p_total else "📋"
-                parts.append(f"{icon} Personal: {p_done}/{p_total}")
+                status = "Done" if p_done == p_total else f"{p_done}/{p_total}"
+                parts.append(f"Personal: {status}")
             if c_total > 0:
-                icon = "✅" if c_done == c_total else "📋"
-                parts.append(f"{icon} Company: {c_done}/{c_total}")
+                status = "Done" if c_done == c_total else f"{c_done}/{c_total}"
+                parts.append(f"BFM: {status}")
             st.info(f"**{month}** — {' · '.join(parts)}")
 
         # Show only current entity's items
@@ -363,7 +363,7 @@ with tab_upload:
         if parsed:
             all_ok = {}
             for fname, (ftype, df, err) in parsed.items():
-                with st.expander(f"📄 {fname}", expanded=True):
+                with st.expander(fname, expanded=True):
                     if err:
                         st.warning(f"Extraction warnings: {err}")
                     if df is None or df.empty:

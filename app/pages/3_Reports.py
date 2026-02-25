@@ -119,7 +119,7 @@ if drill_cat != "(select)":
         # ── Export ────────────────────────────────────────────────────────────
         csv_bytes = txns.to_csv(index=False).encode()
         st.download_button(
-            label="⬇ Export as CSV",
+            label="Export as CSV",
             data=csv_bytes,
             file_name=f"{entity_lower}_{selected_month}_{drill_cat.lower().replace(' ','_')}.csv",
             mime="text/csv",

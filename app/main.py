@@ -26,7 +26,7 @@ from core.db import get_connection, init_db  # noqa: E402
 entity, entity_lower = entity_selector()
 
 # ── Header ────────────────────────────────────────────────────────────────────
-st.title("💰 Dashboard")
+st.title("Dashboard")
 
 st.markdown("---")
 
@@ -94,7 +94,7 @@ for ent in ["personal", "company"]:
             [month] + item_ids,
         ).fetchone()[0]
         total = len(ent_items)
-        icon = "✅" if done == total else "📋"
+        icon = "Done" if done == total else "-"
         progress_parts.append(f"{icon} {entity_display(ent)}: {done}/{total}")
     finally:
         ent_conn.close()
