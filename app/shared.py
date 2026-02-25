@@ -9,6 +9,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from core.db import init_db, get_connection
 
@@ -50,6 +51,31 @@ def entity_selector() -> tuple[str, str]:
         )
         st.markdown("---")
 
+        # Move entity toggle above page nav via JS
+        components.html("""
+        <script>
+        (function() {
+            const doc = window.parent.document;
+            function reorder() {
+                const sidebar = doc.querySelector('[data-testid="stSidebar"]');
+                if (!sidebar) return false;
+                const nav = sidebar.querySelector('nav');
+                const userContent = sidebar.querySelector('[data-testid="stSidebarUserContent"]');
+                if (nav && userContent && nav.parentElement === userContent.parentElement) {
+                    nav.parentElement.insertBefore(userContent, nav);
+                    return true;
+                }
+                return false;
+            }
+            if (!reorder()) {
+                const obs = new MutationObserver(() => { if (reorder()) obs.disconnect(); });
+                obs.observe(doc.body, {childList: true, subtree: true});
+                setTimeout(() => obs.disconnect(), 5000);
+            }
+        })();
+        </script>
+        """, height=0)
+
     db_key = _ENTITY_MAP[choice]
     accent = _ENTITY_COLORS[choice]["accent"]
 
@@ -58,16 +84,7 @@ def entity_selector() -> tuple[str, str]:
     # ── Inject entity-aware theme CSS ─────────────────────────────────────────
     st.markdown(f"""
     <style>
-    /* ── Push entity toggle above page nav ──────────────────────────────── */
-    [data-testid="stSidebar"] > div > div > div {{
-        display: flex !important;
-        flex-direction: column !important;
-    }}
-    [data-testid="stSidebarNav"] {{
-        order: 2 !important;
-    }}
-
-    /* ── Entity toggle styling ────────────────────────────────────────────── */
+    /* ── Entity toggle styling (sidebar) ─────────────────────────────────── */
 
     /* Hide the default radio dot */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:first-child {{
@@ -94,6 +111,11 @@ def entity_selector() -> tuple[str, str]:
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label:has(input:checked) {{
         border-color: {accent} !important;
         color: {accent} !important;
+    }}
+
+    /* Hide the JS iframe in sidebar */
+    [data-testid="stSidebar"] iframe {{
+        display: none !important;
     }}
 
     /* Rename "Main" to "Dashboard" in sidebar nav */
