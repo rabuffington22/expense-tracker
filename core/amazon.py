@@ -478,9 +478,12 @@ def match_orders_to_transactions(
             continue
 
         # Pass 3: Multi-order consolidation (2-3 orders summing to amount)
+        # Only for Business format orders (have payment_ref_id) where Amazon
+        # genuinely bundles items into one charge. Skip for Privacy Central.
         candidate_orders = [
             o for o in unmatched_orders
             if not o["matched"]
+            and o.get("payment_ref_id")
             and _dates_within_window(txn_date, o["order_date"], date_window)
         ]
         found_combo = False
@@ -598,6 +601,7 @@ def load_orders_from_db(entity: str, unmatched_only: bool = False) -> list[dict]
             orders.append({
                 "db_id": r["id"],
                 "order_id": r["order_id"],
+                "payment_ref_id": r["payment_ref_id"] or "",
                 "order_date": r["charge_date"] or r["order_date"],
                 "order_total": r["order_total"],
                 "product_summary": r["product_summary"],
