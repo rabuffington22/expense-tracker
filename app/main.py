@@ -56,7 +56,7 @@ with st.sidebar:
     for _page, _num, _label in _STEPS:
         c_num, c_link = st.columns([1, 3])
         c_num.markdown(
-            f'<span style="color:#98989d;font-weight:600;font-size:0.85rem">{_num}</span>',
+            f'<span style="color:#98989d;font-weight:600;font-size:1.1rem">{_num}</span>',
             unsafe_allow_html=True,
         )
         c_link.page_link(_page, label=_label)
