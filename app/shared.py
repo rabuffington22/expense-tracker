@@ -60,9 +60,10 @@ def entity_selector() -> tuple[str, str]:
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:first-child {{
         display: none !important;
     }}
-    /* Space between the two options */
+    /* Center the row of options */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div {{
         gap: 0.5rem !important;
+        justify-content: center !important;
     }}
     /* Base style for both options */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label {{
@@ -75,15 +76,7 @@ def entity_selector() -> tuple[str, str]:
         background: transparent !important;
         cursor: pointer !important;
         transition: all 0.15s ease !important;
-        text-align: center !important;
-        justify-content: center !important;
-        flex: 1 !important;
-    }}
-    /* Center the text span inside labels */
-    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label p,
-    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label span {{
-        text-align: center !important;
-        width: 100% !important;
+        white-space: nowrap !important;
     }}
     /* Active option — colored text + colored border, no fill */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label[data-checked="true"],
