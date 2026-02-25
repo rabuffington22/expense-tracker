@@ -56,9 +56,20 @@ def entity_selector() -> tuple[str, str]:
 
     /* ── Entity toggle styling (sidebar) ─────────────────────────────────── */
 
-    /* Hide the default radio dot */
-    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:first-child {{
+    /* Hide the default radio dot and any indicator divs */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div {{
         display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }}
+    /* But keep the text paragraph visible */
+    [data-testid="stSidebar"] div[data-testid="stRadio"] > div > label > div:has(> p) {{
+        display: flex !important;
+        width: auto !important;
+        height: auto !important;
     }}
     /* Center the row of options */
     [data-testid="stSidebar"] div[data-testid="stRadio"] > div {{
