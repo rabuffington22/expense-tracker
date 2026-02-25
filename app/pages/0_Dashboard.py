@@ -22,7 +22,7 @@ st.markdown("""
     .stMainBlockContainer { padding-top: 1rem !important; }
     [data-testid='stAppViewBlockContainer'] { padding-top: 1rem !important; }
     .block-container { padding-top: 1rem !important; }
-    [data-testid="stMetric"] { padding-bottom: 0 !important; margin-bottom: -0.5rem !important; }
+    [data-testid="stMetric"] { padding-bottom: 0 !important; margin-bottom: -1rem !important; }
 </style>
 """, unsafe_allow_html=True)
 st.title(f"{entity} Dashboard")
