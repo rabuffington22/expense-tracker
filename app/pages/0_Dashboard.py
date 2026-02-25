@@ -17,7 +17,7 @@ from app.shared import get_entity
 entity, entity_lower = get_entity()
 
 # ── Header ────────────────────────────────────────────────────────────────────
-st.title("Dashboard")
+st.title(f"{entity} Dashboard")
 
 # ── Top row: Need Review + Latest Transaction ─────────────────────────────────
 conn = get_connection(entity_lower)
@@ -68,7 +68,7 @@ with col_month:
 conn = get_connection(entity_lower)
 try:
     all_sources = conn.execute(
-        "SELECT id, label FROM import_checklist WHERE entity=? ORDER BY sort_order, id",
+        "SELECT id, label, url FROM import_checklist WHERE entity=? ORDER BY sort_order, id",
         (entity_lower,),
     ).fetchall()
     all_sources = [dict(r) for r in all_sources]
@@ -91,7 +91,11 @@ try:
         # List sources still needed
         missing = [s for s in all_sources if not status_map.get(s["id"], False)]
         for s in missing:
-            st.write(f"- {s['label']}")
+            url = s.get("url")
+            if url:
+                st.write(f"- {s['label']} · [Download]({url})")
+            else:
+                st.write(f"- {s['label']}")
 
         # Last transaction date for this month
         last_txn = conn.execute(
