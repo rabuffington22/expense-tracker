@@ -415,21 +415,36 @@ def group_orders(df: pd.DataFrame) -> list[dict]:
 
 # ── Transaction lookup ───────────────────────────────────────────────────────
 
+_AMAZON_EXCLUDE_PATTERNS = [
+    "audible",
+    "kindle unlimited",
+    "amazon music",
+    "prime video",
+    "amazon prime",
+    "amzn digital",
+]
+
+
 def find_amazon_transactions(entity: str) -> pd.DataFrame:
-    """Query all transactions matching Amazon patterns."""
+    """Query all transactions matching Amazon patterns (excludes subscriptions)."""
     conn = get_connection(entity)
     try:
         rows = conn.execute(
             "SELECT transaction_id, date, description_raw, amount, "
             "       merchant_canonical, category, notes "
             "FROM transactions "
-            "WHERE LOWER(description_raw) LIKE '%amazon%' "
-            "   OR LOWER(description_raw) LIKE '%amzn%' "
+            "WHERE (LOWER(description_raw) LIKE '%amazon%' "
+            "   OR LOWER(description_raw) LIKE '%amzn%') "
             "ORDER BY date DESC"
         ).fetchall()
         if not rows:
             return pd.DataFrame()
-        return pd.DataFrame([dict(r) for r in rows])
+        df = pd.DataFrame([dict(r) for r in rows])
+        # Filter out subscription/digital charges that aren't product purchases
+        mask = df["description_raw"].str.lower().apply(
+            lambda d: not any(pat in d for pat in _AMAZON_EXCLUDE_PATTERNS)
+        )
+        return df[mask].reset_index(drop=True)
     finally:
         conn.close()
 
@@ -594,7 +609,7 @@ def match_orders_to_transactions(
             result["product_summary"] = best["product_summary"]
             result["suggested_category"] = infer_category(best["product_summary"], best.get("amazon_category", ""))
             result["order_id"] = best["order_id"]
-            # Don't mark as matched — user must confirm
+            best["matched"] = True  # prevent same order matching multiple txns
             results.append(result)
             continue
 

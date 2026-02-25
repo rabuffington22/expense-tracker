@@ -12,9 +12,11 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 ## Key Paths
 - **Repo (Home Mac):** `/Users/ryanbuffington/expense-tracker`
 - **Repo (Atlas):** `~/expense-tracker`
-- **Data (Atlas):** `~/expense-data` (set via `DATA_DIR` env var)
+- **DB location (Atlas):** `~/expense-tracker/local_state/` (default — no `DATA_DIR` set)
 - **Python (Atlas):** Homebrew, venv at `~/expense-tracker/.venv`
 - **App URL:** `http://192.168.3.10:8501` (LAN) or `http://100.79.127.29:8501` (Tailscale)
+
+> **⚠️ DATA_DIR pitfall:** The launchd plist sets `DATA_DIR=~/expense-data` but manual `nohup` restarts do NOT. Streamlit has been using `local_state/` in practice. Do NOT pass `DATA_DIR` to the reset script or deploy command — keep everything on `local_state/`.
 
 ## Deploy to Atlas
 ```bash
@@ -77,9 +79,9 @@ Multi-order matching is disabled for Personal (Privacy Central) orders.
 - Imported sources show green checkmark (not strikethrough)
 
 ## Reset Amazon Data (for re-testing)
-Script at `/tmp/reset_amazon.py` on Atlas:
+Script at `/tmp/reset_amazon.py` on Atlas. Do NOT set `DATA_DIR`:
 ```bash
-ssh Atlas@192.168.3.10 "DATA_DIR=~/expense-data /Users/atlas/expense-tracker/.venv/bin/python /tmp/reset_amazon.py"
+ssh Atlas@192.168.3.10 "cd ~/expense-tracker && /Users/atlas/expense-tracker/.venv/bin/python /tmp/reset_amazon.py"
 ```
 
 ## Testing

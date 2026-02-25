@@ -300,6 +300,9 @@ _DEFAULT_CATEGORIES = [
     "Groceries", "Dining", "Transportation", "Utilities", "Healthcare",
     "Entertainment", "Shopping", "Travel", "Housing", "Income",
     "Transfers", "Fees", "Subscriptions", "Other",
+    "Baby & Kids", "Household", "Health & Beauty", "Clothing",
+    "Pet Supplies", "Office", "Kristine Business",
+    "Home Improvement", "Personal Care",
 ]
 
 
