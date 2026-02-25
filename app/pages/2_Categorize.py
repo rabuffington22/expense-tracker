@@ -20,12 +20,10 @@ from core.db import get_connection  # noqa: E402
 from core.categorize import suggest_categories, apply_aliases_to_db  # noqa: E402
 from core.reporting import get_uncategorized  # noqa: E402
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
-entity = entity_selector()
-entity_lower = entity.lower()
+# ── Entity toggle ─────────────────────────────────────────────────────────────
+entity, entity_lower = entity_selector()
 
 st.title("Categorize")
-st.caption(f"Entity: **{entity}**")
 
 tab_review, tab_settings = st.tabs(["Review", "Settings"])
 

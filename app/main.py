@@ -12,7 +12,7 @@ _ROOT = Path(__file__).parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from app.shared import page_config, entity_selector  # noqa: E402
+from app.shared import page_config, entity_selector, entity_display  # noqa: E402
 
 page_config("Expense Tracker — Home")
 
@@ -22,13 +22,12 @@ import streamlit as st  # noqa: E402
 
 from core.db import get_connection, init_db  # noqa: E402
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
-entity = entity_selector()
-entity_lower = entity.lower()
+# ── Entity toggle ─────────────────────────────────────────────────────────────
+entity, entity_lower = entity_selector()
 
 # ── Header ────────────────────────────────────────────────────────────────────
 st.title("💰 Expense Tracker")
-st.caption(f"Entity: **{entity}**  ·  Use the sidebar to navigate pages")
+st.caption("Use the sidebar to navigate pages")
 
 st.markdown("---")
 
@@ -97,7 +96,7 @@ for ent in ["personal", "company"]:
         ).fetchone()[0]
         total = len(ent_items)
         icon = "✅" if done == total else "📋"
-        progress_parts.append(f"{icon} {ent.title()}: {done}/{total}")
+        progress_parts.append(f"{icon} {entity_display(ent)}: {done}/{total}")
     finally:
         ent_conn.close()
 

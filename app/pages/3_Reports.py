@@ -23,12 +23,10 @@ from core.reporting import (  # noqa: E402
     get_transactions,
 )
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
-entity = entity_selector()
-entity_lower = entity.lower()
+# ── Entity toggle ─────────────────────────────────────────────────────────────
+entity, entity_lower = entity_selector()
 
 st.title("Reports")
-st.caption(f"Entity: **{entity}**")
 
 # ── Month range picker ────────────────────────────────────────────────────────
 months = get_available_months(entity_lower)

@@ -7,7 +7,7 @@ _ROOT = Path(__file__).parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from app.shared import page_config, entity_selector  # noqa: E402
+from app.shared import page_config, entity_selector, entity_display  # noqa: E402
 
 page_config("Upload & Import")
 
@@ -24,16 +24,14 @@ from core.imports import (  # noqa: E402
     parse_pdf,
 )
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
-entity = entity_selector()
-entity_lower = entity.lower()
+# ── Entity toggle ─────────────────────────────────────────────────────────────
+entity, entity_lower = entity_selector()
 other_entity = "company" if entity_lower == "personal" else "personal"
 
 # Ensure other entity DB is initialized too (for cross-entity progress)
 init_db(other_entity)
 
 st.title("Upload & Import")
-st.caption(f"Entity: **{entity}**")
 
 
 # ── Profile helpers ───────────────────────────────────────────────────────────
@@ -296,8 +294,8 @@ with tab_upload:
             if suggested_entity and suggested_entity != entity_lower:
                 st.warning(
                     f"**{f.name}** matches **{match_label}** "
-                    f"({suggested_entity.title()} entity). "
-                    f"Switch to {suggested_entity.title()} to import correctly."
+                    f"({entity_display(suggested_entity)} entity). "
+                    f"Switch to {entity_display(suggested_entity)} to import correctly."
                 )
 
         # ── Per-file profile selectors ────────────────────────────────────
@@ -502,7 +500,7 @@ with tab_checklist:
 
     if all_items_tab:
         for item in all_items_tab:
-            item_ent = item.get("entity", "personal").title()
+            item_ent = entity_display(item.get("entity", "personal"))
             with st.expander(f"{item['label']}  ({item_ent})"):
                 st.write(f"**Entity:** {item_ent}")
                 st.write(f"**Filename pattern:** {item.get('filename_pattern') or '—'}")
@@ -526,7 +524,9 @@ with tab_checklist:
             help="Case-insensitive substring to match uploaded filenames for auto-check",
         )
         cl_profile  = c1.selectbox("Auto-select profile", profile_options)
-        cl_entity   = c1.selectbox("Entity", ["Personal", "Company"],
+        _ent_options = ["Personal", "BFM"]
+        _ent_db_map  = {"Personal": "personal", "BFM": "company"}
+        cl_entity   = c1.selectbox("Entity", _ent_options,
                                    index=0 if entity_lower == "personal" else 1)
         cl_url      = c2.text_input("Download URL", placeholder="e.g. https://chase.com/statements")
         cl_notes    = c2.text_input("Notes", placeholder="e.g. Export last 30 days as CSV")
@@ -541,7 +541,7 @@ with tab_checklist:
                     profile_name="" if cl_profile == "(none)" else cl_profile,
                     url=cl_url.strip(),
                     notes=cl_notes.strip(),
-                    item_entity=cl_entity.lower(),
+                    item_entity=_ent_db_map[cl_entity],
                 )
                 st.success(f"Source '{cl_label.strip()}' added.")
                 st.rerun()
