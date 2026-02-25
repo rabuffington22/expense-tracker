@@ -243,16 +243,11 @@ with tab_import:
                         st.caption(fname)
                 else:
                     st.markdown(f"**{item['label']}**")
-                    parts = []
                     last_date = source_last_dates.get(item["id"])
-                    parts.append(f"Last: {last_date}" if last_date else "No data yet")
+                    hint = f"Last: {last_date}" if last_date else "No data yet"
                     if item.get("url"):
-                        parts.append(f"<a href='{item['url']}' target='_blank'>Download</a>")
-                    hint = " &middot; ".join(parts)
-                    st.markdown(
-                        f"<small style='color: rgba(250,250,250,0.5);'>{hint}</small>",
-                        unsafe_allow_html=True,
-                    )
+                        hint += f" · [Download]({item['url']})"
+                    st.markdown(hint)
 
             with col_action:
                 if is_done:
