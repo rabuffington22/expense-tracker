@@ -242,7 +242,13 @@ def parse_pdf(path: str | Path) -> tuple[pd.DataFrame, list[str]]:
     errors: list[str] = []
 
     try:
-        pdf = pdfplumber.open(str(path))
+        # Accept both file paths and file-like objects (e.g. Streamlit UploadedFile)
+        if hasattr(path, "read"):
+            if hasattr(path, "seek"):
+                path.seek(0)
+            pdf = pdfplumber.open(path)
+        else:
+            pdf = pdfplumber.open(str(path))
     except Exception as exc:
         return pd.DataFrame(), [f"Failed to open PDF: {exc}"]
 
