@@ -366,16 +366,21 @@ with tab_import:
 
                         # Rename files before import
                         rename_map = {}
+                        month_label = format_month(selected_month)  # e.g. "Feb 2026"
+                        source_label = active_item["label"]         # e.g. "Capital One Personal CC"
                         if file_count == 1:
                             orig = list(good_dfs.keys())[0]
                             ext = Path(orig).suffix
+                            auto_name = f"{source_label} - {month_label}{ext}"
                             rename_map[orig] = st.text_input(
-                                "Save as", value=orig, key="rename_single",
+                                "Save as", value=auto_name, key="rename_single",
                             )
                         else:
                             for i, orig in enumerate(good_dfs.keys()):
+                                ext = Path(orig).suffix
+                                auto_name = f"{source_label} - {month_label} ({i + 1}){ext}"
                                 rename_map[orig] = st.text_input(
-                                    f"Save as ({orig})", value=orig, key=f"rename_{i}",
+                                    f"Save as ({orig})", value=auto_name, key=f"rename_{i}",
                                 )
 
                         if st.button(f"Import {total_txns} transactions", type="primary"):
