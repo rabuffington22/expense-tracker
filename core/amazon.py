@@ -524,13 +524,132 @@ def match_orders_to_transactions(
     return results
 
 
+# ── DB persistence for Amazon orders ─────────────────────────────────────────
+
+def save_orders_to_db(entity: str, orders: list[dict]) -> tuple[int, int]:
+    """
+    Save grouped Amazon orders to the amazon_orders table.
+
+    Skips duplicates (same order_id + order_total within $0.01).
+    Returns (inserted, skipped) counts.
+    """
+    now = datetime.now().isoformat()
+    conn = get_connection(entity)
+    try:
+        inserted = skipped = 0
+        for o in orders:
+            # Check for duplicates
+            existing = conn.execute(
+                "SELECT id FROM amazon_orders "
+                "WHERE order_id = ? AND ABS(order_total - ?) < 0.02",
+                (o["order_id"], o["order_total"]),
+            ).fetchone()
+            if existing:
+                skipped += 1
+                continue
+
+            conn.execute(
+                "INSERT INTO amazon_orders "
+                "(order_id, payment_ref_id, order_date, charge_date, "
+                " product_summary, amazon_category, order_total, imported_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    o["order_id"],
+                    o.get("payment_ref_id"),
+                    o["order_date"],
+                    o["order_date"],  # charge_date = order_date for grouped orders
+                    o["product_summary"],
+                    o.get("amazon_category", ""),
+                    o["order_total"],
+                    now,
+                ),
+            )
+            inserted += 1
+
+        conn.commit()
+        return inserted, skipped
+    finally:
+        conn.close()
+
+
+def load_orders_from_db(entity: str, unmatched_only: bool = False) -> list[dict]:
+    """
+    Load Amazon orders from DB in the same format as group_orders() output.
+    """
+    conn = get_connection(entity)
+    try:
+        sql = "SELECT * FROM amazon_orders"
+        if unmatched_only:
+            sql += " WHERE matched_transaction_id IS NULL"
+        sql += " ORDER BY order_date DESC"
+        rows = conn.execute(sql).fetchall()
+        orders = []
+        for r in rows:
+            orders.append({
+                "db_id": r["id"],
+                "order_id": r["order_id"],
+                "order_date": r["charge_date"] or r["order_date"],
+                "order_total": r["order_total"],
+                "product_summary": r["product_summary"],
+                "amazon_category": r["amazon_category"] or "",
+                "matched": False,
+                "items": [],  # not stored per-item, but matching doesn't need it
+            })
+        return orders
+    finally:
+        conn.close()
+
+
+def get_order_counts(entity: str) -> tuple[int, int]:
+    """Return (total_orders, unmatched_orders) counts."""
+    conn = get_connection(entity)
+    try:
+        total = conn.execute("SELECT COUNT(*) FROM amazon_orders").fetchone()[0]
+        unmatched = conn.execute(
+            "SELECT COUNT(*) FROM amazon_orders WHERE matched_transaction_id IS NULL"
+        ).fetchone()[0]
+        return total, unmatched
+    finally:
+        conn.close()
+
+
+def mark_orders_matched(entity: str, matches: list[dict]) -> None:
+    """Mark amazon_orders rows as matched after user applies matches."""
+    conn = get_connection(entity)
+    try:
+        for m in matches:
+            txn_id = m.get("transaction_id")
+            order_id = m.get("order_id")
+            order_total = m.get("order_total")
+            if not txn_id or not order_id:
+                continue
+            # Match by order_id + approximate total
+            if order_total is not None:
+                conn.execute(
+                    "UPDATE amazon_orders SET matched_transaction_id = ? "
+                    "WHERE order_id = ? AND ABS(order_total - ?) < 0.02 "
+                    "AND matched_transaction_id IS NULL",
+                    (txn_id, order_id, abs(order_total)),
+                )
+            else:
+                conn.execute(
+                    "UPDATE amazon_orders SET matched_transaction_id = ? "
+                    "WHERE order_id = ? AND matched_transaction_id IS NULL",
+                    (txn_id, order_id),
+                )
+        conn.commit()
+    finally:
+        conn.close()
+
+
 # ── Apply matches to DB ─────────────────────────────────────────────────────
 
 def apply_matches(entity: str, matches: list[dict]) -> int:
     """
     Write accepted matches to the database.
 
-    Updates: notes (product names), merchant_canonical, category, confidence.
+    Updates transactions: notes (product names), merchant_canonical, category, confidence.
+    Also marks the corresponding amazon_orders as matched.
     Returns count of updated transactions.
     """
     conn = get_connection(entity)
@@ -557,6 +676,10 @@ def apply_matches(entity: str, matches: list[dict]) -> int:
             updated += 1
 
         conn.commit()
-        return updated
     finally:
         conn.close()
+
+    # Mark amazon_orders as matched
+    mark_orders_matched(entity, matches)
+
+    return updated

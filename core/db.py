@@ -254,6 +254,21 @@ VALUES
     ('contains', 'XFINITY', 'Comcast/Xfinity', 'Utilities', 1, datetime('now'));
 """
 
+_MIGRATION_13 = """
+CREATE TABLE IF NOT EXISTS amazon_orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id TEXT NOT NULL,
+    payment_ref_id TEXT,
+    order_date TEXT NOT NULL,
+    charge_date TEXT,
+    product_summary TEXT NOT NULL,
+    amazon_category TEXT,
+    order_total REAL NOT NULL DEFAULT 0,
+    matched_transaction_id TEXT,
+    imported_at TEXT NOT NULL
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -267,6 +282,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (10, _MIGRATION_10),
     (11, _MIGRATION_11),
     (12, _MIGRATION_12),
+    (13, _MIGRATION_13),
 ]
 
 _DEFAULT_CATEGORIES = [
