@@ -202,6 +202,58 @@ VALUES
      'PDF statement — company card with multiple cardholders (Ryan, Andrea, Sarah). Filenames like "amex 2026-01-22.pdf". Full MM/DD/YY dates with asterisk posting-date notation.', 11, datetime('now'));
 """
 
+_MIGRATION_11 = """
+ALTER TABLE import_checklist ADD COLUMN entity TEXT NOT NULL DEFAULT 'personal';
+
+UPDATE import_checklist SET entity = 'company' WHERE label = 'Capital One Business CC';
+UPDATE import_checklist SET entity = 'company' WHERE label = 'Prosperity Business Checking';
+UPDATE import_checklist SET entity = 'company' WHERE label = 'Amex Business Card';
+"""
+
+_MIGRATION_12 = """
+INSERT INTO merchant_aliases
+    (pattern_type, pattern, merchant_canonical, default_category, active, created_at)
+VALUES
+    ('contains', 'AUTOPAY PAYMENT', 'AutoPay Payment', 'Transfers', 1, datetime('now')),
+    ('contains', 'ONLINE PAYMENT THANK YOU', 'Payment', 'Transfers', 1, datetime('now')),
+    ('contains', 'MOBILE PAYMENT', 'Mobile Payment', 'Transfers', 1, datetime('now')),
+    ('contains', 'AUTOMATIC PAYMENT', 'AutoPay Payment', 'Transfers', 1, datetime('now')),
+    ('contains', 'PAYMENT RECEIVED', 'Payment Received', 'Transfers', 1, datetime('now')),
+    ('contains', 'DIRECT DEP', 'Direct Deposit', 'Income', 1, datetime('now')),
+    ('contains', 'PAYROLL', 'Payroll', 'Income', 1, datetime('now')),
+    ('contains', 'LATE PAYMENT FEE', 'Late Payment Fee', 'Fees', 1, datetime('now')),
+    ('contains', 'INTEREST CHARGE', 'Interest Charge', 'Fees', 1, datetime('now')),
+    ('contains', 'ANNUAL FEE', 'Annual Fee', 'Fees', 1, datetime('now')),
+    ('contains', 'FOREIGN TRANSACTION FEE', 'Foreign Transaction Fee', 'Fees', 1, datetime('now')),
+    ('contains', 'OVERDRAFT FEE', 'Overdraft Fee', 'Fees', 1, datetime('now')),
+    ('contains', 'RETURNED ITEM', 'Returned Item Fee', 'Fees', 1, datetime('now')),
+    ('contains', 'NETFLIX', 'Netflix', 'Subscriptions', 1, datetime('now')),
+    ('contains', 'SPOTIFY', 'Spotify', 'Subscriptions', 1, datetime('now')),
+    ('contains', 'HULU', 'Hulu', 'Subscriptions', 1, datetime('now')),
+    ('contains', 'APPLE.COM/BILL', 'Apple Services', 'Subscriptions', 1, datetime('now')),
+    ('contains', 'AMAZON PRIME', 'Amazon Prime', 'Subscriptions', 1, datetime('now')),
+    ('contains', 'DISNEY PLUS', 'Disney+', 'Subscriptions', 1, datetime('now')),
+    ('contains', 'UBER EATS', 'Uber Eats', 'Dining', 1, datetime('now')),
+    ('contains', 'DOORDASH', 'DoorDash', 'Dining', 1, datetime('now')),
+    ('contains', 'GRUBHUB', 'Grubhub', 'Dining', 1, datetime('now')),
+    ('contains', 'STARBUCKS', 'Starbucks', 'Dining', 1, datetime('now')),
+    ('contains', 'MCDONALD', 'McDonald''s', 'Dining', 1, datetime('now')),
+    ('contains', 'CHICK-FIL', 'Chick-fil-A', 'Dining', 1, datetime('now')),
+    ('contains', 'CHIPOTLE', 'Chipotle', 'Dining', 1, datetime('now')),
+    ('contains', 'WHATABURGER', 'Whataburger', 'Dining', 1, datetime('now')),
+    ('contains', 'TACO BELL', 'Taco Bell', 'Dining', 1, datetime('now')),
+    ('contains', 'PANERA', 'Panera Bread', 'Dining', 1, datetime('now')),
+    ('contains', 'KROGER', 'Kroger', 'Groceries', 1, datetime('now')),
+    ('contains', 'WHOLE FOODS', 'Whole Foods', 'Groceries', 1, datetime('now')),
+    ('contains', 'TRADER JOE', 'Trader Joe''s', 'Groceries', 1, datetime('now')),
+    ('contains', 'H-E-B', 'H-E-B', 'Groceries', 1, datetime('now')),
+    ('contains', 'ALDI', 'Aldi', 'Groceries', 1, datetime('now')),
+    ('contains', 'COSTCO', 'Costco', 'Groceries', 1, datetime('now')),
+    ('contains', 'LYFT', 'Lyft', 'Transportation', 1, datetime('now')),
+    ('contains', 'COMCAST', 'Comcast/Xfinity', 'Utilities', 1, datetime('now')),
+    ('contains', 'XFINITY', 'Comcast/Xfinity', 'Utilities', 1, datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -213,6 +265,8 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (8, _MIGRATION_8),
     (9, _MIGRATION_9),
     (10, _MIGRATION_10),
+    (11, _MIGRATION_11),
+    (12, _MIGRATION_12),
 ]
 
 _DEFAULT_CATEGORIES = [
