@@ -51,7 +51,7 @@ def entity_selector() -> tuple[str, str]:
     <style>
     /* ── Reduce sidebar top padding ──────────────────────────────────────── */
     [data-testid="stSidebar"] > div:first-child {{
-        padding-top: 1rem !important;
+        padding-top: 0.4rem !important;
     }}
 
     /* ── Apple-style segmented control ───────────────────────────────────── */
