@@ -248,7 +248,11 @@ with tab_import:
                     parts.append(f"Last: {last_date}" if last_date else "No data yet")
                     if item.get("url"):
                         parts.append(f"[Download]({item['url']})")
-                    st.caption(" · ".join(parts))
+                    hint = " · ".join(parts)
+                    st.markdown(
+                        f"<small style='color: rgba(250,250,250,0.5);'>{hint}</small>",
+                        unsafe_allow_html=True,
+                    )
 
             with col_action:
                 if is_done:
