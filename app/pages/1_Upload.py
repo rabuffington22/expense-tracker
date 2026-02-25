@@ -221,7 +221,7 @@ with tab_import:
             conn.close()
 
         # ── Upload dialog ─────────────────────────────────────────────────────
-        @st.dialog("Import", width="large")
+        @st.dialog("Import", width="small")
         def upload_dialog(item: dict):
             st.subheader(item["label"])
 
