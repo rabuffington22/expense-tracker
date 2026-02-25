@@ -503,6 +503,63 @@ with tab_settings:
 
     st.markdown("---")
 
+    # ── Subcategories section ──────────────────────────────────────────────────
+    st.subheader("Subcategories")
+
+    sub_cat_filter = st.selectbox(
+        "Show subcategories for:",
+        cats or ["(none)"],
+        key="sub_cat_filter",
+    )
+
+    if sub_cat_filter and sub_cat_filter != "(none)":
+        subs = get_subcategories(entity_lower, sub_cat_filter)
+        # Filter out the auto-added "Unknown" for display — only show DB entries
+        conn = get_connection(entity_lower)
+        try:
+            db_subs = conn.execute(
+                "SELECT id, name FROM subcategories WHERE category_name = ? ORDER BY name",
+                (sub_cat_filter,),
+            ).fetchall()
+        finally:
+            conn.close()
+
+        if db_subs:
+            for sub_row in db_subs:
+                sc1, sc2 = st.columns([4, 1])
+                sc1.write(sub_row[1])
+                if sc2.button("Delete", key=f"delsub_{sub_row[0]}"):
+                    conn = get_connection(entity_lower)
+                    try:
+                        conn.execute("DELETE FROM subcategories WHERE id=?", (sub_row[0],))
+                        conn.commit()
+                    finally:
+                        conn.close()
+                    st.rerun()
+        else:
+            st.caption("No subcategories defined yet. 'Unknown' is always available.")
+
+        with st.form("add_sub"):
+            new_sub = st.text_input("New subcategory name")
+            if st.form_submit_button("Add Subcategory"):
+                if not new_sub.strip():
+                    st.error("Name cannot be blank.")
+                else:
+                    now = datetime.now(timezone.utc).isoformat()
+                    conn = get_connection(entity_lower)
+                    try:
+                        conn.execute(
+                            "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) VALUES (?,?,?)",
+                            (sub_cat_filter, new_sub.strip(), now),
+                        )
+                        conn.commit()
+                    finally:
+                        conn.close()
+                    st.success(f"Subcategory '{new_sub.strip()}' added to {sub_cat_filter}.")
+                    st.rerun()
+
+    st.markdown("---")
+
     # ── Merchant Aliases section ──────────────────────────────────────────────
     st.subheader("Merchant Aliases")
     st.caption(
