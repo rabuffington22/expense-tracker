@@ -54,7 +54,7 @@
             </form>
             <form method="post" action="{{ url_for('plaid.disconnect', item_id=item.item_id) }}"
                   style="margin: 0;"
-                  onsubmit="return confirm('Disconnect {{ item.institution_name or item.item_id }}? Imported transactions will be kept.');">
+                  onsubmit="return confirm('Disconnect ' + {{ (item.institution_name or item.item_id)|tojson }} + '? Imported transactions will be kept.');">
                 <button type="submit" class="btn btn-small btn-danger">Disconnect</button>
             </form>
         </div>

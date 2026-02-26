@@ -124,9 +124,16 @@ tr:hover .alias-link { display: inline !important; }
 // Cache of all subcategories — loaded once, used for all rows
 var _subcatCache = null;
 
+function _escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
 function _buildOptions(subs) {
     return subs.map(function(s) {
-        return '<option value="' + s + '">' + s + '</option>';
+        var escaped = _escapeHtml(s);
+        return '<option value="' + escaped + '">' + escaped + '</option>';
     }).join('');
 }
 
@@ -295,6 +302,11 @@ function prefillAlias(desc) {
 </div>
 
 <script>
+function _escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
 function loadSubcategories(cat) {
     fetch('{{ url_for("categorize.subcategories") }}?category=' + encodeURIComponent(cat))
         .then(r => r.text())
@@ -306,8 +318,9 @@ function loadSubcategories(cat) {
             let listHtml = '';
             options.forEach(opt => {
                 if (opt.value !== 'Unknown') {
+                    var escaped = _escapeHtml(opt.textContent);
                     listHtml += `<div class="flex-between" style="padding:0.3rem 0;border-bottom:1px solid rgba(56,56,58,0.5);">
-                        <span class="text-sm">${opt.textContent}</span>
+                        <span class="text-sm">${escaped}</span>
                     </div>`;
                 }
             });

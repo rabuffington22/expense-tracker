@@ -1,5 +1,6 @@
 """Upload route — bank/CC statement import."""
 
+import io
 import json
 import os
 import tempfile
@@ -251,7 +252,12 @@ def confirm(item_id):
     saved_names = []
 
     for fname, json_data in upload_dfs.items():
-        df = pd.read_json(json_data)
+        df = pd.read_json(io.StringIO(json_data))
+        # read_json auto-parses date-like columns to Timestamp — convert back
+        # to strings so they can be bound to SQLite TEXT columns.
+        for col in ("date", "imported_at"):
+            if col in df.columns and pd.api.types.is_datetime64_any_dtype(df[col]):
+                df[col] = df[col].dt.strftime("%Y-%m-%d" if col == "date" else "%Y-%m-%dT%H:%M:%S%z")
         inserted, skipped = commit_transactions(df, g.entity_key)
         total_new += inserted
         total_skip += skipped

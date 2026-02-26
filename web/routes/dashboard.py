@@ -46,7 +46,7 @@ def index():
         # Current month income
         month_income_row = conn.execute(
             "SELECT COALESCE(SUM(amount), 0) FROM transactions "
-            "WHERE strftime('%%Y-%%m', date) = ? AND amount > 0 "
+            "WHERE strftime('%Y-%m', date) = ? AND amount > 0 "
             "AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')",
             (cur_month,),
         ).fetchone()

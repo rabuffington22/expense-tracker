@@ -143,6 +143,9 @@ def create_app():
     def set_entity():
         choice = request.form.get("entity", "Personal")
         redirect_to = request.form.get("redirect", "/")
+        # Prevent open redirect — only allow relative paths
+        if not redirect_to.startswith("/") or redirect_to.startswith("//"):
+            redirect_to = "/"
         resp = redirect(redirect_to)
         resp.set_cookie("entity", choice, max_age=365 * 24 * 3600, samesite="Lax")
         return resp
