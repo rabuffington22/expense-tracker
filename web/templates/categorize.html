@@ -92,7 +92,7 @@
         </table>
     </div>
 
-    <div class="form-row mt-2">
+    <div class="flex gap-1 mt-2">
         <button type="submit" class="btn btn-primary">Accept Changes ({{ txns|length }})</button>
         <a href="{{ url_for('categorize.index') }}" class="btn btn-secondary">Reset</a>
     </div>
@@ -391,7 +391,7 @@ if (document.getElementById('sub-cat-filter').value) {
 <details class="mt-2">
     <summary>Add Alias</summary>
     <div>
-        <form method="post" action="{{ url_for('categorize.add_alias') }}">
+        <form method="post" action="{{ url_for('categorize.add_alias') }}" style="max-width: 500px;">
             <div class="form-row">
                 <div class="form-group">
                     <label>Pattern type</label>

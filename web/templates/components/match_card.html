@@ -41,12 +41,12 @@
 </p>
 {% endif %}
 
-<div class="form-row">
-    <button class="btn btn-primary btn-full"
+<div class="flex gap-1">
+    <button class="btn btn-primary"
             hx-post="{{ url_for('match.accept') }}"
             hx-target="#match-container"
             hx-swap="innerHTML">Accept</button>
-    <button class="btn btn-secondary btn-full"
+    <button class="btn btn-secondary"
             hx-post="{{ url_for('match.skip_match') }}"
             hx-target="#match-container"
             hx-swap="innerHTML">Skip</button>

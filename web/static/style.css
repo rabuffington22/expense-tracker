@@ -210,6 +210,7 @@ label {
     gap: 1rem;
 }
 .form-row > * { flex: 1; }
+.form-row > .btn { flex: none; }
 
 /* ── Tables ─────────────────────────────────────────────────────────────── */
 table {

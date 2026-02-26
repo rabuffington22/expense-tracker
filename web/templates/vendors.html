@@ -5,7 +5,7 @@
 <h1 class="page-title">Upload from Vendors</h1>
 <p class="text-muted mb-2">Upload vendor order data. Orders are saved here, categorized on the next page, then matched to bank transactions on the Match page.</p>
 
-<form method="post" action="{{ url_for('vendors.parse') }}" enctype="multipart/form-data">
+<form method="post" action="{{ url_for('vendors.parse') }}" enctype="multipart/form-data" style="max-width: 500px;">
     <div class="form-row">
         <div class="form-group">
             <label>Vendor</label>
@@ -37,7 +37,7 @@
 
 <form method="post" action="{{ url_for('vendors.save') }}">
     <input type="hidden" name="temp_key" value="{{ temp_key }}">
-    <div class="form-row mb-2">
+    <div class="form-row mb-2" style="max-width: 400px;">
         <div class="form-group">
             <label>From</label>
             <input type="date" name="filter_from" id="filterFrom" value="{{ min_date }}">
