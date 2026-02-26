@@ -1,74 +1,127 @@
 # Expense Tracker
 
 ## What This Is
-Streamlit + SQLite personal/business expense tracker. Runs locally on Atlas Mac Mini. No cloud sync, no bank linking — CSV/PDF bank statements uploaded manually, categorized via alias rules and keyword heuristics. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
+Flask + HTMX + SQLite personal/business expense tracker. Runs locally on Atlas Mac Mini. No cloud sync, no bank linking — CSV/PDF bank statements uploaded manually, categorized via alias rules and keyword heuristics. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
+
+Previously built on Streamlit — migrated to Flask + HTMX to eliminate WebSocket disconnect issues during interactive workflows.
 
 ## Two Entities (Fully Isolated)
-- **Personal** → `personal.sqlite`
-- **BFM** (company) → `company.sqlite`
+- **Personal** -> `personal.sqlite`
+- **BFM** (company) -> `company.sqlite`
 
-Each has its own DB, categories, aliases, import checklists. Entity selected via sidebar.
+Each has its own DB, categories, aliases, import checklists. Entity selected via sidebar toggle.
 
 ## Key Paths
 - **Repo (Home Mac):** `/Users/ryanbuffington/expense-tracker`
 - **Repo (Atlas):** `~/expense-tracker`
-- **DB location (Atlas):** `~/expense-tracker/local_state/` (default — no `DATA_DIR` set)
+- **DB location (Atlas):** `~/expense-tracker/local_state/` (default -- no `DATA_DIR` set)
 - **Python (Atlas):** Homebrew, venv at `~/expense-tracker/.venv`
 - **App URL:** `http://192.168.3.10:8501` (LAN) or `http://100.79.127.29:8501` (Tailscale)
 
-> **⚠️ DATA_DIR pitfall:** The launchd plist sets `DATA_DIR=~/expense-data` but manual `nohup` restarts do NOT. Streamlit has been using `local_state/` in practice. Do NOT pass `DATA_DIR` to the reset script or deploy command — keep everything on `local_state/`.
+> **DATA_DIR pitfall:** Do NOT pass `DATA_DIR` to deploy commands -- keep everything on `local_state/`.
 
 ## Deploy to Atlas
 ```bash
-ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && pkill -9 -f 'streamlit run' ; sleep 3 && cd ~/expense-tracker && nohup /Users/atlas/expense-tracker/.venv/bin/streamlit run app/main.py --server.address 0.0.0.0 --server.port 8501 > /tmp/streamlit.log 2>&1 & sleep 3 && tail -5 /tmp/streamlit.log"
+# Full restart (use after requirements.txt changes or if gunicorn is dead)
+ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && pkill -9 -f gunicorn; sleep 2 && OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES nohup .venv/bin/gunicorn -w 1 -b 0.0.0.0:8501 --timeout 120 --access-logfile - 'web:create_app()' > /tmp/flask.log 2>&1 &"
 ```
-If LAN times out, try Tailscale IP `100.79.127.29` instead. Just push to `main` and run the above.
+
+```bash
+# Graceful reload (use for code-only changes -- workers restart without downtime)
+ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && pkill -HUP -f gunicorn"
+```
+
+Notes:
+- `OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` required on macOS for gunicorn fork()
+- `--timeout 120` needed because matching algorithm can take >30s
+- Single worker (`-w 1`) because SQLite doesn't support concurrent writers
+- If LAN times out, try Tailscale IP `100.79.127.29`
 
 ## Directory Structure
 ```
-app/
-  main.py                      # Streamlit multi-page router (7 pages)
-  shared.py                    # Entity selector, helpers
-  pages/
-    0_Dashboard.py             # Quick stats, import progress
-    1_Upload.py                # Source-by-source CSV/PDF import (modal dialog)
-    2_Vendors.py               # Upload vendor orders (Amazon CSV, Henry Schein XLSX)
-    3_Categorize_Vendors.py    # Card queue to label each vendor order
-    4_Match.py                 # Match vendor orders to bank transactions
-    5_Categorize.py            # Review remaining transactions + alias/category settings
-    6_Reports.py               # Monthly charts, drill-down, CSV export
-core/
-  db.py                        # Schema migrations (17 so far), DB init, connections
-  imports.py                   # CSV/PDF parsing, normalization, dedup
-  categorize.py                # Alias matching, keyword heuristics
-  amazon.py                    # Amazon order CSV parsing + vendor order matching
-  henryschein.py               # Henry Schein XLSX parsing
-  reporting.py                 # Query helpers for Reports page
-scripts/
-  setup-atlas.sh               # One-time Atlas setup
-  smoke_test.py                # Automated verification
+web/                               # Flask app (replaced old app/ Streamlit code)
+  __init__.py                      # Flask app factory, entity cookie, before_request hook
+  routes/                          # Route blueprints (one per page)
+    dashboard.py                   # GET /
+    upload.py                      # GET/POST /upload  (bank statement import)
+    vendors.py                     # GET/POST /vendors (Amazon CSV, Henry Schein XLSX)
+    match.py                       # GET/POST /match   (link orders to bank txns)
+    categorize_vendors.py          # GET/POST /categorize-vendors (label vendor orders)
+    categorize.py                  # GET/POST /categorize (remaining txns + settings)
+    reports.py                     # GET /reports (charts, drill-down, CSV export)
+  templates/
+    base.html                      # Layout: sidebar + main content, dark theme
+    components/
+      sidebar.html                 # Entity toggle + numbered nav steps
+      card.html                    # Vendor order card (HTMX swap target)
+      match_card.html              # Match review card (HTMX swap target)
+      flash.html                   # Success/error flash messages
+    dashboard.html
+    upload.html                    # Import tab + Settings tab
+    upload_dialog.html             # File upload + preview/confirm
+    vendors.html                   # Upload + date filter + save
+    match.html
+    categorize_vendors.html
+    categorize.html                # Review tab + Settings tab
+    reports.html                   # Plotly charts + drill-down tables
+  static/
+    style.css                      # Dark theme (#1c1c1e bg, white text)
+    htmx.min.js                    # HTMX library (~14KB)
+core/                              # Business logic (unchanged from Streamlit era)
+  db.py                            # Schema migrations (17 so far), DB init, connections
+  imports.py                       # CSV/PDF parsing, normalization, dedup
+  categorize.py                    # Alias matching, keyword heuristics
+  amazon.py                        # Amazon order CSV parsing + vendor order matching
+  henryschein.py                   # Henry Schein XLSX parsing
+  reporting.py                     # Query helpers for Reports page
+run.py                             # Entry point: python run.py (dev mode)
+requirements.txt                   # flask, gunicorn, pandas, plotly, pdfplumber, etc.
 ```
+
+## HTMX Interactions
+- **Card queue (Categorize Vendors):** Save/Skip buttons use `hx-post` + `hx-target` to swap just the card div
+- **Match review:** Accept/Skip swap the match card via HTMX partial
+- **Category dropdowns:** `hx-get` to fetch subcategories when category changes
+- **File uploads:** Standard form POST, returns full page with results
+- **Reports chart:** Plotly JSON rendered client-side via `plotly-2.27.0.min.js`
+
+## Session & Temp Files
+Flask's cookie-based session has a 4KB limit. Parsed data from file uploads and match results is stored in temp files on disk (`/tmp/expense-tracker-uploads/`), with only a small key stored in the session or passed as a hidden form field.
+
+Pattern used across routes:
+- `_save_temp(key, data)` -- writes JSON to `/tmp/expense-tracker-uploads/{key}.json`
+- `_load_temp(key)` -- reads + deletes the temp file
+- `_TEMP_DIR` created on module import
+
+## 5-Page Workflow (sidebar order)
+1. **Upload from Bank/CC** -- Import CSV/PDF bank statements
+2. **Upload from Vendors** -- Upload Amazon/Henry Schein order data
+3. **Match** -- Link vendor orders to bank transactions
+4. **Categorize Vendors** -- Label each vendor order with category/subcategory
+5. **Categorize Remaining** -- Review + categorize remaining bank transactions
+
+Plus **Dashboard** and **Reports** pages.
 
 ## Database (17 Migrations)
 Key tables:
-- **`transactions`** — Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
-- **`categories`** — Seeded defaults (Baby & Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
-- **`subcategories`** — Two-level categorization (Migration 15). Each subcategory belongs to a parent category. "Unknown" always available.
-- **`merchant_aliases`** — Pattern-based auto-categorization (contains/regex → merchant + category)
-- **`import_profiles`** — Saved CSV column mappings per bank (Amex, Chase, Capital One, Citi, BofA)
-- **`import_checklist` / `import_checklist_status`** — Monthly source tracking
-- **`amazon_orders`** — Vendor orders for deferred matching. `matched_transaction_id` tracks matches. Has `category`/`subcategory` (Migration 16) and `vendor` (Migration 17, default `'amazon'`). Stores both Amazon and Henry Schein orders.
+- **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
+- **`categories`** -- Seeded defaults (Baby & Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
+- **`subcategories`** -- Two-level categorization (Migration 15). Each subcategory belongs to a parent category. "Unknown" always available.
+- **`merchant_aliases`** -- Pattern-based auto-categorization (contains/regex -> merchant + category)
+- **`import_profiles`** -- Saved CSV column mappings per bank (Amex, Chase, Capital One, Citi, BofA)
+- **`import_checklist` / `import_checklist_status`** -- Monthly source tracking
+- **`amazon_orders`** -- Vendor orders for deferred matching. `matched_transaction_id` tracks matches. Has `category`/`subcategory` (Migration 16) and `vendor` (Migration 17, default `'amazon'`). Stores both Amazon and Henry Schein orders.
 
-## Vendor Workflow (Three-Phase, 3 pages)
+## Vendor Workflow (Three-Phase)
 
-**Phase 1 — Upload (Vendors page):**
-Select vendor from dropdown (Amazon or Henry Schein) → upload file (CSV for Amazon, XLSX for Henry Schein) → preview order count/date range/total → filter by date range → save to `amazon_orders` table with `vendor` tag.
+**Phase 1 -- Upload (Vendors page):**
+Select vendor from dropdown (Amazon or Henry Schein) -> upload file -> preview order count/date range/total -> filter by date range -> save to `amazon_orders` table with `vendor` tag.
 
-**Phase 2 — Categorize (Categorize Vendors page):**
-Card queue shows uncategorized orders across all vendors. Product name, date, amount displayed; pick category + subcategory. Uses `infer_category()` for smart defaults. Categories saved to `amazon_orders` table.
+**Phase 2 -- Match (Match page):**
+Run matching algorithm to link vendor orders to bank transactions. Exact matches auto-applied. Uncertain matches shown in card review queue (Accept/Skip). Cards show amount diff and date gap with red highlighting when values are outside tolerance.
 
-**Phase 3 — Match (Match page):**
-Link pre-categorized vendor orders to bank transactions. Matching uses the order's saved category (via `_get_order_category()`).
+**Phase 3 -- Categorize (Categorize Vendors page):**
+Card queue shows uncategorized orders across all vendors. Product name, date, amount displayed; pick category + subcategory. Uses `infer_category()` for smart defaults.
 
 ### Amazon CSV Formats
 Two formats: **Business** (groups by `payment_ref_id`) and **Privacy Central** (groups by `order_id`).
@@ -77,31 +130,41 @@ Two formats: **Business** (groups by `payment_ref_id`) and **Privacy Central** (
 "Items Purchased" export. Groups by Invoice No (one invoice = one bank charge). Key columns: Short Description, Invoice No, Invoice Date, Amount, Category/Sub Category1, Manufacturer.
 
 ### Matching Algorithm (Amazon only for now)
-1. **Exact** (amount within 8% + date within 5 days) → auto-applied, confidence 0.95
-2. **Likely** (amount within 8% + date within 10 days) → shown for review, confidence 0.80
-3. **Multi-order** (Business format only — 2-3 orders summing to txn) → confidence 0.75
-4. **Date-only fallback** → confidence 0.50
+1. **Exact** (amount within 8% + date within 5 days) -> auto-applied, confidence 0.95
+2. **Likely** (amount within 8% + date within 10 days) -> shown for review, confidence 0.80
+3. **Multi-order** (Business format only -- 2-3 orders summing to txn) -> confidence 0.75
+4. **Date-only fallback** -> confidence 0.50
 
-Exact matches auto-apply. Uncertain matches shown in single-card review queue (Accept/Skip).
+Match review cards show:
+- Amount diff with red highlighting when >3%
+- Date gap (days between bank charge and order date) with red when >5 days or negative
 
 Subscription charges (Audible, Kindle Unlimited, Amazon Music, etc.) excluded via `_AMAZON_EXCLUDE_PATTERNS`.
 
 ## Categorization
-1. **Alias rules** (confidence 0.95) — `merchant_aliases` table
-2. **Keyword heuristics** (confidence 0.5–0.8) — fallback for common merchants
-3. **Subcategories** — Two-level system. `infer_category()` returns `(category, subcategory)` tuple. Users can create new subcategories inline during review. Cached with `@st.cache_data(ttl=120)`.
+1. **Alias rules** (confidence 0.95) -- `merchant_aliases` table
+2. **Keyword heuristics** (confidence 0.5-0.8) -- fallback for common merchants
+3. **Subcategories** -- Two-level system. `infer_category()` returns `(category, subcategory)` tuple.
 
 ## Important Patterns
 - `DATA_DIR` env var controls where DBs and uploads go (default: `./local_state`)
-- Transaction IDs are deterministic — reimporting the same CSV won't create duplicates
-- Upload dialog uses `@st.dialog` with custom CSS for 50vw width
-- File auto-rename detects month from actual transaction dates, not the selected dropdown
-- Imported sources show green checkmark (not strikethrough)
+- Transaction IDs are deterministic -- reimporting the same CSV won't create duplicates
+- Entity stored in cookie (survives page refreshes, no WebSocket dependency)
+- Dark theme with `color-scheme: dark` on date inputs for calendar picker visibility
 
-## Reset Amazon Data (for re-testing)
-Script at `/tmp/reset_amazon.py` on Atlas. Do NOT set `DATA_DIR`:
-```bash
-ssh Atlas@192.168.3.10 "cd ~/expense-tracker && /Users/atlas/expense-tracker/.venv/bin/python /tmp/reset_amazon.py"
+## Delete Amazon Data (for re-import)
+```python
+# Run via SSH on Atlas
+ssh Atlas@192.168.3.10 "cd ~/expense-tracker && .venv/bin/python -c \"
+import sqlite3
+conn = sqlite3.connect('local_state/personal.sqlite')
+c = conn.cursor()
+c.execute('UPDATE transactions SET product_summary=NULL, description_override=NULL, matched_order_id=NULL WHERE matched_order_id IS NOT NULL AND matched_order_id IN (SELECT order_id FROM amazon_orders WHERE vendor=\\\"amazon\\\")')
+c.execute('DELETE FROM amazon_orders WHERE vendor=\\\"amazon\\\"')
+conn.commit()
+print(f'Deleted {c.rowcount} orders')
+conn.close()
+\""
 ```
 
 ## Testing
@@ -111,3 +174,6 @@ python scripts/smoke_test.py  # No server needed
 
 ## Gitignored (never commit)
 `local_state/`, `*.sqlite`, `uploads/`, `backups/`, `.venv/`, `statements/`
+
+## Dependencies
+flask, gunicorn, pandas, plotly, pdfplumber, python-dateutil, openpyxl
