@@ -361,7 +361,7 @@ _DEFAULT_CATEGORIES = [
     "Pet Supplies", "Office", "Kristine Business",
     "Home Improvement", "Personal Care", "Unknown",
     "Student Loans", "Retirement", "Storage", "Ranch",
-    "Credit Card Payment", "Education",
+    "Credit Card Payment", "Education", "Ask Kristine",
 ]
 
 
