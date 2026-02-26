@@ -177,15 +177,28 @@ def sync():
                     new_count = _upsert_plaid_transaction(conn, g.entity_key, item["item_id"], t)
                     total_new += new_count
 
-                # Process modified transactions
+                # Process modified transactions — update existing rows in place
                 for t in result["modified"]:
                     if t["account_id"] not in enabled_accounts:
                         continue
-                    _upsert_plaid_transaction(conn, g.entity_key, item["item_id"], t)
+                    description = t.get("merchant_name") or t.get("name") or ""
+                    amount = -t["amount"]
+                    conn.execute(
+                        """UPDATE transactions
+                           SET description_raw=?, merchant_raw=?, amount=?
+                           WHERE plaid_transaction_id=?""",
+                        (description, description, amount, t["plaid_transaction_id"]),
+                    )
                     total_modified += 1
 
-                # Process removed transactions (just clear plaid_item_id)
+                # Process removed transactions — clear plaid_item_id so they
+                # remain in the ledger but are no longer associated with Plaid
                 for plaid_txn_id in result["removed"]:
+                    conn.execute(
+                        "UPDATE transactions SET plaid_item_id=NULL"
+                        " WHERE plaid_transaction_id=?",
+                        (plaid_txn_id,),
+                    )
                     total_removed += 1
 
                 # Update cursor and last_synced
@@ -219,15 +232,6 @@ def sync():
         flash(msg, "success")
 
     return redirect(url_for("plaid.index"))
-
-
-@bp.route("/accounts", methods=["GET"])
-def accounts():
-    """Return accounts list (used by HTMX or full page)."""
-    items = _get_items(g.entity_key)
-    for item in items:
-        item["accounts"] = _get_accounts_for_item(g.entity_key, item["item_id"])
-    return render_template("plaid.html", items=items, plaid_available=_plaid_available())
 
 
 @bp.route("/toggle-account/<account_id>", methods=["POST"])
@@ -309,10 +313,12 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
         cur = conn.execute(
             """INSERT OR IGNORE INTO transactions
                (transaction_id, date, description_raw, merchant_raw, amount,
-                currency, source_filename, imported_at, plaid_item_id)
-               VALUES (?,?,?,?,?,?,?,?,?)""",
+                currency, source_filename, imported_at, plaid_item_id,
+                plaid_transaction_id)
+               VALUES (?,?,?,?,?,?,?,?,?,?)""",
             (txn_id, date, description, description, amount,
-             "USD", "plaid-sync", now, item_id),
+             "USD", "plaid-sync", now, item_id,
+             txn["plaid_transaction_id"]),
         )
         return 1 if cur.rowcount > 0 else 0
     except Exception:

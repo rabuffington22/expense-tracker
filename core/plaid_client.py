@@ -45,7 +45,7 @@ def create_link_token(user_id: str = "expense-tracker-user") -> str:
     client = _get_client()
     req = LinkTokenCreateRequest(
         user=LinkTokenCreateRequestUser(client_user_id=user_id),
-        client_name="Expense Tracker",
+        client_name="Ledger Oak",
         products=[Products("transactions")],
         country_codes=[CountryCode("US")],
         language="en",

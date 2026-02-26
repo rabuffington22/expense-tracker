@@ -326,6 +326,11 @@ CREATE TABLE IF NOT EXISTS plaid_accounts (
 ALTER TABLE transactions ADD COLUMN plaid_item_id TEXT;
 """
 
+_MIGRATION_19 = """
+ALTER TABLE transactions ADD COLUMN plaid_transaction_id TEXT;
+CREATE INDEX IF NOT EXISTS idx_txn_plaid_id ON transactions(plaid_transaction_id);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -345,6 +350,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (16, _MIGRATION_16),
     (17, _MIGRATION_17),
     (18, _MIGRATION_18),
+    (19, _MIGRATION_19),
 ]
 
 _DEFAULT_CATEGORIES = [
