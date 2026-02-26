@@ -127,9 +127,9 @@ _KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
     (["fee", "interest charge", "penalty", "overdraft", "late fee",
       "enhanced analysis", "bkcd process", "bkcd processing"],
      "Fees", None, 0.6),
-    # ── Transfers last (low confidence, only if nothing else matched) ────
-    (["transfer", "zelle", "venmo", "wire"],
-     "Transfers", None, 0.5),
+    # ── Transfers → Ask Kristine for manual review ────
+    (["zelle", "venmo"],
+     "Ask Kristine", None, 0.5),
 ]
 
 

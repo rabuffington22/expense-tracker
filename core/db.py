@@ -356,7 +356,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
 _DEFAULT_CATEGORIES = [
     "Groceries", "Dining", "Transportation", "Utilities", "Healthcare",
     "Entertainment", "Shopping", "Travel", "Housing", "Income",
-    "Transfers", "Fees", "Subscriptions", "Other",
+    "Fees", "Subscriptions", "Other",
     "Kids", "Household", "Health & Beauty", "Clothing",
     "Pet Supplies", "Office", "Kristine Business",
     "Home Improvement", "Personal Care", "Unknown",
@@ -367,8 +367,7 @@ _DEFAULT_CATEGORIES = [
 
 _DEFAULT_SUBCATEGORIES = {
     "Entertainment": ["Audible", "Streaming", "Movies", "Books", "Games"],
-    "Groceries": ["Grocery Store", "Specialty Food"],
-    "Dining": ["Fast Food", "Restaurant", "Coffee", "Delivery"],
+"Dining": ["Fast Food", "Restaurant", "Coffee", "Delivery"],
     "Shopping": ["Online", "In-Store"],
     "Kids": ["Diapers & Wipes", "Toys", "Gear", "Clothing"],
     "Clothing": ["Women", "Men", "Kids"],
