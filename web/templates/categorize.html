@@ -78,7 +78,7 @@
                         </select>
                     </td>
                     <td class="text-sm text-center">
-                        {% if txn.confidence %}{{ "{:.0f}%".format(txn.confidence * 100) }}{% else %}&mdash;{% endif %}
+                        {% if txn.confidence and txn.confidence == txn.confidence %}{{ "{:.0f}%".format(txn.confidence * 100) }}{% else %}&mdash;{% endif %}
                     </td>
                     <td>
                         <input type="text" name="notes_{{ txn.transaction_id }}"

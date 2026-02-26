@@ -1,5 +1,6 @@
 """Categorize route — review/suggest/accept categories + manage categories & aliases."""
 
+import math
 import re
 from datetime import datetime, timezone
 
@@ -84,6 +85,7 @@ def index():
             if suggested and txn.get("transaction_id") in suggested:
                 s = suggested[txn["transaction_id"]]
                 txn["category"] = s.get("category", txn.get("category", ""))
+                txn["subcategory"] = s.get("subcategory") or txn.get("subcategory", "")
                 txn["confidence"] = s.get("confidence", txn.get("confidence", 0))
             all_txns.append(txn)
 
@@ -129,9 +131,17 @@ def suggest():
     for _, row in result.iterrows():
         tid = row.get("transaction_id")
         if tid:
+            conf_raw = row.get("confidence", 0)
+            try:
+                conf = float(conf_raw)
+                if math.isnan(conf):
+                    conf = 0.0
+            except (TypeError, ValueError):
+                conf = 0.0
             suggestions[tid] = {
-                "category": row.get("category", ""),
-                "confidence": float(row.get("confidence", 0)),
+                "category": row.get("category", "") or "",
+                "subcategory": row.get("subcategory", "") or "",
+                "confidence": conf,
             }
 
     session["categorize_suggested"] = suggestions

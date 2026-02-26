@@ -15,59 +15,76 @@ import pandas as pd
 from core.db import get_connection
 
 
-# ── Keyword rules (description → category, confidence) ───────────────────────
+# ── Keyword rules (description → category, subcategory, confidence) ──────────
+# Each rule: (keywords, category, subcategory_or_None, confidence)
+# Rules are checked in order — first match wins.
 
-_KEYWORD_RULES: list[tuple[list[str], str, float]] = [
+_KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
     # ── High-confidence specific matches (check first) ───────────────────
     (["autopay", "auto pay", "pymt", "payment thank you", "card payment",
       "credit card payment", "pay down"],
-     "Credit Card Payment", 0.8),
+     "Credit Card Payment", None, 0.8),
     (["grocery", "grocer", "safeway", "kroger", "whole foods", "trader joe",
       "aldi", "costco", "sam's club", "publix", "heb", "wegmans", "sprouts"],
-     "Groceries", 0.7),
-    (["restaurant", "cafe", "coffee", "starbucks", "mcdonald", "subway",
-      "pizza", "taco", "burger", "doordash", "grubhub", "ubereats", "chipotle",
-      "chick-fil", "panera", "denny", "ihop", "waffle house", "wendy",
-      "caminos", "wingstop", "panda express", "sonic", "popeyes", "whataburger"],
-     "Dining", 0.7),
-    (["uber", "lyft", "taxi", "parking", "gas station", "shell", "chevron",
-      "bp ", "exxon", "fuel", "toll", "transit", "mta", "bart", "metro",
+     "Groceries", None, 0.7),
+    # ── Dining — check delivery before "uber" so UberEats routes here ────
+    (["doordash", "grubhub", "ubereats", "uber eats", "postmates"],
+     "Dining", "Delivery", 0.7),
+    (["starbucks", "dutch bros", "coffee", "cafe", "espresso"],
+     "Dining", "Coffee", 0.7),
+    (["mcdonald", "kfc", "burger king", "taco bell", "taco",
+      "wendy", "chick-fil", "sonic", "whataburger", "jack in the box",
+      "in-n-out", "popeyes", "wingstop", "raising cane", "five guys",
+      "checkers", "cook out", "hardee", "carl's jr",
+      "pizza", "domino", "papa john", "little caesar", "burger"],
+     "Dining", "Fast Food", 0.7),
+    (["restaurant", "chipotle", "panera", "denny", "ihop",
+      "waffle house", "caminos", "panda express", "subway", "olive garden",
+      "applebee", "chili's", "outback"],
+     "Dining", "Restaurant", 0.7),
+    # ── Transportation — rideshare after delivery so plain "uber" hits here ──
+    (["uber", "lyft", "taxi"],
+     "Transportation", "Rideshare", 0.7),
+    (["gas station", "shell", "chevron", "bp ", "exxon", "fuel",
+      "sunoco", "texaco", "marathon", "speedway", "wawa"],
+     "Transportation", "Gas", 0.7),
+    (["parking", "toll", "transit", "mta", "bart", "metro",
       "amtrak", "greyhound"],
-     "Transportation", 0.7),
+     "Transportation", "Parking", 0.6),
     (["electric", "water ", "internet", "comcast", "at&t", "verizon",
       "t-mobile", "sprint", "pg&e", "atmos", "power", "utility", "xfinity",
       "spectrum"],
-     "Utilities", 0.6),
+     "Utilities", None, 0.6),
     (["pharmacy", "walgreens", "cvs", "rite aid", "doctor", "hospital",
       "dental", "vision", "health", "medical", "clinic", "optometrist",
       "labcorp", "laboratory", "quest diag", "urgent care"],
-     "Healthcare", 0.7),
+     "Healthcare", None, 0.7),
     (["netflix", "spotify", "hulu", "disney", "hbo", "amazon prime",
       "apple tv", "cinema", "movie", "theater", "concert", "ticketmaster",
       "audible", "kindle", "peacock"],
-     "Entertainment", 0.7),
+     "Entertainment", None, 0.7),
     (["amazon", "walmart", "target", "ebay", "etsy", "shopify", "clothing",
       "apparel", "bestbuy", "best buy", "apple store", "gap", "zara", "h&m"],
-     "Shopping", 0.6),
+     "Shopping", None, 0.6),
     (["home depot", "lowes", "lowe's", "menards", "ace hardware", "spray paint",
       "lumber", "paint", "hardware"],
-     "Home Improvement", 0.6),
+     "Home Improvement", None, 0.6),
     (["airline", "hotel", "airbnb", "expedia", "booking.com", "marriott",
       "hilton", "delta", "united", "southwest", "american air", "spirit",
       "vrbo"],
-     "Travel", 0.7),
+     "Travel", None, 0.7),
     (["rent", "mortgage", "hoa", "landlord", "lease", "property"],
-     "Housing", 0.7),
+     "Housing", None, 0.7),
     (["payroll", "direct dep", "salary", "income", "wages"],
-     "Income", 0.7),
+     "Income", None, 0.7),
     (["subscription", "membership", "annual fee", "monthly fee", "saas",
       "dynastynerd", "dynasty nerd"],
-     "Subscriptions", 0.6),
+     "Subscriptions", None, 0.6),
     (["fee", "interest charge", "penalty", "overdraft", "late fee"],
-     "Fees", 0.6),
+     "Fees", None, 0.6),
     # ── Transfers last (low confidence, only if nothing else matched) ────
     (["transfer", "zelle", "venmo", "wire", "ach"],
-     "Transfers", 0.5),
+     "Transfers", None, 0.5),
 ]
 
 
@@ -83,14 +100,14 @@ def _strip_platform_prefix(text: str) -> str:
     return _PLATFORM_PREFIXES.sub("", text).strip()
 
 
-def _keyword_suggest(description: str) -> tuple[Optional[str], float]:
+def _keyword_suggest(description: str) -> tuple[Optional[str], Optional[str], float]:
     desc_lower = description.lower()
     # Also try with platform prefix stripped
     stripped_lower = _strip_platform_prefix(desc_lower)
-    for keywords, category, confidence in _KEYWORD_RULES:
+    for keywords, category, subcategory, confidence in _KEYWORD_RULES:
         if any(kw in desc_lower or kw in stripped_lower for kw in keywords):
-            return category, confidence
-    return None, 0.0
+            return category, subcategory, confidence
+    return None, None, 0.0
 
 
 # ── Alias helpers ─────────────────────────────────────────────────────────────
@@ -148,10 +165,12 @@ def suggest_categories(df: pd.DataFrame, entity: str) -> pd.DataFrame:
                 result.at[idx, "confidence"] = 0.95
                 continue
 
-        category, confidence = _keyword_suggest(combined)
+        category, subcategory, confidence = _keyword_suggest(combined)
         if category:
             result.at[idx, "category"]   = category
             result.at[idx, "confidence"] = confidence
+            if subcategory:
+                result.at[idx, "subcategory"] = subcategory
 
     return result
 
