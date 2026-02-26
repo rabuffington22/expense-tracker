@@ -1,5 +1,9 @@
 """Match route — link bank transactions to vendor orders."""
 
+import json
+import os
+import tempfile
+import uuid
 from datetime import datetime
 
 from flask import Blueprint, render_template, request, session, flash, redirect, url_for, g
@@ -14,6 +18,43 @@ from core.amazon import (
 
 bp = Blueprint("match", __name__, url_prefix="/match")
 
+# Temp directory for match review data (too large for cookie session)
+_TEMP_DIR = os.path.join(tempfile.gettempdir(), "expense-tracker-uploads")
+os.makedirs(_TEMP_DIR, exist_ok=True)
+
+
+def _save_match_data(review_data, no_match_data):
+    """Save match data to temp file, store key in session."""
+    temp_key = f"match_{uuid.uuid4().hex[:12]}"
+    path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
+    with open(path, "w") as f:
+        json.dump({"review": review_data, "no_match": no_match_data}, f)
+    session["match_temp_key"] = temp_key
+    session["match_review_idx"] = 0
+
+
+def _load_match_data():
+    """Load match data from temp file."""
+    temp_key = session.get("match_temp_key")
+    if not temp_key:
+        return [], []
+    path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
+    if not os.path.exists(path):
+        return [], []
+    with open(path) as f:
+        data = json.load(f)
+    return data.get("review", []), data.get("no_match", [])
+
+
+def _clear_match_data():
+    """Remove temp file and session keys."""
+    temp_key = session.pop("match_temp_key", None)
+    session.pop("match_review_idx", None)
+    if temp_key:
+        path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
+        if os.path.exists(path):
+            os.remove(path)
+
 
 @bp.route("/")
 def index():
@@ -23,9 +64,8 @@ def index():
     amazon_txns = find_amazon_transactions(g.entity_key)
     amazon_txn_count = len(amazon_txns) if not amazon_txns.empty else 0
 
-    review = session.get("match_review", [])
+    review, no_match = _load_match_data()
     review_idx = session.get("match_review_idx", 0)
-    no_match = session.get("match_no_match", [])
 
     # Current review item
     current_match = None
@@ -77,7 +117,7 @@ def run_matching():
             })
         auto_count = apply_matches(g.entity_key, auto_apply)
 
-    # Store review queue in session
+    # Build review queue
     review = [m for m in matches if m["match_type"] not in ("exact", "skip", "none")]
     no_match = [m for m in matches if m["match_type"] == "none"]
 
@@ -106,9 +146,7 @@ def run_matching():
             "txn_amount": m["txn_amount"],
         })
 
-    session["match_review"] = review_data
-    session["match_no_match"] = no_match_data
-    session["match_review_idx"] = 0
+    _save_match_data(review_data, no_match_data)
 
     msg = f"Auto-applied {auto_count} exact matches." if auto_count else "No exact matches found."
     if review_data:
@@ -120,7 +158,7 @@ def run_matching():
 @bp.route("/accept", methods=["POST"])
 def accept():
     """Accept a match and advance to next."""
-    review = session.get("match_review", [])
+    review, _ = _load_match_data()
     idx = session.get("match_review_idx", 0)
 
     if review and idx < len(review):
@@ -157,17 +195,14 @@ def skip_match():
 @bp.route("/finish", methods=["POST"])
 def finish():
     """Clear review queue."""
-    session.pop("match_review", None)
-    session.pop("match_no_match", None)
-    session.pop("match_review_idx", None)
+    _clear_match_data()
     return redirect(url_for("match.index"))
 
 
 def _render_match_card():
     """Return the match card partial for HTMX."""
-    review = session.get("match_review", [])
+    review, no_match = _load_match_data()
     idx = session.get("match_review_idx", 0)
-    no_match = session.get("match_no_match", [])
 
     current_match = None
     if review and idx < len(review):
