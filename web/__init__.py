@@ -145,6 +145,7 @@ def create_app():
     from web.routes.match import bp as match_bp
     from web.routes.categorize import bp as categorize_bp
     from web.routes.reports import bp as reports_bp
+    from web.routes.plaid import bp as plaid_bp
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(upload_bp)
@@ -153,5 +154,6 @@ def create_app():
     app.register_blueprint(match_bp)
     app.register_blueprint(categorize_bp)
     app.register_blueprint(reports_bp)
+    app.register_blueprint(plaid_bp)
 
     return app

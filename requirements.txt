@@ -4,3 +4,4 @@ pandas>=2.2.0
 plotly>=5.18.0
 pdfplumber>=0.10.0
 python-dateutil>=2.8.2
+plaid-python>=22.0.0

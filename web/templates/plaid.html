@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}{{ entity_display }} Connected Accounts — Expense Tracker{% endblock %}
+
+{% block head %}
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Connected Accounts</h1>
+
+{% if not plaid_available %}
+<div class="alert alert-warning">
+    Plaid credentials not configured. Set <code>PLAID_CLIENT_ID</code>, <code>PLAID_SECRET</code>, and <code>PLAID_ENV</code> environment variables to enable bank connections.
+</div>
+{% else %}
+
+<!-- Connect + Sync All buttons -->
+<div style="display: flex; gap: 0.8rem; margin-bottom: 1.5rem; max-width: 480px;">
+    <button id="connect-btn" class="btn btn-primary" onclick="startPlaidLink()">
+        Connect a Bank
+    </button>
+    {% if items %}
+    <form method="post" action="{{ url_for('plaid.sync') }}" style="margin: 0;">
+        <button type="submit" class="btn btn-secondary">Sync All</button>
+    </form>
+    {% endif %}
+</div>
+
+{% if not items %}
+<div class="card" style="text-align: center; padding: 2rem;">
+    <div style="color: var(--text-muted); margin-bottom: 0.5rem;">No banks connected yet</div>
+    <div class="text-sm" style="color: var(--text-muted);">Click "Connect a Bank" to link your first account via Plaid.</div>
+</div>
+{% else %}
+
+<!-- Connected institutions -->
+{% for item in items %}
+<div class="card" style="margin-bottom: 1rem; padding: 1rem 1.2rem;">
+    <div class="flex-between" style="margin-bottom: 0.8rem;">
+        <div>
+            <span class="text-bold">{{ item.institution_name or item.item_id }}</span>
+            {% if item.last_synced %}
+            <span class="text-sm" style="color: var(--text-muted); margin-left: 0.8rem;">
+                Last synced: {{ item.last_synced[:16] | replace('T', ' ') }}
+            </span>
+            {% else %}
+            <span class="text-sm" style="color: var(--orange); margin-left: 0.8rem;">Never synced</span>
+            {% endif %}
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <form method="post" action="{{ url_for('plaid.sync') }}" style="margin: 0;">
+                <input type="hidden" name="item_id" value="{{ item.item_id }}">
+                <button type="submit" class="btn btn-small btn-secondary">Sync</button>
+            </form>
+            <form method="post" action="{{ url_for('plaid.disconnect', item_id=item.item_id) }}"
+                  style="margin: 0;"
+                  onsubmit="return confirm('Disconnect {{ item.institution_name or item.item_id }}? Imported transactions will be kept.');">
+                <button type="submit" class="btn btn-small btn-danger">Disconnect</button>
+            </form>
+        </div>
+    </div>
+
+    {% if item.accounts %}
+    <table style="width: 100%;">
+        <thead>
+            <tr>
+                <th style="width: 40px;">On</th>
+                <th>Account</th>
+                <th>Type</th>
+                <th style="width: 80px;">Mask</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acc in item.accounts %}
+            <tr>
+                <td>
+                    <form method="post" action="{{ url_for('plaid.toggle_account', account_id=acc.account_id) }}" style="margin:0;">
+                        <button type="submit" class="toggle-btn {% if acc.enabled %}active{% endif %}"
+                                title="{% if acc.enabled %}Disable{% else %}Enable{% endif %} this account">
+                            {% if acc.enabled %}&#10003;{% else %}&mdash;{% endif %}
+                        </button>
+                    </form>
+                </td>
+                <td>{{ acc.name or '—' }}</td>
+                <td class="text-sm" style="color: var(--text-muted);">{{ acc.type or '' }}{% if acc.subtype %} / {{ acc.subtype }}{% endif %}</td>
+                <td class="text-sm" style="color: var(--text-muted);">{{ acc.mask or '—' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-sm" style="color: var(--text-muted);">No accounts found</div>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% endif %}
+{% endif %}
+
+<script>
+async function startPlaidLink() {
+    const btn = document.getElementById('connect-btn');
+    btn.disabled = true;
+    btn.textContent = 'Loading…';
+
+    try {
+        const resp = await fetch('{{ url_for("plaid.link_token") }}', { method: 'POST' });
+        const data = await resp.json();
+        if (data.error) {
+            alert('Error: ' + data.error);
+            btn.disabled = false;
+            btn.textContent = 'Connect a Bank';
+            return;
+        }
+
+        const handler = Plaid.create({
+            token: data.link_token,
+            onSuccess: async function(public_token, metadata) {
+                const exchResp = await fetch('{{ url_for("plaid.exchange_token") }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        public_token: public_token,
+                        institution_name: metadata.institution ? metadata.institution.name : '',
+                        institution_id: metadata.institution ? metadata.institution.institution_id : '',
+                    }),
+                });
+                const exchData = await exchResp.json();
+                if (exchData.error) {
+                    alert('Error connecting: ' + exchData.error);
+                } else {
+                    window.location.reload();
+                }
+            },
+            onExit: function(err) {
+                btn.disabled = false;
+                btn.textContent = 'Connect a Bank';
+                if (err) console.error('Plaid Link exit error:', err);
+            },
+        });
+        handler.open();
+    } catch (e) {
+        alert('Failed to start Plaid Link: ' + e.message);
+        btn.disabled = false;
+        btn.textContent = 'Connect a Bank';
+    }
+}
+</script>
+
+<style>
+.toggle-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.toggle-btn.active {
+    background: var(--green);
+    color: #000;
+    border-color: var(--green);
+    font-weight: 700;
+}
+.toggle-btn:hover {
+    border-color: var(--text-muted);
+}
+.btn-small {
+    padding: 0.25rem 0.7rem;
+    font-size: 0.8rem;
+}
+.btn-danger {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-danger:hover {
+    opacity: 0.85;
+}
+</style>
+{% endblock %}

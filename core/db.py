@@ -300,6 +300,32 @@ _MIGRATION_17 = """
 ALTER TABLE amazon_orders ADD COLUMN vendor TEXT DEFAULT 'amazon';
 """
 
+_MIGRATION_18 = """
+CREATE TABLE IF NOT EXISTS plaid_items (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id          TEXT UNIQUE NOT NULL,
+    access_token     TEXT NOT NULL,
+    institution_name TEXT,
+    institution_id   TEXT,
+    cursor           TEXT,
+    created_at       TEXT NOT NULL,
+    last_synced      TEXT
+);
+
+CREATE TABLE IF NOT EXISTS plaid_accounts (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id    TEXT NOT NULL REFERENCES plaid_items(item_id) ON DELETE CASCADE,
+    account_id TEXT UNIQUE NOT NULL,
+    name       TEXT,
+    mask       TEXT,
+    type       TEXT,
+    subtype    TEXT,
+    enabled    INTEGER NOT NULL DEFAULT 1
+);
+
+ALTER TABLE transactions ADD COLUMN plaid_item_id TEXT;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -318,6 +344,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (15, _MIGRATION_15),
     (16, _MIGRATION_16),
     (17, _MIGRATION_17),
+    (18, _MIGRATION_18),
 ]
 
 _DEFAULT_CATEGORIES = [
