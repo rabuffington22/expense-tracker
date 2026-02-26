@@ -117,7 +117,7 @@ a:hover { text-decoration: underline; }
 .step-num {
     font-weight: 600;
     font-size: 1.1rem;
-    min-width: 3.5rem;
+    min-width: 1.2rem;
 }
 .step-label {
     color: var(--text);
