@@ -60,7 +60,7 @@ _KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
     (["pharmacy", "walgreens", "cvs", "rite aid", "doctor", "hospital",
       "dental", "vision", "health", "medical", "clinic", "optometrist",
       "labcorp", "laboratory", "quest diag", "urgent care",
-      " ins ", "insur", "life ins", "dearborn", "american general", "safeco"],
+      " ins ", "insur", "life ins", "dearborn", "american general"],
      "Healthcare", None, 0.7),
     (["netflix", "spotify", "hulu", "disney", "hbo", "amazon prime",
       "apple tv", "cinema", "movie", "theater", "concert", "ticketmaster",
