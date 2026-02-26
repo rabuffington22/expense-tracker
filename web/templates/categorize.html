@@ -226,6 +226,7 @@ function prefillAlias(desc) {
 <!-- ── Categories ─────────────────────────── -->
 <h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Categories</h2>
 
+<div style="max-width: 500px;">
 {% if cats %}
 {% for cat in cats %}
 <div class="flex-between" style="padding: 0.3rem 0; border-bottom: 1px solid rgba(56,56,58,0.5);">
@@ -239,6 +240,7 @@ function prefillAlias(desc) {
 {% else %}
 <p class="text-muted">No categories defined.</p>
 {% endif %}
+</div>
 
 <form method="post" action="{{ url_for('categorize.add_category') }}" class="mt-1">
     <div class="form-row" style="max-width: 400px;">
@@ -347,7 +349,7 @@ if (document.getElementById('sub-cat-filter').value) {
 </p>
 
 {% if aliases %}
-<div style="overflow-x: auto;">
+<div style="overflow-x: auto; max-width: 700px;">
     <table>
         <thead>
             <tr>

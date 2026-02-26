@@ -69,9 +69,15 @@
 {% if has_sources %}
     <h2 style="font-size: 1.1rem; margin-bottom: 0.6rem;">Import Progress</h2>
     {% for mp in month_progress %}
-    <div class="flex-between" style="padding: 0.2rem 0;">
-        <span class="text-sm">{{ mp.label }}</span>
-        <span class="text-sm {% if mp.done == mp.total %}text-bold{% endif %}" style="color: {% if mp.done == mp.total %}var(--green){% else %}var(--text-muted){% endif %};">{{ mp.done }}/{{ mp.total }}</span>
+    {% set pct = (mp.done / mp.total * 100)|int if mp.total else 0 %}
+    <div style="padding: 0.3rem 0;">
+        <div class="flex-between" style="margin-bottom: 0.2rem;">
+            <span class="text-sm">{{ mp.label }}</span>
+            <span class="text-sm {% if mp.done == mp.total %}text-bold{% endif %}" style="color: {% if mp.done == mp.total %}var(--green){% else %}var(--text-muted){% endif %};">{{ mp.done }}/{{ mp.total }}</span>
+        </div>
+        <div class="progress-bar" style="height: 4px;">
+            <div class="progress-fill" style="width: {{ pct }}%; background: {% if pct == 100 %}var(--green){% else %}var(--blue){% endif %};"></div>
+        </div>
     </div>
     {% endfor %}
 {% else %}

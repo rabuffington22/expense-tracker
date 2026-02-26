@@ -9,7 +9,7 @@
 <h1 class="page-title">Reports</h1>
 
 {% if not has_data %}
-<div class="alert alert-info">No transactions imported yet.</div>
+<div class="alert alert-info">No transactions imported yet. Import bank data on the <a href="{{ url_for('upload.index') }}"><strong>Upload</strong></a> page to get started.</div>
 {% else %}
 
 <!-- Month range picker -->
