@@ -1,0 +1,38 @@
+<nav class="sidebar">
+    <div class="sidebar-title" style="color: {{ accent }};">EXPENSE TRACKER</div>
+
+    <!-- Entity Toggle -->
+    <div class="entity-toggle">
+        {% for ent in entities %}
+        <form method="post" action="{{ url_for('set_entity') }}" style="flex:1;display:flex;">
+            <input type="hidden" name="entity" value="{{ ent }}">
+            <input type="hidden" name="redirect" value="{{ request.path }}">
+            <button type="submit" class="{% if entity_display == ent %}active{% endif %}"
+                    style="flex:1;">{{ ent }}</button>
+        </form>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <!-- Nav links -->
+    <a href="{{ url_for('dashboard.index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
+    <a href="{{ url_for('reports.index') }}" class="nav-link {% if '/reports' in request.path %}active{% endif %}">Reports</a>
+
+    <hr>
+
+    {% set steps = [
+        ('upload.index', 'ONE', 'Upload from Bank/CC', '/upload'),
+        ('vendors.index', 'TWO', 'Upload from Vendors', '/vendors'),
+        ('categorize_vendors.index', 'THREE', 'Categorize Vendors', '/categorize-vendors'),
+        ('match.index', 'FOUR', 'Match', '/match'),
+        ('categorize.index', 'FIVE', 'Categorize Remaining', '/categorize'),
+    ] %}
+
+    {% for route, num, label, path in steps %}
+    <a href="{{ url_for(route) }}" class="step-row {% if path in request.path %}active{% endif %}" style="text-decoration:none;">
+        <span class="step-num" style="color: {{ accent }};">{{ num }}</span>
+        <span class="step-label">{{ label }}</span>
+    </a>
+    {% endfor %}
+</nav>

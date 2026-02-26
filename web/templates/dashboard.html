@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ entity_display }} Dashboard — Expense Tracker{% endblock %}
+
+{% block content %}
+<h1 class="page-title">{{ entity_display }} Dashboard</h1>
+
+<div class="metrics-row">
+    <div class="metric">
+        <div class="metric-label">Need Review</div>
+        <div class="metric-value">{{ "{:,}".format(uncat_count) }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Latest Transaction</div>
+        <div class="metric-value">{{ latest_date }}</div>
+    </div>
+</div>
+
+<hr class="divider">
+
+{% if has_sources %}
+    {% for mp in month_progress %}
+    <p class="mb-1"><strong>{{ mp.label }}</strong> — {{ mp.done }}/{{ mp.total }} sources imported</p>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">No import sources defined. Go to Upload &gt; Settings to add your bank/card sources.</div>
+{% endif %}
+{% endblock %}

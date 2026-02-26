@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Import {{ item.label }} — Expense Tracker{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Import: {{ item.label }}</h1>
+<p class="text-muted mb-2">{{ format_month(month) }}</p>
+
+{% if not show_preview is defined or not show_preview %}
+<!-- ═══════════ FILE UPLOAD FORM ═══════════ -->
+<form method="post" enctype="multipart/form-data"
+      action="{{ url_for('upload.import_file', item_id=item.id, month=month) }}">
+    <div class="form-group">
+        <label>Select file(s)</label>
+        <input type="file" name="files" multiple accept=".csv,.pdf,.xlsx">
+    </div>
+    <div class="form-row">
+        <button type="submit" class="btn btn-primary">Upload &amp; Parse</button>
+        <a href="{{ url_for('upload.index', month=month) }}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+{% else %}
+<!-- ═══════════ PREVIEW + CONFIRM ═══════════ -->
+
+{% if good_count == 0 %}
+<div class="alert alert-danger">No files could be parsed. Check the format and try again.</div>
+<a href="{{ url_for('upload.import_file', item_id=item.id, month=month) }}" class="btn btn-secondary">Try Again</a>
+{% else %}
+
+<div class="card mb-2">
+    <p><strong>{{ good_count }} file(s)</strong> parsed, <strong>{{ total_txns }} transactions</strong> total</p>
+</div>
+
+{% for p in previews %}
+<div class="card">
+    <div class="flex-between mb-1">
+        <strong>{{ p.name }}</strong>
+        {% if p.error %}
+        <span class="badge badge-red">Error</span>
+        {% elif p.count %}
+        <span class="badge badge-green">{{ p.count }} txns</span>
+        {% endif %}
+    </div>
+
+    {% if p.error %}
+    <p class="text-sm" style="color: var(--red);">{{ p.error }}</p>
+    {% endif %}
+
+    {% if p.count %}
+    <div class="metrics-row" style="margin-bottom: 0.5rem;">
+        <div class="metric" style="padding: 0.6rem 0.8rem;">
+            <div class="metric-label">Date Range</div>
+            <div style="font-size: 0.9rem; font-weight: 600;">{{ p.min_date }} &mdash; {{ p.max_date }}</div>
+        </div>
+        <div class="metric" style="padding: 0.6rem 0.8rem;">
+            <div class="metric-label">Credits</div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--green);">${{ "{:,.2f}".format(p.credits) }}</div>
+        </div>
+        <div class="metric" style="padding: 0.6rem 0.8rem;">
+            <div class="metric-label">Debits</div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--red);">${{ "{:,.2f}".format(p.debits) }}</div>
+        </div>
+        <div class="metric" style="padding: 0.6rem 0.8rem;">
+            <div class="metric-label">Net</div>
+            <div style="font-size: 0.9rem; font-weight: 600;">${{ "{:,.2f}".format(p.net) }}</div>
+        </div>
+    </div>
+
+    {% if p.suggested_name %}
+    <div class="form-group" style="max-width: 400px;">
+        <label>Save as</label>
+        <input type="text" form="confirm-form" name="rename_{{ p.name }}" value="{{ p.suggested_name }}">
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endfor %}
+
+<form id="confirm-form" method="post" action="{{ url_for('upload.confirm', item_id=item.id) }}">
+    <input type="hidden" name="month" value="{{ month }}">
+    <div class="form-row mt-2">
+        <button type="submit" class="btn btn-success">Confirm Import ({{ total_txns }} transactions)</button>
+        <a href="{{ url_for('upload.import_file', item_id=item.id, month=month) }}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+{% endif %}
+
+{% endif %}
+{% endblock %}

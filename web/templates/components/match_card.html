@@ -1,0 +1,65 @@
+{% if current_match %}
+<hr class="divider">
+
+<p class="mb-1"><strong>Match {{ review_idx + 1 }} of {{ review|length }}</strong></p>
+<div class="progress-bar mb-2">
+    <div class="progress-fill" style="width: {{ (review_idx / review|length * 100)|int }}%;"></div>
+</div>
+
+{% set m = current_match %}
+{% set txn_amt = m.txn_amount|abs %}
+{% set order_amt = m.order_total %}
+{% set amt_diff = (txn_amt - order_amt)|abs %}
+{% set amt_pct = (amt_diff / txn_amt * 100) if txn_amt else 0 %}
+
+<div class="form-row">
+    <div class="card" style="flex:1;">
+        <h3>Bank Charge</h3>
+        <p>Date: {{ m.txn_date }}</p>
+        <p>Amount: <strong>${{ "{:,.2f}".format(txn_amt) }}</strong></p>
+        <p class="text-sm text-muted">{{ m.txn_description[:60] }}</p>
+    </div>
+    <div class="card" style="flex:1;">
+        <h3>Vendor Order</h3>
+        <p>Date: {{ m.order_date or '?' }}</p>
+        <p>Amount: <strong>${{ "{:,.2f}".format(order_amt) }}</strong></p>
+        <p class="text-sm">{{ m.product_summary[:80] }}</p>
+        {% if m.suggested_category %}
+        <p class="text-sm text-muted">Category: <strong>{{ m.suggested_category }}{% if m.suggested_subcategory and m.suggested_subcategory != 'Unknown' %} &rarr; {{ m.suggested_subcategory }}{% endif %}</strong></p>
+        {% endif %}
+    </div>
+</div>
+
+<p class="text-sm mb-2">
+    Amount diff: <strong style="color: {% if amt_pct > 3 %}var(--red){% else %}inherit{% endif %};">${{ "{:.2f}".format(amt_diff) }} ({{ "{:.1f}".format(amt_pct) }}%)</strong>
+</p>
+
+<div class="form-row">
+    <button class="btn btn-primary btn-full"
+            hx-post="{{ url_for('match.accept') }}"
+            hx-target="#match-container"
+            hx-swap="innerHTML">Accept</button>
+    <button class="btn btn-secondary btn-full"
+            hx-post="{{ url_for('match.skip_match') }}"
+            hx-target="#match-container"
+            hx-swap="innerHTML">Skip</button>
+</div>
+
+{% elif review and review_idx >= review|length %}
+<hr class="divider">
+<div class="alert alert-success">Done! Reviewed all <strong>{{ review|length }}</strong> matches.</div>
+<form method="post" action="{{ url_for('match.finish') }}">
+    <button type="submit" class="btn btn-primary">Finish</button>
+</form>
+{% endif %}
+
+{% if no_match %}
+<details class="mt-2">
+    <summary>{{ no_match|length }} unmatched bank transactions</summary>
+    <div>
+        {% for m in no_match %}
+        <p class="text-sm"><strong>{{ m.txn_date }}</strong> — {{ m.txn_description }} — ${{ "{:,.2f}".format(m.txn_amount|abs) }}</p>
+        {% endfor %}
+    </div>
+</details>
+{% endif %}

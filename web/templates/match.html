@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Match — Expense Tracker{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Match</h1>
+
+{% if total_orders == 0 %}
+<div class="alert alert-info">No vendor orders saved yet. Upload orders on the <strong>Vendors</strong> page first.</div>
+{% else %}
+<p><strong>{{ total_orders }}</strong> vendor orders on file — <strong>{{ matched_orders }}</strong> matched, <strong>{{ unmatched_orders }}</strong> unmatched</p>
+
+{% if unmatched_orders == 0 %}
+<div class="alert alert-success mt-2">All vendor orders have been matched to bank transactions!</div>
+{% else %}
+
+{% if amazon_txn_count > 0 %}
+<p class="text-muted mt-1">Found <strong>{{ amazon_txn_count }} Amazon transactions</strong> in your bank data.</p>
+
+<form method="post" action="{{ url_for('match.run') }}" class="mt-2 mb-2">
+    <button type="submit" class="btn btn-primary">Run Matching</button>
+</form>
+{% else %}
+<div class="alert alert-info mt-2">No Amazon transactions found in your imported bank data. Import your bank statements on the <strong>Upload</strong> page first.</div>
+{% endif %}
+
+{% endif %}
+{% endif %}
+
+<div id="match-container">
+    {% include "components/match_card.html" %}
+</div>
+{% endblock %}

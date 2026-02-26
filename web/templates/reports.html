@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Reports — Expense Tracker{% endblock %}
+
+{% block head %}
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Reports</h1>
+
+{% if not has_data %}
+<div class="alert alert-info">No transactions imported yet.</div>
+{% else %}
+
+<!-- Month range picker -->
+<form method="get" action="{{ url_for('reports.index') }}" class="mb-2">
+    <div class="form-row" style="max-width: 500px; align-items: flex-end;">
+        <div class="form-group">
+            <label>From</label>
+            <select name="start">
+                {% for m in months %}
+                <option value="{{ m }}" {% if m == start_month %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>To</label>
+            <select name="end">
+                {% for m in months %}
+                <option value="{{ m }}" {% if m == end_month %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-bottom: 0.8rem;">Update</button>
+    </div>
+</form>
+
+<!-- Chart -->
+{% if chart_data %}
+<div id="chart" style="width: 100%; margin-bottom: 1.5rem;"></div>
+<script>
+(function() {
+    var chartData = {{ chart_data|safe }};
+    Plotly.newPlot('chart', chartData.data, chartData.layout, {
+        responsive: true,
+        displayModeBar: false,
+    });
+})();
+</script>
+{% else %}
+<div class="alert alert-info">No expense transactions found for the selected range.</div>
+{% endif %}
+
+<hr class="divider">
+
+<!-- Category totals for detail month -->
+<form method="get" action="{{ url_for('reports.index') }}" class="mb-2">
+    <input type="hidden" name="start" value="{{ start_month }}">
+    <input type="hidden" name="end" value="{{ end_month }}">
+    <div class="form-row" style="max-width: 300px; align-items: flex-end;">
+        <div class="form-group">
+            <label>Detail month</label>
+            <select name="detail" onchange="this.form.submit()">
+                {% for m in range_months %}
+                <option value="{{ m }}" {% if m == detail_month %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</form>
+
+{% if cat_rows %}
+<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Category Totals &mdash; {{ detail_month }}</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th class="text-right">Txns</th>
+            <th class="text-right">Total Spend</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in cat_rows %}
+        <tr>
+            <td>{{ row.category }}</td>
+            <td class="text-right">{{ row.count }}</td>
+            <td class="text-right">${{ "{:,.2f}".format(row.total_amount) }}</td>
+            <td class="text-right">
+                <a href="{{ url_for('reports.index', start=start_month, end=end_month, detail=detail_month, drill=row.category) }}"
+                   class="btn btn-sm btn-secondary">Drill</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">No expense transactions in {{ detail_month }}.</div>
+{% endif %}
+
+<!-- Drill-down -->
+{% if drill_cat %}
+<hr class="divider">
+<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">{{ drill_cat }} &mdash; {{ detail_month }} ({{ drill_txns|length }} transactions)</h2>
+
+{% if drill_txns %}
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Merchant</th>
+            <th class="text-right">Amount</th>
+            <th>Account</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for txn in drill_txns %}
+        <tr>
+            <td class="text-sm">{{ txn.date }}</td>
+            <td class="text-sm">{{ txn.description_raw[:50] }}</td>
+            <td class="text-sm">{{ txn.merchant_canonical or '—' }}</td>
+            <td class="text-sm text-right">${{ "{:,.2f}".format(txn.amount|abs) }}</td>
+            <td class="text-sm">{{ txn.account or '—' }}</td>
+            <td class="text-sm text-muted">{{ txn.notes or '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('reports.export_csv', month=detail_month, category=drill_cat) }}"
+   class="btn btn-secondary mt-1">Export CSV</a>
+{% else %}
+<p class="text-muted">No transactions found.</p>
+{% endif %}
+{% endif %}
+
+{% endif %}
+{% endblock %}

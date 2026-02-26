@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+{% block title %}Categorize — Expense Tracker{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Categorize Remaining</h1>
+
+<!-- Tabs: Review / Settings -->
+<div class="tabs">
+    <a href="{{ url_for('categorize.index', tab='review') }}"
+       class="tab {% if tab == 'review' %}active{% endif %}">Review</a>
+    <a href="{{ url_for('categorize.index', tab='settings') }}"
+       class="tab {% if tab == 'settings' %}active{% endif %}">Settings</a>
+</div>
+
+{% if tab == 'review' %}
+<!-- ═══════════ REVIEW TAB ═══════════ -->
+
+{% if txn_count == 0 %}
+<div class="alert alert-success">All transactions are categorized.</div>
+{% else %}
+<p class="mb-1"><strong>{{ txn_count }} transactions</strong> need review (uncategorized or low confidence)</p>
+
+<!-- Suggest button -->
+<form method="post" action="{{ url_for('categorize.suggest') }}" class="mb-2">
+    <button type="submit" class="btn btn-primary">Suggest Categories</button>
+    {% if has_suggestions %}
+    <span class="badge badge-green" style="margin-left: 0.5rem;">Suggestions applied</span>
+    {% endif %}
+</form>
+
+<!-- Transaction table with editable categories -->
+<form method="post" action="{{ url_for('categorize.accept') }}">
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Date</th>
+                    <th>Description</th>
+                    <th style="width: 90px;">Amount</th>
+                    <th style="width: 160px;">Category</th>
+                    <th style="width: 55px;">Conf.</th>
+                    <th style="width: 140px;">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in txns %}
+                <tr>
+                    <td class="text-sm">{{ txn.date }}</td>
+                    <td class="text-sm">
+                        {{ txn.description_raw[:60] }}
+                        <input type="hidden" name="txn_id" value="{{ txn.transaction_id }}">
+                        <input type="hidden" name="desc_{{ txn.transaction_id }}" value="{{ txn.description_raw }}">
+                    </td>
+                    <td class="text-sm text-right">${{ "{:,.2f}".format(txn.amount|abs) }}</td>
+                    <td>
+                        <select name="cat_{{ txn.transaction_id }}" style="font-size: 0.8rem; padding: 0.3rem;">
+                            {% for cat in categories %}
+                            <option value="{{ cat }}" {% if cat == (txn.category or 'Uncategorized') %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="text-sm text-center">
+                        {% if txn.confidence %}{{ "{:.0f}%".format(txn.confidence * 100) }}{% else %}&mdash;{% endif %}
+                    </td>
+                    <td>
+                        <input type="text" name="notes_{{ txn.transaction_id }}"
+                               value="{{ txn.notes or '' }}"
+                               style="font-size: 0.8rem; padding: 0.3rem;"
+                               placeholder="Notes...">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-row mt-2">
+        <button type="submit" class="btn btn-primary">Accept Changes</button>
+        <a href="{{ url_for('categorize.index') }}" class="btn btn-secondary">Reset</a>
+    </div>
+</form>
+{% endif %}
+
+<!-- Quick alias from transaction -->
+<details class="mt-2">
+    <summary>Create merchant alias from a transaction</summary>
+    <div>
+        <p class="text-sm text-muted mb-1">Aliases auto-categorize future transactions from the same merchant.</p>
+        <form method="post" action="{{ url_for('categorize.add_alias') }}">
+            <input type="hidden" name="pattern_type" value="contains">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Merchant pattern (will match as 'contains')</label>
+                    <input type="text" name="pattern" placeholder="e.g. STARBUCKS">
+                </div>
+                <div class="form-group">
+                    <label>Canonical merchant name</label>
+                    <input type="text" name="canonical" placeholder="e.g. Starbucks">
+                </div>
+            </div>
+            <div class="form-group" style="max-width: 250px;">
+                <label>Default category</label>
+                <select name="default_category">
+                    <option value="(none)">(none)</option>
+                    {% for cat in cats %}
+                    <option value="{{ cat }}">{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Save Alias</button>
+        </form>
+    </div>
+</details>
+
+{% else %}
+<!-- ═══════════ SETTINGS TAB ═══════════ -->
+
+<!-- ── Categories ─────────────────────────── -->
+<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Categories</h2>
+
+{% if cats %}
+{% for cat in cats %}
+<div class="flex-between" style="padding: 0.3rem 0; border-bottom: 1px solid rgba(56,56,58,0.5);">
+    <span>{{ cat }}</span>
+    <form method="post" action="{{ url_for('categorize.delete_category', name=cat) }}" style="display:inline;">
+        <button type="submit" class="btn btn-sm btn-danger"
+                onclick="return confirm('Delete category {{ cat }}?')">Delete</button>
+    </form>
+</div>
+{% endfor %}
+{% else %}
+<p class="text-muted">No categories defined.</p>
+{% endif %}
+
+<form method="post" action="{{ url_for('categorize.add_category') }}" class="mt-1">
+    <div class="form-row" style="max-width: 400px;">
+        <div class="form-group" style="flex: 3;">
+            <input type="text" name="name" placeholder="New category name" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="align-self: flex-start; margin-top: 0.1rem;">Add</button>
+    </div>
+</form>
+
+<!-- Rename -->
+<details class="mt-1">
+    <summary>Rename a category</summary>
+    <div>
+        <p class="text-xs text-muted mb-1">Also updates all matching transactions and aliases</p>
+        <form method="post" action="{{ url_for('categorize.rename_category') }}">
+            <div class="form-row" style="max-width: 500px;">
+                <div class="form-group">
+                    <label>Existing</label>
+                    <select name="old_name">
+                        {% for cat in cats %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>New name</label>
+                    <input type="text" name="new_name" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="align-self: flex-end; margin-bottom: 0.8rem;">Rename</button>
+            </div>
+        </form>
+    </div>
+</details>
+
+<hr class="divider">
+
+<!-- ── Subcategories ──────────────────────── -->
+<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Subcategories</h2>
+
+<div class="form-group" style="max-width: 250px;">
+    <label>Show subcategories for</label>
+    <select id="sub-cat-filter" onchange="loadSubcategories(this.value)">
+        {% for cat in cats %}
+        <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div id="subcategory-list">
+    <p class="text-muted text-sm">Select a category above.</p>
+</div>
+
+<script>
+function loadSubcategories(cat) {
+    fetch('{{ url_for("categorize.subcategories") }}?category=' + encodeURIComponent(cat))
+        .then(r => r.text())
+        .then(html => {
+            // Parse the option tags to display as a list
+            const parser = new DOMParser();
+            const doc = parser.parseFromString('<select>' + html + '</select>', 'text/html');
+            const options = doc.querySelectorAll('option');
+            let listHtml = '';
+            options.forEach(opt => {
+                if (opt.value !== 'Unknown') {
+                    listHtml += `<div class="flex-between" style="padding:0.3rem 0;border-bottom:1px solid rgba(56,56,58,0.5);">
+                        <span class="text-sm">${opt.textContent}</span>
+                    </div>`;
+                }
+            });
+            if (!listHtml) listHtml = '<p class="text-muted text-sm">No subcategories defined. "Unknown" is always available.</p>';
+            document.getElementById('subcategory-list').innerHTML = listHtml;
+        });
+}
+// Load initial
+if (document.getElementById('sub-cat-filter').value) {
+    loadSubcategories(document.getElementById('sub-cat-filter').value);
+}
+</script>
+
+<form method="post" action="{{ url_for('categorize.add_subcategory') }}" class="mt-1">
+    <div class="form-row" style="max-width: 500px;">
+        <div class="form-group">
+            <label>Category</label>
+            <select name="category">
+                {% for cat in cats %}
+                <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Subcategory name</label>
+            <input type="text" name="name" placeholder="New subcategory" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="align-self: flex-end; margin-bottom: 0.8rem;">Add</button>
+    </div>
+</form>
+
+<hr class="divider">
+
+<!-- ── Merchant Aliases ───────────────────── -->
+<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Merchant Aliases</h2>
+<p class="text-muted text-sm mb-1">
+    Rules are checked in order. First match wins.
+    <code>contains</code> = case-insensitive substring; <code>regex</code> = Python regex.
+</p>
+
+{% if aliases %}
+<div style="overflow-x: auto;">
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Pattern</th>
+                <th>Canonical</th>
+                <th>Category</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in aliases %}
+            <tr>
+                <td class="text-sm">{{ a.pattern_type }}</td>
+                <td class="text-sm">{{ a.pattern }}</td>
+                <td class="text-sm">{{ a.merchant_canonical }}</td>
+                <td class="text-sm">{{ a.default_category or '—' }}</td>
+                <td class="text-sm">{{ 'Yes' if a.active else 'No' }}</td>
+                <td class="text-right" style="white-space: nowrap;">
+                    <form method="post" action="{{ url_for('categorize.toggle_alias', alias_id=a.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-secondary">
+                            {{ 'Pause' if a.active else 'Enable' }}
+                        </button>
+                    </form>
+                    <form method="post" action="{{ url_for('categorize.delete_alias', alias_id=a.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Delete this alias?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-muted">No aliases defined yet.</p>
+{% endif %}
+
+<!-- Add alias form -->
+<details class="mt-2">
+    <summary>Add Alias</summary>
+    <div>
+        <form method="post" action="{{ url_for('categorize.add_alias') }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Pattern type</label>
+                    <select name="pattern_type">
+                        <option value="contains">contains</option>
+                        <option value="regex">regex</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pattern</label>
+                    <input type="text" name="pattern" placeholder="e.g. STARBUCKS" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Canonical merchant name</label>
+                    <input type="text" name="canonical" placeholder="e.g. Starbucks" required>
+                </div>
+                <div class="form-group">
+                    <label>Default category (optional)</label>
+                    <select name="default_category">
+                        <option value="(none)">(none)</option>
+                        {% for cat in cats %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="active" checked style="width: auto; margin-right: 0.4rem;">
+                    Active
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Alias</button>
+        </form>
+    </div>
+</details>
+
+<hr class="divider">
+
+<!-- Reapply all rules -->
+<p class="text-muted text-sm">Re-run all active alias rules against every transaction in the database.</p>
+<form method="post" action="{{ url_for('categorize.reapply_aliases') }}">
+    <button type="submit" class="btn btn-primary">Reapply All Alias Rules</button>
+</form>
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% block title %}Upload — Expense Tracker{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Upload from Bank / CC</h1>
+
+<!-- Tabs: Import / Settings -->
+<div class="tabs">
+    <a href="{{ url_for('upload.index', tab='import', month=selected_month) }}"
+       class="tab {% if tab == 'import' %}active{% endif %}">Import</a>
+    <a href="{{ url_for('upload.index', tab='settings', month=selected_month) }}"
+       class="tab {% if tab == 'settings' %}active{% endif %}">Settings</a>
+</div>
+
+{% if tab == 'import' %}
+<!-- ═══════════ IMPORT TAB ═══════════ -->
+
+<!-- Month selector -->
+<div class="form-group" style="max-width: 200px; margin-bottom: 1.2rem;">
+    <label>Month</label>
+    <select onchange="window.location.href='{{ url_for('upload.index') }}?month='+this.value">
+        {% for m in months %}
+        <option value="{{ m }}" {% if m == selected_month %}selected{% endif %}>{{ format_month(m) }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- Progress -->
+<p class="mb-1">
+    <strong>{{ done_count }}/{{ total_count }}</strong> sources imported for {{ format_month(selected_month) }}
+</p>
+<div class="progress-bar mb-2">
+    <div class="progress-fill" style="width: {{ (done_count / total_count * 100)|int if total_count else 0 }}%;"></div>
+</div>
+
+<!-- Checklist items -->
+{% if items %}
+{% for item in items %}
+{% set s = status.get(item.id, {}) %}
+{% set is_done = s.get('completed', 0) %}
+{% set last_date = source_last_dates.get(item.id) %}
+<div class="card flex-between" style="padding: 0.8rem 1.2rem;">
+    <div>
+        <strong>{{ item.label }}</strong>
+        {% if item.profile_name %}
+        <span class="badge badge-muted" style="margin-left: 0.5rem;">{{ item.profile_name }}</span>
+        {% endif %}
+        {% if is_done %}
+        <span class="badge badge-green" style="margin-left: 0.3rem;">Done</span>
+        {% endif %}
+        {% if last_date %}
+        <span class="text-xs text-muted" style="margin-left: 0.5rem;">Last txn: {{ last_date }}</span>
+        {% endif %}
+        {% if s.get('source_filename') %}
+        <span class="text-xs text-muted" style="margin-left: 0.5rem;">{{ s['source_filename'] }}</span>
+        {% endif %}
+    </div>
+    <div class="flex gap-1">
+        {% if is_done %}
+        <form method="post" action="{{ url_for('upload.undo', item_id=item.id) }}">
+            <input type="hidden" name="month" value="{{ selected_month }}">
+            <button type="submit" class="btn btn-sm btn-secondary">Undo</button>
+        </form>
+        {% else %}
+        <a href="{{ url_for('upload.import_file', item_id=item.id, month=selected_month) }}"
+           class="btn btn-sm btn-primary">Import</a>
+        {% endif %}
+        {% if item.url %}
+        <a href="{{ item.url }}" target="_blank" class="btn btn-sm btn-secondary">Download</a>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="alert alert-info">No import sources defined. Go to <strong>Settings</strong> to add your bank/card sources.</div>
+{% endif %}
+
+{% else %}
+<!-- ═══════════ SETTINGS TAB ═══════════ -->
+
+<!-- ── Import Sources ─────────────────────────── -->
+<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Import Sources</h2>
+
+{% if items %}
+<table>
+    <thead>
+        <tr>
+            <th>Source</th>
+            <th>Pattern</th>
+            <th>Profile</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>
+                {{ item.label }}
+                {% if item.url %}<br><a href="{{ item.url }}" class="text-xs" target="_blank">Download link</a>{% endif %}
+            </td>
+            <td class="text-muted text-sm">{{ item.filename_pattern or '—' }}</td>
+            <td class="text-muted text-sm">{{ item.profile_name or '—' }}</td>
+            <td class="text-right">
+                <form method="post" action="{{ url_for('upload.delete_source', item_id=item.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this source?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">No sources defined yet.</p>
+{% endif %}
+
+<!-- Add source form -->
+<details class="mt-2">
+    <summary>Add Source</summary>
+    <div>
+        <form method="post" action="{{ url_for('upload.add_source') }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Source name</label>
+                    <input type="text" name="label" placeholder="e.g. Chase Sapphire" required>
+                </div>
+                <div class="form-group">
+                    <label>Filename pattern (for last-txn lookup)</label>
+                    <input type="text" name="pattern" placeholder="e.g. chase_sapphire">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>CSV Profile</label>
+                    <select name="profile">
+                        <option value="(none)">(none)</option>
+                        {% for p in profiles %}
+                        <option value="{{ p.name }}">{{ p.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Download URL (optional)</label>
+                    <input type="text" name="url" placeholder="https://...">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Notes (optional)</label>
+                <input type="text" name="notes" placeholder="Any helpful notes...">
+            </div>
+            <button type="submit" class="btn btn-primary">Add Source</button>
+        </form>
+    </div>
+</details>
+
+<hr class="divider">
+
+<!-- ── CSV Profiles ───────────────────────────── -->
+<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">CSV Profiles</h2>
+<p class="text-muted text-sm mb-1">Define column mappings for different bank/card CSV formats.</p>
+
+{% if profiles %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date Col</th>
+            <th>Desc Col</th>
+            <th>Amount Col</th>
+            <th>Negate</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in profiles %}
+        <tr>
+            <td>{{ p.name }}</td>
+            <td class="text-muted text-sm">{{ p.date_col }}</td>
+            <td class="text-muted text-sm">{{ p.description_col }}</td>
+            <td class="text-muted text-sm">{{ p.amount_col }}</td>
+            <td class="text-muted text-sm">{{ 'Yes' if p.amount_negate else 'No' }}</td>
+            <td class="text-right">
+                <form method="post" action="{{ url_for('upload.delete_profile', name=p.name) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this profile?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">No profiles defined yet.</p>
+{% endif %}
+
+<!-- Add profile form -->
+<details class="mt-2">
+    <summary>Add Profile</summary>
+    <div>
+        <form method="post" action="{{ url_for('upload.add_profile') }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Profile name</label>
+                    <input type="text" name="name" placeholder="e.g. Chase" required>
+                </div>
+                <div class="form-group">
+                    <label>Date column</label>
+                    <input type="text" name="date_col" placeholder="e.g. Transaction Date" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Description column</label>
+                    <input type="text" name="desc_col" placeholder="e.g. Description" required>
+                </div>
+                <div class="form-group">
+                    <label>Amount column</label>
+                    <input type="text" name="amt_col" placeholder="e.g. Amount" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Merchant column (optional)</label>
+                    <input type="text" name="merchant_col" placeholder="e.g. Merchant Name">
+                </div>
+                <div class="form-group">
+                    <label>Account column (optional)</label>
+                    <input type="text" name="account_col" placeholder="e.g. Account">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Currency column (optional)</label>
+                    <input type="text" name="currency_col" placeholder="e.g. Currency">
+                </div>
+                <div class="form-group">
+                    <label>Date format (optional)</label>
+                    <input type="text" name="date_format" placeholder="e.g. %m/%d/%Y">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="negate" style="width: auto; margin-right: 0.4rem;">
+                    Negate amounts (flip sign)
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Profile</button>
+        </form>
+    </div>
+</details>
+
+{% endif %}
+{% endblock %}
