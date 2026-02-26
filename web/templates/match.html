@@ -16,7 +16,7 @@
 {% if amazon_txn_count > 0 %}
 <p class="text-muted mt-1">Found <strong>{{ amazon_txn_count }} Amazon transactions</strong> in your bank data.</p>
 
-<form method="post" action="{{ url_for('match.run') }}" class="mt-2 mb-2">
+<form method="post" action="{{ url_for('match.run_matching') }}" class="mt-2 mb-2">
     <button type="submit" class="btn btn-primary">Run Matching</button>
 </form>
 {% else %}
