@@ -12,6 +12,21 @@ from core.reporting import get_uncategorized
 bp = Blueprint("categorize", __name__, url_prefix="/categorize")
 
 
+# Patterns for vendor transactions that have unique per-transaction reference
+# codes — aliases created from these will never match future transactions.
+_VENDOR_PATTERNS = re.compile(
+    r"(?i)"
+    r"(amazon\.com\*|amazon mktpl\*|amzn mktp|amzn\.com/bill"
+    r"|henry schein"
+    r"|wholefds|whole foods)"
+)
+
+
+def _is_vendor_transaction(description: str) -> bool:
+    """Return True if description looks like a vendor order (Amazon, etc.)."""
+    return bool(_VENDOR_PATTERNS.search(description))
+
+
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _get_categories(entity_key):
@@ -49,6 +64,9 @@ def _load_aliases(entity_key):
 
 # ── Routes ───────────────────────────────────────────────────────────────────
 
+_PAGE_SIZE = 50
+
+
 @bp.route("/")
 def index():
     tab = request.args.get("tab", "review")
@@ -57,7 +75,7 @@ def index():
 
     # Check if we have suggested data in session
     suggested = session.get("categorize_suggested")
-    txns = []
+    all_txns = []
     if not raw.empty:
         for _, row in raw.iterrows():
             txn = row.to_dict()
@@ -66,7 +84,15 @@ def index():
                 s = suggested[txn["transaction_id"]]
                 txn["category"] = s.get("category", txn.get("category", ""))
                 txn["confidence"] = s.get("confidence", txn.get("confidence", 0))
-            txns.append(txn)
+            all_txns.append(txn)
+
+    # Pagination
+    total_count = len(all_txns)
+    page = request.args.get("page", 1, type=int)
+    total_pages = max(1, (total_count + _PAGE_SIZE - 1) // _PAGE_SIZE)
+    page = max(1, min(page, total_pages))
+    start = (page - 1) * _PAGE_SIZE
+    txns = all_txns[start:start + _PAGE_SIZE]
 
     # Settings tab data
     cats = _get_categories(g.entity_key)
@@ -76,11 +102,14 @@ def index():
         "categorize.html",
         tab=tab,
         txns=txns,
-        txn_count=len(txns),
+        txn_count=total_count,
         categories=categories,
         cats=cats,
         aliases=aliases,
         has_suggestions=bool(suggested),
+        page=page,
+        total_pages=total_pages,
+        page_size=_PAGE_SIZE,
     )
 
 
@@ -140,13 +169,18 @@ def accept():
             saved_count += 1
 
             # Auto-create merchant alias for future matching
+            # Skip for vendor transactions (Amazon, etc.) — they have unique
+            # per-transaction reference codes that will never match again.
             if cat:
                 desc = request.form.get(f"desc_{tid}", "").strip()
-                if desc:
+                if desc and not _is_vendor_transaction(desc):
+                    # Strip platform prefixes
                     pattern = re.sub(
                         r"^(paypal\s*\*|venmo\s*\*|zelle\s*\*|sq\s*\*|tst\s*\*|sp\s*\*)\s*",
                         "", desc, flags=re.IGNORECASE,
                     ).strip()
+                    # Strip trailing location info (city ST)
+                    pattern = re.sub(r"\s+\w{2}\s*$", "", pattern).strip()
                     if len(pattern) >= 4:
                         existing = conn.execute(
                             "SELECT id FROM merchant_aliases "
@@ -287,6 +321,21 @@ def subcategories():
         sub_names.append("Unknown")
     options = "".join(f'<option value="{s}">{s}</option>' for s in sub_names)
     return options
+
+
+@bp.route("/all-subcategories")
+def all_subcategories():
+    """Return all subcategories as JSON map {category: [sub1, sub2, ...]}."""
+    from flask import jsonify
+    cats = _get_categories(g.entity_key)
+    result = {}
+    for cat in cats:
+        subs = _get_subcategories(g.entity_key, cat)
+        names = [s["name"] for s in subs]
+        if "Unknown" not in names:
+            names.append("Unknown")
+        result[cat] = names
+    return jsonify(result)
 
 
 # ── Merchant Alias CRUD ──────────────────────────────────────────────────────

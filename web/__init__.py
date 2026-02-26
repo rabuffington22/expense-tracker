@@ -2,6 +2,8 @@
 
 import os
 import sys
+import time
+import tempfile
 from pathlib import Path
 
 # Ensure project root is on sys.path
@@ -65,6 +67,38 @@ def get_subcategories(entity_key, category):
         conn.close()
 
 
+# ── Temp file cleanup ────────────────────────────────────────────────────────
+
+_TEMP_DIR = os.path.join(tempfile.gettempdir(), "expense-tracker-uploads")
+_CLEANUP_INTERVAL = 3600  # seconds between cleanup runs
+_TEMP_MAX_AGE = 4 * 3600  # delete temp files older than 4 hours
+_last_cleanup = 0.0
+
+
+def _cleanup_temp_files():
+    """Remove temp files older than _TEMP_MAX_AGE. Called periodically."""
+    global _last_cleanup
+    now = time.time()
+    if now - _last_cleanup < _CLEANUP_INTERVAL:
+        return
+    _last_cleanup = now
+    if not os.path.isdir(_TEMP_DIR):
+        return
+    cutoff = now - _TEMP_MAX_AGE
+    removed = 0
+    for name in os.listdir(_TEMP_DIR):
+        path = os.path.join(_TEMP_DIR, name)
+        try:
+            if os.path.isfile(path) and os.path.getmtime(path) < cutoff:
+                os.remove(path)
+                removed += 1
+        except OSError:
+            pass
+    if removed:
+        import logging
+        logging.getLogger(__name__).info(f"Cleaned up {removed} expired temp file(s)")
+
+
 # ── App factory ──────────────────────────────────────────────────────────────
 
 def create_app():
@@ -82,6 +116,7 @@ def create_app():
         g.entity_display, g.entity_key = get_entity()
         g.accent = get_accent()
         init_db(g.entity_key)
+        _cleanup_temp_files()
 
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor

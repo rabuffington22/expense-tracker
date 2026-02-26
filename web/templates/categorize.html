@@ -18,7 +18,7 @@
 {% if txn_count == 0 %}
 <div class="alert alert-success">All transactions are categorized.</div>
 {% else %}
-<p class="mb-1"><strong>{{ txn_count }} transactions</strong> need review (uncategorized or low confidence)</p>
+<p class="mb-1"><strong>{{ txn_count }} transactions</strong> need review (uncategorized or low confidence){% if total_pages > 1 %} — page {{ page }} of {{ total_pages }}{% endif %}</p>
 
 <!-- Suggest button -->
 <form method="post" action="{{ url_for('categorize.suggest') }}" class="mb-2">
@@ -86,44 +86,79 @@
     </div>
 
     <div class="form-row mt-2">
-        <button type="submit" class="btn btn-primary">Accept Changes</button>
+        <button type="submit" class="btn btn-primary">Accept Changes ({{ txns|length }})</button>
         <a href="{{ url_for('categorize.index') }}" class="btn btn-secondary">Reset</a>
     </div>
 </form>
+
+{% if total_pages > 1 %}
+<div class="form-row mt-2" style="justify-content: center; gap: 0.5rem;">
+    {% if page > 1 %}
+    <a href="{{ url_for('categorize.index', page=page-1) }}" class="btn btn-secondary btn-sm">&laquo; Prev</a>
+    {% endif %}
+    {% for p in range(1, total_pages + 1) %}
+    <a href="{{ url_for('categorize.index', page=p) }}"
+       class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-secondary{% endif %}"
+       style="min-width: 2.2rem; text-align: center;">{{ p }}</a>
+    {% endfor %}
+    {% if page < total_pages %}
+    <a href="{{ url_for('categorize.index', page=page+1) }}" class="btn btn-secondary btn-sm">Next &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
 {% endif %}
 
 <script>
-function loadSubcats(catSelect, txnId) {
-    var cat = catSelect.value;
-    var subSelect = document.getElementById('subcat_' + txnId);
-    if (!cat || cat === 'Uncategorized') {
+// Cache of all subcategories — loaded once, used for all rows
+var _subcatCache = null;
+
+function _buildOptions(subs) {
+    return subs.map(function(s) {
+        return '<option value="' + s + '">' + s + '</option>';
+    }).join('');
+}
+
+function _populateSubcat(subSelect, cat) {
+    if (!_subcatCache || !cat || cat === 'Uncategorized') {
         subSelect.innerHTML = '<option value="Unknown">Unknown</option>';
         return;
     }
-    fetch('{{ url_for("categorize.subcategories") }}?category=' + encodeURIComponent(cat))
-        .then(function(r) { return r.text(); })
-        .then(function(html) {
-            subSelect.innerHTML = html;
-            // Restore current value if it exists
-            var current = subSelect.getAttribute('data-current');
-            if (current) {
-                for (var i = 0; i < subSelect.options.length; i++) {
-                    if (subSelect.options[i].value === current) {
-                        subSelect.selectedIndex = i;
-                        break;
-                    }
-                }
+    var subs = _subcatCache[cat] || ['Unknown'];
+    subSelect.innerHTML = _buildOptions(subs);
+    // Restore saved value
+    var current = subSelect.getAttribute('data-current');
+    if (current) {
+        for (var i = 0; i < subSelect.options.length; i++) {
+            if (subSelect.options[i].value === current) {
+                subSelect.selectedIndex = i;
+                break;
             }
-        });
+        }
+    }
 }
 
-// Load subcategories for all rows on page load
+function loadSubcats(catSelect, txnId) {
+    var cat = catSelect.value;
+    var subSelect = document.getElementById('subcat_' + txnId);
+    // Clear data-current since user changed category
+    subSelect.setAttribute('data-current', '');
+    _populateSubcat(subSelect, cat);
+}
+
+// Load all subcategories in one request, then populate all rows
 document.addEventListener('DOMContentLoaded', function() {
-    var catSelects = document.querySelectorAll('select[name^="cat_"]');
-    catSelects.forEach(function(sel) {
-        var txnId = sel.name.replace('cat_', '');
-        loadSubcats(sel, txnId);
-    });
+    fetch('{{ url_for("categorize.all_subcategories") }}')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            _subcatCache = data;
+            var catSelects = document.querySelectorAll('select[name^="cat_"]');
+            catSelects.forEach(function(sel) {
+                var txnId = sel.name.replace('cat_', '');
+                var subSelect = document.getElementById('subcat_' + txnId);
+                _populateSubcat(subSelect, sel.value);
+            });
+        });
 });
 </script>
 
