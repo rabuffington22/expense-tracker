@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS amazon_orders (
 """
 
 _MIGRATION_14 = """
-INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Baby & Kids', datetime('now'));
+INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Kids', datetime('now'));
 INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Household', datetime('now'));
 INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Health & Beauty', datetime('now'));
 INSERT OR IGNORE INTO categories (name, created_at) VALUES ('Clothing', datetime('now'));
@@ -357,9 +357,11 @@ _DEFAULT_CATEGORIES = [
     "Groceries", "Dining", "Transportation", "Utilities", "Healthcare",
     "Entertainment", "Shopping", "Travel", "Housing", "Income",
     "Transfers", "Fees", "Subscriptions", "Other",
-    "Baby & Kids", "Household", "Health & Beauty", "Clothing",
+    "Kids", "Household", "Health & Beauty", "Clothing",
     "Pet Supplies", "Office", "Kristine Business",
     "Home Improvement", "Personal Care", "Unknown",
+    "Student Loans", "Retirement", "Storage", "Ranch",
+    "Credit Card Payment", "Education",
 ]
 
 
@@ -368,15 +370,17 @@ _DEFAULT_SUBCATEGORIES = {
     "Groceries": ["Grocery Store", "Specialty Food"],
     "Dining": ["Fast Food", "Restaurant", "Coffee", "Delivery"],
     "Shopping": ["Online", "In-Store"],
-    "Baby & Kids": ["Diapers & Wipes", "Toys", "Gear", "Clothing"],
+    "Kids": ["Diapers & Wipes", "Toys", "Gear", "Clothing"],
     "Clothing": ["Women", "Men", "Kids"],
     "Household": ["Cleaning", "Kitchen", "Storage"],
     "Health & Beauty": ["Vitamins", "Skincare", "Haircare"],
     "Subscriptions": ["Streaming", "Software", "Membership"],
-    "Transportation": ["Gas", "Parking", "Rideshare", "Maintenance"],
+    "Transportation": ["Gas", "Parking", "Rideshare", "Maintenance", "Tolls"],
     "Home Improvement": ["Tools", "Hardware", "Decor"],
     "Pet Supplies": ["Food", "Toys", "Health"],
     "Electronics": ["Accessories", "Devices"],
+    "Student Loans": ["Ryan", "Kristine"],
+    "Ranch": ["Equipment", "Utilities", "Insurance"],
 }
 
 

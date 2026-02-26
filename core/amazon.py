@@ -59,12 +59,12 @@ _AMAZON_COL_MAP = {
 # ── Category inference from product names ────────────────────────────────────
 
 _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
-    # Baby & Kids
+    # Kids
     (["diaper", "huggies", "pampers", "baby wipe", "formula", "enfamil",
       "similac", "stroller", "car seat", "pacifier", "sippy cup", "bib",
       "onesie", "toddler", "infant", "nursery", "baby monitor", "teething",
       "baby gate", "highchair", "kids ", "children", "child ", "kid "],
-     "Baby & Kids"),
+     "Kids"),
 
     # Household
     (["paper towel", "bounty", "toilet paper", "charmin", "trash bag",
@@ -165,7 +165,7 @@ _AMAZON_BIZ_CATEGORY_MAP = {
     "wireless": "Electronics",
     "video games": "Entertainment",
     "business, industrial, & scientific supplies basic": "Office",
-    "baby product": "Baby & Kids",
+    "baby product": "Kids",
     "toys": "Entertainment",
     "apparel": "Clothing",
     "shoes": "Clothing",

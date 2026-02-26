@@ -122,7 +122,7 @@ Plus **Dashboard** and **Reports** pages.
 ## Database (17 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
-- **`categories`** -- Seeded defaults (Baby & Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
+- **`categories`** -- Seeded defaults (Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
 - **`subcategories`** -- Two-level categorization (Migration 15). Each subcategory belongs to a parent category. "Unknown" always available.
 - **`merchant_aliases`** -- Pattern-based auto-categorization (contains/regex -> merchant + category)
 - **`import_profiles`** -- Saved CSV column mappings per bank (Amex, Chase, Capital One, Citi, BofA)
