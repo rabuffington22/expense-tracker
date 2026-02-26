@@ -123,15 +123,19 @@ def accept():
     try:
         for tid in txn_ids:
             cat = request.form.get(f"cat_{tid}", "").strip()
+            subcat = request.form.get(f"subcat_{tid}", "").strip()
             notes = request.form.get(f"notes_{tid}", "").strip()
 
             if cat == "Uncategorized":
                 cat = ""
 
+            if not subcat or subcat == "Unknown":
+                subcat = None
+
             conn.execute(
-                "UPDATE transactions SET category=?, confidence=1.0, notes=? "
+                "UPDATE transactions SET category=?, subcategory=?, confidence=1.0, notes=? "
                 "WHERE transaction_id=?",
-                (cat, notes, tid),
+                (cat, subcat, notes, tid),
             )
             saved_count += 1
 

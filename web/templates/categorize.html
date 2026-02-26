@@ -38,6 +38,7 @@
                     <th>Description</th>
                     <th style="width: 90px;">Amount</th>
                     <th style="width: 160px;">Category</th>
+                    <th style="width: 140px;">Subcategory</th>
                     <th style="width: 55px;">Conf.</th>
                     <th style="width: 140px;">Notes</th>
                 </tr>
@@ -53,10 +54,20 @@
                     </td>
                     <td class="text-sm text-right">${{ "{:,.2f}".format(txn.amount|abs) }}</td>
                     <td>
-                        <select name="cat_{{ txn.transaction_id }}" style="font-size: 0.8rem; padding: 0.3rem;">
+                        <select name="cat_{{ txn.transaction_id }}"
+                                style="font-size: 0.8rem; padding: 0.3rem;"
+                                onchange="loadSubcats(this, '{{ txn.transaction_id }}')">
                             {% for cat in categories %}
                             <option value="{{ cat }}" {% if cat == (txn.category or 'Uncategorized') %}selected{% endif %}>{{ cat }}</option>
                             {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="subcat_{{ txn.transaction_id }}"
+                                id="subcat_{{ txn.transaction_id }}"
+                                style="font-size: 0.8rem; padding: 0.3rem;"
+                                data-current="{{ txn.subcategory or '' }}">
+                            <option value="Unknown">Unknown</option>
                         </select>
                     </td>
                     <td class="text-sm text-center">
@@ -80,6 +91,41 @@
     </div>
 </form>
 {% endif %}
+
+<script>
+function loadSubcats(catSelect, txnId) {
+    var cat = catSelect.value;
+    var subSelect = document.getElementById('subcat_' + txnId);
+    if (!cat || cat === 'Uncategorized') {
+        subSelect.innerHTML = '<option value="Unknown">Unknown</option>';
+        return;
+    }
+    fetch('{{ url_for("categorize.subcategories") }}?category=' + encodeURIComponent(cat))
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+            subSelect.innerHTML = html;
+            // Restore current value if it exists
+            var current = subSelect.getAttribute('data-current');
+            if (current) {
+                for (var i = 0; i < subSelect.options.length; i++) {
+                    if (subSelect.options[i].value === current) {
+                        subSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        });
+}
+
+// Load subcategories for all rows on page load
+document.addEventListener('DOMContentLoaded', function() {
+    var catSelects = document.querySelectorAll('select[name^="cat_"]');
+    catSelects.forEach(function(sel) {
+        var txnId = sel.name.replace('cat_', '');
+        loadSubcats(sel, txnId);
+    });
+});
+</script>
 
 <!-- Quick alias from transaction -->
 <details class="mt-2">

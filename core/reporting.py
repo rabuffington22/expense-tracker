@@ -109,7 +109,7 @@ def get_uncategorized(entity: str) -> pd.DataFrame:
     """
     sql = """
         SELECT transaction_id, date, description_raw, merchant_raw,
-               merchant_canonical, amount, category, confidence, notes
+               merchant_canonical, amount, category, subcategory, confidence, notes
         FROM transactions
         WHERE category IS NULL OR category = '' OR confidence < 0.6
         ORDER BY date DESC
