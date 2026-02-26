@@ -30,7 +30,7 @@ def index():
         cur_month = f"{now.year:04d}-{now.month:02d}"
         month_spend_row = conn.execute(
             "SELECT COALESCE(SUM(ABS(amount)), 0) FROM transactions "
-            "WHERE strftime('%%Y-%%m', date) = ? AND amount < 0",
+            "WHERE strftime('%Y-%m', date) = ? AND amount < 0",
             (cur_month,),
         ).fetchone()
         month_spend = month_spend_row[0] if month_spend_row else 0
@@ -38,7 +38,7 @@ def index():
         if month_spend == 0:
             month_spend_row = conn.execute(
                 "SELECT COALESCE(SUM(amount), 0) FROM transactions "
-                "WHERE strftime('%%Y-%%m', date) = ? AND amount > 0",
+                "WHERE strftime('%Y-%m', date) = ? AND amount > 0",
                 (cur_month,),
             ).fetchone()
             month_spend = month_spend_row[0] if month_spend_row else 0
@@ -87,7 +87,7 @@ def index():
         top_cats_rows = conn.execute(
             "SELECT category, COALESCE(SUM(ABS(amount)), 0) as total "
             "FROM transactions "
-            "WHERE strftime('%%Y-%%m', date) = ? "
+            "WHERE strftime('%Y-%m', date) = ? "
             "  AND category IS NOT NULL AND category != '' "
             "GROUP BY category ORDER BY total DESC LIMIT 5",
             (cur_month,),
