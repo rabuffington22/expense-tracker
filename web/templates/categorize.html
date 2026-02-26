@@ -57,7 +57,7 @@
                         <input type="hidden" name="txn_id" value="{{ txn.transaction_id }}">
                         <input type="hidden" name="desc_{{ txn.transaction_id }}" value="{{ txn.description_raw }}">
                         <a href="#" class="alias-link text-xs" style="display: none; margin-left: 0.3rem;"
-                           onclick="prefillAlias('{{ txn.description_raw|e }}'); return false;">+ Alias</a>
+                           onclick="prefillAlias({{ txn.description_raw|tojson }}); return false;">+ Alias</a>
                     </td>
                     <td class="text-sm text-right">${{ "{:,.2f}".format(txn.amount|abs) }}</td>
                     <td>
@@ -233,7 +233,7 @@ function prefillAlias(desc) {
     <span>{{ cat }}</span>
     <form method="post" action="{{ url_for('categorize.delete_category', name=cat) }}" style="display:inline;">
         <button type="submit" class="btn btn-sm btn-danger"
-                onclick="return confirm('Delete category {{ cat }}?')">Delete</button>
+                onclick="return confirm('Delete category ' + {{ cat|tojson }} + '?')">Delete</button>
     </form>
 </div>
 {% endfor %}

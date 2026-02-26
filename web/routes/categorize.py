@@ -3,6 +3,7 @@
 import re
 from datetime import datetime, timezone
 
+from markupsafe import escape
 from flask import Blueprint, render_template, request, flash, redirect, url_for, g, session
 
 from core.db import get_connection
@@ -245,6 +246,7 @@ def delete_category(name):
     conn = get_connection(g.entity_key)
     try:
         conn.execute("DELETE FROM categories WHERE name=?", (name,))
+        conn.execute("DELETE FROM subcategories WHERE category_name=?", (name,))
         conn.commit()
     finally:
         conn.close()
@@ -266,6 +268,14 @@ def rename_category():
         conn.execute("UPDATE transactions SET category=? WHERE category=?", (new_name, old_name))
         conn.execute(
             "UPDATE merchant_aliases SET default_category=? WHERE default_category=?",
+            (new_name, old_name),
+        )
+        conn.execute(
+            "UPDATE subcategories SET category_name=? WHERE category_name=?",
+            (new_name, old_name),
+        )
+        conn.execute(
+            "UPDATE amazon_orders SET category=? WHERE category=?",
             (new_name, old_name),
         )
         conn.commit()
@@ -319,7 +329,7 @@ def subcategories():
     sub_names = [s["name"] for s in subs]
     if "Unknown" not in sub_names:
         sub_names.append("Unknown")
-    options = "".join(f'<option value="{s}">{s}</option>' for s in sub_names)
+    options = "".join(f'<option value="{escape(s)}">{escape(s)}</option>' for s in sub_names)
     return options
 
 
@@ -346,7 +356,7 @@ def add_alias():
     pattern = request.form.get("pattern", "").strip()
     canonical = request.form.get("canonical", "").strip()
     def_cat = request.form.get("default_category", "")
-    active = 1 if request.form.get("active") else 1  # default active
+    active = 1 if request.form.get("active") else 0
 
     if not pattern or not canonical:
         flash("Pattern and canonical name are required.", "danger")

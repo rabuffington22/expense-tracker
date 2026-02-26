@@ -2,6 +2,7 @@
 
 from datetime import datetime, timezone
 
+from markupsafe import escape
 from flask import Blueprint, render_template, request, session, g
 
 from core.db import get_connection
@@ -119,5 +120,5 @@ def subcategories():
     """HTMX endpoint: return subcategory <option> tags for a given category."""
     category = request.args.get("category", "")
     subs = get_subcategories(g.entity_key, category) if category else ["Unknown"]
-    options = "".join(f'<option value="{s}">{s}</option>' for s in subs)
+    options = "".join(f'<option value="{escape(s)}">{escape(s)}</option>' for s in subs)
     return options
