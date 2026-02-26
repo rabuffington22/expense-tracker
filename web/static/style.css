@@ -190,6 +190,13 @@ input:focus, select:focus, textarea:focus {
     border-color: var(--blue);
 }
 select { cursor: pointer; }
+
+/* Fix date input calendar icon and text on dark backgrounds */
+input[type="date"] { color-scheme: dark; cursor: pointer; }
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
 label {
     display: block;
     font-size: 0.8rem;
