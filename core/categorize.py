@@ -75,6 +75,8 @@ _KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
       "playstation", "xbox", "nintendo", "youtube tv", "league safe",
       "cheeky monkey", "adventure kids"],
      "Entertainment", None, 0.7),
+    (["cesar mauro"],
+     "Household", "Cleaning", 0.7),
     (["b&h photo", "b & h photo"],
      "Electronics", None, 0.7),
     (["beaufort bonnet"],
