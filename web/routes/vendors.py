@@ -104,13 +104,14 @@ def parse():
         matched_orders=matched,
         unmatched_orders=unmatched_orders,
         show_preview=True,
+        temp_key=temp_key,
     )
 
 
 @bp.route("/save", methods=["POST"])
 def save():
     """Save parsed orders to the database."""
-    temp_key = session.pop("vendor_temp_key", None)
+    temp_key = request.form.get("temp_key") or session.pop("vendor_temp_key", None)
     if not temp_key:
         flash("No parsed orders to save. Upload a file first.", "warning")
         return redirect(url_for("vendors.index"))
