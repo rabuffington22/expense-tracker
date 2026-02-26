@@ -22,11 +22,11 @@
     <hr>
 
     {% set steps = [
-        ('upload.index', 'ONE', 'Upload from Bank/CC', '/upload'),
-        ('vendors.index', 'TWO', 'Upload from Vendors', '/vendors'),
-        ('match.index', 'THREE', 'Match', '/match'),
-        ('categorize_vendors.index', 'FOUR', 'Categorize Vendors', '/categorize-vendors'),
-        ('categorize.index', 'FIVE', 'Categorize Remaining', '/categorize'),
+        ('upload.index', '1', 'Upload from Bank/CC', '/upload'),
+        ('vendors.index', '2', 'Upload from Vendors', '/vendors'),
+        ('match.index', '3', 'Match', '/match'),
+        ('categorize_vendors.index', '4', 'Categorize Vendors', '/categorize-vendors'),
+        ('categorize.index', '5', 'Categorize Remaining', '/categorize'),
     ] %}
 
     {% for route, num, label, path in steps %}
