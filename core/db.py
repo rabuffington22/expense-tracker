@@ -362,6 +362,7 @@ _DEFAULT_CATEGORIES = [
     "Home Improvement", "Personal Care", "Unknown",
     "Student Loans", "Retirement", "Storage", "Ranch",
     "Credit Card Payment", "Education", "Ask Kristine",
+    "Internal Transfer", "Electronics",
 ]
 
 

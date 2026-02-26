@@ -27,6 +27,7 @@ def get_monthly_totals(entity: str, start_month: str, end_month: str) -> pd.Data
         FROM transactions
         WHERE strftime('%Y-%m', date) BETWEEN ? AND ?
           AND amount < 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
         GROUP BY month, category
         ORDER BY month, category
     """
@@ -53,6 +54,7 @@ def get_category_totals(entity: str, month: str) -> pd.DataFrame:
         FROM transactions
         WHERE strftime('%Y-%m', date) = ?
           AND amount < 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
         GROUP BY category
         ORDER BY total_amount DESC
     """
