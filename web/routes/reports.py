@@ -14,6 +14,13 @@ from core.reporting import (
 
 bp = Blueprint("reports", __name__, url_prefix="/reports")
 
+# Apple-style color palette (iOS system colors)
+COLORS = [
+    "#0a84ff", "#30d158", "#ff453a", "#ff9f0a", "#bf5af2",
+    "#64d2ff", "#ffd60a", "#ac8e68", "#98989d", "#ff6482",
+    "#30b0c7", "#8e8e93",
+]
+
 
 @bp.route("/")
 def index():
@@ -31,7 +38,6 @@ def index():
     monthly_df = get_monthly_totals(g.entity_key, start_month, end_month)
     chart_data = None
     if not monthly_df.empty:
-        # Build Plotly-compatible JSON for client-side rendering
         chart_data = _build_chart_json(monthly_df, start_month, end_month)
 
     # ── Detail month ─────────────────────────────────────────────────────────
@@ -49,6 +55,15 @@ def index():
                 "count": int(row["count"]),
                 "total_amount": float(row["total_amount"]),
             })
+
+    # ── Summary stats ────────────────────────────────────────────────────────
+    summary = {
+        "total_spend": sum(r["total_amount"] for r in cat_rows),
+        "total_txns": sum(r["count"] for r in cat_rows),
+        "top_category": cat_rows[0]["category"] if cat_rows else "",
+        "top_category_amount": cat_rows[0]["total_amount"] if cat_rows else 0,
+        "num_categories": len(cat_rows),
+    }
 
     # ── Drill-down ───────────────────────────────────────────────────────────
     drill_cat = request.args.get("drill")
@@ -78,6 +93,8 @@ def index():
         cat_rows=cat_rows,
         drill_cat=drill_cat,
         drill_txns=drill_txns,
+        summary=summary,
+        colors=COLORS,
     )
 
 
@@ -107,38 +124,70 @@ def export_csv():
 
 def _build_chart_json(df, start_month, end_month):
     """Build Plotly traces JSON for client-side rendering."""
-    # Pivot: rows=months, columns=categories, values=amounts
     pivot = df.pivot_table(
         index="month", columns="category", values="total_amount", fill_value=0
     )
 
     traces = []
-    # Color palette
-    colors = [
-        "#0a84ff", "#30d158", "#ff453a", "#ff9f0a", "#bf5af2",
-        "#64d2ff", "#ffd60a", "#ac8e68", "#98989d", "#ff6482",
-        "#30b0c7", "#8e8e93",
-    ]
     for i, cat in enumerate(sorted(pivot.columns)):
         traces.append({
             "x": list(pivot.index),
             "y": [float(v) for v in pivot[cat].values],
             "name": cat,
             "type": "bar",
-            "marker": {"color": colors[i % len(colors)]},
+            "marker": {
+                "color": COLORS[i % len(COLORS)],
+                "line": {"width": 0},
+            },
+            "hovertemplate": "<b>%{fullData.name}</b><br>$%{y:,.2f}<extra></extra>",
         })
 
     layout = {
         "barmode": "stack",
-        "title": f"Monthly Spend by Category ({start_month} - {end_month})",
-        "xaxis": {"title": "Month", "tickangle": -30},
-        "yaxis": {"title": "Spend ($)"},
+        "xaxis": {
+            "tickangle": 0,
+            "tickfont": {"size": 12},
+            "gridcolor": "rgba(0,0,0,0)",
+            "linecolor": "rgba(0,0,0,0)",
+            "zeroline": False,
+        },
+        "yaxis": {
+            "tickprefix": "$",
+            "tickformat": ",.0f",
+            "tickfont": {"size": 11},
+            "gridcolor": "rgba(255,255,255,0.04)",
+            "linecolor": "rgba(0,0,0,0)",
+            "zeroline": False,
+        },
         "hovermode": "x unified",
+        "hoverlabel": {
+            "bgcolor": "#2c2c2e",
+            "bordercolor": "rgba(255,255,255,0.1)",
+            "font": {
+                "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
+                "size": 13,
+                "color": "#f5f5f7",
+            },
+        },
         "plot_bgcolor": "rgba(0,0,0,0)",
         "paper_bgcolor": "rgba(0,0,0,0)",
-        "font": {"color": "#f5f5f7"},
-        "legend": {"title": {"text": "Category"}},
-        "height": 420,
+        "font": {
+            "color": "#f5f5f7",
+            "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
+        },
+        "legend": {
+            "orientation": "h",
+            "yanchor": "top",
+            "y": -0.18,
+            "xanchor": "center",
+            "x": 0.5,
+            "font": {"size": 11},
+            "itemsizing": "constant",
+            "traceorder": "normal",
+        },
+        "height": 380,
+        "margin": {"l": 60, "r": 20, "t": 16, "b": 60},
+        "bargap": 0.35,
     }
 
     return json.dumps({"data": traces, "layout": layout})

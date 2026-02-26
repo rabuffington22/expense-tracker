@@ -387,3 +387,290 @@ input[type="checkbox"] {
 .gap-1 { gap: 0.5rem; }
 .gap-2 { gap: 1rem; }
 .hidden { display: none; }
+
+/* ── Reports Page ──────────────────────────────────────────────────────── */
+
+.rpt-title {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+}
+
+/* Summary stat cards */
+.rpt-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+.rpt-stat-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+}
+.rpt-stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+.rpt-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+.rpt-stat-value--sm {
+    font-size: 1.2rem;
+}
+.rpt-stat-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+/* Range picker bar */
+.rpt-range-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 0.5rem 0.8rem;
+    margin-bottom: 1.2rem;
+}
+.rpt-range-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.rpt-range-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.rpt-range-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+    width: auto;
+}
+.rpt-range-select:focus {
+    outline: none;
+    border-color: var(--blue);
+}
+.rpt-range-sep {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+.rpt-range-btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: filter 0.15s;
+    margin-left: 0.2rem;
+}
+.rpt-range-btn:hover {
+    filter: brightness(1.15);
+}
+
+/* Chart card */
+.rpt-chart-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 1.4rem 1.4rem 0.8rem;
+    margin-bottom: 1.5rem;
+}
+.rpt-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.3rem;
+}
+.rpt-section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+.rpt-chart-range {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Categories section */
+.rpt-categories-section {
+    margin-bottom: 1.5rem;
+}
+.rpt-categories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+.rpt-detail-form {
+    display: inline;
+}
+.rpt-detail-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+    width: auto;
+}
+.rpt-detail-select:focus {
+    outline: none;
+    border-color: var(--blue);
+}
+
+/* Category list */
+.rpt-cat-list {
+    background: var(--bg-card);
+    border-radius: 14px;
+    overflow: hidden;
+}
+.rpt-cat-row {
+    display: flex;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(56, 56, 58, 0.4);
+    text-decoration: none;
+    color: var(--text);
+    transition: background 0.15s;
+    cursor: pointer;
+}
+.rpt-cat-row:hover {
+    background: var(--bg-hover);
+    text-decoration: none;
+}
+.rpt-cat-row:last-child {
+    border-bottom: none;
+}
+.rpt-cat-accent {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+.rpt-cat-info {
+    flex: 1;
+    min-width: 0;
+}
+.rpt-cat-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+.rpt-cat-count {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+.rpt-cat-amount {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    margin-left: 1rem;
+}
+.rpt-cat-chevron {
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    margin-left: 0.6rem;
+    width: 0.8rem;
+    text-align: center;
+    line-height: 1;
+}
+.rpt-cat-total {
+    background: rgba(255, 255, 255, 0.02);
+    cursor: default;
+}
+.rpt-cat-total:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+.rpt-cat-total .rpt-cat-name {
+    font-weight: 700;
+}
+
+/* Export link */
+.rpt-export-link {
+    display: inline-block;
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    color: var(--blue);
+    font-weight: 500;
+}
+
+/* Drill-down section */
+.rpt-drill-section {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.rpt-drill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.8rem;
+}
+.rpt-drill-badge {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    padding: 0.2rem 0.7rem;
+    border-radius: 10px;
+    font-weight: 500;
+}
+.rpt-drill-list {
+    background: var(--bg-card);
+    border-radius: 14px;
+    overflow: hidden;
+}
+.rpt-drill-row {
+    display: flex;
+    align-items: center;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(56, 56, 58, 0.3);
+}
+.rpt-drill-row:last-child {
+    border-bottom: none;
+}
+.rpt-drill-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    width: 90px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+.rpt-drill-merchant {
+    flex: 1;
+    font-size: 0.9rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.rpt-drill-amount {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--red);
+    margin-left: 1rem;
+    font-variant-numeric: tabular-nums;
+}
