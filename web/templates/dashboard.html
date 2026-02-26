@@ -18,6 +18,10 @@
         <div class="metric-value">${{ "{:,.0f}".format(month_spend) }}</div>
     </div>
     <div class="metric">
+        <div class="metric-label">{{ cur_month_label }} Income</div>
+        <div class="metric-value" style="color: var(--green);">${{ "{:,.0f}".format(month_income) }}</div>
+    </div>
+    <div class="metric">
         <div class="metric-label">Latest Transaction</div>
         <div class="metric-value" style="font-size: 1.2rem;">{{ latest_date }}</div>
     </div>

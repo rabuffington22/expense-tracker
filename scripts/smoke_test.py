@@ -47,12 +47,15 @@ def main() -> None:
         print("1. Initialising databases…")
         init_db("personal")
         init_db("company")
+        init_db("luxelegacy")
 
-        personal_db = Path(tmpdir) / "personal.sqlite"
-        company_db  = Path(tmpdir) / "company.sqlite"
-        _check(personal_db.exists(), f"personal.sqlite not created at {personal_db}")
-        _check(company_db.exists(),  f"company.sqlite not created at {company_db}")
-        print(f"   ✅ personal.sqlite and company.sqlite created")
+        personal_db   = Path(tmpdir) / "personal.sqlite"
+        company_db    = Path(tmpdir) / "company.sqlite"
+        luxelegacy_db = Path(tmpdir) / "luxelegacy.sqlite"
+        _check(personal_db.exists(),   f"personal.sqlite not created at {personal_db}")
+        _check(company_db.exists(),    f"company.sqlite not created at {company_db}")
+        _check(luxelegacy_db.exists(), f"luxelegacy.sqlite not created at {luxelegacy_db}")
+        print(f"   ✅ personal.sqlite, company.sqlite, and luxelegacy.sqlite created")
 
         # Verify default categories were seeded
         conn = get_connection("personal")
@@ -114,7 +117,11 @@ def main() -> None:
         count2  = conn2.execute("SELECT COUNT(*) FROM transactions").fetchone()[0]
         conn2.close()
         _check(count2 == 0, f"company.sqlite should be empty, has {count2} rows")
-        print(f"   ✅ company.sqlite isolated (0 rows)")
+        conn3   = get_connection("luxelegacy")
+        count3  = conn3.execute("SELECT COUNT(*) FROM transactions").fetchone()[0]
+        conn3.close()
+        _check(count3 == 0, f"luxelegacy.sqlite should be empty, has {count3} rows")
+        print(f"   ✅ company.sqlite and luxelegacy.sqlite isolated (0 rows)")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

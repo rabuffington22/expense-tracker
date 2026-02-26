@@ -16,11 +16,14 @@ def get_data_dir() -> Path:
     return data_dir
 
 
+_VALID_ENTITY_KEYS = {"personal", "company", "luxelegacy"}
+
+
 def get_db_path(entity: str) -> Path:
     """Return the SQLite DB path for the given entity."""
     entity = entity.lower()
-    if entity not in ("personal", "company"):
-        raise ValueError(f"Unknown entity: {entity!r}. Must be 'personal' or 'company'.")
+    if entity not in _VALID_ENTITY_KEYS:
+        raise ValueError(f"Unknown entity: {entity!r}. Must be one of {_VALID_ENTITY_KEYS}.")
     return get_data_dir() / f"{entity}.sqlite"
 
 
@@ -331,6 +334,14 @@ ALTER TABLE transactions ADD COLUMN plaid_transaction_id TEXT;
 CREATE INDEX IF NOT EXISTS idx_txn_plaid_id ON transactions(plaid_transaction_id);
 """
 
+_MIGRATION_20 = """
+INSERT OR IGNORE INTO import_checklist
+    (label, filename_pattern, profile_name, url, notes, sort_order, entity, created_at)
+VALUES
+    ('BofA Business Checking (LL)', 'bofa', 'BofA Checking', NULL,
+     'Luxe Legacy business checking — BofA Checking CSV format.', 1, 'luxelegacy', datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -351,6 +362,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (17, _MIGRATION_17),
     (18, _MIGRATION_18),
     (19, _MIGRATION_19),
+    (20, _MIGRATION_20),
 ]
 
 _DEFAULT_CATEGORIES = [

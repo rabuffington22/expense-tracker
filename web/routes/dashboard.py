@@ -43,6 +43,15 @@ def index():
             ).fetchone()
             month_spend = month_spend_row[0] if month_spend_row else 0
 
+        # Current month income
+        month_income_row = conn.execute(
+            "SELECT COALESCE(SUM(amount), 0) FROM transactions "
+            "WHERE strftime('%%Y-%%m', date) = ? AND amount > 0 "
+            "AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')",
+            (cur_month,),
+        ).fetchone()
+        month_income = month_income_row[0] if month_income_row else 0
+
         latest_raw = conn.execute("SELECT MAX(date) FROM transactions").fetchone()[0]
         if latest_raw:
             latest_date = datetime.strptime(latest_raw, "%Y-%m-%d").strftime("%b %-d, %Y")
@@ -103,6 +112,7 @@ def index():
         categorized_count=categorized_count,
         cat_pct=cat_pct,
         month_spend=month_spend,
+        month_income=month_income,
         cur_month_label=now.strftime("%b %Y"),
         latest_date=latest_date,
         total_orders=total_orders,

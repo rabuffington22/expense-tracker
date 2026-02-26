@@ -13,11 +13,16 @@
 {% else %}
 
 <!-- ── Summary Stats ─────────────────────────────────────────────────────── -->
-{% if summary.total_txns > 0 %}
+{% if summary.total_txns > 0 or summary.total_income > 0 %}
 <div class="rpt-stats">
     <div class="rpt-stat-card">
         <div class="rpt-stat-label">Total Spend</div>
         <div class="rpt-stat-value">${{ "{:,.2f}".format(summary.total_spend) }}</div>
+        <div class="rpt-stat-sub">{{ detail_month }}</div>
+    </div>
+    <div class="rpt-stat-card">
+        <div class="rpt-stat-label">Total Income</div>
+        <div class="rpt-stat-value" style="color: var(--green);">${{ "{:,.2f}".format(summary.total_income) }}</div>
         <div class="rpt-stat-sub">{{ detail_month }}</div>
     </div>
     <div class="rpt-stat-card">
@@ -61,7 +66,7 @@
 {% if chart_data %}
 <div class="rpt-chart-card">
     <div class="rpt-chart-header">
-        <h2 class="rpt-section-title">Monthly Spend</h2>
+        <h2 class="rpt-section-title">Monthly Spend & Income</h2>
         <span class="rpt-chart-range">{{ start_month }}  –  {{ end_month }}</span>
     </div>
     <div id="chart" style="width:100%;"></div>

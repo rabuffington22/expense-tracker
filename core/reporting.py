@@ -123,6 +123,46 @@ def get_uncategorized(entity: str) -> pd.DataFrame:
         conn.close()
 
 
+def get_monthly_income(entity: str, start_month: str, end_month: str) -> pd.DataFrame:
+    """
+    Return total income per month for a date range.
+
+    Returns DataFrame with columns: month, total_income
+    """
+    sql = """
+        SELECT
+            strftime('%Y-%m', date)  AS month,
+            SUM(amount)              AS total_income
+        FROM transactions
+        WHERE strftime('%Y-%m', date) BETWEEN ? AND ?
+          AND amount > 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')
+        GROUP BY month
+        ORDER BY month
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_month, end_month))
+    finally:
+        conn.close()
+
+
+def get_income_total(entity: str, month: str) -> float:
+    """Return total income for a given month (YYYY-MM)."""
+    sql = """
+        SELECT COALESCE(SUM(amount), 0)
+        FROM transactions
+        WHERE strftime('%Y-%m', date) = ?
+          AND amount > 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')
+    """
+    conn = get_connection(entity)
+    try:
+        return conn.execute(sql, (month,)).fetchone()[0]
+    finally:
+        conn.close()
+
+
 def get_available_months(entity: str) -> list[str]:
     """Return sorted list of 'YYYY-MM' strings that have transactions."""
     sql = "SELECT DISTINCT strftime('%Y-%m', date) AS m FROM transactions ORDER BY m"

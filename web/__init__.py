@@ -27,10 +27,11 @@ from core.db import init_db, get_connection
 
 # ── Entity helpers ────────────────────────────────────────────────────────────
 
-_ENTITY_MAP = {"Personal": "personal", "BFM": "company"}
+_ENTITY_MAP = {"Personal": "personal", "BFM": "company", "LL": "luxelegacy"}
 _ENTITY_COLORS = {
     "Personal": "#30d158",
     "BFM": "#0a84ff",
+    "LL": "#bf5af2",
 }
 
 

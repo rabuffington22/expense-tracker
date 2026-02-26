@@ -8,6 +8,8 @@ from flask import Blueprint, render_template, request, g, Response
 from core.reporting import (
     get_available_months,
     get_category_totals,
+    get_income_total,
+    get_monthly_income,
     get_monthly_totals,
     get_transactions,
 )
@@ -36,9 +38,17 @@ def index():
 
     # ── Stacked bar chart data ───────────────────────────────────────────────
     monthly_df = get_monthly_totals(g.entity_key, start_month, end_month)
+
+    # ── Income data ───────────────────────────────────────────────────────────
+    income_df = get_monthly_income(g.entity_key, start_month, end_month)
+    income_by_month = {}
+    if not income_df.empty:
+        for _, row in income_df.iterrows():
+            income_by_month[row["month"]] = float(row["total_income"])
+
     chart_data = None
     if not monthly_df.empty:
-        chart_data = _build_chart_json(monthly_df, start_month, end_month)
+        chart_data = _build_chart_json(monthly_df, start_month, end_month, income_by_month)
 
     # ── Detail month ─────────────────────────────────────────────────────────
     detail_month = request.args.get("detail", start_month)
@@ -57,8 +67,10 @@ def index():
             })
 
     # ── Summary stats ────────────────────────────────────────────────────────
+    detail_income = get_income_total(g.entity_key, detail_month)
     summary = {
         "total_spend": sum(r["total_amount"] for r in cat_rows),
+        "total_income": detail_income,
         "total_txns": sum(r["count"] for r in cat_rows),
         "top_category": cat_rows[0]["category"] if cat_rows else "",
         "top_category_amount": cat_rows[0]["total_amount"] if cat_rows else 0,
@@ -122,7 +134,7 @@ def export_csv():
     )
 
 
-def _build_chart_json(df, start_month, end_month):
+def _build_chart_json(df, start_month, end_month, income_by_month=None):
     """Build Plotly traces JSON for client-side rendering."""
     pivot = df.pivot_table(
         index="month", columns="category", values="total_amount", fill_value=0
@@ -141,6 +153,22 @@ def _build_chart_json(df, start_month, end_month):
             },
             "hovertemplate": "<b>%{fullData.name}</b><br>$%{y:,.2f}<extra></extra>",
         })
+
+    # Income overlay line
+    if income_by_month:
+        months_in_chart = list(pivot.index)
+        income_values = [income_by_month.get(m, 0) for m in months_in_chart]
+        if any(v > 0 for v in income_values):
+            traces.append({
+                "x": months_in_chart,
+                "y": income_values,
+                "name": "Income",
+                "type": "scatter",
+                "mode": "lines+markers",
+                "line": {"color": "#30d158", "width": 2.5},
+                "marker": {"size": 6, "color": "#30d158"},
+                "hovertemplate": "<b>Income</b><br>$%{y:,.2f}<extra></extra>",
+            })
 
     layout = {
         "barmode": "stack",

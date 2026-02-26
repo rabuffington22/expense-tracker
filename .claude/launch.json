@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "dashboard",
-      "runtimeExecutable": "/bin/bash",
-      "runtimeArgs": ["-c", "cd /Users/ryanbuffington/expense-tracker && .venv/bin/python run.py"],
+      "runtimeExecutable": "/tmp/run-expense-tracker.sh",
+      "runtimeArgs": [],
       "port": 8501
     }
   ]
