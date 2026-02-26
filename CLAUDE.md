@@ -1,7 +1,7 @@
 # Expense Tracker
 
 ## What This Is
-Flask + HTMX + SQLite personal/business expense tracker. Runs locally on Atlas Mac Mini. No cloud sync, no bank linking — CSV/PDF bank statements uploaded manually, categorized via alias rules and keyword heuristics. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
+Flask + HTMX + SQLite personal/business expense tracker. Runs locally on Atlas Mac Mini. Bank and credit card transactions sync automatically via Plaid API (connected accounts). CSV/PDF bank statement import retained as fallback. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
 
 Previously built on Streamlit — migrated to Flask + HTMX to eliminate WebSocket disconnect issues during interactive workflows.
 
@@ -17,6 +17,23 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 - **DB location (Atlas):** `~/expense-tracker/local_state/` (default -- no `DATA_DIR` set)
 - **Python (Atlas):** Homebrew, venv at `~/expense-tracker/.venv`
 - **App URL:** `http://192.168.3.10:8501` (LAN) or `http://100.79.127.29:8501` (Tailscale)
+
+## Plaid Integration
+- **Status:** Production access submitted 2026-02-26, in review. Sandbox available now.
+- **Plaid app name:** BFM Expense Tracker (Plaid dashboard)
+- **Client ID:** `69a02460632219000ea2ea03`
+- **Env vars required:** `PLAID_CLIENT_ID`, `PLAID_SECRET`, `PLAID_ENV` (sandbox|development|production)
+- **Current deploy:** Running in sandbox mode (`PLAID_ENV=sandbox`)
+- **Sandbox test creds:** username `user_good`, password `pass_good`
+- **Connected Accounts page:** `/plaid/` — connect banks, sync, disconnect
+- **Sync:** Manual only (no auto-sync on startup) — POST `/plaid/sync`
+- **Migration 18:** Added `plaid_items`, `plaid_accounts` tables + `plaid_item_id` on transactions
+- **To switch to production:** Update `PLAID_SECRET` to production secret and set `PLAID_ENV=production`, then restart gunicorn
+
+## Deploy with Plaid (Full Restart)
+```bash
+ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && .venv/bin/pip install plaid-python -q && pkill -9 -f gunicorn; sleep 2 && PLAID_CLIENT_ID=69a02460632219000ea2ea03 PLAID_SECRET=<secret> PLAID_ENV=sandbox OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES nohup .venv/bin/gunicorn -w 1 -b 0.0.0.0:8501 --timeout 120 --access-logfile - 'web:create_app()' > /tmp/flask.log 2>&1 &"
+```
 
 > **DATA_DIR pitfall:** Do NOT pass `DATA_DIR` to deploy commands -- keep everything on `local_state/`.
 
