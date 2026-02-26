@@ -39,15 +39,38 @@
     <div class="form-row mb-2">
         <div class="form-group">
             <label>From</label>
-            <input type="date" name="filter_from" value="{{ min_date }}">
+            <input type="date" name="filter_from" id="filterFrom" value="{{ min_date }}">
         </div>
         <div class="form-group">
             <label>To</label>
-            <input type="date" name="filter_to" value="{{ max_date }}">
+            <input type="date" name="filter_to" id="filterTo" value="{{ max_date }}">
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Save {{ order_count }} orders</button>
+    <button type="submit" class="btn btn-primary" id="saveBtn">Save {{ order_count }} orders</button>
 </form>
+
+<script>
+(function() {
+    var dates = [{% for o in orders %}"{{ o.order_date }}"{% if not loop.last %},{% endif %}{% endfor %}];
+    var fromEl = document.getElementById('filterFrom');
+    var toEl = document.getElementById('filterTo');
+    var btn = document.getElementById('saveBtn');
+
+    function update() {
+        var from = fromEl.value;
+        var to = toEl.value;
+        var count = 0;
+        for (var i = 0; i < dates.length; i++) {
+            var d = dates[i].slice(0, 10);
+            if (d >= from && d <= to) count++;
+        }
+        btn.textContent = 'Save ' + count + ' orders';
+    }
+
+    fromEl.addEventListener('change', update);
+    toEl.addEventListener('change', update);
+})();
+</script>
 {% endif %}
 
 <hr class="divider">
