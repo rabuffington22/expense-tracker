@@ -33,10 +33,11 @@
 <p class="text-sm mb-1">
     Amount diff: <strong style="color: {% if amt_pct > 3 %}var(--red){% else %}inherit{% endif %};">${{ "{:.2f}".format(amt_diff) }} ({{ "{:.1f}".format(amt_pct) }}%)</strong>
 </p>
-{% if m.date_gap is not none %}
+{% set date_gap = m.get('date_gap') if m.get is defined else none %}
+{% if date_gap is not none %}
 <p class="text-sm mb-2">
-    Date gap: <strong style="color: {% if m.date_gap > 5 or m.date_gap < -2 %}var(--red){% else %}inherit{% endif %};">{{ m.date_gap }} day{{ 's' if m.date_gap != 1 else '' }}</strong>
-    <span class="text-muted">(bank charge {{ 'after' if m.date_gap >= 0 else 'before' }} order)</span>
+    Date gap: <strong style="color: {% if date_gap > 5 or date_gap < -2 %}var(--red){% else %}inherit{% endif %};">{{ date_gap }} day{{ 's' if date_gap != 1 else '' }}</strong>
+    <span class="text-muted">(bank charge {{ 'after' if date_gap >= 0 else 'before' }} order)</span>
 </p>
 {% endif %}
 
