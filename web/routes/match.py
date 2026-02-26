@@ -124,9 +124,20 @@ def run_matching():
     # Convert to serializable dicts
     review_data = []
     for m in review:
+        order_date = m.get("matched_order", {}).get("order_date", "")
+        txn_date = m["txn_date"]
+        # Compute date gap in days
+        date_gap = None
+        try:
+            td = datetime.strptime(txn_date, "%Y-%m-%d")
+            od = datetime.strptime(order_date, "%Y-%m-%d")
+            date_gap = (td - od).days
+        except (ValueError, TypeError):
+            pass
+
         review_data.append({
             "transaction_id": m["transaction_id"],
-            "txn_date": m["txn_date"],
+            "txn_date": txn_date,
             "txn_amount": m["txn_amount"],
             "txn_description": m["txn_description"],
             "product_summary": m["product_summary"],
@@ -134,8 +145,9 @@ def run_matching():
             "suggested_category": m.get("suggested_category", ""),
             "suggested_subcategory": m.get("suggested_subcategory", "Unknown"),
             "confidence": m["confidence"],
-            "order_date": m.get("matched_order", {}).get("order_date", ""),
+            "order_date": order_date,
             "order_total": m.get("matched_order", {}).get("order_total", 0),
+            "date_gap": date_gap,
         })
 
     no_match_data = []
