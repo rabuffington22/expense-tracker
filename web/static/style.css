@@ -54,7 +54,7 @@ a:hover { text-decoration: underline; }
 
 /* ── Sidebar Wordmark ───────────────────────────────────────────────────── */
 .sidebar-wordmark {
-    display: inline-block;
+    align-self: flex-start;
     margin-bottom: 1rem;
 }
 .sidebar-title {
