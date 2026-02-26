@@ -31,6 +31,8 @@ def _save_match_data(review_data, no_match_data):
         json.dump({"review": review_data, "no_match": no_match_data}, f)
     session["match_temp_key"] = temp_key
     session["match_review_idx"] = 0
+    session["match_accepted"] = 0
+    session["match_skipped"] = 0
 
 
 def _load_match_data():
@@ -47,13 +49,16 @@ def _load_match_data():
 
 
 def _clear_match_data():
-    """Remove temp file and session keys."""
+    """Remove temp file and session keys. Returns (accepted, skipped) counts."""
     temp_key = session.pop("match_temp_key", None)
     session.pop("match_review_idx", None)
+    accepted = session.pop("match_accepted", 0)
+    skipped = session.pop("match_skipped", 0)
     if temp_key:
         path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
         if os.path.exists(path):
             os.remove(path)
+    return accepted, skipped
 
 
 @bp.route("/")
@@ -185,6 +190,7 @@ def accept():
             "confidence": m["confidence"],
         }])
         session["match_review_idx"] = idx + 1
+        session["match_accepted"] = session.get("match_accepted", 0) + 1
 
     if request.headers.get("HX-Request"):
         return _render_match_card()
@@ -197,6 +203,7 @@ def skip_match():
     """Skip a match and advance to next."""
     idx = session.get("match_review_idx", 0)
     session["match_review_idx"] = idx + 1
+    session["match_skipped"] = session.get("match_skipped", 0) + 1
 
     if request.headers.get("HX-Request"):
         return _render_match_card()
@@ -206,8 +213,18 @@ def skip_match():
 
 @bp.route("/finish", methods=["POST"])
 def finish():
-    """Clear review queue."""
-    _clear_match_data()
+    """Clear review queue and show summary."""
+    review, no_match = _load_match_data()
+    accepted, skipped = _clear_match_data()
+    parts = []
+    if accepted:
+        parts.append(f"Accepted {accepted}")
+    if skipped:
+        parts.append(f"Skipped {skipped}")
+    if no_match:
+        parts.append(f"{len(no_match)} unmatched")
+    if parts:
+        flash("Review complete: " + ", ".join(parts) + ".", "success")
     return redirect(url_for("match.index"))
 
 

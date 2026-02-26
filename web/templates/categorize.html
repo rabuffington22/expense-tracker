@@ -49,8 +49,15 @@
                     <td class="text-sm">{{ txn.date }}</td>
                     <td class="text-sm">
                         {{ txn.description_raw[:60] }}
+                        {% if not txn.category or txn.category == '' %}
+                        <span class="badge badge-muted" style="margin-left: 0.3rem; font-size: 0.65rem;">NEW</span>
+                        {% elif txn.confidence and txn.confidence < 0.6 %}
+                        <span class="badge" style="margin-left: 0.3rem; font-size: 0.65rem; background: rgba(255,159,10,0.2); color: var(--orange);">LOW CONF</span>
+                        {% endif %}
                         <input type="hidden" name="txn_id" value="{{ txn.transaction_id }}">
                         <input type="hidden" name="desc_{{ txn.transaction_id }}" value="{{ txn.description_raw }}">
+                        <a href="#" class="alias-link text-xs" style="display: none; margin-left: 0.3rem;"
+                           onclick="prefillAlias('{{ txn.description_raw|e }}'); return false;">+ Alias</a>
                     </td>
                     <td class="text-sm text-right">${{ "{:,.2f}".format(txn.amount|abs) }}</td>
                     <td>
@@ -109,6 +116,10 @@
 
 {% endif %}
 
+<style>
+tr:hover .alias-link { display: inline !important; }
+</style>
+
 <script>
 // Cache of all subcategories — loaded once, used for all rows
 var _subcatCache = null;
@@ -163,20 +174,20 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <!-- Quick alias from transaction -->
-<details class="mt-2">
+<details class="mt-2" id="alias-details">
     <summary>Create merchant alias from a transaction</summary>
     <div>
-        <p class="text-sm text-muted mb-1">Aliases auto-categorize future transactions from the same merchant.</p>
+        <p class="text-sm text-muted mb-1">Aliases auto-categorize future transactions from the same merchant. Click "+ Alias" on any row to pre-fill.</p>
         <form method="post" action="{{ url_for('categorize.add_alias') }}">
             <input type="hidden" name="pattern_type" value="contains">
             <div class="form-row">
                 <div class="form-group">
                     <label>Merchant pattern (will match as 'contains')</label>
-                    <input type="text" name="pattern" placeholder="e.g. STARBUCKS">
+                    <input type="text" name="pattern" id="alias-pattern" placeholder="e.g. STARBUCKS">
                 </div>
                 <div class="form-group">
                     <label>Canonical merchant name</label>
-                    <input type="text" name="canonical" placeholder="e.g. Starbucks">
+                    <input type="text" name="canonical" id="alias-canonical" placeholder="e.g. Starbucks">
                 </div>
             </div>
             <div class="form-group" style="max-width: 250px;">
@@ -192,6 +203,22 @@ document.addEventListener('DOMContentLoaded', function() {
         </form>
     </div>
 </details>
+
+<script>
+function prefillAlias(desc) {
+    // Strip platform prefixes and trailing location info
+    var pattern = desc.replace(/^(paypal\s*\*|venmo\s*\*|zelle\s*\*|sq\s*\*|tst\s*\*|sp\s*\*)\s*/i, '');
+    pattern = pattern.replace(/\s+\w{2}\s*$/, '').trim();
+
+    document.getElementById('alias-pattern').value = pattern;
+    document.getElementById('alias-canonical').value = pattern;
+
+    // Open the details and scroll to it
+    var details = document.getElementById('alias-details');
+    details.open = true;
+    details.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+</script>
 
 {% else %}
 <!-- ═══════════ SETTINGS TAB ═══════════ -->

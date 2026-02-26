@@ -7,10 +7,10 @@
 <a href="{{ url_for('vendors.index') }}" class="btn btn-primary">Go to Vendors &rarr;</a>
 
 {% else %}
-<p class="mb-1"><strong>{{ total }} orders</strong> need categorization.</p>
+<p class="mb-1"><strong>Order {{ completed + 1 }} of {{ initial }}</strong> — {{ total }} remaining</p>
 
 <div class="progress-bar mb-1">
-    <div class="progress-fill" style="width: 0%;"></div>
+    <div class="progress-fill" style="width: {{ progress_pct }}%;"></div>
 </div>
 
 <div class="card">

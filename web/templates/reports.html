@@ -81,7 +81,10 @@
         </tr>
     </thead>
     <tbody>
+        {% set ns = namespace(total_txns=0, total_spend=0) %}
         {% for row in cat_rows %}
+        {% set ns.total_txns = ns.total_txns + row.count %}
+        {% set ns.total_spend = ns.total_spend + row.total_amount %}
         <tr>
             <td>{{ row.category }}</td>
             <td class="text-right">{{ row.count }}</td>
@@ -93,7 +96,18 @@
         </tr>
         {% endfor %}
     </tbody>
+    <tfoot>
+        <tr style="border-top: 2px solid var(--border); font-weight: 700;">
+            <td>Total</td>
+            <td class="text-right">{{ ns.total_txns }}</td>
+            <td class="text-right">${{ "{:,.2f}".format(ns.total_spend) }}</td>
+            <td></td>
+        </tr>
+    </tfoot>
 </table>
+
+<a href="{{ url_for('reports.export_csv', month=detail_month) }}"
+   class="btn btn-secondary btn-sm mt-1">Export All &mdash; {{ detail_month }}</a>
 {% else %}
 <div class="alert alert-info">No expense transactions in {{ detail_month }}.</div>
 {% endif %}

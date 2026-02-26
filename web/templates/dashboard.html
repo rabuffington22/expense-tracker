@@ -6,20 +6,73 @@
 
 <div class="metrics-row">
     <div class="metric">
+        <div class="metric-label">Transactions</div>
+        <div class="metric-value">{{ "{:,}".format(total_txn_count) }}</div>
+    </div>
+    <div class="metric">
         <div class="metric-label">Need Review</div>
-        <div class="metric-value">{{ "{:,}".format(uncat_count) }}</div>
+        <div class="metric-value" style="color: {% if uncat_count > 0 %}var(--orange){% else %}var(--green){% endif %};">{{ "{:,}".format(uncat_count) }}</div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">{{ cur_month_label }} Spend</div>
+        <div class="metric-value">${{ "{:,.0f}".format(month_spend) }}</div>
     </div>
     <div class="metric">
         <div class="metric-label">Latest Transaction</div>
-        <div class="metric-value">{{ latest_date }}</div>
+        <div class="metric-value" style="font-size: 1.2rem;">{{ latest_date }}</div>
     </div>
 </div>
+
+<!-- Categorization progress -->
+{% if total_txn_count > 0 %}
+<div class="card" style="padding: 0.8rem 1.2rem;">
+    <div class="flex-between mb-1">
+        <span class="text-sm text-bold">Categorized</span>
+        <span class="text-sm">{{ "{:,}".format(categorized_count) }} / {{ "{:,}".format(total_txn_count) }} ({{ cat_pct }}%)</span>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ cat_pct }}%; background: {% if cat_pct == 100 %}var(--green){% else %}var(--blue){% endif %};"></div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Vendor matching status -->
+{% if total_orders > 0 %}
+<div class="card" style="padding: 0.8rem 1.2rem;">
+    <div class="flex-between">
+        <span class="text-sm text-bold">Vendor Orders</span>
+        <span class="text-sm">
+            {{ "{:,}".format(total_orders) }} total &mdash;
+            {% if unmatched_orders > 0 %}
+            <span style="color: var(--orange);">{{ unmatched_orders }} unmatched</span>
+            {% else %}
+            <span style="color: var(--green);">All matched</span>
+            {% endif %}
+        </span>
+    </div>
+</div>
+{% endif %}
+
+<!-- Top categories this month -->
+{% if top_cats %}
+<h2 style="font-size: 1.1rem; margin-top: 1.2rem; margin-bottom: 0.6rem;">Top Categories &mdash; {{ cur_month_label }}</h2>
+{% for cat in top_cats %}
+<div class="flex-between" style="padding: 0.3rem 0; border-bottom: 1px solid rgba(56,56,58,0.5);">
+    <span class="text-sm">{{ cat.name }}</span>
+    <span class="text-sm text-bold">${{ "{:,.0f}".format(cat.total) }}</span>
+</div>
+{% endfor %}
+{% endif %}
 
 <hr class="divider">
 
 {% if has_sources %}
+    <h2 style="font-size: 1.1rem; margin-bottom: 0.6rem;">Import Progress</h2>
     {% for mp in month_progress %}
-    <p class="mb-1"><strong>{{ mp.label }}</strong> — {{ mp.done }}/{{ mp.total }} sources imported</p>
+    <div class="flex-between" style="padding: 0.2rem 0;">
+        <span class="text-sm">{{ mp.label }}</span>
+        <span class="text-sm {% if mp.done == mp.total %}text-bold{% endif %}" style="color: {% if mp.done == mp.total %}var(--green){% else %}var(--text-muted){% endif %};">{{ mp.done }}/{{ mp.total }}</span>
+    </div>
     {% endfor %}
 {% else %}
     <div class="alert alert-info">No import sources defined. Go to Upload &gt; Settings to add your bank/card sources.</div>

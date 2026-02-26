@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, request, g
+from flask import Blueprint, render_template, request, session, g
 
 from core.db import get_connection
 from core.amazon import get_uncategorized_orders, get_order_counts, categorize_order, infer_category
@@ -16,10 +16,22 @@ def _build_card_context(entity_key):
     uncategorized = get_uncategorized_orders(entity_key)
     total_orders, _ = get_order_counts(entity_key)
 
+    remaining = len(uncategorized)
+
     if not uncategorized and total_orders > 0:
+        session.pop("vendor_cat_initial", None)
         return {"done": True, "message": "All orders are categorized! Head to the Match page to link them to bank charges."}
     elif not uncategorized:
+        session.pop("vendor_cat_initial", None)
         return {"empty": True, "message": "Upload vendor orders on the Vendors page to get started."}
+
+    # Track initial count for progress display
+    initial = session.get("vendor_cat_initial")
+    if not initial or remaining > initial:
+        initial = remaining
+        session["vendor_cat_initial"] = initial
+    completed = initial - remaining
+    progress_pct = int(completed / initial * 100) if initial else 0
 
     # Always show the first uncategorized order (since we just categorized/skipped the previous one)
     order = uncategorized[0]
@@ -36,8 +48,10 @@ def _build_card_context(entity_key):
 
     return {
         "order": order,
-        "total": len(uncategorized),
-        "idx": 1,
+        "total": remaining,
+        "initial": initial,
+        "completed": completed,
+        "progress_pct": progress_pct,
         "categories": categories,
         "subcategories": subs,
         "inferred_cat": inferred_cat,

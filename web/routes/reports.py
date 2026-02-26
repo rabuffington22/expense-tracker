@@ -83,18 +83,21 @@ def index():
 
 @bp.route("/export-csv")
 def export_csv():
-    """Export drill-down transactions as CSV."""
+    """Export transactions as CSV. If category is provided, exports just that category."""
     month = request.args.get("month", "")
     category = request.args.get("category", "")
-    if not month or not category:
-        return "Missing parameters", 400
+    if not month:
+        return "Missing month parameter", 400
 
-    txn_df = get_transactions(g.entity_key, month=month, category=category)
+    txn_df = get_transactions(g.entity_key, month=month, category=category or None)
     if txn_df.empty:
         return "No data", 404
 
     csv_data = txn_df.to_csv(index=False)
-    filename = f"{g.entity_key}_{month}_{category.lower().replace(' ', '_')}.csv"
+    if category:
+        filename = f"{g.entity_key}_{month}_{category.lower().replace(' ', '_')}.csv"
+    else:
+        filename = f"{g.entity_key}_{month}_all.csv"
     return Response(
         csv_data,
         mimetype="text/csv",

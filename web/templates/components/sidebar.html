@@ -17,7 +17,7 @@
 
     <!-- Nav links -->
     <a href="{{ url_for('dashboard.index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
-    <a href="{{ url_for('reports.index') }}" class="nav-link {% if '/reports' in request.path %}active{% endif %}">Reports</a>
+    <a href="{{ url_for('reports.index') }}" class="nav-link {% if request.path.startswith('/reports') %}active{% endif %}">Reports</a>
 
     <hr>
 
@@ -30,7 +30,7 @@
     ] %}
 
     {% for route, num, label, path in steps %}
-    <a href="{{ url_for(route) }}" class="step-row {% if path in request.path %}active{% endif %}" style="text-decoration:none;">
+    <a href="{{ url_for(route) }}" class="step-row {% if request.path == path or request.path.startswith(path + '/') %}active{% endif %}" style="text-decoration:none;">
         <span class="step-num" style="color: {{ accent }};">{{ num }}</span>
         <span class="step-label">{{ label }}</span>
     </a>
