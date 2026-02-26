@@ -8,7 +8,7 @@ Previously built on Streamlit — migrated to Flask + HTMX to eliminate WebSocke
 ## Three Entities (Fully Isolated)
 - **Personal** -> `personal.sqlite`
 - **BFM** (company) -> `company.sqlite`
-- **Luxe Legacy** -> `luxe_legacy.sqlite`
+- **LL** (Luxe Legacy) -> `luxelegacy.sqlite`
 
 Each has its own DB, categories, aliases, import checklists. Entity selected via sidebar toggle.
 
@@ -86,7 +86,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     style.css                      # Apple-style dark theme (true black #000 bg, SF Pro fonts, segmented controls)
     htmx.min.js                    # HTMX library (~14KB)
 core/                              # Business logic (unchanged from Streamlit era)
-  db.py                            # Schema migrations (17 so far), DB init, connections
+  db.py                            # Schema migrations (20 so far), DB init, connections
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
   amazon.py                        # Amazon order CSV parsing + vendor order matching
@@ -120,7 +120,7 @@ Pattern used across routes:
 
 Plus **Dashboard** and **Reports** pages.
 
-## Database (17 Migrations)
+## Database (20 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Seeded defaults (Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
