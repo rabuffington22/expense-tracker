@@ -5,9 +5,10 @@ Flask + HTMX + SQLite personal/business expense tracker. Runs locally on Atlas M
 
 Previously built on Streamlit — migrated to Flask + HTMX to eliminate WebSocket disconnect issues during interactive workflows.
 
-## Two Entities (Fully Isolated)
+## Three Entities (Fully Isolated)
 - **Personal** -> `personal.sqlite`
 - **BFM** (company) -> `company.sqlite`
+- **Luxe Legacy** -> `luxe_legacy.sqlite`
 
 Each has its own DB, categories, aliases, import checklists. Entity selected via sidebar toggle.
 
@@ -67,9 +68,9 @@ web/                               # Flask app (replaced old app/ Streamlit code
     categorize.py                  # GET/POST /categorize (remaining txns + settings)
     reports.py                     # GET /reports (charts, drill-down, CSV export)
   templates/
-    base.html                      # Layout: sidebar + main content, dark theme
+    base.html                      # Layout: sidebar + main content, mobile header/hamburger, skip-link, scrim overlay
     components/
-      sidebar.html                 # Entity toggle + numbered nav steps
+      sidebar.html                 # Entity toggle + numbered nav steps (ARIA nav landmark)
       card.html                    # Vendor order card (HTMX swap target)
       match_card.html              # Match review card (HTMX swap target)
       flash.html                   # Success/error flash messages
@@ -82,7 +83,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     categorize.html                # Review tab + Settings tab
     reports.html                   # Plotly charts + drill-down tables
   static/
-    style.css                      # Dark theme (#1c1c1e bg, white text)
+    style.css                      # Apple-style dark theme (true black #000 bg, SF Pro fonts, segmented controls)
     htmx.min.js                    # HTMX library (~14KB)
 core/                              # Business logic (unchanged from Streamlit era)
   db.py                            # Schema migrations (17 so far), DB init, connections
@@ -168,6 +169,9 @@ Subscription charges (Audible, Kindle Unlimited, Amazon Music, etc.) excluded vi
 - Transaction IDs are deterministic -- reimporting the same CSV won't create duplicates
 - Entity stored in cookie (survives page refreshes, no WebSocket dependency)
 - Dark theme with `color-scheme: dark` on date inputs for calendar picker visibility
+- Mobile responsive: hamburger menu at ≤768px, sidebar slides in/out with scrim overlay
+- Accessibility: skip-to-content link, ARIA labels on sidebar nav, focus-visible rings on all interactive elements
+- Open redirect prevention on `/set-entity` — only relative paths allowed
 
 ## Delete Amazon Data (for re-import)
 ```python
@@ -196,6 +200,24 @@ python scripts/smoke_test.py  # No server needed
 flask, gunicorn, pandas, plotly, pdfplumber, python-dateutil, openpyxl
 
 ## Change Log
+
+### 2026-02-26 — Apple-style UI overhaul
+Complete visual redesign targeting Apple iOS/macOS dark mode aesthetic. Branch: `claude/review-code-testing-w9VVE`.
+
+1. **style.css rewrite** — True black `#000` background, SF Pro font stack (`-apple-system, BlinkMacSystemFont, "SF Pro Display"`), 0.5px hairline borders, `border-radius: 16px` cards, segmented entity toggle control, `backdrop-filter` vibrancy effects, `cubic-bezier(0.32, 0.72, 0, 1)` spring animations.
+2. **Responsive mobile layout** — CSS Grid metrics row, hamburger menu at ≤768px, sidebar slides in from left with scrim overlay, three breakpoints (1024px, 768px, 400px).
+3. **Accessibility** — Skip-to-content link, `aria-label="Main navigation"` on sidebar, `aria-expanded` on hamburger, `:focus-visible` blue rings on all interactive elements, `role="alert"` on flash messages.
+4. **base.html restructure** — Added `<meta name="theme-color" content="#000000">`, `<meta name="color-scheme" content="dark">`, mobile header with hamburger SVG, scrim div, `toggleSidebar()`/`closeSidebar()` JS, auto-close sidebar on mobile nav click.
+
+### 2026-02-26 — Second code review pass (6 more bugs)
+Continued review after initial fixes. All routes tested via Flask test client with populated databases.
+
+1. **Bug: `pd.read_json()` crashes on pandas 2.x** — `upload.py` passed raw JSON strings to `pd.read_json()`, which in pandas 2.x interprets strings as file paths, causing `OSError: File name too long`. Fixed by wrapping with `io.StringIO()`. Also added Timestamp-to-string conversion for `date`/`imported_at` columns that `read_json` auto-parses.
+2. **Bug: Dashboard income always $0** — `dashboard.py` income query used `strftime('%%Y-%%m', date)` which produces literal `%Y-%m` text in SQLite instead of formatting the date. Fixed to `strftime('%Y-%m', date)`.
+3. **XSS: categorize.html JS subcategory builder** — `_buildOptions()` injected subcategory names directly into innerHTML without escaping. Added `_escapeHtml()` helper using DOM text node.
+4. **XSS: plaid.html disconnect confirm** — Institution name injected directly into `onsubmit="return confirm('...')"` attribute. Fixed with `|tojson` filter.
+5. **Security: open redirect in `/set-entity`** — `redirect` form field accepted arbitrary URLs. Added validation to only allow relative paths (blocks `//evil.com`).
+6. **Missing dependency: openpyxl** — `core/henryschein.py` uses `pd.read_excel()` which requires openpyxl, but it wasn't in `requirements.txt`. Added `openpyxl>=3.1.0`.
 
 ### 2026-02-26 — End-to-end code review fixes
 Full review of all routes, templates, and core modules. Smoke test passing. Fixes:
