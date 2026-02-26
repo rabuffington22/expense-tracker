@@ -1,14 +1,40 @@
 """Vendors route — upload Amazon CSV / Henry Schein XLSX."""
 
+import json
+import os
+import tempfile
 from datetime import date as _date
 
 import pandas as pd
-from flask import Blueprint, render_template, request, flash, redirect, url_for, g
+from flask import Blueprint, render_template, request, flash, redirect, url_for, g, session
 
 from core.amazon import parse_amazon_csv, group_orders, save_orders_to_db, get_order_counts
 from core.henryschein import parse_henryschein_xlsx
 
 bp = Blueprint("vendors", __name__, url_prefix="/vendors")
+
+# Temp directory for storing parsed data between parse and save steps
+_TEMP_DIR = os.path.join(tempfile.gettempdir(), "expense-tracker-uploads")
+os.makedirs(_TEMP_DIR, exist_ok=True)
+
+
+def _save_temp(key, data):
+    """Save data to a temp file, return the filename."""
+    path = os.path.join(_TEMP_DIR, f"{key}.json")
+    with open(path, "w") as f:
+        json.dump(data, f)
+    return key
+
+
+def _load_temp(key):
+    """Load data from a temp file and delete it."""
+    path = os.path.join(_TEMP_DIR, f"{key}.json")
+    if not os.path.exists(path):
+        return None
+    with open(path) as f:
+        data = json.load(f)
+    os.remove(path)
+    return data
 
 
 @bp.route("/")
@@ -56,10 +82,11 @@ def parse():
     max_d = max(dates) if dates else "?"
     total_spent = sum(o["order_total"] for o in orders)
 
-    # Store orders in session for save step
-    from flask import session
-    session["parsed_orders"] = orders
-    session["parsed_vendor"] = vendor.lower().replace(" ", "")
+    # Store orders in temp file (too large for cookie session)
+    import uuid
+    temp_key = f"vendors_{uuid.uuid4().hex[:12]}"
+    _save_temp(temp_key, {"orders": orders, "vendor": vendor.lower().replace(" ", "")})
+    session["vendor_temp_key"] = temp_key
 
     total_orders, unmatched_orders = get_order_counts(g.entity_key)
     matched = total_orders - unmatched_orders
@@ -83,13 +110,18 @@ def parse():
 @bp.route("/save", methods=["POST"])
 def save():
     """Save parsed orders to the database."""
-    from flask import session
-    orders = session.pop("parsed_orders", [])
-    vendor = session.pop("parsed_vendor", "amazon")
-
-    if not orders:
+    temp_key = session.pop("vendor_temp_key", None)
+    if not temp_key:
         flash("No parsed orders to save. Upload a file first.", "warning")
         return redirect(url_for("vendors.index"))
+
+    data = _load_temp(temp_key)
+    if not data:
+        flash("Parsed data expired. Please upload the file again.", "warning")
+        return redirect(url_for("vendors.index"))
+
+    orders = data["orders"]
+    vendor = data["vendor"]
 
     # Apply date filter if provided
     filter_from = request.form.get("filter_from")

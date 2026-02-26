@@ -1,6 +1,9 @@
 """Upload route — bank/CC statement import."""
 
+import json
 import os
+import tempfile
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -9,6 +12,10 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 
 from core.db import get_connection
 from core.imports import parse_csv, parse_pdf, normalize_transactions, commit_transactions
+
+# Temp directory for storing parsed data between upload and confirm steps
+_TEMP_DIR = os.path.join(tempfile.gettempdir(), "expense-tracker-uploads")
+os.makedirs(_TEMP_DIR, exist_ok=True)
 
 bp = Blueprint("upload", __name__, url_prefix="/upload")
 
@@ -192,18 +199,18 @@ def import_file(item_id):
             preview["suggested_name"] = f"{item['label']} - {preview['detected_month']}{ext}"
         previews.append(preview)
 
-    # Store parsed data in session for confirm step
-    session["upload_previews"] = [
-        {
-            "name": pf["name"],
-            "has_data": pf["df"] is not None and not pf["df"].empty,
-        }
+    # Store parsed data in temp file (too large for cookie session)
+    temp_key = f"upload_{uuid.uuid4().hex[:12]}"
+    temp_data = {
+        fname: pf["df"].to_json()
         for pf in parsed_files
-    ]
-    # Store DataFrames as JSON in session (they're small enough)
-    session["upload_dfs"] = {
-        pf["name"]: pf["df"].to_json() for pf in parsed_files if pf["df"] is not None and not pf["df"].empty
+        if pf["df"] is not None and not pf["df"].empty
+        for fname in [pf["name"]]
     }
+    temp_path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
+    with open(temp_path, "w") as f:
+        json.dump(temp_data, f)
+    session["upload_temp_key"] = temp_key
 
     good_count = sum(1 for p in previews if p.get("count"))
     total_txns = sum(p.get("count", 0) for p in previews)
@@ -224,8 +231,16 @@ def import_file(item_id):
 def confirm(item_id):
     """Confirm import — commit transactions to DB."""
     month = request.form.get("month") or _month_options()[0]
-    upload_dfs = session.pop("upload_dfs", {})
-    session.pop("upload_previews", None)
+
+    # Load parsed data from temp file
+    temp_key = session.pop("upload_temp_key", None)
+    upload_dfs = {}
+    if temp_key:
+        temp_path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
+        if os.path.exists(temp_path):
+            with open(temp_path) as f:
+                upload_dfs = json.load(f)
+            os.remove(temp_path)
 
     if not upload_dfs:
         flash("No data to import. Please upload files again.", "warning")
