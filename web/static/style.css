@@ -66,13 +66,11 @@ a:hover { text-decoration: underline; }
 }
 .sidebar-subtitle {
     display: block;
-    width: 100%;
     font-size: 0.68rem;
     font-weight: 500;
     color: var(--text-muted);
     text-transform: uppercase;
-    text-align: justify;
-    text-align-last: justify;
+    letter-spacing: 0.385em;
 }
 
 /* ── Entity Toggle ──────────────────────────────────────────────────────── */
