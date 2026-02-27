@@ -1112,6 +1112,7 @@ input[type="checkbox"] {
     .main {
         margin-left: 0;
         padding: 68px 1rem 2rem;
+        overflow-x: hidden;
     }
     h1.page-title {
         font-size: 1.6rem;
@@ -1210,6 +1211,7 @@ input[type="checkbox"] {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
+    margin-bottom: 0;
 }
 .txn-filter-bar .form-group label {
     margin: 0;
@@ -1243,6 +1245,9 @@ select.input-sm {
     gap: 0.4rem;
     flex-wrap: wrap;
     align-items: center;
+}
+.txn-chips-spacer {
+    flex: 1;
 }
 .txn-chip {
     padding: 0.3rem 0.7rem;
@@ -1340,13 +1345,16 @@ select.input-sm {
     flex-wrap: wrap;
 }
 
-/* Responsive: filter bar + edit form stack on mobile */
+/* Responsive: tablet — filters in 2-col grid (overrides base .form-row column) */
 @media (max-width: 768px) {
     .txn-filter-bar .form-row {
-        flex-direction: column;
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        gap: 0.4rem;
     }
     .txn-filter-bar .form-group {
-        min-width: 100% !important;
+        min-width: calc(50% - 0.25rem) !important;
+        flex: 1 1 calc(50% - 0.25rem) !important;
     }
     .txn-chips {
         gap: 0.3rem;
@@ -1357,5 +1365,44 @@ select.input-sm {
     .txn-edit-fields select,
     .txn-edit-fields input {
         min-width: 100%;
+    }
+}
+
+/* Responsive: mobile — filters fully stack, compact table */
+@media (max-width: 480px) {
+    .txn-filter-bar {
+        padding: 0.5rem 0.75rem;
+        overflow: hidden;
+    }
+    .txn-filter-bar .form-row {
+        flex-direction: column !important;
+        gap: 0.3rem;
+        margin-bottom: 0.35rem;
+    }
+    .txn-filter-bar .form-group {
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
+        gap: 0.1rem;
+    }
+    .txn-chips {
+        gap: 0.25rem;
+    }
+    .txn-chip {
+        padding: 0.25rem 0.55rem;
+        font-size: 0.72rem;
+    }
+    .txn-chips-spacer {
+        display: none;
+    }
+    /* Table: enable horizontal scroll instead of cramping columns */
+    #txn-results table {
+        min-width: 560px;
+    }
+    .txn-edit-actions {
+        gap: 0.25rem;
+    }
+    .txn-edit-actions .btn-sm {
+        padding: 0.22rem 0.55rem;
+        font-size: 0.75rem;
     }
 }
