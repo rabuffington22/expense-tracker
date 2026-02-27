@@ -123,6 +123,76 @@ def main() -> None:
         _check(count3 == 0, f"luxelegacy.sqlite should be empty, has {count3} rows")
         print(f"   ✅ company.sqlite and luxelegacy.sqlite isolated (0 rows)")
 
+        # ── 8. Route regression tests ────────────────────────────────
+        print("\n8. Route regression tests…")
+        from web import create_app
+        app = create_app()
+        app.config["TESTING"] = True
+
+        with app.test_client() as client:
+            client.set_cookie("entity", "Personal")
+
+            def _get_ok(path, label):
+                resp = client.get(path)
+                _check(resp.status_code == 200, f"{label}: expected 200, got {resp.status_code}")
+
+            def _get_ok_contains(path, label, needle):
+                resp = client.get(path)
+                _check(resp.status_code == 200, f"{label}: expected 200, got {resp.status_code}")
+                body = resp.get_data(as_text=True)
+                _check(needle in body, f"{label}: missing '{needle}'")
+
+            # vendor_breakdown with date range (was 500 before fix 2b85b9d)
+            # Assert content to catch "200 but wrong page" regressions
+            _get_ok_contains(
+                "/transactions/?vendor_breakdown=1&start=2024-01-01&end=2024-01-31",
+                "vendor_breakdown + dates",
+                'id="txn-results"',
+            )
+
+            # vendor_breakdown without date range (baseline)
+            _get_ok(
+                "/transactions/?vendor_breakdown=1",
+                "vendor_breakdown bare",
+            )
+
+            # vendor_breakdown with dates + search (maximizes bind params)
+            _get_ok(
+                "/transactions/?vendor_breakdown=1&start=2024-01-01&end=2024-01-31&q=amazon",
+                "vendor_breakdown + dates + search",
+            )
+
+            # vendor_breakdown with dates + merchant (another bind param combo)
+            _get_ok(
+                "/transactions/?vendor_breakdown=1&start=2024-01-01&end=2024-01-31&merchant=amazon",
+                "vendor_breakdown + dates + merchant",
+            )
+
+            # Dashboard loads
+            _get_ok("/", "dashboard")
+
+            # Dashboard partial (HTMX)
+            _get_ok(
+                "/dashboard/partial?start=2024-01-01&end=2024-01-31",
+                "dashboard partial",
+            )
+
+            # Transactions with various filters
+            _get_ok(
+                "/transactions/?start=2024-01-01&end=2024-01-31&type=expense",
+                "transactions expense filter",
+            )
+            _get_ok(
+                "/transactions/?uncategorized=1",
+                "transactions uncategorized",
+            )
+            _get_ok(
+                "/transactions/?possible_transfer=1&start=2024-01-01&end=2024-01-31",
+                "transactions possible_transfer + dates",
+            )
+
+        print("   ✅ All route regression tests passed")
+
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
     print("=" * 60 + "\n")
