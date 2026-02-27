@@ -129,5 +129,47 @@ function sortBy(col) {
     }
     document.getElementById('txn-filter-form').requestSubmit();
 }
+
+/* ── Subcategory cascade for inline edit (PR 3) ────────────────────────── */
+var _txnSubcatCache = null;
+
+function _txnEscapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
+function _txnBuildOptions(subs) {
+    return subs.map(function(s) {
+        var e = _txnEscapeHtml(s);
+        return '<option value="' + e + '">' + e + '</option>';
+    }).join('');
+}
+
+function txnLoadSubcats(catSelect, txnId) {
+    var cat = catSelect.value;
+    var subSelect = document.getElementById('txn-subcat-' + txnId);
+    if (!subSelect) return;
+    subSelect.setAttribute('data-current', '');
+
+    function apply() {
+        if (!cat || !_txnSubcatCache || !_txnSubcatCache[cat]) {
+            subSelect.innerHTML = '<option value="Unknown">Unknown</option>';
+            return;
+        }
+        subSelect.innerHTML = _txnBuildOptions(_txnSubcatCache[cat]);
+    }
+
+    if (_txnSubcatCache) {
+        apply();
+    } else {
+        fetch('{{ url_for("transactions.all_subcategories") }}')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                _txnSubcatCache = data;
+                apply();
+            });
+    }
+}
 </script>
 {% endblock %}

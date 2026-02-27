@@ -22,5 +22,11 @@
     {{ fmt_cents(txn.amount_cents) }}
   </td>
   <td class="text-sm">{{ txn.category or '—' }}</td>
-  <td><!-- actions placeholder (PR 3) --></td>
+  <td>
+    <button class="btn-icon"
+            hx-get="{{ url_for('transactions.edit_row', txn_id=txn.transaction_id) }}"
+            hx-target="#txn-{{ txn.transaction_id }}"
+            hx-swap="outerHTML"
+            title="Edit">&#9998;</button>
+  </td>
 </tr>

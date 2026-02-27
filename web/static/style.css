@@ -1249,12 +1249,65 @@ select.input-sm {
     padding: 1rem 0;
 }
 
+/* Icon button (edit pencil, cancel X) */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+    line-height: 1;
+}
+.btn-icon:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--text);
+}
+.btn-icon:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+}
+
 /* Edit mode highlight (PR 3) */
 .txn-editing {
     background: rgba(255,255,255,0.03);
 }
+.txn-editing td {
+    background: rgba(255,255,255,0.03);
+}
 
-/* Responsive: filter bar stacks on mobile */
+/* Inline edit form layout */
+.txn-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.txn-edit-fields {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.txn-edit-fields select,
+.txn-edit-fields input {
+    flex: 1;
+    min-width: 90px;
+}
+.txn-edit-actions {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive: filter bar + edit form stack on mobile */
 @media (max-width: 768px) {
     .txn-filter-bar .form-row {
         flex-direction: column;
@@ -1264,5 +1317,12 @@ select.input-sm {
     }
     .txn-chips {
         gap: 0.3rem;
+    }
+    .txn-edit-fields {
+        flex-direction: column;
+    }
+    .txn-edit-fields select,
+    .txn-edit-fields input {
+        min-width: 100%;
     }
 }

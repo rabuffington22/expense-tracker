@@ -1,10 +1,14 @@
 """Transactions route — universal drill target with filters, pagination, HTMX."""
 
+import re
 import math
+from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, request, g
+from flask import Blueprint, render_template, request, g, jsonify
+from markupsafe import escape
 
 from core.db import get_connection
+from web import get_categories, get_subcategories
 
 bp = Blueprint("transactions", __name__, url_prefix="/transactions")
 
@@ -286,6 +290,170 @@ def partial():
         categories=categories,
         accounts=accounts,
     )
+
+
+# ── Inline actions (PR 3) ────────────────────────────────────────────────────
+
+@bp.route("/view-row/<txn_id>")
+def view_row(txn_id):
+    """Return read-only <tr> partial (used by cancel button)."""
+    conn = get_connection(g.entity_key)
+    try:
+        return _render_read_row(conn, txn_id)
+    finally:
+        conn.close()
+
+
+@bp.route("/edit-row/<txn_id>")
+def edit_row(txn_id):
+    """Return editable <tr> partial for a single transaction."""
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT * FROM transactions WHERE transaction_id = ?", (txn_id,)
+        ).fetchone()
+        if not row:
+            return "Not found", 404
+        txn = dict(row)
+        categories = get_categories(g.entity_key)
+        current_cat = txn.get("category") or ""
+        subcats = get_subcategories(g.entity_key, current_cat) if current_cat else ["Unknown"]
+        return render_template(
+            "components/txn_row_edit.html",
+            txn=txn,
+            categories=categories,
+            subcategories=subcats,
+        )
+    finally:
+        conn.close()
+
+
+@bp.route("/update/<txn_id>", methods=["POST"])
+def update(txn_id):
+    """Save category + subcategory + notes, return read-only <tr>."""
+    category = request.form.get("category", "").strip()
+    subcategory = request.form.get("subcategory", "").strip() or "Unknown"
+    notes = request.form.get("notes", "").strip()
+
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "UPDATE transactions SET category=?, subcategory=?, notes=?, confidence=1.0 "
+            "WHERE transaction_id=?",
+            (category, subcategory, notes, txn_id),
+        )
+        conn.commit()
+        return _render_read_row(conn, txn_id)
+    finally:
+        conn.close()
+
+
+@bp.route("/mark-transfer/<txn_id>", methods=["POST"])
+def mark_transfer(txn_id):
+    """Set category='Internal Transfer', return read-only <tr>."""
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "UPDATE transactions SET category='Internal Transfer', "
+            "subcategory='Unknown', confidence=1.0 WHERE transaction_id=?",
+            (txn_id,),
+        )
+        conn.commit()
+        return _render_read_row(conn, txn_id)
+    finally:
+        conn.close()
+
+
+@bp.route("/create-rule/<txn_id>", methods=["POST"])
+def create_rule(txn_id):
+    """Create merchant alias from this transaction's description, return <tr>."""
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT description_raw, category FROM transactions WHERE transaction_id=?",
+            (txn_id,),
+        ).fetchone()
+        if not row:
+            return "Not found", 404
+
+        desc = row["description_raw"] or ""
+        cat = row["category"] or ""
+
+        # Strip platform prefixes (same logic as categorize.py)
+        pattern = re.sub(
+            r"^(paypal\s*\*|venmo\s*\*|zelle\s*\*|sq\s*\*|tst\s*\*|sp\s*\*)\s*",
+            "", desc, flags=re.IGNORECASE,
+        ).strip()
+        # Strip trailing location info (city ST)
+        pattern = re.sub(r"\s+\w{2}\s*$", "", pattern).strip()
+
+        message = ""
+        if len(pattern) >= 4:
+            existing = conn.execute(
+                "SELECT id FROM merchant_aliases "
+                "WHERE pattern_type='contains' AND LOWER(pattern)=LOWER(?)",
+                (pattern,),
+            ).fetchone()
+            if not existing:
+                now_ts = datetime.now(timezone.utc).isoformat()
+                conn.execute(
+                    "INSERT INTO merchant_aliases "
+                    "(pattern_type, pattern, merchant_canonical, "
+                    " default_category, active, created_at) "
+                    "VALUES (?, ?, ?, ?, 1, ?)",
+                    ("contains", pattern, pattern, cat, now_ts),
+                )
+                conn.commit()
+                message = f"Rule created: '{pattern}' → {cat}"
+            else:
+                message = f"Rule already exists for '{pattern}'"
+        else:
+            message = "Description too short to create rule"
+
+        # Return the read-only row (with HX-Trigger for optional toast)
+        response = _render_read_row(conn, txn_id)
+        return response
+    finally:
+        conn.close()
+
+
+@bp.route("/subcategories")
+def subcategories():
+    """Return subcategory <option> tags for a category (HTMX endpoint)."""
+    cat = request.args.get("category", "")
+    subs = get_subcategories(g.entity_key, cat)
+    options = "".join(
+        f'<option value="{escape(s)}">{escape(s)}</option>' for s in subs
+    )
+    return options
+
+
+@bp.route("/all-subcategories")
+def all_subcategories():
+    """Return all subcategories as JSON map {category: [sub1, sub2, ...]}."""
+    cats = get_categories(g.entity_key)
+    result = {}
+    for cat in cats:
+        result[cat] = get_subcategories(g.entity_key, cat)
+    return jsonify(result)
+
+
+def _render_read_row(conn, txn_id):
+    """Fetch a transaction and return its read-only <tr> HTML."""
+    row = conn.execute(
+        """SELECT t.*,
+                  COUNT(ao.id) AS alloc_count,
+                  COALESCE(SUM(ABS(ao.order_total_cents)), 0) AS alloc_total_cents,
+                  GROUP_CONCAT(ao.product_summary, ' || ') AS alloc_products
+           FROM transactions t
+           LEFT JOIN amazon_orders ao ON ao.matched_transaction_id = t.transaction_id
+           WHERE t.transaction_id = ?
+           GROUP BY t.transaction_id""",
+        (txn_id,),
+    ).fetchone()
+    if not row:
+        return "Not found", 404
+    return render_template("components/txn_row.html", txn=dict(row))
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
