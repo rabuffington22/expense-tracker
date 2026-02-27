@@ -33,6 +33,11 @@ _ENTITY_COLORS = {
     "BFM": "#0a84ff",
     "LL": "#bf5af2",
 }
+_ENTITY_LABELS = {
+    "Personal": {"income": "Income",  "spend": "Spending", "net": "Net",    "type": "personal"},
+    "BFM":      {"income": "Revenue", "spend": "Expenses", "net": "Profit", "type": "business"},
+    "LL":       {"income": "Revenue", "spend": "Expenses", "net": "Profit", "type": "business"},
+}
 
 
 def get_entity():
@@ -131,11 +136,14 @@ def create_app():
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor
     def _inject_globals():
+        labels = _ENTITY_LABELS.get(g.entity_display, _ENTITY_LABELS["Personal"])
         return {
             "entity_display": g.entity_display,
             "entity_key": g.entity_key,
             "accent": g.accent,
             "entities": list(_ENTITY_MAP.keys()),
+            "entity_type": labels["type"],
+            "entity_labels": labels,
         }
 
     # ── Entity toggle route ──────────────────────────────────────────────────
@@ -150,6 +158,21 @@ def create_app():
         resp.set_cookie("entity", choice, max_age=365 * 24 * 3600, samesite="Lax")
         return resp
 
+    # ── Jinja globals ────────────────────────────────────────────────────────
+    from web.routes.reports import fmt_date, fmt_month_short
+
+    def fmt_cents(cents):
+        """Format integer cents as dollar string. -8943 → '−$89.43'"""
+        if cents is None:
+            return "$0.00"
+        cents = int(cents)
+        sign = "\u2212" if cents < 0 else ""
+        return f"{sign}${abs(cents) / 100:,.2f}"
+
+    app.jinja_env.globals["fmt_date"] = fmt_date
+    app.jinja_env.globals["fmt_month_short"] = fmt_month_short
+    app.jinja_env.globals["fmt_cents"] = fmt_cents
+
     # ── Register blueprints ──────────────────────────────────────────────────
     from web.routes.dashboard import bp as dashboard_bp
     from web.routes.upload import bp as upload_bp
@@ -159,6 +182,7 @@ def create_app():
     from web.routes.categorize import bp as categorize_bp
     from web.routes.reports import bp as reports_bp
     from web.routes.plaid import bp as plaid_bp
+    from web.routes.transactions import bp as transactions_bp
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(upload_bp)
@@ -168,5 +192,6 @@ def create_app():
     app.register_blueprint(categorize_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(plaid_bp)
+    app.register_blueprint(transactions_bp)
 
     return app

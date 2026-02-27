@@ -183,11 +183,14 @@ def sync():
                         continue
                     description = t.get("merchant_name") or t.get("name") or ""
                     amount = -t["amount"]
+                    amount_cents = round(amount * 100)
                     conn.execute(
                         """UPDATE transactions
-                           SET description_raw=?, merchant_raw=?, amount=?
+                           SET description_raw=?, merchant_raw=?, amount=?,
+                               amount_cents=?
                            WHERE plaid_transaction_id=?""",
-                        (description, description, amount, t["plaid_transaction_id"]),
+                        (description, description, amount, amount_cents,
+                         t["plaid_transaction_id"]),
                     )
                     total_modified += 1
 
@@ -305,6 +308,7 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
     description = txn.get("merchant_name") or txn.get("name") or ""
     date = txn["date"]
     amount = -txn["amount"]  # Plaid positive=debit -> our negative=debit
+    amount_cents = round(amount * 100)
 
     txn_id = compute_transaction_id(date, amount, description)
 
@@ -313,11 +317,11 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
         cur = conn.execute(
             """INSERT OR IGNORE INTO transactions
                (transaction_id, date, description_raw, merchant_raw, amount,
-                currency, source_filename, imported_at, plaid_item_id,
-                plaid_transaction_id)
-               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                amount_cents, currency, source_filename, imported_at,
+                plaid_item_id, plaid_transaction_id)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
             (txn_id, date, description, description, amount,
-             "USD", "plaid-sync", now, item_id,
+             amount_cents, "USD", "plaid-sync", now, item_id,
              txn["plaid_transaction_id"]),
         )
         return 1 if cur.rowcount > 0 else 0

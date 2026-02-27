@@ -1159,3 +1159,110 @@ input[type="checkbox"] {
         padding: 64px 0.75rem 2rem;
     }
 }
+
+
+/* ── Transactions page ──────────────────────────────────────────────────── */
+
+.txn-filter-bar {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+}
+.txn-filter-bar .form-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+.txn-filter-bar .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.txn-filter-bar .form-group label {
+    margin: 0;
+}
+.input-sm {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.06);
+    border: 0.5px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    color: #fff;
+    color-scheme: dark;
+}
+.input-sm:focus {
+    outline: none;
+    border-color: var(--accent, #0a84ff);
+    box-shadow: 0 0 0 2px rgba(10,132,255,0.25);
+}
+select.input-sm {
+    -webkit-appearance: none;
+    appearance: none;
+    padding-right: 1.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%23999' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.4rem center;
+}
+
+/* Toggle chips */
+.txn-chips {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.txn-chip {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.78rem;
+    border-radius: 100px;
+    border: 0.5px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+.txn-chip:hover {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.85);
+}
+.txn-chip.active {
+    background: rgba(10,132,255,0.18);
+    border-color: rgba(10,132,255,0.4);
+    color: #fff;
+}
+
+/* Results summary */
+.txn-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+/* Pagination */
+.txn-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0;
+}
+
+/* Edit mode highlight (PR 3) */
+.txn-editing {
+    background: rgba(255,255,255,0.03);
+}
+
+/* Responsive: filter bar stacks on mobile */
+@media (max-width: 768px) {
+    .txn-filter-bar .form-row {
+        flex-direction: column;
+    }
+    .txn-filter-bar .form-group {
+        min-width: 100% !important;
+    }
+    .txn-chips {
+        gap: 0.3rem;
+    }
+}

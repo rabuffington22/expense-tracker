@@ -669,8 +669,9 @@ def save_orders_to_db(entity: str, orders: list[dict], vendor: str = "amazon") -
             conn.execute(
                 "INSERT INTO amazon_orders "
                 "(order_id, payment_ref_id, order_date, charge_date, "
-                " product_summary, amazon_category, order_total, vendor, imported_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                " product_summary, amazon_category, order_total, order_total_cents, "
+                " vendor, imported_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     o["order_id"],
                     o.get("payment_ref_id"),
@@ -679,6 +680,7 @@ def save_orders_to_db(entity: str, orders: list[dict], vendor: str = "amazon") -
                     o["product_summary"],
                     o.get("amazon_category", ""),
                     o["order_total"],
+                    round(o["order_total"] * 100),
                     vendor,
                     now,
                 ),

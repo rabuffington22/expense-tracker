@@ -691,12 +691,17 @@ def commit_transactions(df: pd.DataFrame, entity: str) -> tuple[int, int]:
 
     cols = [
         "transaction_id", "date", "description_raw", "merchant_raw",
-        "merchant_canonical", "amount", "currency", "account",
+        "merchant_canonical", "amount", "amount_cents", "currency", "account",
         "category", "confidence", "notes", "source_filename", "imported_at",
     ]
     for c in cols:
         if c not in new_df.columns:
             new_df[c] = None
+
+    # Populate amount_cents from amount (integer cents, no floating-point math downstream)
+    new_df["amount_cents"] = new_df["amount"].apply(
+        lambda a: round(a * 100) if a is not None else None
+    )
 
     sql = (
         f"INSERT OR IGNORE INTO transactions ({','.join(cols)}) "

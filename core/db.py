@@ -342,6 +342,16 @@ VALUES
      'Luxe Legacy business checking — BofA Checking CSV format.', 1, 'luxelegacy', datetime('now'));
 """
 
+_MIGRATION_21 = """
+ALTER TABLE transactions ADD COLUMN amount_cents INTEGER;
+UPDATE transactions SET amount_cents = CAST(ROUND(amount * 100) AS INTEGER);
+
+ALTER TABLE amazon_orders ADD COLUMN order_total_cents INTEGER;
+UPDATE amazon_orders SET order_total_cents = CAST(ROUND(order_total * 100) AS INTEGER);
+
+CREATE INDEX IF NOT EXISTS idx_ao_matched_txn ON amazon_orders(matched_transaction_id);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -363,6 +373,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (18, _MIGRATION_18),
     (19, _MIGRATION_19),
     (20, _MIGRATION_20),
+    (21, _MIGRATION_21),
 ]
 
 _DEFAULT_CATEGORIES = [

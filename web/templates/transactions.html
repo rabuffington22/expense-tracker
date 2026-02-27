@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Transactions — Ledger Oak{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Transactions</h1>
+
+<!-- Filter bar (outside HTMX target — always visible) -->
+<div class="card txn-filter-bar">
+  <form id="txn-filter-form"
+        hx-get="{{ url_for('transactions.partial') }}"
+        hx-target="#txn-results"
+        hx-swap="innerHTML"
+        hx-push-url="true">
+
+    <!-- Row 1: date range + category + account + search -->
+    <div class="form-row">
+      <div class="form-group" style="flex:1;min-width:120px;">
+        <label class="text-xs text-muted" for="start">From</label>
+        <input type="date" id="start" name="start" value="{{ params.start }}" class="input-sm">
+      </div>
+      <div class="form-group" style="flex:1;min-width:120px;">
+        <label class="text-xs text-muted" for="end">To</label>
+        <input type="date" id="end" name="end" value="{{ params.end }}" class="input-sm">
+      </div>
+      <div class="form-group" style="flex:1.5;min-width:140px;">
+        <label class="text-xs text-muted" for="category_id">Category</label>
+        <select id="category_id" name="category_id" class="input-sm">
+          <option value="">All</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if params.category_id == cat.id|string %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group" style="flex:1;min-width:120px;">
+        <label class="text-xs text-muted" for="account">Account</label>
+        <select id="account" name="account" class="input-sm">
+          <option value="">All</option>
+          {% for acct in accounts %}
+          <option value="{{ acct }}" {% if params.account == acct %}selected{% endif %}>{{ acct }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group" style="flex:1.5;min-width:140px;">
+        <label class="text-xs text-muted" for="q">Search</label>
+        <input type="text" id="q" name="q" value="{{ params.q }}" placeholder="merchant, notes..." class="input-sm">
+      </div>
+    </div>
+
+    <!-- Row 2: toggle chips -->
+    <div class="txn-chips">
+      <label class="txn-chip {% if params.type == 'expense' %}active{% endif %}">
+        <input type="radio" name="type" value="expense" {% if params.type == 'expense' %}checked{% endif %} hidden>
+        <span>Expenses</span>
+      </label>
+      <label class="txn-chip {% if params.type == 'income' %}active{% endif %}">
+        <input type="radio" name="type" value="income" {% if params.type == 'income' %}checked{% endif %} hidden>
+        <span>Income</span>
+      </label>
+      <label class="txn-chip {% if params.uncategorized == '1' %}active{% endif %}">
+        <input type="checkbox" name="uncategorized" value="1" {% if params.uncategorized == '1' %}checked{% endif %} hidden>
+        <span>Uncategorized</span>
+      </label>
+      <label class="txn-chip {% if params.vendor_breakdown == '1' %}active{% endif %}">
+        <input type="checkbox" name="vendor_breakdown" value="1" {% if params.vendor_breakdown == '1' %}checked{% endif %} hidden>
+        <span>Vendor Needed</span>
+      </label>
+      <label class="txn-chip {% if params.possible_transfer == '1' %}active{% endif %}">
+        <input type="checkbox" name="possible_transfer" value="1" {% if params.possible_transfer == '1' %}checked{% endif %} hidden>
+        <span>Transfers</span>
+      </label>
+
+      <!-- Hidden sort fields (updated by JS on column header click) -->
+      <input type="hidden" name="sort" id="sort-field" value="{{ params.sort }}">
+      <input type="hidden" name="dir" id="dir-field" value="{{ params.dir }}">
+
+      <div style="flex:1;"></div>
+      <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+      <a href="{{ url_for('transactions.index') }}" class="btn btn-secondary btn-sm">Clear</a>
+    </div>
+  </form>
+</div>
+
+<!-- Results container — HTMX swap target (D3) -->
+<div id="txn-results">
+  {% include "components/txn_results.html" %}
+</div>
+
+<script>
+/* Toggle chip state on click */
+document.querySelectorAll('.txn-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+        var input = this.querySelector('input');
+        if (input.type === 'radio') {
+            /* For radio: if already active, deselect (clear type filter) */
+            if (this.classList.contains('active')) {
+                input.checked = false;
+                this.classList.remove('active');
+                /* Clear the radio group */
+                document.querySelectorAll('input[name="' + input.name + '"]').forEach(function(r) {
+                    r.checked = false;
+                    r.closest('.txn-chip').classList.remove('active');
+                });
+            } else {
+                /* Deactivate siblings */
+                document.querySelectorAll('input[name="' + input.name + '"]').forEach(function(r) {
+                    r.checked = false;
+                    r.closest('.txn-chip').classList.remove('active');
+                });
+                input.checked = true;
+                this.classList.add('active');
+            }
+        } else {
+            /* Checkbox toggle */
+            input.checked = !input.checked;
+            this.classList.toggle('active', input.checked);
+        }
+    });
+});
+
+/* Column header sort */
+function sortBy(col) {
+    var sortField = document.getElementById('sort-field');
+    var dirField = document.getElementById('dir-field');
+    if (sortField.value === col) {
+        dirField.value = dirField.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortField.value = col;
+        dirField.value = col === 'date' ? 'desc' : 'asc';
+    }
+    document.getElementById('txn-filter-form').requestSubmit();
+}
+</script>
+{% endblock %}

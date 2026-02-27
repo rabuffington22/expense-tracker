@@ -1,0 +1,56 @@
+<div class="txn-summary">
+  <span class="text-sm text-muted">
+    {{ "{:,}".format(total_count) }} transaction{{ 's' if total_count != 1 }}
+    {% if category_name %} in <strong>{{ category_name }}</strong>{% endif %}
+  </span>
+</div>
+
+<div style="overflow-x:auto;">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:85px;cursor:pointer;" onclick="sortBy('date')">
+          Date
+          {% if params.sort == 'date' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
+        </th>
+        <th style="cursor:pointer;" onclick="sortBy('merchant')">
+          Description
+          {% if params.sort == 'merchant' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
+        </th>
+        <th style="width:100px;cursor:pointer;" class="text-right" onclick="sortBy('amount')">
+          Amount
+          {% if params.sort == 'amount' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
+        </th>
+        <th style="width:130px;cursor:pointer;" onclick="sortBy('category')">
+          Category
+          {% if params.sort == 'category' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
+        </th>
+        <th style="width:50px;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for txn in txns %}
+        {% include "components/txn_row.html" %}
+      {% endfor %}
+      {% if not txns %}
+      <tr><td colspan="5" class="text-sm text-muted" style="text-align:center;padding:2rem;">No transactions match your filters.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+{% if total_pages > 1 %}
+<div class="txn-pagination">
+  {% if page > 1 %}
+    <a hx-get="{{ txn_page_url(params, page - 1) }}"
+       hx-target="#txn-results" hx-swap="innerHTML"
+       class="btn btn-sm btn-secondary">&#8249; Prev</a>
+  {% endif %}
+  <span class="text-sm text-muted">Page {{ page }} of {{ total_pages }}</span>
+  {% if page < total_pages %}
+    <a hx-get="{{ txn_page_url(params, page + 1) }}"
+       hx-target="#txn-results" hx-swap="innerHTML"
+       class="btn btn-sm btn-secondary">Next &#8250;</a>
+  {% endif %}
+</div>
+{% endif %}
