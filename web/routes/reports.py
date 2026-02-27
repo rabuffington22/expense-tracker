@@ -165,7 +165,8 @@ def _build_chart_bars(df, end_month):
     for m in month_keys:
         dt = datetime.datetime.strptime(m, "%Y-%m")
         val = float(totals.get(m, 0))
-        pct = round(val / max_val * 100, 1) if max_val else 0
+        raw_pct = round(val / max_val * 100, 1) if max_val else 0
+        pct = max(raw_pct, 4) if val > 0 else 0  # Floor so tiny bars stay visible
         bars.append({
             "month_key": m,
             "label": dt.strftime("%b"),
