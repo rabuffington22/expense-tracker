@@ -148,10 +148,19 @@ def _build_chart_json(df, start_month, end_month):
     monthly_totals = monthly_totals.sort_values("month")
 
     months = list(monthly_totals["month"])
+    # Format month labels: "2026-01" -> "Jan 2026"
+    import datetime
+    month_labels = []
+    for m in months:
+        try:
+            dt = datetime.datetime.strptime(m, "%Y-%m")
+            month_labels.append(dt.strftime("%b %Y"))
+        except ValueError:
+            month_labels.append(m)
     values = [float(v) for v in monthly_totals["total_amount"]]
 
     traces = [{
-        "x": months,
+        "x": month_labels,
         "y": values,
         "type": "bar",
         "marker": {
@@ -172,6 +181,7 @@ def _build_chart_json(df, start_month, end_month):
 
     layout = {
         "xaxis": {
+            "type": "category",
             "tickangle": 0,
             "tickfont": {"size": 12, "color": "rgba(245,245,247,0.5)"},
             "gridcolor": "rgba(0,0,0,0)",
