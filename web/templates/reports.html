@@ -64,7 +64,7 @@
     <div class="rpt-cat-list">
         {% for row in cat_rows %}
         <a class="rpt-cat-row"
-           href="{{ url_for('reports.index', month=selected_month, period=period, drill=row.category) }}">
+           href="{{ url_for('transactions.index', category_id=row.cat_id, start=month_start, end=month_end) if row.cat_id else url_for('reports.index', month=selected_month, period=period, drill=row.category) }}">
             <div class="rpt-cat-left">
                 <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
                 <div class="rpt-cat-info">

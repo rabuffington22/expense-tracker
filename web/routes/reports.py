@@ -1,10 +1,12 @@
 """Reports route — monthly detail + spending trend, category breakdown, drill-down, CSV export."""
 
+import calendar
 import datetime
 from dateutil.relativedelta import relativedelta
 
 from flask import Blueprint, render_template, request, g, Response
 
+from core.db import get_connection
 from core.reporting import (
     get_available_months,
     get_category_totals,
@@ -93,16 +95,32 @@ def index():
     cat_df = get_category_totals(g.entity_key, selected_month)
     cat_rows = []
     if not cat_df.empty:
+        # Look up category IDs for drill links (D5)
+        conn = get_connection(g.entity_key)
+        try:
+            cat_id_map = {}
+            for id_row in conn.execute("SELECT id, name FROM categories").fetchall():
+                cat_id_map[id_row["name"]] = id_row["id"]
+        finally:
+            conn.close()
+
         for _, row in cat_df.iterrows():
             cat_rows.append({
                 "category": row["category"],
                 "count": int(row["count"]),
                 "total_amount": float(row["total_amount"]),
+                "cat_id": cat_id_map.get(row["category"]),
             })
 
     max_cat_amount = cat_rows[0]["total_amount"] if cat_rows else 1
     for r in cat_rows:
         r["pct"] = round(r["total_amount"] / max_cat_amount * 100, 1) if max_cat_amount else 0
+
+    # Month date range for drill links
+    sel_dt = _parse_ym(selected_month)
+    month_start = f"{sel_dt.year:04d}-{sel_dt.month:02d}-01"
+    last_day = calendar.monthrange(sel_dt.year, sel_dt.month)[1]
+    month_end = f"{sel_dt.year:04d}-{sel_dt.month:02d}-{last_day:02d}"
 
     # ── Top Section: Summary stats ────────────────────────────────────────
     detail_income = get_income_total(g.entity_key, selected_month)
@@ -149,6 +167,8 @@ def index():
         fmt_month=fmt_month_full,
         fmt_month_short=fmt_month_short,
         fmt_date=fmt_date,
+        month_start=month_start,
+        month_end=month_end,
     )
 
 
