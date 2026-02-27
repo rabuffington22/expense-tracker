@@ -5,22 +5,22 @@
 <h1 class="page-title">{{ entity_display }} Dashboard</h1>
 
 <div class="metrics-row">
-    <div class="metric">
+    <a href="{{ url_for('transactions.index', start=month_start, end=month_end) }}" class="metric metric-link">
         <div class="metric-label">Transactions</div>
         <div class="metric-value">{{ "{:,}".format(total_txn_count) }}</div>
-    </div>
-    <div class="metric">
+    </a>
+    <a href="{{ url_for('transactions.index', uncategorized='1') }}" class="metric metric-link">
         <div class="metric-label">Need Review</div>
         <div class="metric-value" style="color: {% if uncat_count > 0 %}var(--orange){% else %}var(--green){% endif %};">{{ "{:,}".format(uncat_count) }}</div>
-    </div>
-    <div class="metric">
+    </a>
+    <a href="{{ url_for('transactions.index', type='expense', start=month_start, end=month_end) }}" class="metric metric-link">
         <div class="metric-label">{{ cur_month_label }} Spend</div>
         <div class="metric-value">${{ "{:,.0f}".format(month_spend) }}</div>
-    </div>
-    <div class="metric">
+    </a>
+    <a href="{{ url_for('transactions.index', type='income', start=month_start, end=month_end) }}" class="metric metric-link">
         <div class="metric-label">{{ cur_month_label }} Income</div>
         <div class="metric-value" style="color: var(--green);">${{ "{:,.0f}".format(month_income) }}</div>
-    </div>
+    </a>
     <div class="metric">
         <div class="metric-label">Latest Transaction</div>
         <div class="metric-value" style="font-size: 1.2rem;">{{ latest_date }}</div>
@@ -42,7 +42,7 @@
 
 <!-- Vendor matching status -->
 {% if total_orders > 0 %}
-<div class="card" style="padding: 0.8rem 1.2rem;">
+<a href="{{ url_for('transactions.index', vendor_breakdown='1') }}" class="card card-link" style="padding: 0.8rem 1.2rem; display: block;">
     <div class="flex-between">
         <span class="text-sm text-bold">Vendor Orders</span>
         <span class="text-sm">
@@ -54,17 +54,18 @@
             {% endif %}
         </span>
     </div>
-</div>
+</a>
 {% endif %}
 
 <!-- Top categories this month -->
 {% if top_cats %}
 <h2 style="font-size: 1.1rem; margin-top: 1.2rem; margin-bottom: 0.6rem;">Top Categories &mdash; {{ cur_month_label }}</h2>
 {% for cat in top_cats %}
-<div class="flex-between" style="padding: 0.3rem 0; border-bottom: 1px solid rgba(56,56,58,0.5);">
+<a href="{{ url_for('transactions.index', category_id=cat.id, start=month_start, end=month_end) if cat.id else '#' }}"
+   class="flex-between cat-drill-link" style="padding: 0.3rem 0; border-bottom: 1px solid rgba(56,56,58,0.5);">
     <span class="text-sm">{{ cat.name }}</span>
     <span class="text-sm text-bold">${{ "{:,.0f}".format(cat.total) }}</span>
-</div>
+</a>
 {% endfor %}
 {% endif %}
 

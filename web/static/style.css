@@ -431,6 +431,39 @@ tr:hover td { background: rgba(255,255,255,0.03); }
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
 }
+a.metric-link {
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+a.metric-link:hover {
+    text-decoration: none;
+    border-color: rgba(255,255,255,0.18);
+    box-shadow: var(--shadow-card), 0 0 0 1px rgba(255,255,255,0.08);
+}
+a.card-link {
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+}
+a.card-link:hover {
+    text-decoration: none;
+    border-color: rgba(255,255,255,0.18);
+}
+a.cat-drill-link {
+    display: flex;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.12s ease;
+    margin: 0 -0.3rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    border-radius: 6px;
+}
+a.cat-drill-link:hover {
+    text-decoration: none;
+    background: rgba(255,255,255,0.05);
+}
 
 /* ── Progress Bar ───────────────────────────────────────────────────────── */
 .progress-bar {

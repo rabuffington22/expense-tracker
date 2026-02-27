@@ -1,5 +1,6 @@
 """Dashboard route — quick stats and import status."""
 
+import calendar
 from datetime import datetime
 
 from flask import Blueprint, render_template, g
@@ -25,9 +26,14 @@ def index():
         categorized_count = total_txn_count - uncat_count
         cat_pct = int(categorized_count / total_txn_count * 100) if total_txn_count else 0
 
-        # Current month spend (expenses only — negative amounts or positive debits)
+        # Current month date range for drill links (D7)
         now = datetime.now()
         cur_month = f"{now.year:04d}-{now.month:02d}"
+        month_start = f"{now.year:04d}-{now.month:02d}-01"
+        last_day = calendar.monthrange(now.year, now.month)[1]
+        month_end = f"{now.year:04d}-{now.month:02d}-{last_day:02d}"
+
+        # Current month spend (expenses only — negative amounts or positive debits)
         month_spend_row = conn.execute(
             "SELECT COALESCE(SUM(ABS(amount)), 0) FROM transactions "
             "WHERE strftime('%Y-%m', date) = ? AND amount < 0",
@@ -101,7 +107,18 @@ def index():
             "GROUP BY category ORDER BY total DESC LIMIT 5",
             (cur_month,),
         ).fetchall()
-        top_cats = [{"name": r[0], "total": r[1]} for r in top_cats_rows]
+
+        # Look up category IDs for drill links (D5)
+        top_cats = []
+        for r in top_cats_rows:
+            cat_id_row = conn.execute(
+                "SELECT id FROM categories WHERE name = ?", (r[0],)
+            ).fetchone()
+            top_cats.append({
+                "name": r[0],
+                "total": r[1],
+                "id": cat_id_row["id"] if cat_id_row else None,
+            })
     finally:
         conn.close()
 
@@ -120,4 +137,6 @@ def index():
         month_progress=month_progress,
         has_sources=bool(all_sources),
         top_cats=top_cats,
+        month_start=month_start,
+        month_end=month_end,
     )
