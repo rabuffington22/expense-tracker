@@ -66,7 +66,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     match.py                       # GET/POST /match   (link orders to bank txns)
     categorize_vendors.py          # GET/POST /categorize-vendors (label vendor orders)
     categorize.py                  # GET/POST /categorize (remaining txns + settings)
-    reports.py                     # GET /reports (charts, drill-down, CSV export)
+    reports.py                     # GET /reports (monthly detail + spending trend)
   templates/
     base.html                      # Layout: sidebar + main content, mobile header/hamburger, skip-link, scrim overlay
     components/
@@ -81,7 +81,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     match.html
     categorize_vendors.html
     categorize.html                # Review tab + Settings tab
-    reports.html                   # Plotly charts + drill-down tables
+    reports.html                   # Two-section layout: monthly detail + spending trend
   static/
     style.css                      # Apple-style dark theme (true black #000 bg, SF Pro fonts, segmented controls)
     htmx.min.js                    # HTMX library (~14KB)
@@ -101,7 +101,7 @@ requirements.txt                   # flask, gunicorn, pandas, plotly, pdfplumber
 - **Match review:** Accept/Skip swap the match card via HTMX partial
 - **Category dropdowns:** `hx-get` to fetch subcategories when category changes
 - **File uploads:** Standard form POST, returns full page with results
-- **Reports chart:** Plotly JSON rendered client-side via `plotly-2.27.0.min.js`
+- **Reports chart:** Pure CSS bar chart (no JavaScript charting library)
 
 ## Session & Temp Files
 Flask's cookie-based session has a 4KB limit. Parsed data from file uploads and match results is stored in temp files on disk (`/tmp/expense-tracker-uploads/`), with only a small key stored in the session or passed as a hidden form field.
@@ -173,6 +173,42 @@ Subscription charges (Audible, Kindle Unlimited, Amazon Music, etc.) excluded vi
 - Accessibility: skip-to-content link, ARIA labels on sidebar nav, focus-visible rings on all interactive elements
 - Open redirect prevention on `/set-entity` — only relative paths allowed
 
+## Reports Page Architecture
+Two independent sections, no JavaScript charting library (pure CSS bars).
+
+**Top Section — Monthly Detail:**
+- Month navigator: ‹ February › (prev/next arrows, full month name)
+- Stat cards: Spending | Income | Net (for selected month)
+- Category breakdown: colored dots, horizontal fill bars, drill-down chevrons
+- Drill-down: transaction list when category clicked, CSV export
+
+**Bottom Section — Spending Trend:**
+- Period toggle: segmented control [ 3M | 6M | 1Y | 2Y ]
+- Pure CSS bar chart: variable bar count (3/6/12/24), always ends at most recent month
+- Selected month's bar highlighted (brighter gradient + blue label)
+
+**URL params:** `?month=YYYY-MM` (default: latest), `?period=6` (3/6/12/24), `?drill=CategoryName`
+
+**Date formatting (never show YYYY-MM anywhere):**
+- `fmt_month_full()`: "February" (current year) or "February 2025"
+- `fmt_month_short()`: "Feb" (current year) or "Feb 25"
+- `fmt_date()`: "Feb 15" (current year) or "Feb 15, 2025"
+- All defined in `web/routes/reports.py`, passed to template as callables
+
+**Chart scaling by period:**
+- 3M: wide bars (20% track padding, 16px gap)
+- 6M: default (12% padding, 6px gap)
+- 12M: narrow (8% padding, 3px gap, smaller labels)
+- 24M: very narrow (4% padding, 2px gap, value labels hidden)
+- Mobile: 12M+ hides value labels, 24M alternates x-axis labels
+
+**Query functions used (all in `core/reporting.py`):**
+- `get_available_months(entity)` — month list for navigation bounds
+- `get_monthly_totals(entity, start, end)` — bar chart data
+- `get_category_totals(entity, month)` — category breakdown
+- `get_income_total(entity, month)` — income stat card
+- `get_transactions(entity, month, category)` — drill-down list
+
 ## Delete Amazon Data (for re-import)
 ```python
 # Run via SSH on Atlas
@@ -197,9 +233,22 @@ python scripts/smoke_test.py  # No server needed
 `local_state/`, `*.sqlite`, `uploads/`, `backups/`, `.venv/`, `statements/`
 
 ## Dependencies
-flask, gunicorn, pandas, plotly, pdfplumber, python-dateutil, openpyxl
+flask, gunicorn, pandas, pdfplumber, python-dateutil, openpyxl, plaid-python
+
+> Note: `plotly` is still in requirements.txt but no longer used on the reports page (replaced by pure CSS bars). Can be removed once confirmed not used elsewhere.
 
 ## Change Log
+
+### 2026-02-27 — Reports page redesign
+Complete rewrite of the reports page from a single-section Plotly-based layout to a two-section pure CSS layout.
+
+1. **Removed Plotly** — Replaced Plotly.js bar chart with pure HTML/CSS bars. `border-radius: 7px` pill-shaped bars, blue gradient fill, spring animation. Plotly 2.27.0 didn't support `cornerradius`, so bars were always square.
+2. **Two-section layout** — Top: monthly detail (month navigator + stat cards + category breakdown + drill-down). Bottom: spending trend (period toggle + bar chart).
+3. **Month navigator** — Prev/next arrows flanking full month name ("February"). Replaces the confusing start/end range picker + detail month dropdown.
+4. **Period segmented control** — Apple-style [ 3M | 6M | 1Y | 2Y ] toggle. Chart scales bar width/spacing per period. Value labels hidden at 24M. Responsive label thinning on mobile.
+5. **Date formatting** — All `YYYY-MM` and `YYYY-MM-DD` formats replaced with human-friendly: "February", "Feb 25", "Feb 15". Year omitted when current year. Helper functions in `reports.py`.
+6. **Selected month highlight** — The month selected in the top section gets a brighter blue bar + blue label in the trend chart, visually connecting the two sections.
+7. **URL simplification** — Replaced `?start=&end=&detail=` with `?month=&period=`. Cleaner, bookmarkable, no confusing overlap.
 
 ### 2026-02-26 — Apple-style UI overhaul
 Complete visual redesign targeting Apple iOS/macOS dark mode aesthetic. Branch: `claude/review-code-testing-w9VVE`.
