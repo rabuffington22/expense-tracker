@@ -122,6 +122,7 @@ def _build_base_cte(conn, params):
     where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
 
     # Vendor breakdown: linkage-first, heuristic-fallback (D1)
+    # WHERE clause appears twice (UNION), so params must be doubled.
     if params.get("vendor_breakdown") == "1":
         cte = f"""
         WITH base AS (
@@ -147,6 +148,7 @@ def _build_base_cte(conn, params):
             HAVING COUNT(ao.id) = 0
         )
         """
+        sql_params = sql_params + sql_params  # duplicate for both UNION branches
     else:
         cte = f"""
         WITH base AS (
