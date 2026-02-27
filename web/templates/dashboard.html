@@ -4,88 +4,92 @@
 {% block content %}
 <h1 class="page-title">{{ entity_display }} Dashboard</h1>
 
-<div class="metrics-row">
-    <a href="{{ url_for('transactions.index', start=month_start, end=month_end) }}" class="metric metric-link">
-        <div class="metric-label">Transactions</div>
-        <div class="metric-value">{{ "{:,}".format(total_txn_count) }}</div>
-    </a>
-    <a href="{{ url_for('transactions.index', uncategorized='1') }}" class="metric metric-link">
-        <div class="metric-label">Need Review</div>
-        <div class="metric-value" style="color: {% if uncat_count > 0 %}var(--orange){% else %}var(--green){% endif %};">{{ "{:,}".format(uncat_count) }}</div>
-    </a>
-    <a href="{{ url_for('transactions.index', type='expense', start=month_start, end=month_end) }}" class="metric metric-link">
-        <div class="metric-label">{{ cur_month_label }} Spend</div>
-        <div class="metric-value">${{ "{:,.0f}".format(month_spend) }}</div>
-    </a>
-    <a href="{{ url_for('transactions.index', type='income', start=month_start, end=month_end) }}" class="metric metric-link">
-        <div class="metric-label">{{ cur_month_label }} Income</div>
-        <div class="metric-value" style="color: var(--green);">${{ "{:,.0f}".format(month_income) }}</div>
-    </a>
-    <div class="metric">
-        <div class="metric-label">Latest Transaction</div>
-        <div class="metric-value" style="font-size: 1.2rem;">{{ latest_date }}</div>
+<!-- Filter bar (outside HTMX target — always visible) -->
+<div class="card txn-filter-bar">
+  <form id="dash-filter-form"
+        hx-get="{{ url_for('dashboard.partial') }}"
+        hx-target="#dashboard-body"
+        hx-swap="innerHTML"
+        hx-push-url="true">
+
+    <!-- Row 1: date range + account -->
+    <div class="form-row">
+      <div class="form-group" style="flex:1;min-width:120px;">
+        <label class="text-xs text-muted" for="start">From</label>
+        <input type="date" id="start" name="start" value="{{ params.start }}" class="input-sm">
+      </div>
+      <div class="form-group" style="flex:1;min-width:120px;">
+        <label class="text-xs text-muted" for="end">To</label>
+        <input type="date" id="end" name="end" value="{{ params.end }}" class="input-sm">
+      </div>
+      <div class="form-group" style="flex:1;min-width:120px;">
+        <label class="text-xs text-muted" for="account">Account</label>
+        <select id="account" name="account" class="input-sm">
+          <option value="">All</option>
+          {% for acct in accounts %}
+          <option value="{{ acct }}" {% if params.account == acct %}selected{% endif %}>{{ acct }}</option>
+          {% endfor %}
+        </select>
+      </div>
     </div>
+
+    <!-- Row 2: toggle chips -->
+    <div class="txn-chips">
+      <label class="txn-chip {% if params.uncategorized == '1' %}active{% endif %}">
+        <input type="checkbox" name="uncategorized" value="1" {% if params.uncategorized == '1' %}checked{% endif %} hidden>
+        <span>Uncategorized</span>
+      </label>
+      <label class="txn-chip {% if params.vendor_breakdown == '1' %}active{% endif %}">
+        <input type="checkbox" name="vendor_breakdown" value="1" {% if params.vendor_breakdown == '1' %}checked{% endif %} hidden>
+        <span>Vendor Needed</span>
+      </label>
+      <label class="txn-chip {% if params.possible_transfer == '1' %}active{% endif %}">
+        <input type="checkbox" name="possible_transfer" value="1" {% if params.possible_transfer == '1' %}checked{% endif %} hidden>
+        <span>Transfers</span>
+      </label>
+      <label class="txn-chip {% if params.include_transfers == '1' %}active{% endif %}">
+        <input type="checkbox" name="include_transfers" value="1" {% if params.include_transfers == '1' %}checked{% endif %} hidden>
+        <span>Include Transfers</span>
+      </label>
+
+      <div class="txn-chips-spacer"></div>
+      <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+      <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary btn-sm">Clear</a>
+    </div>
+  </form>
 </div>
 
-<!-- Categorization progress -->
-{% if total_txn_count > 0 %}
-<div class="card" style="padding: 0.8rem 1.2rem;">
-    <div class="flex-between mb-1">
-        <span class="text-sm text-bold">Categorized</span>
-        <span class="text-sm">{{ "{:,}".format(categorized_count) }} / {{ "{:,}".format(total_txn_count) }} ({{ cat_pct }}%)</span>
-    </div>
-    <div class="progress-bar">
-        <div class="progress-fill" style="width: {{ cat_pct }}%; background: {% if cat_pct == 100 %}var(--green){% else %}var(--blue){% endif %};"></div>
-    </div>
+<!-- Results container — HTMX swap target -->
+<div id="dashboard-body">
+  {% include "components/dashboard_body.html" %}
 </div>
-{% endif %}
 
-<!-- Vendor matching status -->
-{% if total_orders > 0 %}
-<a href="{{ url_for('transactions.index', vendor_breakdown='1') }}" class="card card-link" style="padding: 0.8rem 1.2rem; display: block;">
-    <div class="flex-between">
-        <span class="text-sm text-bold">Vendor Orders</span>
-        <span class="text-sm">
-            {{ "{:,}".format(total_orders) }} total &mdash;
-            {% if unmatched_orders > 0 %}
-            <span style="color: var(--orange);">{{ unmatched_orders }} unmatched</span>
-            {% else %}
-            <span style="color: var(--green);">All matched</span>
-            {% endif %}
-        </span>
-    </div>
-</a>
-{% endif %}
-
-<!-- Top categories this month -->
-{% if top_cats %}
-<h2 style="font-size: 1.1rem; margin-top: 1.2rem; margin-bottom: 0.6rem;">Top Categories &mdash; {{ cur_month_label }}</h2>
-{% for cat in top_cats %}
-<a href="{{ url_for('transactions.index', category_id=cat.id, start=month_start, end=month_end) if cat.id else '#' }}"
-   class="flex-between cat-drill-link" style="padding: 0.3rem 0; border-bottom: 1px solid rgba(56,56,58,0.5);">
-    <span class="text-sm">{{ cat.name }}</span>
-    <span class="text-sm text-bold">${{ "{:,.0f}".format(cat.total) }}</span>
-</a>
-{% endfor %}
-{% endif %}
-
-<hr class="divider">
-
-{% if has_sources %}
-    <h2 style="font-size: 1.1rem; margin-bottom: 0.6rem;">Import Progress</h2>
-    {% for mp in month_progress %}
-    {% set pct = (mp.done / mp.total * 100)|int if mp.total else 0 %}
-    <div style="padding: 0.3rem 0;">
-        <div class="flex-between" style="margin-bottom: 0.2rem;">
-            <span class="text-sm">{{ mp.label }}</span>
-            <span class="text-sm {% if mp.done == mp.total %}text-bold{% endif %}" style="color: {% if mp.done == mp.total %}var(--green){% else %}var(--text-muted){% endif %};">{{ mp.done }}/{{ mp.total }}</span>
-        </div>
-        <div class="progress-bar" style="height: 4px;">
-            <div class="progress-fill" style="width: {{ pct }}%; background: {% if pct == 100 %}var(--green){% else %}var(--blue){% endif %};"></div>
-        </div>
-    </div>
-    {% endfor %}
-{% else %}
-    <div class="alert alert-info">No import sources defined. Go to Upload &gt; Settings to add your bank/card sources.</div>
-{% endif %}
+<script>
+/* Toggle chip state on click */
+document.querySelectorAll('#dash-filter-form .txn-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+        var input = this.querySelector('input');
+        if (input.type === 'radio') {
+            if (this.classList.contains('active')) {
+                input.checked = false;
+                this.classList.remove('active');
+                document.querySelectorAll('#dash-filter-form input[name="' + input.name + '"]').forEach(function(r) {
+                    r.checked = false;
+                    r.closest('.txn-chip').classList.remove('active');
+                });
+            } else {
+                document.querySelectorAll('#dash-filter-form input[name="' + input.name + '"]').forEach(function(r) {
+                    r.checked = false;
+                    r.closest('.txn-chip').classList.remove('active');
+                });
+                input.checked = true;
+                this.classList.add('active');
+            }
+        } else {
+            input.checked = !input.checked;
+            this.classList.toggle('active', input.checked);
+        }
+    });
+});
+</script>
 {% endblock %}

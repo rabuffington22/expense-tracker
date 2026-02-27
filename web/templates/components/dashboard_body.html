@@ -1,0 +1,180 @@
+{% if total_txn_count == 0 %}
+<!-- ── Empty state ──────────────────────────────────────────────────────── -->
+<div class="alert alert-info">
+  No transactions in this date range.
+  {% if params.account %}Try clearing the account filter or {% endif %}
+  <a href="{{ url_for('dashboard.index') }}">reset to current month</a>.
+</div>
+{% else %}
+
+<!-- ── KPI strip ────────────────────────────────────────────────────────── -->
+<div class="metrics-row">
+  <a href="{{ drill_url(type='expense') }}" class="metric metric-link">
+    <div class="metric-label">{{ entity_labels.spend }}</div>
+    <div class="metric-value">{{ fmt_cents(spend_cents) }}</div>
+  </a>
+  <a href="{{ drill_url(type='income') }}" class="metric metric-link">
+    <div class="metric-label">{{ entity_labels.income }}</div>
+    <div class="metric-value" style="color:var(--green);">{{ fmt_cents(income_cents) }}</div>
+  </a>
+  <div class="metric">
+    <div class="metric-label">{{ entity_labels.net }}</div>
+    <div class="metric-value" style="color:{% if net_cents >= 0 %}var(--green){% else %}var(--red){% endif %};">
+      {{ fmt_cents(net_cents) }}
+    </div>
+  </div>
+  <a href="{{ drill_url(uncategorized='1') }}" class="metric metric-link">
+    <div class="metric-label">Needs Review</div>
+    <div class="metric-value" style="color:{% if review_count > 0 %}var(--orange){% else %}var(--green){% endif %};">
+      {{ "{:,}".format(review_count) }}
+    </div>
+  </a>
+  <div class="metric">
+    <div class="metric-label">Latest Transaction</div>
+    <div class="metric-value" style="font-size:1.2rem;">{{ latest_date }}</div>
+  </div>
+</div>
+
+<!-- ── Cash Flow chart (6 months) ───────────────────────────────────────── -->
+{% if chart_bars %}
+<div class="card" style="padding:1rem 1.2rem;">
+  <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:0.75rem;">
+    {{ entity_labels.spend }} Trend
+  </h2>
+  <div class="chart-bars">
+    {% for bar in chart_bars %}
+    <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}">
+      <div class="chart-value">{{ bar.display }}</div>
+      <div class="chart-track">
+        <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_current %} chart-fill--selected{% endif %}"
+             style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
+      </div>
+      <div class="chart-label">{{ bar.label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Top Categories ───────────────────────────────────────────────────── -->
+{% if top_cats %}
+<div style="margin-top:0.5rem;">
+  <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:0.5rem; padding:0 0.25rem;">Top Categories</h2>
+  <div class="rpt-cat-list">
+    {% for cat in top_cats %}
+    <a class="rpt-cat-row"
+       href="{{ drill_url(category_id=cat.cat_id) if cat.cat_id else '#' }}">
+      <div class="rpt-cat-left">
+        <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+        <div class="rpt-cat-info">
+          <div class="rpt-cat-name">{{ cat.name }}</div>
+          <div class="rpt-cat-count">{{ cat.txn_count }} txn{{ 's' if cat.txn_count != 1 }}</div>
+        </div>
+      </div>
+      <div class="rpt-cat-right">
+        <div class="rpt-cat-bar-wrap">
+          <div class="rpt-cat-bar" style="width:{{ cat.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+        </div>
+        <div class="rpt-cat-amount">{{ fmt_cents(cat.total_cents) }}</div>
+      </div>
+      <div class="rpt-cat-chevron">&#8250;</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Top Merchants ────────────────────────────────────────────────────── -->
+{% if top_merchants %}
+<div style="margin-top:1rem;">
+  <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:0.5rem; padding:0 0.25rem;">Top Merchants</h2>
+  <div class="rpt-cat-list">
+    {% for m in top_merchants %}
+    <a class="rpt-cat-row"
+       href="{{ drill_url(q=m.merchant) }}">
+      <div class="rpt-cat-left">
+        <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+        <div class="rpt-cat-info">
+          <div class="rpt-cat-name">{{ m.merchant }}</div>
+          <div class="rpt-cat-count">{{ m.txn_count }} txn{{ 's' if m.txn_count != 1 }}</div>
+        </div>
+      </div>
+      <div class="rpt-cat-right">
+        <div class="rpt-cat-bar-wrap">
+          <div class="rpt-cat-bar" style="width:{{ m.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+        </div>
+        <div class="rpt-cat-amount">{{ fmt_cents(m.total_cents) }}</div>
+      </div>
+      <div class="rpt-cat-chevron">&#8250;</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Review Inbox ─────────────────────────────────────────────────────── -->
+{% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 %}
+<div style="margin-top:1rem;">
+  <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:0.5rem; padding:0 0.25rem;">Review Inbox</h2>
+  <div class="rpt-cat-list">
+    {% if review_count > 0 %}
+    <a class="rpt-cat-row" href="{{ drill_url(uncategorized='1') }}">
+      <div class="rpt-cat-left">
+        <div class="rpt-cat-dot" style="background:var(--orange)"></div>
+        <div class="rpt-cat-info">
+          <div class="rpt-cat-name">Uncategorized</div>
+          <div class="rpt-cat-count">{{ review_count }} transaction{{ 's' if review_count != 1 }}</div>
+        </div>
+      </div>
+      <div class="rpt-cat-right"></div>
+      <div class="rpt-cat-chevron">&#8250;</div>
+    </a>
+    {% endif %}
+    {% if vendor_breakdown_count > 0 %}
+    <a class="rpt-cat-row" href="{{ drill_url(vendor_breakdown='1') }}">
+      <div class="rpt-cat-left">
+        <div class="rpt-cat-dot" style="background:var(--purple)"></div>
+        <div class="rpt-cat-info">
+          <div class="rpt-cat-name">Vendor Breakdown Needed</div>
+          <div class="rpt-cat-count">{{ vendor_breakdown_count }} transaction{{ 's' if vendor_breakdown_count != 1 }}</div>
+        </div>
+      </div>
+      <div class="rpt-cat-right"></div>
+      <div class="rpt-cat-chevron">&#8250;</div>
+    </a>
+    {% endif %}
+    {% if transfer_count > 0 %}
+    <a class="rpt-cat-row" href="{{ drill_url(possible_transfer='1') }}">
+      <div class="rpt-cat-left">
+        <div class="rpt-cat-dot" style="background:var(--teal)"></div>
+        <div class="rpt-cat-info">
+          <div class="rpt-cat-name">Possible Transfers</div>
+          <div class="rpt-cat-count">{{ transfer_count }} transaction{{ 's' if transfer_count != 1 }}</div>
+        </div>
+      </div>
+      <div class="rpt-cat-right"></div>
+      <div class="rpt-cat-chevron">&#8250;</div>
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Vendor Orders (global, not date-filtered) ────────────────────────── -->
+{% if total_orders > 0 %}
+<a href="{{ url_for('match.index') }}" class="card card-link" style="display:block; padding:0.8rem 1.2rem; margin-top:1rem;">
+  <div class="flex-between">
+    <span class="text-sm text-bold">Vendor Orders</span>
+    <span class="text-sm">
+      {{ "{:,}".format(total_orders) }} total &mdash;
+      {% if unmatched_orders > 0 %}
+      <span style="color:var(--orange);">{{ unmatched_orders }} unmatched</span>
+      {% else %}
+      <span style="color:var(--green);">All matched</span>
+      {% endif %}
+    </span>
+  </div>
+</a>
+{% endif %}
+
+{% endif %}{# end empty-state check #}
