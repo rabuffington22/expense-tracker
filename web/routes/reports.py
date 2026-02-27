@@ -1,5 +1,6 @@
 """Reports route — monthly spend chart, category breakdown, drill-down, CSV export."""
 
+import datetime
 import io
 import json
 
@@ -142,37 +143,65 @@ def export_csv():
 
 
 def _build_chart_json(df, start_month, end_month):
-    """Build Plotly JSON — clean single-color monthly total bars."""
-    # Aggregate to total spend per month (across all categories)
-    monthly_totals = df.groupby("month")["total_amount"].sum().reset_index()
-    monthly_totals = monthly_totals.sort_values("month")
+    """Build Plotly JSON — clean rounded bars, always 6 months."""
+    # Aggregate actual data
+    monthly_totals = df.groupby("month")["total_amount"].sum().to_dict()
 
-    months = list(monthly_totals["month"])
-    # Format month labels: "2026-01" -> "Jan 2026"
-    import datetime
+    # Build a fixed 6-month window ending at end_month
+    try:
+        end_dt = datetime.datetime.strptime(end_month, "%Y-%m")
+    except ValueError:
+        end_dt = datetime.datetime.now().replace(day=1)
+
+    all_months = []
+    for i in range(5, -1, -1):
+        dt = end_dt - datetime.timedelta(days=i * 30)
+        dt = dt.replace(day=1)
+        all_months.append(dt.strftime("%Y-%m"))
+    # Deduplicate and sort (timedelta approximation can repeat months)
+    seen = set()
+    unique_months = []
+    for m in all_months:
+        if m not in seen:
+            seen.add(m)
+            unique_months.append(m)
+    # If we have fewer than 6 due to dedup, pad from earlier
+    while len(unique_months) < 6:
+        first_dt = datetime.datetime.strptime(unique_months[0], "%Y-%m")
+        prev = (first_dt - datetime.timedelta(days=15)).replace(day=1)
+        unique_months.insert(0, prev.strftime("%Y-%m"))
+
     month_labels = []
-    for m in months:
+    values = []
+    for m in unique_months:
         try:
             dt = datetime.datetime.strptime(m, "%Y-%m")
-            month_labels.append(dt.strftime("%b %Y"))
+            month_labels.append(dt.strftime("%b"))
         except ValueError:
             month_labels.append(m)
-    values = [float(v) for v in monthly_totals["total_amount"]]
+        values.append(float(monthly_totals.get(m, 0)))
+
+    # Accent color with slight opacity variation for zero-value months
+    bar_colors = [
+        "rgba(10, 132, 255, 0.85)" if v > 0 else "rgba(10, 132, 255, 0.15)"
+        for v in values
+    ]
 
     traces = [{
         "x": month_labels,
         "y": values,
         "type": "bar",
         "marker": {
-            "color": "rgba(10, 132, 255, 0.85)",
+            "color": bar_colors,
+            "cornerradius": 6,
             "line": {"width": 0},
         },
         "hovertemplate": "<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
-        "text": ["${:,.0f}".format(v) for v in values],
+        "text": ["${:,.0f}".format(v) if v > 0 else "" for v in values],
         "textposition": "outside",
         "textfont": {
             "size": 12,
-            "color": "rgba(245,245,247,0.7)",
+            "color": "rgba(245,245,247,0.6)",
             "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
         },
     }]
