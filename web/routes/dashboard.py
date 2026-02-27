@@ -1,7 +1,8 @@
 """Dashboard route — filterable KPIs, cash flow chart, top categories/merchants."""
 
 import calendar
-from datetime import datetime, timezone
+import statistics
+from datetime import datetime, timedelta, timezone
 
 from flask import Blueprint, render_template, request, g, url_for
 
@@ -232,6 +233,10 @@ def _query_dashboard(conn, params):
     # ── Plaid sync health ─────────────────────────────────────────────────────
     data["plaid_sync_items"] = _query_plaid_sync(conn)
 
+    # ── Recurring / Upcoming ───────────────────────────────────────────────
+    recurring_patterns = _detect_recurring(conn, params)
+    data["upcoming_items"] = _build_upcoming(recurring_patterns)
+
     # ── Drill URL builder ────────────────────────────────────────────────────
     data["drill_url"] = _make_drill_url(params)
     data["colors"] = COLORS
@@ -350,6 +355,187 @@ def _query_plaid_sync(conn):
             "is_stale": stale,
         })
     return items
+
+
+# ── Recurring detection ───────────────────────────────────────────────────────
+
+# Cadence definitions: (label, min_days, max_days)
+_CADENCES = [
+    ("Weekly", 5, 9),
+    ("Monthly", 25, 35),
+    ("Annual", 340, 390),
+]
+
+
+def _classify_cadence(median_interval_days):
+    """Classify a median interval into a named cadence, or None if irregular."""
+    for label, lo, hi in _CADENCES:
+        if lo <= median_interval_days <= hi:
+            return label
+    return None
+
+
+def _amount_is_regular(amounts_cents, n_recent=3):
+    """Check if recent amounts are consistent with the median.
+
+    Small-N-safe rule: require at least 2 of the last `n_recent` occurrences
+    to be within max($3.00, 5% of median) of the median amount.
+    """
+    if len(amounts_cents) < 2:
+        return False
+    abs_amounts = [abs(a) for a in amounts_cents]
+    med = statistics.median(abs_amounts)
+    tolerance = max(300, int(med * 0.05))  # max($3.00, 5%)
+    recent = abs_amounts[-n_recent:]
+    within = sum(1 for a in recent if abs(a - med) <= tolerance)
+    return within >= 2
+
+
+def _detect_recurring(conn, params):
+    """Detect recurring transaction patterns from the last 12 months.
+
+    Returns list of dicts: merchant_canonical, cadence, median_amount_cents,
+    last_date, next_expected_date, is_income.
+    """
+    xfer_clause, _ = _exclude_transfers_clause(params)
+
+    # Look back 12 months from today
+    cutoff = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+    today_str = datetime.now().strftime("%Y-%m-%d")
+
+    patterns = []
+
+    # ── Expense pass (amount_cents < 0) ──────────────────────────────────
+    expense_rows = conn.execute(
+        f"SELECT merchant_canonical, date, amount_cents "
+        f"FROM transactions "
+        f"WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+        f"  AND amount_cents < 0 "
+        f"  AND date >= ? AND date <= ? "
+        f"  {xfer_clause} "
+        f"ORDER BY merchant_canonical, date",
+        [cutoff, today_str],
+    ).fetchall()
+    _process_merchant_groups(expense_rows, patterns, is_income=False)
+
+    # ── Income pass (amount_cents > 0) ───────────────────────────────────
+    income_rows = conn.execute(
+        f"SELECT merchant_canonical, date, amount_cents "
+        f"FROM transactions "
+        f"WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+        f"  AND amount_cents > 0 "
+        f"  AND date >= ? AND date <= ? "
+        f"  {xfer_clause} "
+        f"ORDER BY merchant_canonical, date",
+        [cutoff, today_str],
+    ).fetchall()
+    _process_merchant_groups(income_rows, patterns, is_income=True)
+
+    return patterns
+
+
+def _process_merchant_groups(rows, patterns, is_income):
+    """Group rows by merchant_canonical and detect recurring patterns."""
+    # Group by merchant
+    groups = {}
+    for r in rows:
+        merchant = r["merchant_canonical"]
+        if merchant not in groups:
+            groups[merchant] = []
+        groups[merchant].append({
+            "date": r["date"],
+            "amount_cents": r["amount_cents"],
+        })
+
+    today = datetime.now().date()
+
+    for merchant, txns in groups.items():
+        if len(txns) < 3:
+            continue
+
+        # Parse dates and compute intervals
+        dates = []
+        amounts = []
+        for t in txns:
+            try:
+                dates.append(datetime.strptime(t["date"], "%Y-%m-%d").date())
+            except (ValueError, TypeError):
+                continue
+            amounts.append(t["amount_cents"])
+
+        if len(dates) < 3:
+            continue
+
+        # Consecutive intervals in days
+        intervals = [(dates[i + 1] - dates[i]).days for i in range(len(dates) - 1)]
+        intervals = [iv for iv in intervals if iv > 0]  # skip same-day duplicates
+
+        if not intervals:
+            continue
+
+        median_interval = statistics.median(intervals)
+        cadence = _classify_cadence(median_interval)
+        if cadence is None:
+            continue
+
+        # Amount regularity check
+        if not _amount_is_regular(amounts):
+            continue
+
+        # Staleness check: skip if last charge was >2× cadence ago
+        last_date = dates[-1]
+        days_since_last = (today - last_date).days
+        if days_since_last > 2 * median_interval:
+            continue
+
+        # Compute next expected date and median amount
+        next_date = last_date + timedelta(days=int(median_interval))
+        median_amount = int(statistics.median([abs(a) for a in amounts]))
+
+        patterns.append({
+            "merchant_canonical": merchant,
+            "cadence": cadence,
+            "median_amount_cents": median_amount if not is_income else median_amount,
+            "last_date": last_date.isoformat(),
+            "next_expected_date": next_date.isoformat(),
+            "is_income": is_income,
+        })
+
+
+def _build_upcoming(patterns, horizon_days=30):
+    """Filter recurring patterns to those expected within the next horizon_days.
+
+    Returns sorted list of upcoming items for the template.
+    """
+    today = datetime.now().date()
+    cutoff = today + timedelta(days=horizon_days)
+    items = []
+
+    for p in patterns:
+        try:
+            next_date = datetime.strptime(p["next_expected_date"], "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            continue
+
+        # Include if next expected date is between today and cutoff
+        if next_date < today or next_date > cutoff:
+            continue
+
+        # Format display date (e.g., "Mar 5")
+        display_date = next_date.strftime("%b %-d")
+
+        items.append({
+            "merchant_canonical": p["merchant_canonical"],
+            "cadence": p["cadence"],
+            "expected_amount_cents": p["median_amount_cents"],
+            "expected_date": p["next_expected_date"],
+            "expected_date_display": display_date,
+            "is_income": p["is_income"],
+        })
+
+    # Sort by expected date, limit to 10
+    items.sort(key=lambda x: x["expected_date"])
+    return items[:10]
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
