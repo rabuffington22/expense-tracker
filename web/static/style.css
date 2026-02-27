@@ -703,7 +703,7 @@ input[type="checkbox"] {
 .rpt-chart-card {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
-    padding: 1.4rem 1.4rem 0.8rem;
+    padding: 1.6rem 1.6rem 1.2rem;
     margin-bottom: 1.5rem;
     box-shadow: var(--shadow-card);
     border: 0.5px solid var(--border);
@@ -712,7 +712,7 @@ input[type="checkbox"] {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 0.3rem;
+    margin-bottom: 1.2rem;
 }
 .rpt-section-title {
     font-size: 1.3rem;
@@ -722,6 +722,57 @@ input[type="checkbox"] {
 .rpt-chart-range {
     font-size: 0.8rem;
     color: var(--text-muted);
+}
+
+/* ── Pure CSS bar chart (Apple-style) ──────────────────────────────────── */
+.chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 200px;
+    padding: 0 0.25rem;
+}
+.chart-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+.chart-value {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(245, 245, 247, 0.45);
+    margin-bottom: 6px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    min-height: 1rem;
+}
+.chart-track {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 12%;
+}
+.chart-fill {
+    width: 100%;
+    border-radius: 7px;
+    background: linear-gradient(180deg, #4da8ff 0%, #0a84ff 100%);
+    transition: height 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+    min-height: 4px;
+}
+.chart-fill--empty {
+    background: rgba(118, 118, 128, 0.08);
+    border-radius: 7px;
+}
+.chart-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(245, 245, 247, 0.4);
+    margin-top: 8px;
+    letter-spacing: 0.01em;
 }
 
 /* Categories section */

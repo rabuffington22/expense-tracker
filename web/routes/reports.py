@@ -3,6 +3,7 @@
 import datetime
 import io
 import json
+from dateutil.relativedelta import relativedelta
 
 from flask import Blueprint, render_template, request, g, Response
 
@@ -47,9 +48,7 @@ def index():
         for _, row in income_df.iterrows():
             income_by_month[row["month"]] = float(row["total_income"])
 
-    chart_data = None
-    if not monthly_df.empty:
-        chart_data = _build_chart_json(monthly_df, start_month, end_month)
+    chart_bars = _build_chart_bars(monthly_df, end_month)
 
     # ── Detail month (default to most recent) ────────────────────────────────
     detail_month = request.args.get("detail", end_month)
@@ -107,7 +106,7 @@ def index():
         has_data=True,
         start_month=start_month,
         end_month=end_month,
-        chart_data=chart_data,
+        chart_bars=chart_bars,
         detail_month=detail_month,
         range_months=range_months,
         cat_rows=cat_rows,
@@ -142,107 +141,38 @@ def export_csv():
     )
 
 
-def _build_chart_json(df, start_month, end_month):
-    """Build Plotly JSON — clean rounded bars, always 6 months."""
-    # Aggregate actual data
-    monthly_totals = df.groupby("month")["total_amount"].sum().to_dict()
+def _build_chart_bars(df, end_month):
+    """Build template-ready bar data — always 6 months, pure CSS chart."""
+    # Aggregate actual spend by month
+    totals = {}
+    if not df.empty:
+        totals = df.groupby("month")["total_amount"].sum().to_dict()
 
-    # Build a fixed 6-month window ending at end_month
+    # Fixed 6-month window ending at end_month
     try:
         end_dt = datetime.datetime.strptime(end_month, "%Y-%m")
     except ValueError:
         end_dt = datetime.datetime.now().replace(day=1)
 
-    all_months = []
+    month_keys = []
     for i in range(5, -1, -1):
-        dt = end_dt - datetime.timedelta(days=i * 30)
-        dt = dt.replace(day=1)
-        all_months.append(dt.strftime("%Y-%m"))
-    # Deduplicate and sort (timedelta approximation can repeat months)
-    seen = set()
-    unique_months = []
-    for m in all_months:
-        if m not in seen:
-            seen.add(m)
-            unique_months.append(m)
-    # If we have fewer than 6 due to dedup, pad from earlier
-    while len(unique_months) < 6:
-        first_dt = datetime.datetime.strptime(unique_months[0], "%Y-%m")
-        prev = (first_dt - datetime.timedelta(days=15)).replace(day=1)
-        unique_months.insert(0, prev.strftime("%Y-%m"))
+        dt = end_dt - relativedelta(months=i)
+        month_keys.append(dt.strftime("%Y-%m"))
 
-    month_labels = []
-    values = []
-    for m in unique_months:
-        try:
-            dt = datetime.datetime.strptime(m, "%Y-%m")
-            month_labels.append(dt.strftime("%b"))
-        except ValueError:
-            month_labels.append(m)
-        values.append(float(monthly_totals.get(m, 0)))
+    # Build bar dicts
+    bars = []
+    max_val = max((totals.get(m, 0) for m in month_keys), default=0) or 1
+    for m in month_keys:
+        dt = datetime.datetime.strptime(m, "%Y-%m")
+        val = float(totals.get(m, 0))
+        pct = round(val / max_val * 100, 1) if max_val else 0
+        bars.append({
+            "month_key": m,
+            "label": dt.strftime("%b"),
+            "value": val,
+            "display": "${:,.0f}".format(val) if val > 0 else "",
+            "pct": pct,
+            "has_data": val > 0,
+        })
 
-    # Accent color with slight opacity variation for zero-value months
-    bar_colors = [
-        "rgba(10, 132, 255, 0.85)" if v > 0 else "rgba(10, 132, 255, 0.15)"
-        for v in values
-    ]
-
-    traces = [{
-        "x": month_labels,
-        "y": values,
-        "type": "bar",
-        "marker": {
-            "color": bar_colors,
-            "cornerradius": 6,
-            "line": {"width": 0},
-        },
-        "hovertemplate": "<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
-        "text": ["${:,.0f}".format(v) if v > 0 else "" for v in values],
-        "textposition": "outside",
-        "textfont": {
-            "size": 12,
-            "color": "rgba(245,245,247,0.6)",
-            "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
-        },
-    }]
-
-    max_val = max(values) if values else 0
-
-    layout = {
-        "xaxis": {
-            "type": "category",
-            "tickangle": 0,
-            "tickfont": {"size": 12, "color": "rgba(245,245,247,0.5)"},
-            "gridcolor": "rgba(0,0,0,0)",
-            "linecolor": "rgba(0,0,0,0)",
-            "zeroline": False,
-            "fixedrange": True,
-        },
-        "yaxis": {
-            "visible": False,
-            "fixedrange": True,
-            "range": [0, max_val * 1.2] if max_val else [0, 100],
-        },
-        "hovermode": "x",
-        "hoverlabel": {
-            "bgcolor": "#2c2c2e",
-            "bordercolor": "rgba(255,255,255,0.08)",
-            "font": {
-                "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
-                "size": 13,
-                "color": "#f5f5f7",
-            },
-        },
-        "plot_bgcolor": "rgba(0,0,0,0)",
-        "paper_bgcolor": "rgba(0,0,0,0)",
-        "font": {
-            "color": "#f5f5f7",
-            "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
-        },
-        "showlegend": False,
-        "height": 280,
-        "margin": {"l": 0, "r": 0, "t": 24, "b": 40},
-        "bargap": 0.4,
-    }
-
-    return json.dumps({"data": traces, "layout": layout})
+    return bars
