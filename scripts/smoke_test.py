@@ -191,6 +191,15 @@ def main() -> None:
                 "transactions possible_transfer + dates",
             )
 
+            # include_transfers preserved in drill links (bugfix in PR8)
+            resp = client.get("/?include_transfers=1&start=2024-01-01&end=2024-01-31")
+            _check(resp.status_code == 200, "dashboard with include_transfers: expected 200")
+            body = resp.get_data(as_text=True)
+            _check(
+                "include_transfers=1" in body,
+                "dashboard with include_transfers=1: drill links should contain include_transfers=1",
+            )
+
         print("   ✅ All route regression tests passed")
 
     print("\n" + "=" * 60)

@@ -35,6 +35,22 @@
   </div>
 </div>
 
+<!-- ── Sync Health ─────────────────────────────────────────────────────── -->
+{% if plaid_sync_items %}
+<div class="card sync-health-card">
+  <div class="sync-health-header">
+    <span class="text-sm text-bold">Sync Status</span>
+    <a href="{{ url_for('plaid.index') }}" class="sync-health-link">Manage connections &rarr;</a>
+  </div>
+  {% for item in plaid_sync_items %}
+  <div class="sync-health-row">
+    <span class="sync-health-institution">{{ item.institution }}</span>
+    <span class="sync-health-time{% if item.is_stale %} sync-health-stale{% endif %}">{{ item.last_synced_text }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <!-- ── Cash Flow chart (6 months) ───────────────────────────────────────── -->
 {% if chart_bars %}
 <div class="card" style="padding:1rem 1.2rem;">

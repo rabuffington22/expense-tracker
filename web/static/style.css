@@ -795,6 +795,42 @@ input[type="checkbox"] {
     color: var(--text-muted);
 }
 
+/* ── Sync Health card ─────────────────────────────────────────────────── */
+.sync-health-card {
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.5rem;
+}
+.sync-health-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+.sync-health-link {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+}
+.sync-health-link:hover {
+    color: var(--accent);
+}
+.sync-health-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.2rem 0;
+    font-size: 0.8rem;
+}
+.sync-health-institution {
+    color: var(--text-secondary);
+}
+.sync-health-time {
+    color: var(--text-muted);
+}
+.sync-health-stale {
+    color: var(--orange);
+}
+
 /* ── Pure CSS bar chart (Apple-style) ──────────────────────────────────── */
 .chart-bars {
     display: flex;
