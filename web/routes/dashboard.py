@@ -1,7 +1,7 @@
 """Dashboard route — filterable KPIs, cash flow chart, top categories/merchants."""
 
 import calendar
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, request, g, url_for
 
@@ -47,6 +47,8 @@ def _make_drill_url(params):
             qp["end"] = params["end"]
         if params.get("account"):
             qp["account"] = params["account"]
+        if params.get("include_transfers"):
+            qp["include_transfers"] = params["include_transfers"]
         qp.update({k: v for k, v in overrides.items() if v})
         return url_for("transactions.index", **qp)
     return drill_url
@@ -227,6 +229,9 @@ def _query_dashboard(conn, params):
     # ── Cash flow chart ──────────────────────────────────────────────────────
     data["chart_bars"] = _build_cash_flow_bars(conn, params["end"])
 
+    # ── Plaid sync health ─────────────────────────────────────────────────────
+    data["plaid_sync_items"] = _query_plaid_sync(conn)
+
     # ── Drill URL builder ────────────────────────────────────────────────────
     data["drill_url"] = _make_drill_url(params)
     data["colors"] = COLORS
@@ -292,6 +297,59 @@ def _fmt_compact(cents):
     if dollars >= 1000:
         return f"${dollars / 1000:.1f}K"
     return f"${dollars:,.0f}"
+
+
+# ── Plaid sync helpers ────────────────────────────────────────────────────────
+
+def _fmt_relative_time(iso_str):
+    """Format an ISO 8601 UTC timestamp as a human-readable relative time string.
+
+    Returns (text, is_stale) where is_stale is True when the sync is old or missing.
+    """
+    if not iso_str:
+        return "Never synced", True
+    try:
+        # Handle both offset-aware and naive ISO strings
+        ts = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        delta = datetime.now(timezone.utc) - ts
+        seconds = int(delta.total_seconds())
+        if seconds < 0:
+            return "Just now", False
+        if seconds < 3600:
+            minutes = max(1, seconds // 60)
+            return f"{minutes} minute{'s' if minutes != 1 else ''} ago", False
+        if seconds < 86400:
+            hours = seconds // 3600
+            return f"{hours} hour{'s' if hours != 1 else ''} ago", False
+        days = seconds // 86400
+        if days < 7:
+            return f"{days} day{'s' if days != 1 else ''} ago", days >= 3
+        return "Over a week ago", True
+    except (ValueError, TypeError):
+        return "Never synced", True
+
+
+def _query_plaid_sync(conn):
+    """Return list of Plaid items with sync status for the current entity."""
+    try:
+        rows = conn.execute(
+            "SELECT institution_name, last_synced FROM plaid_items "
+            "ORDER BY institution_name"
+        ).fetchall()
+    except Exception:
+        # Table may not exist in older DBs
+        return []
+    items = []
+    for r in rows:
+        text, stale = _fmt_relative_time(r["last_synced"])
+        items.append({
+            "institution": r["institution_name"] or "Unknown",
+            "last_synced_text": text,
+            "is_stale": stale,
+        })
+    return items
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
