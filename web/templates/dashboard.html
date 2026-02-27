@@ -57,6 +57,20 @@
       <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary btn-sm">Clear</a>
     </div>
   </form>
+  <!-- Row 3: saved views -->
+  <div class="txn-chips" style="margin-top:0.4rem;">
+    <select id="sv-select-dashboard" class="input-sm" style="min-width:160px;"
+            onchange="svLoad('dashboard', this)">
+      <option value="" selected disabled>Saved Views</option>
+    </select>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="svSave('dashboard')">
+      Save View
+    </button>
+    <button type="button" class="btn btn-secondary btn-sm" id="sv-delete-btn-dashboard"
+            onclick="svDelete('dashboard')" disabled style="opacity:0.4;">
+      Delete
+    </button>
+  </div>
 </div>
 
 <!-- Results container — HTMX swap target -->

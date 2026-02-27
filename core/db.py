@@ -352,6 +352,16 @@ UPDATE amazon_orders SET order_total_cents = CAST(ROUND(order_total * 100) AS IN
 CREATE INDEX IF NOT EXISTS idx_ao_matched_txn ON amazon_orders(matched_transaction_id);
 """
 
+_MIGRATION_22 = """
+CREATE TABLE IF NOT EXISTS saved_views (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    name         TEXT NOT NULL,
+    page         TEXT NOT NULL CHECK(page IN ('dashboard', 'transactions')),
+    query_string TEXT NOT NULL DEFAULT '',
+    created_at   TEXT NOT NULL
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -374,6 +384,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (19, _MIGRATION_19),
     (20, _MIGRATION_20),
     (21, _MIGRATION_21),
+    (22, _MIGRATION_22),
 ]
 
 _DEFAULT_CATEGORIES = [

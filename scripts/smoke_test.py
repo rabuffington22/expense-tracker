@@ -244,6 +244,168 @@ def main() -> None:
 
         print("   ✅ All route regression tests passed")
 
+        # ── 9. Saved Views CRUD ──────────────────────────────────────
+        print("\n9. Saved Views CRUD tests…")
+        import json as _json
+
+        try:
+            # 9a. List — should start empty (JSON array)
+            resp = client.get("/saved-views/list?page=dashboard")
+            _check(resp.status_code == 200, "saved views list: expected 200")
+            views = _json.loads(resp.get_data(as_text=True))
+            _check(isinstance(views, list), "saved views list: should return JSON array")
+            _check(len(views) == 0, "saved views list: should be empty initially")
+
+            # 9b. Create a view
+            resp = client.post("/saved-views/create", data={
+                "name": "Test View",
+                "page": "dashboard",
+                "query_string": "start=2024-01-01&end=2024-01-31&uncategorized=1",
+            })
+            _check(resp.status_code == 200, "saved views create: expected 200")
+            views = _json.loads(resp.get_data(as_text=True))
+            names = [v["name"] for v in views]
+            _check("Test View" in names, "saved views create: should return view name in JSON")
+
+            # 9c. Get the view ID from the DB, then verify
+            conn_sv = get_connection("personal")
+            sv_row = conn_sv.execute(
+                "SELECT id, query_string FROM saved_views WHERE name = 'Test View'"
+            ).fetchone()
+            conn_sv.close()
+            _check(sv_row is not None, "saved views: row should exist in DB")
+            _check(
+                sv_row["query_string"] == "start=2024-01-01&end=2024-01-31&uncategorized=1",
+                "saved views: query_string should match what was saved",
+            )
+            view_id = sv_row["id"]
+
+            # 9d. Get endpoint returns correct JSON
+            resp = client.get(f"/saved-views/get?id={view_id}")
+            _check(resp.status_code == 200, "saved views get: expected 200")
+            data = _json.loads(resp.get_data(as_text=True))
+            _check(data["page"] == "dashboard", "saved views get: page should be 'dashboard'")
+            _check(
+                "start=2024-01-01" in data["query_string"],
+                "saved views get: query_string should contain start param",
+            )
+
+            # 9e. List should now include the view
+            resp = client.get("/saved-views/list?page=dashboard")
+            views = _json.loads(resp.get_data(as_text=True))
+            names = [v["name"] for v in views]
+            _check("Test View" in names, "saved views list after create: should contain 'Test View'")
+
+            # 9f. List for transactions should NOT include the dashboard view
+            resp = client.get("/saved-views/list?page=transactions")
+            views = _json.loads(resp.get_data(as_text=True))
+            names = [v["name"] for v in views]
+            _check(
+                "Test View" not in names,
+                "saved views list for transactions: should not contain dashboard view",
+            )
+
+            # 9g. Delete the view
+            resp = client.post("/saved-views/delete", data={
+                "id": str(view_id),
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 200, "saved views delete: expected 200")
+            views = _json.loads(resp.get_data(as_text=True))
+            names = [v["name"] for v in views]
+            _check("Test View" not in names, "saved views delete: view should be gone")
+
+            # 9h. Verify DB is clean
+            conn_sv = get_connection("personal")
+            count_sv = conn_sv.execute("SELECT COUNT(*) FROM saved_views").fetchone()[0]
+            conn_sv.close()
+            _check(count_sv == 0, f"saved views: DB should be empty after delete, has {count_sv}")
+
+            # 9i. Validation — bad page value
+            resp = client.get("/saved-views/list?page=invalid")
+            _check(resp.status_code == 400, "saved views list with bad page: expected 400")
+
+            resp = client.post("/saved-views/create", data={
+                "name": "Bad",
+                "page": "invalid",
+                "query_string": "",
+            })
+            _check(resp.status_code == 400, "saved views create with bad page: expected 400")
+
+            # 9j. XSS — name with HTML stored verbatim in JSON
+            # (Client builds DOM with textContent, so HTML is never parsed)
+            resp = client.post("/saved-views/create", data={
+                "name": '<script>alert("xss")</script>',
+                "page": "transactions",
+                "query_string": "",
+            })
+            _check(resp.status_code == 200, "saved views create with HTML name: expected 200")
+            views = _json.loads(resp.get_data(as_text=True))
+            _check(
+                views[0]["name"] == '<script>alert("xss")</script>',
+                "saved views: name stored verbatim in JSON (client uses textContent for safe rendering)",
+            )
+
+            # 9k. Cross-entity isolation — create under Personal, then
+            # switch to BFM and attempt to access/delete the same view.
+            resp = client.post("/saved-views/create", data={
+                "name": "Personal Only",
+                "page": "dashboard",
+                "query_string": "start=2024-01-01&end=2024-01-31",
+            })
+            _check(resp.status_code == 200, "cross-entity: create under Personal")
+            views = _json.loads(resp.get_data(as_text=True))
+            personal_view_id = views[-1]["id"]
+
+            # Switch to BFM entity
+            client.set_cookie("entity", "BFM")
+
+            # 9k-i. List under BFM should NOT include Personal's view
+            resp = client.get("/saved-views/list?page=dashboard")
+            _check(resp.status_code == 200, "cross-entity: list under BFM")
+            views = _json.loads(resp.get_data(as_text=True))
+            bfm_ids = [v["id"] for v in views]
+            _check(
+                personal_view_id not in bfm_ids,
+                "cross-entity: Personal view ID must not appear in BFM list",
+            )
+
+            # 9k-ii. GET by ID under BFM should 404
+            resp = client.get(f"/saved-views/get?id={personal_view_id}")
+            _check(
+                resp.status_code == 404,
+                f"cross-entity: GET Personal view {personal_view_id} under BFM should 404",
+            )
+
+            # 9k-iii. DELETE by ID under BFM should 404 (not found in BFM's DB)
+            resp = client.post("/saved-views/delete", data={
+                "id": str(personal_view_id),
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 404, "cross-entity: delete Personal view under BFM should 404")
+
+            # Switch back to Personal and confirm the view still exists
+            client.set_cookie("entity", "Personal")
+            resp = client.get("/saved-views/list?page=dashboard")
+            views = _json.loads(resp.get_data(as_text=True))
+            personal_ids = [v["id"] for v in views]
+            _check(
+                personal_view_id in personal_ids,
+                "cross-entity: Personal view must survive BFM delete attempt",
+            )
+
+        finally:
+            # Cleanup all saved views across both entities
+            for ek in ("personal", "company"):
+                conn_sv = get_connection(ek)
+                conn_sv.execute("DELETE FROM saved_views")
+                conn_sv.commit()
+                conn_sv.close()
+            # Reset cookie to Personal for any subsequent tests
+            client.set_cookie("entity", "Personal")
+
+        print("   ✅ All Saved Views CRUD tests passed")
+
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
     print("=" * 60 + "\n")

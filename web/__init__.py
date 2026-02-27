@@ -183,6 +183,7 @@ def create_app():
     from web.routes.reports import bp as reports_bp
     from web.routes.plaid import bp as plaid_bp
     from web.routes.transactions import bp as transactions_bp
+    from web.routes.saved_views import bp as saved_views_bp
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(upload_bp)
@@ -193,5 +194,6 @@ def create_app():
     app.register_blueprint(reports_bp)
     app.register_blueprint(plaid_bp)
     app.register_blueprint(transactions_bp)
+    app.register_blueprint(saved_views_bp)
 
     return app
