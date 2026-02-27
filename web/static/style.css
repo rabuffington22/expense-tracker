@@ -602,7 +602,7 @@ input[type="checkbox"] {
 /* Summary stat cards */
 .rpt-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.8rem;
     margin-bottom: 1.5rem;
 }
@@ -755,6 +755,7 @@ input[type="checkbox"] {
 }
 
 /* Category list */
+/* Category list — Apple Wallet style with horizontal fill bars */
 .rpt-cat-list {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
@@ -765,13 +766,14 @@ input[type="checkbox"] {
 .rpt-cat-row {
     display: flex;
     align-items: center;
-    padding: 0.85rem 1rem;
+    padding: 0.75rem 1rem;
     border-bottom: 0.5px solid var(--border);
     text-decoration: none;
     color: var(--text);
     transition: background var(--transition);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    gap: 0.5rem;
 }
 .rpt-cat-row:hover {
     background: rgba(255,255,255,0.04);
@@ -787,51 +789,86 @@ input[type="checkbox"] {
     outline: 2px solid var(--blue);
     outline-offset: -2px;
 }
-.rpt-cat-accent {
-    width: 4px;
-    height: 32px;
-    border-radius: 2px;
-    margin-right: 1rem;
+.rpt-cat-left {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 140px;
+    flex-shrink: 0;
+}
+.rpt-cat-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
     flex-shrink: 0;
 }
 .rpt-cat-info {
-    flex: 1;
     min-width: 0;
 }
 .rpt-cat-name {
-    font-size: 0.93rem;
+    font-size: 0.88rem;
     font-weight: 600;
     letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .rpt-cat-count {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
-    margin-top: 0.1rem;
+    margin-top: 0.05rem;
+}
+.rpt-cat-right {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 0.75rem;
+}
+.rpt-cat-bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: rgba(118, 118, 128, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.rpt-cat-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+    min-width: 3px;
 }
 .rpt-cat-amount {
-    font-size: 1.05rem;
+    font-size: 0.88rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    margin-left: 1rem;
     letter-spacing: -0.01em;
+    min-width: 60px;
+    text-align: right;
+    flex-shrink: 0;
 }
 .rpt-cat-chevron {
-    font-size: 1.3rem;
-    color: var(--text-muted);
-    margin-left: 0.6rem;
-    width: 0.8rem;
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.2);
+    width: 0.7rem;
     text-align: center;
     line-height: 1;
+    flex-shrink: 0;
 }
 .rpt-cat-total {
     background: rgba(255, 255, 255, 0.015);
     cursor: default;
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
 }
 .rpt-cat-total:hover {
     background: rgba(255, 255, 255, 0.015);
 }
 .rpt-cat-total .rpt-cat-name {
     font-weight: 700;
+}
+.rpt-cat-total .rpt-cat-amount {
+    font-size: 0.95rem;
 }
 
 /* Export link */
@@ -948,11 +985,17 @@ input[type="checkbox"] {
         gap: 0;
     }
     .rpt-stats {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
     .rpt-range-bar {
         flex-wrap: wrap;
         gap: 0.5rem;
+    }
+    .rpt-cat-left {
+        min-width: 110px;
+    }
+    .rpt-cat-bar-wrap {
+        display: none;
     }
     table {
         font-size: 0.8rem;

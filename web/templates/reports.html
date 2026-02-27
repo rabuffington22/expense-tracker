@@ -12,32 +12,6 @@
 <div class="alert alert-info">No transactions imported yet. Import bank data on the <a href="{{ url_for('upload.index') }}"><strong>Upload</strong></a> page to get started.</div>
 {% else %}
 
-<!-- ── Summary Stats ─────────────────────────────────────────────────────── -->
-{% if summary.total_txns > 0 or summary.total_income > 0 %}
-<div class="rpt-stats">
-    <div class="rpt-stat-card">
-        <div class="rpt-stat-label">Total Spend</div>
-        <div class="rpt-stat-value">${{ "{:,.2f}".format(summary.total_spend) }}</div>
-        <div class="rpt-stat-sub">{{ detail_month }}</div>
-    </div>
-    <div class="rpt-stat-card">
-        <div class="rpt-stat-label">Total Income</div>
-        <div class="rpt-stat-value" style="color: var(--green);">${{ "{:,.2f}".format(summary.total_income) }}</div>
-        <div class="rpt-stat-sub">{{ detail_month }}</div>
-    </div>
-    <div class="rpt-stat-card">
-        <div class="rpt-stat-label">Transactions</div>
-        <div class="rpt-stat-value">{{ summary.total_txns }}</div>
-        <div class="rpt-stat-sub">across {{ summary.num_categories }} categor{{ 'y' if summary.num_categories == 1 else 'ies' }}</div>
-    </div>
-    <div class="rpt-stat-card">
-        <div class="rpt-stat-label">Largest Category</div>
-        <div class="rpt-stat-value rpt-stat-value--sm">{{ summary.top_category }}</div>
-        <div class="rpt-stat-sub">${{ "{:,.2f}".format(summary.top_category_amount) }}</div>
-    </div>
-</div>
-{% endif %}
-
 <!-- ── Month Range Picker ────────────────────────────────────────────────── -->
 <form method="get" action="{{ url_for('reports.index') }}">
     <div class="rpt-range-bar">
@@ -62,11 +36,34 @@
     </div>
 </form>
 
-<!-- ── Chart ──────────────────────────────────────────────────────────────── -->
+<!-- ── Summary Cards ─────────────────────────────────────────────────────── -->
+{% if summary.total_txns > 0 or summary.total_income > 0 %}
+<div class="rpt-stats">
+    <div class="rpt-stat-card">
+        <div class="rpt-stat-label">Spending</div>
+        <div class="rpt-stat-value">${{ "{:,.0f}".format(summary.total_spend) }}</div>
+        <div class="rpt-stat-sub">{{ detail_month }}</div>
+    </div>
+    <div class="rpt-stat-card">
+        <div class="rpt-stat-label">Income</div>
+        <div class="rpt-stat-value" style="color: var(--green);">${{ "{:,.0f}".format(summary.total_income) }}</div>
+        <div class="rpt-stat-sub">{{ detail_month }}</div>
+    </div>
+    <div class="rpt-stat-card">
+        <div class="rpt-stat-label">Net</div>
+        <div class="rpt-stat-value" style="color: {{ 'var(--green)' if summary.net >= 0 else 'var(--red)' }};">
+            {{ '+' if summary.net >= 0 else '' }}${{ "{:,.0f}".format(summary.net) }}
+        </div>
+        <div class="rpt-stat-sub">{{ summary.total_txns }} transactions</div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ── Monthly Spend Chart ───────────────────────────────────────────────── -->
 {% if chart_data %}
 <div class="rpt-chart-card">
     <div class="rpt-chart-header">
-        <h2 class="rpt-section-title">Monthly Spend & Income</h2>
+        <h2 class="rpt-section-title">Monthly Spending</h2>
         <span class="rpt-chart-range">{{ start_month }}  –  {{ end_month }}</span>
     </div>
     <div id="chart" style="width:100%;"></div>
@@ -88,7 +85,7 @@
 <!-- ── Category Breakdown ────────────────────────────────────────────────── -->
 <div class="rpt-categories-section">
     <div class="rpt-categories-header">
-        <h2 class="rpt-section-title">Category Breakdown</h2>
+        <h2 class="rpt-section-title">Categories</h2>
         <form method="get" action="{{ url_for('reports.index') }}" class="rpt-detail-form">
             <input type="hidden" name="start" value="{{ start_month }}">
             <input type="hidden" name="end" value="{{ end_month }}">
@@ -105,22 +102,34 @@
         {% for row in cat_rows %}
         <a class="rpt-cat-row"
            href="{{ url_for('reports.index', start=start_month, end=end_month, detail=detail_month, drill=row.category) }}">
-            <div class="rpt-cat-accent" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-            <div class="rpt-cat-info">
-                <div class="rpt-cat-name">{{ row.category }}</div>
-                <div class="rpt-cat-count">{{ row.count }} transaction{{ 's' if row.count != 1 }}</div>
+            <div class="rpt-cat-left">
+                <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+                <div class="rpt-cat-info">
+                    <div class="rpt-cat-name">{{ row.category }}</div>
+                    <div class="rpt-cat-count">{{ row.count }} txn{{ 's' if row.count != 1 }}</div>
+                </div>
             </div>
-            <div class="rpt-cat-amount">${{ "{:,.2f}".format(row.total_amount) }}</div>
+            <div class="rpt-cat-right">
+                <div class="rpt-cat-bar-wrap">
+                    <div class="rpt-cat-bar" style="width:{{ row.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+                </div>
+                <div class="rpt-cat-amount">${{ "{:,.0f}".format(row.total_amount) }}</div>
+            </div>
             <div class="rpt-cat-chevron">›</div>
         </a>
         {% endfor %}
         <div class="rpt-cat-row rpt-cat-total">
-            <div class="rpt-cat-accent" style="background:transparent"></div>
-            <div class="rpt-cat-info">
-                <div class="rpt-cat-name">Total</div>
-                <div class="rpt-cat-count">{{ summary.total_txns }} transactions</div>
+            <div class="rpt-cat-left">
+                <div class="rpt-cat-dot" style="background:transparent"></div>
+                <div class="rpt-cat-info">
+                    <div class="rpt-cat-name">Total</div>
+                    <div class="rpt-cat-count">{{ summary.total_txns }} transactions</div>
+                </div>
             </div>
-            <div class="rpt-cat-amount">${{ "{:,.2f}".format(summary.total_spend) }}</div>
+            <div class="rpt-cat-right">
+                <div class="rpt-cat-bar-wrap" style="visibility:hidden"></div>
+                <div class="rpt-cat-amount">${{ "{:,.0f}".format(summary.total_spend) }}</div>
+            </div>
             <div class="rpt-cat-chevron"></div>
         </div>
     </div>

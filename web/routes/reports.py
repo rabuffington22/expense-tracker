@@ -1,4 +1,4 @@
-"""Reports route — stacked bar chart, category totals, drill-down, CSV export."""
+"""Reports route — monthly spend chart, category breakdown, drill-down, CSV export."""
 
 import io
 import json
@@ -16,7 +16,7 @@ from core.reporting import (
 
 bp = Blueprint("reports", __name__, url_prefix="/reports")
 
-# Apple-style color palette (iOS system colors)
+# Curated palette — distinct, readable on dark backgrounds
 COLORS = [
     "#0a84ff", "#30d158", "#ff453a", "#ff9f0a", "#bf5af2",
     "#64d2ff", "#ffd60a", "#ac8e68", "#98989d", "#ff6482",
@@ -36,10 +36,10 @@ def index():
     if start_month > end_month:
         start_month, end_month = end_month, start_month
 
-    # ── Stacked bar chart data ───────────────────────────────────────────────
+    # ── Monthly totals for bar chart ─────────────────────────────────────────
     monthly_df = get_monthly_totals(g.entity_key, start_month, end_month)
 
-    # ── Income data ───────────────────────────────────────────────────────────
+    # ── Income data (stat cards only, not on chart) ──────────────────────────
     income_df = get_monthly_income(g.entity_key, start_month, end_month)
     income_by_month = {}
     if not income_df.empty:
@@ -48,13 +48,13 @@ def index():
 
     chart_data = None
     if not monthly_df.empty:
-        chart_data = _build_chart_json(monthly_df, start_month, end_month, income_by_month)
+        chart_data = _build_chart_json(monthly_df, start_month, end_month)
 
-    # ── Detail month ─────────────────────────────────────────────────────────
-    detail_month = request.args.get("detail", start_month)
+    # ── Detail month (default to most recent) ────────────────────────────────
+    detail_month = request.args.get("detail", end_month)
     range_months = [m for m in months if start_month <= m <= end_month]
     if detail_month not in range_months and range_months:
-        detail_month = range_months[0]
+        detail_month = range_months[-1]
 
     cat_df = get_category_totals(g.entity_key, detail_month)
     cat_rows = []
@@ -66,11 +66,18 @@ def index():
                 "total_amount": float(row["total_amount"]),
             })
 
+    # Compute percentage bars (relative to largest category)
+    max_cat_amount = cat_rows[0]["total_amount"] if cat_rows else 1
+    for r in cat_rows:
+        r["pct"] = round(r["total_amount"] / max_cat_amount * 100, 1) if max_cat_amount else 0
+
     # ── Summary stats ────────────────────────────────────────────────────────
     detail_income = get_income_total(g.entity_key, detail_month)
+    total_spend = sum(r["total_amount"] for r in cat_rows)
     summary = {
-        "total_spend": sum(r["total_amount"] for r in cat_rows),
+        "total_spend": total_spend,
         "total_income": detail_income,
+        "net": detail_income - total_spend,
         "total_txns": sum(r["count"] for r in cat_rows),
         "top_category": cat_rows[0]["category"] if cat_rows else "",
         "top_category_amount": cat_rows[0]["total_amount"] if cat_rows else 0,
@@ -134,63 +141,53 @@ def export_csv():
     )
 
 
-def _build_chart_json(df, start_month, end_month, income_by_month=None):
-    """Build Plotly traces JSON for client-side rendering."""
-    pivot = df.pivot_table(
-        index="month", columns="category", values="total_amount", fill_value=0
-    )
+def _build_chart_json(df, start_month, end_month):
+    """Build Plotly JSON — clean single-color monthly total bars."""
+    # Aggregate to total spend per month (across all categories)
+    monthly_totals = df.groupby("month")["total_amount"].sum().reset_index()
+    monthly_totals = monthly_totals.sort_values("month")
 
-    traces = []
-    for i, cat in enumerate(sorted(pivot.columns)):
-        traces.append({
-            "x": list(pivot.index),
-            "y": [float(v) for v in pivot[cat].values],
-            "name": cat,
-            "type": "bar",
-            "marker": {
-                "color": COLORS[i % len(COLORS)],
-                "line": {"width": 0},
-            },
-            "hovertemplate": "<b>%{fullData.name}</b><br>$%{y:,.2f}<extra></extra>",
-        })
+    months = list(monthly_totals["month"])
+    values = [float(v) for v in monthly_totals["total_amount"]]
 
-    # Income overlay line
-    if income_by_month:
-        months_in_chart = list(pivot.index)
-        income_values = [income_by_month.get(m, 0) for m in months_in_chart]
-        if any(v > 0 for v in income_values):
-            traces.append({
-                "x": months_in_chart,
-                "y": income_values,
-                "name": "Income",
-                "type": "scatter",
-                "mode": "lines+markers",
-                "line": {"color": "#30d158", "width": 2.5},
-                "marker": {"size": 6, "color": "#30d158"},
-                "hovertemplate": "<b>Income</b><br>$%{y:,.2f}<extra></extra>",
-            })
+    traces = [{
+        "x": months,
+        "y": values,
+        "type": "bar",
+        "marker": {
+            "color": "rgba(10, 132, 255, 0.85)",
+            "line": {"width": 0},
+        },
+        "hovertemplate": "<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
+        "text": ["${:,.0f}".format(v) for v in values],
+        "textposition": "outside",
+        "textfont": {
+            "size": 12,
+            "color": "rgba(245,245,247,0.7)",
+            "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
+        },
+    }]
+
+    max_val = max(values) if values else 0
 
     layout = {
-        "barmode": "stack",
         "xaxis": {
             "tickangle": 0,
-            "tickfont": {"size": 12},
+            "tickfont": {"size": 12, "color": "rgba(245,245,247,0.5)"},
             "gridcolor": "rgba(0,0,0,0)",
             "linecolor": "rgba(0,0,0,0)",
             "zeroline": False,
+            "fixedrange": True,
         },
         "yaxis": {
-            "tickprefix": "$",
-            "tickformat": ",.0f",
-            "tickfont": {"size": 11},
-            "gridcolor": "rgba(255,255,255,0.04)",
-            "linecolor": "rgba(0,0,0,0)",
-            "zeroline": False,
+            "visible": False,
+            "fixedrange": True,
+            "range": [0, max_val * 1.2] if max_val else [0, 100],
         },
-        "hovermode": "x unified",
+        "hovermode": "x",
         "hoverlabel": {
             "bgcolor": "#2c2c2e",
-            "bordercolor": "rgba(255,255,255,0.1)",
+            "bordercolor": "rgba(255,255,255,0.08)",
             "font": {
                 "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
                 "size": 13,
@@ -203,19 +200,10 @@ def _build_chart_json(df, start_month, end_month, income_by_month=None):
             "color": "#f5f5f7",
             "family": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif",
         },
-        "legend": {
-            "orientation": "h",
-            "yanchor": "top",
-            "y": -0.18,
-            "xanchor": "center",
-            "x": 0.5,
-            "font": {"size": 11},
-            "itemsizing": "constant",
-            "traceorder": "normal",
-        },
-        "height": 380,
-        "margin": {"l": 60, "r": 20, "t": 16, "b": 60},
-        "bargap": 0.35,
+        "showlegend": False,
+        "height": 280,
+        "margin": {"l": 0, "r": 0, "t": 24, "b": 40},
+        "bargap": 0.4,
     }
 
     return json.dumps({"data": traces, "layout": layout})
