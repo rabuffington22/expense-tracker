@@ -1,8 +1,6 @@
-"""Reports route — monthly spend chart, category breakdown, drill-down, CSV export."""
+"""Reports route — monthly detail + spending trend, category breakdown, drill-down, CSV export."""
 
 import datetime
-import io
-import json
 from dateutil.relativedelta import relativedelta
 
 from flask import Blueprint, render_template, request, g, Response
@@ -11,7 +9,6 @@ from core.reporting import (
     get_available_months,
     get_category_totals,
     get_income_total,
-    get_monthly_income,
     get_monthly_totals,
     get_transactions,
 )
@@ -25,6 +22,48 @@ COLORS = [
     "#30b0c7", "#8e8e93",
 ]
 
+_VALID_PERIODS = (3, 6, 12, 24)
+
+
+# ── Date formatting helpers ──────────────────────────────────────────────────
+
+def _current_year():
+    return datetime.date.today().year
+
+
+def _parse_ym(ym_str):
+    """Parse 'YYYY-MM' to a date (day=1)."""
+    return datetime.datetime.strptime(ym_str, "%Y-%m").date()
+
+
+def fmt_month_full(ym_str):
+    """'2026-02' -> 'February' (current year) or 'February 2025'."""
+    dt = _parse_ym(ym_str)
+    if dt.year == _current_year():
+        return dt.strftime("%B")
+    return dt.strftime("%B %Y")
+
+
+def fmt_month_short(ym_str):
+    """'2026-02' -> 'Feb' (current year) or 'Feb 25'."""
+    dt = _parse_ym(ym_str)
+    if dt.year == _current_year():
+        return dt.strftime("%b")
+    return dt.strftime("%b") + " " + dt.strftime("%y")
+
+
+def fmt_date(date_str):
+    """'2026-02-15' -> 'Feb 15' (current year) or 'Feb 15, 2025'."""
+    try:
+        dt = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+    except (ValueError, TypeError):
+        return date_str
+    if dt.year == _current_year():
+        return dt.strftime("%b") + " " + str(dt.day)
+    return dt.strftime("%b") + " " + str(dt.day) + ", " + str(dt.year)
+
+
+# ── Routes ───────────────────────────────────────────────────────────────────
 
 @bp.route("/")
 def index():
@@ -32,31 +71,26 @@ def index():
     if not months:
         return render_template("reports.html", months=[], has_data=False)
 
-    start_month = request.args.get("start", months[0])
-    end_month = request.args.get("end", months[-1])
+    # ── Parse params ──────────────────────────────────────────────────────
+    selected_month = request.args.get("month", months[-1])
+    if selected_month not in months:
+        selected_month = months[-1]
 
-    if start_month > end_month:
-        start_month, end_month = end_month, start_month
+    period = request.args.get("period", "6")
+    try:
+        period = int(period)
+    except ValueError:
+        period = 6
+    if period not in _VALID_PERIODS:
+        period = 6
 
-    # ── Monthly totals for bar chart ─────────────────────────────────────────
-    monthly_df = get_monthly_totals(g.entity_key, start_month, end_month)
+    # ── Top Section: Month navigation ─────────────────────────────────────
+    month_idx = months.index(selected_month)
+    prev_month = months[month_idx - 1] if month_idx > 0 else None
+    next_month = months[month_idx + 1] if month_idx < len(months) - 1 else None
 
-    # ── Income data (stat cards only, not on chart) ──────────────────────────
-    income_df = get_monthly_income(g.entity_key, start_month, end_month)
-    income_by_month = {}
-    if not income_df.empty:
-        for _, row in income_df.iterrows():
-            income_by_month[row["month"]] = float(row["total_income"])
-
-    chart_bars = _build_chart_bars(monthly_df, end_month)
-
-    # ── Detail month (default to most recent) ────────────────────────────────
-    detail_month = request.args.get("detail", end_month)
-    range_months = [m for m in months if start_month <= m <= end_month]
-    if detail_month not in range_months and range_months:
-        detail_month = range_months[-1]
-
-    cat_df = get_category_totals(g.entity_key, detail_month)
+    # ── Top Section: Category breakdown ───────────────────────────────────
+    cat_df = get_category_totals(g.entity_key, selected_month)
     cat_rows = []
     if not cat_df.empty:
         for _, row in cat_df.iterrows():
@@ -66,29 +100,25 @@ def index():
                 "total_amount": float(row["total_amount"]),
             })
 
-    # Compute percentage bars (relative to largest category)
     max_cat_amount = cat_rows[0]["total_amount"] if cat_rows else 1
     for r in cat_rows:
         r["pct"] = round(r["total_amount"] / max_cat_amount * 100, 1) if max_cat_amount else 0
 
-    # ── Summary stats ────────────────────────────────────────────────────────
-    detail_income = get_income_total(g.entity_key, detail_month)
+    # ── Top Section: Summary stats ────────────────────────────────────────
+    detail_income = get_income_total(g.entity_key, selected_month)
     total_spend = sum(r["total_amount"] for r in cat_rows)
     summary = {
         "total_spend": total_spend,
         "total_income": detail_income,
         "net": detail_income - total_spend,
         "total_txns": sum(r["count"] for r in cat_rows),
-        "top_category": cat_rows[0]["category"] if cat_rows else "",
-        "top_category_amount": cat_rows[0]["total_amount"] if cat_rows else 0,
-        "num_categories": len(cat_rows),
     }
 
-    # ── Drill-down ───────────────────────────────────────────────────────────
+    # ── Top Section: Drill-down ───────────────────────────────────────────
     drill_cat = request.args.get("drill")
     drill_txns = []
     if drill_cat:
-        txn_df = get_transactions(g.entity_key, month=detail_month, category=drill_cat)
+        txn_df = get_transactions(g.entity_key, month=selected_month, category=drill_cat)
         if not txn_df.empty:
             for _, row in txn_df.iterrows():
                 drill_txns.append({
@@ -97,23 +127,28 @@ def index():
                     "merchant_canonical": row.get("merchant_canonical", ""),
                     "amount": float(row.get("amount", 0)),
                     "account": row.get("account", ""),
-                    "notes": row.get("notes", ""),
                 })
+
+    # ── Bottom Section: Spending trend chart ──────────────────────────────
+    chart_bars = _build_chart_bars(g.entity_key, months[-1], period, selected_month)
 
     return render_template(
         "reports.html",
-        months=months,
         has_data=True,
-        start_month=start_month,
-        end_month=end_month,
+        months=months,
+        selected_month=selected_month,
+        prev_month=prev_month,
+        next_month=next_month,
+        period=period,
         chart_bars=chart_bars,
-        detail_month=detail_month,
-        range_months=range_months,
         cat_rows=cat_rows,
         drill_cat=drill_cat,
         drill_txns=drill_txns,
         summary=summary,
         colors=COLORS,
+        fmt_month=fmt_month_full,
+        fmt_month_short=fmt_month_short,
+        fmt_date=fmt_date,
     )
 
 
@@ -141,39 +176,45 @@ def export_csv():
     )
 
 
-def _build_chart_bars(df, end_month):
-    """Build template-ready bar data — always 6 months, pure CSS chart."""
-    # Aggregate actual spend by month
-    totals = {}
-    if not df.empty:
-        totals = df.groupby("month")["total_amount"].sum().to_dict()
+# ── Chart builder ────────────────────────────────────────────────────────────
 
-    # Fixed 6-month window ending at end_month
+def _build_chart_bars(entity_key, latest_month, period, selected_month):
+    """Build template-ready bar data for a variable-length trend chart."""
     try:
-        end_dt = datetime.datetime.strptime(end_month, "%Y-%m")
+        end_dt = datetime.datetime.strptime(latest_month, "%Y-%m")
     except ValueError:
         end_dt = datetime.datetime.now().replace(day=1)
 
+    # Generate month keys for the period
     month_keys = []
-    for i in range(5, -1, -1):
+    for i in range(period - 1, -1, -1):
         dt = end_dt - relativedelta(months=i)
         month_keys.append(dt.strftime("%Y-%m"))
+
+    # Fetch spending data
+    start_key = month_keys[0]
+    end_key = month_keys[-1]
+    monthly_df = get_monthly_totals(entity_key, start_key, end_key)
+
+    totals = {}
+    if not monthly_df.empty:
+        totals = monthly_df.groupby("month")["total_amount"].sum().to_dict()
 
     # Build bar dicts
     bars = []
     max_val = max((totals.get(m, 0) for m in month_keys), default=0) or 1
     for m in month_keys:
-        dt = datetime.datetime.strptime(m, "%Y-%m")
         val = float(totals.get(m, 0))
         raw_pct = round(val / max_val * 100, 1) if max_val else 0
         pct = max(raw_pct, 4) if val > 0 else 0  # Floor so tiny bars stay visible
         bars.append({
             "month_key": m,
-            "label": dt.strftime("%b"),
+            "label": fmt_month_short(m),
             "value": val,
             "display": "${:,.0f}".format(val) if val > 0 else "",
             "pct": pct,
             "has_data": val > 0,
+            "is_selected": m == selected_month,
         })
 
     return bars

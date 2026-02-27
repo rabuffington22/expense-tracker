@@ -8,96 +8,63 @@
 <div class="alert alert-info">No transactions imported yet. Import bank data on the <a href="{{ url_for('upload.index') }}"><strong>Upload</strong></a> page to get started.</div>
 {% else %}
 
-<!-- ── Month Range Picker ────────────────────────────────────────────────── -->
-<form method="get" action="{{ url_for('reports.index') }}">
-    <div class="rpt-range-bar">
-        <div class="rpt-range-group">
-            <span class="rpt-range-label">From</span>
-            <select name="start" class="rpt-range-select">
-                {% for m in months %}
-                <option value="{{ m }}" {% if m == start_month %}selected{% endif %}>{{ m }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <span class="rpt-range-sep">—</span>
-        <div class="rpt-range-group">
-            <span class="rpt-range-label">To</span>
-            <select name="end" class="rpt-range-select">
-                {% for m in months %}
-                <option value="{{ m }}" {% if m == end_month %}selected{% endif %}>{{ m }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="rpt-range-btn">Update</button>
-    </div>
-</form>
+<!-- ================================================================= -->
+<!-- TOP SECTION: Monthly Detail                                        -->
+<!-- ================================================================= -->
 
-<!-- ── Summary Cards ─────────────────────────────────────────────────────── -->
+<!-- Month Navigator -->
+<div class="rpt-month-nav">
+    {% if prev_month %}
+    <a href="{{ url_for('reports.index', month=prev_month, period=period) }}"
+       class="rpt-month-arrow" aria-label="Previous month">‹</a>
+    {% else %}
+    <span class="rpt-month-arrow rpt-month-arrow--disabled">‹</span>
+    {% endif %}
+
+    <span class="rpt-month-name">{{ fmt_month(selected_month) }}</span>
+
+    {% if next_month %}
+    <a href="{{ url_for('reports.index', month=next_month, period=period) }}"
+       class="rpt-month-arrow" aria-label="Next month">›</a>
+    {% else %}
+    <span class="rpt-month-arrow rpt-month-arrow--disabled">›</span>
+    {% endif %}
+</div>
+
+<!-- Stat Cards -->
 {% if summary.total_txns > 0 or summary.total_income > 0 %}
 <div class="rpt-stats">
     <div class="rpt-stat-card">
         <div class="rpt-stat-label">Spending</div>
         <div class="rpt-stat-value">${{ "{:,.0f}".format(summary.total_spend) }}</div>
-        <div class="rpt-stat-sub">{{ detail_month }}</div>
+        <div class="rpt-stat-sub">{{ summary.total_txns }} transaction{{ 's' if summary.total_txns != 1 }}</div>
     </div>
     <div class="rpt-stat-card">
         <div class="rpt-stat-label">Income</div>
         <div class="rpt-stat-value" style="color: var(--green);">${{ "{:,.0f}".format(summary.total_income) }}</div>
-        <div class="rpt-stat-sub">{{ detail_month }}</div>
+        <div class="rpt-stat-sub">{{ fmt_month(selected_month) }}</div>
     </div>
     <div class="rpt-stat-card">
         <div class="rpt-stat-label">Net</div>
         <div class="rpt-stat-value" style="color: {{ 'var(--green)' if summary.net >= 0 else 'var(--red)' }};">
             {{ '+' if summary.net >= 0 else '' }}${{ "{:,.0f}".format(summary.net) }}
         </div>
-        <div class="rpt-stat-sub">{{ summary.total_txns }} transactions</div>
+        <div class="rpt-stat-sub">{{ fmt_month(selected_month) }}</div>
     </div>
 </div>
 {% endif %}
 
-<!-- ── Monthly Spend Chart (Pure CSS) ────────────────────────────────────── -->
-{% if chart_bars %}
-<div class="rpt-chart-card">
-    <div class="rpt-chart-header">
-        <h2 class="rpt-section-title">Monthly Spending</h2>
-    </div>
-    <div class="chart-bars">
-        {% for bar in chart_bars %}
-        <div class="chart-col">
-            <div class="chart-value">{{ bar.display }}</div>
-            <div class="chart-track">
-                <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}"
-                     style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
-            </div>
-            <div class="chart-label">{{ bar.label }}</div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% else %}
-<div class="alert alert-info" style="margin-top:1rem;">No expense transactions found for the selected range.</div>
-{% endif %}
-
-<!-- ── Category Breakdown ────────────────────────────────────────────────── -->
+<!-- Category Breakdown -->
 <div class="rpt-categories-section">
     <div class="rpt-categories-header">
         <h2 class="rpt-section-title">Categories</h2>
-        <form method="get" action="{{ url_for('reports.index') }}" class="rpt-detail-form">
-            <input type="hidden" name="start" value="{{ start_month }}">
-            <input type="hidden" name="end" value="{{ end_month }}">
-            <select name="detail" class="rpt-detail-select" onchange="this.form.submit()">
-                {% for m in range_months %}
-                <option value="{{ m }}" {% if m == detail_month %}selected{% endif %}>{{ m }}</option>
-                {% endfor %}
-            </select>
-        </form>
     </div>
 
     {% if cat_rows %}
     <div class="rpt-cat-list">
         {% for row in cat_rows %}
         <a class="rpt-cat-row"
-           href="{{ url_for('reports.index', start=start_month, end=end_month, detail=detail_month, drill=row.category) }}">
+           href="{{ url_for('reports.index', month=selected_month, period=period, drill=row.category) }}">
             <div class="rpt-cat-left">
                 <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
                 <div class="rpt-cat-info">
@@ -130,14 +97,14 @@
         </div>
     </div>
 
-    <a href="{{ url_for('reports.export_csv', month=detail_month) }}"
-       class="rpt-export-link">Export All — {{ detail_month }}</a>
+    <a href="{{ url_for('reports.export_csv', month=selected_month) }}"
+       class="rpt-export-link">Export All — {{ fmt_month(selected_month) }}</a>
     {% else %}
-    <div class="alert alert-info" style="margin-top:0.8rem;">No expense transactions in {{ detail_month }}.</div>
+    <div class="alert alert-info" style="margin-top:0.8rem;">No expense transactions in {{ fmt_month(selected_month) }}.</div>
     {% endif %}
 </div>
 
-<!-- ── Drill-down ────────────────────────────────────────────────────────── -->
+<!-- Drill-down -->
 {% if drill_cat %}
 <div class="rpt-drill-section">
     <div class="rpt-drill-header">
@@ -149,20 +116,61 @@
     <div class="rpt-drill-list">
         {% for txn in drill_txns %}
         <div class="rpt-drill-row">
-            <div class="rpt-drill-date">{{ txn.date }}</div>
+            <div class="rpt-drill-date">{{ fmt_date(txn.date) }}</div>
             <div class="rpt-drill-merchant">{{ txn.merchant_canonical or txn.description_raw[:45] }}</div>
             <div class="rpt-drill-amount">${{ "{:,.2f}".format(txn.amount|abs) }}</div>
         </div>
         {% endfor %}
     </div>
 
-    <a href="{{ url_for('reports.export_csv', month=detail_month, category=drill_cat) }}"
+    <a href="{{ url_for('reports.export_csv', month=selected_month, category=drill_cat) }}"
        class="rpt-export-link">Export CSV</a>
     {% else %}
     <p class="text-muted" style="margin-top:0.5rem;">No transactions found.</p>
     {% endif %}
 </div>
 {% endif %}
+
+<!-- ================================================================= -->
+<!-- DIVIDER                                                            -->
+<!-- ================================================================= -->
+<hr class="rpt-divider">
+
+<!-- ================================================================= -->
+<!-- BOTTOM SECTION: Spending Trend                                     -->
+<!-- ================================================================= -->
+
+<div class="rpt-trend-section">
+    <div class="rpt-trend-header">
+        <h2 class="rpt-section-title">Spending Trend</h2>
+
+        <div class="rpt-period-toggle">
+            {% for p, label in [(3, '3M'), (6, '6M'), (12, '1Y'), (24, '2Y')] %}
+            <a href="{{ url_for('reports.index', month=selected_month, period=p) }}"
+               class="rpt-period-btn{% if period == p %} active{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if chart_bars %}
+    <div class="rpt-chart-card">
+        <div class="chart-bars chart-bars--period-{{ period }}">
+            {% for bar in chart_bars %}
+            <div class="chart-col{% if bar.is_selected %} chart-col--selected{% endif %}">
+                <div class="chart-value">{{ bar.display }}</div>
+                <div class="chart-track">
+                    <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_selected %} chart-fill--selected{% endif %}"
+                         style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
+                </div>
+                <div class="chart-label">{{ bar.label }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info" style="margin-top:1rem;">No expense transactions found.</div>
+    {% endif %}
+</div>
 
 {% endif %}
 {% endblock %}
