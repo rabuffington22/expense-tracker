@@ -51,6 +51,41 @@
 </div>
 {% endif %}
 
+<!-- ── Upcoming ────────────────────────────────────────────────────────── -->
+<div style="margin-top:0.5rem;">
+  <h2 style="font-size:0.95rem; font-weight:600; margin-bottom:0.5rem; padding:0 0.25rem;">
+    Upcoming
+    {% if upcoming_items %}
+    <span style="color:var(--text-muted); font-weight:400;">({{ upcoming_items|length }})</span>
+    {% endif %}
+  </h2>
+  {% if upcoming_items %}
+  <div class="rpt-cat-list">
+    {% for item in upcoming_items %}
+    <a class="rpt-cat-row" href="{{ drill_url(merchant=item.merchant_canonical) }}">
+      <div class="rpt-cat-left">
+        <div class="rpt-cat-dot" style="background:{% if item.is_income %}var(--green){% else %}var(--blue){% endif %}"></div>
+        <div class="rpt-cat-info">
+          <div class="rpt-cat-name">{{ item.merchant_canonical }}</div>
+          <div class="rpt-cat-count">{{ item.expected_date_display }} &middot; {{ item.cadence }}</div>
+        </div>
+      </div>
+      <div class="rpt-cat-right">
+        <div class="rpt-cat-amount"{% if item.is_income %} style="color:var(--green);"{% endif %}>
+          {{ fmt_cents(item.expected_amount_cents) }}
+        </div>
+      </div>
+      <div class="rpt-cat-chevron">&#8250;</div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card" style="padding:0.8rem 1rem;">
+    <span class="text-sm" style="color:var(--text-muted);">No recurring patterns detected yet</span>
+  </div>
+  {% endif %}
+</div>
+
 <!-- ── Cash Flow chart (6 months) ───────────────────────────────────────── -->
 {% if chart_bars %}
 <div class="card" style="padding:1rem 1.2rem;">
