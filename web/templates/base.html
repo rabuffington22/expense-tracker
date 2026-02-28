@@ -308,5 +308,98 @@
         if (e.key === 'Escape') svCloseMenus();
     });
     </script>
+
+    <script>
+    /* ── Keyboard shortcuts ────────────────────────────────────── */
+    (function() {
+        var _gPending = false, _gTimer = null;
+
+        function _active(e) {
+            var t = e.target.tagName;
+            return t !== 'INPUT' && t !== 'TEXTAREA' && t !== 'SELECT'
+                && !e.target.isContentEditable;
+        }
+
+        function _txnRows() {
+            var c = document.getElementById('txn-results');
+            return c ? Array.from(c.querySelectorAll('tbody tr')) : [];
+        }
+
+        function _selectRow(rows, idx) {
+            rows.forEach(function(r) { r.classList.remove('is-selected'); });
+            if (idx >= 0 && idx < rows.length) {
+                rows[idx].classList.add('is-selected');
+                rows[idx].scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (!_active(e)) return;
+            var key = e.key;
+
+            /* "g" prefix for navigation */
+            if (_gPending) {
+                _gPending = false;
+                clearTimeout(_gTimer);
+                if (key === 't') { window.location.href = '/transactions/'; return; }
+                if (key === 'd') { window.location.href = '/'; return; }
+                return;
+            }
+            if (key === 'g') {
+                _gPending = true;
+                _gTimer = setTimeout(function() { _gPending = false; }, 1000);
+                return;
+            }
+
+            /* "/" — focus search or first date input */
+            if (key === '/') {
+                var q = document.getElementById('q');
+                var start = document.getElementById('start');
+                if (q) { e.preventDefault(); q.focus(); }
+                else if (start) { e.preventDefault(); start.focus(); }
+                return;
+            }
+
+            /* j/k — row navigation (transactions only) */
+            var rows = _txnRows();
+            if (rows.length && (key === 'j' || key === 'k')) {
+                var cur = rows.findIndex(function(r) {
+                    return r.classList.contains('is-selected');
+                });
+                if (key === 'j') cur = Math.min(cur + 1, rows.length - 1);
+                else cur = Math.max(cur - 1, 0);
+                _selectRow(rows, cur);
+                return;
+            }
+
+            /* Enter — open edit or submit edit form */
+            if (key === 'Enter' && rows.length) {
+                var sel = document.querySelector('#txn-results tr.is-selected');
+                if (!sel) return;
+                if (sel.classList.contains('txn-editing')) {
+                    var submit = sel.querySelector('button[type="submit"]');
+                    if (submit) submit.click();
+                } else {
+                    var edit = sel.querySelector('.btn-icon');
+                    if (edit) edit.click();
+                }
+                return;
+            }
+
+            /* Escape — cancel edit or clear selection */
+            if (key === 'Escape') {
+                var editing = document.querySelector('#txn-results tr.txn-editing');
+                if (editing) {
+                    var cancel = editing.querySelector('.btn-icon[title="Cancel"]');
+                    if (cancel) cancel.click();
+                    return;
+                }
+                var selected = document.querySelector('#txn-results tr.is-selected');
+                if (selected) selected.classList.remove('is-selected');
+                return;
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
