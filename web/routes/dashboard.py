@@ -508,6 +508,17 @@ def _query_plaid_sync(conn):
 
 
 # ── Recurring detection ───────────────────────────────────────────────────────
+#
+# Heuristic summary:
+#   1. Query last 90 days of transactions (respects account + transfer filters).
+#   2. Group by merchant_canonical; require ≥2 occurrences.
+#   3. Compute consecutive date intervals → median → classify cadence:
+#        Weekly 5–9d, Monthly 25–35d, Annual 340–390d.
+#   4. Amount regularity: ≥2 of last 3 amounts within max($3, 5% of median).
+#   5. Staleness: skip if last charge was >2× median interval ago.
+#   6. Next expected = last_date + median_interval.
+#   7. _build_upcoming filters to next 30 days, caps to 6 items, adds ±7 day
+#      drill window for each item.
 
 # Cadence definitions: (label, min_days, max_days)
 _CADENCES = [
@@ -542,15 +553,21 @@ def _amount_is_regular(amounts_cents, n_recent=3):
 
 
 def _detect_recurring(conn, params):
-    """Detect recurring transaction patterns from the last 12 months.
+    """Detect recurring transaction patterns from the last 90 days.
 
     Returns list of dicts: merchant_canonical, cadence, median_amount_cents,
     last_date, next_expected_date, is_income.
+    Respects account filter and transfer exclusion from params.
     """
     xfer_clause, _ = _exclude_transfers_clause(params)
+    acct_clause = ""
+    acct_binds = []
+    if params.get("account"):
+        acct_clause = "AND account = ?"
+        acct_binds = [params["account"]]
 
-    # Look back 12 months from today
-    cutoff = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+    # Look back 90 days from today
+    cutoff = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
     today_str = datetime.now().strftime("%Y-%m-%d")
 
     patterns = []
@@ -562,9 +579,9 @@ def _detect_recurring(conn, params):
         f"WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
         f"  AND amount_cents < 0 "
         f"  AND date >= ? AND date <= ? "
-        f"  {xfer_clause} "
+        f"  {xfer_clause} {acct_clause} "
         f"ORDER BY merchant_canonical, date",
-        [cutoff, today_str],
+        [cutoff, today_str] + acct_binds,
     ).fetchall()
     _process_merchant_groups(expense_rows, patterns, is_income=False)
 
@@ -575,9 +592,9 @@ def _detect_recurring(conn, params):
         f"WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
         f"  AND amount_cents > 0 "
         f"  AND date >= ? AND date <= ? "
-        f"  {xfer_clause} "
+        f"  {xfer_clause} {acct_clause} "
         f"ORDER BY merchant_canonical, date",
-        [cutoff, today_str],
+        [cutoff, today_str] + acct_binds,
     ).fetchall()
     _process_merchant_groups(income_rows, patterns, is_income=True)
 
@@ -600,7 +617,7 @@ def _process_merchant_groups(rows, patterns, is_income):
     today = datetime.now().date()
 
     for merchant, txns in groups.items():
-        if len(txns) < 3:
+        if len(txns) < 2:
             continue
 
         # Parse dates and compute intervals
@@ -613,7 +630,7 @@ def _process_merchant_groups(rows, patterns, is_income):
                 continue
             amounts.append(t["amount_cents"])
 
-        if len(dates) < 3:
+        if len(dates) < 2:
             continue
 
         # Consecutive intervals in days
@@ -655,7 +672,8 @@ def _process_merchant_groups(rows, patterns, is_income):
 def _build_upcoming(patterns, horizon_days=30):
     """Filter recurring patterns to those expected within the next horizon_days.
 
-    Returns sorted list of upcoming items for the template.
+    Returns sorted list of up to 6 upcoming items for the template.
+    Each item includes drill_start/drill_end (expected ±7 days) for date-windowed links.
     """
     today = datetime.now().date()
     cutoff = today + timedelta(days=horizon_days)
@@ -674,6 +692,10 @@ def _build_upcoming(patterns, horizon_days=30):
         # Format display date (e.g., "Mar 5")
         display_date = next_date.strftime("%b %-d")
 
+        # ±7 day window around expected date for drill links
+        drill_start = (next_date - timedelta(days=7)).isoformat()
+        drill_end = (next_date + timedelta(days=7)).isoformat()
+
         items.append({
             "merchant_canonical": p["merchant_canonical"],
             "cadence": p["cadence"],
@@ -681,11 +703,13 @@ def _build_upcoming(patterns, horizon_days=30):
             "expected_date": p["next_expected_date"],
             "expected_date_display": display_date,
             "is_income": p["is_income"],
+            "drill_start": drill_start,
+            "drill_end": drill_end,
         })
 
-    # Sort by expected date, limit to 10
+    # Sort by expected date, limit to 6
     items.sort(key=lambda x: x["expected_date"])
-    return items[:10]
+    return items[:6]
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
