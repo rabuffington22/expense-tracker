@@ -68,17 +68,37 @@
 </div>
 {% endif %}
 
-<!-- ── Activity: Review Inbox + Insights ────────────────────────────────── -->
-{% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 or insights %}
+<!-- ── Activity band: Spend Trend + Review Inbox + Insights ─────────────── -->
 <div class="band">
 <div class="band-label">Activity</div>
-  <div class="activity-grid">
-    {% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 %}
-    <div class="list-card">
-      <div class="list-card-header">
-        <div class="list-card-title">Review Inbox</div>
+  <div class="band-body">
+    <div class="band-grid band-grid--2">
+      <!-- Left: Spend Trend -->
+      {% if chart_bars %}
+      <div class="band-panel">
+        <div class="panel-title">Spend Trend</div>
+        <div class="plot-area">
+          <div class="chart-bars">
+            {% for bar in chart_bars %}
+            <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}" title="{{ bar.label }}: {{ bar.display }}">
+              <div class="chart-value">{{ bar.display }}</div>
+              <div class="chart-track">
+                <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_current %} chart-fill--selected{% endif %}"
+                     style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
+              </div>
+              <div class="chart-label">{{ bar.label }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-      <div class="list-card-body">
+      {% endif %}
+
+      <!-- Right: Review Inbox + Insights stacked -->
+      {% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 or insights %}
+      <div class="band-stack">
+        {% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 %}
+        <div class="panel-title">Review Inbox</div>
         <div class="rpt-cat-list">
           {% if review_count > 0 %}
           <a class="rpt-cat-row" href="{{ drill_url(uncategorized='1') }}">
@@ -120,15 +140,12 @@
           </a>
           {% endif %}
         </div>
-      </div>
-    </div>
-    {% endif %}
-    {% if insights %}
-    <div class="list-card">
-      <div class="list-card-header">
-        <div class="list-card-title">Insights</div>
-      </div>
-      <div class="list-card-body">
+        {% endif %}
+        {% if insights %}
+        {% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 %}
+        <div class="band-divider"></div>
+        {% endif %}
+        <div class="panel-title">Insights</div>
         <div class="rpt-cat-list">
           {% for ins in insights %}
           <a class="rpt-cat-row" href="{{ ins.url }}">
@@ -143,54 +160,26 @@
           </a>
           {% endfor %}
         </div>
+        {% endif %}
       </div>
+      {% endif %}
     </div>
-    {% endif %}
   </div>
 </div>{# end band Activity #}
-{% endif %}
 
-<!-- ── Chart grid: Spend Trend + Spending Breakdown ────────────────────── -->
-<div class="chart-grid">
-
-  <!-- Spend Trend -->
-  {% if chart_bars %}
-  <div class="chart-card">
-    <div class="chart-card-header">
-      <div>
-        <div class="chart-card-title">Spend Trend</div>
-        <div class="chart-card-subtitle">Last 6 months</div>
-      </div>
-    </div>
-    <div class="chart-well">
-      <div class="chart-bars">
-        {% for bar in chart_bars %}
-        <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}" title="{{ bar.label }}: {{ bar.display }}">
-          <div class="chart-value">{{ bar.display }}</div>
-          <div class="chart-track">
-            <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_current %} chart-fill--selected{% endif %}"
-                 style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
-          </div>
-          <div class="chart-label">{{ bar.label }}</div>
-        </div>
-        {% endfor %}
-      </div>
+<!-- ── Spending band: Donut + Legend ────────────────────────────────────── -->
+{% if top_cats %}
+<div class="band">
+<div class="band-label">Spending</div>
+  <div class="band-head">
+    <div>
+      <div class="band-title">Spending Breakdown</div>
+      <div class="band-subtitle">Share of spending by category</div>
     </div>
   </div>
-  {% endif %}
-
-  <!-- Spending Breakdown (donut) -->
-  {% if top_cats %}
-  <div class="chart-card">
-    <div class="chart-card-header">
-      <div>
-        <div class="chart-card-title">Spending Breakdown</div>
-        <div class="chart-card-subtitle">Share of spending by category</div>
-      </div>
-    </div>
+  <div class="band-body">
     <div class="donut-layout">
-      <!-- SVG Donut (unchanged) -->
-      <div class="chart-well">
+      <!-- SVG Donut -->
       <div class="donut-chart-wrap donut-chart-wrap--lg">
         {% set circumference = 439.82 %}
         {% set gap_pct = 0.25 %}
@@ -200,10 +189,8 @@
               <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.25)"/>
             </filter>
           </defs>
-          <!-- Background ring -->
           <circle class="donut-track" cx="100" cy="100" r="70"
                   fill="none" stroke="var(--control-bg-faint)" stroke-width="22"/>
-          <!-- Category slices -->
           {% set ns = namespace(offset=0) %}
           {% for cat in top_cats %}
             {% set arc = (cat.donut_pct - gap_pct) / 100 * circumference if cat.donut_pct > gap_pct else 0 %}
@@ -224,7 +211,6 @@
             {% endif %}
             {% set ns.offset = ns.offset + cat.donut_pct / 100 * circumference %}
           {% endfor %}
-          <!-- "Other" slice -->
           {% if other_pct > gap_pct %}
             {% set other_arc = (other_pct - gap_pct) / 100 * circumference %}
             <circle class="donut-slice donut-slice--other" data-donut-key="other"
@@ -239,15 +225,13 @@
             </circle>
           {% endif %}
         </svg>
-        <!-- Center label -->
         <div class="donut-center">
           <div class="donut-center-label">Total</div>
           <div class="donut-center-value">{{ fmt_cents(spend_cents) }}</div>
         </div>
       </div>
-      </div>{# end chart-well #}
 
-      <!-- Legend (unchanged) -->
+      <!-- Legend -->
       <div class="donut-legend">
         <div class="rpt-cat-list donut-legend-list">
           {% for cat in top_cats %}
@@ -286,13 +270,11 @@
         </div>
       </div>
     </div>{# end donut-layout #}
-  </div>{# end chart-card donut #}
-  {% endif %}
-
-</div>{# end chart-grid #}
+  </div>
+</div>{# end band Spending #}
 {% if top_cats %}
 <script>
-/* Slice ↔ legend hover linking (unchanged) */
+/* Slice ↔ legend hover linking */
 (function() {
   document.querySelectorAll('[data-donut-key]').forEach(function(el) {
     el.addEventListener('mouseenter', function() {
@@ -311,80 +293,74 @@
 })();
 </script>
 {% endif %}
+{% endif %}
 
-<!-- ── Top Merchants + Upcoming ────────────────────────────────────────── -->
+<!-- ── Recurring band: Top Merchants + Upcoming ────────────────────────── -->
 <div class="band">
 <div class="band-label">Recurring</div>
-<div class="below-grid">
-  {% if top_merchants %}
-  <div class="list-card">
-    <div class="list-card-header">
-      <div class="list-card-title">Top Merchants</div>
-    </div>
-    <div class="list-card-body">
-      <div class="rpt-cat-list">
-        {% for m in top_merchants %}
-        <a class="rpt-cat-row" href="{{ drill_url(q=m.merchant) }}">
-          <div class="rpt-cat-left">
-            <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-            <div class="rpt-cat-info">
-              <div class="rpt-cat-name">{{ m.merchant }}</div>
-              <div class="rpt-cat-count">{{ m.txn_count }} txn{{ 's' if m.txn_count != 1 }}</div>
+  <div class="band-body">
+    <div class="band-grid band-grid--2">
+      {% if top_merchants %}
+      <div class="band-panel">
+        <div class="panel-title">Top Merchants</div>
+        <div class="rpt-cat-list">
+          {% for m in top_merchants %}
+          <a class="rpt-cat-row" href="{{ drill_url(q=m.merchant) }}">
+            <div class="rpt-cat-left">
+              <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+              <div class="rpt-cat-info">
+                <div class="rpt-cat-name">{{ m.merchant }}</div>
+                <div class="rpt-cat-count">{{ m.txn_count }} txn{{ 's' if m.txn_count != 1 }}</div>
+              </div>
             </div>
-          </div>
-          <div class="rpt-cat-right">
-            <div class="rpt-cat-bar-wrap">
-              <div class="rpt-cat-bar" style="width:{{ m.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+            <div class="rpt-cat-right">
+              <div class="rpt-cat-bar-wrap">
+                <div class="rpt-cat-bar" style="width:{{ m.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+              </div>
+              <div class="rpt-cat-amount">{{ fmt_cents(m.total_cents) }}</div>
             </div>
-            <div class="rpt-cat-amount">{{ fmt_cents(m.total_cents) }}</div>
-          </div>
-          <div class="rpt-cat-chevron">&#8250;</div>
-        </a>
-        {% endfor %}
+            <div class="rpt-cat-chevron">&#8250;</div>
+          </a>
+          {% endfor %}
+        </div>
       </div>
-    </div>
-  </div>
-  {% endif %}
+      {% endif %}
 
-  <!-- ── Upcoming ──────────────────────────────────────────────────────── -->
-  <div class="list-card">
-    <div class="list-card-header">
-      <div class="list-card-title">
-        Upcoming
+      <div class="band-panel">
+        <div class="panel-title">
+          Upcoming
+          {% if upcoming_items %}
+          <span style="color:var(--text-muted); font-weight:400;">({{ upcoming_items|length }})</span>
+          {% endif %}
+        </div>
         {% if upcoming_items %}
-        <span style="color:var(--text-muted); font-weight:400;">({{ upcoming_items|length }})</span>
+        <div class="rpt-cat-list">
+          {% for item in upcoming_items %}
+          <a class="rpt-cat-row" href="{{ drill_url(merchant=item.merchant_canonical, start=item.drill_start, end=item.drill_end) }}">
+            <div class="rpt-cat-left">
+              <div class="rpt-cat-dot" style="background:{% if item.is_income %}var(--green){% else %}var(--blue){% endif %}"></div>
+              <div class="rpt-cat-info">
+                <div class="rpt-cat-name">{{ item.merchant_canonical }}</div>
+                <div class="rpt-cat-count">{{ item.expected_date_display }} &middot; {{ item.cadence }}</div>
+              </div>
+            </div>
+            <div class="rpt-cat-right">
+              <div class="rpt-cat-amount"{% if item.is_income %} style="color:var(--green);"{% endif %}>
+                {{ fmt_cents(item.expected_amount_cents) }}
+              </div>
+            </div>
+            <div class="rpt-cat-chevron">&#8250;</div>
+          </a>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div style="padding:0.8rem 0;">
+          <span class="text-sm" style="color:var(--text-muted);">No recurring patterns detected yet</span>
+        </div>
         {% endif %}
       </div>
     </div>
-    <div class="list-card-body">
-      {% if upcoming_items %}
-      <div class="rpt-cat-list">
-        {% for item in upcoming_items %}
-        <a class="rpt-cat-row" href="{{ drill_url(merchant=item.merchant_canonical, start=item.drill_start, end=item.drill_end) }}">
-          <div class="rpt-cat-left">
-            <div class="rpt-cat-dot" style="background:{% if item.is_income %}var(--green){% else %}var(--blue){% endif %}"></div>
-            <div class="rpt-cat-info">
-              <div class="rpt-cat-name">{{ item.merchant_canonical }}</div>
-              <div class="rpt-cat-count">{{ item.expected_date_display }} &middot; {{ item.cadence }}</div>
-            </div>
-          </div>
-          <div class="rpt-cat-right">
-            <div class="rpt-cat-amount"{% if item.is_income %} style="color:var(--green);"{% endif %}>
-              {{ fmt_cents(item.expected_amount_cents) }}
-            </div>
-          </div>
-          <div class="rpt-cat-chevron">&#8250;</div>
-        </a>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div style="padding:0.8rem 1rem;">
-        <span class="text-sm" style="color:var(--text-muted);">No recurring patterns detected yet</span>
-      </div>
-      {% endif %}
-    </div>
   </div>
-</div>{# end below-grid #}
 </div>{# end band Recurring #}
 
 <!-- ── Vendor Orders (global, not date-filtered) ────────────────────────── -->

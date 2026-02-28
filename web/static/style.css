@@ -641,6 +641,86 @@ h2 {
     margin-top: 0;
 }
 
+/* ── Flat band interior components ─────────────────────────────────────── */
+.band-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+.band-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+.band-subtitle {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+.band-body { }
+.band-grid {
+    display: grid;
+    gap: 1rem;
+}
+.band-grid--2 {
+    grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 900px) {
+    .band-grid--2 { grid-template-columns: 1fr; }
+}
+.band-panel { }
+.band-stack {
+    display: flex;
+    flex-direction: column;
+}
+.panel-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 0.6rem;
+}
+.band-divider {
+    height: 0.5px;
+    background: rgba(255,255,255,0.08);
+    margin: 0.6rem 0;
+}
+:root[data-theme="light"] .band-divider {
+    background: rgba(0,0,0,0.06);
+}
+/* Flat plot area (replaces chart-well inside bands) */
+.plot-area {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem;
+}
+:root[data-theme="light"] .plot-area {
+    background: rgba(0,0,0,0.02);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+/* Rows inside bands: transparent, just dividers */
+.band .rpt-cat-list {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+}
+/* Donut inside band: no card surface */
+.band .donut-layout {
+    justify-items: center;
+}
+.band .donut-legend {
+    width: 100%;
+}
+.band .donut-legend-list {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
 /* ── Chart Well (inner surface for charts) ─────────────────────────────── */
 .chart-well {
     background: var(--chart-well-bg);
