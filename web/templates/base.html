@@ -83,6 +83,7 @@
         /* Build <option> elements from JSON array using DOM nodes. */
         var sel = document.getElementById('sv-select-' + page);
         if (!sel) return;
+        var prevValue = sel.value;  /* preserve current selection */
         var hasDefault = false;
         while (sel.firstChild) sel.removeChild(sel.firstChild);
         var ph = document.createElement('option');
@@ -99,6 +100,8 @@
             sel.appendChild(opt);
             if (v.is_default) hasDefault = true;
         });
+        /* Restore previous selection if still present */
+        if (prevValue) sel.value = prevValue;
         /* Show/hide Clear Default button */
         var clearBtn = document.getElementById('sv-cleardefault-btn-' + page);
         if (clearBtn) clearBtn.style.display = hasDefault ? '' : 'none';

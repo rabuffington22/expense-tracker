@@ -546,7 +546,7 @@ def index():
     if not request.query_string:
         from web.routes.saved_views import get_default_qs
         default_qs = get_default_qs(g.entity_key, "dashboard")
-        if default_qs:
+        if default_qs and default_qs != request.query_string.decode():
             return redirect(f"/?{default_qs}")
 
     params = _apply_date_defaults(_get_filter_params())
