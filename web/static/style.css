@@ -2998,7 +2998,7 @@ select.input-sm {
 }
 .dhdr-datebtn {
     min-width: 128px;
-    text-align: left;
+    text-align: center;
     cursor: pointer;
     white-space: nowrap;
     flex: 0 0 auto;
@@ -3105,9 +3105,10 @@ select.input-sm {
 .dhdr-pill {
     height: 30px;
     padding: 0 1.4rem 0 0.5rem;
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     font-family: inherit;
     border-radius: 8px;
+    text-align: center;
     border: 0.5px solid var(--input-sm-border);
     background: var(--input-sm-bg);
     color: var(--text);
@@ -3235,14 +3236,14 @@ select.input-sm {
     margin-left: auto;
     height: 30px;
     padding: 0 0.7rem;
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     line-height: 30px;
     border-radius: 8px;
 }
 .dhdr-clear {
     margin-left: 0.35rem;
     height: 30px;
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     line-height: 30px;
 }
 
