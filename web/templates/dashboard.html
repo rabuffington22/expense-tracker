@@ -5,36 +5,75 @@
 <h1 class="page-title">{{ entity_display }} Dashboard</h1>
 
 <!-- Filter bar (outside HTMX target — always visible) -->
-<div class="card txn-filter-bar">
+<div class="card txn-filter-bar dhdr-bar">
   <form id="dash-filter-form"
         hx-get="{{ url_for('dashboard.partial') }}"
         hx-target="#dashboard-body"
         hx-swap="innerHTML"
         hx-push-url="true">
 
-    <!-- Row 1: date range + account -->
-    <div class="form-row">
-      <div class="form-group" style="flex:1;min-width:120px;">
-        <label class="text-xs text-muted" for="start">From</label>
-        <input type="date" id="start" name="start" value="{{ params.start }}" class="input-sm">
+    <!-- Primary control row -->
+    <div class="dhdr-row">
+      <!-- Date range pill -->
+      <div class="dhdr-date-pill">
+        <input type="date" id="start" name="start" value="{{ params.start }}" class="dhdr-date-input">
+        <span class="dhdr-date-sep" aria-hidden="true"></span>
+        <input type="date" id="end" name="end" value="{{ params.end }}" class="dhdr-date-input">
       </div>
-      <div class="form-group" style="flex:1;min-width:120px;">
-        <label class="text-xs text-muted" for="end">To</label>
-        <input type="date" id="end" name="end" value="{{ params.end }}" class="input-sm">
-      </div>
-      <div class="form-group" style="flex:1;min-width:120px;">
-        <label class="text-xs text-muted" for="account">Account</label>
-        <select id="account" name="account" class="input-sm">
-          <option value="">All</option>
-          {% for acct in accounts %}
-          <option value="{{ acct }}" {% if params.account == acct %}selected{% endif %}>{{ acct }}</option>
-          {% endfor %}
+
+      <!-- Account pill -->
+      <select id="account" name="account" class="dhdr-pill">
+        <option value="">All Accounts</option>
+        {% for acct in accounts %}
+        <option value="{{ acct }}" {% if params.account == acct %}selected{% endif %}>{{ acct }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Saved Views group -->
+      <div class="dhdr-sv-group">
+        <select id="sv-select-dashboard" class="dhdr-pill"
+                onchange="svLoad('dashboard', this)">
+          <option value="" selected disabled>Saved Views</option>
         </select>
+        <button type="button" class="dhdr-sv-btn" onclick="svSave('dashboard')">Save</button>
+        <button type="button" class="dhdr-sv-btn" id="sv-update-btn-dashboard"
+                onclick="svUpdate('dashboard')" disabled style="opacity:0.4;">Update</button>
+        <div class="sv-menu-wrap">
+          <button type="button" class="dhdr-sv-btn sv-menu-trigger"
+                  id="sv-more-btn-dashboard"
+                  onclick="svToggleMenu('dashboard')"
+                  aria-haspopup="true" aria-expanded="false"
+                  disabled style="opacity:0.4;">&#x22EF;</button>
+          <div class="sv-menu" id="sv-menu-dashboard" role="menu">
+            <button type="button" role="menuitem" class="sv-menu-item"
+                    id="sv-rename-btn-dashboard"
+                    onclick="svRename('dashboard'); svCloseMenus();">Rename</button>
+            <button type="button" role="menuitem" class="sv-menu-item"
+                    id="sv-default-btn-dashboard"
+                    onclick="svSetDefault('dashboard'); svCloseMenus();">Make Default</button>
+            <button type="button" role="menuitem" class="sv-menu-item"
+                    id="sv-cleardefault-btn-dashboard"
+                    onclick="svClearDefault('dashboard'); svCloseMenus();"
+                    style="display:none;">Clear Default</button>
+            <hr class="sv-menu-divider">
+            <button type="button" role="menuitem" class="sv-menu-item sv-menu-item--danger"
+                    id="sv-delete-btn-dashboard"
+                    onclick="svDelete('dashboard'); svCloseMenus();">Delete</button>
+          </div>
+        </div>
       </div>
+
+      <!-- Spacer pushes actions right -->
+      <div class="dhdr-spacer"></div>
+
+      <!-- Actions -->
+      <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+      <button type="button" class="dhdr-clear"
+              onclick="window.location.href='{{ url_for('dashboard.index') }}'">Clear</button>
     </div>
 
-    <!-- Row 2: toggle chips -->
-    <div class="txn-chips">
+    <!-- Toggle chips (subtle second line) -->
+    <div class="dhdr-chips">
       <label class="txn-chip {% if params.uncategorized == '1' %}active{% endif %}">
         <input type="checkbox" name="uncategorized" value="1" {% if params.uncategorized == '1' %}checked{% endif %} hidden>
         <span>Uncategorized</span>
@@ -51,49 +90,8 @@
         <input type="checkbox" name="include_transfers" value="1" {% if params.include_transfers == '1' %}checked{% endif %} hidden>
         <span>Include Transfers</span>
       </label>
-
-      <div class="txn-chips-spacer"></div>
-      <button type="submit" class="btn btn-primary btn-sm">Apply</button>
-      <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary btn-sm">Clear</a>
     </div>
   </form>
-  <!-- Row 3: saved views -->
-  <div class="txn-chips" style="margin-top:0.4rem;">
-    <select id="sv-select-dashboard" class="input-sm" style="min-width:160px;"
-            onchange="svLoad('dashboard', this)">
-      <option value="" selected disabled>Saved Views</option>
-    </select>
-    <button type="button" class="btn btn-secondary btn-sm" onclick="svSave('dashboard')">
-      Save As…
-    </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-update-btn-dashboard"
-            onclick="svUpdate('dashboard')" disabled style="opacity:0.4;">
-      Update
-    </button>
-    <div class="sv-menu-wrap">
-      <button type="button" class="btn btn-secondary btn-sm sv-menu-trigger"
-              id="sv-more-btn-dashboard"
-              onclick="svToggleMenu('dashboard')"
-              aria-haspopup="true" aria-expanded="false"
-              disabled style="opacity:0.4;">⋯</button>
-      <div class="sv-menu" id="sv-menu-dashboard" role="menu">
-        <button type="button" role="menuitem" class="sv-menu-item"
-                id="sv-rename-btn-dashboard"
-                onclick="svRename('dashboard'); svCloseMenus();">Rename</button>
-        <button type="button" role="menuitem" class="sv-menu-item"
-                id="sv-default-btn-dashboard"
-                onclick="svSetDefault('dashboard'); svCloseMenus();">Make Default</button>
-        <button type="button" role="menuitem" class="sv-menu-item"
-                id="sv-cleardefault-btn-dashboard"
-                onclick="svClearDefault('dashboard'); svCloseMenus();"
-                style="display:none;">Clear Default</button>
-        <hr class="sv-menu-divider">
-        <button type="button" role="menuitem" class="sv-menu-item sv-menu-item--danger"
-                id="sv-delete-btn-dashboard"
-                onclick="svDelete('dashboard'); svCloseMenus();">Delete</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- Results container — HTMX swap target -->
