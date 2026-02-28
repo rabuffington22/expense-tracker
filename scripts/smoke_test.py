@@ -462,6 +462,161 @@ def main() -> None:
                 "cross-entity: Personal view must survive BFM delete attempt",
             )
 
+            # ── 9l. Default Views ────────────────────────────────────
+            # Clean slate for default tests
+            for ek in ("personal", "company"):
+                conn_sv = get_connection(ek)
+                conn_sv.execute("DELETE FROM saved_views")
+                conn_sv.commit()
+                conn_sv.close()
+            client.set_cookie("entity", "Personal")
+
+            # 9l. Create two dashboard views (A and B)
+            resp = client.post("/saved-views/create", data={
+                "name": "View A",
+                "page": "dashboard",
+                "query_string": "start=2024-06-01&end=2024-06-30",
+            })
+            _check(resp.status_code == 200, "default: create View A")
+            views = _json.loads(resp.get_data(as_text=True))
+            view_a_id = [v for v in views if v["name"] == "View A"][0]["id"]
+
+            resp = client.post("/saved-views/create", data={
+                "name": "View B",
+                "page": "dashboard",
+                "query_string": "start=2024-07-01&end=2024-07-31",
+            })
+            _check(resp.status_code == 200, "default: create View B")
+            views = _json.loads(resp.get_data(as_text=True))
+            view_b_id = [v for v in views if v["name"] == "View B"][0]["id"]
+
+            # 9l-i. List returns is_default=0 for both initially
+            resp = client.get("/saved-views/list?page=dashboard")
+            views = _json.loads(resp.get_data(as_text=True))
+            for v in views:
+                _check(v["is_default"] == 0, f"default: {v['name']} should start as non-default")
+
+            # 9l-ii. Set A as default
+            resp = client.post("/saved-views/set-default", data={
+                "id": str(view_a_id),
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 200, "default: set-default A: expected 200")
+            data = _json.loads(resp.get_data(as_text=True))
+            _check(data["default_id"] == view_a_id, "default: response should contain A's id")
+
+            # 9l-iii. List shows A is_default=1 and B is_default=0
+            resp = client.get("/saved-views/list?page=dashboard")
+            views = _json.loads(resp.get_data(as_text=True))
+            a_row = [v for v in views if v["id"] == view_a_id][0]
+            b_row = [v for v in views if v["id"] == view_b_id][0]
+            _check(a_row["is_default"] == 1, "default: A should be default after set")
+            _check(b_row["is_default"] == 0, "default: B should not be default")
+
+            # 9l-iv. GET / with NO query params → 302 redirect to A's querystring
+            resp = client.get("/")
+            _check(resp.status_code == 302, "default: GET / with no params should redirect")
+            _check(
+                "start=2024-06-01" in resp.headers.get("Location", ""),
+                "default: redirect Location should contain A's querystring",
+            )
+
+            # 9l-v. GET / WITH query params → 200, no redirect
+            resp = client.get("/?start=2025-01-01")
+            _check(resp.status_code == 200, "default: GET / with params should not redirect")
+
+            # 9m. Switch default to B — A should lose default
+            resp = client.post("/saved-views/set-default", data={
+                "id": str(view_b_id),
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 200, "default: set-default B: expected 200")
+            resp = client.get("/saved-views/list?page=dashboard")
+            views = _json.loads(resp.get_data(as_text=True))
+            a_row = [v for v in views if v["id"] == view_a_id][0]
+            b_row = [v for v in views if v["id"] == view_b_id][0]
+            _check(a_row["is_default"] == 0, "default: A should lose default after B set")
+            _check(b_row["is_default"] == 1, "default: B should now be default")
+
+            # 9n. Set-default with wrong page → 404
+            resp = client.post("/saved-views/set-default", data={
+                "id": str(view_a_id),
+                "page": "transactions",
+            })
+            _check(resp.status_code == 404, "default: set-default with mismatched page should 404")
+
+            # 9n-i. Set-default with non-existent id → 404
+            resp = client.post("/saved-views/set-default", data={
+                "id": "99999",
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 404, "default: set-default non-existent id should 404")
+
+            # 9o. Transactions default — create, set default, verify redirect
+            resp = client.post("/saved-views/create", data={
+                "name": "Txn Default",
+                "page": "transactions",
+                "query_string": "type=expense&uncategorized=1",
+            })
+            views = _json.loads(resp.get_data(as_text=True))
+            txn_view_id = [v for v in views if v["name"] == "Txn Default"][0]["id"]
+
+            client.post("/saved-views/set-default", data={
+                "id": str(txn_view_id),
+                "page": "transactions",
+            })
+
+            resp = client.get("/transactions/")
+            _check(resp.status_code == 302, "default: GET /transactions/ with no params should redirect")
+            _check(
+                "type=expense" in resp.headers.get("Location", ""),
+                "default: transactions redirect should contain querystring",
+            )
+
+            resp = client.get("/transactions/?start=2025-01-01")
+            _check(resp.status_code == 200, "default: GET /transactions/ with params should not redirect")
+
+            # 9p. Cross-entity — default in Personal should NOT affect BFM
+            client.set_cookie("entity", "BFM")
+            resp = client.get("/")
+            _check(
+                resp.status_code == 200,
+                "default cross-entity: BFM GET / should not redirect (no BFM default)",
+            )
+            resp = client.get("/transactions/")
+            _check(
+                resp.status_code == 200,
+                "default cross-entity: BFM GET /transactions/ should not redirect",
+            )
+
+            # 9p-i. Set-default cross-entity → 404
+            client.set_cookie("entity", "BFM")
+            resp = client.post("/saved-views/set-default", data={
+                "id": str(view_a_id),
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 404, "default cross-entity: set-default Personal view under BFM should 404")
+
+            client.set_cookie("entity", "Personal")
+
+            # 9q. Clear-default
+            resp = client.post("/saved-views/clear-default", data={
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 200, "default: clear-default should return 200")
+            data = _json.loads(resp.get_data(as_text=True))
+            _check(data["cleared"] is True, "default: clear-default response should have cleared=true")
+
+            # Verify no default after clear
+            resp = client.get("/saved-views/list?page=dashboard")
+            views = _json.loads(resp.get_data(as_text=True))
+            for v in views:
+                _check(v["is_default"] == 0, f"default: {v['name']} should be non-default after clear")
+
+            # GET / should no longer redirect
+            resp = client.get("/")
+            _check(resp.status_code == 200, "default: GET / should not redirect after clear-default")
+
         finally:
             # Cleanup all saved views across both entities
             for ek in ("personal", "company"):
@@ -472,7 +627,7 @@ def main() -> None:
             # Reset cookie to Personal for any subsequent tests
             client.set_cookie("entity", "Personal")
 
-        print("   ✅ All Saved Views CRUD tests passed")
+        print("   ✅ All Saved Views tests passed (CRUD + rename + default)")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
