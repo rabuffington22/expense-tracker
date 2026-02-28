@@ -1482,22 +1482,8 @@ input[type="checkbox"] {
     height: 200px;
     flex-shrink: 0;
 }
-/* Donut specular highlight (glass cue) */
-.donut-chart-wrap::after {
-    content: "";
-    position: absolute;
-    inset: 8%;
-    border-radius: 50%;
-    pointer-events: none;
-    background:
-        radial-gradient(circle at 30% 22%,
-            rgba(255,255,255,0.55),
-            rgba(255,255,255,0.0) 58%);
-    opacity: 0.22;
-}
-:root[data-theme="dark"] .donut-chart-wrap::after {
-    opacity: 0.16;
-}
+/* Old CSS specular highlight — disabled; replaced by SVG overlays */
+.donut-chart-wrap::after { display: none; }
 .donut-chart-wrap--lg {
     width: 300px;
     height: 300px;
@@ -1518,7 +1504,7 @@ input[type="checkbox"] {
 .donut-slice {
     stroke-linecap: butt;
     stroke-width: 22;
-    opacity: 0.92;
+    opacity: 0.95;
     transition: opacity 140ms ease;
     cursor: pointer;
 }
@@ -1541,6 +1527,12 @@ input[type="checkbox"] {
     stroke-width: 34;
     filter: brightness(1.2);
 }
+/* Donut 3D overlays (SVG rings) */
+.donut-overlay { pointer-events: none; }
+:root[data-theme="dark"] .donut-overlay--highlight { opacity: 0.22; }
+:root[data-theme="dark"] .donut-overlay--shade     { opacity: 0.28; }
+:root[data-theme="light"] .donut-overlay--highlight { opacity: 0.18; }
+:root[data-theme="light"] .donut-overlay--shade     { opacity: 0.16; }
 .donut-center {
     position: absolute;
     top: 50%;
