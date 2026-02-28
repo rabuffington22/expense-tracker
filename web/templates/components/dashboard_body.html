@@ -62,7 +62,7 @@
   {% for ins in insights %}
   <a class="rpt-cat-row" href="{{ ins.url }}">
     <div class="rpt-cat-left">
-      <div style="font-size:1rem; width:20px; text-align:center;">{{ ins.icon }}</div>
+      <div class="rpt-cat-icon">{{ ins.icon }}</div>
       <div class="rpt-cat-info">
         <div class="rpt-cat-name">{{ ins.text }}</div>
       </div>
@@ -115,7 +115,7 @@
   </h2>
   <div class="chart-bars">
     {% for bar in chart_bars %}
-    <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}">
+    <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}" title="{{ bar.label }}: {{ bar.display }}">
       <div class="chart-value">{{ bar.display }}</div>
       <div class="chart-track">
         <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_current %} chart-fill--selected{% endif %}"
