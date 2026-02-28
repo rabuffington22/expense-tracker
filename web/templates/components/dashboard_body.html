@@ -84,7 +84,7 @@
   {% if upcoming_items %}
   <div class="rpt-cat-list">
     {% for item in upcoming_items %}
-    <a class="rpt-cat-row" href="{{ drill_url(merchant=item.merchant_canonical) }}">
+    <a class="rpt-cat-row" href="{{ drill_url(merchant=item.merchant_canonical, start=item.drill_start, end=item.drill_end) }}">
       <div class="rpt-cat-left">
         <div class="rpt-cat-dot" style="background:{% if item.is_income %}var(--green){% else %}var(--blue){% endif %}"></div>
         <div class="rpt-cat-info">
