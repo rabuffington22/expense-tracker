@@ -1327,6 +1327,14 @@ input[type="checkbox"] {
     font-variant-numeric: tabular-nums;
 }
 
+/* ── Keyboard navigation — selected row ─────────────────────────────────── */
+tr.is-selected > td {
+    background: var(--hover-bg);
+}
+tr.is-selected > td:first-child {
+    box-shadow: inset 3px 0 0 var(--blue);
+}
+
 /* ── Light-theme dashboard overrides ────────────────────────────────────── */
 
 /* Chart bar gradients — softer blue for light backgrounds */
