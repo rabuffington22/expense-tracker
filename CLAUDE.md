@@ -275,6 +275,15 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #26: KPI band flatten (remove card surface)
+Removed heavy card surface from KPI band to match Provider flat-band feel.
+
+1. **Flat band** — `.kpi-band` overrides: `background: transparent`, `box-shadow: none`, `padding: 0` (only `padding-top: 0.9rem` for label clearance). Band outline remains from `.band` parent.
+2. **Flat row** — `.kpi-band-row` now `border-radius: 0`, `overflow: visible` — no tile feel.
+3. **Subtle dividers** — Explicit `rgba(255,255,255,0.08)` dark / `rgba(0,0,0,0.06)` light borders instead of `var(--band-border)`.
+4. **Subtle hover** — `rgba(255,255,255,0.03)` dark / `rgba(0,0,0,0.02)` light — barely visible, not button-group-like.
+5. **Light-mode parity** — Per-theme overrides for cell borders, hover, and responsive border-top.
+
 ### 2026-02-28 — PR #25: Dashboard KPI band (Provider-style)
 Replaced 5 separate KPI tiles with a single Provider-style band row.
 
