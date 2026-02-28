@@ -711,9 +711,14 @@ h2 {
 .kpi-band--provider {
     padding-top: 0.85rem;
 }
-/* Keep band outline + label but flatten interior */
+/* Flatten interior; period label: no filled pill */
 .kpi-band--provider.band {
     background: transparent;
+    box-shadow: none;
+}
+.kpi-band--provider .band-label {
+    background: transparent;
+    border: none;
     box-shadow: none;
 }
 .kpi-band--provider .kpi-band-row {
@@ -2779,4 +2784,20 @@ select.input-sm {
         font-size: 0.68rem;
         height: 26px;
     }
+}
+
+/* KPI period label: plain text (no pill) */
+.band-label {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    display: inline-block;
+    color: var(--text-secondary);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.62rem;
+    opacity: 0.75;
 }
