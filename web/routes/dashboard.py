@@ -238,10 +238,160 @@ def _query_dashboard(conn, params):
     data["upcoming_items"] = _build_upcoming(recurring_patterns)
 
     # ── Drill URL builder ────────────────────────────────────────────────────
-    data["drill_url"] = _make_drill_url(params)
+    drill_url = _make_drill_url(params)
+    data["drill_url"] = drill_url
     data["colors"] = COLORS
 
+    # ── Insights ─────────────────────────────────────────────────────────────
+    data["insights"] = _compute_insights(conn, params, drill_url)
+
     return data
+
+
+# ── Insights engine ──────────────────────────────────────────────────────────
+
+def _compute_insights(conn, params, drill_url):
+    """Return up to 3 actionable insight dicts for the current dashboard range.
+
+    Each insight: {"icon": str, "text": str, "url": str}.
+    Returns [] when no insights qualify.
+    """
+    insights = []
+
+    try:
+        start_dt = datetime.strptime(params["start"], "%Y-%m-%d")
+        end_dt = datetime.strptime(params["end"], "%Y-%m-%d")
+    except (ValueError, TypeError, KeyError):
+        return insights
+
+    # ── Insight A: Largest category spend increase vs prior period ────────
+    span_days = (end_dt - start_dt).days
+    if span_days > 0:
+        prior_end = start_dt - timedelta(days=1)
+        prior_start = prior_end - timedelta(days=span_days)
+        prior_start_str = prior_start.strftime("%Y-%m-%d")
+        prior_end_str = prior_end.strftime("%Y-%m-%d")
+
+        xfer_clause, _ = _exclude_transfers_clause(params)
+        acct_clause = ""
+        acct_binds = []
+        if params.get("account"):
+            acct_clause = "AND account = ?"
+            acct_binds = [params["account"]]
+
+        # Current period category totals
+        cur_rows = conn.execute(
+            f"SELECT category, "
+            f"  COUNT(*) AS txn_count, "
+            f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total_cents "
+            f"FROM transactions "
+            f"WHERE amount_cents < 0 "
+            f"  AND date >= ? AND date <= ? "
+            f"  AND category IS NOT NULL AND category != '' "
+            f"  {xfer_clause} {acct_clause} "
+            f"GROUP BY category",
+            [params["start"], params["end"]] + acct_binds,
+        ).fetchall()
+
+        # Prior period category totals
+        prior_rows = conn.execute(
+            f"SELECT category, "
+            f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total_cents "
+            f"FROM transactions "
+            f"WHERE amount_cents < 0 "
+            f"  AND date >= ? AND date <= ? "
+            f"  AND category IS NOT NULL AND category != '' "
+            f"  {xfer_clause} {acct_clause} "
+            f"GROUP BY category",
+            [prior_start_str, prior_end_str] + acct_binds,
+        ).fetchall()
+
+        prior_map = {r["category"]: r["total_cents"] for r in prior_rows}
+
+        best_cat = None
+        best_increase = 0
+        for r in cur_rows:
+            if r["txn_count"] < 2:
+                continue
+            increase = r["total_cents"] - prior_map.get(r["category"], 0)
+            if increase > best_increase:
+                best_increase = increase
+                best_cat = r["category"]
+
+        if best_cat and best_increase > 5000:  # > $50
+            # Look up category ID for drill link
+            cat_id_row = conn.execute(
+                "SELECT id FROM categories WHERE name = ?", (best_cat,)
+            ).fetchone()
+            cat_id = cat_id_row["id"] if cat_id_row else None
+            dollars = best_increase // 100
+            insights.append({
+                "icon": "\U0001F4C8",  # 📈
+                "text": f"{best_cat} up ${dollars:,} vs prior period",
+                "url": drill_url(category_id=cat_id) if cat_id else drill_url(),
+            })
+
+    # ── Insight B: New merchants this period ──────────────────────────────
+    try:
+        lookback_start = (start_dt - timedelta(days=90)).strftime("%Y-%m-%d")
+        xfer_clause, _ = _exclude_transfers_clause(params)
+        acct_clause = ""
+        acct_binds = []
+        if params.get("account"):
+            acct_clause = "AND account = ?"
+            acct_binds = [params["account"]]
+
+        new_count = conn.execute(
+            f"SELECT COUNT(DISTINCT merchant_canonical) FROM transactions "
+            f"WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+            f"  AND date >= ? AND date <= ? "
+            f"  {xfer_clause} {acct_clause} "
+            f"  AND merchant_canonical NOT IN ("
+            f"    SELECT DISTINCT merchant_canonical FROM transactions "
+            f"    WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+            f"      AND date >= ? AND date < ? "
+            f"      {xfer_clause} {acct_clause}"
+            f"  )",
+            [params["start"], params["end"]] + acct_binds +
+            [lookback_start, params["start"]] + acct_binds,
+        ).fetchone()[0]
+
+        if new_count > 0:
+            insights.append({
+                "icon": "\U0001F195",  # 🆕
+                "text": f"{new_count} new merchant{'s' if new_count != 1 else ''} this period",
+                "url": drill_url(),
+            })
+    except Exception:
+        pass  # Skip this insight on any error
+
+    # ── Insight C: Large transactions (> $500) ────────────────────────────
+    try:
+        xfer_clause, _ = _exclude_transfers_clause(params)
+        acct_clause = ""
+        acct_binds = []
+        if params.get("account"):
+            acct_clause = "AND account = ?"
+            acct_binds = [params["account"]]
+
+        large_count = conn.execute(
+            f"SELECT COUNT(*) FROM transactions "
+            f"WHERE ABS(amount_cents) > 50000 "
+            f"  AND date >= ? AND date <= ? "
+            f"  {xfer_clause} {acct_clause}",
+            [params["start"], params["end"]] + acct_binds,
+        ).fetchone()[0]
+
+        if large_count > 0:
+            insights.append({
+                "icon": "\U0001F4B0",  # 💰
+                "text": f"{large_count} transaction{'s' if large_count != 1 else ''} over $500",
+                "url": drill_url(sort="amount"),
+            })
+    except Exception:
+        pass  # Skip this insight on any error
+
+    return insights[:3]
 
 
 # ── Cash flow chart builder ──────────────────────────────────────────────────

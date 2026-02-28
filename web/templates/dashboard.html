@@ -90,7 +90,7 @@
 </div>
 
 <!-- Results container — HTMX swap target -->
-<div id="dashboard-body">
+<div id="dashboard-body" class="dash-body">
   {% include "components/dashboard_body.html" %}
 </div>
 
@@ -120,6 +120,23 @@ document.querySelectorAll('#dash-filter-form .txn-chip').forEach(function(chip) 
             this.classList.toggle('active', input.checked);
         }
     });
+});
+
+/* ── Loading indicator for HTMX swaps ─────────────────────────────────── */
+document.body.addEventListener('htmx:beforeRequest', function(e) {
+    if (e.detail.target && e.detail.target.id === 'dashboard-body') {
+        e.detail.target.classList.add('dash-loading');
+    }
+});
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    if (e.detail.target && e.detail.target.id === 'dashboard-body') {
+        e.detail.target.classList.remove('dash-loading');
+    }
+});
+document.body.addEventListener('htmx:responseError', function(e) {
+    if (e.detail.target && e.detail.target.id === 'dashboard-body') {
+        e.detail.target.classList.remove('dash-loading');
+    }
 });
 </script>
 {% endblock %}
