@@ -9,6 +9,7 @@ from core.db import get_connection
 bp = Blueprint("saved_views", __name__, url_prefix="/saved-views")
 
 _VALID_PAGES = ("dashboard", "transactions")
+_MAX_NAME_LEN = 100
 
 
 def _fetch_views(conn, page):
@@ -45,8 +46,8 @@ def create_view():
 
     if not name or page not in _VALID_PAGES:
         return jsonify({"error": "bad request"}), 400
-    if len(name) > 100:
-        name = name[:100]
+    if len(name) > _MAX_NAME_LEN:
+        name = name[:_MAX_NAME_LEN]
 
     conn = get_connection(g.entity_key)
     try:
@@ -83,6 +84,38 @@ def delete_view():
     finally:
         conn.close()
     return jsonify(_views_json(rows))
+
+
+@bp.route("/rename", methods=["POST"])
+def rename_view():
+    view_id = request.form.get("id", "")
+    new_name = request.form.get("name", "").strip()
+    page = request.form.get("page", "")
+
+    if not view_id or page not in _VALID_PAGES:
+        return jsonify({"error": "bad request"}), 400
+    if not new_name:
+        return jsonify({"error": "name is required"}), 400
+    if len(new_name) > _MAX_NAME_LEN:
+        new_name = new_name[:_MAX_NAME_LEN]
+
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT id, name FROM saved_views WHERE id = ?", (int(view_id),)
+        ).fetchone()
+        if not row:
+            return jsonify({"error": "not found"}), 404
+        if row["name"] == new_name:
+            return jsonify({"error": "name unchanged"}), 400
+        conn.execute(
+            "UPDATE saved_views SET name = ? WHERE id = ?",
+            (new_name, int(view_id)),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return jsonify({"id": int(view_id), "name": new_name, "page": page})
 
 
 @bp.route("/get")

@@ -296,7 +296,67 @@ def main() -> None:
             names = [v["name"] for v in views]
             _check("Test View" in names, "saved views list after create: should contain 'Test View'")
 
-            # 9f. List for transactions should NOT include the dashboard view
+            # 9f. Rename the view
+            resp = client.post("/saved-views/rename", data={
+                "id": str(view_id),
+                "name": "Renamed View",
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 200, "saved views rename: expected 200")
+            data = _json.loads(resp.get_data(as_text=True))
+            _check(data["id"] == view_id, "saved views rename: id should match")
+            _check(data["name"] == "Renamed View", "saved views rename: name should be updated")
+            _check(data["page"] == "dashboard", "saved views rename: page should match")
+
+            # 9f-ii. List should show renamed view
+            resp = client.get("/saved-views/list?page=dashboard")
+            views = _json.loads(resp.get_data(as_text=True))
+            names = [v["name"] for v in views]
+            _check("Renamed View" in names, "saved views rename: list should contain renamed name")
+            _check("Test View" not in names, "saved views rename: old name should be gone")
+
+            # 9f-iii. Query string unchanged after rename
+            resp = client.get(f"/saved-views/get?id={view_id}")
+            data = _json.loads(resp.get_data(as_text=True))
+            _check(
+                data["query_string"] == "start=2024-01-01&end=2024-01-31&uncategorized=1",
+                "saved views rename: query_string must be unchanged after rename",
+            )
+
+            # 9f-iv. Rename to same name → 400
+            resp = client.post("/saved-views/rename", data={
+                "id": str(view_id),
+                "name": "Renamed View",
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 400, "saved views rename to same name: expected 400")
+            data = _json.loads(resp.get_data(as_text=True))
+            _check(data["error"] == "name unchanged", "saved views rename same name: error should be 'name unchanged'")
+
+            # 9f-v. Rename with empty name → 400
+            resp = client.post("/saved-views/rename", data={
+                "id": str(view_id),
+                "name": "   ",
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 400, "saved views rename empty name: expected 400")
+
+            # 9f-vi. Rename non-existent view → 404
+            resp = client.post("/saved-views/rename", data={
+                "id": "99999",
+                "name": "Ghost",
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 404, "saved views rename non-existent: expected 404")
+
+            # Rename back so subsequent tests use original name context
+            client.post("/saved-views/rename", data={
+                "id": str(view_id),
+                "name": "Test View",
+                "page": "dashboard",
+            })
+
+            # 9g. List for transactions should NOT include the dashboard view (page isolation)
             resp = client.get("/saved-views/list?page=transactions")
             views = _json.loads(resp.get_data(as_text=True))
             names = [v["name"] for v in views]
@@ -377,7 +437,15 @@ def main() -> None:
                 f"cross-entity: GET Personal view {personal_view_id} under BFM should 404",
             )
 
-            # 9k-iii. DELETE by ID under BFM should 404 (not found in BFM's DB)
+            # 9k-iii. RENAME by ID under BFM should 404 (not found in BFM's DB)
+            resp = client.post("/saved-views/rename", data={
+                "id": str(personal_view_id),
+                "name": "Hijacked",
+                "page": "dashboard",
+            })
+            _check(resp.status_code == 404, "cross-entity: rename Personal view under BFM should 404")
+
+            # 9k-iv. DELETE by ID under BFM should 404 (not found in BFM's DB)
             resp = client.post("/saved-views/delete", data={
                 "id": str(personal_view_id),
                 "page": "dashboard",
