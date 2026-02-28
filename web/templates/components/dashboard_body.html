@@ -146,61 +146,129 @@
   </div>
 </div>
 
-<!-- ── Split row: Categories + Merchants ───────────────────────────────── -->
-<div class="dash-row-split">
-  {% if top_cats %}
-  <div>
-    <h2 class="dash-section-title">Top Categories</h2>
-    <div class="rpt-cat-list">
-      {% for cat in top_cats %}
-      <a class="rpt-cat-row"
-         href="{{ drill_url(category_id=cat.cat_id) if cat.cat_id else '#' }}">
-        <div class="rpt-cat-left">
-          <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-          <div class="rpt-cat-info">
-            <div class="rpt-cat-name">{{ cat.name }}</div>
-            <div class="rpt-cat-count">{{ cat.txn_count }} txn{{ 's' if cat.txn_count != 1 }}</div>
+<!-- ── Donut + Category Breakdown ─────────────────────────────────────── -->
+{% if top_cats %}
+<div class="donut-section">
+  <h2 class="dash-section-title">{{ entity_labels.spend }} Breakdown</h2>
+  <div class="donut-layout">
+    <!-- SVG Donut -->
+    <div class="donut-chart-wrap">
+      {% set circumference = 439.82 %}
+      {% set gap_pct = 0.5 %}
+      <svg class="donut-svg" viewBox="0 0 200 200" aria-label="Spending breakdown donut chart">
+        <!-- Background ring -->
+        <circle class="donut-track" cx="100" cy="100" r="70"
+                fill="none" stroke="var(--control-bg-faint)" stroke-width="30"/>
+        <!-- Category slices -->
+        {% set ns = namespace(offset=0) %}
+        {% for cat in top_cats %}
+          {% set arc = (cat.donut_pct - gap_pct) / 100 * circumference if cat.donut_pct > gap_pct else 0 %}
+          {% if arc > 0 %}
+          <a href="{{ drill_url(category_id=cat.cat_id) if cat.cat_id else '#' }}"
+             class="donut-slice-link">
+            <circle class="donut-slice"
+                    cx="100" cy="100" r="70"
+                    fill="none"
+                    stroke="{{ colors[loop.index0 % (colors|length)] }}"
+                    stroke-width="30"
+                    stroke-dasharray="{{ arc }} {{ circumference }}"
+                    stroke-dashoffset="{{ -ns.offset }}"
+                    stroke-linecap="butt">
+              <title>{{ cat.name }}: {{ fmt_cents(cat.total_cents) }} ({{ cat.donut_pct }}%)</title>
+            </circle>
+          </a>
+          {% endif %}
+          {% set ns.offset = ns.offset + cat.donut_pct / 100 * circumference %}
+        {% endfor %}
+        <!-- "Other" slice -->
+        {% if other_pct > gap_pct %}
+          {% set other_arc = (other_pct - gap_pct) / 100 * circumference %}
+          <circle class="donut-slice donut-slice--other"
+                  cx="100" cy="100" r="70"
+                  fill="none"
+                  stroke="var(--text-muted)"
+                  stroke-width="30"
+                  stroke-dasharray="{{ other_arc }} {{ circumference }}"
+                  stroke-dashoffset="{{ -ns.offset }}"
+                  stroke-linecap="butt">
+            <title>Other: {{ fmt_cents(other_cents) }} ({{ other_pct }}%)</title>
+          </circle>
+        {% endif %}
+      </svg>
+      <!-- Center label -->
+      <div class="donut-center">
+        <div class="donut-center-label">Total</div>
+        <div class="donut-center-value">{{ fmt_cents(spend_cents) }}</div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="donut-legend">
+      <div class="rpt-cat-list">
+        {% for cat in top_cats %}
+        <a class="rpt-cat-row"
+           href="{{ drill_url(category_id=cat.cat_id) if cat.cat_id else '#' }}">
+          <div class="rpt-cat-left">
+            <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+            <div class="rpt-cat-info">
+              <div class="rpt-cat-name">{{ cat.name }}</div>
+              <div class="rpt-cat-count">{{ cat.txn_count }} txn{{ 's' if cat.txn_count != 1 }} &middot; {{ cat.donut_pct }}%</div>
+            </div>
           </div>
-        </div>
-        <div class="rpt-cat-right">
-          <div class="rpt-cat-bar-wrap">
-            <div class="rpt-cat-bar" style="width:{{ cat.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+          <div class="rpt-cat-right">
+            <div class="rpt-cat-amount">{{ fmt_cents(cat.total_cents) }}</div>
           </div>
-          <div class="rpt-cat-amount">{{ fmt_cents(cat.total_cents) }}</div>
+          <div class="rpt-cat-chevron">&#8250;</div>
+        </a>
+        {% endfor %}
+        {% if other_cents > 0 %}
+        <div class="rpt-cat-row rpt-cat-row--other">
+          <div class="rpt-cat-left">
+            <div class="rpt-cat-dot" style="background:var(--text-muted)"></div>
+            <div class="rpt-cat-info">
+              <div class="rpt-cat-name">Other</div>
+              <div class="rpt-cat-count">{{ other_pct }}%</div>
+            </div>
+          </div>
+          <div class="rpt-cat-right">
+            <div class="rpt-cat-amount">{{ fmt_cents(other_cents) }}</div>
+          </div>
+          <div class="rpt-cat-chevron" style="visibility:hidden;">&#8250;</div>
         </div>
-        <div class="rpt-cat-chevron">&#8250;</div>
-      </a>
-      {% endfor %}
+        {% endif %}
+      </div>
     </div>
   </div>
-  {% endif %}
-  {% if top_merchants %}
-  <div>
-    <h2 class="dash-section-title">Top Merchants</h2>
-    <div class="rpt-cat-list">
-      {% for m in top_merchants %}
-      <a class="rpt-cat-row"
-         href="{{ drill_url(q=m.merchant) }}">
-        <div class="rpt-cat-left">
-          <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-          <div class="rpt-cat-info">
-            <div class="rpt-cat-name">{{ m.merchant }}</div>
-            <div class="rpt-cat-count">{{ m.txn_count }} txn{{ 's' if m.txn_count != 1 }}</div>
-          </div>
-        </div>
-        <div class="rpt-cat-right">
-          <div class="rpt-cat-bar-wrap">
-            <div class="rpt-cat-bar" style="width:{{ m.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-          </div>
-          <div class="rpt-cat-amount">{{ fmt_cents(m.total_cents) }}</div>
-        </div>
-        <div class="rpt-cat-chevron">&#8250;</div>
-      </a>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
 </div>
+{% endif %}
+
+<!-- ── Top Merchants ──────────────────────────────────────────────────── -->
+{% if top_merchants %}
+<div>
+  <h2 class="dash-section-title">Top Merchants</h2>
+  <div class="rpt-cat-list">
+    {% for m in top_merchants %}
+    <a class="rpt-cat-row"
+       href="{{ drill_url(q=m.merchant) }}">
+      <div class="rpt-cat-left">
+        <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+        <div class="rpt-cat-info">
+          <div class="rpt-cat-name">{{ m.merchant }}</div>
+          <div class="rpt-cat-count">{{ m.txn_count }} txn{{ 's' if m.txn_count != 1 }}</div>
+        </div>
+      </div>
+      <div class="rpt-cat-right">
+        <div class="rpt-cat-bar-wrap">
+          <div class="rpt-cat-bar" style="width:{{ m.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
+        </div>
+        <div class="rpt-cat-amount">{{ fmt_cents(m.total_cents) }}</div>
+      </div>
+      <div class="rpt-cat-chevron">&#8250;</div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
 
 <!-- ── Upcoming ────────────────────────────────────────────────────────── -->
 <h2 class="dash-section-title">

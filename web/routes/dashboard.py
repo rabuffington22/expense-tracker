@@ -168,6 +168,15 @@ def _query_dashboard(conn, params):
         })
     data["top_cats"] = top_cats
 
+    # ── Donut chart percentages (relative to total spend) ────────────────────
+    cat_total = sum(c["total_cents"] for c in top_cats)
+    spend_abs = abs(data["spend_cents"]) if data["spend_cents"] else 0
+    other_cents = max(0, spend_abs - cat_total)
+    for c in top_cats:
+        c["donut_pct"] = round(c["total_cents"] / spend_abs * 100, 1) if spend_abs else 0
+    data["other_cents"] = other_cents
+    data["other_pct"] = round(other_cents / spend_abs * 100, 1) if spend_abs else 0
+
     # ── Top Merchants (8 rows) ───────────────────────────────────────────────
     top_merch_rows = conn.execute(
         f"SELECT t.merchant_canonical AS merchant, "
