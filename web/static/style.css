@@ -627,13 +627,19 @@ h2 {
 }
 
 /* ── KPI band row (Provider-style) ────────────────────────────────────── */
-.kpi-band { padding-top: 1.15rem; }
+/* Flatten: band outline only, no card surface */
+.kpi-band {
+    padding: 0;
+    padding-top: 0.9rem;
+    background: transparent;
+    box-shadow: none;
+}
 .kpi-band-row {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0;
-    border-radius: var(--radius-xl);
-    overflow: hidden;
+    border-radius: 0;
+    overflow: visible;
     background: transparent;
 }
 .kpi-cell {
@@ -641,13 +647,19 @@ h2 {
     padding: 1.15rem 1.25rem;
     text-decoration: none;
     color: inherit;
-    border-right: 1px solid var(--band-border);
+    border-right: 1px solid rgba(255,255,255,0.08);
     transition: background var(--transition), transform var(--transition);
+}
+:root[data-theme="light"] .kpi-cell {
+    border-right-color: rgba(0,0,0,0.06);
 }
 .kpi-cell:last-child { border-right: none; }
 .kpi-cell:hover {
-    background: var(--hover-bg);
+    background: rgba(255,255,255,0.03);
     text-decoration: none;
+}
+:root[data-theme="light"] .kpi-cell:hover {
+    background: rgba(0,0,0,0.02);
 }
 .kpi-cell:focus-visible {
     outline: 2px solid var(--blue);
@@ -684,16 +696,16 @@ h2 {
 /* Responsive: 5 → 2 columns on small screens */
 @media (max-width: 900px) {
     .kpi-band-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .kpi-cell { border-right: 1px solid var(--band-border); }
     .kpi-cell:nth-child(2n) { border-right: none; }
-    .kpi-cell:nth-child(n+3) { border-top: 1px solid var(--band-border); }
+    .kpi-cell:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,0.08); }
 }
 @media (max-width: 480px) {
     .kpi-band-row { grid-template-columns: 1fr; }
-    .kpi-cell { border-right: none; border-top: 1px solid var(--band-border); }
+    .kpi-cell { border-right: none; border-top: 1px solid rgba(255,255,255,0.08); }
     .kpi-cell:first-child { border-top: none; }
     .kpi-cell-value { font-size: 2.0rem; }
 }
+:root[data-theme="light"] .kpi-cell:nth-child(n+3) { border-top-color: rgba(0,0,0,0.06); }
 
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */
 .segmented {
