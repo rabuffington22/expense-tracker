@@ -471,3 +471,33 @@ Full review of all routes, templates, and core modules. Smoke test passing. Fixe
 4. **XSS: unescaped HTML in subcategory option endpoints** — Both `/categorize/subcategories` and `/categorize-vendors/subcategories` rendered user-provided names directly into `<option>` tags without escaping. Added `markupsafe.escape()`.
 5. **XSS: unescaped values in JS contexts** — `categorize.html` delete confirm and alias prefill injected category/description into JS strings without proper escaping. Fixed with `|tojson` filter.
 6. **Bug: CSV export Content-Disposition header** — Filename not quoted, causing download issues when category names contain spaces. Added quotes around filename.
+
+## STATUS SNAPSHOT (for reconnect)
+Live environment
+- Atlas is running commit: 55fd081e75ee1e280d7f07da65e3442645a3a1c0 (matches origin/main)
+- Routes: GET / = 200, GET /dashboard/partial = 200
+
+What's finished / working
+- Provider-style design direction implemented (bands, segmented controls, chart-well, typography tokens).
+- Dashboard hero donut chart works + hover linking slice ↔ legend; donut is large and responsive.
+- Saved Views is mature: create/rename/update/delete, defaults, overflow "…" menu, entity isolation.
+- /transactions is the universal drill target with filters, pagination, inline edit, keyboard shortcuts.
+- Sidebar redesigned: clean hierarchy, primary nav (4 links), "Workflows" collapsible and collapsed by default with localStorage persistence.
+- Theme toggle (dark default + light mode) works; parity fixes done.
+
+Latest verified UI details
+- KPI row: centered text + whole dollars (no cents) in headline KPIs.
+- KPI row has NO surface behind it (floats on page background).
+- KPI period label above KPI row ("FEB 1–28") is now plain text (no pill) in both dark + light:
+  - background-color equals page background, border/shadow none.
+- Header date button in the top filter bar ("Feb 1–28", top-left) still has a gray fill and is intentionally unchanged.
+
+Current "almost there" gap vs Provider dashboard
+- Header controls (date/account/saved views) still feel heavier than Provider; likely next polish.
+- Next big visual parity items:
+  1) Calm down header controls (reduce pill fill/width/visual weight).
+  2) Chart-card system (Provider-style chart grid + headers).
+  3) Optional: add THIS WEEK / THIS MONTH dual KPI bands once header is calm.
+
+Process
+- Workflow: branch → smoke tests → PR → merge → deploy → verify.
