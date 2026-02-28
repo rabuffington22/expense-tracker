@@ -14,11 +14,30 @@
 
     <!-- Primary control row -->
     <div class="dhdr-row">
-      <!-- Date range pill -->
-      <div class="dhdr-date-pill">
-        <input type="date" id="start" name="start" value="{{ params.start }}" class="dhdr-date-input">
-        <span class="dhdr-date-sep" aria-hidden="true"></span>
-        <input type="date" id="end" name="end" value="{{ params.end }}" class="dhdr-date-input">
+      <!-- Hidden date inputs (HTMX form submission) -->
+      <input type="hidden" id="start" name="start" value="{{ params.start }}">
+      <input type="hidden" id="end" name="end" value="{{ params.end }}">
+
+      <!-- Date range pill + popover -->
+      <div class="dhdr-datepop-wrap">
+        <button type="button" id="dhdr-datebtn" class="dhdr-pill dhdr-datebtn"
+                aria-haspopup="true" aria-expanded="false">
+          <span id="dhdr-datebtn-label"></span>
+        </button>
+        <div id="dhdr-datepop" class="dhdr-popover" hidden>
+          <button type="button" class="dhdr-pop-item" data-preset="last7">Last 7 days</button>
+          <button type="button" class="dhdr-pop-item" data-preset="last30">Last 30 days</button>
+          <button type="button" class="dhdr-pop-item" data-preset="thisMonth">This month</button>
+          <button type="button" class="dhdr-pop-item" data-preset="lastMonth">Last month</button>
+          <hr class="dhdr-pop-divider">
+          <button type="button" class="dhdr-pop-item" data-preset="custom" id="dhdr-pop-custom-btn">Custom…</button>
+          <div id="dhdr-pop-custom" class="dhdr-pop-custom" hidden>
+            <input type="date" id="dhdr-pop-start" class="dhdr-pop-date">
+            <span class="dhdr-pop-dash">–</span>
+            <input type="date" id="dhdr-pop-end" class="dhdr-pop-date">
+            <button type="button" id="dhdr-pop-apply" class="btn btn-primary btn-sm dhdr-pop-apply">Apply</button>
+          </div>
+        </div>
       </div>
 
       <!-- Account pill -->
@@ -143,5 +162,140 @@ document.body.addEventListener('htmx:responseError', function(e) {
         e.detail.target.classList.remove('dash-loading');
     }
 });
+</script>
+
+<script>
+/* ── Date range pill + popover ───────────────────────────────────────── */
+(function() {
+  var form = document.getElementById('dash-filter-form');
+  var btn = document.getElementById('dhdr-datebtn');
+  var label = document.getElementById('dhdr-datebtn-label');
+  var pop = document.getElementById('dhdr-datepop');
+  var startInput = document.getElementById('start');
+  var endInput = document.getElementById('end');
+  var customRow = document.getElementById('dhdr-pop-custom');
+  var popStart = document.getElementById('dhdr-pop-start');
+  var popEnd = document.getElementById('dhdr-pop-end');
+  var popApply = document.getElementById('dhdr-pop-apply');
+  var LS_KEY = 'dash_date_preset';
+
+  /* ── Label formatting ────────────────────────────────────────── */
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun',
+                'Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function fmtRange(s, e) {
+    if (!s || !e) return 'Select dates';
+    var sp = s.split('-'), ep = e.split('-');
+    var sm = parseInt(sp[1], 10) - 1, sd = parseInt(sp[2], 10);
+    var em = parseInt(ep[1], 10) - 1, ed = parseInt(ep[2], 10);
+    if (sm === em && sp[0] === ep[0]) {
+      return MONTHS[sm] + '\u00a0' + sd + '\u2009\u2013\u2009' + ed;
+    }
+    return MONTHS[sm] + '\u00a0' + sd + ' \u2013 ' + MONTHS[em] + '\u00a0' + ed;
+  }
+
+  /* ── Preset computation ──────────────────────────────────────── */
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function isoDate(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function computePreset(key) {
+    var now = new Date();
+    var y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
+    switch (key) {
+      case 'last7':
+        var s7 = new Date(y, m, d - 6);
+        return [isoDate(s7), isoDate(now)];
+      case 'last30':
+        var s30 = new Date(y, m, d - 29);
+        return [isoDate(s30), isoDate(now)];
+      case 'thisMonth':
+        return [y + '-' + pad(m + 1) + '-01',
+                y + '-' + pad(m + 1) + '-' + pad(new Date(y, m + 1, 0).getDate())];
+      case 'lastMonth':
+        var lm = m === 0 ? 11 : m - 1;
+        var ly = m === 0 ? y - 1 : y;
+        return [ly + '-' + pad(lm + 1) + '-01',
+                ly + '-' + pad(lm + 1) + '-' + pad(new Date(ly, lm + 1, 0).getDate())];
+    }
+    return [null, null];
+  }
+
+  /* ── Detect if current dates match a preset ──────────────────── */
+  function detectPreset(s, e) {
+    var presets = ['last7', 'last30', 'thisMonth', 'lastMonth'];
+    for (var i = 0; i < presets.length; i++) {
+      var r = computePreset(presets[i]);
+      if (r[0] === s && r[1] === e) return presets[i];
+    }
+    return null;
+  }
+
+  /* ── Popover open / close ────────────────────────────────────── */
+  function openPop() {
+    pop.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+    var cur = detectPreset(startInput.value, endInput.value);
+    pop.querySelectorAll('.dhdr-pop-item[data-preset]').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.preset === cur);
+    });
+    popStart.value = startInput.value;
+    popEnd.value = endInput.value;
+  }
+
+  function closePop() {
+    pop.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+    customRow.hidden = true;
+  }
+
+  /* ── Apply dates + submit ────────────────────────────────────── */
+  function applyDates(s, e, presetKey) {
+    startInput.value = s;
+    endInput.value = e;
+    try { localStorage.setItem(LS_KEY, presetKey || 'custom'); } catch (x) {}
+    label.textContent = fmtRange(s, e);
+    closePop();
+    form.requestSubmit();
+  }
+
+  /* ── Event wiring ────────────────────────────────────────────── */
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    pop.hidden ? openPop() : closePop();
+  });
+
+  pop.querySelectorAll('.dhdr-pop-item[data-preset]').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var key = this.dataset.preset;
+      if (key === 'custom') {
+        customRow.hidden = !customRow.hidden;
+        return;
+      }
+      var r = computePreset(key);
+      applyDates(r[0], r[1], key);
+    });
+  });
+
+  popApply.addEventListener('click', function() {
+    if (popStart.value && popEnd.value) {
+      applyDates(popStart.value, popEnd.value, 'custom');
+    }
+  });
+
+  /* Close on outside click */
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dhdr-datepop-wrap')) closePop();
+  });
+
+  /* Close on Escape */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePop();
+  });
+
+  /* ── Init label ──────────────────────────────────────────────── */
+  label.textContent = fmtRange(startInput.value, endInput.value);
+})();
 </script>
 {% endblock %}

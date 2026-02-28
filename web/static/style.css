@@ -1942,51 +1942,97 @@ select.input-sm {
     flex-wrap: wrap;
 }
 
-/* ── Date range pill ─────────────────────────────────────────────────── */
-.dhdr-date-pill {
-    display: inline-flex;
-    align-items: center;
-    background: var(--input-sm-bg);
-    border: 0.5px solid var(--input-sm-border);
-    border-radius: 10px;
-    height: 34px;
-    overflow: hidden;
+/* ── Date range pill + popover ───────────────────────────────────────── */
+.dhdr-datepop-wrap {
+    position: relative;
 }
-.dhdr-date-input {
-    border: none !important;
-    background: transparent !important;
-    padding: 0 0.5rem !important;
-    height: 100%;
+.dhdr-datebtn {
+    min-width: 140px;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.dhdr-popover {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 220px;
+    background: var(--bg-elevated);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-popup);
+    padding: 4px 0;
+    z-index: 25;
+}
+.dhdr-popover[hidden] {
+    display: none;
+}
+.dhdr-pop-item {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.85rem;
     font-size: 0.82rem;
+    font-family: inherit;
+    color: var(--text);
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.dhdr-pop-item:hover {
+    background: var(--hover-bg);
+}
+.dhdr-pop-item:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+}
+.dhdr-pop-item.active {
+    color: var(--blue);
+    font-weight: 600;
+}
+.dhdr-pop-divider {
+    height: 0;
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 4px 0;
+}
+.dhdr-pop-custom {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.85rem;
+}
+.dhdr-pop-custom[hidden] {
+    display: none;
+}
+.dhdr-pop-date {
+    height: 30px;
+    padding: 0 0.4rem;
+    font-size: 0.8rem;
+    font-family: inherit;
+    border: 0.5px solid var(--input-sm-border);
+    border-radius: 8px;
+    background: var(--input-sm-bg);
     color: var(--text);
     color-scheme: dark;
-    font-family: inherit;
-    -webkit-appearance: none;
-    appearance: none;
-    width: auto;
-    min-width: 120px;
-    box-shadow: none !important;
-    border-radius: 0;
+    flex: 1;
+    min-width: 0;
 }
-.dhdr-date-input:focus {
-    box-shadow: none !important;
+.dhdr-pop-date:focus {
     outline: none;
-}
-.dhdr-date-pill:focus-within {
     border-color: var(--blue);
     box-shadow: 0 0 0 2px rgba(10,132,255,0.25);
 }
-.dhdr-date-sep {
-    width: 0.5px;
-    height: 18px;
-    background: var(--border-light);
-    flex-shrink: 0;
+.dhdr-pop-dash {
+    color: var(--text-muted);
+    font-size: 0.8rem;
 }
-.dhdr-date-input::-webkit-calendar-picker-indicator {
-    filter: var(--date-icon-filter);
-    cursor: pointer;
-    margin-left: -2px;
-    padding-right: 2px;
+.dhdr-pop-apply {
+    height: 30px;
+    padding: 0 0.6rem;
+    font-size: 0.78rem;
+    flex-shrink: 0;
 }
 
 /* ── Pill-style selects ──────────────────────────────────────────────── */
@@ -2096,11 +2142,11 @@ select.input-sm {
 }
 
 /* ── Dashboard header: light-theme overrides ─────────────────────────── */
-:root[data-theme="light"] .dhdr-date-pill {
-    border: 1px solid var(--input-sm-border);
-    background: var(--input-sm-bg);
+:root[data-theme="light"] .dhdr-popover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 0 0 0.5px rgba(0,0,0,0.06);
 }
-:root[data-theme="light"] .dhdr-date-input {
+:root[data-theme="light"] .dhdr-pop-date {
+    border: 1px solid var(--input-sm-border);
     color-scheme: light;
 }
 :root[data-theme="light"] .dhdr-pill {
@@ -2144,13 +2190,12 @@ select.input-sm {
     .dhdr-bar {
         padding: 0.4rem 0.6rem;
     }
-    .dhdr-date-pill {
-        width: 100%;
-        flex: 1 1 100%;
+    .dhdr-datepop-wrap {
+        flex: 1 1 auto;
     }
-    .dhdr-date-input {
-        flex: 1;
-        min-width: 0 !important;
+    .dhdr-datebtn {
+        width: 100%;
+        min-width: 0;
     }
     .dhdr-pill {
         flex: 1 1 calc(50% - 0.2rem);
