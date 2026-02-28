@@ -711,16 +711,22 @@ h2 {
 .kpi-band--provider {
     padding-top: 0.85rem;
 }
-/* Keep band outline + label but flatten interior */
+/* No surface behind the KPI band — fully transparent, no border or glow */
 .kpi-band--provider.band {
-    background: transparent;
-    box-shadow: none;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+.kpi-band--provider::before,
+.kpi-band--provider::after {
+    content: none !important;
 }
 .kpi-band--provider .kpi-band-row {
-    background: transparent;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
+    background: transparent !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 .kpi-band--provider .kpi-cell {
     padding: 1.0rem 1.1rem 0.9rem;
