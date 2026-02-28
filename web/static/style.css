@@ -1358,9 +1358,14 @@ input[type="checkbox"] {
 /* Filter bar + inputs */
 :root[data-theme="light"] .txn-filter-bar {
     border: 1px solid var(--border);
+    padding: 0.6rem 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
 }
 :root[data-theme="light"] .input-sm {
     border: 1px solid var(--input-sm-border);
+    height: 34px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 /* Active chip — readable blue text in light mode */
@@ -1381,6 +1386,49 @@ input[type="checkbox"] {
 /* Select arrow — darker stroke for contrast on white */
 :root[data-theme="light"] select.input-sm {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%23666' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+
+/* Control height alignment — scoped to filter bar */
+:root[data-theme="light"] .txn-filter-bar .btn-sm,
+:root[data-theme="light"] .txn-chips .btn-sm {
+    height: 34px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Tighter form-row spacing */
+:root[data-theme="light"] .txn-filter-bar .form-row {
+    margin-bottom: 0.35rem;
+}
+
+/* Lighter inactive chips — iOS pill style */
+:root[data-theme="light"] .txn-chip {
+    border-color: rgba(0,0,0,0.08);
+    background: rgba(0,0,0,0.02);
+    color: rgba(0,0,0,0.45);
+    font-weight: 400;
+}
+:root[data-theme="light"] .txn-chip:hover {
+    background: rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.12);
+    color: rgba(0,0,0,0.6);
+}
+
+/* Softer secondary buttons in filter bar — de-emphasize vs Apply */
+:root[data-theme="light"] .txn-filter-bar .btn-secondary {
+    background: rgba(0,0,0,0.04);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+:root[data-theme="light"] .txn-filter-bar .btn-secondary:hover {
+    background: rgba(0,0,0,0.07);
+    color: var(--text);
+}
+
+/* Saved views row separator */
+:root[data-theme="light"] .txn-filter-bar > .txn-chips:last-child {
+    padding-top: 0.3rem;
+    border-top: 1px solid rgba(0,0,0,0.06);
 }
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
