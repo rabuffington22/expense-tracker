@@ -12,6 +12,7 @@
         hx-swap="innerHTML"
         hx-push-url="true">
 
+    <div class="dhdr-strip">
     <div class="dhdr-row">
       <!-- Hidden date inputs (HTMX form submission) -->
       <input type="hidden" id="start" name="start" value="{{ params.start }}">
@@ -89,6 +90,7 @@
       <button type="button" class="dhdr-clear"
               onclick="window.location.href='{{ url_for('dashboard.index') }}'">Clear</button>
     </div>
+    </div><!-- /.dhdr-strip -->
   </form>
 </div>
 

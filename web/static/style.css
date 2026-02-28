@@ -2838,6 +2838,14 @@ select.input-sm {
     margin-bottom: 0.5rem;
 }
 
+/* ── Header strip (segmented-track container for controls) ───────────── */
+.dhdr-strip {
+    background: var(--seg-bg);
+    border: 1px solid var(--seg-border);
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
 /* Primary single-row layout */
 .dhdr-row {
     display: flex;
@@ -3158,6 +3166,10 @@ select.input-sm {
 @media (max-width: 480px) {
     .dhdr-bar {
         padding: 0.4rem 0;
+    }
+    .dhdr-strip {
+        padding: 8px 10px;
+        border-radius: 10px;
     }
     .dhdr-datepop-wrap {
         flex: 1 1 auto;
