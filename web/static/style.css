@@ -789,6 +789,84 @@ input[type="checkbox"] {
     margin-top: 0;
 }
 
+/* ── Donut chart ───────────────────────────────────────────────────────── */
+.donut-section {
+    grid-column: 1 / -1;
+}
+.donut-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+.donut-chart-wrap {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+}
+.donut-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+.donut-track {
+    opacity: 0.5;
+}
+.donut-slice {
+    transition: opacity 0.15s ease, stroke-width 0.15s ease;
+    cursor: pointer;
+}
+.donut-slice:hover {
+    opacity: 0.8;
+    stroke-width: 33;
+}
+.donut-slice--other {
+    cursor: default;
+}
+.donut-slice--other:hover {
+    opacity: 1;
+    stroke-width: 30;
+}
+.donut-slice-link {
+    outline: none;
+}
+.donut-slice-link:focus-visible .donut-slice {
+    stroke-width: 34;
+    filter: brightness(1.2);
+}
+.donut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+}
+.donut-center-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.donut-center-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+.donut-legend {
+    min-width: 0;
+}
+.rpt-cat-row--other {
+    cursor: default;
+}
+.rpt-cat-row--other:hover {
+    background: transparent;
+}
+
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 7px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -1550,6 +1628,17 @@ tr.is-selected > td:first-child {
     .dash-row-split {
         grid-template-columns: 1fr;
     }
+    .donut-layout {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+    .donut-chart-wrap {
+        width: 180px;
+        height: 180px;
+    }
+    .donut-legend {
+        width: 100%;
+    }
     .txn-filter-bar {
         position: static;
     }
@@ -1593,6 +1682,13 @@ tr.is-selected > td:first-child {
 
 /* Small phone */
 @media (max-width: 400px) {
+    .donut-chart-wrap {
+        width: 160px;
+        height: 160px;
+    }
+    .donut-center-value {
+        font-size: 1rem;
+    }
     .metrics-row {
         grid-template-columns: 1fr;
     }
