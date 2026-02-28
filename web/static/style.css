@@ -626,6 +626,53 @@ h2 {
     padding: 0.75rem;
 }
 
+/* ── Provider-style chart cards ─────────────────────────────────────────── */
+.chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 1rem 1.1rem;
+}
+.chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+.chart-card-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+.chart-card-subtitle {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+.chart-card-actions {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+/* chart well inside chart-card: re-use existing token, no extra declaration needed */
+:root[data-theme="light"] .chart-card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 8px 24px rgba(0,0,0,0.06);
+}
+
+/* ── Chart grid: 2-col desktop, 1-col mobile ────────────────────────────── */
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    grid-column: 1 / -1;
+}
+@media (max-width: 900px) {
+    .chart-grid { grid-template-columns: 1fr; }
+}
+
 /* ── KPI band row (Provider-style) ────────────────────────────────────── */
 /* Flatten: band outline only, no card surface */
 .kpi-band {
