@@ -193,8 +193,13 @@
       <div class="chart-well">
       <div class="donut-chart-wrap donut-chart-wrap--lg">
         {% set circumference = 439.82 %}
-        {% set gap_pct = 0.8 %}
+        {% set gap_pct = 0.55 %}
         <svg class="donut-svg" viewBox="0 0 200 200" aria-label="Spending breakdown donut chart">
+          <defs>
+            <filter id="donutShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.25)"/>
+            </filter>
+          </defs>
           <!-- Background ring -->
           <circle class="donut-track" cx="100" cy="100" r="70"
                   fill="none" stroke="var(--control-bg-faint)" stroke-width="30"/>
@@ -253,12 +258,13 @@
               <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
               <div class="rpt-cat-info">
                 <div class="rpt-cat-name">{{ cat.name }}</div>
-                <div class="rpt-cat-count">{{ cat.txn_count }} txn{{ 's' if cat.txn_count != 1 }} &middot; {{ cat.donut_pct }}%</div>
+                <div class="rpt-cat-count">{{ cat.txn_count }} txn{{ 's' if cat.txn_count != 1 }}</div>
               </div>
             </div>
             <div class="rpt-cat-right">
               <div class="rpt-cat-amount">{{ fmt_cents(cat.total_cents) }}</div>
             </div>
+            <div class="rpt-cat-pct">{{ cat.donut_pct }}%</div>
             <div class="rpt-cat-chevron">&#8250;</div>
           </a>
           {% endfor %}
@@ -268,12 +274,12 @@
               <div class="rpt-cat-dot" style="background:var(--text-muted)"></div>
               <div class="rpt-cat-info">
                 <div class="rpt-cat-name">Other</div>
-                <div class="rpt-cat-count">{{ other_pct }}%</div>
               </div>
             </div>
             <div class="rpt-cat-right">
               <div class="rpt-cat-amount">{{ fmt_cents(other_cents) }}</div>
             </div>
+            <div class="rpt-cat-pct">{{ other_pct }}%</div>
             <div class="rpt-cat-chevron" style="visibility:hidden;">&#8250;</div>
           </div>
           {% endif %}
