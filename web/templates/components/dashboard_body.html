@@ -13,6 +13,8 @@
 <div class="dash-grid">
 
 <!-- ── KPI strip ────────────────────────────────────────────────────────── -->
+<div class="band">
+<div class="band-label">Overview</div>
 <div class="metrics-row">
   <a href="{{ drill_url(type='expense') }}" class="metric metric-link">
     <div class="kpi-label">{{ entity_labels.spend }}</div>
@@ -39,6 +41,7 @@
     <div class="kpi-value" style="font-size:1.2rem;">{{ latest_date }}</div>
   </div>
 </div>
+</div>{# end band Overview #}
 
 <!-- ── Sync Health ─────────────────────────────────────────────────────── -->
 {% if plaid_sync_items %}
@@ -57,6 +60,8 @@
 {% endif %}
 
 <!-- ── Main row: Cash Flow (left) + Rail (right) ───────────────────────── -->
+<div class="band">
+<div class="band-label">Activity</div>
 <div class="dash-row-main">
   {% if chart_bars %}
   <div class="card dash-chart">
@@ -145,13 +150,17 @@
     {% endif %}
   </div>
 </div>
+</div>{# end band Activity #}
 
 <!-- ── Donut + Category Breakdown ─────────────────────────────────────── -->
 {% if top_cats %}
+<div class="band">
+<div class="band-label">Spending</div>
 <div class="donut-section">
   <h2 class="dash-section-title">{{ entity_labels.spend }} Breakdown</h2>
   <div class="donut-layout">
     <!-- SVG Donut -->
+    <div class="chart-well">
     <div class="donut-chart-wrap donut-chart-wrap--lg">
       {% set circumference = 439.82 %}
       {% set gap_pct = 0.8 %}
@@ -201,6 +210,7 @@
         <div class="donut-center-value">{{ fmt_cents(spend_cents) }}</div>
       </div>
     </div>
+    </div>{# end chart-well #}
 
     <!-- Legend -->
     <div class="donut-legend">
@@ -241,6 +251,7 @@
     </div>
   </div>
 </div>
+</div>{# end band Spending #}
 <script>
 /* Slice ↔ legend hover linking */
 (function() {
@@ -262,7 +273,9 @@
 </script>
 {% endif %}
 
-<!-- ── Top Merchants ──────────────────────────────────────────────────── -->
+<!-- ── Top Merchants + Upcoming ────────────────────────────────────────── -->
+<div class="band">
+<div class="band-label">Recurring</div>
 {% if top_merchants %}
 <div>
   <h2 class="dash-section-title">Top Merchants</h2>
@@ -322,6 +335,7 @@
   <span class="text-sm" style="color:var(--text-muted);">No recurring patterns detected yet</span>
 </div>
 {% endif %}
+</div>{# end band Recurring #}
 
 <!-- ── Vendor Orders (global, not date-filtered) ────────────────────────── -->
 {% if total_orders > 0 %}

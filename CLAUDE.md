@@ -275,6 +275,17 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #24: Design language shift — Provider Performance style
+Banded groups, segmented controls, chart wells, and Provider-style typography across the dashboard.
+
+1. **CSS tokens** — Added `--band-bg`, `--band-border`, `--band-shadow`, `--chart-well-bg`, `--seg-bg`, `--seg-border`, `--seg-active-bg`, `--seg-active-text` per theme. Plus `--radius-xl` (18px), `--label-tracking` (0.08em).
+2. **Band component** — `.band` wrapper with subtle border/bg/shadow and `.band-label` floating pill (absolute positioned, uppercase, 0.68rem). Dashboard sections wrapped in 4 bands: Overview, Activity, Spending, Recurring.
+3. **Chart well** — `.chart-well` inner surface with `--chart-well-bg` background, applied around donut chart SVG.
+4. **Segmented controls** — Unified `.segmented` component (inline-flex, 12px radius, 30px items). Dashboard filter chips, sidebar entity toggle, and reports period toggle all use segmented tokens (`--seg-bg`, `--seg-active-bg`).
+5. **Typography** — KPI labels: 0.68rem weight 700 with `--label-tracking`. KPI values: 1.7rem weight 800. Section titles: 0.88rem weight 800.
+6. **Interaction polish** — Softened `--shadow-hover` (dark: 0.18 alpha vs 0.3). Increased `.dash-grid` gap to 1.2rem for band label clearance.
+7. **Light-mode parity** — Segmented chip overrides for both themes. Light-mode band/well tokens use subtle `rgba(0,0,0,...)` values.
+
 ### 2026-02-28 — PR #23: Sidebar redesign (Apple-ish) + Workflows collapsed by default
 Calmer sidebar with clear hierarchy, collapsible workflows, Apple-ish styling.
 
