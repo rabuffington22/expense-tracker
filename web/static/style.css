@@ -626,6 +626,75 @@ h2 {
     padding: 0.75rem;
 }
 
+/* ── KPI band row (Provider-style) ────────────────────────────────────── */
+.kpi-band { padding-top: 1.15rem; }
+.kpi-band-row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: transparent;
+}
+.kpi-cell {
+    display: block;
+    padding: 1.15rem 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    border-right: 1px solid var(--band-border);
+    transition: background var(--transition), transform var(--transition);
+}
+.kpi-cell:last-child { border-right: none; }
+.kpi-cell:hover {
+    background: var(--hover-bg);
+    text-decoration: none;
+}
+.kpi-cell:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+}
+.kpi-cell--static { cursor: default; }
+.kpi-cell--static:hover { background: transparent; }
+
+.kpi-cell-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+}
+.kpi-cell-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.0;
+    color: var(--text);
+}
+.kpi-cell-sub {
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+.kpi-pos { color: var(--green); }
+.kpi-neg { color: var(--red); }
+.kpi-warn { color: var(--orange); }
+
+/* Responsive: 5 → 2 columns on small screens */
+@media (max-width: 900px) {
+    .kpi-band-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kpi-cell { border-right: 1px solid var(--band-border); }
+    .kpi-cell:nth-child(2n) { border-right: none; }
+    .kpi-cell:nth-child(n+3) { border-top: 1px solid var(--band-border); }
+}
+@media (max-width: 480px) {
+    .kpi-band-row { grid-template-columns: 1fr; }
+    .kpi-cell { border-right: none; border-top: 1px solid var(--band-border); }
+    .kpi-cell:first-child { border-top: none; }
+    .kpi-cell-value { font-size: 2.0rem; }
+}
+
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */
 .segmented {
     display: inline-flex;

@@ -12,35 +12,44 @@
 {% else %}
 <div class="dash-grid">
 
-<!-- ── KPI strip ────────────────────────────────────────────────────────── -->
-<div class="band">
-<div class="band-label">Overview</div>
-<div class="metrics-row">
-  <a href="{{ drill_url(type='expense') }}" class="metric metric-link">
-    <div class="kpi-label">{{ entity_labels.spend }}</div>
-    <div class="kpi-value">{{ fmt_cents(spend_cents) }}</div>
-  </a>
-  <a href="{{ drill_url(type='income') }}" class="metric metric-link">
-    <div class="kpi-label">{{ entity_labels.income }}</div>
-    <div class="kpi-value" style="color:var(--green);">{{ fmt_cents(income_cents) }}</div>
-  </a>
-  <div class="metric">
-    <div class="kpi-label">{{ entity_labels.net }}</div>
-    <div class="kpi-value" style="color:{% if net_cents >= 0 %}var(--green){% else %}var(--red){% endif %};">
-      {{ fmt_cents(net_cents) }}
+<!-- ── KPI band (Provider-style) ────────────────────────────────────────── -->
+<div class="band kpi-band">
+  <div class="band-label">Overview</div>
+  <div class="kpi-band-row">
+    <!-- 1) Spend / Expenses -->
+    <a class="kpi-cell" href="{{ drill_url(type='expense') }}">
+      <div class="kpi-cell-label">{{ entity_labels.spend }}</div>
+      <div class="kpi-cell-value">{{ fmt_cents(spend_cents) }}</div>
+      <div class="kpi-cell-sub">{{ "{:,}".format(total_txn_count) }} txns</div>
+    </a>
+    <!-- 2) Income / Revenue -->
+    <a class="kpi-cell" href="{{ drill_url(type='income') }}">
+      <div class="kpi-cell-label">{{ entity_labels.income }}</div>
+      <div class="kpi-cell-value kpi-pos">{{ fmt_cents(income_cents) }}</div>
+    </a>
+    <!-- 3) Net / Profit -->
+    <div class="kpi-cell kpi-cell--static">
+      <div class="kpi-cell-label">{{ entity_labels.net }}</div>
+      <div class="kpi-cell-value {% if net_cents < 0 %}kpi-neg{% else %}kpi-pos{% endif %}">
+        {{ fmt_cents(net_cents) }}
+      </div>
+      <div class="kpi-cell-sub">period net</div>
+    </div>
+    <!-- 4) Needs Review -->
+    <a class="kpi-cell" href="{{ drill_url(uncategorized='1') }}">
+      <div class="kpi-cell-label">Needs Review</div>
+      <div class="kpi-cell-value {% if review_count > 0 %}kpi-warn{% endif %}">
+        {{ "{:,}".format(review_count) }}
+      </div>
+      <div class="kpi-cell-sub">uncategorized</div>
+    </a>
+    <!-- 5) Latest Transaction -->
+    <div class="kpi-cell kpi-cell--static">
+      <div class="kpi-cell-label">Latest</div>
+      <div class="kpi-cell-value">{{ latest_date }}</div>
+      <div class="kpi-cell-sub">last activity</div>
     </div>
   </div>
-  <a href="{{ drill_url(uncategorized='1') }}" class="metric metric-link">
-    <div class="kpi-label">Needs Review</div>
-    <div class="kpi-value" style="color:{% if review_count > 0 %}var(--orange){% else %}var(--green){% endif %};">
-      {{ "{:,}".format(review_count) }}
-    </div>
-  </a>
-  <div class="metric">
-    <div class="kpi-label">Latest Transaction</div>
-    <div class="kpi-value" style="font-size:1.2rem;">{{ latest_date }}</div>
-  </div>
-</div>
 </div>{# end band Overview #}
 
 <!-- ── Sync Health ─────────────────────────────────────────────────────── -->
