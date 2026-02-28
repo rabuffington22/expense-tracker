@@ -2801,3 +2801,46 @@ select.input-sm {
     font-size: 0.62rem;
     opacity: 0.75;
 }
+
+/* ── Provider-ish header controls: ghost pills (dashboard only) ─────────── */
+.dhdr-row button#dhdr-datebtn,
+.dhdr-row select#account.dhdr-pill,
+.dhdr-row select#sv-select-dashboard.dhdr-pill,
+.dhdr-row .dhdr-sv-group .dhdr-sv-btn {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+/* subtle outline */
+:root[data-theme="dark"] .dhdr-row button#dhdr-datebtn,
+:root[data-theme="dark"] .dhdr-row select#account.dhdr-pill,
+:root[data-theme="dark"] .dhdr-row select#sv-select-dashboard.dhdr-pill,
+:root[data-theme="dark"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn {
+    border-color: rgba(255,255,255,0.10) !important;
+}
+:root[data-theme="light"] .dhdr-row button#dhdr-datebtn,
+:root[data-theme="light"] .dhdr-row select#account.dhdr-pill,
+:root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill,
+:root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn {
+    border-color: rgba(0,0,0,0.10) !important;
+}
+/* minimal hover */
+:root[data-theme="dark"] .dhdr-row button#dhdr-datebtn:hover,
+:root[data-theme="dark"] .dhdr-row select#account.dhdr-pill:hover,
+:root[data-theme="dark"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover,
+:root[data-theme="dark"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn:hover {
+    background: rgba(255,255,255,0.04) !important;
+}
+:root[data-theme="light"] .dhdr-row button#dhdr-datebtn:hover,
+:root[data-theme="light"] .dhdr-row select#account.dhdr-pill:hover,
+:root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover,
+:root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn:hover {
+    background: rgba(0,0,0,0.03) !important;
+}
+/* keep focus-visible ring */
+.dhdr-row button#dhdr-datebtn:focus-visible,
+.dhdr-row select#account.dhdr-pill:focus-visible,
+.dhdr-row select#sv-select-dashboard.dhdr-pill:focus-visible,
+.dhdr-row .dhdr-sv-group .dhdr-sv-btn:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+}
