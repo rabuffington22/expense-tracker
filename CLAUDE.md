@@ -275,6 +275,12 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #31: KPI band — remove cents + center-align (Provider-style)
+Cleaner KPI values: whole dollars only, center-aligned cells.
+
+1. **Whole dollars** — KPI values drop cents (e.g. `$7,486` not `$7,486.45`). Uses `"{:,.0f}".format(cents/100)` in Jinja. Net uses `\u2212` minus sign.
+2. **Center alignment** — `.kpi-band--centered` modifier centers label, value, and sub-text in each cell via `text-align: center` + flex column `align-items: center`.
+
 ### 2026-02-28 — PR #30: KPI band Provider parity (typography + outlined band)
 Matched KPI band to Provider dashboard: lighter values, outlined band, period label.
 

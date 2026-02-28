@@ -13,25 +13,25 @@
 <div class="dash-grid">
 
 <!-- ── KPI band (Provider-style) ────────────────────────────────────────── -->
-<div class="band kpi-band kpi-band--provider">
+<div class="band kpi-band kpi-band--provider kpi-band--centered">
   {% if period_label %}<div class="band-label">{{ period_label }}</div>{% endif %}
   <div class="kpi-band-row">
     <!-- 1) Spend / Expenses -->
     <a class="kpi-cell" href="{{ drill_url(type='expense') }}">
       <div class="kpi-cell-label">{{ entity_labels.spend }}</div>
-      <div class="kpi-cell-value">{{ fmt_cents(spend_cents) }}</div>
+      <div class="kpi-cell-value">${{ "{:,.0f}".format(spend_cents / 100) }}</div>
       <div class="kpi-cell-sub">{{ "{:,}".format(total_txn_count) }} txns</div>
     </a>
     <!-- 2) Income / Revenue -->
     <a class="kpi-cell" href="{{ drill_url(type='income') }}">
       <div class="kpi-cell-label">{{ entity_labels.income }}</div>
-      <div class="kpi-cell-value kpi-pos">{{ fmt_cents(income_cents) }}</div>
+      <div class="kpi-cell-value kpi-pos">${{ "{:,.0f}".format(income_cents / 100) }}</div>
     </a>
     <!-- 3) Net / Profit -->
     <div class="kpi-cell kpi-cell--static">
       <div class="kpi-cell-label">{{ entity_labels.net }}</div>
       <div class="kpi-cell-value {% if net_cents < 0 %}kpi-neg{% else %}kpi-pos{% endif %}">
-        {{ fmt_cents(net_cents) }}
+        {{ "\u2212" if net_cents < 0 else "" }}${{ "{:,.0f}".format((net_cents|abs) / 100) }}
       </div>
       <div class="kpi-cell-sub">period net</div>
     </div>
