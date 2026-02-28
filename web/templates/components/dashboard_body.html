@@ -169,7 +169,7 @@
         {% set gap_pct = 0.5 %}
         <svg class="donut-svg" viewBox="0 0 200 200" aria-label="Spending breakdown donut chart">
           <circle class="donut-track" cx="100" cy="100" r="70"
-                  fill="none" stroke-width="18"/>
+                  fill="none" stroke-width="24"/>
           {% set ns = namespace(offset=0) %}
           {% for cat in top_cats %}
             {% set arc = (cat.donut_pct - gap_pct) / 100 * circumference if cat.donut_pct > gap_pct else 0 %}
@@ -180,11 +180,11 @@
                       cx="100" cy="100" r="70"
                       fill="none"
                       stroke="{{ colors[loop.index0 % (colors|length)] }}"
-                      stroke-width="18"
+                      stroke-width="24"
                       stroke-dasharray="{{ arc }} {{ circumference }}"
                       stroke-dashoffset="{{ -ns.offset }}"
                       stroke-linecap="butt">
-                <title>{{ cat.name }}: {{ fmt_cents(cat.total_cents) }} ({{ cat.donut_pct }}%)</title>
+                <title>{{ cat.name }}: {{ fmt_dollars(cat.total_cents) }} ({{ cat.donut_pct }}%)</title>
               </circle>
             </a>
             {% endif %}
@@ -196,17 +196,17 @@
                     cx="100" cy="100" r="70"
                     fill="none"
                     stroke="var(--text-muted)"
-                    stroke-width="18"
+                    stroke-width="24"
                     stroke-dasharray="{{ other_arc }} {{ circumference }}"
                     stroke-dashoffset="{{ -ns.offset }}"
                     stroke-linecap="butt">
-              <title>Other: {{ fmt_cents(other_cents) }} ({{ other_pct }}%)</title>
+              <title>Other: {{ fmt_dollars(other_cents) }} ({{ other_pct }}%)</title>
             </circle>
           {% endif %}
         </svg>
         <div class="donut-center">
           <div class="donut-center-label">Total</div>
-          <div class="donut-center-value">{{ fmt_cents(spend_cents) }}</div>
+          <div class="donut-center-value">{{ fmt_dollars(spend_cents) }}</div>
         </div>
       </div>
 
@@ -225,7 +225,7 @@
               </div>
             </div>
             <div class="rpt-cat-right">
-              <div class="rpt-cat-amount">{{ fmt_cents(cat.total_cents) }}</div>
+              <div class="rpt-cat-amount">{{ fmt_dollars(cat.total_cents) }}</div>
             </div>
             <div class="rpt-cat-pct">{{ cat.donut_pct }}%</div>
             <div class="rpt-cat-chevron">&#8250;</div>
@@ -240,7 +240,7 @@
               </div>
             </div>
             <div class="rpt-cat-right">
-              <div class="rpt-cat-amount">{{ fmt_cents(other_cents) }}</div>
+              <div class="rpt-cat-amount">{{ fmt_dollars(other_cents) }}</div>
             </div>
             <div class="rpt-cat-pct">{{ other_pct }}%</div>
             <div class="rpt-cat-chevron" style="visibility:hidden;">&#8250;</div>
@@ -296,7 +296,7 @@
               <div class="rpt-cat-bar-wrap">
                 <div class="rpt-cat-bar" style="width:{{ m.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
               </div>
-              <div class="rpt-cat-amount">{{ fmt_cents(m.total_cents) }}</div>
+              <div class="rpt-cat-amount">{{ fmt_dollars(m.total_cents) }}</div>
             </div>
             <div class="rpt-cat-chevron">&#8250;</div>
           </a>
@@ -325,7 +325,7 @@
             </div>
             <div class="rpt-cat-right">
               <div class="rpt-cat-amount"{% if item.is_income %} style="color:var(--green);"{% endif %}>
-                {{ fmt_cents(item.expected_amount_cents) }}
+                {{ fmt_dollars(item.expected_amount_cents) }}
               </div>
             </div>
             <div class="rpt-cat-chevron">&#8250;</div>

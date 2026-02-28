@@ -1574,8 +1574,8 @@ input[type="checkbox"] {
 /* Old CSS specular highlight — disabled; replaced by SVG overlays */
 .donut-chart-wrap::after { display: none; }
 .donut-chart-wrap--lg {
-    width: 300px;
-    height: 300px;
+    width: 240px;
+    height: 240px;
     margin: 0 auto;
 }
 .donut-svg {
@@ -1599,19 +1599,19 @@ input[type="checkbox"] {
 }
 .donut-slice-link:hover .donut-slice,
 .donut-slice-link.is-hover .donut-slice {
-    stroke-width: 20;
+    stroke-width: 26;
 }
 .donut-slice--other,
 .donut-slice--other:hover {
     cursor: default;
     opacity: 0.45;
-    stroke-width: 18 !important;
+    stroke-width: 24 !important;
 }
 .donut-slice-link {
     outline: none;
 }
 .donut-slice-link:focus-visible .donut-slice {
-    stroke-width: 22;
+    stroke-width: 28;
     opacity: 1;
 }
 .donut-center {
@@ -3303,8 +3303,8 @@ select.input-sm {
         grid-template-columns: 1fr;
     }
     .donut-chart-wrap--lg {
-        width: 200px;
-        height: 200px;
+        width: 180px;
+        height: 180px;
         margin: 0 auto;
     }
 }

@@ -169,9 +169,18 @@ def create_app():
         sign = "\u2212" if cents < 0 else ""
         return f"{sign}${abs(cents) / 100:,.2f}"
 
+    def fmt_dollars(cents):
+        """Format integer cents as whole-dollar string. -8943 → '−$89'"""
+        if cents is None:
+            return "$0"
+        cents = int(cents)
+        sign = "\u2212" if cents < 0 else ""
+        return f"{sign}${abs(cents) / 100:,.0f}"
+
     app.jinja_env.globals["fmt_date"] = fmt_date
     app.jinja_env.globals["fmt_month_short"] = fmt_month_short
     app.jinja_env.globals["fmt_cents"] = fmt_cents
+    app.jinja_env.globals["fmt_dollars"] = fmt_dollars
 
     # ── Register blueprints ──────────────────────────────────────────────────
     from web.routes.dashboard import bp as dashboard_bp
