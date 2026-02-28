@@ -2830,7 +2830,12 @@ select.input-sm {
 /* ── Dashboard compact header bar ──────────────────────────────────────── */
 
 .dhdr-bar {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin-bottom: 0.5rem;
 }
 
 /* Primary single-row layout */
@@ -2838,7 +2843,7 @@ select.input-sm {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 /* ── Date range pill + popover ───────────────────────────────────────── */
@@ -3072,10 +3077,10 @@ select.input-sm {
     width: auto;
 }
 #account.dhdr-pill {
-    width: 200px;
+    width: 150px;
 }
 #sv-select-dashboard.dhdr-pill {
-    width: 170px;
+    width: 130px;
 }
 .dhdr-sv-group {
     flex: 0 0 auto;
@@ -3108,23 +3113,20 @@ select.input-sm {
     background: rgba(0,0,0,0.07);
     color: var(--text);
 }
-:root[data-theme="light"] .dhdr-chips {
-    border-top-color: rgba(0,0,0,0.06);
-}
-
 /* ── Dashboard header: responsive — narrow desktop ───────────────────── */
 @media (max-width: 900px) {
-    #account.dhdr-pill {
-        width: 100%;
+    .dhdr-row {
+        flex-wrap: wrap;
     }
-    #sv-select-dashboard.dhdr-pill {
-        width: 100%;
+    #account.dhdr-pill {
+        flex: 1 1 auto;
+        min-width: 0;
     }
     .dhdr-sv-group {
         flex: 1 1 100%;
     }
     .dhdr-row > .btn-primary {
-        margin-left: 0;
+        margin-left: auto;
     }
     .donut-layout {
         grid-template-columns: 1fr;
@@ -3155,7 +3157,7 @@ select.input-sm {
 /* ── Dashboard header: responsive — mobile ───────────────────────────── */
 @media (max-width: 480px) {
     .dhdr-bar {
-        padding: 0.4rem 0.6rem;
+        padding: 0.4rem 0;
     }
     .dhdr-datepop-wrap {
         flex: 1 1 auto;
@@ -3173,15 +3175,6 @@ select.input-sm {
     }
     .dhdr-sv-group .dhdr-pill {
         flex: 1;
-    }
-    .dhdr-chips .txn-chip {
-        padding: 0.22rem 0.5rem;
-        font-size: 0.72rem;
-    }
-    .dhdr-chips.segmented .txn-chip {
-        padding: 0 0.5rem;
-        font-size: 0.68rem;
-        height: 26px;
     }
 }
 

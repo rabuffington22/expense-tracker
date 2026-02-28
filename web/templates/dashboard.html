@@ -5,14 +5,13 @@
 <h1 class="page-title">{{ entity_display }} Dashboard</h1>
 
 <!-- Filter bar (outside HTMX target — always visible) -->
-<div class="card txn-filter-bar dhdr-bar">
+<div class="dhdr-bar">
   <form id="dash-filter-form"
         hx-get="{{ url_for('dashboard.partial') }}"
         hx-target="#dashboard-body"
         hx-swap="innerHTML"
         hx-push-url="true">
 
-    <!-- Primary control row -->
     <div class="dhdr-row">
       <!-- Hidden date inputs (HTMX form submission) -->
       <input type="hidden" id="start" name="start" value="{{ params.start }}">
@@ -90,26 +89,6 @@
       <button type="button" class="dhdr-clear"
               onclick="window.location.href='{{ url_for('dashboard.index') }}'">Clear</button>
     </div>
-
-    <!-- Toggle chips (subtle second line) -->
-    <div class="dhdr-chips segmented">
-      <label class="txn-chip {% if params.uncategorized == '1' %}active{% endif %}">
-        <input type="checkbox" name="uncategorized" value="1" {% if params.uncategorized == '1' %}checked{% endif %} hidden>
-        <span>Uncategorized</span>
-      </label>
-      <label class="txn-chip {% if params.vendor_breakdown == '1' %}active{% endif %}">
-        <input type="checkbox" name="vendor_breakdown" value="1" {% if params.vendor_breakdown == '1' %}checked{% endif %} hidden>
-        <span>Vendor Needed</span>
-      </label>
-      <label class="txn-chip {% if params.possible_transfer == '1' %}active{% endif %}">
-        <input type="checkbox" name="possible_transfer" value="1" {% if params.possible_transfer == '1' %}checked{% endif %} hidden>
-        <span>Transfers</span>
-      </label>
-      <label class="txn-chip {% if params.include_transfers == '1' %}active{% endif %}">
-        <input type="checkbox" name="include_transfers" value="1" {% if params.include_transfers == '1' %}checked{% endif %} hidden>
-        <span>Include Transfers</span>
-      </label>
-    </div>
   </form>
 </div>
 
@@ -119,33 +98,6 @@
 </div>
 
 <script>
-/* Toggle chip state on click */
-document.querySelectorAll('#dash-filter-form .txn-chip').forEach(function(chip) {
-    chip.addEventListener('click', function() {
-        var input = this.querySelector('input');
-        if (input.type === 'radio') {
-            if (this.classList.contains('active')) {
-                input.checked = false;
-                this.classList.remove('active');
-                document.querySelectorAll('#dash-filter-form input[name="' + input.name + '"]').forEach(function(r) {
-                    r.checked = false;
-                    r.closest('.txn-chip').classList.remove('active');
-                });
-            } else {
-                document.querySelectorAll('#dash-filter-form input[name="' + input.name + '"]').forEach(function(r) {
-                    r.checked = false;
-                    r.closest('.txn-chip').classList.remove('active');
-                });
-                input.checked = true;
-                this.classList.add('active');
-            }
-        } else {
-            input.checked = !input.checked;
-            this.classList.toggle('active', input.checked);
-        }
-    });
-});
-
 /* ── Loading indicator for HTMX swaps ─────────────────────────────────── */
 document.body.addEventListener('htmx:beforeRequest', function(e) {
     if (e.detail.target && e.detail.target.id === 'dashboard-body') {
