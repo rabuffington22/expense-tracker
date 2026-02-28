@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
-    <meta name="color-scheme" content="dark">
     <title>{% block title %}Ledger Oak{% endblock %}</title>
+    <script>
+    /* Theme init — runs before CSS/paint to prevent flash */
+    (function(){
+        var t = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        /* Update theme-color meta for mobile browsers */
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = t === 'light' ? '#f4f6f9' : '#000000';
+    })();
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="{{ url_for('static', filename='htmx.min.js') }}"></script>
     {% block head %}{% endblock %}
@@ -44,6 +53,23 @@
     </div>
 
     <script>
+    /* ── Theme toggle ──────────────────────────────────────────────── */
+    function toggleTheme() {
+        var html = document.documentElement;
+        var current = html.getAttribute('data-theme') || 'dark';
+        var next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        /* Update theme-color meta */
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = next === 'light' ? '#f4f6f9' : '#000000';
+        /* Update toggle button label + icon */
+        var icon = document.querySelector('.theme-toggle-icon');
+        var label = document.querySelector('.theme-toggle-label');
+        if (icon) icon.textContent = next === 'dark' ? '\u263E' : '\u2600\uFE0F';
+        if (label) label.textContent = next === 'dark' ? 'Dark' : 'Light';
+    }
+
     function toggleSidebar() {
         var sidebar = document.querySelector('.sidebar');
         var scrim = document.getElementById('sidebar-scrim');

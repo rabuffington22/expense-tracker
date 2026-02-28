@@ -1,7 +1,18 @@
 /* ── Reset & Base ───────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Theme-invariant tokens */
 :root {
+    --radius:      12px;
+    --radius-lg:   16px;
+    --sidebar-w:   272px;
+    --transition:  0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+}
+
+/* ── Dark Theme ────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
+    color-scheme: dark;
     --bg:          #000000;
     --bg-elevated: #1c1c1e;
     --bg-card:     #1c1c1e;
@@ -19,13 +30,88 @@
     --purple:      #bf5af2;
     --teal:        #64d2ff;
     --yellow:      #ffd60a;
-    --radius:      12px;
-    --radius-lg:   16px;
-    --sidebar-w:   272px;
     --shadow-card: 0 0 0 0.5px rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.35);
     --shadow-popup: 0 8px 32px rgba(0,0,0,0.6);
-    --transition:  0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    /* Intermediate tokens */
+    --hover-bg:          rgba(255,255,255,0.06);
+    --hover-bg-strong:   rgba(255,255,255,0.08);
+    --hover-bg-subtle:   rgba(255,255,255,0.03);
+    --control-bg:        rgba(118,118,128,0.12);
+    --control-bg-hover:  rgba(118,118,128,0.28);
+    --control-bg-faint:  rgba(118,118,128,0.08);
+    --border-light:      rgba(255,255,255,0.15);
+    --border-medium:     rgba(255,255,255,0.18);
+    --chip-bg:           rgba(255,255,255,0.04);
+    --chip-text:         rgba(255,255,255,0.6);
+    --chip-text-hover:   rgba(255,255,255,0.85);
+    --chart-text:        rgba(245,245,247,0.45);
+    --chart-text-label:  rgba(245,245,247,0.4);
+    --chart-text-sel:    rgba(245,245,247,0.7);
+    --chevron-color:     rgba(255,255,255,0.2);
+    --chevron-hover:     rgba(255,255,255,0.5);
+    --scrollbar-thumb:   rgba(255,255,255,0.12);
+    --scrollbar-hover:   rgba(255,255,255,0.2);
+    --mobile-header-bg:  rgba(28,28,30,0.82);
+    --toggle-shadow:     0 1px 4px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(255,255,255,0.05);
+    --total-row-bg:      rgba(255,255,255,0.015);
+    --date-icon-filter:  invert(1);
+    --input-sm-bg:       rgba(255,255,255,0.06);
+    --input-sm-border:   rgba(255,255,255,0.12);
+    --btn-icon-bg:       rgba(255,255,255,0.06);
+    --btn-icon-bg-hover: rgba(255,255,255,0.12);
+    --editing-bg:        rgba(255,255,255,0.03);
+}
+
+/* ── Light Theme ───────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+    color-scheme: light;
+    --bg:          #f4f6f9;
+    --bg-elevated: #ffffff;
+    --bg-card:     #ffffff;
+    --bg-hover:    #ededf0;
+    --bg-tertiary: #e5e5ea;
+    --text:        #1d1d1f;
+    --text-secondary: #6e6e73;
+    --text-muted:  #86868b;
+    --border:      rgba(0,0,0,0.08);
+    --border-opaque: #d2d2d7;
+    --green:       #34c759;
+    --blue:        #007aff;
+    --red:         #ff3b30;
+    --orange:      #ff9500;
+    --purple:      #af52de;
+    --teal:        #5ac8fa;
+    --yellow:      #ffcc00;
+    --shadow-card: 0 0 0 0.5px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-popup: 0 8px 32px rgba(0,0,0,0.15);
+    /* Intermediate tokens */
+    --hover-bg:          rgba(0,0,0,0.04);
+    --hover-bg-strong:   rgba(0,0,0,0.06);
+    --hover-bg-subtle:   rgba(0,0,0,0.02);
+    --control-bg:        rgba(0,0,0,0.04);
+    --control-bg-hover:  rgba(0,0,0,0.08);
+    --control-bg-faint:  rgba(0,0,0,0.04);
+    --border-light:      rgba(0,0,0,0.12);
+    --border-medium:     rgba(0,0,0,0.15);
+    --chip-bg:           rgba(0,0,0,0.03);
+    --chip-text:         rgba(0,0,0,0.5);
+    --chip-text-hover:   rgba(0,0,0,0.75);
+    --chart-text:        rgba(0,0,0,0.4);
+    --chart-text-label:  rgba(0,0,0,0.35);
+    --chart-text-sel:    rgba(0,0,0,0.65);
+    --chevron-color:     rgba(0,0,0,0.2);
+    --chevron-hover:     rgba(0,0,0,0.45);
+    --scrollbar-thumb:   rgba(0,0,0,0.12);
+    --scrollbar-hover:   rgba(0,0,0,0.2);
+    --mobile-header-bg:  rgba(255,255,255,0.82);
+    --toggle-shadow:     0 1px 4px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
+    --total-row-bg:      rgba(0,0,0,0.015);
+    --date-icon-filter:  none;
+    --input-sm-bg:       #ffffff;
+    --input-sm-border:   rgba(0,0,0,0.12);
+    --btn-icon-bg:       rgba(0,0,0,0.04);
+    --btn-icon-bg-hover: rgba(0,0,0,0.08);
+    --editing-bg:        rgba(0,0,0,0.02);
 }
 
 html {
@@ -117,7 +203,7 @@ a:hover { text-decoration: underline; }
     left: 0;
     right: 0;
     height: 52px;
-    background: rgba(28,28,30,0.82);
+    background: var(--mobile-header-bg);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
     border-bottom: 0.5px solid var(--border);
@@ -183,7 +269,7 @@ a:hover { text-decoration: underline; }
 /* ── Entity Toggle (segmented control) ─────────────────────────────────── */
 .entity-toggle {
     display: flex;
-    background: rgba(118,118,128,0.12);
+    background: var(--control-bg);
     border-radius: 9px;
     padding: 2px;
     gap: 0;
@@ -206,9 +292,9 @@ a:hover { text-decoration: underline; }
     -webkit-tap-highlight-color: transparent;
 }
 .entity-toggle button.active {
-    background: var(--bg-hover);
+    background: var(--bg-card);
     color: var(--text);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(255,255,255,0.05);
+    box-shadow: var(--toggle-shadow);
 }
 
 /* ── Sidebar Nav ────────────────────────────────────────────────────────── */
@@ -226,10 +312,10 @@ a:hover { text-decoration: underline; }
     transition: background var(--transition);
     -webkit-tap-highlight-color: transparent;
 }
-.nav-link:hover { background: rgba(255,255,255,0.06); text-decoration: none; }
-.nav-link:active { background: rgba(255,255,255,0.08); }
+.nav-link:hover { background: var(--hover-bg); text-decoration: none; }
+.nav-link:active { background: var(--hover-bg-strong); }
 .nav-link.active {
-    background: rgba(255,255,255,0.08);
+    background: var(--hover-bg-strong);
     font-weight: 600;
 }
 .nav-link:focus-visible,
@@ -248,9 +334,9 @@ a:hover { text-decoration: underline; }
     transition: background var(--transition);
     -webkit-tap-highlight-color: transparent;
 }
-.step-row:hover { background: rgba(255,255,255,0.06); }
-.step-row:active { background: rgba(255,255,255,0.08); }
-.step-row.active { background: rgba(255,255,255,0.08); }
+.step-row:hover { background: var(--hover-bg); }
+.step-row:active { background: var(--hover-bg-strong); }
+.step-row.active { background: var(--hover-bg-strong); }
 .step-num {
     font-weight: 700;
     font-size: 1rem;
@@ -264,6 +350,38 @@ a:hover { text-decoration: underline; }
 }
 .step-row.active .step-label {
     font-weight: 600;
+}
+
+/* ── Theme Toggle ──────────────────────────────────────────────────────── */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+    -webkit-tap-highlight-color: transparent;
+    margin-top: auto;
+}
+.theme-toggle:hover {
+    background: var(--hover-bg);
+    color: var(--text);
+}
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+}
+.theme-toggle-icon {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+    line-height: 1;
 }
 
 /* ── Page Title ─────────────────────────────────────────────────────────── */
@@ -321,10 +439,10 @@ h2 {
 
 .btn-primary { background: var(--blue); }
 .btn-secondary {
-    background: rgba(118,118,128,0.2);
+    background: var(--control-bg);
     color: var(--blue);
 }
-.btn-secondary:hover { background: rgba(118,118,128,0.28); }
+.btn-secondary:hover { background: var(--control-bg-hover); }
 .btn-danger { background: var(--red); }
 .btn-success { background: var(--green); color: #000; }
 .btn-sm { padding: 0.28rem 0.75rem; font-size: 0.8rem; border-radius: 8px; }
@@ -337,7 +455,7 @@ input[type="number"],
 input[type="file"],
 textarea,
 select {
-    background: rgba(118,118,128,0.12);
+    background: var(--control-bg);
     border: 0.5px solid var(--border);
     border-radius: 10px;
     color: var(--text);
@@ -358,10 +476,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 }
 select { cursor: pointer; }
 
-/* Fix date input calendar icon and text on dark backgrounds */
-input[type="date"] { color-scheme: dark; cursor: pointer; }
+/* Date input calendar icon */
+input[type="date"] { cursor: pointer; }
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+    filter: var(--date-icon-filter);
     cursor: pointer;
 }
 label {
@@ -401,7 +519,7 @@ td {
     border-bottom: 0.5px solid var(--border);
     vertical-align: top;
 }
-tr:hover td { background: rgba(255,255,255,0.03); }
+tr:hover td { background: var(--hover-bg-subtle); }
 
 /* ── Metrics ────────────────────────────────────────────────────────────── */
 .metrics-row {
@@ -445,8 +563,8 @@ a.metric-link {
 }
 a.metric-link:hover {
     text-decoration: none;
-    border-color: rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--border-light);
+    background: var(--hover-bg-subtle);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 a.metric-link:focus-visible {
@@ -460,8 +578,8 @@ a.card-link {
 }
 a.card-link:hover {
     text-decoration: none;
-    border-color: rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--border-medium);
+    background: var(--hover-bg-subtle);
 }
 a.card-link:focus-visible {
     outline: 2px solid var(--blue);
@@ -479,14 +597,14 @@ a.cat-drill-link {
 }
 a.cat-drill-link:hover {
     text-decoration: none;
-    background: rgba(255,255,255,0.05);
+    background: var(--hover-bg);
 }
 
 /* ── Progress Bar ───────────────────────────────────────────────────────── */
 .progress-bar {
     width: 100%;
     height: 6px;
-    background: rgba(118,118,128,0.18);
+    background: var(--control-bg);
     border-radius: 3px;
     overflow: hidden;
     margin: 0.5rem 0;
@@ -594,7 +712,7 @@ details > div, details > p { padding: 1rem 1.1rem; }
 .badge-green { background: rgba(48,209,88,0.15); color: var(--green); }
 .badge-blue  { background: rgba(10,132,255,0.15); color: var(--blue); }
 .badge-red   { background: rgba(255,69,58,0.15); color: var(--red); }
-.badge-muted { background: rgba(118,118,128,0.12); color: var(--text-muted); }
+.badge-muted { background: var(--control-bg); color: var(--text-muted); }
 
 /* ── Checkbox ───────────────────────────────────────────────────────────── */
 input[type="checkbox"] {
@@ -672,8 +790,8 @@ input[type="checkbox"] {
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 7px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
 .sidebar::-webkit-scrollbar { width: 0; }
 
 /* ── Utility ────────────────────────────────────────────────────────────── */
@@ -810,7 +928,7 @@ input[type="checkbox"] {
 /* ── Period Segmented Control ────────────────────────────────────── */
 .rpt-period-toggle {
     display: flex;
-    background: rgba(118,118,128,0.12);
+    background: var(--control-bg);
     border-radius: 9px;
     padding: 2px;
     gap: 0;
@@ -835,7 +953,7 @@ input[type="checkbox"] {
 .rpt-period-btn.active {
     background: var(--bg-card);
     color: var(--text);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(255,255,255,0.05);
+    box-shadow: var(--toggle-shadow);
 }
 .rpt-period-btn:focus-visible {
     outline: 2px solid var(--blue);
@@ -921,7 +1039,7 @@ input[type="checkbox"] {
 .chart-value {
     font-size: 0.7rem;
     font-weight: 600;
-    color: rgba(245, 245, 247, 0.45);
+    color: var(--chart-text);
     margin-bottom: 8px;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
@@ -943,13 +1061,13 @@ input[type="checkbox"] {
     min-height: 4px;
 }
 .chart-fill--empty {
-    background: rgba(118, 118, 128, 0.08);
+    background: var(--control-bg-faint);
     border-radius: 7px;
 }
 .chart-label {
     font-size: 0.75rem;
     font-weight: 500;
-    color: rgba(245, 245, 247, 0.4);
+    color: var(--chart-text-label);
     margin-top: 10px;
     letter-spacing: 0.01em;
 }
@@ -1000,7 +1118,7 @@ input[type="checkbox"] {
     font-weight: 700;
 }
 .chart-col--selected .chart-value {
-    color: rgba(245, 245, 247, 0.7);
+    color: var(--chart-text-sel);
 }
 
 /* Categories section */
@@ -1013,7 +1131,6 @@ input[type="checkbox"] {
     align-items: center;
     margin-bottom: 0.8rem;
 }
-/* Category list */
 /* Category list — Apple Wallet style with horizontal fill bars */
 .rpt-cat-list {
     background: var(--bg-card);
@@ -1035,14 +1152,14 @@ input[type="checkbox"] {
     gap: 0.5rem;
 }
 .rpt-cat-row:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--hover-bg);
     text-decoration: none;
 }
 .rpt-cat-row:hover .rpt-cat-chevron {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--chevron-hover);
 }
 .rpt-cat-row:active {
-    background: rgba(255,255,255,0.06);
+    background: var(--hover-bg);
 }
 .rpt-cat-row:last-child {
     border-bottom: none;
@@ -1097,7 +1214,7 @@ input[type="checkbox"] {
 .rpt-cat-bar-wrap {
     flex: 1;
     height: 8px;
-    background: rgba(118, 118, 128, 0.08);
+    background: var(--control-bg-faint);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -1118,7 +1235,7 @@ input[type="checkbox"] {
 }
 .rpt-cat-chevron {
     font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--chevron-color);
     width: 0.7rem;
     text-align: center;
     line-height: 1;
@@ -1126,13 +1243,13 @@ input[type="checkbox"] {
     transition: color var(--transition);
 }
 .rpt-cat-total {
-    background: rgba(255, 255, 255, 0.015);
+    background: var(--total-row-bg);
     cursor: default;
     padding-top: 0.85rem;
     padding-bottom: 0.85rem;
 }
 .rpt-cat-total:hover {
-    background: rgba(255, 255, 255, 0.015);
+    background: var(--total-row-bg);
 }
 .rpt-cat-total .rpt-cat-name {
     font-weight: 700;
@@ -1164,7 +1281,7 @@ input[type="checkbox"] {
 .rpt-drill-badge {
     font-size: 0.72rem;
     color: var(--text-muted);
-    background: rgba(118,118,128,0.12);
+    background: var(--control-bg);
     padding: 0.2rem 0.7rem;
     border-radius: 10px;
     font-weight: 500;
@@ -1350,15 +1467,14 @@ input[type="checkbox"] {
 .input-sm {
     padding: 0.35rem 0.5rem;
     font-size: 0.82rem;
-    background: rgba(255,255,255,0.06);
-    border: 0.5px solid rgba(255,255,255,0.12);
+    background: var(--input-sm-bg);
+    border: 0.5px solid var(--input-sm-border);
     border-radius: 8px;
-    color: #fff;
-    color-scheme: dark;
+    color: var(--text);
 }
 .input-sm:focus {
     outline: none;
-    border-color: var(--accent, #0a84ff);
+    border-color: var(--accent, var(--blue));
     box-shadow: 0 0 0 2px rgba(10,132,255,0.25);
 }
 select.input-sm {
@@ -1384,16 +1500,16 @@ select.input-sm {
     padding: 0.3rem 0.7rem;
     font-size: 0.78rem;
     border-radius: 100px;
-    border: 0.5px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.04);
-    color: rgba(255,255,255,0.6);
+    border: 0.5px solid var(--border-light);
+    background: var(--chip-bg);
+    color: var(--chip-text);
     cursor: pointer;
     user-select: none;
     transition: all 0.15s ease;
 }
 .txn-chip:hover {
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.85);
+    background: var(--hover-bg);
+    color: var(--chip-text-hover);
 }
 .txn-chip.active {
     background: rgba(10,132,255,0.18);
@@ -1427,7 +1543,7 @@ select.input-sm {
     height: 28px;
     border-radius: 8px;
     border: none;
-    background: rgba(255,255,255,0.06);
+    background: var(--btn-icon-bg);
     color: var(--text-secondary);
     font-size: 0.85rem;
     cursor: pointer;
@@ -1436,7 +1552,7 @@ select.input-sm {
     line-height: 1;
 }
 .btn-icon:hover {
-    background: rgba(255,255,255,0.12);
+    background: var(--btn-icon-bg-hover);
     color: var(--text);
 }
 .btn-icon:focus-visible {
@@ -1446,10 +1562,10 @@ select.input-sm {
 
 /* Edit mode highlight (PR 3) */
 .txn-editing {
-    background: rgba(255,255,255,0.03);
+    background: var(--editing-bg);
 }
 .txn-editing td {
-    background: rgba(255,255,255,0.03);
+    background: var(--editing-bg);
 }
 
 /* Inline edit form layout */
