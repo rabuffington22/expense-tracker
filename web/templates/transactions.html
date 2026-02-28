@@ -91,22 +91,29 @@
             onclick="svUpdate('transactions')" disabled style="opacity:0.4;">
       Update
     </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-rename-btn-transactions"
-            onclick="svRename('transactions')" disabled style="opacity:0.4;">
-      Rename
-    </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-default-btn-transactions"
-            onclick="svSetDefault('transactions')" disabled style="opacity:0.4;">
-      Make Default
-    </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-cleardefault-btn-transactions"
-            onclick="svClearDefault('transactions')" style="display:none;">
-      Clear Default
-    </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-delete-btn-transactions"
-            onclick="svDelete('transactions')" disabled style="opacity:0.4;">
-      Delete
-    </button>
+    <div class="sv-menu-wrap">
+      <button type="button" class="btn btn-secondary btn-sm sv-menu-trigger"
+              id="sv-more-btn-transactions"
+              onclick="svToggleMenu('transactions')"
+              aria-haspopup="true" aria-expanded="false"
+              disabled style="opacity:0.4;">⋯</button>
+      <div class="sv-menu" id="sv-menu-transactions" role="menu">
+        <button type="button" role="menuitem" class="sv-menu-item"
+                id="sv-rename-btn-transactions"
+                onclick="svRename('transactions'); svCloseMenus();">Rename</button>
+        <button type="button" role="menuitem" class="sv-menu-item"
+                id="sv-default-btn-transactions"
+                onclick="svSetDefault('transactions'); svCloseMenus();">Make Default</button>
+        <button type="button" role="menuitem" class="sv-menu-item"
+                id="sv-cleardefault-btn-transactions"
+                onclick="svClearDefault('transactions'); svCloseMenus();"
+                style="display:none;">Clear Default</button>
+        <hr class="sv-menu-divider">
+        <button type="button" role="menuitem" class="sv-menu-item sv-menu-item--danger"
+                id="sv-delete-btn-transactions"
+                onclick="svDelete('transactions'); svCloseMenus();">Delete</button>
+      </div>
+    </div>
   </div>
 </div>
 
