@@ -275,6 +275,16 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #25: Dashboard KPI band (Provider-style)
+Replaced 5 separate KPI tiles with a single Provider-style band row.
+
+1. **KPI band row** — `.kpi-band` + `.kpi-band-row` 5-column grid replaces `.metrics-row` of individual `.metric` cards. One calm container, equal columns, vertical dividers via `border-right`.
+2. **Cell anatomy** — `.kpi-cell-label` (tiny uppercase), `.kpi-cell-value` (2.25rem/800 weight), `.kpi-cell-sub` (muted subtext). Color classes: `.kpi-pos`, `.kpi-neg`, `.kpi-warn`.
+3. **Drill links preserved** — Spend → expense, Income → income, Needs Review → uncategorized. Net and Latest remain static (no link).
+4. **Subtext line** — Spend shows txn count, Net shows "period net", Needs Review shows "uncategorized", Latest shows "last activity".
+5. **Responsive** — 5 cols → 2 cols at ≤900px → 1 col at ≤480px with border-top dividers.
+6. **Old styles untouched** — `.metric`, `.metrics-row` CSS kept for other pages; just stopped using them in dashboard.
+
 ### 2026-02-28 — PR #24: Design language shift — Provider Performance style
 Banded groups, segmented controls, chart wells, and Provider-style typography across the dashboard.
 
