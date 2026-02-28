@@ -708,16 +708,22 @@ h2 {
 :root[data-theme="light"] .kpi-cell:nth-child(n+3) { border-top-color: rgba(0,0,0,0.06); }
 
 /* ── KPI band (Provider parity) ──────────────────────────────────────── */
-.kpi-band--provider { padding-top: 1.0rem; }
-.kpi-band--provider .kpi-band-row {
-    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.0));
-    border-radius: 0;
+.kpi-band--provider {
+    padding-top: 0.85rem;
 }
-:root[data-theme="light"] .kpi-band--provider .kpi-band-row {
-    background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.0));
+/* Keep band outline + label but flatten interior */
+.kpi-band--provider.band {
+    background: transparent;
+    box-shadow: none;
+}
+.kpi-band--provider .kpi-band-row {
+    background: transparent;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
 }
 .kpi-band--provider .kpi-cell {
-    padding: 1.35rem 1.45rem 1.25rem;
+    padding: 1.0rem 1.1rem 0.9rem;
     border-right: none;
 }
 .kpi-band--provider .kpi-cell-label {
@@ -725,44 +731,46 @@ h2 {
     letter-spacing: 0.18em;
     font-weight: 700;
     opacity: 0.70;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.55rem;
 }
 .kpi-band--provider .kpi-cell-value {
-    font-size: 2.55rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-size: 1.65rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
     line-height: 1.0;
     white-space: nowrap;
 }
 .kpi-band--provider .kpi-cell-sub {
-    margin-top: 0.70rem;
+    margin-top: 0.45rem;
     font-size: 0.70rem;
     opacity: 0.60;
 }
-/* Latest should not overpower currency */
+/* Latest value slightly smaller */
 .kpi-band--provider .kpi-cell--latest .kpi-cell-value {
-    font-size: 2.25rem;
-    font-weight: 800;
+    font-size: 1.55rem;
+    font-weight: 500;
 }
-/* Hover should be nearly imperceptible */
+/* Hover barely perceptible */
 .kpi-band--provider .kpi-cell:hover {
     background: rgba(255,255,255,0.02);
 }
 :root[data-theme="light"] .kpi-band--provider .kpi-cell:hover {
     background: rgba(0,0,0,0.015);
 }
-.kpi-band--provider .kpi-cell--static:hover { background: transparent; }
+.kpi-band--provider .kpi-cell--static:hover {
+    background: transparent;
+}
 
 /* Provider KPI responsive */
 @media (max-width: 900px) {
-    .kpi-band--provider .kpi-cell { padding: 1.15rem 1.15rem 1.00rem; }
-    .kpi-band--provider .kpi-cell-value { font-size: 2.25rem; }
-    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 2.00rem; }
+    .kpi-band--provider .kpi-cell { padding: 0.85rem 0.95rem 0.80rem; }
+    .kpi-band--provider .kpi-cell-value { font-size: 1.50rem; }
+    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 1.40rem; }
 }
 @media (max-width: 480px) {
-    .kpi-band--provider .kpi-cell { padding: 1.00rem 1.00rem 0.90rem; }
-    .kpi-band--provider .kpi-cell-value { font-size: 2.00rem; }
-    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 1.85rem; }
+    .kpi-band--provider .kpi-cell { padding: 0.75rem 0.85rem 0.70rem; }
+    .kpi-band--provider .kpi-cell-value { font-size: 1.35rem; }
+    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 1.30rem; }
 }
 
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */

@@ -721,6 +721,21 @@ def _build_upcoming(patterns, horizon_days=30):
     return items[:6]
 
 
+def _format_period_label(params):
+    """Human-readable label for the current date range (KPI band badge)."""
+    try:
+        s = datetime.strptime(params["start"], "%Y-%m-%d")
+        e = datetime.strptime(params["end"], "%Y-%m-%d")
+    except (ValueError, KeyError):
+        return ""
+    now = datetime.now()
+    if s.year == e.year and s.month == e.month:
+        suffix = "" if s.year == now.year else f", {s.year}"
+        return f"{s.strftime('%b')} {s.day}\u2009\u2013\u2009{e.day}{suffix}"
+    else:
+        return f"{s.strftime('%b')} {s.day}\u2009\u2013\u2009{e.strftime('%b')} {e.day}"
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @bp.route("/")
@@ -738,7 +753,8 @@ def index():
         data = _query_dashboard(conn, params)
     finally:
         conn.close()
-    return render_template("dashboard.html", **data, params=params)
+    return render_template("dashboard.html", **data, params=params,
+                           period_label=_format_period_label(params))
 
 
 @bp.route("/dashboard/partial")
@@ -749,4 +765,5 @@ def partial():
         data = _query_dashboard(conn, params)
     finally:
         conn.close()
-    return render_template("components/dashboard_body.html", **data, params=params)
+    return render_template("components/dashboard_body.html", **data, params=params,
+                           period_label=_format_period_label(params))

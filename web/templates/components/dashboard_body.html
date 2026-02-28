@@ -14,7 +14,7 @@
 
 <!-- ── KPI band (Provider-style) ────────────────────────────────────────── -->
 <div class="band kpi-band kpi-band--provider">
-  <div class="band-label">Overview</div>
+  {% if period_label %}<div class="band-label">{{ period_label }}</div>{% endif %}
   <div class="kpi-band-row">
     <!-- 1) Spend / Expenses -->
     <a class="kpi-cell" href="{{ drill_url(type='expense') }}">
