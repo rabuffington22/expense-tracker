@@ -85,7 +85,11 @@
       <option value="" selected disabled>Saved Views</option>
     </select>
     <button type="button" class="btn btn-secondary btn-sm" onclick="svSave('transactions')">
-      Save View
+      Save As…
+    </button>
+    <button type="button" class="btn btn-secondary btn-sm" id="sv-update-btn-transactions"
+            onclick="svUpdate('transactions')" disabled style="opacity:0.4;">
+      Update
     </button>
     <button type="button" class="btn btn-secondary btn-sm" id="sv-rename-btn-transactions"
             onclick="svRename('transactions')" disabled style="opacity:0.4;">

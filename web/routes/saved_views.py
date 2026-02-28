@@ -179,6 +179,32 @@ def clear_default():
     return jsonify({"cleared": True, "page": page})
 
 
+@bp.route("/update", methods=["POST"])
+def update_view():
+    view_id = request.form.get("id", "")
+    page = request.form.get("page", "")
+    query_string = request.form.get("query_string", "")
+
+    if not view_id or page not in _VALID_PAGES:
+        return jsonify({"error": "bad request"}), 400
+
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT id, page FROM saved_views WHERE id = ?", (int(view_id),)
+        ).fetchone()
+        if not row or row["page"] != page:
+            return jsonify({"error": "not found"}), 404
+        conn.execute(
+            "UPDATE saved_views SET query_string = ? WHERE id = ?",
+            (query_string, int(view_id)),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return jsonify({"updated": True, "id": int(view_id)})
+
+
 @bp.route("/get")
 def get_view():
     view_id = request.args.get("id", "")

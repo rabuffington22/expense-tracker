@@ -134,8 +134,30 @@
             .then(function(views) { _svPopulate(page, views); });
     }
 
+    function svUpdate(page) {
+        var sel = document.getElementById('sv-select-' + page);
+        if (!sel || !sel.value) return;
+        var qs = window.location.search.replace(/^\?/, '');
+        var form = new FormData();
+        form.append('id', sel.value);
+        form.append('page', page);
+        form.append('query_string', qs);
+        var selectedId = sel.value;
+        fetch('/saved-views/update', {method: 'POST', body: form})
+            .then(function(r) { return r.json(); })
+            .then(function() {
+                fetch('/saved-views/list?page=' + encodeURIComponent(page))
+                    .then(function(r) { return r.json(); })
+                    .then(function(views) {
+                        _svPopulate(page, views);
+                        var sel2 = document.getElementById('sv-select-' + page);
+                        if (sel2) sel2.value = selectedId;
+                    });
+            });
+    }
+
     function _svEnableActions(page, enabled) {
-        ['sv-rename-btn-', 'sv-default-btn-', 'sv-delete-btn-'].forEach(function(prefix) {
+        ['sv-update-btn-', 'sv-rename-btn-', 'sv-default-btn-', 'sv-delete-btn-'].forEach(function(prefix) {
             var btn = document.getElementById(prefix + page);
             if (btn) { btn.disabled = !enabled; btn.style.opacity = enabled ? '1' : '0.4'; }
         });
