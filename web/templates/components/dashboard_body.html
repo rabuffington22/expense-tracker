@@ -52,20 +52,6 @@
   </div>
 </div>{# end band Overview #}
 
-<!-- ── Sync Health ─────────────────────────────────────────────────────── -->
-{% if plaid_sync_items %}
-<div class="sync-row">
-  <span class="sync-row-label">Sync</span>
-  {% for item in plaid_sync_items %}
-  <span class="sync-row-item">
-    <span class="sync-row-inst">{{ item.institution }}</span>
-    <span class="sync-row-time{% if item.is_stale %} sync-health-stale{% endif %}">{{ item.last_synced_text }}</span>
-  </span>
-  {% endfor %}
-  <a href="{{ url_for('plaid.index') }}" class="sync-row-manage">Manage &rarr;</a>
-</div>
-{% endif %}
-
 <!-- ── Activity band: Spend Trend + Review Inbox + Insights ─────────────── -->
 <div class="outline-band">
 <div class="band-label">Activity</div>
