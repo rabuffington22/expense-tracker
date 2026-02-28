@@ -1593,13 +1593,12 @@ input[type="checkbox"] {
 /* Donut slices (flat, clean) */
 .donut-slice {
     stroke-linecap: butt;
-    opacity: 0.9;
-    transition: opacity 120ms ease, stroke-width 120ms ease;
+    opacity: 1;
+    transition: stroke-width 120ms ease;
     cursor: pointer;
 }
 .donut-slice-link:hover .donut-slice,
 .donut-slice-link.is-hover .donut-slice {
-    opacity: 1;
     stroke-width: 20;
 }
 .donut-slice--other,
