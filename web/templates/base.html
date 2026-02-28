@@ -72,5 +72,87 @@
         });
     });
     </script>
+
+    <script>
+    /* ── Saved Views ─────────────────────────────────────────────── */
+    /* All view names are inserted via textContent (never innerHTML)  */
+    /* to make XSS structurally impossible.                           */
+    var _SV_PAGES = {dashboard: '/', transactions: '/transactions/'};
+
+    function _svPopulate(page, views) {
+        /* Build <option> elements from JSON array using DOM nodes. */
+        var sel = document.getElementById('sv-select-' + page);
+        if (!sel) return;
+        while (sel.firstChild) sel.removeChild(sel.firstChild);
+        var ph = document.createElement('option');
+        ph.value = '';
+        ph.disabled = true;
+        ph.selected = true;
+        ph.textContent = 'Saved Views';
+        sel.appendChild(ph);
+        views.forEach(function(v) {
+            var opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.name;   /* safe: textContent, not innerHTML */
+            sel.appendChild(opt);
+        });
+    }
+
+    function _svFetchAndPopulate(page) {
+        fetch('/saved-views/list?page=' + encodeURIComponent(page))
+            .then(function(r) { return r.json(); })
+            .then(function(views) { _svPopulate(page, views); });
+    }
+
+    /* Populate dropdowns on page load (only fires if element exists) */
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('sv-select-dashboard'))
+            _svFetchAndPopulate('dashboard');
+        if (document.getElementById('sv-select-transactions'))
+            _svFetchAndPopulate('transactions');
+    });
+
+    function svSave(page) {
+        var name = prompt('Name this view:');
+        if (!name || !name.trim()) return;
+        var qs = window.location.search.replace(/^\?/, '');
+        var form = new FormData();
+        form.append('name', name.trim());
+        form.append('page', page);
+        form.append('query_string', qs);
+        fetch('/saved-views/create', {method: 'POST', body: form})
+            .then(function(r) { return r.json(); })
+            .then(function(views) { _svPopulate(page, views); });
+    }
+
+    function svLoad(page, sel) {
+        var id = sel.value;
+        if (!id) return;
+        var del = document.getElementById('sv-delete-btn-' + page);
+        if (del) { del.disabled = false; del.style.opacity = '1'; }
+        fetch('/saved-views/get?id=' + encodeURIComponent(id))
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                var base = _SV_PAGES[d.page] || '/';
+                window.location.href = d.query_string ? base + '?' + d.query_string : base;
+            });
+    }
+
+    function svDelete(page) {
+        var sel = document.getElementById('sv-select-' + page);
+        if (!sel || !sel.value) return;
+        if (!confirm('Delete this saved view?')) return;
+        var form = new FormData();
+        form.append('id', sel.value);
+        form.append('page', page);
+        fetch('/saved-views/delete', {method: 'POST', body: form})
+            .then(function(r) { return r.json(); })
+            .then(function(views) {
+                _svPopulate(page, views);
+                var del = document.getElementById('sv-delete-btn-' + page);
+                if (del) { del.disabled = true; del.style.opacity = '0.4'; }
+            });
+    }
+    </script>
 </body>
 </html>
