@@ -42,18 +42,8 @@
     {% endfor %}
 
     <!-- Theme toggle (pushed to bottom via margin-top:auto) -->
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark theme">
+    <button type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span class="theme-toggle-icon">☾</span>
         <span class="theme-toggle-label">Dark</span>
     </button>
-    <script>
-    /* Sync toggle label with current theme on load */
-    (function(){
-        var t = document.documentElement.getAttribute('data-theme') || 'dark';
-        var icon = document.querySelector('.theme-toggle-icon');
-        var label = document.querySelector('.theme-toggle-label');
-        if (icon) icon.textContent = t === 'dark' ? '\u263E' : '\u2600\uFE0F';
-        if (label) label.textContent = t === 'dark' ? 'Dark' : 'Light';
-    })();
-    </script>
 </nav>

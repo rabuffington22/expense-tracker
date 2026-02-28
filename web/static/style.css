@@ -82,8 +82,8 @@
     --purple:      #af52de;
     --teal:        #5ac8fa;
     --yellow:      #ffcc00;
-    --shadow-card: 0 0 0 0.5px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06);
-    --shadow-popup: 0 8px 32px rgba(0,0,0,0.15);
+    --shadow-card: 0 0 0 0.5px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-popup: 0 8px 32px rgba(0,0,0,0.18);
     /* Intermediate tokens */
     --hover-bg:          rgba(0,0,0,0.04);
     --hover-bg-strong:   rgba(0,0,0,0.06);
