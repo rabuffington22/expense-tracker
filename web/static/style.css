@@ -710,17 +710,16 @@ h2 {
 /* ── KPI band (Provider parity) ──────────────────────────────────────── */
 .kpi-band--provider { padding-top: 1.0rem; }
 .kpi-band--provider .kpi-band-row {
-    background: transparent;
+    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.0));
     border-radius: 0;
 }
+:root[data-theme="light"] .kpi-band--provider .kpi-band-row {
+    background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.0));
+}
 .kpi-band--provider .kpi-cell {
-    padding: 1.45rem 1.60rem 1.35rem;
-    border-right: 1px solid rgba(255,255,255,0.055);
+    padding: 1.35rem 1.45rem 1.25rem;
+    border-right: none;
 }
-:root[data-theme="light"] .kpi-band--provider .kpi-cell {
-    border-right: 1px solid rgba(0,0,0,0.045);
-}
-.kpi-band--provider .kpi-cell:last-child { border-right: none; }
 .kpi-band--provider .kpi-cell-label {
     font-size: 0.58rem;
     letter-spacing: 0.18em;
@@ -729,10 +728,11 @@ h2 {
     margin-bottom: 0.75rem;
 }
 .kpi-band--provider .kpi-cell-value {
-    font-size: 2.85rem;
+    font-size: 2.55rem;
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.0;
+    white-space: nowrap;
 }
 .kpi-band--provider .kpi-cell-sub {
     margin-top: 0.70rem;
@@ -741,7 +741,7 @@ h2 {
 }
 /* Latest should not overpower currency */
 .kpi-band--provider .kpi-cell--latest .kpi-cell-value {
-    font-size: 2.35rem;
+    font-size: 2.25rem;
     font-weight: 800;
 }
 /* Hover should be nearly imperceptible */
@@ -755,14 +755,14 @@ h2 {
 
 /* Provider KPI responsive */
 @media (max-width: 900px) {
-    .kpi-band--provider .kpi-cell { padding: 1.25rem 1.25rem 1.10rem; }
-    .kpi-band--provider .kpi-cell-value { font-size: 2.45rem; }
-    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 2.15rem; }
+    .kpi-band--provider .kpi-cell { padding: 1.15rem 1.15rem 1.00rem; }
+    .kpi-band--provider .kpi-cell-value { font-size: 2.25rem; }
+    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 2.00rem; }
 }
 @media (max-width: 480px) {
-    .kpi-band--provider .kpi-cell { padding: 1.10rem 1.10rem 1.00rem; }
-    .kpi-band--provider .kpi-cell-value { font-size: 2.20rem; }
-    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 2.00rem; }
+    .kpi-band--provider .kpi-cell { padding: 1.00rem 1.00rem 0.90rem; }
+    .kpi-band--provider .kpi-cell-value { font-size: 2.00rem; }
+    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 1.85rem; }
 }
 
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */
