@@ -2788,10 +2788,10 @@ select.input-sm {
 
 /* KPI period label: plain text (no pill) */
 .band-label {
-    background: transparent !important;
+    background: var(--bg) !important;
     border: none !important;
     box-shadow: none !important;
-    padding: 0 !important;
+    padding: 0 0.3rem !important;
     border-radius: 0 !important;
     display: inline-block;
     color: var(--text-secondary);
