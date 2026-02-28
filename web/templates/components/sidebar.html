@@ -1,31 +1,36 @@
 <nav class="sidebar" aria-label="Main navigation">
-    <div class="sidebar-wordmark">
+    <!-- Brand -->
+    <div class="sb-brand">
         <div class="sidebar-title" style="color: {{ accent }};">LEDGER OAK</div>
         <div class="sidebar-subtitle">Expense Tracker</div>
     </div>
 
+    <div class="sb-divider"></div>
+
     <!-- Entity Toggle -->
-    <div class="entity-toggle">
+    <div class="sb-entity">
         {% for ent in entities %}
-        <form method="post" action="{{ url_for('set_entity') }}" style="flex:1;display:flex;">
+        <form method="post" action="{{ url_for('set_entity') }}">
             <input type="hidden" name="entity" value="{{ ent }}">
             <input type="hidden" name="redirect" value="{{ request.path }}">
-            <button type="submit" class="{% if entity_display == ent %}active{% endif %}"
-                    style="flex:1;">{{ ent }}</button>
+            <button type="submit" class="{% if entity_display == ent %}active{% endif %}">{{ ent }}</button>
         </form>
         {% endfor %}
     </div>
 
-    <hr>
+    <div class="sb-divider"></div>
 
-    <!-- Nav links -->
-    <a href="{{ url_for('dashboard.index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
-    <a href="{{ url_for('transactions.index') }}" class="nav-link {% if request.path.startswith('/transactions') %}active{% endif %}">Transactions</a>
-    <a href="{{ url_for('reports.index') }}" class="nav-link {% if request.path.startswith('/reports') %}active{% endif %}">Reports</a>
-    <a href="{{ url_for('plaid.index') }}" class="nav-link {% if request.path.startswith('/plaid') %}active{% endif %}">Connected Accounts</a>
+    <!-- Primary nav -->
+    <div class="sb-nav">
+        <a href="{{ url_for('dashboard.index') }}" class="sb-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
+        <a href="{{ url_for('transactions.index') }}" class="sb-link {% if request.path.startswith('/transactions') %}active{% endif %}">Transactions</a>
+        <a href="{{ url_for('reports.index') }}" class="sb-link {% if request.path.startswith('/reports') %}active{% endif %}">Reports</a>
+        <a href="{{ url_for('plaid.index') }}" class="sb-link {% if request.path.startswith('/plaid') %}active{% endif %}">Connected Accounts</a>
+    </div>
 
-    <hr>
+    <div class="sb-divider"></div>
 
+    <!-- Workflows (collapsible) -->
     {% set steps = [
         ('upload.index', '1', 'Upload from Bank/CC', '/upload'),
         ('vendors.index', '2', 'Upload from Vendors', '/vendors'),
@@ -34,12 +39,21 @@
         ('categorize.index', '5', 'Categorize Remaining', '/categorize'),
     ] %}
 
-    {% for route, num, label, path in steps %}
-    <a href="{{ url_for(route) }}" class="step-row {% if request.path == path or request.path.startswith(path + '/') %}active{% endif %}" style="text-decoration:none;">
-        <span class="step-num" style="color: {{ accent }};">{{ num }}</span>
-        <span class="step-label">{{ label }}</span>
-    </a>
-    {% endfor %}
+    <div class="sb-workflows">
+        <button type="button" class="sb-workflows-toggle" id="sb-wf-toggle"
+                aria-expanded="false" aria-controls="sb-wf-body">
+            <span>Workflows</span>
+            <span class="sb-wf-chevron">&#x25B8;</span>
+        </button>
+        <div id="sb-wf-body" class="sb-workflows-body">
+            {% for route, num, label, path in steps %}
+            <a href="{{ url_for(route) }}" class="step-row {% if request.path == path or request.path.startswith(path + '/') %}active{% endif %}" style="text-decoration:none;">
+                <span class="step-num" style="color: {{ accent }};">{{ num }}</span>
+                <span class="step-label">{{ label }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
 
     <!-- Theme toggle (pushed to bottom via margin-top:auto) -->
     <button type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">

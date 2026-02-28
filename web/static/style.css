@@ -268,7 +268,146 @@ a:hover { text-decoration: underline; }
     letter-spacing: 0.42em;
 }
 
-/* ── Entity Toggle (segmented control) ─────────────────────────────────── */
+/* ── Sidebar Redesign (sb-* prefix) ────────────────────────────────────── */
+.sb-brand {
+    padding: 0 0.35rem;
+    margin-bottom: 0.1rem;
+}
+.sb-brand .sidebar-title {
+    font-size: 1.3rem;
+}
+.sb-brand .sidebar-subtitle {
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+}
+.sb-divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 0.6rem 0;
+}
+.sb-entity {
+    display: flex;
+    background: var(--control-bg);
+    border-radius: 12px;
+    padding: 3px;
+    gap: 0;
+    margin-bottom: 0.15rem;
+}
+.sb-entity form {
+    flex: 1;
+    display: flex;
+}
+.sb-entity button {
+    flex: 1;
+    text-align: center;
+    height: 34px;
+    padding: 0 0.5rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    background: transparent;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+.sb-entity button.active {
+    background: var(--bg-card);
+    color: var(--text);
+    box-shadow: var(--toggle-shadow);
+}
+.sb-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+.sb-link {
+    display: block;
+    position: relative;
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.84rem;
+    transition: background var(--transition);
+    -webkit-tap-highlight-color: transparent;
+}
+.sb-link:hover {
+    background: var(--hover-bg);
+    text-decoration: none;
+}
+.sb-link:active {
+    background: var(--hover-bg-strong);
+}
+.sb-link.active {
+    background: var(--hover-bg-strong);
+    font-weight: 600;
+}
+.sb-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--blue);
+}
+.sb-link:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+    border-radius: 8px;
+}
+.sb-workflows {
+    display: flex;
+    flex-direction: column;
+}
+.sb-workflows-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.4rem 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 600;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+    -webkit-tap-highlight-color: transparent;
+}
+.sb-workflows-toggle:hover {
+    background: var(--hover-bg);
+    color: var(--text);
+}
+.sb-workflows-toggle:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+}
+.sb-wf-chevron {
+    font-size: 0.7rem;
+    transition: transform 200ms ease;
+    display: inline-block;
+}
+.sb-workflows-toggle.is-open .sb-wf-chevron {
+    transform: rotate(90deg);
+}
+.sb-workflows-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    padding-top: 0.2rem;
+}
+
+/* ── Entity Toggle (segmented control) — legacy, kept for compat ───────── */
 .entity-toggle {
     display: flex;
     background: var(--control-bg);

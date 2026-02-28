@@ -102,6 +102,28 @@
             if (window.innerWidth <= 768) closeSidebar();
         });
     });
+
+    /* ── Workflows collapse/expand ──────────────────────────────── */
+    (function() {
+        var toggle = document.getElementById('sb-wf-toggle');
+        var body = document.getElementById('sb-wf-body');
+        if (!toggle || !body) return;
+        var LS_KEY = 'sidebar_workflows_open';
+        var open = localStorage.getItem(LS_KEY) === '1';
+
+        function apply(isOpen) {
+            body.style.display = isOpen ? '' : 'none';
+            toggle.setAttribute('aria-expanded', isOpen);
+            toggle.classList.toggle('is-open', isOpen);
+        }
+        apply(open);
+
+        toggle.addEventListener('click', function() {
+            open = !open;
+            apply(open);
+            localStorage.setItem(LS_KEY, open ? '1' : '0');
+        });
+    })();
     </script>
 
     <script>

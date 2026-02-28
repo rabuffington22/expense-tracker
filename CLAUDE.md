@@ -275,6 +275,16 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #23: Sidebar redesign (Apple-ish) + Workflows collapsed by default
+Calmer sidebar with clear hierarchy, collapsible workflows, Apple-ish styling.
+
+1. **Section grouping** — Sidebar split into Brand, Entity toggle, Primary nav (4 links), collapsible Workflows (5 steps), Theme toggle. New `.sb-*` class prefix.
+2. **Segmented control polish** — Taller (34px), larger radius (12px), CSS-only form styling (no inline styles).
+3. **Active indicator** — Primary nav active state uses 3px blue left bar (`::before` pseudo-element) + soft background.
+4. **Collapsible Workflows** — "Workflows" header with rotating chevron, collapsed by default, state persisted via `localStorage("sidebar_workflows_open")`.
+5. **Calmer brand** — Smaller title (1.3rem vs 1.55rem), subtle `.sb-divider` elements replace `<hr>` tags.
+6. **Accessibility** — `aria-expanded` + `aria-controls` on toggle button, focus-visible rings on all elements.
+
 ### 2026-02-28 — PR #21: Donut layout sizing + Apple-ish polish
 Bigger donut, tighter legend, softer slices, bidirectional hover linking.
 
