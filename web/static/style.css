@@ -773,6 +773,20 @@ h2 {
     .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 1.30rem; }
 }
 
+/* ── KPI band centered modifier ───────────────────────────────────────── */
+.kpi-band--centered .kpi-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.kpi-band--centered .kpi-cell-label,
+.kpi-band--centered .kpi-cell-value,
+.kpi-band--centered .kpi-cell-sub {
+    width: 100%;
+    text-align: center;
+}
+
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */
 .segmented {
     display: inline-flex;
