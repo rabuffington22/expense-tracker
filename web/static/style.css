@@ -1359,29 +1359,29 @@ input[type="checkbox"] {
 }
 .donut-track {
     opacity: 1;
-    stroke-width: 30;
+    stroke-width: 22;
 }
 :root[data-theme="dark"] .donut-track {
-    stroke: rgba(255,255,255,0.06);
+    stroke: rgba(255,255,255,0.05);
 }
 .donut-slice {
-    stroke-linecap: round;
-    opacity: 0.94;
-    transition: opacity 140ms ease, stroke-width 140ms ease, filter 140ms ease, transform 140ms ease;
-    transform-origin: 50% 50%;
+    stroke-linecap: butt;
+    stroke-width: 22;
+    opacity: 0.92;
+    transition: opacity 140ms ease;
     cursor: pointer;
 }
-.donut-slice-link:hover .donut-slice {
+.donut-slice-link:hover .donut-slice,
+.donut-slice-link.is-hover .donut-slice {
     opacity: 1;
-    stroke-width: 32;
-    filter: url(#donutShadow);
+    filter: none;
 }
 .donut-slice--other,
 .donut-slice--other:hover {
     cursor: default;
     filter: none !important;
-    stroke-width: 30 !important;
-    opacity: 0.75;
+    stroke-width: 22 !important;
+    opacity: 0.65;
 }
 .donut-slice-link {
     outline: none;
@@ -1468,11 +1468,7 @@ input[type="checkbox"] {
 }
 
 /* ── Donut: slice ↔ legend hover linking ───────────────────────────────── */
-.donut-slice-link.is-hover .donut-slice {
-    opacity: 1;
-    stroke-width: 32;
-    filter: url(#donutShadow);
-}
+/* Hover state (both direct + JS-linked) handled in .donut-slice block above */
 .donut-legend-list .rpt-cat-row.is-hover {
     background: var(--hover-bg);
 }
@@ -2105,7 +2101,7 @@ tr.is-selected > td:first-child {
 
 /* Donut track — light theme */
 :root[data-theme="light"] .donut-track {
-    stroke: rgba(0,0,0,0.05);
+    stroke: rgba(0,0,0,0.04);
 }
 
 /* Select arrow — darker stroke for contrast on white */
