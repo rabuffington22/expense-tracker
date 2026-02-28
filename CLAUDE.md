@@ -275,6 +275,15 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #28: KPI band typography + remove dividers
+Fixed value collision and removed hard vertical dividers.
+
+1. **Smaller values** — `2.55rem` (was `2.85rem`), Latest `2.25rem` (was `2.35rem`). `white-space: nowrap` prevents wrapping.
+2. **No dividers** — Removed `border-right` entirely from `.kpi-cell`. Provider KPI bands have no visible dividers between metrics.
+3. **Subtle gradient** — Row gets a faint top-to-transparent gradient for soft visual cohesion instead of hard lines.
+4. **Tighter padding** — `1.35rem 1.45rem 1.25rem` (was `1.45rem 1.60rem 1.35rem`).
+5. **Responsive** — Scaled down font sizes at 900px (`2.25rem`) and 480px (`2.00rem`).
+
 ### 2026-02-28 — PR #27: Provider KPI parity (tall, airy, tracked labels)
 Tuned KPI band to match Provider dashboard vertical rhythm and typography.
 
