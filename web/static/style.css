@@ -1583,51 +1583,38 @@ input[type="checkbox"] {
     height: 100%;
     transform: rotate(-90deg);
 }
+/* Donut track (background ring) */
 .donut-track {
-    opacity: 1;
-    stroke-width: 22;
+    stroke: rgba(255,255,255,0.04);
 }
-:root[data-theme="dark"] .donut-track {
-    stroke: rgba(255,255,255,0.05);
+:root[data-theme="light"] .donut-track {
+    stroke: rgba(0,0,0,0.04);
 }
+/* Donut slices (flat, clean) */
 .donut-slice {
-    stroke-linecap: butt;
-    stroke-width: 22;
-    opacity: 0.95;
-    transition: opacity 140ms ease;
+    stroke-linecap: round;
+    opacity: 0.9;
+    transition: opacity 120ms ease, stroke-width 120ms ease;
     cursor: pointer;
 }
 .donut-slice-link:hover .donut-slice,
 .donut-slice-link.is-hover .donut-slice {
     opacity: 1;
-    filter: none;
+    stroke-width: 20;
 }
 .donut-slice--other,
 .donut-slice--other:hover {
     cursor: default;
-    filter: none !important;
-    stroke-width: 22 !important;
-    opacity: 0.65;
+    opacity: 0.45;
+    stroke-width: 18 !important;
 }
 .donut-slice-link {
     outline: none;
 }
 .donut-slice-link:focus-visible .donut-slice {
-    stroke-width: 34;
-    filter: brightness(1.2);
+    stroke-width: 22;
+    opacity: 1;
 }
-/* Donut 3D extrusion (shifted ring behind for visible thickness) */
-.donut-slice--extrude {
-    pointer-events: none;
-    opacity: 0.35;
-}
-:root[data-theme="light"] .donut-slice--extrude { opacity: 0.22; }
-/* Donut 3D overlays (SVG rings) */
-.donut-overlay { pointer-events: none; }
-:root[data-theme="dark"] .donut-overlay--highlight { opacity: 0.22; }
-:root[data-theme="dark"] .donut-overlay--shade     { opacity: 0.28; }
-:root[data-theme="light"] .donut-overlay--highlight { opacity: 0.18; }
-:root[data-theme="light"] .donut-overlay--shade     { opacity: 0.16; }
 .donut-center {
     position: absolute;
     top: 50%;

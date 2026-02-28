@@ -166,58 +166,10 @@
       <!-- SVG Donut -->
       <div class="donut-chart-wrap donut-chart-wrap--lg">
         {% set circumference = 439.82 %}
-        {% set gap_pct = 0.25 %}
+        {% set gap_pct = 0.5 %}
         <svg class="donut-svg" viewBox="0 0 200 200" aria-label="Spending breakdown donut chart">
-          <defs>
-            <filter id="donutRingShadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.12)"/>
-            </filter>
-            <radialGradient id="donutHighlight" cx="30%" cy="22%" r="70%">
-              <stop offset="0%" stop-color="rgba(255,255,255,0.55)"/>
-              <stop offset="35%" stop-color="rgba(255,255,255,0.18)"/>
-              <stop offset="65%" stop-color="rgba(255,255,255,0.0)"/>
-            </radialGradient>
-            <radialGradient id="donutInnerShade" cx="50%" cy="55%" r="70%">
-              <stop offset="0%" stop-color="rgba(0,0,0,0.0)"/>
-              <stop offset="55%" stop-color="rgba(0,0,0,0.0)"/>
-              <stop offset="100%" stop-color="rgba(0,0,0,0.28)"/>
-            </radialGradient>
-          </defs>
-          {# Extrusion: same arcs shifted down for visible "thickness" #}
-          <g class="donut-extrude" transform="translate(0, 5)">
           <circle class="donut-track" cx="100" cy="100" r="70"
-                  fill="none" stroke="var(--control-bg-faint)" stroke-width="22" opacity="0.3"/>
-          {% set ns = namespace(offset=0) %}
-          {% for cat in top_cats %}
-            {% set arc = (cat.donut_pct - gap_pct) / 100 * circumference if cat.donut_pct > gap_pct else 0 %}
-            {% if arc > 0 %}
-              <circle class="donut-slice donut-slice--extrude"
-                      cx="100" cy="100" r="70"
-                      fill="none"
-                      stroke="{{ colors[loop.index0 % (colors|length)] }}"
-                      stroke-width="22"
-                      stroke-dasharray="{{ arc }} {{ circumference }}"
-                      stroke-dashoffset="{{ -ns.offset }}"
-                      stroke-linecap="butt"/>
-            {% endif %}
-            {% set ns.offset = ns.offset + cat.donut_pct / 100 * circumference %}
-          {% endfor %}
-          {% if other_pct > gap_pct %}
-            {% set other_arc = (other_pct - gap_pct) / 100 * circumference %}
-            <circle class="donut-slice donut-slice--extrude"
-                    cx="100" cy="100" r="70"
-                    fill="none"
-                    stroke="var(--text-muted)"
-                    stroke-width="22"
-                    stroke-dasharray="{{ other_arc }} {{ circumference }}"
-                    stroke-dashoffset="{{ -ns.offset }}"
-                    stroke-linecap="butt"/>
-          {% endif %}
-          </g>
-          {# Main ring (on top) #}
-          <g class="donut-ring" filter="url(#donutRingShadow)">
-          <circle class="donut-track" cx="100" cy="100" r="70"
-                  fill="none" stroke="var(--control-bg-faint)" stroke-width="22"/>
+                  fill="none" stroke-width="18"/>
           {% set ns = namespace(offset=0) %}
           {% for cat in top_cats %}
             {% set arc = (cat.donut_pct - gap_pct) / 100 * circumference if cat.donut_pct > gap_pct else 0 %}
@@ -228,10 +180,10 @@
                       cx="100" cy="100" r="70"
                       fill="none"
                       stroke="{{ colors[loop.index0 % (colors|length)] }}"
-                      stroke-width="22"
+                      stroke-width="18"
                       stroke-dasharray="{{ arc }} {{ circumference }}"
                       stroke-dashoffset="{{ -ns.offset }}"
-                      stroke-linecap="butt">
+                      stroke-linecap="round">
                 <title>{{ cat.name }}: {{ fmt_cents(cat.total_cents) }} ({{ cat.donut_pct }}%)</title>
               </circle>
             </a>
@@ -244,20 +196,13 @@
                     cx="100" cy="100" r="70"
                     fill="none"
                     stroke="var(--text-muted)"
-                    stroke-width="22"
+                    stroke-width="18"
                     stroke-dasharray="{{ other_arc }} {{ circumference }}"
                     stroke-dashoffset="{{ -ns.offset }}"
-                    stroke-linecap="butt">
+                    stroke-linecap="round">
               <title>Other: {{ fmt_cents(other_cents) }} ({{ other_pct }}%)</title>
             </circle>
           {% endif %}
-          </g>
-          <circle class="donut-overlay donut-overlay--highlight"
-                  cx="100" cy="100" r="70" fill="none"
-                  stroke="url(#donutHighlight)" stroke-width="22"/>
-          <circle class="donut-overlay donut-overlay--shade"
-                  cx="100" cy="100" r="70" fill="none"
-                  stroke="url(#donutInnerShade)" stroke-width="22"/>
         </svg>
         <div class="donut-center">
           <div class="donut-center-label">Total</div>
