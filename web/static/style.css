@@ -80,6 +80,8 @@
     --glass-border:      rgba(255,255,255,0.14);
     --glass-shadow:      0 14px 40px rgba(0,0,0,0.45);
     --glass-highlight:   rgba(255,255,255,0.10);
+    --glass-hover:       rgba(255,255,255,0.06);
+    --focus-ring:        0 0 0 3px rgba(10,132,255,0.35);
 }
 
 /* ── Light Theme ───────────────────────────────────────────────────────── */
@@ -149,6 +151,8 @@
     --glass-border:      rgba(0,0,0,0.10);
     --glass-shadow:      0 14px 40px rgba(0,0,0,0.14);
     --glass-highlight:   rgba(255,255,255,0.70);
+    --glass-hover:       rgba(0,0,0,0.04);
+    --focus-ring:        0 0 0 3px rgba(0,122,255,0.25);
 }
 
 html {
@@ -402,8 +406,8 @@ a:hover { text-decoration: underline; }
     background: var(--blue);
 }
 .sb-link:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--focus-ring);
     border-radius: 8px;
 }
 .sb-workflows {
@@ -1160,8 +1164,8 @@ a.metric-link:hover {
     box-shadow: var(--shadow-hover);
 }
 a.metric-link:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--focus-ring);
 }
 a.card-link {
     text-decoration: none;
@@ -1174,8 +1178,8 @@ a.card-link:hover {
     background: var(--hover-bg-subtle);
 }
 a.card-link:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--focus-ring);
 }
 a.cat-drill-link {
     display: flex;
@@ -1927,8 +1931,8 @@ input[type="checkbox"] {
     border-bottom: none;
 }
 .rpt-cat-row:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--focus-ring);
 }
 .rpt-cat-left {
     display: flex;
@@ -2089,7 +2093,7 @@ input[type="checkbox"] {
 
 /* ── Keyboard navigation — selected row ─────────────────────────────────── */
 tr.is-selected > td {
-    background: var(--hover-bg);
+    background: var(--glass-hover);
 }
 tr.is-selected > td:first-child {
     box-shadow: inset 3px 0 0 var(--blue);
@@ -2236,10 +2240,12 @@ tr.is-selected > td:first-child {
     top: calc(100% + 4px);
     right: 0;
     min-width: 160px;
-    background: var(--bg-elevated);
-    border: 0.5px solid var(--border);
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    box-shadow: var(--shadow-popup);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.2);
     padding: 4px 0;
     z-index: 20;
 }
@@ -2260,11 +2266,11 @@ tr.is-selected > td:first-child {
     transition: background 0.1s;
 }
 .sv-menu-item:hover {
-    background: var(--hover-bg);
+    background: var(--glass-hover);
 }
 .sv-menu-item:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--focus-ring);
 }
 .sv-menu-item--danger {
     color: var(--red);
@@ -2275,12 +2281,13 @@ tr.is-selected > td:first-child {
 .sv-menu-divider {
     height: 0;
     border: none;
-    border-top: 0.5px solid var(--border);
+    border-top: 1px solid rgba(255,255,255,0.10);
     margin: 4px 0;
 }
-:root[data-theme="light"] .sv-menu {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 0 0 0.5px rgba(0,0,0,0.06);
+:root[data-theme="light"] .sv-menu-divider {
+    border-top: 1px solid rgba(0,0,0,0.08);
 }
+/* Light sv-menu inherits glass tokens — no override needed */
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 
@@ -2669,10 +2676,12 @@ select.input-sm {
     top: calc(100% + 4px);
     left: 0;
     min-width: 220px;
-    background: var(--bg-elevated);
-    border: 0.5px solid var(--border);
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    box-shadow: var(--shadow-popup);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.2);
     padding: 4px 0;
     z-index: 25;
 }
@@ -2693,11 +2702,11 @@ select.input-sm {
     transition: background 0.1s;
 }
 .dhdr-pop-item:hover {
-    background: var(--hover-bg);
+    background: var(--glass-hover);
 }
 .dhdr-pop-item:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--focus-ring);
 }
 .dhdr-pop-item.active {
     color: var(--blue);
@@ -2706,8 +2715,11 @@ select.input-sm {
 .dhdr-pop-divider {
     height: 0;
     border: none;
-    border-top: 0.5px solid var(--border);
+    border-top: 1px solid rgba(255,255,255,0.10);
     margin: 4px 0;
+}
+:root[data-theme="light"] .dhdr-pop-divider {
+    border-top: 1px solid rgba(0,0,0,0.08);
 }
 .dhdr-pop-custom {
     display: flex;
@@ -2885,9 +2897,7 @@ select.input-sm {
 }
 
 /* ── Dashboard header: light-theme overrides ─────────────────────────── */
-:root[data-theme="light"] .dhdr-popover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 0 0 0.5px rgba(0,0,0,0.06);
-}
+/* Light dhdr-popover inherits glass tokens — no override needed */
 :root[data-theme="light"] .dhdr-pop-date {
     border: 1px solid var(--input-sm-border);
     color-scheme: light;
@@ -3002,12 +3012,21 @@ select.input-sm {
 }
 
 /* ── Provider-ish header controls: ghost pills (dashboard only) ─────────── */
+/* Ghost glass header controls */
 .dhdr-row button#dhdr-datebtn,
 .dhdr-row select#account.dhdr-pill,
 .dhdr-row select#sv-select-dashboard.dhdr-pill,
 .dhdr-row .dhdr-sv-group .dhdr-sv-btn {
-    background: transparent !important;
+    background: rgba(255,255,255,0.02) !important;
     box-shadow: none !important;
+    backdrop-filter: blur(calc(var(--blur) * 0.55)) saturate(1.2);
+    -webkit-backdrop-filter: blur(calc(var(--blur) * 0.55)) saturate(1.2);
+}
+:root[data-theme="light"] .dhdr-row button#dhdr-datebtn,
+:root[data-theme="light"] .dhdr-row select#account.dhdr-pill,
+:root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill,
+:root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn {
+    background: rgba(255,255,255,0.35) !important;
 }
 /* subtle outline */
 :root[data-theme="dark"] .dhdr-row button#dhdr-datebtn,
@@ -3022,24 +3041,24 @@ select.input-sm {
 :root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn {
     border-color: rgba(0,0,0,0.10) !important;
 }
-/* minimal hover */
+/* ghost glass hover */
 :root[data-theme="dark"] .dhdr-row button#dhdr-datebtn:hover,
 :root[data-theme="dark"] .dhdr-row select#account.dhdr-pill:hover,
 :root[data-theme="dark"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover,
 :root[data-theme="dark"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn:hover {
-    background: rgba(255,255,255,0.04) !important;
+    background: rgba(255,255,255,0.06) !important;
 }
 :root[data-theme="light"] .dhdr-row button#dhdr-datebtn:hover,
 :root[data-theme="light"] .dhdr-row select#account.dhdr-pill:hover,
 :root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover,
 :root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn:hover {
-    background: rgba(0,0,0,0.03) !important;
+    background: rgba(255,255,255,0.55) !important;
 }
-/* keep focus-visible ring */
+/* Apple-like focus ring */
 .dhdr-row button#dhdr-datebtn:focus-visible,
 .dhdr-row select#account.dhdr-pill:focus-visible,
 .dhdr-row select#sv-select-dashboard.dhdr-pill:focus-visible,
 .dhdr-row .dhdr-sv-group .dhdr-sv-btn:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--focus-ring) !important;
 }
