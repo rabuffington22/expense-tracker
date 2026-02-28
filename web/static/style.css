@@ -641,6 +641,46 @@ h2 {
     margin-top: 0;
 }
 
+/* ── Outline band (no card surface — just a hairline border) ───────────── */
+.outline-band {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-xl);
+    box-shadow: none;
+    padding: 1rem 1.1rem;
+    position: relative;
+}
+:root[data-theme="light"] .outline-band {
+    border-color: rgba(0,0,0,0.08);
+}
+.outline-band .band-label {
+    background: var(--bg);
+    border: 1px solid rgba(255,255,255,0.10);
+}
+:root[data-theme="light"] .outline-band .band-label {
+    background: var(--bg);
+    border-color: rgba(0,0,0,0.08);
+}
+.outline-band .band-head { margin-bottom: 0.75rem; }
+.outline-band .band-divider { background: rgba(255,255,255,0.10); }
+:root[data-theme="light"] .outline-band .band-divider { background: rgba(0,0,0,0.08); }
+.outline-band .rpt-cat-list {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+.outline-band .rpt-cat-row { border-bottom: 1px solid rgba(255,255,255,0.08); }
+:root[data-theme="light"] .outline-band .rpt-cat-row { border-bottom-color: rgba(0,0,0,0.06); }
+.outline-band .rpt-cat-row:last-child { border-bottom: none; }
+.outline-band .donut-layout { justify-items: center; }
+.outline-band .donut-legend { width: 100%; }
+.outline-band .donut-legend-list {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
 /* ── Flat band interior components ─────────────────────────────────────── */
 .band-head {
     display: flex;
@@ -1527,6 +1567,12 @@ input[type="checkbox"] {
     stroke-width: 34;
     filter: brightness(1.2);
 }
+/* Donut 3D extrusion (shifted ring behind for visible thickness) */
+.donut-slice--extrude {
+    pointer-events: none;
+    opacity: 0.35;
+}
+:root[data-theme="light"] .donut-slice--extrude { opacity: 0.22; }
 /* Donut 3D overlays (SVG rings) */
 .donut-overlay { pointer-events: none; }
 :root[data-theme="dark"] .donut-overlay--highlight { opacity: 0.22; }
