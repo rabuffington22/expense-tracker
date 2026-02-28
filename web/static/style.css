@@ -2997,7 +2997,7 @@ select.input-sm {
     position: relative;
 }
 .dhdr-datebtn {
-    min-width: 128px;
+    min-width: 100px;
     text-align: center;
     cursor: pointer;
     white-space: nowrap;
@@ -3175,22 +3175,31 @@ select.input-sm {
     min-width: 0.25rem;
 }
 
-/* ── Clear link-button ───────────────────────────────────────────────── */
+/* ── Clear button (outlined, matches pill style) ────────────────────── */
 .dhdr-clear {
-    background: none;
-    border: none;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.10);
     color: var(--text-secondary);
-    font-size: 0.82rem;
+    font-size: 0.68rem;
     font-family: inherit;
     font-weight: 500;
     cursor: pointer;
-    padding: 0.25rem 0.4rem;
-    border-radius: 6px;
-    transition: color 0.15s ease;
+    height: 26px;
+    padding: 0 0.6rem;
+    border-radius: 7px;
+    transition: background 0.12s, color 0.12s;
     white-space: nowrap;
+    line-height: 24px;
 }
 .dhdr-clear:hover {
+    background: rgba(255,255,255,0.04);
     color: var(--text);
+}
+:root[data-theme="light"] .dhdr-clear {
+    border-color: rgba(0,0,0,0.08);
+}
+:root[data-theme="light"] .dhdr-clear:hover {
+    background: rgba(0,0,0,0.03);
 }
 .dhdr-clear:focus-visible {
     outline: 2px solid var(--blue);
@@ -3224,13 +3233,14 @@ select.input-sm {
     width: auto;
 }
 #account.dhdr-pill {
-    width: 150px;
+    width: 115px;
 }
 #sv-select-dashboard.dhdr-pill {
-    width: 130px;
+    width: 105px;
 }
 .dhdr-sv-group {
     flex: 0 0 auto;
+    margin-left: 1.2rem;
 }
 .dhdr-row > .btn-primary {
     margin-left: auto;
@@ -3242,9 +3252,6 @@ select.input-sm {
 }
 .dhdr-clear {
     margin-left: 0.35rem;
-    height: 26px;
-    font-size: 0.68rem;
-    line-height: 26px;
 }
 
 /* ── Dashboard header: light-theme overrides ─────────────────────────── */
