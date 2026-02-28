@@ -188,7 +188,7 @@
     }
 
     function _svEnableActions(page, enabled) {
-        ['sv-update-btn-', 'sv-rename-btn-', 'sv-default-btn-', 'sv-delete-btn-'].forEach(function(prefix) {
+        ['sv-update-btn-', 'sv-more-btn-'].forEach(function(prefix) {
             var btn = document.getElementById(prefix + page);
             if (btn) { btn.disabled = !enabled; btn.style.opacity = enabled ? '1' : '0.4'; }
         });
@@ -284,6 +284,29 @@
                 _svEnableActions(page, false);
             });
     }
+
+    /* ── Saved Views overflow menu ─────────────────────────────────── */
+    function svToggleMenu(page) {
+        var menu = document.getElementById('sv-menu-' + page);
+        var trigger = document.getElementById('sv-more-btn-' + page);
+        if (!menu) return;
+        var open = menu.classList.toggle('open');
+        trigger.setAttribute('aria-expanded', open);
+    }
+    function svCloseMenus() {
+        document.querySelectorAll('.sv-menu.open').forEach(function(m) {
+            m.classList.remove('open');
+        });
+        document.querySelectorAll('.sv-menu-trigger[aria-expanded="true"]').forEach(function(b) {
+            b.setAttribute('aria-expanded', 'false');
+        });
+    }
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.sv-menu-wrap')) svCloseMenus();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') svCloseMenus();
+    });
     </script>
 </body>
 </html>

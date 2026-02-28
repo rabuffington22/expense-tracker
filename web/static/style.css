@@ -1431,6 +1431,69 @@ input[type="checkbox"] {
     border-top: 1px solid rgba(0,0,0,0.06);
 }
 
+/* ── Saved Views overflow menu ──────────────────────────────────────────── */
+.sv-menu-wrap {
+    position: relative;
+}
+.sv-menu-trigger {
+    min-width: 34px;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+}
+.sv-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 160px;
+    background: var(--bg-elevated);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-popup);
+    padding: 4px 0;
+    z-index: 20;
+}
+.sv-menu.open {
+    display: block;
+}
+.sv-menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.82rem;
+    font-family: inherit;
+    color: var(--text);
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.sv-menu-item:hover {
+    background: var(--hover-bg);
+}
+.sv-menu-item:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+}
+.sv-menu-item--danger {
+    color: var(--red);
+}
+.sv-menu-item--danger:hover {
+    background: rgba(255,69,58,0.08);
+}
+.sv-menu-divider {
+    height: 0;
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 4px 0;
+}
+:root[data-theme="light"] .sv-menu {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 0 0 0.5px rgba(0,0,0,0.06);
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 
 /* Tablet */

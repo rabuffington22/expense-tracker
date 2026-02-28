@@ -70,22 +70,29 @@
             onclick="svUpdate('dashboard')" disabled style="opacity:0.4;">
       Update
     </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-rename-btn-dashboard"
-            onclick="svRename('dashboard')" disabled style="opacity:0.4;">
-      Rename
-    </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-default-btn-dashboard"
-            onclick="svSetDefault('dashboard')" disabled style="opacity:0.4;">
-      Make Default
-    </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-cleardefault-btn-dashboard"
-            onclick="svClearDefault('dashboard')" style="display:none;">
-      Clear Default
-    </button>
-    <button type="button" class="btn btn-secondary btn-sm" id="sv-delete-btn-dashboard"
-            onclick="svDelete('dashboard')" disabled style="opacity:0.4;">
-      Delete
-    </button>
+    <div class="sv-menu-wrap">
+      <button type="button" class="btn btn-secondary btn-sm sv-menu-trigger"
+              id="sv-more-btn-dashboard"
+              onclick="svToggleMenu('dashboard')"
+              aria-haspopup="true" aria-expanded="false"
+              disabled style="opacity:0.4;">⋯</button>
+      <div class="sv-menu" id="sv-menu-dashboard" role="menu">
+        <button type="button" role="menuitem" class="sv-menu-item"
+                id="sv-rename-btn-dashboard"
+                onclick="svRename('dashboard'); svCloseMenus();">Rename</button>
+        <button type="button" role="menuitem" class="sv-menu-item"
+                id="sv-default-btn-dashboard"
+                onclick="svSetDefault('dashboard'); svCloseMenus();">Make Default</button>
+        <button type="button" role="menuitem" class="sv-menu-item"
+                id="sv-cleardefault-btn-dashboard"
+                onclick="svClearDefault('dashboard'); svCloseMenus();"
+                style="display:none;">Clear Default</button>
+        <hr class="sv-menu-divider">
+        <button type="button" role="menuitem" class="sv-menu-item sv-menu-item--danger"
+                id="sv-delete-btn-dashboard"
+                onclick="svDelete('dashboard'); svCloseMenus();">Delete</button>
+      </div>
+    </div>
   </div>
 </div>
 
