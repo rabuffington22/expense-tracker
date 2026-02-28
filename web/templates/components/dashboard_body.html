@@ -183,7 +183,7 @@
                       stroke-width="18"
                       stroke-dasharray="{{ arc }} {{ circumference }}"
                       stroke-dashoffset="{{ -ns.offset }}"
-                      stroke-linecap="round">
+                      stroke-linecap="butt">
                 <title>{{ cat.name }}: {{ fmt_cents(cat.total_cents) }} ({{ cat.donut_pct }}%)</title>
               </circle>
             </a>
@@ -199,7 +199,7 @@
                     stroke-width="18"
                     stroke-dasharray="{{ other_arc }} {{ circumference }}"
                     stroke-dashoffset="{{ -ns.offset }}"
-                    stroke-linecap="round">
+                    stroke-linecap="butt">
               <title>Other: {{ fmt_cents(other_cents) }} ({{ other_pct }}%)</title>
             </circle>
           {% endif %}
