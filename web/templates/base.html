@@ -83,6 +83,7 @@
         /* Build <option> elements from JSON array using DOM nodes. */
         var sel = document.getElementById('sv-select-' + page);
         if (!sel) return;
+        var hasDefault = false;
         while (sel.firstChild) sel.removeChild(sel.firstChild);
         var ph = document.createElement('option');
         ph.value = '';
@@ -93,9 +94,14 @@
         views.forEach(function(v) {
             var opt = document.createElement('option');
             opt.value = v.id;
-            opt.textContent = v.name;   /* safe: textContent, not innerHTML */
+            /* Prefix default view with star — safe: textContent, not innerHTML */
+            opt.textContent = v.is_default ? '\u2605 ' + v.name : v.name;
             sel.appendChild(opt);
+            if (v.is_default) hasDefault = true;
         });
+        /* Show/hide Clear Default button */
+        var clearBtn = document.getElementById('sv-cleardefault-btn-' + page);
+        if (clearBtn) clearBtn.style.display = hasDefault ? '' : 'none';
     }
 
     function _svFetchAndPopulate(page) {
@@ -126,7 +132,7 @@
     }
 
     function _svEnableActions(page, enabled) {
-        ['sv-rename-btn-', 'sv-delete-btn-'].forEach(function(prefix) {
+        ['sv-rename-btn-', 'sv-default-btn-', 'sv-delete-btn-'].forEach(function(prefix) {
             var btn = document.getElementById(prefix + page);
             if (btn) { btn.disabled = !enabled; btn.style.opacity = enabled ? '1' : '0.4'; }
         });
@@ -175,6 +181,36 @@
             })
             .catch(function(err) {
                 alert(err.message);
+            });
+    }
+
+    function svSetDefault(page) {
+        var sel = document.getElementById('sv-select-' + page);
+        if (!sel || !sel.value) return;
+        var form = new FormData();
+        form.append('id', sel.value);
+        form.append('page', page);
+        var selectedId = sel.value;
+        fetch('/saved-views/set-default', {method: 'POST', body: form})
+            .then(function(r) { return r.json(); })
+            .then(function() {
+                fetch('/saved-views/list?page=' + encodeURIComponent(page))
+                    .then(function(r) { return r.json(); })
+                    .then(function(views) {
+                        _svPopulate(page, views);
+                        var sel2 = document.getElementById('sv-select-' + page);
+                        if (sel2) sel2.value = selectedId;
+                    });
+            });
+    }
+
+    function svClearDefault(page) {
+        var form = new FormData();
+        form.append('page', page);
+        fetch('/saved-views/clear-default', {method: 'POST', body: form})
+            .then(function(r) { return r.json(); })
+            .then(function() {
+                _svFetchAndPopulate(page);
             });
     }
 

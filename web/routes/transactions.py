@@ -4,7 +4,7 @@ import re
 import math
 from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, request, g, jsonify
+from flask import Blueprint, render_template, request, g, jsonify, redirect
 from markupsafe import escape
 
 from core.db import get_connection
@@ -251,6 +251,13 @@ def _query_transactions(entity_key, params, page):
 @bp.route("/")
 def index():
     """Full page render."""
+    # Auto-apply default saved view when no query params present
+    if not request.query_string:
+        from web.routes.saved_views import get_default_qs
+        default_qs = get_default_qs(g.entity_key, "transactions")
+        if default_qs:
+            return redirect(f"/transactions/?{default_qs}")
+
     params = _get_filter_params()
     page = _parse_page()
 

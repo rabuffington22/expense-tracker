@@ -4,7 +4,7 @@ import calendar
 import statistics
 from datetime import datetime, timedelta, timezone
 
-from flask import Blueprint, render_template, request, g, url_for
+from flask import Blueprint, render_template, request, g, url_for, redirect
 
 from core.db import get_connection
 from core.amazon import get_order_counts
@@ -542,6 +542,13 @@ def _build_upcoming(patterns, horizon_days=30):
 
 @bp.route("/")
 def index():
+    # Auto-apply default saved view when no query params present
+    if not request.query_string:
+        from web.routes.saved_views import get_default_qs
+        default_qs = get_default_qs(g.entity_key, "dashboard")
+        if default_qs:
+            return redirect(f"/?{default_qs}")
+
     params = _apply_date_defaults(_get_filter_params())
     conn = get_connection(g.entity_key)
     try:

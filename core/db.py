@@ -362,6 +362,10 @@ CREATE TABLE IF NOT EXISTS saved_views (
 );
 """
 
+_MIGRATION_23 = """
+ALTER TABLE saved_views ADD COLUMN is_default INTEGER NOT NULL DEFAULT 0;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -385,6 +389,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (20, _MIGRATION_20),
     (21, _MIGRATION_21),
     (22, _MIGRATION_22),
+    (23, _MIGRATION_23),
 ]
 
 _DEFAULT_CATEGORIES = [
