@@ -617,6 +617,95 @@ def main() -> None:
             resp = client.get("/")
             _check(resp.status_code == 200, "default: GET / should not redirect after clear-default")
 
+            # ── 9r. Update (Save As vs Update) ────────────────────────
+            # Clean slate
+            for ek in ("personal", "company"):
+                conn_sv = get_connection(ek)
+                conn_sv.execute("DELETE FROM saved_views")
+                conn_sv.commit()
+                conn_sv.close()
+            client.set_cookie("entity", "Personal")
+
+            # 9r. Create view, then update its querystring
+            resp = client.post("/saved-views/create", data={
+                "name": "Updatable",
+                "page": "dashboard",
+                "query_string": "start=2024-01-01&end=2024-01-31",
+            })
+            _check(resp.status_code == 200, "update: create Updatable")
+            views = _json.loads(resp.get_data(as_text=True))
+            upd_id = [v for v in views if v["name"] == "Updatable"][0]["id"]
+
+            # Set it as default to verify update doesn't change is_default
+            client.post("/saved-views/set-default", data={
+                "id": str(upd_id),
+                "page": "dashboard",
+            })
+
+            # 9r-i. Update querystring
+            resp = client.post("/saved-views/update", data={
+                "id": str(upd_id),
+                "page": "dashboard",
+                "query_string": "start=2025-06-01&end=2025-06-30&account=Checking",
+            })
+            _check(resp.status_code == 200, "update: expected 200")
+            data = _json.loads(resp.get_data(as_text=True))
+            _check(data["updated"] is True, "update: response should have updated=true")
+            _check(data["id"] == upd_id, "update: response id should match")
+
+            # 9r-ii. GET view and verify querystring changed
+            resp = client.get(f"/saved-views/get?id={upd_id}")
+            data = _json.loads(resp.get_data(as_text=True))
+            _check(
+                data["query_string"] == "start=2025-06-01&end=2025-06-30&account=Checking",
+                "update: querystring should reflect new value",
+            )
+
+            # 9r-iii. Name and is_default unchanged after update
+            resp = client.get("/saved-views/list?page=dashboard")
+            views = _json.loads(resp.get_data(as_text=True))
+            upd_row = [v for v in views if v["id"] == upd_id][0]
+            _check(upd_row["name"] == "Updatable", "update: name should be unchanged")
+            _check(upd_row["is_default"] == 1, "update: is_default should be unchanged")
+
+            # 9r-iv. Save As creates a second view (both exist)
+            resp = client.post("/saved-views/create", data={
+                "name": "SavedAs Copy",
+                "page": "dashboard",
+                "query_string": "start=2025-07-01&end=2025-07-31",
+            })
+            _check(resp.status_code == 200, "update: Save As should create new view")
+            views = _json.loads(resp.get_data(as_text=True))
+            names = [v["name"] for v in views]
+            _check("Updatable" in names, "update: original view should still exist")
+            _check("SavedAs Copy" in names, "update: Save As view should exist")
+
+            # 9r-v. Update with wrong page → 404
+            resp = client.post("/saved-views/update", data={
+                "id": str(upd_id),
+                "page": "transactions",
+                "query_string": "type=expense",
+            })
+            _check(resp.status_code == 404, "update: wrong page should 404")
+
+            # 9r-vi. Update non-existent id → 404
+            resp = client.post("/saved-views/update", data={
+                "id": "99999",
+                "page": "dashboard",
+                "query_string": "type=expense",
+            })
+            _check(resp.status_code == 404, "update: non-existent id should 404")
+
+            # 9r-vii. Cross-entity update → 404
+            client.set_cookie("entity", "BFM")
+            resp = client.post("/saved-views/update", data={
+                "id": str(upd_id),
+                "page": "dashboard",
+                "query_string": "start=2025-01-01",
+            })
+            _check(resp.status_code == 404, "update cross-entity: should 404")
+            client.set_cookie("entity", "Personal")
+
         finally:
             # Cleanup all saved views across both entities
             for ek in ("personal", "company"):
@@ -627,7 +716,7 @@ def main() -> None:
             # Reset cookie to Personal for any subsequent tests
             client.set_cookie("entity", "Personal")
 
-        print("   ✅ All Saved Views tests passed (CRUD + rename + default)")
+        print("   ✅ All Saved Views tests passed (CRUD + rename + default + update)")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
