@@ -615,7 +615,7 @@ h1.page-title {
     font-size: 2rem;
     font-weight: 700;
     letter-spacing: -0.025em;
-    margin-bottom: 1.4rem;
+    margin-bottom: 0.6rem;
     line-height: 1.15;
 }
 h2 {
@@ -2968,7 +2968,7 @@ select.input-sm {
     border: none;
     box-shadow: none;
     border-radius: 0;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.6rem;
 }
 
 /* ── Header strip (segmented-track container for controls) ───────────── */
