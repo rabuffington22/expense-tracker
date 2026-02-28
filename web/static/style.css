@@ -2470,6 +2470,103 @@ tr.is-selected > td:first-child {
 }
 /* Light sv-menu inherits glass tokens — no override needed */
 
+/* ── Saved Views popover (dashboard header) ──────────────────────────── */
+.sv-pop-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.dhdr-sv-manage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    transition: background 0.12s, border-color 0.12s;
+}
+.dhdr-sv-manage:hover {
+    background: rgba(255,255,255,0.04);
+}
+.dhdr-sv-manage:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-color: var(--blue);
+}
+:root[data-theme="light"] .dhdr-sv-manage {
+    border-color: rgba(0,0,0,0.10);
+}
+:root[data-theme="light"] .dhdr-sv-manage:hover {
+    background: rgba(0,0,0,0.03);
+}
+.sv-pop {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 220px;
+    background: var(--bg);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 6px 0;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+:root[data-theme="light"] .sv-pop {
+    border-color: rgba(0,0,0,0.10);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.sv-pop-item {
+    display: block;
+    width: 100%;
+    padding: 8px 14px;
+    border: none;
+    background: none;
+    color: var(--text);
+    font-size: 0.82rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.1s;
+    white-space: nowrap;
+}
+.sv-pop-item:hover:not(:disabled) {
+    background: rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .sv-pop-item:hover:not(:disabled) {
+    background: rgba(0,0,0,0.04);
+}
+.sv-pop-item:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--blue);
+    border-radius: 6px;
+}
+.sv-pop-item:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+.sv-pop-item--danger {
+    color: var(--red);
+}
+.sv-pop-item--danger:hover:not(:disabled) {
+    background: rgba(255,69,58,0.08);
+}
+.sv-pop-divider {
+    height: 0;
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.10);
+    margin: 4px 0;
+}
+:root[data-theme="light"] .sv-pop-divider {
+    border-top: 1px solid rgba(0,0,0,0.08);
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 
 /* Tablet */
@@ -2830,7 +2927,20 @@ select.input-sm {
 /* ── Dashboard compact header bar ──────────────────────────────────────── */
 
 .dhdr-bar {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin-bottom: 0.5rem;
+}
+
+/* ── Header strip (segmented-track container for controls) ───────────── */
+.dhdr-strip {
+    background: var(--seg-bg);
+    border: 1px solid var(--seg-border);
+    border-radius: 12px;
+    padding: 10px 12px;
 }
 
 /* Primary single-row layout */
@@ -2838,7 +2948,7 @@ select.input-sm {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 /* ── Date range pill + popover ───────────────────────────────────────── */
@@ -3072,10 +3182,10 @@ select.input-sm {
     width: auto;
 }
 #account.dhdr-pill {
-    width: 200px;
+    width: 150px;
 }
 #sv-select-dashboard.dhdr-pill {
-    width: 170px;
+    width: 130px;
 }
 .dhdr-sv-group {
     flex: 0 0 auto;
@@ -3108,23 +3218,21 @@ select.input-sm {
     background: rgba(0,0,0,0.07);
     color: var(--text);
 }
-:root[data-theme="light"] .dhdr-chips {
-    border-top-color: rgba(0,0,0,0.06);
-}
 
 /* ── Dashboard header: responsive — narrow desktop ───────────────────── */
 @media (max-width: 900px) {
-    #account.dhdr-pill {
-        width: 100%;
+    .dhdr-row {
+        flex-wrap: wrap;
     }
-    #sv-select-dashboard.dhdr-pill {
-        width: 100%;
+    #account.dhdr-pill {
+        flex: 1 1 auto;
+        min-width: 0;
     }
     .dhdr-sv-group {
         flex: 1 1 100%;
     }
     .dhdr-row > .btn-primary {
-        margin-left: 0;
+        margin-left: auto;
     }
     .donut-layout {
         grid-template-columns: 1fr;
@@ -3155,7 +3263,11 @@ select.input-sm {
 /* ── Dashboard header: responsive — mobile ───────────────────────────── */
 @media (max-width: 480px) {
     .dhdr-bar {
-        padding: 0.4rem 0.6rem;
+        padding: 0.4rem 0;
+    }
+    .dhdr-strip {
+        padding: 8px 10px;
+        border-radius: 10px;
     }
     .dhdr-datepop-wrap {
         flex: 1 1 auto;
@@ -3173,15 +3285,6 @@ select.input-sm {
     }
     .dhdr-sv-group .dhdr-pill {
         flex: 1;
-    }
-    .dhdr-chips .txn-chip {
-        padding: 0.22rem 0.5rem;
-        font-size: 0.72rem;
-    }
-    .dhdr-chips.segmented .txn-chip {
-        padding: 0 0.5rem;
-        font-size: 0.68rem;
-        height: 26px;
     }
 }
 
@@ -3204,8 +3307,7 @@ select.input-sm {
 /* ── Provider-ish header controls: flat outline (dashboard only) ────────── */
 .dhdr-row button#dhdr-datebtn,
 .dhdr-row select#account.dhdr-pill,
-.dhdr-row select#sv-select-dashboard.dhdr-pill,
-.dhdr-row .dhdr-sv-group .dhdr-sv-btn {
+.dhdr-row select#sv-select-dashboard.dhdr-pill {
     background: transparent !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
@@ -3214,27 +3316,23 @@ select.input-sm {
 }
 :root[data-theme="light"] .dhdr-row button#dhdr-datebtn,
 :root[data-theme="light"] .dhdr-row select#account.dhdr-pill,
-:root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill,
-:root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn {
+:root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill {
     border-color: rgba(0,0,0,0.08) !important;
 }
 :root[data-theme="dark"] .dhdr-row button#dhdr-datebtn:hover,
 :root[data-theme="dark"] .dhdr-row select#account.dhdr-pill:hover,
-:root[data-theme="dark"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover,
-:root[data-theme="dark"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn:hover {
+:root[data-theme="dark"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover {
     background: rgba(255,255,255,0.04) !important;
 }
 :root[data-theme="light"] .dhdr-row button#dhdr-datebtn:hover,
 :root[data-theme="light"] .dhdr-row select#account.dhdr-pill:hover,
-:root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover,
-:root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn:hover {
+:root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover {
     background: rgba(0,0,0,0.03) !important;
 }
 /* Apple-like focus ring */
 .dhdr-row button#dhdr-datebtn:focus-visible,
 .dhdr-row select#account.dhdr-pill:focus-visible,
-.dhdr-row select#sv-select-dashboard.dhdr-pill:focus-visible,
-.dhdr-row .dhdr-sv-group .dhdr-sv-btn:focus-visible {
+.dhdr-row select#sv-select-dashboard.dhdr-pill:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring) !important;
 }

@@ -210,10 +210,17 @@
     }
 
     function _svEnableActions(page, enabled) {
+        /* Legacy buttons (transactions page) */
         ['sv-update-btn-', 'sv-more-btn-'].forEach(function(prefix) {
             var btn = document.getElementById(prefix + page);
             if (btn) { btn.disabled = !enabled; btn.style.opacity = enabled ? '1' : '0.4'; }
         });
+        /* Dashboard popover menu items (require a view selected) */
+        ['sv-update-mi-', 'sv-rename-mi-', 'sv-default-mi-', 'sv-delete-mi-', 'sv-cleardefault-btn-'].forEach(function(prefix) {
+            var mi = document.getElementById(prefix + page);
+            if (mi) { mi.disabled = !enabled; }
+        });
+        /* Clear-default visibility is handled separately by _svPopulate */
     }
 
     function svLoad(page, sel) {
@@ -322,12 +329,43 @@
         document.querySelectorAll('.sv-menu-trigger[aria-expanded="true"]').forEach(function(b) {
             b.setAttribute('aria-expanded', 'false');
         });
+        /* Also close any saved-views popover menus */
+        svPopCloseAll();
     }
+
+    /* ── Saved Views popover menu (dashboard) ──────────────────────── */
+    function svPopToggle(page) {
+        var pop = document.getElementById('sv-pop-' + page);
+        var trigger = document.getElementById('sv-manage-btn-' + page);
+        if (!pop) return;
+        var isOpen = !pop.hidden;
+        svPopCloseAll();  /* close others first */
+        if (!isOpen) {
+            pop.hidden = false;
+            if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        }
+    }
+    function svPopClose(page) {
+        var pop = document.getElementById('sv-pop-' + page);
+        var trigger = document.getElementById('sv-manage-btn-' + page);
+        if (pop) pop.hidden = true;
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    }
+    function svPopCloseAll() {
+        document.querySelectorAll('.sv-pop:not([hidden])').forEach(function(p) {
+            p.hidden = true;
+        });
+        document.querySelectorAll('.dhdr-sv-manage[aria-expanded="true"]').forEach(function(b) {
+            b.setAttribute('aria-expanded', 'false');
+        });
+    }
+
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.sv-menu-wrap')) svCloseMenus();
+        if (!e.target.closest('.sv-pop-wrap')) svPopCloseAll();
     });
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') svCloseMenus();
+        if (e.key === 'Escape') { svCloseMenus(); svPopCloseAll(); }
     });
     </script>
 
