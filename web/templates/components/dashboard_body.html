@@ -77,7 +77,7 @@
       {% if chart_bars %}
       <div class="band-panel">
         <div class="panel-title">Spend Trend</div>
-        <div class="plot-area">
+        <div class="plot-area trend-chart">
           <div class="chart-bars">
             {% for bar in chart_bars %}
             <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}" title="{{ bar.label }}: {{ bar.display }}">
