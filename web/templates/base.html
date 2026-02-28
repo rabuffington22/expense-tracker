@@ -125,16 +125,56 @@
             .then(function(views) { _svPopulate(page, views); });
     }
 
+    function _svEnableActions(page, enabled) {
+        ['sv-rename-btn-', 'sv-delete-btn-'].forEach(function(prefix) {
+            var btn = document.getElementById(prefix + page);
+            if (btn) { btn.disabled = !enabled; btn.style.opacity = enabled ? '1' : '0.4'; }
+        });
+    }
+
     function svLoad(page, sel) {
         var id = sel.value;
         if (!id) return;
-        var del = document.getElementById('sv-delete-btn-' + page);
-        if (del) { del.disabled = false; del.style.opacity = '1'; }
+        _svEnableActions(page, true);
         fetch('/saved-views/get?id=' + encodeURIComponent(id))
             .then(function(r) { return r.json(); })
             .then(function(d) {
                 var base = _SV_PAGES[d.page] || '/';
                 window.location.href = d.query_string ? base + '?' + d.query_string : base;
+            });
+    }
+
+    function svRename(page) {
+        var sel = document.getElementById('sv-select-' + page);
+        if (!sel || !sel.value) return;
+        var currentOption = sel.options[sel.selectedIndex];
+        var newName = prompt('Rename view:', currentOption.textContent);
+        if (!newName || !newName.trim()) return;
+        newName = newName.trim();
+        if (newName === currentOption.textContent) return;
+        var form = new FormData();
+        form.append('id', sel.value);
+        form.append('name', newName);
+        form.append('page', page);
+        var selectedId = sel.value;
+        fetch('/saved-views/rename', {method: 'POST', body: form})
+            .then(function(r) {
+                if (!r.ok) return r.json().then(function(d) { throw new Error(d.error || 'Rename failed'); });
+                return r.json();
+            })
+            .then(function() {
+                /* Refresh dropdown and re-select the renamed view */
+                fetch('/saved-views/list?page=' + encodeURIComponent(page))
+                    .then(function(r) { return r.json(); })
+                    .then(function(views) {
+                        _svPopulate(page, views);
+                        /* Re-select the view that was just renamed */
+                        var sel2 = document.getElementById('sv-select-' + page);
+                        if (sel2) sel2.value = selectedId;
+                    });
+            })
+            .catch(function(err) {
+                alert(err.message);
             });
     }
 
@@ -149,8 +189,7 @@
             .then(function(r) { return r.json(); })
             .then(function(views) {
                 _svPopulate(page, views);
-                var del = document.getElementById('sv-delete-btn-' + page);
-                if (del) { del.disabled = true; del.style.opacity = '0.4'; }
+                _svEnableActions(page, false);
             });
     }
     </script>
