@@ -707,6 +707,64 @@ h2 {
 }
 :root[data-theme="light"] .kpi-cell:nth-child(n+3) { border-top-color: rgba(0,0,0,0.06); }
 
+/* ── KPI band (Provider parity) ──────────────────────────────────────── */
+.kpi-band--provider { padding-top: 1.0rem; }
+.kpi-band--provider .kpi-band-row {
+    background: transparent;
+    border-radius: 0;
+}
+.kpi-band--provider .kpi-cell {
+    padding: 1.45rem 1.60rem 1.35rem;
+    border-right: 1px solid rgba(255,255,255,0.055);
+}
+:root[data-theme="light"] .kpi-band--provider .kpi-cell {
+    border-right: 1px solid rgba(0,0,0,0.045);
+}
+.kpi-band--provider .kpi-cell:last-child { border-right: none; }
+.kpi-band--provider .kpi-cell-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+    opacity: 0.70;
+    margin-bottom: 0.75rem;
+}
+.kpi-band--provider .kpi-cell-value {
+    font-size: 2.85rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.0;
+}
+.kpi-band--provider .kpi-cell-sub {
+    margin-top: 0.70rem;
+    font-size: 0.70rem;
+    opacity: 0.60;
+}
+/* Latest should not overpower currency */
+.kpi-band--provider .kpi-cell--latest .kpi-cell-value {
+    font-size: 2.35rem;
+    font-weight: 800;
+}
+/* Hover should be nearly imperceptible */
+.kpi-band--provider .kpi-cell:hover {
+    background: rgba(255,255,255,0.02);
+}
+:root[data-theme="light"] .kpi-band--provider .kpi-cell:hover {
+    background: rgba(0,0,0,0.015);
+}
+.kpi-band--provider .kpi-cell--static:hover { background: transparent; }
+
+/* Provider KPI responsive */
+@media (max-width: 900px) {
+    .kpi-band--provider .kpi-cell { padding: 1.25rem 1.25rem 1.10rem; }
+    .kpi-band--provider .kpi-cell-value { font-size: 2.45rem; }
+    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 2.15rem; }
+}
+@media (max-width: 480px) {
+    .kpi-band--provider .kpi-cell { padding: 1.10rem 1.10rem 1.00rem; }
+    .kpi-band--provider .kpi-cell-value { font-size: 2.20rem; }
+    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 2.00rem; }
+}
+
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */
 .segmented {
     display: inline-flex;
