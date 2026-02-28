@@ -709,15 +709,15 @@ h2 {
 
 /* ── KPI band (Provider parity) ──────────────────────────────────────── */
 .kpi-band--provider { padding-top: 1.0rem; }
+.kpi-band--provider,
 .kpi-band--provider .kpi-band-row {
-    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.0));
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
     border-radius: 0;
 }
-:root[data-theme="light"] .kpi-band--provider .kpi-band-row {
-    background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.0));
-}
 .kpi-band--provider .kpi-cell {
-    padding: 1.35rem 1.45rem 1.25rem;
+    padding: 1.20rem 1.25rem 1.10rem;
     border-right: none;
 }
 .kpi-band--provider .kpi-cell-label {
@@ -728,7 +728,7 @@ h2 {
     margin-bottom: 0.75rem;
 }
 .kpi-band--provider .kpi-cell-value {
-    font-size: 2.55rem;
+    font-size: 2.25rem;
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.0;
@@ -741,7 +741,7 @@ h2 {
 }
 /* Latest should not overpower currency */
 .kpi-band--provider .kpi-cell--latest .kpi-cell-value {
-    font-size: 2.25rem;
+    font-size: 2.05rem;
     font-weight: 800;
 }
 /* Hover should be nearly imperceptible */
@@ -755,14 +755,14 @@ h2 {
 
 /* Provider KPI responsive */
 @media (max-width: 900px) {
-    .kpi-band--provider .kpi-cell { padding: 1.15rem 1.15rem 1.00rem; }
-    .kpi-band--provider .kpi-cell-value { font-size: 2.25rem; }
-    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 2.00rem; }
+    .kpi-band--provider .kpi-cell { padding: 1.05rem 1.05rem 0.95rem; }
+    .kpi-band--provider .kpi-cell-value { font-size: 2.05rem; }
+    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 1.90rem; }
 }
 @media (max-width: 480px) {
-    .kpi-band--provider .kpi-cell { padding: 1.00rem 1.00rem 0.90rem; }
-    .kpi-band--provider .kpi-cell-value { font-size: 2.00rem; }
-    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 1.85rem; }
+    .kpi-band--provider .kpi-cell { padding: 0.90rem 0.90rem 0.80rem; }
+    .kpi-band--provider .kpi-cell-value { font-size: 1.85rem; }
+    .kpi-band--provider .kpi-cell--latest .kpi-cell-value { font-size: 1.75rem; }
 }
 
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */

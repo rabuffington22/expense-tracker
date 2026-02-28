@@ -275,6 +275,15 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #29: KPI band final sizing + remove Overview card surface
+Final KPI band pass: smaller values, no card surface, no gradient.
+
+1. **Smaller values** — `2.25rem` (was `2.55rem`), Latest `2.05rem` (was `2.25rem`). Responsive: 900px `2.05rem`/`1.90rem`, 480px `1.85rem`/`1.75rem`.
+2. **No card surface** — Removed `.band` class from KPI wrapper in template. CSS forces `background: transparent !important; box-shadow: none !important; border: none !important` on both `.kpi-band--provider` and `.kpi-band-row`.
+3. **No gradient** — Removed the subtle top-to-transparent gradient from PR #28.
+4. **No Overview label** — Removed `<div class="band-label">Overview</div>` from template.
+5. **Tighter padding** — `1.20rem 1.25rem 1.10rem` (was `1.35rem 1.45rem 1.25rem`).
+
 ### 2026-02-28 — PR #28: KPI band typography + remove dividers
 Fixed value collision and removed hard vertical dividers.
 
