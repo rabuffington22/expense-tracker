@@ -2858,7 +2858,7 @@ select.input-sm {
     left: 0;
     min-width: 220px;
     background: var(--bg);
-    border: 1px solid rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: var(--radius);
     box-shadow: none;
     backdrop-filter: none;
@@ -2867,7 +2867,7 @@ select.input-sm {
     z-index: 25;
 }
 :root[data-theme="light"] .dhdr-popover {
-    border-color: rgba(0,0,0,0.08);
+    border-color: rgba(0,0,0,0.10);
 }
 .dhdr-popover[hidden] {
     display: none;
@@ -2902,11 +2902,11 @@ select.input-sm {
 .dhdr-pop-divider {
     height: 0;
     border: none;
-    border-top: 1px solid rgba(255,255,255,0.10);
+    border-top: 1px solid rgba(255,255,255,0.12);
     margin: 4px 0;
 }
 :root[data-theme="light"] .dhdr-pop-divider {
-    border-top: 1px solid rgba(0,0,0,0.08);
+    border-top: 1px solid rgba(0,0,0,0.10);
 }
 .dhdr-pop-custom {
     display: flex;
@@ -2922,7 +2922,7 @@ select.input-sm {
     padding: 0 0.4rem;
     font-size: 0.8rem;
     font-family: inherit;
-    border: 1px solid rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: 8px;
     background: transparent;
     color: var(--text);
@@ -2931,7 +2931,7 @@ select.input-sm {
     min-width: 0;
 }
 :root[data-theme="light"] .dhdr-pop-date {
-    border-color: rgba(0,0,0,0.08);
+    border-color: rgba(0,0,0,0.10);
     color-scheme: light;
 }
 .dhdr-pop-date:focus {
@@ -2972,6 +2972,32 @@ select.input-sm {
     outline: none;
     border-color: var(--blue);
     box-shadow: 0 0 0 2px rgba(10,132,255,0.25);
+}
+
+/* ── Date picker pill: flat outline (match outline-band aesthetic) ──── */
+.dhdr-datebtn.dhdr-pill {
+    background: transparent;
+    background-image: none;                 /* kill .dhdr-pill dropdown arrow */
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding-right: 0.6rem;                  /* equal padding; no arrow space */
+}
+.dhdr-datebtn.dhdr-pill:hover {
+    background: rgba(255,255,255,0.04);
+}
+.dhdr-datebtn.dhdr-pill:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-color: var(--blue);
+}
+:root[data-theme="light"] .dhdr-datebtn.dhdr-pill {
+    border-color: rgba(0,0,0,0.10);
+    color-scheme: light;
+}
+:root[data-theme="light"] .dhdr-datebtn.dhdr-pill:hover {
+    background: rgba(0,0,0,0.03);
 }
 
 /* ── Saved Views group ───────────────────────────────────────────────── */
@@ -3089,7 +3115,7 @@ select.input-sm {
 
 /* ── Dashboard header: light-theme overrides ─────────────────────────── */
 :root[data-theme="light"] .dhdr-pop-date {
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.10);
     color-scheme: light;
 }
 :root[data-theme="light"] .dhdr-pill {
@@ -3202,7 +3228,6 @@ select.input-sm {
 }
 
 /* ── Provider-ish header controls: flat outline (dashboard only) ────────── */
-.dhdr-row button#dhdr-datebtn,
 .dhdr-row select#account.dhdr-pill,
 .dhdr-row select#sv-select-dashboard.dhdr-pill,
 .dhdr-row .dhdr-sv-group .dhdr-sv-btn {
@@ -3210,28 +3235,24 @@ select.input-sm {
     box-shadow: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    border: 1px solid rgba(255,255,255,0.10) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
 }
-:root[data-theme="light"] .dhdr-row button#dhdr-datebtn,
 :root[data-theme="light"] .dhdr-row select#account.dhdr-pill,
 :root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill,
 :root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn {
-    border-color: rgba(0,0,0,0.08) !important;
+    border-color: rgba(0,0,0,0.10) !important;
 }
-:root[data-theme="dark"] .dhdr-row button#dhdr-datebtn:hover,
 :root[data-theme="dark"] .dhdr-row select#account.dhdr-pill:hover,
 :root[data-theme="dark"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover,
 :root[data-theme="dark"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn:hover {
     background: rgba(255,255,255,0.04) !important;
 }
-:root[data-theme="light"] .dhdr-row button#dhdr-datebtn:hover,
 :root[data-theme="light"] .dhdr-row select#account.dhdr-pill:hover,
 :root[data-theme="light"] .dhdr-row select#sv-select-dashboard.dhdr-pill:hover,
 :root[data-theme="light"] .dhdr-row .dhdr-sv-group .dhdr-sv-btn:hover {
     background: rgba(0,0,0,0.03) !important;
 }
 /* Apple-like focus ring */
-.dhdr-row button#dhdr-datebtn:focus-visible,
 .dhdr-row select#account.dhdr-pill:focus-visible,
 .dhdr-row select#sv-select-dashboard.dhdr-pill:focus-visible,
 .dhdr-row .dhdr-sv-group .dhdr-sv-btn:focus-visible {
