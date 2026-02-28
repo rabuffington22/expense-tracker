@@ -275,6 +275,18 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #27: Provider KPI parity (tall, airy, tracked labels)
+Tuned KPI band to match Provider dashboard vertical rhythm and typography.
+
+1. **Provider modifier** — `.kpi-band--provider` scoped overrides keep base `.kpi-band` intact.
+2. **Taller cells** — Padding `1.45rem 1.60rem 1.35rem` (was `1.15rem 1.25rem`).
+3. **Tiny tracked labels** — `0.58rem`, `letter-spacing: 0.18em`, `opacity: 0.70`.
+4. **Bigger airy values** — `2.85rem` weight 800 (was `2.25rem`). Latest cell smaller at `2.35rem`.
+5. **Softer subtext** — `opacity: 0.60`, `margin-top: 0.70rem`.
+6. **Ultra-subtle dividers** — `rgba(…,0.055)` dark / `rgba(…,0.045)` light.
+7. **Nearly invisible hover** — `rgba(…,0.02)` dark / `rgba(…,0.015)` light.
+8. **Responsive** — Provider-specific padding/font reductions at 900px and 480px.
+
 ### 2026-02-28 — PR #26: KPI band flatten (remove card surface)
 Removed heavy card surface from KPI band to match Provider flat-band feel.
 
