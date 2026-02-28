@@ -171,6 +171,11 @@ def main() -> None:
             # Dashboard loads
             _get_ok("/", "dashboard")
 
+            # Dashboard with empty entity doesn't crash (insights/upcoming with 0 txns)
+            client.set_cookie("entity", "BFM")
+            _get_ok("/", "dashboard empty entity")
+            client.set_cookie("entity", "Personal")
+
             # Dashboard partial (HTMX)
             _get_ok(
                 "/dashboard/partial?start=2024-01-01&end=2024-01-31",

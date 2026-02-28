@@ -597,6 +597,19 @@ input[type="checkbox"] {
 .htmx-request .htmx-indicator { display: inline; }
 .htmx-request.htmx-indicator { display: inline; }
 
+/* ── Dashboard body loading state ──────────────────────────────────────── */
+.dash-body { position: relative; min-height: 200px; transition: opacity 0.15s; }
+.dash-body.dash-loading { opacity: 0.4; pointer-events: none; }
+
+/* ── Dashboard section titles ──────────────────────────────────────────── */
+.dash-section-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+    padding: 0 0.25rem;
+}
+.dash-section-title:first-child { margin-top: 0; }
+
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 7px; }
 ::-webkit-scrollbar-track { background: transparent; }
