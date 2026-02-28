@@ -275,6 +275,15 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #30: KPI band Provider parity (typography + outlined band)
+Matched KPI band to Provider dashboard: lighter values, outlined band, period label.
+
+1. **Lighter values** — `font-weight: 500` (was `800`), `font-size: 1.65rem` (was `2.55rem`). Calm, readable numerals matching Provider's thin typography.
+2. **Outlined band** — Kept `.band` class for subtle border outline + floating period label badge. Overrode `.band` background to transparent.
+3. **Period label** — Dynamic date range label replaces static "Overview" badge (e.g. "Feb 1 – 28"). Computed by `_format_period_label()` in `dashboard.py`.
+4. **Tighter spacing** — Cell padding `1.0rem 1.1rem 0.9rem` (was `1.35rem 1.45rem 1.25rem`), label gap `0.55rem` (was `0.75rem`), sub gap `0.45rem` (was `0.70rem`).
+5. **Responsive** — Scaled down: 900px `1.50rem`, 480px `1.35rem`.
+
 ### 2026-02-28 — PR #28: KPI band typography + remove dividers
 Fixed value collision and removed hard vertical dividers.
 
