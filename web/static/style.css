@@ -2480,10 +2480,10 @@ tr.is-selected > td:first-child {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 8px;
+    border-radius: 7px;
     background: transparent;
     color: var(--text-secondary);
     font-size: 1rem;
@@ -2940,7 +2940,7 @@ select.input-sm {
     background: var(--seg-bg);
     border: 1px solid var(--seg-border);
     border-radius: 12px;
-    padding: 10px 12px;
+    padding: 5px 10px;
 }
 
 /* Primary single-row layout */
@@ -3062,11 +3062,11 @@ select.input-sm {
 
 /* ── Pill-style selects ──────────────────────────────────────────────── */
 .dhdr-pill {
-    height: 34px;
-    padding: 0 1.6rem 0 0.6rem;
-    font-size: 0.82rem;
+    height: 30px;
+    padding: 0 1.4rem 0 0.5rem;
+    font-size: 0.78rem;
     font-family: inherit;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 0.5px solid var(--input-sm-border);
     background: var(--input-sm-bg);
     color: var(--text);
@@ -3192,9 +3192,17 @@ select.input-sm {
 }
 .dhdr-row > .btn-primary {
     margin-left: auto;
+    height: 30px;
+    padding: 0 0.7rem;
+    font-size: 0.78rem;
+    line-height: 30px;
+    border-radius: 8px;
 }
 .dhdr-clear {
     margin-left: 0.35rem;
+    height: 30px;
+    font-size: 0.78rem;
+    line-height: 30px;
 }
 
 /* ── Dashboard header: light-theme overrides ─────────────────────────── */
@@ -3266,7 +3274,7 @@ select.input-sm {
         padding: 0.4rem 0;
     }
     .dhdr-strip {
-        padding: 8px 10px;
+        padding: 4px 8px;
         border-radius: 10px;
     }
     .dhdr-datepop-wrap {
