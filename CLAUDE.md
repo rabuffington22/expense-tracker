@@ -83,7 +83,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     categorize.html                # Review tab + Settings tab
     reports.html                   # Two-section layout: monthly detail + spending trend
   static/
-    style.css                      # Apple-style dark theme (true black #000 bg, SF Pro fonts, segmented controls)
+    style.css                      # Apple-style dual theme (dark default + light), CSS custom properties on data-theme, SF Pro fonts
     htmx.min.js                    # HTMX library (~14KB)
 core/                              # Business logic (unchanged from Streamlit era)
   db.py                            # Schema migrations (20 so far), DB init, connections
@@ -97,6 +97,7 @@ requirements.txt                   # flask, gunicorn, pandas, plotly, pdfplumber
 ```
 
 ## HTMX Interactions
+- **Dashboard filters:** Filter form uses `hx-get` to `/dashboard/partial`, swaps `#dashboard-body` with `hx-push-url="true"`. Loading state via JS event listeners (not `hx-indicator`).
 - **Card queue (Categorize Vendors):** Save/Skip buttons use `hx-post` + `hx-target` to swap just the card div
 - **Match review:** Accept/Skip swap the match card via HTMX partial
 - **Category dropdowns:** `hx-get` to fetch subcategories when category changes
@@ -168,7 +169,9 @@ Subscription charges (Audible, Kindle Unlimited, Amazon Music, etc.) excluded vi
 - `DATA_DIR` env var controls where DBs and uploads go (default: `./local_state`)
 - Transaction IDs are deterministic -- reimporting the same CSV won't create duplicates
 - Entity stored in cookie (survives page refreshes, no WebSocket dependency)
-- Dark theme with `color-scheme: dark` on date inputs for calendar picker visibility
+- Dual theme (dark default + light) via `data-theme` attribute on `<html>`, persisted in `localStorage`. Toggle in sidebar. Inline `<script>` in `<head>` prevents flash of wrong theme.
+- CSS custom properties for all colors/shadows/borders — ~30 variables per theme in `:root[data-theme="dark"]` and `:root[data-theme="light"]`
+- Light-theme scoped overrides (`:root[data-theme="light"] .selector`) for dashboard-specific polish (charts, chips, filter bar, KPI cards)
 - Mobile responsive: hamburger menu at ≤768px, sidebar slides in/out with scrim overlay
 - Accessibility: skip-to-content link, ARIA labels on sidebar nav, focus-visible rings on all interactive elements
 - Open redirect prevention on `/set-entity` — only relative paths allowed
@@ -237,7 +240,122 @@ flask, gunicorn, pandas, pdfplumber, python-dateutil, openpyxl, plaid-python
 
 > Note: `plotly` is still in requirements.txt but no longer used on the reports page (replaced by pure CSS bars). Can be removed once confirmed not used elsewhere.
 
+## Dashboard Architecture
+
+**KPI Strip:** Spend, Income, Net, Needs Review count, Latest Transaction date. Spend/Income are clickable drill links to `/transactions`.
+
+**Sync Health:** Plaid connection status per institution (only shown when Plaid items exist).
+
+**Insights Card:** Up to 3 auto-generated insights computed by `_compute_insights()`:
+- Category spend increase vs prior period (>$50, ≥2 txns)
+- New merchants this period (not seen in prior 90 days)
+- Large transactions over $500
+Each insight links to a drill-down in `/transactions`.
+
+**Upcoming Recurring:** Detects recurring merchants via `_detect_recurring()` + `_build_upcoming()`:
+- 90-day lookback, ≥2 occurrences per merchant
+- Cadence classification: Weekly (5–9d), Monthly (25–35d), Annual (340–390d)
+- Amount regularity: ≥2 of last 3 within max($3, 5% of median)
+- Staleness filter: skips if last charge >2× cadence ago
+- Up to 6 items within next 30 days, sorted soonest first
+- Drill links include merchant + ±7 day window around expected date
+- Respects account filter from dashboard params
+
+**Cash Flow Chart:** 6-month spend trend bar chart (pure CSS, no charting library).
+
+**Top Categories / Top Merchants:** Ranked lists with horizontal bar visualization and drill-down links.
+
+**Review Inbox:** Uncategorized, Vendor Breakdown Needed, Possible Transfers counts with drill links.
+
+**Vendor Orders:** Total/unmatched order count linking to Match page (shown only when orders exist).
+
+**HTMX Partial Updates:** Filter form submits via `hx-get` to `/dashboard/partial`, swaps `#dashboard-body`. Loading state managed via `htmx:beforeRequest`/`htmx:afterRequest`/`htmx:responseError` event listeners that toggle `.dash-loading` class (opacity fade + pointer-events disabled).
+
+**Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
+
 ## Change Log
+
+### 2026-02-28 — PR #21: Donut layout sizing + Apple-ish polish
+Bigger donut, tighter legend, softer slices, bidirectional hover linking.
+
+1. **Larger donut** — Increased from 200×200 to 300×300px desktop (220px tablet, 180px mobile) via `.donut-chart-wrap--lg` modifier. Center text bumped to 1.35rem.
+2. **Compact legend** — `.donut-legend-list` scoped overrides reduce row padding (0.55rem vs 0.75rem), font sizes (0.85rem), and radius (14px) for tighter scannable rows.
+3. **Softer slices** — `stroke-linecap: round` for smooth edges, base opacity 0.92, wider gap (0.8% vs 0.5%). Track ring uses subtle rgba stroke instead of 50% opacity.
+4. **Hover pop** — Slices brighten to full opacity, expand stroke-width to 34, and add `drop-shadow` on hover. 120ms transition for smooth feel.
+5. **Slice ↔ legend linking** — `data-donut-key` attributes on slices and legend rows. Tiny JS wires mouseenter/mouseleave to add `.is-hover` class on matching elements. Hovering a slice highlights the legend row; hovering a legend row highlights the slice.
+6. **Light theme** — Track ring uses `rgba(0,0,0,0.05)` in light mode.
+
+### 2026-02-28 — PR #20: Dashboard single date pill (presets)
+Replaced two native date inputs with a compact pill + popover.
+
+1. **Date pill** — Single button showing "Feb 1–28" replaces two `<input type="date">` pickers. Reuses `.dhdr-pill` class.
+2. **Preset popover** — Last 7 days, Last 30 days, This month, Last month computed in JS. Selection writes hidden `start`/`end` inputs and triggers `form.requestSubmit()` for HTMX update.
+3. **Custom dates** — "Custom…" reveals inline date inputs + Apply button inside the popover.
+4. **Label formatting** — `fmtRange()` shows "Feb 1–28" (same month) or "Feb 1 – Mar 15" (cross-month) with thin-space en-dash.
+5. **Coexistence** — Popover uses `hidden` attribute (not `.open` class), so saved views Escape/click-outside handlers don't conflict.
+6. **Responsive** — Pill takes full width on mobile ≤480px.
+
+### 2026-02-28 — PR #16: Saved Views overflow menu
+Collapsed 6 flat saved-views buttons into a compact layout.
+
+1. **Overflow menu** — Rename, Make Default, Clear Default, and Delete moved into a "⋯" popover menu. Select, Save As, and Update remain visible.
+2. **Keyboard accessible** — `aria-haspopup`, `role="menu"`/`role="menuitem"`, closes on Escape.
+3. **Outside click close** — Document-level click listener closes open menus when clicking outside `.sv-menu-wrap`.
+4. **Danger styling** — Delete menu item uses `--red` color with red-tinted hover background.
+5. **Simplified enable/disable** — `_svEnableActions()` now only toggles Update and "⋯" trigger (menu items don't need individual disable since the trigger gates access).
+6. **Both pages** — Applied identically to dashboard and transactions saved views rows.
+
+### 2026-02-28 — PR #15: Filter bar + saved views light-mode polish
+CSS-only light-theme refinements for the filter bar area.
+
+1. **Control height alignment** — Standardized inputs and buttons to 34px in the filter bar (scoped to `.txn-filter-bar` and `.txn-chips` to avoid affecting pagination/inline-edit buttons).
+2. **Tighter spacing** — Filter bar padding reduced to 0.6rem, form-row gap to 0.35rem.
+3. **Lighter inactive chips** — Softer border/fill/text for iOS pill feel; subtle hover state.
+4. **Softer secondary buttons** — Filter bar `.btn-secondary` uses gray text (not blue) so Apply stays the clear primary action.
+5. **Saved views row separator** — Subtle top border between chips row and saved views row.
+6. **Airy sticky shadow** — Replaced heavy `--shadow-card` with lighter shadow on the sticky filter bar.
+
+### 2026-02-28 — PR #14: Light-theme parity pass (dashboard-specific)
+CSS-only dashboard fixes for light mode.
+
+1. **Active chip text fix** — Changed `.txn-chip.active` from `color: #fff` (invisible on light blue) to `color: var(--blue)` + `font-weight: 600`.
+2. **`--shadow-hover` variable** — Added to both theme blocks for theme-aware hover shadows. Dark: heavy (0.3 alpha), Light: subtle (0.08 alpha).
+3. **Metric hover shadow** — `a.metric-link:hover` now uses `var(--shadow-hover)` instead of hardcoded value.
+4. **Softer chart gradients** — Light-mode chart bars use `#5eaeff → #007aff` (less neon than dark mode's `#4da8ff → #0a84ff`).
+5. **KPI card borders** — Light-mode metrics get `1px solid var(--border)` for definition on white background.
+6. **Section titles** — Bolder weight (700) and `--text-secondary` color in light mode.
+7. **Filter bar/input borders** — Visible 1px borders on inputs and filter bar in light mode.
+8. **Select arrow contrast** — Arrow stroke darkened from `#999` to `#666` in light mode.
+
+### 2026-02-28 — PR #13: Theme toggle (Light/Dark) + light-theme mockup parity
+Major CSS refactoring to add persistent Light/Dark theme toggle. Dark remains default.
+
+1. **CSS variable architecture** — Refactored `:root` into theme-invariant tokens + `:root[data-theme="dark"]` + `:root[data-theme="light"]`. ~30 intermediate variables per theme (hover-bg, control-bg, chip-bg, chart-text, chevron-color, scrollbar-thumb, toggle-shadow, input-sm-bg, btn-icon-bg, editing-bg, etc.).
+2. **Replaced all hardcoded rgba** — Every hardcoded `rgba(255,255,255,...)` and `rgba(0,0,0,...)` throughout the CSS replaced with theme-aware variables.
+3. **Flash prevention** — Inline `<script>` in `<head>` before CSS link reads `localStorage` and sets `data-theme` attribute before any styles load.
+4. **Toggle UI** — Moon/sun button at bottom of sidebar, `toggleTheme()` function, `_syncThemeUI()` single source of truth for icon/label sync.
+5. **Light theme tokens** — `--bg: #f4f6f9`, `--bg-card: #ffffff`, `--text: #1d1d1f`, `--shadow-card` with subtle values, `color-scheme: light`, `--date-icon-filter: none`.
+6. **meta theme-color** — Dynamically updated on toggle (`#f4f6f9` light, `#000000` dark).
+
+### 2026-02-27 — PR #9: Upcoming Recurring alignment
+Tweaked existing recurring detection to match target spec.
+
+1. **Lookback 365→90 days** — `_detect_recurring()` now queries last 90 days instead of 365 for faster, more relevant pattern detection.
+2. **Min occurrences 3→2** — Lowered threshold so bimonthly or new recurring charges surface sooner.
+3. **Max items 10→6** — Caps the Upcoming card to 6 items for a cleaner dashboard.
+4. **Account filter** — Recurring queries now respect the dashboard account filter (`params.account`), so switching accounts shows only that account's patterns.
+5. **Date-windowed drill links** — Each upcoming item links to `/transactions` filtered by merchant + ±7 day window around expected date (via `drill_start`/`drill_end` fields).
+6. **Heuristic docstring** — Added summary comment block above `_detect_recurring()` documenting the full algorithm.
+
+### 2026-02-27 — PR #8: Dashboard UX polish
+Loading state, Insights card, section cleanup.
+
+1. **HTMX loading indicator** — `htmx:beforeRequest`/`afterRequest`/`responseError` event listeners toggle `.dash-loading` class on `#dashboard-body` (opacity fade + pointer-events disabled during filter changes).
+2. **Insights card** — `_compute_insights()` generates up to 3 contextual insights: largest category increase vs prior period, new merchants, large transactions (>$500). Each links to a `/transactions` drill-down.
+3. **Section title cleanup** — Replaced 5 inline `<h2 style="...">` with `.dash-section-title` CSS class for consistency.
+4. **Empty state improvement** — Added emoji icon + descriptive text + CTA button linking to transactions with current filter params.
+5. **Wrapper div cleanup** — Removed 4 unnecessary `<div style="margin-top:...">` wrappers from dashboard body template.
+6. **Empty entity smoke test** — Added BFM entity test to catch crashes when an entity has zero data.
 
 ### 2026-02-27 — Reports page redesign
 Complete rewrite of the reports page from a single-section Plotly-based layout to a two-section pure CSS layout.
