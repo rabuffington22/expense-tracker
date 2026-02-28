@@ -792,12 +792,13 @@ input[type="checkbox"] {
 /* ── Donut chart ───────────────────────────────────────────────────────── */
 .donut-section {
     grid-column: 1 / -1;
+    overflow: hidden;
 }
 .donut-layout {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 320px 1fr;
     gap: 1.25rem;
-    align-items: center;
+    align-items: start;
 }
 .donut-chart-wrap {
     position: relative;
@@ -808,6 +809,7 @@ input[type="checkbox"] {
 .donut-chart-wrap--lg {
     width: 300px;
     height: 300px;
+    margin: 0 auto;
 }
 .donut-svg {
     width: 100%;
@@ -1996,10 +1998,11 @@ select.input-sm {
     position: relative;
 }
 .dhdr-datebtn {
-    min-width: 140px;
+    min-width: 128px;
     text-align: left;
     cursor: pointer;
     white-space: nowrap;
+    flex: 0 0 auto;
 }
 .dhdr-popover {
     position: absolute;
@@ -2190,6 +2193,28 @@ select.input-sm {
     border-top: 0.5px solid var(--border);
 }
 
+/* ── Dashboard header: compact control widths ────────────────────────── */
+.dhdr-row .dhdr-pill,
+.dhdr-row .dhdr-datebtn {
+    flex: 0 0 auto;
+    width: auto;
+}
+#account.dhdr-pill {
+    width: 200px;
+}
+#sv-select-dashboard.dhdr-pill {
+    width: 170px;
+}
+.dhdr-sv-group {
+    flex: 0 0 auto;
+}
+.dhdr-row > .btn-primary {
+    margin-left: auto;
+}
+.dhdr-clear {
+    margin-left: 0.35rem;
+}
+
 /* ── Dashboard header: light-theme overrides ─────────────────────────── */
 :root[data-theme="light"] .dhdr-popover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 0 0 0.5px rgba(0,0,0,0.06);
@@ -2216,6 +2241,28 @@ select.input-sm {
 }
 :root[data-theme="light"] .dhdr-chips {
     border-top-color: rgba(0,0,0,0.06);
+}
+
+/* ── Dashboard header: responsive — narrow desktop ───────────────────── */
+@media (max-width: 900px) {
+    #account.dhdr-pill {
+        width: 100%;
+    }
+    #sv-select-dashboard.dhdr-pill {
+        width: 100%;
+    }
+    .dhdr-sv-group {
+        flex: 1 1 100%;
+    }
+    .dhdr-row > .btn-primary {
+        margin-left: 0;
+    }
+    .donut-layout {
+        grid-template-columns: 1fr;
+    }
+    .donut-chart-wrap--lg {
+        margin: 0 auto;
+    }
 }
 
 /* ── Dashboard header: responsive — tablet ───────────────────────────── */
