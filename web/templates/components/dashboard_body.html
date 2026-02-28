@@ -152,9 +152,9 @@
   <h2 class="dash-section-title">{{ entity_labels.spend }} Breakdown</h2>
   <div class="donut-layout">
     <!-- SVG Donut -->
-    <div class="donut-chart-wrap">
+    <div class="donut-chart-wrap donut-chart-wrap--lg">
       {% set circumference = 439.82 %}
-      {% set gap_pct = 0.5 %}
+      {% set gap_pct = 0.8 %}
       <svg class="donut-svg" viewBox="0 0 200 200" aria-label="Spending breakdown donut chart">
         <!-- Background ring -->
         <circle class="donut-track" cx="100" cy="100" r="70"
@@ -165,7 +165,7 @@
           {% set arc = (cat.donut_pct - gap_pct) / 100 * circumference if cat.donut_pct > gap_pct else 0 %}
           {% if arc > 0 %}
           <a href="{{ drill_url(category_id=cat.cat_id) if cat.cat_id else '#' }}"
-             class="donut-slice-link">
+             class="donut-slice-link" data-donut-key="cat-{{ cat.cat_id }}">
             <circle class="donut-slice"
                     cx="100" cy="100" r="70"
                     fill="none"
@@ -183,7 +183,7 @@
         <!-- "Other" slice -->
         {% if other_pct > gap_pct %}
           {% set other_arc = (other_pct - gap_pct) / 100 * circumference %}
-          <circle class="donut-slice donut-slice--other"
+          <circle class="donut-slice donut-slice--other" data-donut-key="other"
                   cx="100" cy="100" r="70"
                   fill="none"
                   stroke="var(--text-muted)"
@@ -204,10 +204,11 @@
 
     <!-- Legend -->
     <div class="donut-legend">
-      <div class="rpt-cat-list">
+      <div class="rpt-cat-list donut-legend-list">
         {% for cat in top_cats %}
         <a class="rpt-cat-row"
-           href="{{ drill_url(category_id=cat.cat_id) if cat.cat_id else '#' }}">
+           href="{{ drill_url(category_id=cat.cat_id) if cat.cat_id else '#' }}"
+           data-donut-key="cat-{{ cat.cat_id }}">
           <div class="rpt-cat-left">
             <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
             <div class="rpt-cat-info">
@@ -222,7 +223,7 @@
         </a>
         {% endfor %}
         {% if other_cents > 0 %}
-        <div class="rpt-cat-row rpt-cat-row--other">
+        <div class="rpt-cat-row rpt-cat-row--other" data-donut-key="other">
           <div class="rpt-cat-left">
             <div class="rpt-cat-dot" style="background:var(--text-muted)"></div>
             <div class="rpt-cat-info">
@@ -240,6 +241,25 @@
     </div>
   </div>
 </div>
+<script>
+/* Slice ↔ legend hover linking */
+(function() {
+  document.querySelectorAll('[data-donut-key]').forEach(function(el) {
+    el.addEventListener('mouseenter', function() {
+      var key = this.dataset.donutKey;
+      document.querySelectorAll('[data-donut-key="' + key + '"]').forEach(function(m) {
+        m.classList.add('is-hover');
+      });
+    });
+    el.addEventListener('mouseleave', function() {
+      var key = this.dataset.donutKey;
+      document.querySelectorAll('[data-donut-key="' + key + '"]').forEach(function(m) {
+        m.classList.remove('is-hover');
+      });
+    });
+  });
+})();
+</script>
 {% endif %}
 
 <!-- ── Top Merchants ──────────────────────────────────────────────────── -->

@@ -796,8 +796,8 @@ input[type="checkbox"] {
 .donut-layout {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 1.5rem;
-    align-items: start;
+    gap: 1.25rem;
+    align-items: center;
 }
 .donut-chart-wrap {
     position: relative;
@@ -805,21 +805,29 @@ input[type="checkbox"] {
     height: 200px;
     flex-shrink: 0;
 }
+.donut-chart-wrap--lg {
+    width: 300px;
+    height: 300px;
+}
 .donut-svg {
     width: 100%;
     height: 100%;
     transform: rotate(-90deg);
 }
 .donut-track {
-    opacity: 0.5;
+    opacity: 1;
+    stroke: rgba(255,255,255,0.08);
 }
 .donut-slice {
-    transition: opacity 0.15s ease, stroke-width 0.15s ease;
+    stroke-linecap: round;
+    opacity: 0.92;
+    transition: opacity 120ms ease, stroke-width 120ms ease, filter 120ms ease;
     cursor: pointer;
 }
 .donut-slice:hover {
-    opacity: 0.8;
-    stroke-width: 33;
+    opacity: 1;
+    stroke-width: 34;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18));
 }
 .donut-slice--other {
     cursor: default;
@@ -844,14 +852,14 @@ input[type="checkbox"] {
     pointer-events: none;
 }
 .donut-center-label {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-muted);
     font-weight: 600;
 }
 .donut-center-value {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
@@ -865,6 +873,33 @@ input[type="checkbox"] {
 }
 .rpt-cat-row--other:hover {
     background: transparent;
+}
+
+/* ── Donut: compact legend rows ────────────────────────────────────────── */
+.donut-legend-list {
+    border-radius: 14px;
+}
+.donut-legend-list .rpt-cat-row {
+    padding: 0.55rem 0.85rem;
+}
+.donut-legend-list .rpt-cat-name {
+    font-size: 0.85rem;
+}
+.donut-legend-list .rpt-cat-amount {
+    font-size: 0.85rem;
+}
+
+/* ── Donut: slice ↔ legend hover linking ───────────────────────────────── */
+.donut-slice-link.is-hover .donut-slice {
+    opacity: 1;
+    stroke-width: 34;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18));
+}
+.donut-legend-list .rpt-cat-row.is-hover {
+    background: var(--hover-bg);
+}
+.donut-legend-list .rpt-cat-row.is-hover .rpt-cat-chevron {
+    color: var(--chevron-hover);
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
@@ -1469,6 +1504,11 @@ tr.is-selected > td:first-child {
     background: rgba(0,0,0,0.025);
 }
 
+/* Donut track — light theme */
+:root[data-theme="light"] .donut-track {
+    stroke: rgba(0,0,0,0.05);
+}
+
 /* Select arrow — darker stroke for contrast on white */
 :root[data-theme="light"] select.input-sm {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%23666' stroke-width='1.5'/%3E%3C/svg%3E");
@@ -1636,6 +1676,11 @@ tr.is-selected > td:first-child {
         width: 180px;
         height: 180px;
     }
+    .donut-chart-wrap--lg {
+        width: 220px;
+        height: 220px;
+        margin: 0 auto;
+    }
     .donut-legend {
         width: 100%;
     }
@@ -1685,6 +1730,10 @@ tr.is-selected > td:first-child {
     .donut-chart-wrap {
         width: 160px;
         height: 160px;
+    }
+    .donut-chart-wrap--lg {
+        width: 180px;
+        height: 180px;
     }
     .donut-center-value {
         font-size: 1rem;
