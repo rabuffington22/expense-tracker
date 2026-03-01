@@ -49,5 +49,9 @@
           + '?left_period=' + encodeURIComponent(leftSel.value)
           + '&right_period=' + encodeURIComponent(rightSel.value);
   htmx.ajax('GET', url, {target: '#categories-compare', swap: 'innerHTML'});
+  /* Also refresh Insights + Upcoming (tied to LEFT period only) */
+  var iuUrl = '{{ url_for("dashboard.insights_upcoming") }}'
+            + '?left_period=' + encodeURIComponent(leftSel.value);
+  htmx.ajax('GET', iuUrl, {target: '#insights-upcoming', swap: 'innerHTML'});
 })();
 </script>

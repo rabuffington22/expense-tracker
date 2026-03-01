@@ -1179,3 +1179,49 @@ def categories_compare():
                            right_drill=right_drill,
                            subcats_left=subcats_left_json,
                            subcats_right=subcats_right_json)
+
+
+@bp.route("/dashboard/insights-upcoming")
+def insights_upcoming():
+    """Render the Insights + Upcoming boxes (HTMX endpoint).
+
+    Tied to the LEFT KPI panel period so both boxes show data for
+    the same range the user selected on the blue/left side.
+    """
+    left_period = request.args.get("left_period", "this_month")
+    start, end = _period_to_dates(left_period)
+
+    # Build params dict compatible with _compute_insights / _detect_recurring
+    params = {
+        "start": start,
+        "end": end,
+        "account": request.args.get("account", ""),
+        "include_transfers": "",
+    }
+
+    def drill_url(**overrides):
+        qp = {"start": start, "end": end}
+        if params.get("account"):
+            qp["account"] = params["account"]
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    conn = get_connection(g.entity_key)
+    try:
+        insights = _compute_insights(conn, params, drill_url)
+        recurring_patterns = _detect_recurring(conn, params)
+        upcoming = _build_upcoming(recurring_patterns)
+
+        # Build drill URLs for upcoming items
+        for item in upcoming:
+            item["url"] = url_for("transactions.index",
+                                  start=item["drill_start"],
+                                  end=item["drill_end"],
+                                  merchant=item["merchant_canonical"],
+                                  **({"account": params["account"]} if params.get("account") else {}))
+    finally:
+        conn.close()
+
+    return render_template("components/insights_upcoming.html",
+                           insights=insights,
+                           upcoming=upcoming)
