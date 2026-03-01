@@ -1,20 +1,8 @@
 {% if categories %}
 <div class="outline-band">
-  <div class="band-label">Expense Categories</div>
+  <div class="band-label">Categories</div>
   <div class="band-body">
     <div class="cat-compare">
-      <!-- Legend -->
-      <div class="cat-compare-legend">
-        <span class="cat-compare-legend-item">
-          <span class="cat-compare-swatch cat-compare-swatch--left"></span>
-          {{ left_label }}
-        </span>
-        <span class="cat-compare-legend-item">
-          <span class="cat-compare-swatch cat-compare-swatch--right"></span>
-          {{ right_label }}
-        </span>
-      </div>
-
       <!-- Y-axis + Chart area -->
       <div class="cat-compare-chart-wrap">
         <!-- Y-axis tick labels -->
@@ -122,11 +110,6 @@
     var priLabel  = side === 'left' ? meta.leftLabel : meta.rightLabel;
     var secLabel  = side === 'left' ? meta.rightLabel : meta.leftLabel;
 
-    /* Delta is always Left - Right (no sign, no color) */
-    var deltaC    = leftC - rightC;
-    var deltaPct  = rightC ? ((leftC - rightC) / rightC * 100) : (leftC ? 100 : 0);
-    var deltaAbs  = Math.abs(deltaC);
-
     var html = '';
     html += '<div class="cat-tip-title">' + esc(catName) + '</div>';
 
@@ -142,14 +125,6 @@
     html += '<span class="cat-tip-sec-amount">' + fmtDollars(secondC) + '</span>';
     html += '</div>';
 
-    /* Delta line */
-    html += '<div class="cat-tip-delta">';
-    html += '\u0394 ' + fmtDollars(deltaAbs);
-    if (rightC) {
-      html += ' (' + Math.abs(deltaPct).toFixed(1) + '%)';
-    }
-    html += '</div>';
-
     /* Subcategories for hovered period */
     var subcats = side === 'left' ? subcatsLeft[catName] : subcatsRight[catName];
     if (subcats && subcats.length > 0) {
@@ -157,7 +132,7 @@
       var hoverEnd   = side === 'left' ? meta.leftEnd   : meta.rightEnd;
 
       html += '<div class="cat-tip-subcats">';
-      html += '<div class="cat-tip-subcats-hdr">Top subcategories</div>';
+      html += '<div class="cat-tip-subcats-hdr">Subcategories</div>';
       for (var i = 0; i < subcats.length; i++) {
         var s = subcats[i];
         var drillUrl = meta.txnBaseUrl
@@ -168,7 +143,6 @@
         html += '<a class="cat-tip-subrow" href="' + escAttr(drillUrl) + '">';
         html += '<span class="cat-tip-subname">' + esc(s.name) + '</span>';
         html += '<span class="cat-tip-subamt">' + fmtDollars(s.cents) + '</span>';
-        html += '<span class="cat-tip-subpct">' + s.pct.toFixed(1) + '%</span>';
         html += '</a>';
       }
       html += '</div>';

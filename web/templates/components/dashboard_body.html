@@ -1,12 +1,15 @@
-<!-- ── KPI Compare Panels ──────────────────────────────────────────────── -->
-<div class="kpi-compare-row">
-  <div hx-get="{{ url_for('dashboard.kpi_panel', panel='left', period='this_month') }}"
-       hx-trigger="load" hx-swap="innerHTML"></div>
-  <div hx-get="{{ url_for('dashboard.kpi_panel', panel='right', period='last_month') }}"
-       hx-trigger="load" hx-swap="innerHTML"></div>
+<!-- ── Compare Group: KPI Panels + Expense Categories ─────────────────── -->
+<div class="compare-group">
+  <div class="compare-group-label">Expenses</div>
+  <div class="kpi-compare-row">
+    <div hx-get="{{ url_for('dashboard.kpi_panel', panel='left', period='this_month') }}"
+         hx-trigger="load" hx-swap="innerHTML"></div>
+    <div hx-get="{{ url_for('dashboard.kpi_panel', panel='right', period='last_month') }}"
+         hx-trigger="load" hx-swap="innerHTML"></div>
+  </div>
+  <!-- ── Categories Comparison (populated by KPI panel scripts) ────── -->
+  <div id="categories-compare"></div>
 </div>
-<!-- ── Categories Comparison (populated by KPI panel scripts) ──────────── -->
-<div id="categories-compare"></div>
 
 <!-- ── Income vs Expenses (12 months) ────────────────────────────────── -->
 {% set ie_max = ie_points|map(attribute='income_cents')|list + ie_points|map(attribute='expense_cents')|list %}

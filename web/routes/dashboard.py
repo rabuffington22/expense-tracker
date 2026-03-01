@@ -981,46 +981,69 @@ def _query_category_totals(conn, start, end):
 
 
 def _query_subcategory_rollups(conn, start, end, category_names):
-    """Return top-3 subcategories per category for a date range.
+    """Return all subcategories per category for a date range.
 
-    Returns dict: category_name -> [{name, cents, pct}]
+    Every defined subcategory is included (even at $0).  Transactions with
+    no subcategory (NULL / empty / 'Unknown') are rolled into a 'General'
+    bucket.
+
+    Returns dict: category_name -> [{name, cents}]
     Only includes categories in *category_names* (the displayed set).
-    Expenses only; same exclusions as ``_query_category_totals``.
     """
     if not category_names:
         return {}
 
+    from collections import defaultdict
+
     placeholders = ", ".join("?" for _ in category_names)
-    rows = conn.execute(
+
+    # 1. All defined subcategories for the displayed categories
+    defined = conn.execute(
+        "SELECT category_name, name FROM subcategories "
+        "WHERE category_name IN (" + placeholders + ") "
+        "ORDER BY category_name, name",
+        list(category_names),
+    ).fetchall()
+
+    # Build skeleton: every category gets "General" + its defined subs
+    skeleton = defaultdict(dict)  # cat -> {sub_name: 0}
+    for cat in category_names:
+        skeleton[cat]["General"] = 0
+    for r in defined:
+        skeleton[r["category_name"]][r["name"]] = 0
+
+    # 2. Actual spend per (category, subcategory) in the period
+    spend_rows = conn.execute(
         "SELECT t.category, t.subcategory, "
         "  COALESCE(SUM(ABS(t.amount_cents)), 0) AS sub_cents "
         "FROM transactions t "
         "WHERE t.amount_cents < 0 "
         "  AND t.date >= ? AND t.date <= ? "
         "  AND t.category IN (" + placeholders + ") "
-        "  AND t.subcategory IS NOT NULL AND t.subcategory != '' "
-        "  AND t.subcategory != 'Unknown' "
-        "GROUP BY t.category, t.subcategory "
-        "ORDER BY t.category, sub_cents DESC",
+        "GROUP BY t.category, t.subcategory",
         [start, end] + list(category_names),
     ).fetchall()
 
-    # Group by category, keep top 3, compute pct of category total
-    from collections import defaultdict
-    grouped = defaultdict(list)
-    for r in rows:
-        grouped[r["category"]].append({
-            "name": r["subcategory"],
-            "cents": r["sub_cents"],
-        })
+    for r in spend_rows:
+        cat = r["category"]
+        sub = r["subcategory"]
+        cents = r["sub_cents"]
+        if not sub or sub == "Unknown":
+            skeleton[cat]["General"] += cents
+        else:
+            skeleton[cat][sub] = skeleton[cat].get(sub, 0) + cents
 
+    # 3. Build result sorted by spend descending, General always first
     result = {}
-    for cat_name, subs in grouped.items():
-        top3 = subs[:3]
-        cat_total = sum(s["cents"] for s in subs)
-        for s in top3:
-            s["pct"] = round(s["cents"] / cat_total * 100, 1) if cat_total else 0
-        result[cat_name] = top3
+    for cat in category_names:
+        subs = skeleton[cat]
+        items = []
+        general_cents = subs.pop("General", 0)
+        items.append({"name": "General", "cents": general_cents})
+        # Remaining subs sorted by spend descending
+        for name, cents in sorted(subs.items(), key=lambda x: -x[1]):
+            items.append({"name": name, "cents": cents})
+        result[cat] = items
     return result
 
 

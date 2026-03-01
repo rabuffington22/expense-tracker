@@ -736,6 +736,56 @@ h2 {
     border: none;
 }
 
+/* ── Compare group (wraps KPI panels + Expense Categories) ────────────── */
+.compare-group {
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-xl);
+    padding: 1.2rem 1rem 1rem;
+    background: transparent;
+}
+:root[data-theme="light"] .compare-group {
+    border-color: rgba(0,0,0,0.08);
+}
+.compare-group-label {
+    position: absolute;
+    top: -0.55rem;
+    left: 1rem;
+    padding: 0.1rem 0.55rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 0.7;
+    background: var(--bg);
+    border-radius: 999px;
+}
+/* Flatten nested outline-band inside compare-group */
+.compare-group .outline-band {
+    border: none;
+    border-radius: 0;
+    padding: 0.6rem 0 0;
+}
+.compare-group .outline-band .band-label {
+    position: static;
+    display: inline-block;
+    padding: 0;
+    margin: 0 0 0.6rem 0.1rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 0.65;
+    background: none;
+    border: none;
+}
+/* KPI row inside compare group needs no extra top margin */
+.compare-group .kpi-compare-row {
+    margin-bottom: 0.5rem;
+}
+
 /* ── Flat band interior components ─────────────────────────────────────── */
 .band-head {
     display: flex;
@@ -1123,25 +1173,28 @@ h2 {
 
 /* ── KPI Compare Panels ──────────────────────────────────────────────── */
 .kpi-compare-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    display: flex;
+    justify-content: space-evenly;
     margin-top: 1.25rem;
     margin-bottom: 1.2rem;
+}
+.kpi-compare-row > div {
+    width: 30%;
 }
 #categories-compare {
     margin-top: 1.5rem;
 }
 @media (max-width: 900px) {
-    .kpi-compare-row { grid-template-columns: 1fr; }
+    .kpi-compare-row { flex-direction: column; }
+    .kpi-compare-row > div { width: 100%; }
 }
 
 .kpi-panel {
     position: relative;
     background: transparent;
     border: 1px solid rgba(255,255,255,0.10);
-    border-radius: var(--radius-xl);
-    padding: 1.4rem 1rem 0.8rem;
+    border-radius: 12px;
+    padding: 0.9rem 0.7rem 0.5rem;
 }
 :root[data-theme="light"] .kpi-panel {
     border-color: rgba(0,0,0,0.08);
@@ -1149,12 +1202,12 @@ h2 {
 /* Left panel = blue series, Right panel = orange series */
 #kpi-left {
     border-color: var(--series-left);
-    border-width: 3px;
+    border-width: 2px;
 }
 #kpi-left .kpi-panel-cell:first-child .kpi-panel-value { color: var(--series-left); }
 #kpi-right {
     border-color: var(--series-right);
-    border-width: 3px;
+    border-width: 2px;
 }
 #kpi-right .kpi-panel-cell:first-child .kpi-panel-value { color: var(--series-right); }
 /* Neutralize green/red on Income and Net inside KPI panels */
@@ -1164,28 +1217,27 @@ h2 {
 .kpi-panel-header {
     position: absolute;
     top: 0;
-    left: 0.8rem;
+    left: 0.6rem;
     transform: translateY(-50%);
     z-index: 1;
-    /* Solid background breaks the panel border behind the select */
     background: var(--bg);
-    padding: 0 0.3rem;
+    padding: 0 0.2rem;
 }
 
 .kpi-period-select {
     flex: 0 0 auto;
     width: fit-content;
-    min-width: 120px;
-    max-width: 180px;
+    min-width: 100px;
+    max-width: 160px;
     appearance: none;
     -webkit-appearance: none;
     background-color: var(--bg);
     border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 8px;
+    border-radius: 6px;
     color: var(--text);
-    font-size: 0.68rem;
+    font-size: 0.6rem;
     font-weight: 500;
-    padding: 0.3rem 1.6rem 0.3rem 0.5rem;
+    padding: 0.2rem 1.4rem 0.2rem 0.4rem;
     cursor: pointer;
     outline: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -1218,10 +1270,10 @@ h2 {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 0.5rem 0.3rem;
+    padding: 0.3rem 0.2rem;
     text-decoration: none;
     color: inherit;
-    border-radius: 10px;
+    border-radius: 8px;
     transition: background 0.15s;
 }
 a.kpi-panel-cell:hover {
@@ -1237,29 +1289,32 @@ a.kpi-panel-cell:hover {
 }
 
 .kpi-panel-label {
-    font-size: 0.58rem;
+    font-size: 0.5rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     color: var(--text-muted);
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.2rem;
 }
 .kpi-panel-value {
-    font-size: 1.5rem;
+    font-size: 1.05rem;
     font-weight: 500;
     line-height: 1.1;
     white-space: nowrap;
 }
 .kpi-panel-sub {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
     color: var(--text-muted);
-    margin-top: 0.3rem;
+    margin-top: 0.2rem;
     opacity: 0.6;
 }
 
+@media (max-width: 900px) {
+    .kpi-compare-row { max-width: 100%; }
+}
 @media (max-width: 480px) {
-    .kpi-panel-value { font-size: 1.25rem; }
-    .kpi-panel { padding: 1.2rem 0.7rem 0.6rem; }
+    .kpi-panel-value { font-size: 0.9rem; }
+    .kpi-panel { padding: 0.8rem 0.5rem 0.4rem; }
 }
 
 /* ── Categories Compare ───────────────────────────────────────────────── */
@@ -1470,9 +1525,11 @@ a.kpi-panel-cell:hover {
 
 /* Title */
 .cat-tip-title {
-    font-size: 0.78rem;
+    font-size: 0.56rem;
     font-weight: 700;
-    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
     margin-bottom: 6px;
     line-height: 1.2;
 }
@@ -1483,6 +1540,7 @@ a.kpi-panel-cell:hover {
     align-items: center;
     gap: 6px;
     margin-bottom: 3px;
+    padding-left: 10px;
 }
 .cat-tip-primary--left  .cat-tip-pri-label,
 .cat-tip-primary--left  .cat-tip-pri-amount { color: var(--series-left); }
@@ -1509,6 +1567,7 @@ a.kpi-panel-cell:hover {
     align-items: center;
     gap: 6px;
     margin-bottom: 6px;
+    padding-left: 10px;
 }
 .cat-tip-sec-label {
     font-size: 0.64rem;
@@ -1525,16 +1584,6 @@ a.kpi-panel-cell:hover {
     font-weight: 500;
     font-variant-numeric: tabular-nums;
     color: var(--text-muted);
-}
-
-/* Delta line */
-.cat-tip-delta {
-    font-size: 0.64rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-muted);
-    margin-bottom: 2px;
-    line-height: 1.3;
 }
 
 /* Subcategory block */
@@ -1555,7 +1604,7 @@ a.kpi-panel-cell:hover {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 3px 4px;
+    padding: 3px 4px 3px 10px;
     border-radius: 6px;
     text-decoration: none;
     transition: background 0.12s;
@@ -1579,14 +1628,6 @@ a.kpi-panel-cell:hover {
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     color: var(--text);
-}
-.cat-tip-subpct {
-    font-size: 0.58rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-muted);
-    min-width: 32px;
-    text-align: right;
 }
 
 /* Light theme overrides */
