@@ -275,6 +275,17 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-03-01 — PR #68: Insights + Upcoming half-width side-by-side, no emojis
+New Insights + Upcoming section below the Income vs Expenses chart.
+
+1. **Side-by-side layout** — Insights box (left) and Upcoming box (right) sit 50/50 in a `.iu-row-grid` 2-column grid. Both use `outline-band` styling. Stacks vertically at ≤900px.
+2. **No emojis** — Insight rows are text-only (no 📈/🆕/💰 icons). Clean rows with just text + chevron.
+3. **Insights internal layout** — Top section split into two columns with "THIS MONTH" / "LAST MONTH" uppercase tracked headers. Vertical hairline divider. Bottom "COMPARE" section with cross-period insights (spending change, biggest category shift, income change).
+4. **Unified compare header** — "COMPARE THIS MONTH VS LAST MONTH" all on one line, same uppercase/tracked/muted typography as the period half-labels.
+5. **Tighter row density** — Row padding 0.32rem (Apple-ish list density). Hairline dividers at 0.06 alpha.
+6. **HTMX endpoint** — `/dashboard/insights-upcoming` receives both `left_period` and `right_period`, computes per-period insights via `_compute_insights()`, cross-period compare via `_compute_compare_insights()`, and upcoming recurring via `_detect_recurring()` + `_build_upcoming()`.
+7. **KPI panel wiring** — `kpi_panel.html` script triggers insights/upcoming fetch after both panels load (same pattern as categories comparison).
+
 ### 2026-02-28 — PR #47: Single-line header strip (no chips, segmented-track container)
 Removed chips row, flattened header panel, added strip container matching entity switcher.
 
