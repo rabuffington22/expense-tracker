@@ -5,7 +5,7 @@
 <h1 class="page-title">Upload from Vendors</h1>
 <p class="text-muted mb-2">Upload vendor order data. Orders are saved here, categorized on the next page, then matched to bank transactions on the Match page.</p>
 
-<form method="post" action="{{ url_for('vendors.parse') }}" enctype="multipart/form-data" style="max-width: 500px;">
+<form method="post" action="{{ url_for('vendors.parse') }}" enctype="multipart/form-data" class="form-narrow">
     <div class="form-row">
         <div class="form-group">
             <label>Vendor</label>
@@ -30,7 +30,7 @@
 <div class="alert alert-warning">{{ w }}</div>
 {% endfor %}
 
-<div class="card">
+<div class="outline-panel">
     <h3>{{ order_count }} {{ 'invoices' if 'henry' in (vendor|lower) else 'orders' }} parsed</h3>
     <p>{{ min_date }} to {{ max_date }} — totaling <strong>${{ "{:,.2f}".format(total_spent) }}</strong></p>
 </div>
@@ -75,7 +75,7 @@
 {% endif %}
 
 <hr class="divider">
-<h2 style="font-size:1.2rem; margin-bottom:0.5rem;">Saved Orders</h2>
+<h2 class="section-title">Saved Orders</h2>
 {% if total_orders %}
 <p><strong>{{ total_orders }}</strong> vendor orders on file — <strong>{{ matched_orders }}</strong> matched, <strong>{{ unmatched_orders }}</strong> unmatched</p>
 {% else %}

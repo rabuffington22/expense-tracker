@@ -15,7 +15,7 @@
 {% else %}
 
 <!-- Connect + Sync All buttons -->
-<div style="display: flex; gap: 0.8rem; margin-bottom: 1.5rem; max-width: 480px;">
+<div class="control-row" style="margin-bottom: 1rem;">
     <button id="connect-btn" class="btn btn-primary" onclick="startPlaidLink()">
         Connect a Bank
     </button>
@@ -27,15 +27,15 @@
 </div>
 
 {% if not items %}
-<div class="card" style="text-align: center; padding: 2rem;">
-    <div style="color: var(--text-muted); margin-bottom: 0.5rem;">No banks connected yet</div>
-    <div class="text-sm" style="color: var(--text-muted);">Click "Connect a Bank" to link your first account via Plaid.</div>
+<div class="outline-panel empty-state">
+    <div>No banks connected yet</div>
+    <div class="empty-state-sub">Click "Connect a Bank" to link your first account via Plaid.</div>
 </div>
 {% else %}
 
 <!-- Connected institutions -->
 {% for item in items %}
-<div class="card" style="margin-bottom: 1rem; padding: 1rem 1.2rem;">
+<div class="outline-panel">
     <div class="flex-between" style="margin-bottom: 0.8rem;">
         <div>
             <span class="text-bold">{{ item.institution_name or item.item_id }}</span>
@@ -47,21 +47,22 @@
             <span class="text-sm" style="color: var(--orange); margin-left: 0.8rem;">Never synced</span>
             {% endif %}
         </div>
-        <div style="display: flex; gap: 0.5rem;">
+        <div class="control-row">
             <form method="post" action="{{ url_for('plaid.sync') }}" style="margin: 0;">
                 <input type="hidden" name="item_id" value="{{ item.item_id }}">
-                <button type="submit" class="btn btn-small btn-secondary">Sync</button>
+                <button type="submit" class="btn btn-sm btn-secondary">Sync</button>
             </form>
             <form method="post" action="{{ url_for('plaid.disconnect', item_id=item.item_id) }}"
                   style="margin: 0;"
                   onsubmit="return confirm('Disconnect ' + {{ (item.institution_name or item.item_id)|tojson }} + '? Imported transactions will be kept.');">
-                <button type="submit" class="btn btn-small btn-danger">Disconnect</button>
+                <button type="submit" class="btn btn-sm btn-danger">Disconnect</button>
             </form>
         </div>
     </div>
 
     {% if item.accounts %}
-    <table style="width: 100%;">
+    <div class="table-wrap">
+    <table>
         <thead>
             <tr>
                 <th style="width: 40px;">On</th>
@@ -88,6 +89,7 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
     {% else %}
     <div class="text-sm" style="color: var(--text-muted);">No accounts found</div>
     {% endif %}
@@ -146,44 +148,4 @@ async function startPlaidLink() {
     }
 }
 </script>
-
-<style>
-.toggle-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 0.85rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-.toggle-btn.active {
-    background: var(--green);
-    color: #000;
-    border-color: var(--green);
-    font-weight: 700;
-}
-.toggle-btn:hover {
-    border-color: var(--text-muted);
-}
-.btn-small {
-    padding: 0.25rem 0.7rem;
-    font-size: 0.8rem;
-}
-.btn-danger {
-    background: var(--red);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius);
-    cursor: pointer;
-    font-weight: 600;
-}
-.btn-danger:hover {
-    opacity: 0.85;
-}
-</style>
 {% endblock %}

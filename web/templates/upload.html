@@ -16,7 +16,7 @@
 <!-- ═══════════ IMPORT TAB ═══════════ -->
 
 <!-- Month selector -->
-<div class="form-group" style="max-width: 200px; margin-bottom: 1.2rem;">
+<div class="form-group" style="max-width: 200px; margin-bottom: 0.8rem;">
     <label>Month</label>
     <select onchange="window.location.href='{{ url_for('upload.index') }}?month='+this.value">
         {% for m in months %}
@@ -39,7 +39,7 @@
 {% set s = status.get(item.id, {}) %}
 {% set is_done = s.get('completed', 0) %}
 {% set last_date = source_last_dates.get(item.id) %}
-<div class="card flex-between" style="padding: 0.8rem 1.2rem;">
+<div class="outline-panel flex-between">
     <div>
         <strong>{{ item.label }}</strong>
         {% if item.profile_name %}
@@ -79,9 +79,10 @@
 <!-- ═══════════ SETTINGS TAB ═══════════ -->
 
 <!-- ── Import Sources ─────────────────────────── -->
-<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Import Sources</h2>
+<h2 class="section-title">Import Sources</h2>
 
 {% if items %}
+<div class="table-wrap">
 <table>
     <thead>
         <tr>
@@ -110,6 +111,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <p class="text-muted">No sources defined yet.</p>
 {% endif %}
@@ -118,7 +120,7 @@
 <details class="mt-2">
     <summary>Add Source</summary>
     <div>
-        <form method="post" action="{{ url_for('upload.add_source') }}" style="max-width: 500px;">
+        <form method="post" action="{{ url_for('upload.add_source') }}" class="form-narrow">
             <div class="form-row">
                 <div class="form-group">
                     <label>Source name</label>
@@ -156,10 +158,11 @@
 <hr class="divider">
 
 <!-- ── CSV Profiles ───────────────────────────── -->
-<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">CSV Profiles</h2>
+<h2 class="section-title">CSV Profiles</h2>
 <p class="text-muted text-sm mb-1">Define column mappings for different bank/card CSV formats.</p>
 
 {% if profiles %}
+<div class="table-wrap">
 <table>
     <thead>
         <tr>
@@ -189,6 +192,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
 <p class="text-muted">No profiles defined yet.</p>
 {% endif %}
@@ -197,7 +201,7 @@
 <details class="mt-2">
     <summary>Add Profile</summary>
     <div>
-        <form method="post" action="{{ url_for('upload.add_profile') }}" style="max-width: 500px;">
+        <form method="post" action="{{ url_for('upload.add_profile') }}" class="form-narrow">
             <div class="form-row">
                 <div class="form-group">
                     <label>Profile name</label>

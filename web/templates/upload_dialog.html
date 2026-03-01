@@ -27,12 +27,12 @@
 <a href="{{ url_for('upload.import_file', item_id=item.id, month=month) }}" class="btn btn-secondary">Try Again</a>
 {% else %}
 
-<div class="card mb-2">
+<div class="outline-panel mb-2">
     <p><strong>{{ good_count }} file(s)</strong> parsed, <strong>{{ total_txns }} transactions</strong> total</p>
 </div>
 
 {% for p in previews %}
-<div class="card">
+<div class="outline-panel">
     <div class="flex-between mb-1">
         <strong>{{ p.name }}</strong>
         {% if p.error %}
