@@ -275,6 +275,9 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-03-01 — PR #70: Insights + Upcoming equal height on desktop
+Single CSS fix: `.iu-row-grid` `align-items: start` → `align-items: stretch`. Both cards now fill identical height regardless of content length. Empty states remain vertically centered via existing flex layout.
+
 ### 2026-03-01 — PR #68: Insights + Upcoming half-width side-by-side, no emojis
 New Insights + Upcoming section below the Income vs Expenses chart.
 
