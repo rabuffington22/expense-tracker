@@ -1151,10 +1151,12 @@ h2 {
     border-color: var(--series-left);
     border-width: 3px;
 }
+#kpi-left .kpi-panel-value { color: var(--series-left); }
 #kpi-right {
     border-color: var(--series-right);
     border-width: 3px;
 }
+#kpi-right .kpi-panel-value { color: var(--series-right); }
 
 .kpi-panel-header {
     position: absolute;
