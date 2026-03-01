@@ -679,14 +679,54 @@ def main() -> None:
 
         client.set_cookie("entity", "Personal")
 
-        # 10a. GET /todo returns 200
+        # 10a. GET /todo returns 200 with both sections
         resp = client.get("/todo/")
         _check(resp.status_code == 200, "todo index: expected 200")
         body = resp.get_data(as_text=True)
-        _check("Statement Reminders" in body, "todo: should contain 'Statement Reminders'")
         _check("Review Queues" in body, "todo: should contain 'Review Queues'")
+        _check("Statement Reminders" in body, "todo: should contain 'Statement Reminders'")
 
-        # 10b. Create a schedule
+        # 10b. Insert fixture data to make new queues non-zero
+        import hashlib
+        from datetime import date as _date, timedelta as _td
+
+        conn_fix = get_connection("personal")
+        today_str = _date.today().isoformat()
+        yesterday_str = (_date.today() - _td(days=1)).isoformat()
+
+        # Insert a large transaction (>=$500) in last 30 days
+        large_txn_id = hashlib.sha256(
+            f"{today_str}|-750.00|LARGE PURCHASE TEST".encode()
+        ).hexdigest()[:24]
+        conn_fix.execute(
+            "INSERT OR IGNORE INTO transactions "
+            "(transaction_id, date, description_raw, amount, amount_cents, merchant_canonical, imported_at) "
+            "VALUES (?, ?, 'LARGE PURCHASE TEST', -750.00, -75000, 'LargeVendorTest', ?)",
+            (large_txn_id, today_str, today_str),
+        )
+
+        # Insert a transaction with a unique merchant (new merchant — not seen before)
+        new_merch_id = hashlib.sha256(
+            f"{today_str}|-15.00|BRAND NEW MERCHANT XYZ".encode()
+        ).hexdigest()[:24]
+        conn_fix.execute(
+            "INSERT OR IGNORE INTO transactions "
+            "(transaction_id, date, description_raw, amount, amount_cents, merchant_canonical, imported_at) "
+            "VALUES (?, ?, 'BRAND NEW MERCHANT XYZ', -15.00, -1500, 'BrandNewMerchantXyz', ?)",
+            (new_merch_id, today_str, today_str),
+        )
+        conn_fix.commit()
+        conn_fix.close()
+
+        # 10b-ii. Verify counts are now non-zero on the page
+        resp = client.get("/todo/")
+        body = resp.get_data(as_text=True)
+        # Large txn badge should be visible (count >= 1)
+        _check("Large transactions" in body, "todo queues: Large transactions row should appear")
+        # New merchants badge should be visible
+        _check("New merchants" in body, "todo queues: New merchants row should appear")
+
+        # 10c. Create a schedule
         resp = client.post("/todo/schedules/create", data={
             "name": "US Bank",
             "statement_day": "5",
@@ -696,7 +736,7 @@ def main() -> None:
         body = resp.get_data(as_text=True)
         _check("US Bank" in body, "todo create: schedule name should appear on page")
 
-        # 10c. Verify schedule exists in DB
+        # 10d. Verify schedule exists in DB
         conn_todo = get_connection("personal")
         sched = conn_todo.execute(
             "SELECT id, name, statement_day FROM statement_schedules WHERE name = 'US Bank'"
@@ -706,7 +746,7 @@ def main() -> None:
         _check(sched["statement_day"] == 5, "todo: statement_day should be 5")
         sched_id = sched["id"]
 
-        # 10d. Mark schedule as complete
+        # 10e. Mark schedule as complete
         resp = client.post(
             f"/todo/schedules/complete/{sched_id}",
             follow_redirects=True,
@@ -715,8 +755,7 @@ def main() -> None:
         body = resp.get_data(as_text=True)
         _check("Done" in body, "todo complete: should show 'Done' badge")
 
-        # 10e. Verify completion in DB
-        from datetime import date as _date
+        # 10f. Verify completion in DB
         period_key = _date.today().strftime("%Y-%m")
         conn_todo = get_connection("personal")
         comp = conn_todo.execute(
@@ -726,14 +765,14 @@ def main() -> None:
         conn_todo.close()
         _check(comp is not None, "todo: completion row should exist in DB")
 
-        # 10f. Entity isolation — BFM should NOT see Personal's schedule
+        # 10g. Entity isolation — BFM should NOT see Personal's schedule or queue data
         client.set_cookie("entity", "BFM")
         resp = client.get("/todo/")
         _check(resp.status_code == 200, "todo BFM: expected 200")
         body = resp.get_data(as_text=True)
         _check("US Bank" not in body, "todo isolation: BFM should not see Personal's schedule")
 
-        # 10g. Delete schedule
+        # 10h. Delete schedule
         client.set_cookie("entity", "Personal")
         resp = client.post(
             f"/todo/schedules/delete/{sched_id}",
@@ -752,9 +791,16 @@ def main() -> None:
         conn_todo.close()
         _check(comp is None, "todo delete: completion should be cascade-deleted")
 
+        # Cleanup fixture data
+        conn_fix = get_connection("personal")
+        conn_fix.execute("DELETE FROM transactions WHERE transaction_id IN (?, ?)",
+                         (large_txn_id, new_merch_id))
+        conn_fix.commit()
+        conn_fix.close()
+
         client.set_cookie("entity", "Personal")
 
-        print("   ✅ All To Do tests passed (CRUD + isolation + cascade)")
+        print("   ✅ All To Do tests passed (CRUD + new queues + isolation + cascade)")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

@@ -3434,11 +3434,21 @@ tr.is-selected > td:first-child {
 
 /* ── To Do page ────────────────────────────────────────────────────────── */
 
+/* Scoped under .todo-page for tight, dashboard-density feel */
+
+.todo-page .outline-panel {
+    padding: 0.6rem 0.7rem;
+}
+.todo-page .panel-header {
+    font-size: var(--ui-font-sm);
+}
+
+/* ── Add form (single-line compact) ─────────────── */
 .todo-add-form {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.35rem;
     align-items: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     flex-wrap: wrap;
 }
 .todo-input {
@@ -3446,20 +3456,21 @@ tr.is-selected > td:first-child {
     border: 0.5px solid var(--border);
     border-radius: var(--ui-radius);
     color: var(--text);
-    padding: 0.32rem 0.6rem;
-    font-size: var(--ui-font-base);
+    padding: 0.28rem 0.5rem;
+    font-size: var(--ui-font-xs);
     font-family: inherit;
     width: auto;
 }
-.todo-input--name  { flex: 2; min-width: 120px; }
-.todo-input--day   { flex: 0 0 60px; text-align: center; }
-.todo-input--notes { flex: 2; min-width: 100px; }
+.todo-input--name  { flex: 2; min-width: 100px; }
+.todo-input--day   { flex: 0 0 52px; text-align: center; }
+.todo-input--notes { flex: 2; min-width: 80px; }
 .todo-input:focus {
     outline: none;
     border-color: var(--blue);
     box-shadow: 0 0 0 2px rgba(10,132,255,0.25);
 }
 
+/* ── List + rows ────────────────────────────────── */
 .todo-list {
     display: flex;
     flex-direction: column;
@@ -3468,32 +3479,57 @@ tr.is-selected > td:first-child {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.4rem 0;
-    border-bottom: 0.5px solid var(--border);
-    gap: 0.5rem;
+    padding: 0.32rem 0;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    gap: 0.4rem;
+}
+:root[data-theme="light"] .todo-row {
+    border-bottom-color: rgba(0,0,0,0.06);
 }
 .todo-row:last-child { border-bottom: none; }
+
+/* ── Queue link rows ────────────────────────────── */
 .todo-row--link {
     text-decoration: none;
     color: inherit;
     border-radius: 6px;
-    padding: 0.4rem 0.35rem;
-    margin: 0 -0.35rem;
+    padding: 0.35rem 0.4rem;
+    margin: 0 -0.4rem;
     transition: background var(--transition);
 }
 .todo-row--link:hover {
     background: var(--hover-bg);
     text-decoration: none;
 }
-.todo-row-main {
+.todo-row-right {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+.todo-chevron {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    opacity: 0.5;
+    line-height: 1;
+}
+.todo-queue-hint {
+    font-size: var(--ui-font-xs);
+    opacity: 0.6;
+    white-space: nowrap;
+}
+
+/* ── Schedule reminder rows (compact) ───────────── */
+.todo-sched-left {
     display: flex;
     align-items: baseline;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-wrap: wrap;
     min-width: 0;
 }
 .todo-name {
-    font-size: var(--ui-font-base);
+    font-size: var(--ui-font-sm);
     font-weight: 600;
 }
 .todo-meta {
@@ -3504,18 +3540,44 @@ tr.is-selected > td:first-child {
     font-size: var(--ui-font-xs);
     font-style: italic;
 }
+.todo-countdown {
+    font-size: var(--ui-font-xs);
+    white-space: nowrap;
+}
 .todo-row-actions {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.25rem;
     flex-shrink: 0;
 }
+.todo-delete-btn {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.15rem 0.35rem;
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0.5;
+    transition: opacity var(--transition);
+}
+.todo-delete-btn:hover {
+    opacity: 1;
+}
 
+/* ── Empty state (compact) ──────────────────────── */
+.todo-empty {
+    padding: 0.6rem 0.3rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+}
+
+/* ── Mobile ─────────────────────────────────────── */
 @media (max-width: 480px) {
     .todo-add-form { flex-direction: column; }
     .todo-input { width: 100%; }
     .todo-input--day { flex: 1; }
     .todo-row { flex-wrap: wrap; }
+    .todo-sched-row .todo-row-actions { width: 100%; justify-content: flex-end; }
 }
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */

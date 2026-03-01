@@ -2,13 +2,103 @@
 {% block title %}To Do{% endblock %}
 
 {% block content %}
+<div class="todo-page">
+
 <h1 class="page-title">To Do</h1>
 
-{# ── Statement Reminders ────────────────────────────────────────────────── #}
+{# ── Review Queues (primary) ──────────────────────────────────────────── #}
+<div class="outline-panel">
+    <div class="panel-header">Review Queues</div>
+
+    <div class="todo-list">
+        {% if counts.uncategorized > 0 %}
+        <a href="{{ url_for('transactions.index', uncategorized=1) }}" class="todo-row todo-row--link">
+            <span class="todo-name">Uncategorized transactions</span>
+            <span class="todo-row-right">
+                <span class="badge badge-red">{{ counts.uncategorized }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if counts.vendor_breakdown > 0 %}
+        <a href="{{ url_for('transactions.index', vendor_breakdown=1) }}" class="todo-row todo-row--link">
+            <span class="todo-name">Vendor breakdown needed</span>
+            <span class="todo-row-right">
+                <span class="badge badge-red">{{ counts.vendor_breakdown }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if counts.possible_transfer > 0 %}
+        <a href="{{ url_for('transactions.index', possible_transfer=1) }}" class="todo-row todo-row--link">
+            <span class="todo-name">Possible transfers</span>
+            <span class="todo-row-right">
+                <span class="badge badge-muted">{{ counts.possible_transfer }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if counts.large_txns > 0 %}
+        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, sort='amount', dir='asc') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Large transactions</span>
+            <span class="text-muted todo-queue-hint">last 30 days</span>
+            <span class="todo-row-right">
+                <span class="badge badge-muted">{{ counts.large_txns }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if counts.new_merchants > 0 %}
+        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end) }}" class="todo-row todo-row--link">
+            <span class="todo-name">New merchants</span>
+            <span class="text-muted todo-queue-hint">last 30 days</span>
+            <span class="todo-row-right">
+                <span class="badge badge-muted">{{ counts.new_merchants }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if counts.orders_unmatched > 0 %}
+        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Orders to match</span>
+            <span class="todo-row-right">
+                <span class="badge badge-blue">{{ counts.orders_unmatched }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if counts.orders_uncategorized > 0 %}
+        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Orders to categorize</span>
+            <span class="todo-row-right">
+                <span class="badge badge-blue">{{ counts.orders_uncategorized }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if counts.uncategorized == 0 and counts.vendor_breakdown == 0
+              and counts.possible_transfer == 0 and counts.orders_unmatched == 0
+              and counts.orders_uncategorized == 0 and counts.large_txns == 0
+              and counts.new_merchants == 0 %}
+        <div class="todo-empty">
+            All caught up. No items need attention.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# ── Statement Reminders (secondary, compact) ────────────────────────── #}
 <div class="outline-panel">
     <div class="panel-header">Statement Reminders</div>
 
-    {# Add form #}
+    {# Compact single-line add form #}
     <form method="post" action="{{ url_for('todo.create_schedule') }}" class="todo-add-form">
         <input type="text" name="name" placeholder="Source name" required class="todo-input todo-input--name">
         <input type="number" name="statement_day" min="1" max="31" placeholder="Day" required class="todo-input todo-input--day">
@@ -16,15 +106,14 @@
         <button type="submit" class="btn btn-primary btn-sm">Add</button>
     </form>
 
-    {# Schedule list #}
+    {# Compact schedule rows #}
     {% if schedules %}
     <div class="todo-list">
         {% for s in schedules %}
-        <div class="todo-row">
-            <div class="todo-row-main">
+        <div class="todo-row todo-sched-row">
+            <div class="todo-sched-left">
                 <span class="todo-name">{{ s.name }}</span>
-                <span class="text-muted todo-meta">Day {{ s.statement_day }}
-                    &middot; {{ s.due_date.strftime('%b %-d') }}</span>
+                <span class="text-muted todo-meta">Day {{ s.statement_day }} &middot; {{ s.due_date.strftime('%b %-d') }}</span>
                 {% if s.notes %}
                 <span class="text-muted todo-notes">{{ s.notes }}</span>
                 {% endif %}
@@ -37,12 +126,12 @@
                         <button type="submit" class="btn btn-success btn-sm">Mark done</button>
                     </form>
                 {% else %}
-                    <span class="badge badge-muted">Upcoming</span>
+                    <span class="text-muted todo-countdown">Due in {{ s.days_until }}d</span>
                 {% endif %}
                 <form method="post" action="{{ url_for('todo.delete_schedule', schedule_id=s.id) }}"
                       style="display:inline;"
                       onsubmit="return confirm('Delete this schedule?');">
-                    <button type="submit" class="btn btn-sm" style="background:transparent; color:var(--text-muted);"
+                    <button type="submit" class="btn btn-sm todo-delete-btn"
                             title="Delete">&times;</button>
                 </form>
             </div>
@@ -50,59 +139,11 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="empty-state">
+    <div class="todo-empty">
         No statement reminders yet. Add one above.
     </div>
     {% endif %}
 </div>
 
-{# ── Queues ─────────────────────────────────────────────────────────────── #}
-<div class="outline-panel">
-    <div class="panel-header">Review Queues</div>
-
-    <div class="todo-list">
-        {% if counts.uncategorized > 0 %}
-        <a href="{{ url_for('transactions.index', uncategorized=1) }}" class="todo-row todo-row--link">
-            <span class="todo-name">Uncategorized transactions</span>
-            <span class="badge badge-red">{{ counts.uncategorized }}</span>
-        </a>
-        {% endif %}
-
-        {% if counts.vendor_breakdown > 0 %}
-        <a href="{{ url_for('transactions.index', vendor_breakdown=1) }}" class="todo-row todo-row--link">
-            <span class="todo-name">Vendor breakdown needed</span>
-            <span class="badge badge-red">{{ counts.vendor_breakdown }}</span>
-        </a>
-        {% endif %}
-
-        {% if counts.possible_transfer > 0 %}
-        <a href="{{ url_for('transactions.index', possible_transfer=1) }}" class="todo-row todo-row--link">
-            <span class="todo-name">Possible transfers</span>
-            <span class="badge badge-muted">{{ counts.possible_transfer }}</span>
-        </a>
-        {% endif %}
-
-        {% if counts.orders_unmatched > 0 %}
-        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Orders to match</span>
-            <span class="badge badge-blue">{{ counts.orders_unmatched }}</span>
-        </a>
-        {% endif %}
-
-        {% if counts.orders_uncategorized > 0 %}
-        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Orders to categorize</span>
-            <span class="badge badge-blue">{{ counts.orders_uncategorized }}</span>
-        </a>
-        {% endif %}
-
-        {% if counts.uncategorized == 0 and counts.vendor_breakdown == 0
-              and counts.possible_transfer == 0 and counts.orders_unmatched == 0
-              and counts.orders_uncategorized == 0 %}
-        <div class="empty-state">
-            All caught up. No items need attention.
-        </div>
-        {% endif %}
-    </div>
-</div>
+</div>{# .todo-page #}
 {% endblock %}
