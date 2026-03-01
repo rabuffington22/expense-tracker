@@ -1,0 +1,88 @@
+<!-- ── Insights + Upcoming (side-by-side on desktop) ──────────────────── -->
+<div class="iu-row-grid">
+
+  <!-- ── INSIGHTS box ──────────────────────────────────────────────────── -->
+  <div class="outline-band iu-insights-box">
+    <div class="band-label">Insights</div>
+    <div class="iu-insights-inner">
+      <!-- Top row: two halves with period headers -->
+      <div class="iu-top-row">
+        <!-- Left period insights -->
+        <div class="iu-half">
+          <div class="iu-half-label">{{ left_label }}</div>
+          {% if left_insights %}
+            {% for ins in left_insights %}
+            <a class="iu-row" href="{{ ins.url }}">
+              <span class="iu-text">{{ ins.text }}</span>
+              <span class="iu-chevron">&#x203A;</span>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div class="iu-empty-sm">No insights for this period</div>
+          {% endif %}
+        </div>
+        <!-- Vertical divider -->
+        <div class="iu-vdiv"></div>
+        <!-- Right period insights -->
+        <div class="iu-half">
+          <div class="iu-half-label">{{ right_label }}</div>
+          {% if right_insights %}
+            {% for ins in right_insights %}
+            <a class="iu-row" href="{{ ins.url }}">
+              <span class="iu-text">{{ ins.text }}</span>
+              <span class="iu-chevron">&#x203A;</span>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div class="iu-empty-sm">No insights for this period</div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- Horizontal divider -->
+      <div class="iu-hdiv"></div>
+      <!-- Compare section (full width) -->
+      <div class="iu-compare">
+        <div class="iu-compare-header">
+          <span class="iu-compare-title">Compare</span>
+          <span class="iu-compare-periods">{{ left_label }} vs {{ right_label }}</span>
+        </div>
+        <div class="iu-compare-list">
+          {% if compare_insights %}
+            {% for ins in compare_insights %}
+            <a class="iu-row" href="{{ ins.url }}">
+              <span class="iu-text">{{ ins.text }}</span>
+              <span class="iu-chevron">&#x203A;</span>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div class="iu-empty-sm">Not enough data to compare yet</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── UPCOMING box ──────────────────────────────────────────────────── -->
+  <div class="outline-band iu-upcoming-box">
+    <div class="band-label">Upcoming</div>
+    <div class="iu-list">
+      {% if upcoming %}
+        {% for item in upcoming %}
+        <a class="iu-row" href="{{ item.url }}">
+          <span class="iu-merchant">{{ item.merchant_canonical }}</span>
+          <span class="iu-meta">
+            <span class="iu-date">{{ item.expected_date_display }}</span>
+            {% if item.expected_amount_cents %}
+            <span class="iu-amount">${{ "{:,.0f}".format(item.expected_amount_cents / 100) }}</span>
+            {% endif %}
+          </span>
+          <span class="iu-chevron">&#x203A;</span>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="iu-empty">No recurring patterns detected yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>

@@ -45,9 +45,19 @@
   var leftSel  = document.querySelector('#kpi-left .kpi-period-select');
   var rightSel = document.querySelector('#kpi-right .kpi-period-select');
   if (!leftSel || !rightSel) return;
-  var url = '{{ url_for("dashboard.categories_compare") }}'
-          + '?left_period=' + encodeURIComponent(leftSel.value)
-          + '&right_period=' + encodeURIComponent(rightSel.value);
-  htmx.ajax('GET', url, {target: '#categories-compare', swap: 'innerHTML'});
+  /* Categories comparison */
+  var catUrl = '{{ url_for("dashboard.categories_compare") }}'
+             + '?left_period=' + encodeURIComponent(leftSel.value)
+             + '&right_period=' + encodeURIComponent(rightSel.value);
+  htmx.ajax('GET', catUrl, {target: '#categories-compare', swap: 'innerHTML'});
+
+  /* Insights + Upcoming (uses both periods for left/right/compare) */
+  var iuTarget = document.getElementById('insights-upcoming');
+  if (iuTarget) {
+    var iuUrl = '{{ url_for("dashboard.insights_upcoming") }}'
+              + '?left_period=' + encodeURIComponent(leftSel.value)
+              + '&right_period=' + encodeURIComponent(rightSel.value);
+    htmx.ajax('GET', iuUrl, {target: '#insights-upcoming', swap: 'innerHTML'});
+  }
 })();
 </script>
