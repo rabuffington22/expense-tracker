@@ -75,12 +75,13 @@
     --seg-active-text:   var(--text);
     /* Glass tokens */
     --blur:              26px;
-    --glass-bg:          rgba(24, 24, 28, 0.42);
-    --glass-bg-strong:   rgba(24, 24, 28, 0.58);
-    --glass-border:      rgba(255,255,255,0.14);
-    --glass-shadow:      0 14px 40px rgba(0,0,0,0.45);
+    --glass-bg:          rgba(24, 24, 28, 0.45);
+    --glass-bg-strong:   rgba(24, 24, 28, 0.62);
+    --glass-border:      rgba(255,255,255,0.12);
+    --glass-shadow:      0 4px 24px rgba(0,0,0,0.35);
     --glass-highlight:   rgba(255,255,255,0.10);
     --glass-hover:       rgba(255,255,255,0.06);
+    --glass-divider:     rgba(255,255,255,0.06);
     --focus-ring:        0 0 0 3px rgba(10,132,255,0.35);
     /* Series colors — single source of truth (KPI panels + bars + legend) */
     --series-left:       #409CFF;
@@ -149,12 +150,13 @@
     --seg-active-text:   var(--blue);
     /* Glass tokens */
     --blur:              26px;
-    --glass-bg:          rgba(255,255,255,0.50);
-    --glass-bg-strong:   rgba(255,255,255,0.68);
+    --glass-bg:          rgba(255,255,255,0.62);
+    --glass-bg-strong:   rgba(255,255,255,0.78);
     --glass-border:      rgba(0,0,0,0.10);
-    --glass-shadow:      0 14px 40px rgba(0,0,0,0.14);
+    --glass-shadow:      0 4px 20px rgba(0,0,0,0.08);
     --glass-highlight:   rgba(255,255,255,0.70);
     --glass-hover:       rgba(0,0,0,0.04);
+    --glass-divider:     rgba(0,0,0,0.06);
     --focus-ring:        0 0 0 3px rgba(0,122,255,0.25);
     /* Series colors — single source of truth (KPI panels + bars + legend) */
     --series-left:       #409CFF;
@@ -696,25 +698,83 @@ h2 {
     margin-top: 0;
 }
 
-/* ── Outline band (no card surface — just a hairline border) ───────────── */
-.outline-band {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.10);
+/* ── Shared Glass Surfaces ──────────────────────────────────────────────── */
+
+/* Standard glass surface — translucent bg + blur + hairline border */
+.surface-glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-xl);
-    box-shadow: none;
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.2);
+}
+/* Strong glass — elevated elements (menus, popovers, modals) */
+.surface-glass-strong {
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.4);
+}
+/* Inset surface — recessed area inside glass (chart wells, inner panels) */
+.surface-inset {
+    background: rgba(0,0,0,0.10);
+    border: 1px solid var(--glass-divider);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(calc(var(--blur) * 0.5)) saturate(1.1);
+    -webkit-backdrop-filter: blur(calc(var(--blur) * 0.5)) saturate(1.1);
+}
+:root[data-theme="light"] .surface-inset {
+    background: rgba(255,255,255,0.35);
+}
+/* Hairline divider — theme-aware 1px line */
+.hairline {
+    border: none;
+    height: 1px;
+    background: var(--glass-divider);
+}
+/* Fallback: when backdrop-filter is unsupported, use more opaque bg */
+@supports not (backdrop-filter: blur(1px)) {
+    .surface-glass {
+        background: var(--bg-card);
+        box-shadow: var(--shadow-card);
+    }
+    .surface-glass-strong {
+        background: var(--bg-card);
+        box-shadow: var(--shadow-popup);
+    }
+    .surface-inset {
+        background: var(--chart-well-bg);
+        backdrop-filter: none;
+    }
+    .outline-band {
+        background: var(--bg-card);
+        box-shadow: var(--shadow-card);
+    }
+}
+
+/* ── Outline band (glass surface with hairline border) ─────────────────── */
+.outline-band {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.2);
     padding: 1rem 1.1rem;
     position: relative;
 }
-:root[data-theme="light"] .outline-band {
-    border-color: rgba(0,0,0,0.08);
-}
 .outline-band .band-label {
-    background: var(--bg);
-    border: 1px solid rgba(255,255,255,0.10);
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.4);
 }
 :root[data-theme="light"] .outline-band .band-label {
-    background: var(--bg);
-    border-color: rgba(0,0,0,0.08);
+    background: var(--glass-bg-strong);
+    border-color: var(--glass-border);
 }
 .outline-band .band-head { margin-bottom: 0.75rem; }
 .outline-band .band-divider { background: rgba(255,255,255,0.10); }
@@ -739,14 +799,15 @@ h2 {
 /* ── Compare group (wraps KPI panels + Expense Categories) ────────────── */
 .compare-group {
     position: relative;
-    border: 1px solid rgba(255,255,255,0.10);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-xl);
     padding: 1.2rem 1rem 1rem;
-    background: transparent;
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.2);
 }
-:root[data-theme="light"] .compare-group {
-    border-color: rgba(0,0,0,0.08);
-}
+/* Light mode — glass tokens handle theme switch automatically */
 .compare-group-label {
     position: absolute;
     top: -0.55rem;
@@ -758,8 +819,11 @@ h2 {
     text-transform: uppercase;
     color: var(--text-muted);
     opacity: 0.7;
-    background: var(--bg);
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
     border-radius: 999px;
+    backdrop-filter: blur(var(--blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.4);
 }
 /* Flatten nested outline-band inside compare-group */
 .compare-group .outline-band {
@@ -1499,11 +1563,13 @@ a.kpi-panel-cell:hover {
     z-index: 1000;
     max-width: 260px;
     min-width: 200px;
-    background: #000000;
-    border: 0.5px solid rgba(255,255,255,0.12);
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
     border-radius: 14px;
     padding: 11px 13px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.06);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.4);
     font-family: var(--font);
     pointer-events: auto;
     opacity: 0;
@@ -1630,12 +1696,7 @@ a.kpi-panel-cell:hover {
     color: var(--text);
 }
 
-/* Light theme overrides */
-:root[data-theme="light"] .cat-tip {
-    background: rgba(255, 255, 255, 0.92);
-    border-color: rgba(0,0,0,0.08);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.06);
-}
+/* Light theme — glass tokens already handle the switch */
 
 /* ── Dashboard section divider ─────────────────────────────────────────── */
 .dash-divider {
@@ -1756,11 +1817,13 @@ a.kpi-panel-cell:hover {
 .ie-tip {
     position: absolute;
     z-index: 10;
-    background: #000;
-    border: 0.5px solid rgba(255,255,255,0.12);
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
     border-radius: 10px;
     padding: 8px 10px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.4);
     pointer-events: none;
     white-space: nowrap;
     font-family: var(--font);
@@ -1804,12 +1867,7 @@ a.kpi-panel-cell:hover {
     color: var(--text);
 }
 
-/* Light theme */
-:root[data-theme="light"] .ie-tip {
-    background: rgba(255,255,255,0.94);
-    border-color: rgba(0,0,0,0.08);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-}
+/* Light theme — glass tokens handle the switch */
 /* (area gradient opacity handled by SVG defs) */
 
 /* Responsive */
@@ -3172,8 +3230,8 @@ tr.is-selected > td:first-child {
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(var(--blur)) saturate(1.2);
-    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.2);
+    backdrop-filter: blur(var(--blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.4);
     padding: 4px 0;
     z-index: 20;
 }
@@ -3719,17 +3777,14 @@ select.input-sm {
     top: calc(100% + 4px);
     left: 0;
     min-width: 220px;
-    background: var(--bg);
-    border: 1px solid rgba(255,255,255,0.10);
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--blur)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.4);
     padding: 4px 0;
     z-index: 25;
-}
-:root[data-theme="light"] .dhdr-popover {
-    border-color: rgba(0,0,0,0.08);
 }
 .dhdr-popover[hidden] {
     display: none;
