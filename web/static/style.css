@@ -82,11 +82,9 @@
     --glass-highlight:   rgba(255,255,255,0.10);
     --glass-hover:       rgba(255,255,255,0.06);
     --focus-ring:        0 0 0 3px rgba(10,132,255,0.35);
-    /* Series colors (KPI panels + category compare chart) */
-    --series-left:       #0a84ff;
-    --series-right:      #ff9f0a;
-    --series-left-border:  rgba(10,132,255,0.35);
-    --series-right-border: rgba(255,159,10,0.35);
+    /* Series colors — single source of truth (KPI panels + bars + legend) */
+    --series-left:       #0A84FF;
+    --series-right:      #FF9F0A;
 }
 
 /* ── Light Theme ───────────────────────────────────────────────────────── */
@@ -158,11 +156,9 @@
     --glass-highlight:   rgba(255,255,255,0.70);
     --glass-hover:       rgba(0,0,0,0.04);
     --focus-ring:        0 0 0 3px rgba(0,122,255,0.25);
-    /* Series colors (KPI panels + category compare chart) */
-    --series-left:       #007aff;
-    --series-right:      #ff9500;
-    --series-left-border:  rgba(0,122,255,0.30);
-    --series-right-border: rgba(255,149,0,0.30);
+    /* Series colors — single source of truth (KPI panels + bars + legend) */
+    --series-left:       #0A84FF;
+    --series-right:      #FF9F0A;
 }
 
 html {
@@ -1152,12 +1148,12 @@ h2 {
 }
 /* Left panel = blue series, Right panel = orange series */
 #kpi-left {
-    border-color: var(--series-left-border);
-    border-width: 2px;
+    border-color: var(--series-left);
+    border-width: 3px;
 }
 #kpi-right {
-    border-color: var(--series-right-border);
-    border-width: 2px;
+    border-color: var(--series-right);
+    border-width: 3px;
 }
 
 .kpi-panel-header {
@@ -1256,38 +1252,6 @@ a.kpi-panel-cell:hover {
 @media (max-width: 480px) {
     .kpi-panel-value { font-size: 1.25rem; }
     .kpi-panel { padding: 1.2rem 0.7rem 0.6rem; }
-}
-
-/* Tiny series legend between KPI panels */
-.kpi-series-legend {
-    display: flex;
-    gap: 1.2rem;
-    justify-content: center;
-    margin-top: -0.4rem;
-    margin-bottom: 0.2rem;
-}
-.kpi-series-legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.6rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    opacity: 0.7;
-}
-.kpi-series-dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-}
-.kpi-series-dot--left {
-    background: var(--series-left);
-}
-.kpi-series-dot--right {
-    background: var(--series-right);
 }
 
 /* ── Categories Compare ───────────────────────────────────────────────── */
@@ -1423,14 +1387,11 @@ a.kpi-panel-cell:hover {
 }
 .cat-compare-bar--left {
     background: var(--series-left);
-    opacity: 0.8;
 }
 .cat-compare-bar--right {
     background: var(--series-right);
-    opacity: 0.8;
 }
 .cat-compare-bar:hover {
-    opacity: 1;
     filter: brightness(1.15);
 }
 

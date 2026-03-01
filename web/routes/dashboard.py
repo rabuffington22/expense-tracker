@@ -738,12 +738,10 @@ def _format_period_label(params):
 
 # ── Period helpers (KPI compare panels) ───────────────────────────────────────
 
-_PERIOD_LABELS = {
-    "this_week": "This Week",
-    "last_week": "Last Week",
+# Static presets (always shown first in dropdown)
+_PRESET_LABELS = {
     "this_month": "This Month",
     "last_month": "Last Month",
-    "month_to_date": "Month to Date",
     "last_30": "Last 30 Days",
     "last_90": "Last 90 Days",
     "year_to_date": "Year to Date",
@@ -751,28 +749,50 @@ _PERIOD_LABELS = {
 }
 
 
+def _build_period_labels():
+    """Build ordered period labels: presets + last 12 explicit months.
+
+    Explicit months use keys like 'month_2026_03' → 'Mar 2026'.
+    """
+    labels = dict(_PRESET_LABELS)
+    now = datetime.now()
+    y, m = now.year, now.month
+    for _ in range(12):
+        key = f"month_{y:04d}_{m:02d}"
+        # "Mar 2026" style label
+        month_name = calendar.month_abbr[m]
+        label = f"{month_name} {y}"
+        labels[key] = label
+        m -= 1
+        if m == 0:
+            m = 12
+            y -= 1
+    return labels
+
+
 def _period_to_dates(period_key):
     """Map a period key to (start_date, end_date) strings in YYYY-MM-DD format.
 
-    Week boundaries use Monday start (ISO standard).
-    last_12_months = rolling 365 days ending today.
+    Supports preset keys and explicit month keys (month_YYYY_MM).
     """
     now = datetime.now()
     today = now.date()
 
-    if period_key == "this_week":
-        # Monday..today (weekday(): Monday=0)
-        monday = today - timedelta(days=today.weekday())
-        start = monday.isoformat()
-        end = today.isoformat()
-    elif period_key == "last_week":
-        # Previous Monday..Sunday
-        this_monday = today - timedelta(days=today.weekday())
-        last_monday = this_monday - timedelta(days=7)
-        last_sunday = this_monday - timedelta(days=1)
-        start = last_monday.isoformat()
-        end = last_sunday.isoformat()
-    elif period_key == "this_month":
+    # Handle explicit month keys: month_2026_03 etc.
+    if period_key.startswith("month_"):
+        parts = period_key.split("_")
+        if len(parts) == 3:
+            try:
+                y, m = int(parts[1]), int(parts[2])
+                start = f"{y:04d}-{m:02d}-01"
+                last_day = calendar.monthrange(y, m)[1]
+                end = f"{y:04d}-{m:02d}-{last_day:02d}"
+                return start, end
+            except (ValueError, OverflowError):
+                pass
+        return _period_to_dates("this_month")
+
+    if period_key == "this_month":
         start = f"{now.year:04d}-{now.month:02d}-01"
         last_day = calendar.monthrange(now.year, now.month)[1]
         end = f"{now.year:04d}-{now.month:02d}-{last_day:02d}"
@@ -784,9 +804,6 @@ def _period_to_dates(period_key):
         start = f"{y:04d}-{m:02d}-01"
         last_day = calendar.monthrange(y, m)[1]
         end = f"{y:04d}-{m:02d}-{last_day:02d}"
-    elif period_key == "month_to_date":
-        start = f"{now.year:04d}-{now.month:02d}-01"
-        end = today.isoformat()
     elif period_key == "last_30":
         start = (today - timedelta(days=29)).isoformat()
         end = today.isoformat()
@@ -833,6 +850,64 @@ def _query_kpi(conn, start, end):
         "net_cents": income_cents - spend_cents,
         "txn_count": txn_count,
     }
+
+
+def _nice_y_ticks(max_cents):
+    """Compute Apple-ish nice-number Y-axis ticks for a bar chart.
+
+    Returns (ticks, axis_max_cents) where ticks is a list of dicts
+    [{"label": "$500", "pct": 50.0}, ...] from top to bottom,
+    and axis_max_cents is the tick ceiling (>= max_cents).
+
+    Uses step from {1, 2, 5} × 10^n to get ~4–5 ticks.
+    If max_cents == 0: returns single $0 baseline and axis_max of 0.
+    """
+    import math
+
+    if max_cents <= 0:
+        return [{"label": "$0", "pct": 0}], 0
+
+    # Work in dollars for readability
+    max_dollars = max_cents / 100
+
+    # Find nice step: target ~4-5 ticks, minimum step $1
+    rough_step = max(max_dollars / 4, 1)
+    magnitude = 10 ** math.floor(math.log10(rough_step)) if rough_step > 0 else 1
+    residual = rough_step / magnitude
+    # Pick from {1, 2, 5}
+    if residual <= 1.5:
+        nice_step = 1 * magnitude
+    elif residual <= 3.5:
+        nice_step = 2 * magnitude
+    else:
+        nice_step = 5 * magnitude
+    nice_step = max(nice_step, 1)  # never sub-dollar ticks
+
+    # Round up max to next nice_step multiple
+    axis_max_dollars = math.ceil(max_dollars / nice_step) * nice_step
+    axis_max_cents = int(axis_max_dollars * 100)
+
+    # Build ticks from top to bottom (axis_max down to 0)
+    ticks = []
+    val = axis_max_dollars
+    while val >= 0:
+        pct = (val / axis_max_dollars * 100) if axis_max_dollars > 0 else 0
+        if val >= 1000:
+            label = f"${val / 1000:.1f}K".replace(".0K", "K")
+        elif val >= 1:
+            label = f"${val:,.0f}"
+        else:
+            label = "$0"
+        ticks.append({"label": label, "pct": pct})
+        val = round(val - nice_step, 2)
+        if val < 0 and abs(val) < nice_step * 0.01:
+            val = 0  # float precision guard
+
+    # Ensure $0 baseline is present
+    if ticks[-1]["pct"] != 0:
+        ticks.append({"label": "$0", "pct": 0})
+
+    return ticks, axis_max_cents
 
 
 def _query_category_totals(conn, start, end):
@@ -901,9 +976,11 @@ def kpi_panel():
         qp.update({k: v for k, v in overrides.items() if v})
         return url_for("transactions.index", **qp)
 
+    period_labels = _build_period_labels()
+
     return render_template("components/kpi_panel.html",
                            panel=panel, period=period, start=start, end=end,
-                           period_labels=_PERIOD_LABELS,
+                           period_labels=period_labels,
                            drill_url=drill_url,
                            **kpi)
 
@@ -960,32 +1037,17 @@ def categories_compare():
     merged.sort(key=lambda x: x["combined"], reverse=True)
     top = merged[:12]
 
-    # Compute bar height percentages with common scale
-    max_cents = max((c["left_cents"] for c in top), default=0)
-    max_cents = max(max_cents, max((c["right_cents"] for c in top), default=0))
-    if max_cents == 0:
-        max_cents = 1  # avoid division by zero
+    # Compute bar height percentages with common scale (from displayed categories only)
+    raw_max = max((c["left_cents"] for c in top), default=0)
+    raw_max = max(raw_max, max((c["right_cents"] for c in top), default=0))
 
+    # Nice-number Y-axis ticks: pick step from {1,2,5}×10^n to get ~4-5 ticks
+    y_ticks, axis_max_cents = _nice_y_ticks(raw_max)
+
+    # Bar heights are percentage of axis_max (tick ceiling), not raw max
     for c in top:
-        c["left_pct"] = int(c["left_cents"] / max_cents * 100) if c["left_cents"] else 0
-        c["right_pct"] = int(c["right_cents"] / max_cents * 100) if c["right_cents"] else 0
-
-    # Y-axis ticks: 0%, 25%, 50%, 75%, 100% of max_cents → dollar labels
-    # Guard: if max is 0 (no data), show only $0 baseline
-    y_ticks = []
-    if max_cents <= 1:
-        y_ticks.append({"label": "$0", "pct": 0})
-    else:
-        for frac in (1.0, 0.75, 0.5, 0.25, 0.0):
-            cents = int(max_cents * frac)
-            dollars = cents / 100
-            if dollars >= 1000:
-                label = f"${dollars / 1000:.1f}K"
-            elif dollars >= 1:
-                label = f"${dollars:,.0f}"
-            else:
-                label = "$0"
-            y_ticks.append({"label": label, "pct": frac * 100})
+        c["left_pct"] = int(c["left_cents"] / axis_max_cents * 100) if axis_max_cents and c["left_cents"] else 0
+        c["right_pct"] = int(c["right_cents"] / axis_max_cents * 100) if axis_max_cents and c["right_cents"] else 0
 
     # Drill URL helpers
     def left_drill(**overrides):
@@ -998,12 +1060,14 @@ def categories_compare():
         qp.update({k: v for k, v in overrides.items() if v})
         return url_for("transactions.index", **qp)
 
+    period_labels = _build_period_labels()
+
     return render_template("components/categories_compare.html",
                            categories=top,
                            y_ticks=y_ticks,
                            left_period=left_period,
                            right_period=right_period,
-                           left_label=_PERIOD_LABELS.get(left_period, left_period),
-                           right_label=_PERIOD_LABELS.get(right_period, right_period),
+                           left_label=period_labels.get(left_period, left_period),
+                           right_label=period_labels.get(right_period, right_period),
                            left_drill=left_drill,
                            right_drill=right_drill)

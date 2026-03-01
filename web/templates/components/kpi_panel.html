@@ -6,7 +6,12 @@
             hx-vals='{"panel": "{{ panel }}"}'
             hx-target="#kpi-{{ panel }}"
             hx-swap="outerHTML">
+      {% set ns = namespace(in_months=false) %}
       {% for key, label in period_labels.items() %}
+        {% if key.startswith('month_') and not ns.in_months %}
+          {% set ns.in_months = true %}
+      <option disabled>──────────</option>
+        {% endif %}
       <option value="{{ key }}" {% if key == period %}selected{% endif %}>{{ label }}</option>
       {% endfor %}
     </select>

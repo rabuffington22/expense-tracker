@@ -5,15 +5,6 @@
   <div hx-get="{{ url_for('dashboard.kpi_panel', panel='right', period='last_month') }}"
        hx-trigger="load" hx-swap="innerHTML"></div>
 </div>
-<div class="kpi-series-legend">
-  <span class="kpi-series-legend-item">
-    <span class="kpi-series-dot kpi-series-dot--left"></span>Left period
-  </span>
-  <span class="kpi-series-legend-item">
-    <span class="kpi-series-dot kpi-series-dot--right"></span>Right period
-  </span>
-</div>
-
 <!-- ── Categories Comparison (populated by KPI panel scripts) ──────────── -->
 <div id="categories-compare"></div>
 
