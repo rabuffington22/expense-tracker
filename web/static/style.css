@@ -4110,7 +4110,7 @@ select.input-sm {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.2rem;
-    align-items: start;
+    align-items: stretch;
 }
 /* Insights box */
 .iu-insights-box {
