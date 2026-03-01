@@ -1525,8 +1525,10 @@ a.kpi-panel-cell:hover {
 
 /* Title */
 .cat-tip-title {
-    font-size: 0.68rem;
-    font-weight: 500;
+    font-size: 0.56rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
     margin-bottom: 6px;
     line-height: 1.2;
@@ -1538,6 +1540,7 @@ a.kpi-panel-cell:hover {
     align-items: center;
     gap: 6px;
     margin-bottom: 3px;
+    padding-left: 4px;
 }
 .cat-tip-primary--left  .cat-tip-pri-label,
 .cat-tip-primary--left  .cat-tip-pri-amount { color: var(--series-left); }
@@ -1564,6 +1567,7 @@ a.kpi-panel-cell:hover {
     align-items: center;
     gap: 6px;
     margin-bottom: 6px;
+    padding-left: 4px;
 }
 .cat-tip-sec-label {
     font-size: 0.64rem;
