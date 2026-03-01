@@ -3488,8 +3488,47 @@ tr.is-selected > td:first-child {
     line-height: 1;
 }
 .todo-pill-badge--red { background: var(--red); color: #fff; }
+.todo-pill-badge--blue { background: var(--blue); color: #fff; }
 .todo-pill-badge--muted { background: rgba(255,255,255,0.12); color: var(--text-muted); }
 :root[data-theme="light"] .todo-pill-badge--muted { background: rgba(0,0,0,0.08); }
+
+/* ── Quick-add presets ─────────────────────────── */
+.todo-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.35rem;
+}
+.todo-preset-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 99px;
+    font-size: var(--ui-font-xs);
+    font-weight: 500;
+    color: var(--text);
+    background: transparent;
+    border: 0.5px dashed var(--border);
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition);
+    font-family: inherit;
+}
+.todo-preset-pill:hover:not(:disabled) {
+    background: var(--hover-bg);
+    border-style: solid;
+}
+.todo-preset-pill:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+.todo-preset-tag {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    opacity: 0.7;
+}
 
 /* ── Add form (grid layout) ────────────────────── */
 .todo-add-form {

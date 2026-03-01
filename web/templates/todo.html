@@ -8,7 +8,8 @@
 
 {# ── Quick Actions (pill strip) ────────────────────────────────────────── #}
 {% set has_actions = counts.uncategorized > 0 or counts.vendor_breakdown > 0
-                  or counts.possible_transfer > 0 or counts.large_txns > 0 %}
+                  or counts.large_txns > 0 or counts.new_merchants > 0
+                  or counts.possible_transfer > 0 or counts.orders_unmatched > 0 %}
 {% if has_actions %}
 <div class="todo-actions">
     {% if counts.uncategorized > 0 %}
@@ -23,16 +24,28 @@
         <span class="todo-pill-badge todo-pill-badge--red">{{ counts.vendor_breakdown }}</span>
     </a>
     {% endif %}
+    {% if counts.large_txns > 0 %}
+    <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, sort='amount', dir='desc') }}" class="todo-pill">
+        Large txns
+        <span class="todo-pill-badge todo-pill-badge--muted">{{ counts.large_txns }}</span>
+    </a>
+    {% endif %}
+    {% if counts.new_merchants > 0 %}
+    <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end) }}" class="todo-pill">
+        New merchants
+        <span class="todo-pill-badge todo-pill-badge--muted">{{ counts.new_merchants }}</span>
+    </a>
+    {% endif %}
     {% if counts.possible_transfer > 0 %}
     <a href="{{ url_for('transactions.index', possible_transfer=1) }}" class="todo-pill">
         Transfers
         <span class="todo-pill-badge todo-pill-badge--muted">{{ counts.possible_transfer }}</span>
     </a>
     {% endif %}
-    {% if counts.large_txns > 0 %}
-    <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, sort='amount', dir='desc') }}" class="todo-pill">
-        Large txns
-        <span class="todo-pill-badge todo-pill-badge--muted">{{ counts.large_txns }}</span>
+    {% if counts.orders_unmatched > 0 %}
+    <a href="{{ url_for('match.index') }}" class="todo-pill">
+        Unmatched orders
+        <span class="todo-pill-badge todo-pill-badge--blue">{{ counts.orders_unmatched }}</span>
     </a>
     {% endif %}
 </div>
@@ -129,6 +142,28 @@
 {# ── 2. Periodic Tasks (middle) ───────────────────────────────────────── #}
 <div class="outline-panel">
     <div class="panel-header">Periodic Tasks</div>
+
+    <div class="todo-presets">
+        {% set task_names = periodic_tasks | map(attribute='name') | list %}
+        <form method="post" action="{{ url_for('todo.quick_add_task') }}" style="display:inline;">
+            <input type="hidden" name="preset" value="us_bank_login">
+            <button type="submit" class="todo-preset-pill" {{ 'disabled' if 'US Bank login' in task_names }}>
+                US Bank login <span class="todo-preset-tag">Quarterly</span>
+            </button>
+        </form>
+        <form method="post" action="{{ url_for('todo.quick_add_task') }}" style="display:inline;">
+            <input type="hidden" name="preset" value="amazon_statement">
+            <button type="submit" class="todo-preset-pill" {{ 'disabled' if 'Amazon statement' in task_names }}>
+                Amazon statement <span class="todo-preset-tag">Monthly</span>
+            </button>
+        </form>
+        <form method="post" action="{{ url_for('todo.quick_add_task') }}" style="display:inline;">
+            <input type="hidden" name="preset" value="henry_schein_statement">
+            <button type="submit" class="todo-preset-pill" {{ 'disabled' if 'Henry Schein statement' in task_names }}>
+                Henry Schein statement <span class="todo-preset-tag">Monthly</span>
+            </button>
+        </form>
+    </div>
 
     <form method="post" action="{{ url_for('todo.create_task') }}" class="todo-add-form todo-add-form--periodic">
         <input type="text" name="name" placeholder="Task name" required class="todo-input">

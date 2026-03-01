@@ -410,6 +410,54 @@ def edit_task(task_id):
     return redirect(url_for("todo.index"))
 
 
+_QUICK_ADD_PRESETS = {
+    "us_bank_login": {
+        "name": "US Bank login",
+        "cadence": "quarterly",
+        "day_of_month": 1,
+        "notes": None,
+    },
+    "amazon_statement": {
+        "name": "Amazon statement",
+        "cadence": "monthly",
+        "day_of_month": 1,
+        "notes": None,
+    },
+    "henry_schein_statement": {
+        "name": "Henry Schein statement",
+        "cadence": "monthly",
+        "day_of_month": 1,
+        "notes": None,
+    },
+}
+
+
+@bp.route("/tasks/quick-add", methods=["POST"])
+def quick_add_task():
+    """Create a preset periodic task if it doesn't already exist."""
+    preset_key = request.form.get("preset", "")
+    preset = _QUICK_ADD_PRESETS.get(preset_key)
+    if not preset:
+        return redirect(url_for("todo.index"))
+
+    conn = get_connection(g.entity_key)
+    try:
+        existing = conn.execute(
+            "SELECT id FROM periodic_tasks WHERE name = ? AND is_active = 1",
+            (preset["name"],),
+        ).fetchone()
+        if not existing:
+            conn.execute(
+                "INSERT INTO periodic_tasks (name, cadence, day_of_month, notes) "
+                "VALUES (?, ?, ?, ?)",
+                (preset["name"], preset["cadence"], preset["day_of_month"], preset["notes"]),
+            )
+            conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("todo.index"))
+
+
 @bp.route("/tasks/delete/<int:task_id>", methods=["POST"])
 def delete_task(task_id):
     """Delete a periodic task (cascades completions)."""
