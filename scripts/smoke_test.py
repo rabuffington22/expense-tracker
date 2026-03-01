@@ -721,6 +721,13 @@ def main() -> None:
         _check("Large transactions" in body, "todo queues: Large transactions row should appear")
         _check("New merchants" in body, "todo queues: New merchants row should appear")
 
+        # 10b2. Quick Actions pills should appear when queues are non-zero
+        _check("todo-pill" in body, "todo pills: pill class should appear")
+        _check("todo-pill-badge" in body, "todo pills: badge class should appear")
+        _check("Large txns" in body, "todo pills: 'Large txns' pill should appear")
+        # Uncategorized pill (fixture txns have no category)
+        _check("Uncategorized" in body, "todo pills: 'Uncategorized' pill should appear")
+
         # ── 10c. Statement schedule CRUD ──────────────────────────────
         resp = client.post("/todo/schedules/create", data={
             "name": "Citi Statement",

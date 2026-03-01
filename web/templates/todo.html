@@ -6,6 +6,38 @@
 
 <h1 class="page-title todo-title">To Do</h1>
 
+{# ── Quick Actions (pill strip) ────────────────────────────────────────── #}
+{% set has_actions = counts.uncategorized > 0 or counts.vendor_breakdown > 0
+                  or counts.possible_transfer > 0 or counts.large_txns > 0 %}
+{% if has_actions %}
+<div class="todo-actions">
+    {% if counts.uncategorized > 0 %}
+    <a href="{{ url_for('transactions.index', uncategorized=1) }}" class="todo-pill">
+        Uncategorized
+        <span class="todo-pill-badge todo-pill-badge--red">{{ counts.uncategorized }}</span>
+    </a>
+    {% endif %}
+    {% if counts.vendor_breakdown > 0 %}
+    <a href="{{ url_for('transactions.index', vendor_breakdown=1) }}" class="todo-pill">
+        Vendor breakdown
+        <span class="todo-pill-badge todo-pill-badge--red">{{ counts.vendor_breakdown }}</span>
+    </a>
+    {% endif %}
+    {% if counts.possible_transfer > 0 %}
+    <a href="{{ url_for('transactions.index', possible_transfer=1) }}" class="todo-pill">
+        Transfers
+        <span class="todo-pill-badge todo-pill-badge--muted">{{ counts.possible_transfer }}</span>
+    </a>
+    {% endif %}
+    {% if counts.large_txns > 0 %}
+    <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, sort='amount', dir='desc') }}" class="todo-pill">
+        Large txns
+        <span class="todo-pill-badge todo-pill-badge--muted">{{ counts.large_txns }}</span>
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+
 {# ── 1. Review Queues (primary) ───────────────────────────────────────── #}
 <div class="outline-panel">
     <div class="panel-header">Review Queues</div>
@@ -98,9 +130,9 @@
 <div class="outline-panel">
     <div class="panel-header">Periodic Tasks</div>
 
-    <form method="post" action="{{ url_for('todo.create_task') }}" class="todo-add-form">
-        <input type="text" name="name" placeholder="Task name" required class="todo-input todo-input--name">
-        <select name="cadence" class="todo-input todo-input--cadence">
+    <form method="post" action="{{ url_for('todo.create_task') }}" class="todo-add-form todo-add-form--periodic">
+        <input type="text" name="name" placeholder="Task name" required class="todo-input">
+        <select name="cadence" class="todo-input">
             <option value="monthly">Monthly</option>
             <option value="quarterly">Quarterly</option>
         </select>
@@ -149,8 +181,8 @@
 <div class="outline-panel">
     <div class="panel-header">Statement Reminders</div>
 
-    <form method="post" action="{{ url_for('todo.create_schedule') }}" class="todo-add-form">
-        <input type="text" name="name" placeholder="Source name" required class="todo-input todo-input--name">
+    <form method="post" action="{{ url_for('todo.create_schedule') }}" class="todo-add-form todo-add-form--stmt">
+        <input type="text" name="name" placeholder="Source name" required class="todo-input">
         <input type="number" name="statement_day" min="1" max="31" placeholder="Day" required class="todo-input todo-input--day">
         <input type="text" name="notes" placeholder="Notes (optional)" class="todo-input todo-input--notes-sm">
         <button type="submit" class="btn btn-primary btn-sm">Add</button>
