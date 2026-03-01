@@ -1525,9 +1525,9 @@ a.kpi-panel-cell:hover {
 
 /* Title */
 .cat-tip-title {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--text);
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--text-muted);
     margin-bottom: 6px;
     line-height: 1.2;
 }
@@ -1582,16 +1582,6 @@ a.kpi-panel-cell:hover {
     color: var(--text-muted);
 }
 
-/* Delta line */
-.cat-tip-delta {
-    font-size: 0.64rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-muted);
-    margin-bottom: 2px;
-    line-height: 1.3;
-}
-
 /* Subcategory block */
 .cat-tip-subcats {
     margin-top: 8px;
@@ -1634,14 +1624,6 @@ a.kpi-panel-cell:hover {
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     color: var(--text);
-}
-.cat-tip-subpct {
-    font-size: 0.58rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-muted);
-    min-width: 32px;
-    text-align: right;
 }
 
 /* Light theme overrides */

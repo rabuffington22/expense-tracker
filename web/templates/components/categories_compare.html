@@ -132,6 +132,7 @@
       var hoverEnd   = side === 'left' ? meta.leftEnd   : meta.rightEnd;
 
       html += '<div class="cat-tip-subcats">';
+      html += '<div class="cat-tip-subcats-hdr">Subcategories</div>';
       for (var i = 0; i < subcats.length; i++) {
         var s = subcats[i];
         var drillUrl = meta.txnBaseUrl
@@ -142,7 +143,6 @@
         html += '<a class="cat-tip-subrow" href="' + escAttr(drillUrl) + '">';
         html += '<span class="cat-tip-subname">' + esc(s.name) + '</span>';
         html += '<span class="cat-tip-subamt">' + fmtDollars(s.cents) + '</span>';
-        html += '<span class="cat-tip-subpct">' + s.pct.toFixed(1) + '%</span>';
         html += '</a>';
       }
       html += '</div>';
