@@ -22,11 +22,27 @@
       <div class="kpi-panel-label">{{ entity_labels.income }}</div>
       <div class="kpi-panel-value kpi-pos">${{ "{:,.0f}".format(income_cents / 100) }}</div>
     </a>
-    <!-- Net (value only, no label) -->
+    <!-- Net -->
     <div class="kpi-panel-cell kpi-panel-cell--static kpi-panel-cell--net">
+      <div class="kpi-panel-label">{{ entity_labels.net }}</div>
       <div class="kpi-panel-value {% if net_cents < 0 %}kpi-neg{% else %}kpi-pos{% endif %}">
         {{ "\u2212" if net_cents < 0 else "" }}${{ "{:,.0f}".format((net_cents|abs) / 100) }}
       </div>
     </div>
   </div>
 </div>
+<script>
+/* After HTMX swaps in a KPI panel, refresh the categories comparison section
+   if both panels are in the DOM. First panel load: other panel won't exist yet
+   (skip). Second panel load: both exist, trigger the categories fetch. Any
+   subsequent dropdown change also fires this. */
+(function() {
+  var leftSel  = document.querySelector('#kpi-left .kpi-period-select');
+  var rightSel = document.querySelector('#kpi-right .kpi-period-select');
+  if (!leftSel || !rightSel) return;
+  var url = '{{ url_for("dashboard.categories_compare") }}'
+          + '?left_period=' + encodeURIComponent(leftSel.value)
+          + '&right_period=' + encodeURIComponent(rightSel.value);
+  htmx.ajax('GET', url, {target: '#categories-compare', swap: 'innerHTML'});
+})();
+</script>

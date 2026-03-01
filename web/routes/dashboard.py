@@ -835,6 +835,27 @@ def _query_kpi(conn, start, end):
     }
 
 
+def _query_category_totals(conn, start, end):
+    """Query per-category expense totals for a date range.
+
+    Expenses only (amount_cents < 0).  Excludes *exactly* 'Internal Transfer'
+    and 'Credit Card Payment' categories.  Credit card interest and all other
+    categories remain included.
+    """
+    return conn.execute(
+        "SELECT c.id AS cat_id, t.category, "
+        "  COALESCE(SUM(ABS(t.amount_cents)), 0) AS total_cents "
+        "FROM transactions t "
+        "LEFT JOIN categories c ON c.name = t.category "
+        "WHERE t.amount_cents < 0 "
+        "  AND t.date >= ? AND t.date <= ? "
+        "  AND t.category IS NOT NULL AND t.category != '' "
+        "  AND t.category NOT IN ('Internal Transfer', 'Credit Card Payment') "
+        "GROUP BY t.category ORDER BY total_cents DESC",
+        [start, end],
+    ).fetchall()
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @bp.route("/")
@@ -885,3 +906,86 @@ def kpi_panel():
                            period_labels=_PERIOD_LABELS,
                            drill_url=drill_url,
                            **kpi)
+
+
+@bp.route("/dashboard/categories-compare")
+def categories_compare():
+    """Render the categories comparison section (HTMX endpoint).
+
+    Reads left_period and right_period from querystring, queries per-category
+    expense totals for each, merges into combined list keyed by category name,
+    sorts by combined total desc, takes top 12, and computes bar height
+    percentages on a common scale.
+    """
+    left_period = request.args.get("left_period", "this_month")
+    right_period = request.args.get("right_period", "last_month")
+
+    left_start, left_end = _period_to_dates(left_period)
+    right_start, right_end = _period_to_dates(right_period)
+
+    conn = get_connection(g.entity_key)
+    try:
+        left_rows = _query_category_totals(conn, left_start, left_end)
+        right_rows = _query_category_totals(conn, right_start, right_end)
+    finally:
+        conn.close()
+
+    # Build lookup dicts: category_name -> {cat_id, total_cents}
+    left_map = {}
+    for r in left_rows:
+        left_map[r["category"]] = {"cat_id": r["cat_id"], "total_cents": r["total_cents"]}
+
+    right_map = {}
+    for r in right_rows:
+        right_map[r["category"]] = {"cat_id": r["cat_id"], "total_cents": r["total_cents"]}
+
+    # Merge into combined list keyed by category name
+    all_cats = set(left_map.keys()) | set(right_map.keys())
+    merged = []
+    for cat_name in all_cats:
+        left_data = left_map.get(cat_name, {"cat_id": None, "total_cents": 0})
+        right_data = right_map.get(cat_name, {"cat_id": None, "total_cents": 0})
+        cat_id = left_data["cat_id"] or right_data["cat_id"]
+        left_cents = left_data["total_cents"]
+        right_cents = right_data["total_cents"]
+        merged.append({
+            "name": cat_name,
+            "cat_id": cat_id,
+            "left_cents": left_cents,
+            "right_cents": right_cents,
+            "combined": left_cents + right_cents,
+        })
+
+    # Sort by combined total desc, take top 12
+    merged.sort(key=lambda x: x["combined"], reverse=True)
+    top = merged[:12]
+
+    # Compute bar height percentages with common scale
+    max_cents = max((c["left_cents"] for c in top), default=0)
+    max_cents = max(max_cents, max((c["right_cents"] for c in top), default=0))
+    if max_cents == 0:
+        max_cents = 1  # avoid division by zero
+
+    for c in top:
+        c["left_pct"] = int(c["left_cents"] / max_cents * 100) if c["left_cents"] else 0
+        c["right_pct"] = int(c["right_cents"] / max_cents * 100) if c["right_cents"] else 0
+
+    # Drill URL helpers
+    def left_drill(**overrides):
+        qp = {"start": left_start, "end": left_end}
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    def right_drill(**overrides):
+        qp = {"start": right_start, "end": right_end}
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    return render_template("components/categories_compare.html",
+                           categories=top,
+                           left_period=left_period,
+                           right_period=right_period,
+                           left_label=_PERIOD_LABELS.get(left_period, left_period),
+                           right_label=_PERIOD_LABELS.get(right_period, right_period),
+                           left_drill=left_drill,
+                           right_drill=right_drill)
