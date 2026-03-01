@@ -16,20 +16,17 @@
     <a class="kpi-panel-cell" href="{{ drill_url(type='expense') }}">
       <div class="kpi-panel-label">{{ entity_labels.spend }}</div>
       <div class="kpi-panel-value">${{ "{:,.0f}".format(spend_cents / 100) }}</div>
-      <div class="kpi-panel-sub">{{ "{:,}".format(txn_count) }} txns</div>
     </a>
     <!-- Income -->
     <a class="kpi-panel-cell" href="{{ drill_url(type='income') }}">
       <div class="kpi-panel-label">{{ entity_labels.income }}</div>
       <div class="kpi-panel-value kpi-pos">${{ "{:,.0f}".format(income_cents / 100) }}</div>
     </a>
-    <!-- Net -->
-    <div class="kpi-panel-cell kpi-panel-cell--static">
-      <div class="kpi-panel-label">{{ entity_labels.net }}</div>
+    <!-- Net (value only, no label) -->
+    <div class="kpi-panel-cell kpi-panel-cell--static kpi-panel-cell--net">
       <div class="kpi-panel-value {% if net_cents < 0 %}kpi-neg{% else %}kpi-pos{% endif %}">
         {{ "\u2212" if net_cents < 0 else "" }}${{ "{:,.0f}".format((net_cents|abs) / 100) }}
       </div>
-      <div class="kpi-panel-sub">period net</div>
     </div>
   </div>
 </div>

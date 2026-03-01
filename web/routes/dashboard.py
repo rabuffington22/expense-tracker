@@ -739,22 +739,44 @@ def _format_period_label(params):
 # ── Period helpers (KPI compare panels) ───────────────────────────────────────
 
 _PERIOD_LABELS = {
+    "this_week": "This Week",
+    "last_week": "Last Week",
     "this_month": "This Month",
     "last_month": "Last Month",
+    "month_to_date": "Month to Date",
     "last_30": "Last 30 Days",
     "last_90": "Last 90 Days",
+    "year_to_date": "Year to Date",
+    "last_12_months": "Last 12 Months",
 }
 
 
 def _period_to_dates(period_key):
-    """Map a period key to (start_date, end_date) strings in YYYY-MM-DD format."""
+    """Map a period key to (start_date, end_date) strings in YYYY-MM-DD format.
+
+    Week boundaries use Monday start (ISO standard).
+    last_12_months = rolling 365 days ending today.
+    """
     now = datetime.now()
-    if period_key == "this_month":
+    today = now.date()
+
+    if period_key == "this_week":
+        # Monday..today (weekday(): Monday=0)
+        monday = today - timedelta(days=today.weekday())
+        start = monday.isoformat()
+        end = today.isoformat()
+    elif period_key == "last_week":
+        # Previous Monday..Sunday
+        this_monday = today - timedelta(days=today.weekday())
+        last_monday = this_monday - timedelta(days=7)
+        last_sunday = this_monday - timedelta(days=1)
+        start = last_monday.isoformat()
+        end = last_sunday.isoformat()
+    elif period_key == "this_month":
         start = f"{now.year:04d}-{now.month:02d}-01"
         last_day = calendar.monthrange(now.year, now.month)[1]
         end = f"{now.year:04d}-{now.month:02d}-{last_day:02d}"
     elif period_key == "last_month":
-        # Go to last month
         if now.month == 1:
             y, m = now.year - 1, 12
         else:
@@ -762,18 +784,22 @@ def _period_to_dates(period_key):
         start = f"{y:04d}-{m:02d}-01"
         last_day = calendar.monthrange(y, m)[1]
         end = f"{y:04d}-{m:02d}-{last_day:02d}"
+    elif period_key == "month_to_date":
+        start = f"{now.year:04d}-{now.month:02d}-01"
+        end = today.isoformat()
     elif period_key == "last_30":
-        end_dt = now
-        start_dt = now - timedelta(days=29)
-        start = start_dt.strftime("%Y-%m-%d")
-        end = end_dt.strftime("%Y-%m-%d")
+        start = (today - timedelta(days=29)).isoformat()
+        end = today.isoformat()
     elif period_key == "last_90":
-        end_dt = now
-        start_dt = now - timedelta(days=89)
-        start = start_dt.strftime("%Y-%m-%d")
-        end = end_dt.strftime("%Y-%m-%d")
+        start = (today - timedelta(days=89)).isoformat()
+        end = today.isoformat()
+    elif period_key == "year_to_date":
+        start = f"{now.year:04d}-01-01"
+        end = today.isoformat()
+    elif period_key == "last_12_months":
+        start = (today - timedelta(days=365)).isoformat()
+        end = today.isoformat()
     else:
-        # Default to this month
         return _period_to_dates("this_month")
     return start, end
 

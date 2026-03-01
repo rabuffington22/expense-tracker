@@ -1137,10 +1137,18 @@ h2 {
 }
 
 .kpi-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
     margin-bottom: 0.6rem;
 }
 
 .kpi-period-select {
+    flex: 0 0 auto;
+    width: fit-content;
+    min-width: 120px;
+    max-width: 180px;
     appearance: none;
     -webkit-appearance: none;
     background: transparent;
@@ -1196,6 +1204,9 @@ a.kpi-panel-cell:hover {
 }
 .kpi-panel-cell--static {
     cursor: default;
+}
+.kpi-panel-cell--net {
+    justify-content: center;
 }
 
 .kpi-panel-label {
