@@ -1173,18 +1173,21 @@ h2 {
 
 /* ── KPI Compare Panels ──────────────────────────────────────────────── */
 .kpi-compare-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: space-between;
     gap: 0.75rem;
-    max-width: 66%;
     margin-top: 1.25rem;
     margin-bottom: 1.2rem;
+}
+.kpi-compare-row > div {
+    width: 30%;
 }
 #categories-compare {
     margin-top: 1.5rem;
 }
 @media (max-width: 900px) {
-    .kpi-compare-row { grid-template-columns: 1fr; }
+    .kpi-compare-row { flex-direction: column; }
+    .kpi-compare-row > div { width: 100%; }
 }
 
 .kpi-panel {
