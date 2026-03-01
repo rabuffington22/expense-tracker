@@ -3081,6 +3081,48 @@ input[type="checkbox"] {
     font-weight: 500;
 }
 
+/* ── CPA Export section ──────────────────────────── */
+.rpt-export-section {
+    margin-top: 1rem;
+}
+.rpt-export-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+.rpt-export-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: var(--ui-radius);
+    border: 0.5px solid var(--border);
+    background: var(--control-bg);
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--transition), border-color var(--transition);
+}
+.rpt-export-card:hover {
+    background: var(--hover-bg);
+    border-color: var(--blue);
+    text-decoration: none;
+}
+.rpt-export-card-title {
+    font-size: var(--ui-font-sm);
+    font-weight: 600;
+    color: var(--blue);
+}
+.rpt-export-card-desc {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+@media (max-width: 600px) {
+    .rpt-export-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Drill-down section */
 .rpt-drill-section {
     margin-top: 1rem;

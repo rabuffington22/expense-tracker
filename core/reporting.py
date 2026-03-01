@@ -163,6 +163,30 @@ def get_income_total(entity: str, month: str) -> float:
         conn.close()
 
 
+def get_merchant_totals(entity: str, month: str) -> pd.DataFrame:
+    """Return per-merchant spend totals for a given month (YYYY-MM).
+
+    Returns DataFrame with columns: merchant, count, total_amount (positive spend)
+    """
+    sql = """
+        SELECT
+            COALESCE(NULLIF(merchant_canonical,''), description_raw) AS merchant,
+            COUNT(*)                                                 AS count,
+            ABS(SUM(amount))                                        AS total_amount
+        FROM transactions
+        WHERE strftime('%Y-%m', date) = ?
+          AND amount < 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+        GROUP BY merchant
+        ORDER BY total_amount DESC
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(month,))
+    finally:
+        conn.close()
+
+
 def get_available_months(entity: str) -> list[str]:
     """Return sorted list of 'YYYY-MM' strings that have transactions."""
     sql = "SELECT DISTINCT strftime('%Y-%m', date) AS m FROM transactions ORDER BY m"

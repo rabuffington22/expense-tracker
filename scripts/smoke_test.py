@@ -204,6 +204,59 @@ def main() -> None:
 
         print("   ✅ All route regression tests passed")
 
+        # ── 8b. CSV export tests ────────────────────────────────────
+        print("\n8b. CSV export tests…")
+        with app.test_client() as csv_client:
+            csv_client.set_cookie("entity", "Personal")
+
+            # Reports page loads
+            resp = csv_client.get("/reports/")
+            _check(resp.status_code == 200, "reports page: expected 200")
+            body = resp.get_data(as_text=True)
+            _check("Export" in body, "reports page: missing Export section")
+
+            # Transactions CSV — fixture data is in 2024-01
+            resp = csv_client.get("/reports/export-csv?month=2024-01")
+            _check(resp.status_code == 200, "transactions CSV: expected 200")
+            _check("text/csv" in resp.content_type, "transactions CSV: wrong content-type")
+            csv_body = resp.get_data(as_text=True)
+            _check("Date,Description,Merchant,Amount,Category,Account" in csv_body,
+                   "transactions CSV: missing expected header")
+            # Filename check
+            disp = resp.headers.get("Content-Disposition", "")
+            _check("personal_transactions_2024-01-01_2024-01-31.csv" in disp,
+                   f"transactions CSV: unexpected filename in {disp}")
+
+            # Category summary CSV
+            resp = csv_client.get("/reports/export-categories?month=2024-01")
+            _check(resp.status_code == 200, "categories CSV: expected 200")
+            csv_body = resp.get_data(as_text=True)
+            _check("Category,Transactions,Total" in csv_body,
+                   "categories CSV: missing expected header")
+            disp = resp.headers.get("Content-Disposition", "")
+            _check("personal_categories_2024-01-01_2024-01-31.csv" in disp,
+                   f"categories CSV: unexpected filename in {disp}")
+
+            # Merchant summary CSV
+            resp = csv_client.get("/reports/export-merchants?month=2024-01")
+            _check(resp.status_code == 200, "merchants CSV: expected 200")
+            csv_body = resp.get_data(as_text=True)
+            _check("Merchant,Transactions,Total" in csv_body,
+                   "merchants CSV: missing expected header")
+            disp = resp.headers.get("Content-Disposition", "")
+            _check("personal_merchants_2024-01-01_2024-01-31.csv" in disp,
+                   f"merchants CSV: unexpected filename in {disp}")
+
+            # Missing month param returns 400
+            resp = csv_client.get("/reports/export-csv")
+            _check(resp.status_code == 400, "export CSV no month: expected 400")
+
+            # Empty month returns 404
+            resp = csv_client.get("/reports/export-csv?month=1999-01")
+            _check(resp.status_code == 404, "export CSV empty month: expected 404")
+
+        print("   ✅ All CSV export tests passed")
+
         # ── 9. Saved Views CRUD ──────────────────────────────────────
         print("\n9. Saved Views CRUD tests…")
         import json as _json
