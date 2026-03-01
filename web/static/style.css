@@ -4184,13 +4184,18 @@ select.input-sm {
     padding: 0 0.7rem 0.15rem;
 }
 .iu-compare-title {
-    font-size: 0.68rem;
+    font-size: 0.58rem;
     font-weight: 700;
-    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    opacity: 0.5;
 }
 .iu-compare-periods {
-    font-size: 0.68rem;
-    font-weight: 500;
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
     color: var(--text-muted);
     opacity: 0.5;
 }
@@ -4209,7 +4214,7 @@ select.input-sm {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.4rem 0.7rem;
+    padding: 0.32rem 0.7rem;
     text-decoration: none;
     color: var(--text);
     border-radius: 8px;
