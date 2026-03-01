@@ -83,7 +83,7 @@
     --glass-hover:       rgba(255,255,255,0.06);
     --focus-ring:        0 0 0 3px rgba(10,132,255,0.35);
     /* Series colors — single source of truth (KPI panels + bars + legend) */
-    --series-left:       #0A84FF;
+    --series-left:       #409CFF;
     --series-right:      #BF5AF2;
 }
 
@@ -157,7 +157,7 @@
     --glass-hover:       rgba(0,0,0,0.04);
     --focus-ring:        0 0 0 3px rgba(0,122,255,0.25);
     /* Series colors — single source of truth (KPI panels + bars + legend) */
-    --series-left:       #0A84FF;
+    --series-left:       #409CFF;
     --series-right:      #BF5AF2;
 }
 
