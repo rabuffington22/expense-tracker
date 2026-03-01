@@ -3449,13 +3449,62 @@ tr.is-selected > td:first-child {
     margin-bottom: 0.3rem;
 }
 
-/* ── Add form (single-line compact) ─────────────── */
-.todo-add-form {
+/* ── Quick Actions pills ───────────────────────── */
+.todo-actions {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.6rem;
+}
+.todo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: 99px;
+    font-size: var(--ui-font-xs);
+    font-weight: 500;
+    color: var(--text);
+    background: var(--control-bg);
+    border: 0.5px solid var(--border);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--transition);
+}
+.todo-pill:hover {
+    background: var(--hover-bg);
+    text-decoration: none;
+}
+.todo-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 99px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1;
+}
+.todo-pill-badge--red { background: var(--red); color: #fff; }
+.todo-pill-badge--muted { background: rgba(255,255,255,0.12); color: var(--text-muted); }
+:root[data-theme="light"] .todo-pill-badge--muted { background: rgba(0,0,0,0.08); }
+
+/* ── Add form (grid layout) ────────────────────── */
+.todo-add-form {
+    display: grid;
     gap: 0.3rem;
     align-items: center;
     margin-bottom: 0.3rem;
-    flex-wrap: wrap;
+}
+/* Periodic: name | cadence | day | notes | add */
+.todo-add-form--periodic {
+    grid-template-columns: minmax(140px, 1.5fr) 120px 80px minmax(100px, 1fr) auto;
+}
+/* Statement: name | day | notes | add */
+.todo-add-form--stmt {
+    grid-template-columns: minmax(160px, 2fr) 80px minmax(100px, 1fr) auto;
 }
 .todo-input {
     background: var(--control-bg);
@@ -3467,11 +3516,9 @@ tr.is-selected > td:first-child {
     font-family: inherit;
     width: auto;
     height: 28px;
+    min-width: 0; /* prevent grid blowout */
 }
-.todo-input--name    { flex: 2; min-width: 90px; }
-.todo-input--day     { flex: 0 0 56px; text-align: center; }
-.todo-input--cadence { flex: 0 0 90px; }
-.todo-input--notes-sm { flex: 1; min-width: 60px; }
+.todo-input--day { text-align: center; }
 .todo-input:focus {
     outline: none;
     border-color: var(--blue);
@@ -3591,11 +3638,24 @@ tr.is-selected > td:first-child {
     opacity: 0.6;
 }
 
-/* ── Mobile ─────────────────────────────────────── */
+/* ── Tablet (form wraps to 2 rows) ─────────────── */
+@media (max-width: 900px) {
+    .todo-add-form--periodic {
+        grid-template-columns: 1fr 120px 80px;
+    }
+    .todo-add-form--periodic .todo-input--notes-sm {
+        grid-column: span 2;
+    }
+}
+/* ── Mobile (stacked forms) ────────────────────── */
 @media (max-width: 480px) {
-    .todo-add-form { flex-direction: column; }
-    .todo-input { width: 100%; }
-    .todo-input--day { flex: 1; }
+    .todo-add-form--periodic,
+    .todo-add-form--stmt {
+        grid-template-columns: 1fr;
+    }
+    .todo-add-form--periodic .todo-input--notes-sm {
+        grid-column: auto;
+    }
     .todo-row { flex-wrap: wrap; }
     .todo-sched-row .todo-row-actions { width: 100%; justify-content: flex-end; }
 }
