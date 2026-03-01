@@ -1210,6 +1210,11 @@ h2 {
     border-width: 2px;
 }
 #kpi-right .kpi-panel-cell:first-child .kpi-panel-value { color: var(--series-right); }
+/* Empty state — dim the colored border */
+#kpi-left.kpi-panel--empty  { border-color: rgba(64,156,255,0.35); }
+#kpi-right.kpi-panel--empty { border-color: rgba(191,90,242,0.35); }
+.kpi-panel--empty .kpi-panel-grid { opacity: 0.45; }
+
 /* Neutralize green/red on Income and Net inside KPI panels */
 .kpi-panel .kpi-panel-value.kpi-pos,
 .kpi-panel .kpi-panel-value.kpi-neg { color: var(--text-secondary); }
@@ -1227,33 +1232,33 @@ h2 {
 .kpi-period-select {
     flex: 0 0 auto;
     width: fit-content;
-    min-width: 100px;
-    max-width: 160px;
+    min-width: 90px;
+    max-width: 150px;
     appearance: none;
     -webkit-appearance: none;
     background-color: var(--bg);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 6px;
-    color: var(--text);
-    font-size: 0.6rem;
-    font-weight: 500;
-    padding: 0.2rem 1.4rem 0.2rem 0.4rem;
+    border: none;
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 0.52rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.15rem 1.2rem 0.15rem 0.45rem;
     cursor: pointer;
     outline: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%23999' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.5rem center;
-    background-size: 10px 6px;
+    background-position: right 0.4rem center;
+    background-size: 8px 5px;
 }
 :root[data-theme="light"] .kpi-period-select {
-    border-color: rgba(0,0,0,0.10);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%23999' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 .kpi-period-select:hover {
-    background-color: rgba(255,255,255,0.04);
+    background-color: rgba(255,255,255,0.06);
 }
 :root[data-theme="light"] .kpi-period-select:hover {
-    background-color: rgba(0,0,0,0.03);
+    background-color: rgba(0,0,0,0.04);
 }
 .kpi-period-select:focus-visible {
     box-shadow: 0 0 0 2px var(--focus-ring);
@@ -1307,6 +1312,15 @@ a.kpi-panel-cell:hover {
     color: var(--text-muted);
     margin-top: 0.2rem;
     opacity: 0.6;
+}
+.kpi-panel-empty-hint {
+    text-align: center;
+    font-size: 0.52rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    opacity: 0.5;
+    margin-top: 0.15rem;
+    padding-bottom: 0.1rem;
 }
 
 @media (max-width: 900px) {
