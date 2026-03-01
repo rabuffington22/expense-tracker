@@ -1227,33 +1227,34 @@ h2 {
 .kpi-period-select {
     flex: 0 0 auto;
     width: fit-content;
-    min-width: 100px;
-    max-width: 160px;
+    min-width: 90px;
+    max-width: 150px;
     appearance: none;
     -webkit-appearance: none;
     background-color: var(--bg);
     border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 6px;
-    color: var(--text);
-    font-size: 0.6rem;
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 0.62rem;
     font-weight: 500;
-    padding: 0.2rem 1.4rem 0.2rem 0.4rem;
+    letter-spacing: 0.01em;
+    padding: 0.2rem 1.4rem 0.2rem 0.5rem;
     cursor: pointer;
     outline: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%23999' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.5rem center;
-    background-size: 10px 6px;
+    background-position: right 0.4rem center;
+    background-size: 8px 5px;
 }
 :root[data-theme="light"] .kpi-period-select {
     border-color: rgba(0,0,0,0.10);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%23999' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 .kpi-period-select:hover {
-    background-color: rgba(255,255,255,0.04);
+    background-color: rgba(255,255,255,0.06);
 }
 :root[data-theme="light"] .kpi-period-select:hover {
-    background-color: rgba(0,0,0,0.03);
+    background-color: rgba(0,0,0,0.04);
 }
 .kpi-period-select:focus-visible {
     box-shadow: 0 0 0 2px var(--focus-ring);
@@ -1308,7 +1309,6 @@ a.kpi-panel-cell:hover {
     margin-top: 0.2rem;
     opacity: 0.6;
 }
-
 @media (max-width: 900px) {
     .kpi-compare-row { max-width: 100%; }
 }
