@@ -2,6 +2,7 @@
 {% block title %}To Do{% endblock %}
 
 {% block content %}
+{% set highlight_name = request.args.get('highlight', '') %}
 <div class="todo-page">
 
 <h1 class="page-title todo-title">To Do</h1>
@@ -180,7 +181,8 @@
     {% if periodic_tasks %}
     <div class="todo-list">
         {% for t in periodic_tasks %}
-        <div class="todo-row todo-sched-row">
+        <div class="todo-row todo-sched-row{% if highlight_name == t.name %} todo-flash{% endif %}"
+             {% if highlight_name == t.name %}id="hl-task"{% endif %}>
             <div class="todo-sched-left">
                 <span class="todo-name">{{ t.name }}</span>
                 <span class="text-muted todo-meta">{{ t.cadence|capitalize }} &middot; Day {{ t.day_of_month }} &middot; {{ t.next_due.strftime('%b %-d') }}</span>
@@ -280,4 +282,19 @@
 </div>
 
 </div>{# .todo-page #}
+
+{% if highlight_name %}
+<script>
+(function(){
+    var el = document.getElementById('hl-task');
+    if (el) { el.scrollIntoView({block:'nearest',behavior:'smooth'}); }
+    // Clean highlight param from URL without reload
+    if (window.history.replaceState) {
+        var url = new URL(location);
+        url.searchParams.delete('highlight');
+        history.replaceState(null, '', url.pathname + url.search);
+    }
+})();
+</script>
+{% endif %}
 {% endblock %}

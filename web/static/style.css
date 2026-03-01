@@ -3460,7 +3460,8 @@ tr.is-selected > td:first-child {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    padding: 0.22rem 0.6rem;
+    padding: 0.18rem 0.55rem;
+    height: 26px;
     border-radius: 99px;
     font-size: var(--ui-font-xs);
     font-weight: 500;
@@ -3503,7 +3504,8 @@ tr.is-selected > td:first-child {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.18rem 0.5rem;
+    padding: 0.18rem 0.55rem;
+    height: 26px;
     border-radius: 99px;
     font-size: var(--ui-font-xs);
     font-weight: 500;
@@ -3619,11 +3621,14 @@ tr.is-selected > td:first-child {
     white-space: nowrap;
 }
 
-/* ── Schedule reminder rows (compact) ───────────── */
+/* ── Schedule / periodic task rows (compact) ─────── */
+.todo-sched-row {
+    padding: 0.2rem 0;
+}
 .todo-sched-left {
     display: flex;
     align-items: baseline;
-    gap: 0.4rem;
+    gap: 0.3rem;
     flex-wrap: wrap;
     min-width: 0;
 }
@@ -3673,9 +3678,9 @@ tr.is-selected > td:first-child {
     opacity: 1;
 }
 .todo-edit-row {
-    margin-top: -0.1rem;
-    padding-top: 0.15rem;
-    padding-bottom: 0.25rem;
+    margin-top: -0.15rem;
+    padding-top: 0.1rem;
+    padding-bottom: 0.15rem;
     border-bottom: 0.5px solid rgba(255,255,255,0.06);
 }
 :root[data-theme="light"] .todo-edit-row {
@@ -3700,6 +3705,22 @@ tr.is-selected > td:first-child {
     color: var(--text-muted);
     font-size: var(--ui-font-xs);
     opacity: 0.6;
+}
+
+/* ── Highlight flash for newly created tasks ─────── */
+@keyframes todo-flash {
+    0%   { background: rgba(10,132,255,0.18); }
+    100% { background: transparent; }
+}
+.todo-flash {
+    animation: todo-flash 1.2s ease-out;
+}
+:root[data-theme="light"] .todo-flash {
+    animation-name: todo-flash-light;
+}
+@keyframes todo-flash-light {
+    0%   { background: rgba(10,132,255,0.12); }
+    100% { background: transparent; }
 }
 
 /* ── Tablet (form wraps to 2 rows) ─────────────── */
