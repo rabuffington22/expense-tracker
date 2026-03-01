@@ -134,6 +134,29 @@
 {% endif %}
 
 <!-- ================================================================= -->
+<!-- CPA Export                                                          -->
+<!-- ================================================================= -->
+{% if summary.total_txns > 0 %}
+<div class="outline-panel rpt-export-section">
+    <div class="panel-header">Export — {{ fmt_month(selected_month) }}</div>
+    <div class="rpt-export-grid">
+        <a href="{{ url_for('reports.export_csv', month=selected_month) }}" class="rpt-export-card">
+            <span class="rpt-export-card-title">Transactions</span>
+            <span class="rpt-export-card-desc">All transactions with dates, amounts, merchants, categories</span>
+        </a>
+        <a href="{{ url_for('reports.export_categories', month=selected_month) }}" class="rpt-export-card">
+            <span class="rpt-export-card-title">Category Summary</span>
+            <span class="rpt-export-card-desc">Spending totals grouped by category</span>
+        </a>
+        <a href="{{ url_for('reports.export_merchants', month=selected_month) }}" class="rpt-export-card">
+            <span class="rpt-export-card-title">Merchant Summary</span>
+            <span class="rpt-export-card-desc">Spending totals grouped by merchant</span>
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- ================================================================= -->
 <!-- DIVIDER                                                            -->
 <!-- ================================================================= -->
 <hr class="rpt-divider">

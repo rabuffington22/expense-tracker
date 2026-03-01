@@ -11,6 +11,7 @@ from core.reporting import (
     get_available_months,
     get_category_totals,
     get_income_total,
+    get_merchant_totals,
     get_monthly_totals,
     get_transactions,
 )
@@ -63,6 +64,24 @@ def fmt_date(date_str):
     if dt.year == _current_year():
         return dt.strftime("%b") + " " + str(dt.day)
     return dt.strftime("%b") + " " + str(dt.day) + ", " + str(dt.year)
+
+
+# ── CSV filename helper ───────────────────────────────────────────────────────
+
+def _month_range(ym_str):
+    """Return (start_date, end_date) as YYYY-MM-DD strings for a month."""
+    dt = _parse_ym(ym_str)
+    last_day = calendar.monthrange(dt.year, dt.month)[1]
+    return (
+        f"{dt.year:04d}-{dt.month:02d}-01",
+        f"{dt.year:04d}-{dt.month:02d}-{last_day:02d}",
+    )
+
+
+def _csv_filename(entity_key, report_type, ym_str):
+    """Build filename: <entity>_<report>_<start>_<end>.csv"""
+    start, end = _month_range(ym_str)
+    return f"{entity_key}_{report_type}_{start}_{end}.csv"
 
 
 # ── Routes ───────────────────────────────────────────────────────────────────
@@ -174,7 +193,7 @@ def index():
 
 @bp.route("/export-csv")
 def export_csv():
-    """Export transactions as CSV. If category is provided, exports just that category."""
+    """Export transactions as CSV for a month, optionally filtered by category."""
     month = request.args.get("month", "")
     category = request.args.get("category", "")
     if not month:
@@ -184,11 +203,66 @@ def export_csv():
     if txn_df.empty:
         return "No data", 404
 
-    csv_data = txn_df.to_csv(index=False)
+    # Format for CPA-friendly output: ISO dates, decimal dollars, minus sign
+    out = txn_df[["date", "description_raw", "merchant_canonical",
+                   "amount", "category", "account"]].copy()
+    out.columns = ["Date", "Description", "Merchant", "Amount", "Category", "Account"]
+    out["Amount"] = out["Amount"].apply(lambda v: f"{v:.2f}")
+
+    csv_data = out.to_csv(index=False)
     if category:
-        filename = f"{g.entity_key}_{month}_{category.lower().replace(' ', '_')}.csv"
+        slug = category.lower().replace(" ", "_")
+        filename = _csv_filename(g.entity_key, f"transactions_{slug}", month)
     else:
-        filename = f"{g.entity_key}_{month}_all.csv"
+        filename = _csv_filename(g.entity_key, "transactions", month)
+    return Response(
+        csv_data,
+        mimetype="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@bp.route("/export-categories")
+def export_categories():
+    """Export category summary CSV for a month."""
+    month = request.args.get("month", "")
+    if not month:
+        return "Missing month parameter", 400
+
+    cat_df = get_category_totals(g.entity_key, month)
+    if cat_df.empty:
+        return "No data", 404
+
+    out = cat_df[["category", "count", "total_amount"]].copy()
+    out.columns = ["Category", "Transactions", "Total"]
+    out["Total"] = out["Total"].apply(lambda v: f"{v:.2f}")
+
+    csv_data = out.to_csv(index=False)
+    filename = _csv_filename(g.entity_key, "categories", month)
+    return Response(
+        csv_data,
+        mimetype="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@bp.route("/export-merchants")
+def export_merchants():
+    """Export merchant summary CSV for a month."""
+    month = request.args.get("month", "")
+    if not month:
+        return "Missing month parameter", 400
+
+    merch_df = get_merchant_totals(g.entity_key, month)
+    if merch_df.empty:
+        return "No data", 404
+
+    out = merch_df[["merchant", "count", "total_amount"]].copy()
+    out.columns = ["Merchant", "Transactions", "Total"]
+    out["Total"] = out["Total"].apply(lambda v: f"{v:.2f}")
+
+    csv_data = out.to_csv(index=False)
+    filename = _csv_filename(g.entity_key, "merchants", month)
     return Response(
         csv_data,
         mimetype="text/csv",
