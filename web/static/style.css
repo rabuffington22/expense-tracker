@@ -459,56 +459,6 @@ a:hover { text-decoration: underline; }
     box-shadow: var(--focus-ring);
     border-radius: 7px;
 }
-.sb-workflows {
-    display: flex;
-    flex-direction: column;
-}
-.sb-workflows-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0.3rem 0.7rem;
-    border: none;
-    border-radius: 7px;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 0.65rem;
-    font-weight: 700;
-    font-family: inherit;
-    text-transform: uppercase;
-    letter-spacing: 0.10em;
-    cursor: pointer;
-    transition: background var(--transition), color var(--transition);
-    -webkit-tap-highlight-color: transparent;
-}
-.sb-workflows-toggle:hover {
-    background: var(--hover-bg);
-    color: var(--text-secondary);
-}
-.sb-workflows-toggle:focus-visible {
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
-}
-.sb-wf-chevron {
-    font-size: 0.65rem;
-    transition: transform 200ms ease, opacity 150ms ease;
-    display: inline-block;
-    opacity: 0.4;
-}
-.sb-workflows-toggle:hover .sb-wf-chevron {
-    opacity: 0.7;
-}
-.sb-workflows-toggle.is-open .sb-wf-chevron {
-    transform: rotate(90deg);
-}
-.sb-workflows-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    padding-top: 0.15rem;
-}
-
 /* ── Entity Toggle (segmented control) — legacy, kept for compat ───────── */
 .entity-toggle {
     display: flex;
@@ -561,75 +511,59 @@ a:hover { text-decoration: underline; }
     background: var(--hover-bg-strong);
     font-weight: 600;
 }
-.nav-link:focus-visible,
-.step-row:focus-visible {
+.nav-link:focus-visible {
     outline: 2px solid var(--blue);
     outline-offset: -2px;
     border-radius: 8px;
 }
 
-.step-row {
+/* ── Sidebar Bottom Row ───────────────────────────────────────────────── */
+.sb-bottom {
     display: flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.28rem 0.7rem;
-    border-radius: 7px;
-    transition: background var(--transition);
-    -webkit-tap-highlight-color: transparent;
+    gap: 0.35rem;
+    margin-top: auto;
+    padding: 0 0.25rem;
 }
-.step-row:hover { background: var(--hover-bg); }
-.step-row:active { background: var(--hover-bg-strong); }
-.step-row.active { background: var(--hover-bg-strong); }
-.step-num {
-    font-weight: 600;
-    font-size: 0.72rem;
-    min-width: 1rem;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-    opacity: 0.6;
-}
-.step-label {
-    color: var(--text-secondary);
-    font-size: 0.74rem;
-}
-.step-row.active .step-label {
-    font-weight: 600;
-    color: var(--text);
-}
-.step-row.active .step-num {
-    opacity: 1;
-}
-
-/* ── Theme Toggle ──────────────────────────────────────────────────────── */
-.theme-toggle {
+.sb-bottom-btn {
     display: flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.3rem 0.7rem;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
     border-radius: 7px;
     border: 0.5px solid transparent;
     background: transparent;
     color: var(--text-muted);
-    font-size: 0.72rem;
+    font-size: 0.85rem;
     font-family: inherit;
     cursor: pointer;
     transition: background var(--transition), color var(--transition), border-color var(--transition);
     -webkit-tap-highlight-color: transparent;
-    margin-top: auto;
+    text-decoration: none;
 }
-:root[data-theme="dark"] .theme-toggle:hover {
-    border-color: rgba(255,255,255,0.06);
-}
-:root[data-theme="light"] .theme-toggle:hover {
-    border-color: rgba(0,0,0,0.04);
-}
-.theme-toggle:hover {
+.sb-bottom-btn:hover {
     background: var(--hover-bg);
     color: var(--text);
+    text-decoration: none;
 }
-.theme-toggle:focus-visible {
+:root[data-theme="dark"] .sb-bottom-btn:hover {
+    border-color: rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .sb-bottom-btn:hover {
+    border-color: rgba(0,0,0,0.04);
+}
+.sb-bottom-btn:focus-visible {
     outline: 2px solid var(--blue);
     outline-offset: -2px;
+}
+.sb-bottom-btn.active {
+    color: var(--text);
+    background: var(--hover-bg);
+}
+.sb-bottom-btn svg {
+    width: 18px;
+    height: 18px;
 }
 .theme-toggle-icon {
     font-size: 0.85rem;
