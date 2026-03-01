@@ -7,6 +7,7 @@
       <div class="iu-top-row">
         <!-- Left period insights -->
         <div class="iu-half">
+          <div class="iu-half-label">{{ left_label }}</div>
           {% if left_insights %}
             {% for ins in left_insights %}
             <a class="iu-row" href="{{ ins.url }}">
@@ -23,6 +24,7 @@
         <div class="iu-vdiv"></div>
         <!-- Right period insights -->
         <div class="iu-half">
+          <div class="iu-half-label">{{ right_label }}</div>
           {% if right_insights %}
             {% for ins in right_insights %}
             <a class="iu-row" href="{{ ins.url }}">
@@ -44,6 +46,7 @@
           <span class="iu-compare-title">Compare</span>
           <span class="iu-compare-periods">{{ left_label }} vs {{ right_label }}</span>
         </div>
+
         <div class="iu-compare-list">
           {% if compare_insights %}
             {% for ins in compare_insights %}

@@ -1684,6 +1684,15 @@ a.kpi-panel-cell:hover {
     flex-direction: column;
     padding: 0.3rem 0;
 }
+.iu-half-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    opacity: 0.55;
+    padding: 0.15rem 0.8rem 0.1rem;
+}
 /* Subtle vertical divider between two top halves */
 .iu-vdiv {
     width: 1px;
@@ -1710,23 +1719,20 @@ a.kpi-panel-cell:hover {
 }
 .iu-compare-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.3rem;
     padding: 0 0.8rem 0.25rem;
 }
 .iu-compare-title {
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: var(--label-tracking);
     color: var(--text-secondary);
-    opacity: 0.7;
 }
 .iu-compare-periods {
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     font-weight: 500;
     color: var(--text-muted);
-    opacity: 0.6;
+    opacity: 0.55;
 }
 .iu-compare-list {
     display: flex;
