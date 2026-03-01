@@ -1,0 +1,42 @@
+<div class="iu-grid">
+  <!-- ── Insights (left) ──────────────────────────────────────────────── -->
+  <div class="outline-band iu-box">
+    <div class="band-label">Insights</div>
+    <div class="iu-list">
+      {% if insights %}
+        {% for ins in insights %}
+        <a class="iu-row" href="{{ ins.url }}">
+          <span class="iu-icon">{{ ins.icon }}</span>
+          <span class="iu-text">{{ ins.text }}</span>
+          <span class="iu-chevron">&#x203A;</span>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="iu-empty">No insights yet for this period.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ── Upcoming (right) ─────────────────────────────────────────────── -->
+  <div class="outline-band iu-box">
+    <div class="band-label">Upcoming</div>
+    <div class="iu-list">
+      {% if upcoming %}
+        {% for item in upcoming %}
+        <a class="iu-row" href="{{ item.url }}">
+          <span class="iu-merchant">{{ item.merchant_canonical }}</span>
+          <span class="iu-meta">
+            <span class="iu-date">{{ item.expected_date_display }}</span>
+            {% if item.expected_amount_cents %}
+            <span class="iu-amount">${{ "{:,.0f}".format(item.expected_amount_cents / 100) }}</span>
+            {% endif %}
+          </span>
+          <span class="iu-chevron">&#x203A;</span>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="iu-empty">No recurring patterns detected yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
