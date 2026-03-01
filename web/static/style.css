@@ -3448,7 +3448,7 @@ tr.is-selected > td:first-child {
     display: flex;
     gap: 0.35rem;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
     flex-wrap: wrap;
 }
 .todo-input {
@@ -3462,8 +3462,8 @@ tr.is-selected > td:first-child {
     width: auto;
 }
 .todo-input--name  { flex: 2; min-width: 100px; }
-.todo-input--day   { flex: 0 0 52px; text-align: center; }
-.todo-input--notes { flex: 2; min-width: 80px; }
+.todo-input--day   { flex: 0 0 68px; text-align: center; }
+.todo-input--notes { flex: 1.5; min-width: 70px; }
 .todo-input:focus {
     outline: none;
     border-color: var(--blue);
@@ -3569,6 +3569,13 @@ tr.is-selected > td:first-child {
     text-align: center;
     color: var(--text-muted);
     font-size: var(--ui-font-xs);
+}
+.todo-hint {
+    margin: 0;
+    padding: 0.15rem 0 0;
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+    opacity: 0.6;
 }
 
 /* ── Mobile ─────────────────────────────────────── */

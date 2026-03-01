@@ -42,7 +42,7 @@
         {% endif %}
 
         {% if counts.large_txns > 0 %}
-        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, sort='amount', dir='asc') }}" class="todo-row todo-row--link">
+        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, sort='amount', dir='desc') }}" class="todo-row todo-row--link">
             <span class="todo-name">Large transactions</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
@@ -139,9 +139,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="todo-empty">
-        No statement reminders yet. Add one above.
-    </div>
+    <p class="todo-hint">No reminders yet.</p>
     {% endif %}
 </div>
 
