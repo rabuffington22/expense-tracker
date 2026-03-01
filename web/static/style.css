@@ -1310,7 +1310,7 @@ a.kpi-panel-cell:hover {
     flex-shrink: 0;
     padding-right: 6px;
     /* matches chart-area height + bottom name row */
-    height: 120px;
+    height: 130px;
 }
 .cat-compare-ytick {
     font-size: 0.58rem;
@@ -1351,8 +1351,8 @@ a.kpi-panel-cell:hover {
 .cat-compare-chart {
     display: flex;
     gap: 0;
-    align-items: stretch;  /* cols must fill 120px for % bar heights */
-    height: 120px;
+    align-items: stretch;  /* cols must fill 130px for % bar heights */
+    height: 130px;
     position: relative;
     z-index: 1;
 }
@@ -1594,6 +1594,187 @@ a.kpi-panel-cell:hover {
     background: rgba(255, 255, 255, 0.92);
     border-color: rgba(0,0,0,0.08);
     box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.06);
+}
+
+/* ── Dashboard section divider ─────────────────────────────────────────── */
+.dash-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 1.5rem 0 0;
+}
+:root[data-theme="light"] .dash-divider {
+    border-color: rgba(0,0,0,0.06);
+}
+
+/* ── Income vs Expenses Line Chart ─────────────────────────────────────── */
+.ie-legend {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+.ie-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+.ie-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+}
+.ie-legend-dot--income  { background: var(--green); }
+.ie-legend-dot--expense { background: var(--red); }
+
+.ie-chart-wrap {
+    padding: 0;
+}
+.ie-chart {
+    position: relative;
+    width: 100%;
+}
+.ie-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.ie-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* Grid + axes */
+.ie-grid {
+    stroke: rgba(255,255,255,0.06);
+    stroke-width: 0.5;
+}
+:root[data-theme="light"] .ie-grid {
+    stroke: rgba(0,0,0,0.06);
+}
+.ie-ytick {
+    fill: var(--text-muted);
+    font-size: 9px;
+    font-family: var(--font);
+    font-variant-numeric: tabular-nums;
+    text-anchor: end;
+    opacity: 0.65;
+}
+.ie-xtick {
+    fill: var(--text-muted);
+    font-size: 8.5px;
+    font-family: var(--font);
+    text-anchor: middle;
+    opacity: 0.6;
+}
+
+/* Smooth lines */
+.ie-line {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.ie-line--income  { stroke: var(--green); }
+.ie-line--expense { stroke: var(--red); }
+
+/* Gradient area fills (opacity controlled by SVG gradient defs) */
+.ie-area {
+    pointer-events: none;
+}
+
+/* Dots — hidden by default, shown on hover via JS */
+.ie-dot {
+    opacity: 0;
+    transition: opacity 0.15s ease, r 0.15s ease;
+    stroke: var(--bg);
+    stroke-width: 2;
+}
+.ie-dot--income  { fill: var(--green); }
+.ie-dot--expense { fill: var(--red); }
+.ie-dot--active {
+    opacity: 1;
+}
+
+/* Guide line */
+.ie-guide {
+    stroke: rgba(255,255,255,0.2);
+    stroke-width: 1;
+    stroke-dasharray: none;
+}
+:root[data-theme="light"] .ie-guide {
+    stroke: rgba(0,0,0,0.12);
+}
+
+/* Tooltip */
+.ie-tip {
+    position: absolute;
+    z-index: 10;
+    background: #000;
+    border: 0.5px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 8px 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    pointer-events: none;
+    white-space: nowrap;
+    font-family: var(--font);
+}
+.ie-tip[hidden] {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+}
+.ie-tip:not([hidden]) {
+    opacity: 1;
+    transition: opacity 0.12s;
+}
+.ie-tip-month {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+.ie-tip-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.64rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.ie-tip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.ie-tip-dot--income  { background: var(--green); }
+.ie-tip-dot--expense { background: var(--red); }
+.ie-tip-val {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Light theme */
+:root[data-theme="light"] .ie-tip {
+    background: rgba(255,255,255,0.94);
+    border-color: rgba(0,0,0,0.08);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+/* (area gradient opacity handled by SVG defs) */
+
+/* Responsive */
+@media (max-width: 480px) {
+    .ie-xtick { font-size: 7px; }
+    .ie-ytick { font-size: 7.5px; }
 }
 
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */
