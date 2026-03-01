@@ -5,7 +5,7 @@
 <h1 class="page-title">Transactions</h1>
 
 <!-- Filter bar (outside HTMX target — always visible) -->
-<div class="card txn-filter-bar">
+<div class="outline-panel txn-filter-bar">
   <form id="txn-filter-form"
         hx-get="{{ url_for('transactions.partial') }}"
         hx-target="#txn-results"

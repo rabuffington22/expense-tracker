@@ -641,6 +641,117 @@ h2 {
     letter-spacing: -0.015em;
 }
 
+/* ── Page-chrome primitives (shared across pages) ───────────────────────── */
+
+/* Section heading — settings panels, config areas */
+.section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.7rem;
+}
+
+/* Outline panel — flat + hairline border (matches dashboard outline-band) */
+.outline-panel {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-xl);
+    box-shadow: none;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+}
+:root[data-theme="light"] .outline-panel {
+    border-color: rgba(0,0,0,0.08);
+}
+
+/* Panel header — tracked uppercase label */
+.panel-header {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+}
+
+/* Table wrapper — horizontal overflow for wide tables */
+.table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Empty state — centered placeholder */
+.empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+}
+.empty-state-sub {
+    margin-top: 0.3rem;
+    font-size: 0.82rem;
+    opacity: 0.7;
+}
+
+/* Form width constraint */
+.form-narrow { max-width: 500px; }
+
+/* Reports: flatten stat cards inside outline-panel */
+.outline-panel .rpt-stat-card {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    padding: 0.9rem 0.5rem;
+}
+
+/* Reports: flatten cat-list inside outline-panel */
+.outline-panel .rpt-cat-list {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+.outline-panel .rpt-cat-row {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .outline-panel .rpt-cat-row {
+    border-bottom-color: rgba(0,0,0,0.05);
+}
+.outline-panel .rpt-cat-row:last-child { border-bottom: none; }
+
+/* Upload dialog: flatten metric tiles inside outline-panel */
+.outline-panel .metric {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+/* Toggle button (Connected Accounts page) */
+.toggle-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+}
+.toggle-btn.active {
+    background: var(--green);
+    color: #000;
+    border-color: var(--green);
+    font-weight: 700;
+}
+.toggle-btn:hover {
+    border-color: var(--text-muted);
+}
+
 /* ── Cards ──────────────────────────────────────────────────────────────── */
 .card {
     background: var(--bg-card);
@@ -3057,9 +3168,7 @@ tr.is-selected > td:first-child {
 
 /* Filter bar + inputs */
 :root[data-theme="light"] .txn-filter-bar {
-    border: 1px solid var(--border);
     padding: 0.6rem 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
 }
 :root[data-theme="light"] .input-sm {
     border: 1px solid var(--input-sm-border);
@@ -3464,6 +3573,7 @@ tr.is-selected > td:first-child {
     position: sticky;
     top: 0;
     z-index: 10;
+    background: var(--bg);
 }
 .txn-filter-bar .form-row {
     display: flex;

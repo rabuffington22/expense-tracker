@@ -30,7 +30,7 @@
 
 <!-- Transaction table with editable categories -->
 <form method="post" action="{{ url_for('categorize.accept') }}">
-    <div style="overflow-x: auto;">
+    <div class="table-wrap">
         <table>
             <thead>
                 <tr>
@@ -231,12 +231,12 @@ function prefillAlias(desc) {
 <!-- ═══════════ SETTINGS TAB ═══════════ -->
 
 <!-- ── Categories ─────────────────────────── -->
-<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Categories</h2>
+<h2 class="section-title">Categories</h2>
 
 <div style="max-width: 500px;">
 {% if cats %}
 {% for cat in cats %}
-<div class="flex-between" style="padding: 0.3rem 0; border-bottom: 1px solid rgba(56,56,58,0.5);">
+<div class="flex-between" style="padding: 0.3rem 0; border-bottom: 1px solid var(--border);">
     <span>{{ cat }}</span>
     <form method="post" action="{{ url_for('categorize.delete_category', name=cat) }}" style="display:inline;">
         <button type="submit" class="btn btn-sm btn-danger"
@@ -264,7 +264,7 @@ function prefillAlias(desc) {
     <div>
         <p class="text-xs text-muted mb-1">Also updates all matching transactions and aliases</p>
         <form method="post" action="{{ url_for('categorize.rename_category') }}">
-            <div class="form-row" style="max-width: 500px;">
+            <div class="form-row form-narrow">
                 <div class="form-group">
                     <label>Existing</label>
                     <select name="old_name">
@@ -286,7 +286,7 @@ function prefillAlias(desc) {
 <hr class="divider">
 
 <!-- ── Subcategories ──────────────────────── -->
-<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Subcategories</h2>
+<h2 class="section-title">Subcategories</h2>
 
 <div class="form-group" style="max-width: 250px;">
     <label>Show subcategories for</label>
@@ -319,7 +319,7 @@ function loadSubcategories(cat) {
             options.forEach(opt => {
                 if (opt.value !== 'Unknown') {
                     var escaped = _escapeHtml(opt.textContent);
-                    listHtml += `<div class="flex-between" style="padding:0.3rem 0;border-bottom:1px solid rgba(56,56,58,0.5);">
+                    listHtml += `<div class="flex-between" style="padding:0.3rem 0;border-bottom:1px solid var(--border);">
                         <span class="text-sm">${escaped}</span>
                     </div>`;
                 }
@@ -335,7 +335,7 @@ if (document.getElementById('sub-cat-filter').value) {
 </script>
 
 <form method="post" action="{{ url_for('categorize.add_subcategory') }}" class="mt-1">
-    <div class="form-row" style="max-width: 500px;">
+    <div class="form-row form-narrow">
         <div class="form-group">
             <label>Category</label>
             <select name="category">
@@ -355,14 +355,14 @@ if (document.getElementById('sub-cat-filter').value) {
 <hr class="divider">
 
 <!-- ── Merchant Aliases ───────────────────── -->
-<h2 style="font-size: 1.2rem; margin-bottom: 0.8rem;">Merchant Aliases</h2>
+<h2 class="section-title">Merchant Aliases</h2>
 <p class="text-muted text-sm mb-1">
     Rules are checked in order. First match wins.
     <code>contains</code> = case-insensitive substring; <code>regex</code> = Python regex.
 </p>
 
 {% if aliases %}
-<div style="overflow-x: auto; max-width: 700px;">
+<div class="table-wrap" style="max-width: 700px;">
     <table>
         <thead>
             <tr>
@@ -406,7 +406,7 @@ if (document.getElementById('sub-cat-filter').value) {
 <details class="mt-2">
     <summary>Add Alias</summary>
     <div>
-        <form method="post" action="{{ url_for('categorize.add_alias') }}" style="max-width: 500px;">
+        <form method="post" action="{{ url_for('categorize.add_alias') }}" class="form-narrow">
             <div class="form-row">
                 <div class="form-group">
                     <label>Pattern type</label>

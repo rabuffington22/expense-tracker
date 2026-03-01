@@ -33,29 +33,31 @@
 
 <!-- Stat Cards -->
 {% if summary.total_txns > 0 or summary.total_income > 0 %}
-<div class="rpt-stats">
-    <div class="rpt-stat-card">
-        <div class="rpt-stat-label">Spending</div>
-        <div class="rpt-stat-value">${{ "{:,.0f}".format(summary.total_spend) }}</div>
-        <div class="rpt-stat-sub">{{ summary.total_txns }} transaction{{ 's' if summary.total_txns != 1 }}</div>
-    </div>
-    <div class="rpt-stat-card">
-        <div class="rpt-stat-label">Income</div>
-        <div class="rpt-stat-value" style="color: var(--green);">${{ "{:,.0f}".format(summary.total_income) }}</div>
-        <div class="rpt-stat-sub">{{ fmt_month(selected_month) }}</div>
-    </div>
-    <div class="rpt-stat-card">
-        <div class="rpt-stat-label">Net</div>
-        <div class="rpt-stat-value" style="color: {{ 'var(--green)' if summary.net >= 0 else 'var(--red)' }};">
-            {{ '+' if summary.net >= 0 else '' }}${{ "{:,.0f}".format(summary.net) }}
+<div class="outline-panel">
+    <div class="rpt-stats">
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Spending</div>
+            <div class="rpt-stat-value">${{ "{:,.0f}".format(summary.total_spend) }}</div>
+            <div class="rpt-stat-sub">{{ summary.total_txns }} transaction{{ 's' if summary.total_txns != 1 }}</div>
         </div>
-        <div class="rpt-stat-sub">{{ fmt_month(selected_month) }}</div>
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Income</div>
+            <div class="rpt-stat-value" style="color: var(--green);">${{ "{:,.0f}".format(summary.total_income) }}</div>
+            <div class="rpt-stat-sub">{{ fmt_month(selected_month) }}</div>
+        </div>
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Net</div>
+            <div class="rpt-stat-value" style="color: {{ 'var(--green)' if summary.net >= 0 else 'var(--red)' }};">
+                {{ '+' if summary.net >= 0 else '' }}${{ "{:,.0f}".format(summary.net) }}
+            </div>
+            <div class="rpt-stat-sub">{{ fmt_month(selected_month) }}</div>
+        </div>
     </div>
 </div>
 {% endif %}
 
 <!-- Category Breakdown -->
-<div class="rpt-categories-section">
+<div class="outline-panel rpt-categories-section">
     <div class="rpt-categories-header">
         <h2 class="rpt-section-title">Categories</h2>
     </div>
@@ -153,7 +155,7 @@
     </div>
 
     {% if chart_bars %}
-    <div class="rpt-chart-card">
+    <div class="outline-panel" style="padding: 1.4rem 1.4rem 1rem;">
         <div class="chart-bars chart-bars--period-{{ period }}">
             {% for bar in chart_bars %}
             <div class="chart-col{% if bar.is_selected %} chart-col--selected{% endif %}">
