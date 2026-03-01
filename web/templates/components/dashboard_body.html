@@ -1,155 +1,14 @@
-{% if total_txn_count == 0 %}
-<!-- ── Empty state ──────────────────────────────────────────────────────── -->
-<div class="card" style="padding:2rem; text-align:center;">
-  <div style="font-size:2rem; margin-bottom:0.5rem;">📭</div>
-  <div style="font-weight:600; margin-bottom:0.3rem;">No transactions found</div>
-  <div class="text-sm" style="color:var(--text-muted); margin-bottom:1rem;">
-    {% if params.account %}Try clearing the account filter or {% endif %}
-    adjust the date range to see data.
-  </div>
-  <a href="{{ drill_url(start=params.start, end=params.end, account=params.account) }}" class="btn btn-primary btn-sm">View All Transactions</a>
+<!-- ── KPI Compare Panels ──────────────────────────────────────────────── -->
+<div class="kpi-compare-row">
+  <div hx-get="{{ url_for('dashboard.kpi_panel', panel='left', period='this_month') }}"
+       hx-trigger="load" hx-swap="innerHTML"></div>
+  <div hx-get="{{ url_for('dashboard.kpi_panel', panel='right', period='last_month') }}"
+       hx-trigger="load" hx-swap="innerHTML"></div>
 </div>
-{% else %}
+<!-- ── Categories Comparison (populated by KPI panel scripts) ──────────── -->
+<div id="categories-compare"></div>
+
 <div class="dash-grid">
-
-<!-- ── KPI band (Provider-style) ────────────────────────────────────────── -->
-<div class="band kpi-band kpi-band--provider kpi-band--centered">
-  {% if period_label %}<div class="band-label">{{ period_label }}</div>{% endif %}
-  <div class="kpi-band-row">
-    <!-- 1) Spend / Expenses -->
-    <a class="kpi-cell" href="{{ drill_url(type='expense') }}">
-      <div class="kpi-cell-label">{{ entity_labels.spend }}</div>
-      <div class="kpi-cell-value">${{ "{:,.0f}".format(spend_cents / 100) }}</div>
-      <div class="kpi-cell-sub">{{ "{:,}".format(total_txn_count) }} txns</div>
-    </a>
-    <!-- 2) Income / Revenue -->
-    <a class="kpi-cell" href="{{ drill_url(type='income') }}">
-      <div class="kpi-cell-label">{{ entity_labels.income }}</div>
-      <div class="kpi-cell-value kpi-pos">${{ "{:,.0f}".format(income_cents / 100) }}</div>
-    </a>
-    <!-- 3) Net / Profit -->
-    <div class="kpi-cell kpi-cell--static">
-      <div class="kpi-cell-label">{{ entity_labels.net }}</div>
-      <div class="kpi-cell-value {% if net_cents < 0 %}kpi-neg{% else %}kpi-pos{% endif %}">
-        {{ "\u2212" if net_cents < 0 else "" }}${{ "{:,.0f}".format((net_cents|abs) / 100) }}
-      </div>
-      <div class="kpi-cell-sub">period net</div>
-    </div>
-    <!-- 4) Needs Review -->
-    <a class="kpi-cell" href="{{ drill_url(uncategorized='1') }}">
-      <div class="kpi-cell-label">Needs Review</div>
-      <div class="kpi-cell-value {% if review_count > 0 %}kpi-warn{% endif %}">
-        {{ "{:,}".format(review_count) }}
-      </div>
-      <div class="kpi-cell-sub">uncategorized</div>
-    </a>
-    <!-- 5) Latest Transaction -->
-    <div class="kpi-cell kpi-cell--static kpi-cell--latest">
-      <div class="kpi-cell-label">Latest</div>
-      <div class="kpi-cell-value">{{ latest_date }}</div>
-      <div class="kpi-cell-sub">last activity</div>
-    </div>
-  </div>
-</div>{# end band Overview #}
-
-<!-- ── Activity band: Spend Trend + Review Inbox + Insights ─────────────── -->
-<div class="outline-band">
-<div class="band-label">Activity</div>
-  <div class="band-body">
-    <div class="band-grid band-grid--2">
-      <!-- Left: Spend Trend -->
-      {% if chart_bars %}
-      <div class="band-panel">
-        <div class="panel-title">Spend Trend</div>
-        <div class="plot-area trend-chart">
-          <div class="chart-bars">
-            {% for bar in chart_bars %}
-            <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}" title="{{ bar.label }}: {{ bar.display }}">
-              <div class="chart-value">{{ bar.display }}</div>
-              <div class="chart-track">
-                <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_current %} chart-fill--selected{% endif %}"
-                     style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
-              </div>
-              <div class="chart-label">{{ bar.label }}</div>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-      {% endif %}
-
-      <!-- Right: Review Inbox + Insights stacked -->
-      {% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 or insights %}
-      <div class="band-stack">
-        {% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 %}
-        <div class="panel-title">Review Inbox</div>
-        <div class="rpt-cat-list">
-          {% if review_count > 0 %}
-          <a class="rpt-cat-row" href="{{ drill_url(uncategorized='1') }}">
-            <div class="rpt-cat-left">
-              <div class="rpt-cat-dot" style="background:var(--orange)"></div>
-              <div class="rpt-cat-info">
-                <div class="rpt-cat-name">Uncategorized</div>
-                <div class="rpt-cat-count">{{ review_count }} transaction{{ 's' if review_count != 1 }}</div>
-              </div>
-            </div>
-            <div class="rpt-cat-right"></div>
-            <div class="rpt-cat-chevron">&#8250;</div>
-          </a>
-          {% endif %}
-          {% if vendor_breakdown_count > 0 %}
-          <a class="rpt-cat-row" href="{{ drill_url(vendor_breakdown='1') }}">
-            <div class="rpt-cat-left">
-              <div class="rpt-cat-dot" style="background:var(--purple)"></div>
-              <div class="rpt-cat-info">
-                <div class="rpt-cat-name">Vendor Breakdown Needed</div>
-                <div class="rpt-cat-count">{{ vendor_breakdown_count }} transaction{{ 's' if vendor_breakdown_count != 1 }}</div>
-              </div>
-            </div>
-            <div class="rpt-cat-right"></div>
-            <div class="rpt-cat-chevron">&#8250;</div>
-          </a>
-          {% endif %}
-          {% if transfer_count > 0 %}
-          <a class="rpt-cat-row" href="{{ drill_url(possible_transfer='1') }}">
-            <div class="rpt-cat-left">
-              <div class="rpt-cat-dot" style="background:var(--teal)"></div>
-              <div class="rpt-cat-info">
-                <div class="rpt-cat-name">Possible Transfers</div>
-                <div class="rpt-cat-count">{{ transfer_count }} transaction{{ 's' if transfer_count != 1 }}</div>
-              </div>
-            </div>
-            <div class="rpt-cat-right"></div>
-            <div class="rpt-cat-chevron">&#8250;</div>
-          </a>
-          {% endif %}
-        </div>
-        {% endif %}
-        {% if insights %}
-        {% if review_count > 0 or vendor_breakdown_count > 0 or transfer_count > 0 %}
-        <div class="band-divider"></div>
-        {% endif %}
-        <div class="panel-title">Insights</div>
-        <div class="rpt-cat-list">
-          {% for ins in insights %}
-          <a class="rpt-cat-row" href="{{ ins.url }}">
-            <div class="rpt-cat-left">
-              <div class="rpt-cat-icon">{{ ins.icon }}</div>
-              <div class="rpt-cat-info">
-                <div class="rpt-cat-name">{{ ins.text }}</div>
-              </div>
-            </div>
-            <div class="rpt-cat-right"></div>
-            <div class="rpt-cat-chevron">&#8250;</div>
-          </a>
-          {% endfor %}
-        </div>
-        {% endif %}
-      </div>
-      {% endif %}
-    </div>
-  </div>
-</div>{# end band Activity #}
 
 <!-- ── Spending band: Donut + Legend ────────────────────────────────────── -->
 {% if top_cats %}
@@ -274,74 +133,6 @@
 {% endif %}
 {% endif %}
 
-<!-- ── Recurring band: Top Merchants + Upcoming ────────────────────────── -->
-<div class="outline-band">
-<div class="band-label">Recurring</div>
-  <div class="band-body">
-    <div class="band-grid band-grid--2">
-      {% if top_merchants %}
-      <div class="band-panel">
-        <div class="panel-title">Top Merchants</div>
-        <div class="rpt-cat-list">
-          {% for m in top_merchants %}
-          <a class="rpt-cat-row" href="{{ drill_url(q=m.merchant) }}">
-            <div class="rpt-cat-left">
-              <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-              <div class="rpt-cat-info">
-                <div class="rpt-cat-name">{{ m.merchant }}</div>
-                <div class="rpt-cat-count">{{ m.txn_count }} txn{{ 's' if m.txn_count != 1 }}</div>
-              </div>
-            </div>
-            <div class="rpt-cat-right">
-              <div class="rpt-cat-bar-wrap">
-                <div class="rpt-cat-bar" style="width:{{ m.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-              </div>
-              <div class="rpt-cat-amount">{{ fmt_dollars(m.total_cents) }}</div>
-            </div>
-            <div class="rpt-cat-chevron">&#8250;</div>
-          </a>
-          {% endfor %}
-        </div>
-      </div>
-      {% endif %}
-
-      <div class="band-panel">
-        <div class="panel-title">
-          Upcoming
-          {% if upcoming_items %}
-          <span style="color:var(--text-muted); font-weight:400;">({{ upcoming_items|length }})</span>
-          {% endif %}
-        </div>
-        {% if upcoming_items %}
-        <div class="rpt-cat-list">
-          {% for item in upcoming_items %}
-          <a class="rpt-cat-row" href="{{ drill_url(merchant=item.merchant_canonical, start=item.drill_start, end=item.drill_end) }}">
-            <div class="rpt-cat-left">
-              <div class="rpt-cat-dot" style="background:{% if item.is_income %}var(--green){% else %}var(--blue){% endif %}"></div>
-              <div class="rpt-cat-info">
-                <div class="rpt-cat-name">{{ item.merchant_canonical }}</div>
-                <div class="rpt-cat-count">{{ item.expected_date_display }} &middot; {{ item.cadence }}</div>
-              </div>
-            </div>
-            <div class="rpt-cat-right">
-              <div class="rpt-cat-amount"{% if item.is_income %} style="color:var(--green);"{% endif %}>
-                {{ fmt_dollars(item.expected_amount_cents) }}
-              </div>
-            </div>
-            <div class="rpt-cat-chevron">&#8250;</div>
-          </a>
-          {% endfor %}
-        </div>
-        {% else %}
-        <div style="padding:0.8rem 0;">
-          <span class="text-sm" style="color:var(--text-muted);">No recurring patterns detected yet</span>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>{# end band Recurring #}
-
 <!-- ── Vendor Orders (global, not date-filtered) ────────────────────────── -->
 {% if total_orders > 0 %}
 <a href="{{ url_for('match.index') }}" class="card card-link" style="display:block; padding:0.8rem 1.2rem;">
@@ -360,4 +151,3 @@
 {% endif %}
 
 </div>{# end dash-grid #}
-{% endif %}{# end empty-state check #}

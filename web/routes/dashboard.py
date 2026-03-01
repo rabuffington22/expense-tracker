@@ -736,17 +736,205 @@ def _format_period_label(params):
         return f"{s.strftime('%b')} {s.day}\u2009\u2013\u2009{e.strftime('%b')} {e.day}"
 
 
+# ── Period helpers (KPI compare panels) ───────────────────────────────────────
+
+# Static presets (always shown first in dropdown)
+_PRESET_LABELS = {
+    "this_month": "This Month",
+    "last_month": "Last Month",
+    "last_30": "Last 30 Days",
+    "last_90": "Last 90 Days",
+    "year_to_date": "Year to Date",
+    "last_12_months": "Last 12 Months",
+}
+
+
+def _build_period_labels():
+    """Build ordered period labels: presets + last 12 explicit months.
+
+    Explicit months use keys like 'month_2026_03' → 'Mar 2026'.
+    """
+    labels = dict(_PRESET_LABELS)
+    now = datetime.now()
+    y, m = now.year, now.month
+    for _ in range(12):
+        key = f"month_{y:04d}_{m:02d}"
+        # "Mar 2026" style label
+        month_name = calendar.month_abbr[m]
+        label = f"{month_name} {y}"
+        labels[key] = label
+        m -= 1
+        if m == 0:
+            m = 12
+            y -= 1
+    return labels
+
+
+def _period_to_dates(period_key):
+    """Map a period key to (start_date, end_date) strings in YYYY-MM-DD format.
+
+    Supports preset keys and explicit month keys (month_YYYY_MM).
+    """
+    now = datetime.now()
+    today = now.date()
+
+    # Handle explicit month keys: month_2026_03 etc.
+    if period_key.startswith("month_"):
+        parts = period_key.split("_")
+        if len(parts) == 3:
+            try:
+                y, m = int(parts[1]), int(parts[2])
+                start = f"{y:04d}-{m:02d}-01"
+                last_day = calendar.monthrange(y, m)[1]
+                end = f"{y:04d}-{m:02d}-{last_day:02d}"
+                return start, end
+            except (ValueError, OverflowError):
+                pass
+        return _period_to_dates("this_month")
+
+    if period_key == "this_month":
+        start = f"{now.year:04d}-{now.month:02d}-01"
+        last_day = calendar.monthrange(now.year, now.month)[1]
+        end = f"{now.year:04d}-{now.month:02d}-{last_day:02d}"
+    elif period_key == "last_month":
+        if now.month == 1:
+            y, m = now.year - 1, 12
+        else:
+            y, m = now.year, now.month - 1
+        start = f"{y:04d}-{m:02d}-01"
+        last_day = calendar.monthrange(y, m)[1]
+        end = f"{y:04d}-{m:02d}-{last_day:02d}"
+    elif period_key == "last_30":
+        start = (today - timedelta(days=29)).isoformat()
+        end = today.isoformat()
+    elif period_key == "last_90":
+        start = (today - timedelta(days=89)).isoformat()
+        end = today.isoformat()
+    elif period_key == "year_to_date":
+        start = f"{now.year:04d}-01-01"
+        end = today.isoformat()
+    elif period_key == "last_12_months":
+        start = (today - timedelta(days=365)).isoformat()
+        end = today.isoformat()
+    else:
+        return _period_to_dates("this_month")
+    return start, end
+
+
+def _query_kpi(conn, start, end):
+    """Run KPI queries for a date range. Returns dict with spend/income/net + txn count."""
+    da_where = "date >= ? AND date <= ?"
+    binds = [start, end]
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+
+    spend_cents = conn.execute(
+        f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+        f"WHERE amount_cents < 0 AND {da_where} {xfer_exclude}",
+        binds,
+    ).fetchone()[0]
+
+    income_cents = conn.execute(
+        f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+        f"WHERE amount_cents > 0 AND {da_where} {xfer_exclude}",
+        binds,
+    ).fetchone()[0]
+
+    txn_count = conn.execute(
+        f"SELECT COUNT(*) FROM transactions WHERE {da_where}",
+        binds,
+    ).fetchone()[0]
+
+    return {
+        "spend_cents": spend_cents,
+        "income_cents": income_cents,
+        "net_cents": income_cents - spend_cents,
+        "txn_count": txn_count,
+    }
+
+
+def _nice_y_ticks(max_cents):
+    """Compute Apple-ish nice-number Y-axis ticks for a bar chart.
+
+    Returns (ticks, axis_max_cents) where ticks is a list of dicts
+    [{"label": "$500", "pct": 50.0}, ...] from top to bottom,
+    and axis_max_cents is the tick ceiling (>= max_cents).
+
+    Uses step from {1, 2, 5} × 10^n to get ~4–5 ticks.
+    If max_cents == 0: returns single $0 baseline and axis_max of 0.
+    """
+    import math
+
+    if max_cents <= 0:
+        return [{"label": "$0", "pct": 0}], 0
+
+    # Work in dollars for readability
+    max_dollars = max_cents / 100
+
+    # Find nice step: target ~4-5 ticks, minimum step $1
+    rough_step = max(max_dollars / 4, 1)
+    magnitude = 10 ** math.floor(math.log10(rough_step)) if rough_step > 0 else 1
+    residual = rough_step / magnitude
+    # Pick from {1, 2, 5}
+    if residual <= 1.5:
+        nice_step = 1 * magnitude
+    elif residual <= 3.5:
+        nice_step = 2 * magnitude
+    else:
+        nice_step = 5 * magnitude
+    nice_step = max(nice_step, 1)  # never sub-dollar ticks
+
+    # Round up max to next nice_step multiple
+    axis_max_dollars = math.ceil(max_dollars / nice_step) * nice_step
+    axis_max_cents = int(axis_max_dollars * 100)
+
+    # Build ticks from top to bottom (axis_max down to 0)
+    ticks = []
+    val = axis_max_dollars
+    while val >= 0:
+        pct = (val / axis_max_dollars * 100) if axis_max_dollars > 0 else 0
+        if val >= 1000:
+            label = f"${val / 1000:.1f}K".replace(".0K", "K")
+        elif val >= 1:
+            label = f"${val:,.0f}"
+        else:
+            label = "$0"
+        ticks.append({"label": label, "pct": pct})
+        val = round(val - nice_step, 2)
+        if val < 0 and abs(val) < nice_step * 0.01:
+            val = 0  # float precision guard
+
+    # Ensure $0 baseline is present
+    if ticks[-1]["pct"] != 0:
+        ticks.append({"label": "$0", "pct": 0})
+
+    return ticks, axis_max_cents
+
+
+def _query_category_totals(conn, start, end):
+    """Query per-category expense totals for a date range.
+
+    Expenses only (amount_cents < 0).  Excludes *exactly* 'Internal Transfer'
+    and 'Credit Card Payment' categories.  Credit card interest and all other
+    categories remain included.
+    """
+    return conn.execute(
+        "SELECT c.id AS cat_id, t.category, "
+        "  COALESCE(SUM(ABS(t.amount_cents)), 0) AS total_cents "
+        "FROM transactions t "
+        "LEFT JOIN categories c ON c.name = t.category "
+        "WHERE t.amount_cents < 0 "
+        "  AND t.date >= ? AND t.date <= ? "
+        "  AND t.category IS NOT NULL AND t.category != '' "
+        "  AND t.category NOT IN ('Internal Transfer', 'Credit Card Payment') "
+        "GROUP BY t.category ORDER BY total_cents DESC",
+        [start, end],
+    ).fetchall()
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @bp.route("/")
 def index():
-    # Auto-apply default saved view when no query params present
-    if not request.query_string:
-        from web.routes.saved_views import get_default_qs
-        default_qs = get_default_qs(g.entity_key, "dashboard")
-        if default_qs and default_qs != request.query_string.decode():
-            return redirect(f"/?{default_qs}")
-
     params = _apply_date_defaults(_get_filter_params())
     conn = get_connection(g.entity_key)
     try:
@@ -767,3 +955,119 @@ def partial():
         conn.close()
     return render_template("components/dashboard_body.html", **data, params=params,
                            period_label=_format_period_label(params))
+
+
+@bp.route("/dashboard/kpi-panel")
+def kpi_panel():
+    """Render a single KPI panel partial (HTMX endpoint)."""
+    panel = request.args.get("panel", "left")
+    period = request.args.get("period", "this_month" if panel == "left" else "last_month")
+
+    start, end = _period_to_dates(period)
+    conn = get_connection(g.entity_key)
+    try:
+        kpi = _query_kpi(conn, start, end)
+    finally:
+        conn.close()
+
+    # Build drill URL helper for this panel's date range
+    def drill_url(**overrides):
+        qp = {"start": start, "end": end}
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    period_labels = _build_period_labels()
+
+    return render_template("components/kpi_panel.html",
+                           panel=panel, period=period, start=start, end=end,
+                           period_labels=period_labels,
+                           drill_url=drill_url,
+                           **kpi)
+
+
+@bp.route("/dashboard/categories-compare")
+def categories_compare():
+    """Render the categories comparison section (HTMX endpoint).
+
+    Reads left_period and right_period from querystring, queries per-category
+    expense totals for each, merges into combined list keyed by category name,
+    sorts by combined total desc, takes top 12, and computes bar height
+    percentages on a common scale.
+    """
+    left_period = request.args.get("left_period", "this_month")
+    right_period = request.args.get("right_period", "last_month")
+
+    left_start, left_end = _period_to_dates(left_period)
+    right_start, right_end = _period_to_dates(right_period)
+
+    conn = get_connection(g.entity_key)
+    try:
+        left_rows = _query_category_totals(conn, left_start, left_end)
+        right_rows = _query_category_totals(conn, right_start, right_end)
+    finally:
+        conn.close()
+
+    # Build lookup dicts: category_name -> {cat_id, total_cents}
+    left_map = {}
+    for r in left_rows:
+        left_map[r["category"]] = {"cat_id": r["cat_id"], "total_cents": r["total_cents"]}
+
+    right_map = {}
+    for r in right_rows:
+        right_map[r["category"]] = {"cat_id": r["cat_id"], "total_cents": r["total_cents"]}
+
+    # Merge into combined list keyed by category name
+    all_cats = set(left_map.keys()) | set(right_map.keys())
+    merged = []
+    for cat_name in all_cats:
+        left_data = left_map.get(cat_name, {"cat_id": None, "total_cents": 0})
+        right_data = right_map.get(cat_name, {"cat_id": None, "total_cents": 0})
+        cat_id = left_data["cat_id"] or right_data["cat_id"]
+        left_cents = left_data["total_cents"]
+        right_cents = right_data["total_cents"]
+        merged.append({
+            "name": cat_name,
+            "cat_id": cat_id,
+            "left_cents": left_cents,
+            "right_cents": right_cents,
+            "combined": left_cents + right_cents,
+        })
+
+    # Sort by combined total desc, take top 12
+    merged.sort(key=lambda x: x["combined"], reverse=True)
+    top = merged[:12]
+
+    # Compute bar height percentages with common scale (from displayed categories only)
+    raw_max = max((c["left_cents"] for c in top), default=0)
+    raw_max = max(raw_max, max((c["right_cents"] for c in top), default=0))
+
+    # Nice-number Y-axis ticks: pick step from {1,2,5}×10^n to get ~4-5 ticks
+    y_ticks, axis_max_cents = _nice_y_ticks(raw_max)
+
+    # Bar heights are percentage of axis_max (tick ceiling), not raw max
+    for c in top:
+        c["left_pct"] = int(c["left_cents"] / axis_max_cents * 100) if axis_max_cents and c["left_cents"] else 0
+        c["right_pct"] = int(c["right_cents"] / axis_max_cents * 100) if axis_max_cents and c["right_cents"] else 0
+
+    # Drill URL helpers
+    def left_drill(**overrides):
+        qp = {"start": left_start, "end": left_end}
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    def right_drill(**overrides):
+        qp = {"start": right_start, "end": right_end}
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    period_labels = _build_period_labels()
+
+    return render_template("components/categories_compare.html",
+                           categories=top,
+                           y_ticks=y_ticks,
+                           left_period=left_period,
+                           right_period=right_period,
+                           left_label=period_labels.get(left_period, left_period),
+                           right_label=period_labels.get(right_period, right_period),
+                           left_drill=left_drill,
+                           right_drill=right_drill)
