@@ -11,12 +11,9 @@
 <!-- ── Income vs Expenses (12 months) ────────────────────────────────── -->
 {% set ie_max = ie_points|map(attribute='income_cents')|list + ie_points|map(attribute='expense_cents')|list %}
 {% set ie_max_val = ie_max|max if ie_max|max > 0 else 0 %}
-<div class="outline-band" style="margin-top: 1.2rem;">
+<div class="outline-band" style="margin-top: 2rem;">
   <div class="band-label">Income vs Expenses</div>
   <div class="band-head">
-    <div>
-      <div class="band-title">Income vs Expenses (12 months)</div>
-    </div>
     <div class="ie-legend">
       <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--income"></span>Income</span>
       <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--expense"></span>Expenses</span>
@@ -40,7 +37,7 @@
       var rawMax = parseInt(el.dataset.max, 10);
       if (!rawMax) { el.innerHTML = '<div class="ie-empty">No data</div>'; return; }
 
-      /* Nice-number Y ticks (same algorithm as backend) */
+      /* Nice-number Y ticks */
       function niceTicks(maxCents) {
         var maxD = maxCents / 100;
         var rough = Math.max(maxD / 4, 1);
@@ -51,12 +48,11 @@
         var axisMax = Math.ceil(maxD / step) * step;
         var ticks = [];
         for (var v = axisMax; v >= 0; v = Math.round((v - step) * 100) / 100) {
-          var pct = axisMax > 0 ? (v / axisMax * 100) : 0;
           var lbl;
           if (v >= 1000) { lbl = '$' + (v/1000).toFixed(v % 1000 ? 1 : 0) + 'K'; }
           else if (v >= 1) { lbl = '$' + v.toLocaleString('en-US', {maximumFractionDigits:0}); }
           else { lbl = '$0'; }
-          ticks.push({label: lbl, pct: pct, val: v});
+          ticks.push({label: lbl, val: v});
           if (v <= 0) break;
         }
         return {ticks: ticks, axisMaxCents: Math.round(axisMax * 100)};
@@ -67,8 +63,8 @@
       var axisMax = nt.axisMaxCents;
 
       /* SVG dimensions */
-      var W = 700, H = 200;
-      var padL = 52, padR = 12, padT = 16, padB = 28;
+      var W = 700, H = 220;
+      var padL = 52, padR = 16, padT = 20, padB = 32;
       var cW = W - padL - padR;
       var cH = H - padT - padB;
       var n = points.length;
@@ -76,45 +72,79 @@
       function xPos(i) { return padL + (n > 1 ? i / (n - 1) * cW : cW / 2); }
       function yPos(cents) { return padT + cH - (axisMax ? cents / axisMax * cH : 0); }
 
+      /* Smooth cubic bezier path through data points */
+      function smoothPath(pts) {
+        if (pts.length < 2) return 'M' + pts[0][0] + ',' + pts[0][1];
+        var d = 'M' + pts[0][0].toFixed(1) + ',' + pts[0][1].toFixed(1);
+        for (var i = 0; i < pts.length - 1; i++) {
+          var x0 = pts[i][0], y0 = pts[i][1];
+          var x1 = pts[i+1][0], y1 = pts[i+1][1];
+          var tension = 0.3;
+          var dx = (x1 - x0) * tension;
+          d += ' C' + (x0+dx).toFixed(1) + ',' + y0.toFixed(1) +
+               ' ' + (x1-dx).toFixed(1) + ',' + y1.toFixed(1) +
+               ' ' + x1.toFixed(1) + ',' + y1.toFixed(1);
+        }
+        return d;
+      }
+
+      /* Collect data coordinates */
+      var incCoords = [], expCoords = [];
+      for (var i = 0; i < n; i++) {
+        incCoords.push([xPos(i), yPos(points[i].income_cents)]);
+        expCoords.push([xPos(i), yPos(points[i].expense_cents)]);
+      }
+
+      var baseY = yPos(0);
+      var incPath = smoothPath(incCoords);
+      var expPath = smoothPath(expCoords);
+
+      /* Area path = line path + close along baseline */
+      function areaPath(coords, linePath) {
+        return linePath +
+          ' L' + coords[coords.length-1][0].toFixed(1) + ',' + baseY.toFixed(1) +
+          ' L' + coords[0][0].toFixed(1) + ',' + baseY.toFixed(1) + ' Z';
+      }
+
       /* Build SVG */
       var svg = '<svg class="ie-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">';
 
-      /* Gridlines + Y labels */
+      /* Gradient defs */
+      svg += '<defs>';
+      svg += '<linearGradient id="ie-grad-income" x1="0" x2="0" y1="0" y2="1">';
+      svg += '<stop offset="0%" stop-color="var(--green)" stop-opacity="0.18"/>';
+      svg += '<stop offset="100%" stop-color="var(--green)" stop-opacity="0"/>';
+      svg += '</linearGradient>';
+      svg += '<linearGradient id="ie-grad-expense" x1="0" x2="0" y1="0" y2="1">';
+      svg += '<stop offset="0%" stop-color="var(--red)" stop-opacity="0.14"/>';
+      svg += '<stop offset="100%" stop-color="var(--red)" stop-opacity="0"/>';
+      svg += '</linearGradient>';
+      svg += '</defs>';
+
+      /* Gridlines + Y labels (skip $0 gridline, just keep baseline subtle) */
       for (var t = 0; t < ticks.length; t++) {
         var gy = yPos(ticks[t].val * 100);
         svg += '<line class="ie-grid" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + gy + '" y2="' + gy + '"/>';
-        svg += '<text class="ie-ytick" x="' + (padL - 6) + '" y="' + (gy + 3.5) + '">' + ticks[t].label + '</text>';
+        svg += '<text class="ie-ytick" x="' + (padL - 8) + '" y="' + (gy + 3.5) + '">' + ticks[t].label + '</text>';
       }
 
       /* X labels */
       for (var i = 0; i < n; i++) {
-        var lx = xPos(i);
-        svg += '<text class="ie-xtick" x="' + lx + '" y="' + (H - 6) + '">' + points[i].label + '</text>';
+        svg += '<text class="ie-xtick" x="' + xPos(i).toFixed(1) + '" y="' + (H - 8) + '">' + points[i].label + '</text>';
       }
 
-      /* Build polyline strings */
-      var incPts = '', expPts = '';
+      /* Gradient area fills */
+      svg += '<path class="ie-area" d="' + areaPath(incCoords, incPath) + '" fill="url(#ie-grad-income)"/>';
+      svg += '<path class="ie-area" d="' + areaPath(expCoords, expPath) + '" fill="url(#ie-grad-expense)"/>';
+
+      /* Smooth lines */
+      svg += '<path class="ie-line ie-line--income" d="' + incPath + '"/>';
+      svg += '<path class="ie-line ie-line--expense" d="' + expPath + '"/>';
+
+      /* Data dots (hidden by default, shown on hover via JS class) */
       for (var i = 0; i < n; i++) {
-        var px = xPos(i).toFixed(1);
-        incPts += px + ',' + yPos(points[i].income_cents).toFixed(1) + ' ';
-        expPts += px + ',' + yPos(points[i].expense_cents).toFixed(1) + ' ';
-      }
-
-      /* Area fills (subtle) */
-      var baseY = yPos(0).toFixed(1);
-      var x0 = xPos(0).toFixed(1);
-      var xN = xPos(n - 1).toFixed(1);
-      svg += '<polygon class="ie-area ie-area--income" points="' + x0 + ',' + baseY + ' ' + incPts + xN + ',' + baseY + '"/>';
-      svg += '<polygon class="ie-area ie-area--expense" points="' + x0 + ',' + baseY + ' ' + expPts + xN + ',' + baseY + '"/>';
-
-      /* Lines */
-      svg += '<polyline class="ie-line ie-line--income" points="' + incPts + '"/>';
-      svg += '<polyline class="ie-line ie-line--expense" points="' + expPts + '"/>';
-
-      /* Data dots */
-      for (var i = 0; i < n; i++) {
-        svg += '<circle class="ie-dot ie-dot--income" cx="' + xPos(i).toFixed(1) + '" cy="' + yPos(points[i].income_cents).toFixed(1) + '" r="3"/>';
-        svg += '<circle class="ie-dot ie-dot--expense" cx="' + xPos(i).toFixed(1) + '" cy="' + yPos(points[i].expense_cents).toFixed(1) + '" r="3"/>';
+        svg += '<circle class="ie-dot ie-dot--income" data-idx="' + i + '" cx="' + incCoords[i][0].toFixed(1) + '" cy="' + incCoords[i][1].toFixed(1) + '" r="4"/>';
+        svg += '<circle class="ie-dot ie-dot--expense" data-idx="' + i + '" cx="' + expCoords[i][0].toFixed(1) + '" cy="' + expCoords[i][1].toFixed(1) + '" r="4"/>';
       }
 
       /* Invisible hover columns */
@@ -123,29 +153,34 @@
         svg += '<rect class="ie-hover-col" data-idx="' + i + '" x="' + (xPos(i) - colW/2).toFixed(1) + '" y="' + padT + '" width="' + colW.toFixed(1) + '" height="' + cH + '" fill="transparent"/>';
       }
 
-      /* Vertical guide (hidden by default) */
+      /* Vertical guide */
       svg += '<line class="ie-guide" id="ie-guide" x1="0" x2="0" y1="' + padT + '" y2="' + (padT + cH) + '" style="display:none"/>';
 
       svg += '</svg>';
-
-      /* Tooltip container */
       svg += '<div class="ie-tip" id="ie-tip" hidden></div>';
-
       el.innerHTML = svg;
 
       /* Hover logic */
       var guide = document.getElementById('ie-guide');
       var tipEl = document.getElementById('ie-tip');
-      var chartEl = el;
+      var allDots = el.querySelectorAll('.ie-dot');
+      var activeIdx = -1;
 
       function fmtD(c) { return '$' + Math.round(Math.abs(c)/100).toLocaleString('en-US'); }
 
-      function showTip(idx, e) {
+      function showTip(idx) {
+        if (idx === activeIdx) return;
+        activeIdx = idx;
         var p = points[idx];
         var gx = xPos(idx);
         guide.setAttribute('x1', gx);
         guide.setAttribute('x2', gx);
         guide.style.display = '';
+
+        /* Show dots for this index only */
+        allDots.forEach(function(d) {
+          d.classList.toggle('ie-dot--active', parseInt(d.dataset.idx) === idx);
+        });
 
         tipEl.innerHTML =
           '<div class="ie-tip-month">' + p.label + ' ' + p.ym.split('-')[0] + '</div>' +
@@ -154,35 +189,34 @@
         tipEl.hidden = false;
 
         /* Position tooltip */
-        var cr = chartEl.getBoundingClientRect();
+        var cr = el.getBoundingClientRect();
         var tipW = tipEl.offsetWidth;
-        var frac = (gx / W);
+        var frac = gx / W;
         var left = cr.width * frac;
         if (left + tipW + 8 > cr.width) left = left - tipW - 12;
         else left += 12;
         tipEl.style.left = Math.max(0, left) + 'px';
-        tipEl.style.top = '12px';
+        tipEl.style.top = '16px';
       }
 
       function hideTip() {
         guide.style.display = 'none';
         tipEl.hidden = true;
+        allDots.forEach(function(d) { d.classList.remove('ie-dot--active'); });
+        activeIdx = -1;
       }
 
       el.querySelectorAll('.ie-hover-col').forEach(function(col) {
-        col.addEventListener('mouseenter', function(e) { showTip(parseInt(this.dataset.idx), e); });
+        col.addEventListener('mouseenter', function() { showTip(parseInt(this.dataset.idx)); });
         col.addEventListener('mouseleave', hideTip);
       });
 
-      /* Touch support */
+      /* Touch */
       el.addEventListener('touchstart', function(e) {
-        var touch = e.touches[0];
         var cr = el.getBoundingClientRect();
-        var relX = touch.clientX - cr.left;
-        var frac = relX / cr.width;
-        var idx = Math.round(frac * (n - 1));
-        idx = Math.max(0, Math.min(n - 1, idx));
-        showTip(idx, e);
+        var relX = e.touches[0].clientX - cr.left;
+        var idx = Math.round(relX / cr.width * (n - 1));
+        showTip(Math.max(0, Math.min(n - 1, idx)));
       }, {passive: true});
       el.addEventListener('touchend', function() { setTimeout(hideTip, 1500); }, {passive: true});
     })();

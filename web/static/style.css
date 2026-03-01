@@ -1661,38 +1661,42 @@ a.kpi-panel-cell:hover {
     opacity: 0.6;
 }
 
-/* Lines */
+/* Smooth lines */
 .ie-line {
     fill: none;
-    stroke-width: 2;
+    stroke-width: 2.5;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
 .ie-line--income  { stroke: var(--green); }
 .ie-line--expense { stroke: var(--red); }
 
-/* Area fills */
+/* Gradient area fills (opacity controlled by SVG gradient defs) */
 .ie-area {
-    opacity: 0.08;
+    pointer-events: none;
 }
-.ie-area--income  { fill: var(--green); }
-.ie-area--expense { fill: var(--red); }
 
-/* Dots */
+/* Dots — hidden by default, shown on hover via JS */
 .ie-dot {
     opacity: 0;
-    transition: opacity 0.12s;
+    transition: opacity 0.15s ease, r 0.15s ease;
+    stroke: var(--bg);
+    stroke-width: 2;
 }
 .ie-dot--income  { fill: var(--green); }
 .ie-dot--expense { fill: var(--red); }
-.ie-hover-col:hover ~ .ie-dot { opacity: 0; }
+.ie-dot--active {
+    opacity: 1;
+}
 
 /* Guide line */
 .ie-guide {
-    stroke: var(--text-muted);
-    stroke-width: 0.75;
-    stroke-dasharray: 3 2;
-    opacity: 0.5;
+    stroke: rgba(255,255,255,0.2);
+    stroke-width: 1;
+    stroke-dasharray: none;
+}
+:root[data-theme="light"] .ie-guide {
+    stroke: rgba(0,0,0,0.12);
 }
 
 /* Tooltip */
@@ -1753,7 +1757,7 @@ a.kpi-panel-cell:hover {
     border-color: rgba(0,0,0,0.08);
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
-:root[data-theme="light"] .ie-area { opacity: 0.06; }
+/* (area gradient opacity handled by SVG defs) */
 
 /* Responsive */
 @media (max-width: 480px) {
