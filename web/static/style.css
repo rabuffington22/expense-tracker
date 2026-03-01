@@ -1601,6 +1601,7 @@ a.kpi-panel-cell:hover {
     display: flex;
     gap: 1rem;
     align-items: center;
+    justify-content: center;
 }
 .ie-legend-item {
     display: inline-flex;
