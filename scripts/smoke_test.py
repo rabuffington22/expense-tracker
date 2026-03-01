@@ -805,6 +805,48 @@ def main() -> None:
         _check(q_task["cadence"] == "quarterly", "todo quarterly task: cadence should be quarterly")
         q_task_id = q_task["id"]
 
+        # Create annual task
+        resp = client.post("/todo/tasks/create", data={
+            "name": "Annual tax review",
+            "cadence": "annual",
+            "day_of_month": "15",
+        }, follow_redirects=True)
+        _check(resp.status_code == 200, "todo task create annual: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("Annual tax review" in body, "todo task create annual: name should appear")
+        _check("Annual" in body, "todo task create annual: cadence should appear")
+
+        conn_todo = get_connection("personal")
+        a_task = conn_todo.execute(
+            "SELECT id, cadence FROM periodic_tasks WHERE name = 'Annual tax review'"
+        ).fetchone()
+        conn_todo.close()
+        _check(a_task is not None, "todo annual task: row should exist in DB")
+        _check(a_task["cadence"] == "annual", "todo annual task: cadence should be annual")
+        a_task_id = a_task["id"]
+
+        # Edit task (change name + cadence)
+        resp = client.post(f"/todo/tasks/edit/{task_id}", data={
+            "name": "Updated Amazon orders",
+            "cadence": "quarterly",
+            "day_of_month": "20",
+            "notes": "Updated notes",
+        }, follow_redirects=True)
+        _check(resp.status_code == 200, "todo task edit: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("Updated Amazon orders" in body, "todo task edit: updated name should appear")
+
+        conn_todo = get_connection("personal")
+        edited = conn_todo.execute(
+            "SELECT name, cadence, day_of_month, notes FROM periodic_tasks WHERE id = ?",
+            (task_id,),
+        ).fetchone()
+        conn_todo.close()
+        _check(edited["name"] == "Updated Amazon orders", "todo task edit: name should be updated")
+        _check(edited["cadence"] == "quarterly", "todo task edit: cadence should be quarterly")
+        _check(edited["day_of_month"] == 20, "todo task edit: day should be 20")
+        _check(edited["notes"] == "Updated notes", "todo task edit: notes should be updated")
+
         # Mark monthly task done
         resp = client.post(f"/todo/tasks/complete/{task_id}", follow_redirects=True)
         _check(resp.status_code == 200, "todo task complete: expected 200")
@@ -823,8 +865,9 @@ def main() -> None:
         _check(resp.status_code == 200, "todo BFM: expected 200")
         body = resp.get_data(as_text=True)
         _check("Citi Statement" not in body, "todo isolation: BFM should not see Personal's schedule")
-        _check("Update Amazon orders" not in body, "todo isolation: BFM should not see Personal's task")
+        _check("Updated Amazon orders" not in body, "todo isolation: BFM should not see Personal's task")
         _check("Quarterly bank login" not in body, "todo isolation: BFM should not see Personal's quarterly task")
+        _check("Annual tax review" not in body, "todo isolation: BFM should not see Personal's annual task")
 
         # ── 10f. Delete with cascade ──────────────────────────────────
         client.set_cookie("entity", "Personal")
@@ -846,7 +889,7 @@ def main() -> None:
         resp = client.post(f"/todo/tasks/delete/{task_id}", follow_redirects=True)
         _check(resp.status_code == 200, "todo task delete: expected 200")
         body = resp.get_data(as_text=True)
-        _check("Update Amazon orders" not in body, "todo task delete: should be gone")
+        _check("Updated Amazon orders" not in body, "todo task delete: should be gone")
 
         conn_todo = get_connection("personal")
         pc = conn_todo.execute(
@@ -858,6 +901,10 @@ def main() -> None:
         # Delete quarterly task
         resp = client.post(f"/todo/tasks/delete/{q_task_id}", follow_redirects=True)
         _check(resp.status_code == 200, "todo quarterly task delete: expected 200")
+
+        # Delete annual task
+        resp = client.post(f"/todo/tasks/delete/{a_task_id}", follow_redirects=True)
+        _check(resp.status_code == 200, "todo annual task delete: expected 200")
 
         # Cleanup fixture txns
         conn_fix = get_connection("personal")

@@ -135,6 +135,7 @@
         <select name="cadence" class="todo-input">
             <option value="monthly">Monthly</option>
             <option value="quarterly">Quarterly</option>
+            <option value="annual">Annual</option>
         </select>
         <input type="number" name="day_of_month" min="1" max="28" placeholder="Day" value="1" required class="todo-input todo-input--day">
         <input type="text" name="notes" placeholder="Notes (optional)" class="todo-input todo-input--notes-sm">
@@ -156,12 +157,19 @@
                 {% if t.status == 'done' %}
                     <span class="badge badge-green">Done</span>
                 {% elif t.status == 'due' %}
+                    {% if t.days_until == 0 %}
+                    <span class="text-muted todo-countdown todo-countdown--warn">Due today</span>
+                    {% elif t.days_until < 0 %}
+                    <span class="text-muted todo-countdown todo-countdown--warn">Overdue {{ -t.days_until }}d</span>
+                    {% endif %}
                     <form method="post" action="{{ url_for('todo.complete_task', task_id=t.id) }}" style="display:inline;">
                         <button type="submit" class="btn btn-success btn-sm">Mark done</button>
                     </form>
                 {% else %}
                     <span class="text-muted todo-countdown">Due in {{ t.days_until }}d</span>
                 {% endif %}
+                <button type="button" class="btn btn-sm todo-edit-btn" title="Edit"
+                        onclick="var f=this.closest('.todo-sched-row').nextElementSibling;f.hidden=!f.hidden;">&#x270E;</button>
                 <form method="post" action="{{ url_for('todo.delete_task', task_id=t.id) }}"
                       style="display:inline;"
                       onsubmit="return confirm('Delete this task?');">
@@ -170,6 +178,18 @@
                 </form>
             </div>
         </div>
+        <form method="post" action="{{ url_for('todo.edit_task', task_id=t.id) }}"
+              class="todo-add-form todo-add-form--periodic todo-edit-row" hidden>
+            <input type="text" name="name" value="{{ t.name }}" required class="todo-input">
+            <select name="cadence" class="todo-input">
+                <option value="monthly" {{ 'selected' if t.cadence == 'monthly' }}>Monthly</option>
+                <option value="quarterly" {{ 'selected' if t.cadence == 'quarterly' }}>Quarterly</option>
+                <option value="annual" {{ 'selected' if t.cadence == 'annual' }}>Annual</option>
+            </select>
+            <input type="number" name="day_of_month" min="1" max="28" value="{{ t.day_of_month }}" required class="todo-input todo-input--day">
+            <input type="text" name="notes" value="{{ t.notes or '' }}" placeholder="Notes" class="todo-input todo-input--notes-sm">
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+        </form>
         {% endfor %}
     </div>
     {% else %}
