@@ -1120,7 +1120,11 @@ h2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+    margin-top: 1.25rem;
     margin-bottom: 1.2rem;
+}
+#categories-compare {
+    margin-top: 1.5rem;
 }
 @media (max-width: 900px) {
     .kpi-compare-row { grid-template-columns: 1fr; }
@@ -1266,29 +1270,95 @@ a.kpi-panel-cell:hover {
     background: var(--orange);
 }
 
+/* Y-axis + chart area wrapper */
+.cat-compare-chart-wrap {
+    display: flex;
+    gap: 0;
+    position: relative;
+}
+
+/* Y-axis labels column */
+.cat-compare-yaxis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 48px;
+    flex-shrink: 0;
+    padding-right: 6px;
+    /* matches chart-area height + bottom name row */
+    height: 120px;
+}
+.cat-compare-ytick {
+    font-size: 0.58rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+    opacity: 0.65;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* Chart area (bars + gridlines) */
+.cat-compare-chart-area {
+    flex: 1;
+    position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Gridlines sit behind bars */
+.cat-compare-gridlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.cat-compare-gridline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .cat-compare-gridline {
+    border-color: rgba(0,0,0,0.06);
+}
+
+/* Bar columns row */
 .cat-compare-chart {
     display: flex;
     gap: 0;
     align-items: flex-end;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    height: 120px;
+    position: relative;
+    z-index: 1;
+}
+
+.cat-compare-names-row {
+    display: flex;
+    gap: 0;
+    margin-top: 0.4rem;
 }
 
 .cat-compare-col {
     flex: 1 1 0;
     min-width: 52px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
+    justify-content: center;
+    align-items: flex-end;
+}
+.cat-compare-name-col {
+    flex: 1 1 0;
+    min-width: 52px;
+    display: flex;
+    justify-content: center;
 }
 
 .cat-compare-bars {
     display: flex;
     gap: 3px;
     align-items: flex-end;
-    height: 120px;
-    width: 100%;
+    height: 100%;
     justify-content: center;
 }
 
@@ -1330,17 +1400,20 @@ a.kpi-panel-cell:hover {
     color: var(--text);
 }
 
-/* Responsive: stack categories on small screens */
+/* Responsive */
 @media (max-width: 900px) {
-    .cat-compare-bars { height: 90px; }
+    .cat-compare-chart { height: 90px; }
+    .cat-compare-yaxis { height: 90px; width: 42px; }
     .cat-compare-bar { width: 11px; }
-    .cat-compare-col { min-width: 44px; }
+    .cat-compare-col, .cat-compare-name-col { min-width: 44px; }
     .cat-compare-name { font-size: 0.55rem; max-width: 52px; }
 }
 @media (max-width: 480px) {
-    .cat-compare-bars { height: 70px; }
+    .cat-compare-chart { height: 70px; }
+    .cat-compare-yaxis { height: 70px; width: 36px; }
+    .cat-compare-ytick { font-size: 0.5rem; }
     .cat-compare-bar { width: 9px; }
-    .cat-compare-col { min-width: 36px; }
+    .cat-compare-col, .cat-compare-name-col { min-width: 36px; }
     .cat-compare-name { font-size: 0.5rem; max-width: 42px; }
 }
 

@@ -9,16 +9,6 @@
 <!-- ── Categories Comparison (populated by KPI panel scripts) ──────────── -->
 <div id="categories-compare"></div>
 
-{% if total_txn_count == 0 %}
-<!-- ── Empty state ──────────────────────────────────────────────────────── -->
-<div class="card" style="padding:2rem; text-align:center;">
-  <div style="font-size:2rem; margin-bottom:0.5rem;">📭</div>
-  <div style="font-weight:600; margin-bottom:0.3rem;">No transactions yet</div>
-  <div class="text-sm" style="color:var(--text-muted); margin-bottom:1rem;">
-    Import bank statements to get started.
-  </div>
-</div>
-{% else %}
 <div class="dash-grid">
 
 <!-- ── Activity band: Spend Trend + Review Inbox + Insights ─────────────── -->
@@ -329,4 +319,3 @@
 {% endif %}
 
 </div>{# end dash-grid #}
-{% endif %}{# end empty-state check #}

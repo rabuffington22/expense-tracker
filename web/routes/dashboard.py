@@ -970,6 +970,19 @@ def categories_compare():
         c["left_pct"] = int(c["left_cents"] / max_cents * 100) if c["left_cents"] else 0
         c["right_pct"] = int(c["right_cents"] / max_cents * 100) if c["right_cents"] else 0
 
+    # Y-axis ticks: 0%, 25%, 50%, 75%, 100% of max_cents → dollar labels
+    y_ticks = []
+    for frac in (1.0, 0.75, 0.5, 0.25, 0.0):
+        cents = int(max_cents * frac)
+        dollars = cents / 100
+        if dollars >= 1000:
+            label = f"${dollars / 1000:.1f}K"
+        elif dollars >= 1:
+            label = f"${dollars:,.0f}"
+        else:
+            label = "$0"
+        y_ticks.append({"label": label, "pct": frac * 100})
+
     # Drill URL helpers
     def left_drill(**overrides):
         qp = {"start": left_start, "end": left_end}
@@ -983,6 +996,7 @@ def categories_compare():
 
     return render_template("components/categories_compare.html",
                            categories=top,
+                           y_ticks=y_ticks,
                            left_period=left_period,
                            right_period=right_period,
                            left_label=_PERIOD_LABELS.get(left_period, left_period),

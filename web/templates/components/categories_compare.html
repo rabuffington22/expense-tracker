@@ -1,6 +1,6 @@
 {% if categories %}
 <div class="outline-band">
-  <div class="band-label">Categories</div>
+  <div class="band-label">Expense Categories</div>
   <div class="band-body">
     <div class="cat-compare">
       <!-- Legend -->
@@ -15,27 +15,55 @@
         </span>
       </div>
 
-      <!-- Bar pairs -->
-      <div class="cat-compare-chart">
-        {% for cat in categories %}
-        <div class="cat-compare-col">
-          <div class="cat-compare-bars">
-            <a class="cat-compare-bar cat-compare-bar--left"
-               href="{{ left_drill(category_id=cat.cat_id) if cat.cat_id else '#' }}"
-               style="height: {{ cat.left_pct }}%;"
-               title="{{ cat.name }}: {{ fmt_dollars(cat.left_cents) }}">
-            </a>
-            <a class="cat-compare-bar cat-compare-bar--right"
-               href="{{ right_drill(category_id=cat.cat_id) if cat.cat_id else '#' }}"
-               style="height: {{ cat.right_pct }}%;"
-               title="{{ cat.name }}: {{ fmt_dollars(cat.right_cents) }}">
-            </a>
-          </div>
-          <a class="cat-compare-name"
-             href="{{ left_drill(category_id=cat.cat_id) if cat.cat_id else '#' }}"
-             title="{{ cat.name }}">{{ cat.name }}</a>
+      <!-- Y-axis + Chart area -->
+      <div class="cat-compare-chart-wrap">
+        <!-- Y-axis tick labels -->
+        <div class="cat-compare-yaxis">
+          {% for tick in y_ticks %}
+          <span class="cat-compare-ytick">{{ tick.label }}</span>
+          {% endfor %}
         </div>
-        {% endfor %}
+
+        <!-- Chart area with gridlines + bars + names -->
+        <div class="cat-compare-chart-area">
+          <!-- Gridlines -->
+          <div class="cat-compare-gridlines" style="height: 120px;">
+            {% for tick in y_ticks %}
+            <div class="cat-compare-gridline" style="bottom: {{ tick.pct }}%;"></div>
+            {% endfor %}
+          </div>
+
+          <!-- Bar columns -->
+          <div class="cat-compare-chart">
+            {% for cat in categories %}
+            <div class="cat-compare-col">
+              <div class="cat-compare-bars">
+                <a class="cat-compare-bar cat-compare-bar--left"
+                   href="{{ left_drill(category_id=cat.cat_id) if cat.cat_id else '#' }}"
+                   style="height: {{ cat.left_pct }}%;"
+                   title="{{ cat.name }}: {{ fmt_dollars(cat.left_cents) }}">
+                </a>
+                <a class="cat-compare-bar cat-compare-bar--right"
+                   href="{{ right_drill(category_id=cat.cat_id) if cat.cat_id else '#' }}"
+                   style="height: {{ cat.right_pct }}%;"
+                   title="{{ cat.name }}: {{ fmt_dollars(cat.right_cents) }}">
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Category names below bars -->
+          <div class="cat-compare-names-row">
+            {% for cat in categories %}
+            <div class="cat-compare-name-col">
+              <a class="cat-compare-name"
+                 href="{{ left_drill(category_id=cat.cat_id) if cat.cat_id else '#' }}"
+                 title="{{ cat.name }}">{{ cat.name }}</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
   </div>
