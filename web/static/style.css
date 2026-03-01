@@ -1346,7 +1346,7 @@ a.kpi-panel-cell:hover {
 .cat-compare-chart {
     display: flex;
     gap: 0;
-    align-items: flex-end;
+    align-items: stretch;  /* cols must fill 120px for % bar heights */
     height: 120px;
     position: relative;
     z-index: 1;
@@ -1361,9 +1361,10 @@ a.kpi-panel-cell:hover {
 .cat-compare-col {
     flex: 1 1 0;
     min-width: 52px;
+    height: 100%;          /* explicit height so bars' % resolves */
     display: flex;
     justify-content: center;
-    align-items: flex-end;
+    align-items: flex-end;  /* bars anchor to bottom within col */
 }
 .cat-compare-name-col {
     flex: 1 1 0;
