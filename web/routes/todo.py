@@ -1,7 +1,7 @@
 """To Do page — statement schedule reminders + data-driven queues."""
 
 import calendar
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from flask import Blueprint, g, redirect, render_template, request, url_for
 
@@ -28,6 +28,11 @@ def _next_due_date(statement_day: int) -> date:
     last_day = calendar.monthrange(today.year, today.month)[1]
     clamped = min(statement_day, last_day)
     return date(today.year, today.month, clamped)
+
+
+def _days_until(due: date) -> int:
+    """Return days from today to due date (negative = overdue)."""
+    return (due - date.today()).days
 
 
 def _status_for(schedule, period_key: str) -> str:
@@ -57,12 +62,14 @@ def _get_schedules(conn, period_key: str) -> list[dict]:
         d = dict(r)
         d["status"] = _status_for(d, period_key)
         d["due_date"] = _next_due_date(d["statement_day"])
+        d["days_until"] = _days_until(d["due_date"])
         schedules.append(d)
     return schedules
 
 
 def _get_queue_counts(conn) -> dict:
-    """Compute queue counts similar to dashboard."""
+    """Compute queue counts + links for review queues."""
+    today = date.today()
     counts = {}
 
     # Uncategorized
@@ -108,6 +115,41 @@ def _get_queue_counts(conn) -> dict:
         "SELECT COUNT(*) FROM amazon_orders "
         "WHERE (category IS NULL OR category = '')"
     ).fetchone()[0]
+
+    # ── New high-signal queues ────────────────────────────────────────────
+
+    cutoff_30 = (today - timedelta(days=30)).isoformat()
+    cutoff_120 = (today - timedelta(days=120)).isoformat()
+    today_iso = today.isoformat()
+
+    # Large transactions (>=500, last 30 days, exclude transfers/CC payments)
+    counts["large_txns"] = conn.execute(
+        "SELECT COUNT(*) FROM transactions "
+        "WHERE ABS(amount_cents) >= 50000 "
+        "AND date >= ? AND date <= ? "
+        "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')",
+        (cutoff_30, today_iso),
+    ).fetchone()[0]
+
+    # New merchants (last 30 days not seen in prior 90 days)
+    # merchant_canonical in last 30 days that does NOT appear before cutoff_30
+    # going back to cutoff_120 (90 day window before the 30-day window)
+    counts["new_merchants"] = conn.execute(
+        "SELECT COUNT(DISTINCT merchant_canonical) FROM transactions "
+        "WHERE date >= ? AND date <= ? "
+        "AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+        "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment') "
+        "AND merchant_canonical NOT IN ("
+        "  SELECT DISTINCT merchant_canonical FROM transactions "
+        "  WHERE date >= ? AND date < ? "
+        "  AND merchant_canonical IS NOT NULL AND merchant_canonical != ''"
+        ")",
+        (cutoff_30, today_iso, cutoff_120, cutoff_30),
+    ).fetchone()[0]
+
+    # Store date range strings for link building
+    counts["_30d_start"] = cutoff_30
+    counts["_30d_end"] = today_iso
 
     return counts
 
