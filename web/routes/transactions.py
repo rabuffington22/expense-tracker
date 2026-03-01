@@ -72,6 +72,12 @@ def _build_base_cte(conn, params):
         except (ValueError, TypeError):
             pass  # Invalid category_id — ignore
 
+    # Subcategory filter
+    subcat = params.get("subcategory", "").strip()
+    if subcat:
+        conditions.append("t.subcategory = ?")
+        sql_params.append(subcat)
+
     # Uncategorized
     if params.get("uncategorized") == "1":
         conditions.append(
@@ -166,6 +172,7 @@ def _get_filter_params():
     return {
         "type": request.args.get("type", ""),
         "category_id": request.args.get("category_id", ""),
+        "subcategory": request.args.get("subcategory", ""),
         "merchant": request.args.get("merchant", ""),
         "uncategorized": request.args.get("uncategorized", ""),
         "vendor_breakdown": request.args.get("vendor_breakdown", ""),

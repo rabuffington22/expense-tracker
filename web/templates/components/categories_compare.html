@@ -41,12 +41,20 @@
                 <a class="cat-compare-bar cat-compare-bar--left"
                    href="{{ left_drill(category_id=cat.cat_id) if cat.cat_id else '#' }}"
                    style="height: {{ cat.left_pct }}%;"
-                   title="{{ cat.name }}: {{ fmt_dollars(cat.left_cents) }}">
+                   data-cat-name="{{ cat.name }}"
+                   data-cat-id="{{ cat.cat_id or '' }}"
+                   data-left-cents="{{ cat.left_cents }}"
+                   data-right-cents="{{ cat.right_cents }}"
+                   data-hover-side="left">
                 </a>
                 <a class="cat-compare-bar cat-compare-bar--right"
                    href="{{ right_drill(category_id=cat.cat_id) if cat.cat_id else '#' }}"
                    style="height: {{ cat.right_pct }}%;"
-                   title="{{ cat.name }}: {{ fmt_dollars(cat.right_cents) }}">
+                   data-cat-name="{{ cat.name }}"
+                   data-cat-id="{{ cat.cat_id or '' }}"
+                   data-left-cents="{{ cat.left_cents }}"
+                   data-right-cents="{{ cat.right_cents }}"
+                   data-hover-side="right">
                 </a>
               </div>
             </div>
@@ -68,4 +76,196 @@
     </div>
   </div>
 </div>
+
+<!-- Tooltip container (positioned absolutely by JS) -->
+<div id="cat-tooltip" class="cat-tip" hidden></div>
+
+<!-- Subcategory data for tooltip JS -->
+<script type="application/json" id="subcats-left-json">{{ subcats_left|tojson }}</script>
+<script type="application/json" id="subcats-right-json">{{ subcats_right|tojson }}</script>
+<script type="application/json" id="cat-tip-meta">{
+  "leftLabel": {{ left_label|tojson }},
+  "rightLabel": {{ right_label|tojson }},
+  "leftStart": {{ left_start|tojson }},
+  "leftEnd": {{ left_end|tojson }},
+  "rightStart": {{ right_start|tojson }},
+  "rightEnd": {{ right_end|tojson }},
+  "txnBaseUrl": {{ url_for('transactions.index')|tojson }}
+}</script>
+
+<script>
+/* ── Category Compare Tooltips ───────────────────────────────────────── */
+(function() {
+  var tip = document.getElementById('cat-tooltip');
+  if (!tip) return;
+
+  var subcatsLeft  = JSON.parse(document.getElementById('subcats-left-json').textContent);
+  var subcatsRight = JSON.parse(document.getElementById('subcats-right-json').textContent);
+  var meta         = JSON.parse(document.getElementById('cat-tip-meta').textContent);
+
+  /* Format cents as $X,XXX */
+  function fmtDollars(cents) {
+    var n = Math.round(Math.abs(cents) / 100);
+    return '$' + n.toLocaleString('en-US');
+  }
+
+  /* Build tooltip HTML */
+  function buildTip(bar) {
+    var ds        = bar.dataset;
+    var side      = ds.hoverSide;           /* "left" or "right" */
+    var catName   = ds.catName;
+    var catId     = ds.catId;
+    var leftC     = parseInt(ds.leftCents, 10) || 0;
+    var rightC    = parseInt(ds.rightCents, 10) || 0;
+    var primaryC  = side === 'left' ? leftC : rightC;
+    var secondC   = side === 'left' ? rightC : leftC;
+    var priLabel  = side === 'left' ? meta.leftLabel : meta.rightLabel;
+    var secLabel  = side === 'left' ? meta.rightLabel : meta.leftLabel;
+
+    /* Delta is always Left - Right (no sign, no color) */
+    var deltaC    = leftC - rightC;
+    var deltaPct  = rightC ? ((leftC - rightC) / rightC * 100) : (leftC ? 100 : 0);
+    var deltaAbs  = Math.abs(deltaC);
+
+    var html = '';
+    html += '<div class="cat-tip-title">' + esc(catName) + '</div>';
+
+    /* Primary line (hovered period) — colored by series */
+    html += '<div class="cat-tip-primary cat-tip-primary--' + side + '">';
+    html += '<span class="cat-tip-pri-label">' + esc(priLabel) + '</span>';
+    html += '<span class="cat-tip-pri-amount">' + fmtDollars(primaryC) + '</span>';
+    html += '</div>';
+
+    /* Secondary line */
+    html += '<div class="cat-tip-secondary">';
+    html += '<span class="cat-tip-sec-label">' + esc(secLabel) + '</span>';
+    html += '<span class="cat-tip-sec-amount">' + fmtDollars(secondC) + '</span>';
+    html += '</div>';
+
+    /* Delta line */
+    html += '<div class="cat-tip-delta">';
+    html += '\u0394 ' + fmtDollars(deltaAbs);
+    if (rightC) {
+      html += ' (' + Math.abs(deltaPct).toFixed(1) + '%)';
+    }
+    html += '</div>';
+
+    /* Subcategories for hovered period */
+    var subcats = side === 'left' ? subcatsLeft[catName] : subcatsRight[catName];
+    if (subcats && subcats.length > 0) {
+      var hoverStart = side === 'left' ? meta.leftStart : meta.rightStart;
+      var hoverEnd   = side === 'left' ? meta.leftEnd   : meta.rightEnd;
+
+      html += '<div class="cat-tip-subcats">';
+      html += '<div class="cat-tip-subcats-hdr">Top subcategories</div>';
+      for (var i = 0; i < subcats.length; i++) {
+        var s = subcats[i];
+        var drillUrl = meta.txnBaseUrl
+          + '?start=' + encodeURIComponent(hoverStart)
+          + '&end=' + encodeURIComponent(hoverEnd)
+          + (catId ? '&category_id=' + encodeURIComponent(catId) : '')
+          + '&subcategory=' + encodeURIComponent(s.name);
+        html += '<a class="cat-tip-subrow" href="' + escAttr(drillUrl) + '">';
+        html += '<span class="cat-tip-subname">' + esc(s.name) + '</span>';
+        html += '<span class="cat-tip-subamt">' + fmtDollars(s.cents) + '</span>';
+        html += '<span class="cat-tip-subpct">' + s.pct.toFixed(1) + '%</span>';
+        html += '</a>';
+      }
+      html += '</div>';
+    }
+
+    return html;
+  }
+
+  /* Escape HTML */
+  function esc(str) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(str));
+    return d.innerHTML;
+  }
+  function escAttr(str) {
+    return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /* Position tooltip near bar, clamped to viewport */
+  function positionTip(bar) {
+    var r   = bar.getBoundingClientRect();
+    var tw  = tip.offsetWidth;
+    var th  = tip.offsetHeight;
+    var pad = 8;
+
+    /* Default: above the bar, centered horizontally */
+    var left = r.left + r.width / 2 - tw / 2;
+    var top  = r.top - th - pad;
+
+    /* If above clips, put below */
+    if (top < pad) {
+      top = r.bottom + pad;
+    }
+
+    /* Clamp horizontal */
+    if (left < pad) left = pad;
+    if (left + tw > window.innerWidth - pad) left = window.innerWidth - pad - tw;
+
+    /* Clamp vertical (below clips) */
+    if (top + th > window.innerHeight - pad) {
+      top = window.innerHeight - pad - th;
+    }
+
+    tip.style.left = left + 'px';
+    tip.style.top  = top + 'px';
+  }
+
+  /* Show / hide */
+  function showTip(bar) {
+    var side = bar.dataset.hoverSide;
+    tip.innerHTML = buildTip(bar);
+    tip.className = 'cat-tip cat-tip--' + side;
+    tip.hidden = false;
+    positionTip(bar);
+  }
+  function hideTip() {
+    tip.hidden = true;
+  }
+
+  /* Desktop: mouseenter / mouseleave on bars */
+  var bars = document.querySelectorAll('.cat-compare-bar');
+  bars.forEach(function(bar) {
+    bar.addEventListener('mouseenter', function(e) {
+      e.preventDefault();
+      showTip(bar);
+    });
+    bar.addEventListener('mouseleave', function() {
+      hideTip();
+    });
+    /* Prevent default navigation on hover so tooltip shows;
+       click still navigates (drill-through on the bar itself) */
+  });
+
+  /* Mobile: tap toggles tooltip, tap outside closes */
+  var activeTouchBar = null;
+  bars.forEach(function(bar) {
+    bar.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      if (activeTouchBar === bar && !tip.hidden) {
+        hideTip();
+        activeTouchBar = null;
+      } else {
+        showTip(bar);
+        activeTouchBar = bar;
+      }
+    }, {passive: false});
+  });
+
+  document.addEventListener('touchstart', function(e) {
+    if (!tip.hidden && !tip.contains(e.target) && !e.target.closest('.cat-compare-bar')) {
+      hideTip();
+      activeTouchBar = null;
+    }
+  });
+
+  /* Close on scroll (prevents stale position) */
+  window.addEventListener('scroll', hideTip, {passive: true});
+})();
+</script>
 {% endif %}
