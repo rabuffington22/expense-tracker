@@ -476,10 +476,13 @@ a:hover { text-decoration: underline; }
     outline-offset: -2px;
 }
 .sb-wf-chevron {
-    font-size: 0.6rem;
-    transition: transform 200ms ease;
+    font-size: 0.65rem;
+    transition: transform 200ms ease, opacity 150ms ease;
     display: inline-block;
-    opacity: 0.5;
+    opacity: 0.4;
+}
+.sb-workflows-toggle:hover .sb-wf-chevron {
+    opacity: 0.7;
 }
 .sb-workflows-toggle.is-open .sb-wf-chevron {
     transform: rotate(90deg);
@@ -1571,8 +1574,8 @@ input[type="checkbox"] {
 /* Old CSS specular highlight — disabled; replaced by SVG overlays */
 .donut-chart-wrap::after { display: none; }
 .donut-chart-wrap--lg {
-    width: 300px;
-    height: 300px;
+    width: 240px;
+    height: 240px;
     margin: 0 auto;
 }
 .donut-svg {
@@ -1580,51 +1583,37 @@ input[type="checkbox"] {
     height: 100%;
     transform: rotate(-90deg);
 }
+/* Donut track (background ring) */
 .donut-track {
-    opacity: 1;
-    stroke-width: 22;
+    stroke: rgba(255,255,255,0.04);
 }
-:root[data-theme="dark"] .donut-track {
-    stroke: rgba(255,255,255,0.05);
+:root[data-theme="light"] .donut-track {
+    stroke: rgba(0,0,0,0.04);
 }
+/* Donut slices (flat, clean) */
 .donut-slice {
     stroke-linecap: butt;
-    stroke-width: 22;
-    opacity: 0.95;
-    transition: opacity 140ms ease;
+    opacity: 1;
+    transition: stroke-width 120ms ease;
     cursor: pointer;
 }
 .donut-slice-link:hover .donut-slice,
 .donut-slice-link.is-hover .donut-slice {
-    opacity: 1;
-    filter: none;
+    stroke-width: 26;
 }
 .donut-slice--other,
 .donut-slice--other:hover {
     cursor: default;
-    filter: none !important;
-    stroke-width: 22 !important;
-    opacity: 0.65;
+    opacity: 0.45;
+    stroke-width: 24 !important;
 }
 .donut-slice-link {
     outline: none;
 }
 .donut-slice-link:focus-visible .donut-slice {
-    stroke-width: 34;
-    filter: brightness(1.2);
+    stroke-width: 28;
+    opacity: 1;
 }
-/* Donut 3D extrusion (shifted ring behind for visible thickness) */
-.donut-slice--extrude {
-    pointer-events: none;
-    opacity: 0.35;
-}
-:root[data-theme="light"] .donut-slice--extrude { opacity: 0.22; }
-/* Donut 3D overlays (SVG rings) */
-.donut-overlay { pointer-events: none; }
-:root[data-theme="dark"] .donut-overlay--highlight { opacity: 0.22; }
-:root[data-theme="dark"] .donut-overlay--shade     { opacity: 0.28; }
-:root[data-theme="light"] .donut-overlay--highlight { opacity: 0.18; }
-:root[data-theme="light"] .donut-overlay--shade     { opacity: 0.16; }
 .donut-center {
     position: absolute;
     top: 50%;
@@ -1927,40 +1916,49 @@ input[type="checkbox"] {
     color: var(--text-muted);
 }
 
-/* ── Sync Health card ─────────────────────────────────────────────────── */
-.sync-health-card {
-    padding: 0.7rem 1rem;
-    margin-bottom: 0.5rem;
-}
-.sync-health-header {
+/* ── Sync row (lightweight inline strip) ──────────────────────────────── */
+.sync-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.4rem;
+    gap: 0.8rem;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid var(--band-border);
+    border-radius: 10px;
+    font-size: 0.7rem;
+    background: transparent;
 }
-.sync-health-link {
-    font-size: 0.75rem;
+.sync-row-label {
+    font-weight: 700;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
     color: var(--text-muted);
-    text-decoration: none;
+    flex-shrink: 0;
 }
-.sync-health-link:hover {
-    color: var(--accent);
-}
-.sync-health-row {
+.sync-row-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0.2rem 0;
-    font-size: 0.8rem;
+    gap: 0.35rem;
 }
-.sync-health-institution {
+.sync-row-inst {
     color: var(--text-secondary);
+    font-weight: 500;
 }
-.sync-health-time {
+.sync-row-time {
     color: var(--text-muted);
 }
 .sync-health-stale {
     color: var(--orange);
+}
+.sync-row-manage {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+.sync-row-manage:hover {
+    color: var(--blue);
 }
 
 /* ── Pure CSS bar chart (Apple-style) ──────────────────────────────────── */
@@ -2998,7 +2996,7 @@ select.input-sm {
 .dhdr-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     flex-wrap: nowrap;
 }
 
@@ -3250,7 +3248,7 @@ select.input-sm {
 }
 .dhdr-sv-group {
     flex: 0 0 auto;
-    margin-left: 1.2rem;
+    margin: 0 auto;
 }
 .dhdr-row > .btn-primary {
     margin-left: auto;
@@ -3305,8 +3303,8 @@ select.input-sm {
         grid-template-columns: 1fr;
     }
     .donut-chart-wrap--lg {
-        width: 200px;
-        height: 200px;
+        width: 180px;
+        height: 180px;
         margin: 0 auto;
     }
 }

@@ -275,6 +275,62 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-02-28 — PR #47: Single-line header strip (no chips, segmented-track container)
+Removed chips row, flattened header panel, added strip container matching entity switcher.
+
+1. **Chips removed** — Entire `dhdr-chips` row (Uncategorized, Vendor Needed, Transfers, Include Transfers) removed from template. Backend URL params still accepted for saved view compatibility.
+2. **Panel removed** — Wrapper changed from `class="card txn-filter-bar dhdr-bar"` to just `class="dhdr-bar"`. Background transparent, no shadow/border/radius.
+3. **Header strip** — New `.dhdr-strip` wraps `.dhdr-row`: `background: var(--seg-bg)`, `border: 1px solid var(--seg-border)`, `border-radius: 12px`, `padding: 10px 12px`. Matches entity switcher track exactly (same tokens, same radius).
+4. **Single-line layout** — `.dhdr-row` set to `flex-wrap: nowrap`. Pill widths reduced: account 200→150px, saved views 170→130px. All controls fit on one line at desktop width.
+5. **Responsive** — Wraps at ≤900px, stacks at ≤480px. Strip tightens to `padding: 8px 10px`, `border-radius: 10px` on mobile.
+6. **Dark mode** — Strip reads near-black (`rgba(255,255,255,0.05)`), not gray. Light mode uses `rgba(0,0,0,0.03)`.
+
+### 2026-02-28 — PR #46: Flat/outlined date picker (match band aesthetic)
+Cleaner CSS for the date button and popover to match outline-band look.
+
+1. **Date button** — `.dhdr-datebtn.dhdr-pill` compound selector: transparent bg, no arrow image, `border: 1px solid rgba(255,255,255,0.12)`, no shadow/blur. Higher specificity than `.dhdr-pill` without `!important`.
+2. **Border bump** — Popover, divider, and date input borders bumped from 0.10→0.12 alpha for consistency.
+3. **Light-mode borders** — Bumped from 0.08→0.10 alpha across popover, divider, date inputs.
+4. **Hover/focus** — Dark hover `rgba(255,255,255,0.04)`, light hover `rgba(0,0,0,0.03)`. Focus ring via `var(--focus-ring)`.
+5. **Cleanup** — Removed `button#dhdr-datebtn` from PR #45 `!important` block since compound selector handles specificity cleanly.
+
+### 2026-02-28 — PR #45: Premium-flat Spend Trend bars + flat header date picker
+Completed the flat-outline design language across the remaining glass/blur elements.
+
+1. **Trend chart container** — `.trend-chart` scoped overrides: transparent background + `1px solid rgba(255,255,255,0.10)` border (matches `.outline-band`). Light mode uses `rgba(0,0,0,0.08)`.
+2. **Premium-flat bars** — Subtle gradient fill (`rgba(10,132,255,0.85)` to `0.55`). `::after` pseudo-element adds a 35%-height top highlight (`rgba(255,255,255,0.22)` at `opacity: 0.65`) — no glow or neon.
+3. **Selected bar** — `filter: none`, `box-shadow: none`, `opacity: 1` + bold value label. Clean emphasis without bloom.
+4. **Header controls flattened** — Date button, account select, saved views select, and SV buttons all get `background: transparent`, `backdrop-filter: none`, `border: 1px solid rgba(255,255,255,0.10)`. Replaced ghost-glass from PR #40.
+5. **Popover no glass** — `.dhdr-popover` uses solid `var(--bg)` background, no `backdrop-filter`, no `box-shadow`. Hover items use subtle rgba fill.
+6. **Custom date inputs** — Transparent background + hairline border. Light-mode override updated from `var(--input-sm-border)` to `rgba(0,0,0,0.08)`.
+
+### 2026-02-28 — PR #44: Outline-only bands + true 3D donut (extruded depth)
+Flattened the three remaining dashboard bands and added real 3D thickness to the donut.
+
+1. **Outline bands** — Activity, Spending, Recurring sections changed from `class="band"` to `class="outline-band"`: transparent background, hairline border, no box-shadow. Band labels use `var(--bg)` background to sit seamlessly on the outline.
+2. **Inside-band overrides** — `.outline-band .rpt-cat-list` gets transparent bg/no border. `.outline-band .rpt-cat-row` uses subtle `border-bottom` dividers (last child none).
+3. **True 3D extrusion** — New `<g class="donut-extrude" transform="translate(0, 5)">` group renders duplicate arcs shifted down 5px below the main ring. Creates visible "thickness" like a coin edge.
+4. **Extrusion styling** — `.donut-slice--extrude`: `pointer-events: none`, `opacity: 0.35` dark / `0.22` light. Non-interactive, subtler than main slices.
+5. **Softened ring shadow** — `feDropShadow` reduced to `dy:1, stdDeviation:1.5, flood-opacity:0.12` since extrusion provides real depth cues.
+
+### 2026-02-28 — PR #43: Subtle 3D donut ring — SVG shadow + highlight overlays
+Added depth to the donut chart using SVG filters and gradient overlays (no CSS hacks).
+
+1. **SVG defs** — Three new defs: `feDropShadow` filter (`donutRingShadow`), `radialGradient` specular highlight (`donutHighlight`, top-left light source), `radialGradient` inner shade (`donutInnerShade`, edge darkening).
+2. **Ring group** — Track + slices wrapped in `<g class="donut-ring" filter="url(#donutRingShadow)">` so shadow applies to the whole ring, not per-slice.
+3. **Overlay rings** — Two `<circle class="donut-overlay">` elements above slices: `--highlight` uses `donutHighlight` gradient, `--shade` uses `donutInnerShade`. Both `pointer-events: none`.
+4. **Theme-aware opacity** — Dark: highlight 0.22 / shade 0.28. Light: highlight 0.18 / shade 0.16.
+5. **Cleanup** — Old CSS `::after` pseudo-element highlight disabled (`display: none`). Slice base opacity bumped from 0.92 to 0.95.
+
+### 2026-02-28 — PR #42: Flatten dashboard — band sections replace nested cards
+Removed all nested card surfaces from dashboard sections, replacing with flat band layouts.
+
+1. **Activity band** — Spend Trend (left) + Review Inbox/Insights (right) in `band-grid--2` layout. Chart wrapped in subtle `plot-area` surface.
+2. **Spending band** — Donut + legend sit directly inside band with `band-head` title. Removed `chart-card`, `chart-well`, and extra wrapper divs.
+3. **Recurring band** — Top Merchants + Upcoming side-by-side in `band-grid--2`. Removed `list-card` wrappers.
+4. **New CSS components** — `band-head`, `band-body`, `band-grid`, `band-grid--2`, `band-panel`, `band-stack`, `panel-title`, `band-divider`, `plot-area`. Inside-band overrides flatten `rpt-cat-list` and `donut-legend-list` backgrounds.
+5. **Jinja guard fix** — Added missing `{% endif %}` for the `{% if review_count > 0 or ... %}` conditional wrapping Review Inbox + Insights inside `band-stack`.
+
 ### 2026-02-28 — PR #31: KPI band — remove cents + center-align (Provider-style)
 Cleaner KPI values: whole dollars only, center-aligned cells.
 
