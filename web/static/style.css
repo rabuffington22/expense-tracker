@@ -1157,6 +1157,9 @@ h2 {
     border-width: 3px;
 }
 #kpi-right .kpi-panel-cell:first-child .kpi-panel-value { color: var(--series-right); }
+/* Neutralize green/red on Income and Net inside KPI panels */
+.kpi-panel .kpi-panel-value.kpi-pos,
+.kpi-panel .kpi-panel-value.kpi-neg { color: var(--text); }
 
 .kpi-panel-header {
     position: absolute;
