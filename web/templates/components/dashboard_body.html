@@ -11,7 +11,7 @@
 <!-- ── Income vs Expenses (12 months) ────────────────────────────────── -->
 {% set ie_max = ie_points|map(attribute='income_cents')|list + ie_points|map(attribute='expense_cents')|list %}
 {% set ie_max_val = ie_max|max if ie_max|max > 0 else 0 %}
-<div class="outline-band">
+<div class="outline-band" style="margin-top: 1.2rem;">
   <div class="band-label">Income vs Expenses</div>
   <div class="band-head">
     <div>
@@ -26,20 +26,17 @@
     {% if ie_max_val == 0 %}
     <div class="ie-empty">No data in last 12 months</div>
     {% else %}
-    {# Compute nice Y-axis ticks in Python — reuse the same algorithm #}
-    {% set ie_data = ie_points|tojson %}
+    <script type="application/json" id="ie-chart-data">{{ ie_points|tojson }}</script>
     <div class="ie-chart-wrap">
       <div class="ie-chart" id="ie-line-chart"
-           data-points="{{ ie_data }}"
            data-max="{{ ie_max_val }}">
-        {# SVG injected by JS so we can compute nice ticks + polyline coords #}
       </div>
     </div>
     <script>
     (function() {
       var el = document.getElementById('ie-line-chart');
       if (!el) return;
-      var points = JSON.parse(el.dataset.points);
+      var points = JSON.parse(document.getElementById('ie-chart-data').textContent);
       var rawMax = parseInt(el.dataset.max, 10);
       if (!rawMax) { el.innerHTML = '<div class="ie-empty">No data</div>'; return; }
 
