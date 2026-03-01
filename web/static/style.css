@@ -1438,6 +1438,172 @@ a.kpi-panel-cell:hover {
     .cat-compare-name { font-size: 0.5rem; max-width: 42px; }
 }
 
+/* ── Category Compare Tooltip ──────────────────────────────────────────── */
+.cat-tip {
+    position: fixed;
+    z-index: 1000;
+    max-width: 260px;
+    min-width: 200px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.28), 0 0 0 0.5px rgba(255,255,255,0.06);
+    font-family: var(--font);
+    pointer-events: auto;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+.cat-tip:not([hidden]) {
+    opacity: 1;
+}
+.cat-tip[hidden] {
+    display: block !important;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* Left / right accent — left-border stripe */
+.cat-tip--left  { border-left: 3px solid var(--series-left); }
+.cat-tip--right { border-left: 3px solid var(--series-right); }
+
+/* Title */
+.cat-tip-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.2;
+}
+
+/* Primary line (hovered period) */
+.cat-tip-primary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3px;
+}
+.cat-tip-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.cat-tip-dot--left  { background: var(--series-left); }
+.cat-tip-dot--right { background: var(--series-right); }
+.cat-tip-pri-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cat-tip-pri-amount {
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+}
+
+/* Secondary line */
+.cat-tip-secondary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 13px;  /* align with primary text (dot width + gap) */
+    margin-bottom: 6px;
+}
+.cat-tip-sec-label {
+    font-size: 0.64rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cat-tip-sec-amount {
+    font-size: 0.72rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+
+/* Delta line */
+.cat-tip-delta {
+    font-size: 0.64rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+    padding-left: 13px;
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+.cat-tip-delta--pos { color: var(--red); }
+.cat-tip-delta--neg { color: var(--green); }
+
+/* Subcategory block */
+.cat-tip-subcats {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border);
+}
+.cat-tip-subcats-hdr {
+    font-size: 0.56rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+.cat-tip-subrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 4px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.12s;
+    cursor: pointer;
+}
+.cat-tip-subrow:hover {
+    background: var(--hover-bg);
+}
+.cat-tip-subname {
+    flex: 1;
+    font-size: 0.66rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+.cat-tip-subamt {
+    font-size: 0.66rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+}
+.cat-tip-subpct {
+    font-size: 0.58rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+    min-width: 32px;
+    text-align: right;
+}
+
+/* Light theme overrides */
+:root[data-theme="light"] .cat-tip {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06);
+}
+
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */
 .segmented {
     display: inline-flex;

@@ -931,6 +931,50 @@ def _query_category_totals(conn, start, end):
     ).fetchall()
 
 
+def _query_subcategory_rollups(conn, start, end, category_names):
+    """Return top-3 subcategories per category for a date range.
+
+    Returns dict: category_name -> [{name, cents, pct}]
+    Only includes categories in *category_names* (the displayed set).
+    Expenses only; same exclusions as ``_query_category_totals``.
+    """
+    if not category_names:
+        return {}
+
+    placeholders = ", ".join("?" for _ in category_names)
+    rows = conn.execute(
+        "SELECT t.category, t.subcategory, "
+        "  COALESCE(SUM(ABS(t.amount_cents)), 0) AS sub_cents "
+        "FROM transactions t "
+        "WHERE t.amount_cents < 0 "
+        "  AND t.date >= ? AND t.date <= ? "
+        "  AND t.category IN (" + placeholders + ") "
+        "  AND t.subcategory IS NOT NULL AND t.subcategory != '' "
+        "  AND t.subcategory != 'Unknown' "
+        "GROUP BY t.category, t.subcategory "
+        "ORDER BY t.category, sub_cents DESC",
+        [start, end] + list(category_names),
+    ).fetchall()
+
+    # Group by category, keep top 3, compute pct of category total
+    from collections import defaultdict
+    grouped = defaultdict(list)
+    for r in rows:
+        grouped[r["category"]].append({
+            "name": r["subcategory"],
+            "cents": r["sub_cents"],
+        })
+
+    result = {}
+    for cat_name, subs in grouped.items():
+        top3 = subs[:3]
+        cat_total = sum(s["cents"] for s in subs)
+        for s in top3:
+            s["pct"] = round(s["cents"] / cat_total * 100, 1) if cat_total else 0
+        result[cat_name] = top3
+    return result
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @bp.route("/")
@@ -1004,38 +1048,43 @@ def categories_compare():
     try:
         left_rows = _query_category_totals(conn, left_start, left_end)
         right_rows = _query_category_totals(conn, right_start, right_end)
+
+        # Build lookup dicts: category_name -> {cat_id, total_cents}
+        left_map = {}
+        for r in left_rows:
+            left_map[r["category"]] = {"cat_id": r["cat_id"], "total_cents": r["total_cents"]}
+
+        right_map = {}
+        for r in right_rows:
+            right_map[r["category"]] = {"cat_id": r["cat_id"], "total_cents": r["total_cents"]}
+
+        # Merge into combined list keyed by category name
+        all_cats = set(left_map.keys()) | set(right_map.keys())
+        merged = []
+        for cat_name in all_cats:
+            left_data = left_map.get(cat_name, {"cat_id": None, "total_cents": 0})
+            right_data = right_map.get(cat_name, {"cat_id": None, "total_cents": 0})
+            cat_id = left_data["cat_id"] or right_data["cat_id"]
+            left_cents = left_data["total_cents"]
+            right_cents = right_data["total_cents"]
+            merged.append({
+                "name": cat_name,
+                "cat_id": cat_id,
+                "left_cents": left_cents,
+                "right_cents": right_cents,
+                "combined": left_cents + right_cents,
+            })
+
+        # Sort by combined total desc, take top 12
+        merged.sort(key=lambda x: x["combined"], reverse=True)
+        top = merged[:12]
+
+        # Query subcategory rollups for displayed categories only
+        displayed_names = [c["name"] for c in top]
+        subcats_left = _query_subcategory_rollups(conn, left_start, left_end, displayed_names)
+        subcats_right = _query_subcategory_rollups(conn, right_start, right_end, displayed_names)
     finally:
         conn.close()
-
-    # Build lookup dicts: category_name -> {cat_id, total_cents}
-    left_map = {}
-    for r in left_rows:
-        left_map[r["category"]] = {"cat_id": r["cat_id"], "total_cents": r["total_cents"]}
-
-    right_map = {}
-    for r in right_rows:
-        right_map[r["category"]] = {"cat_id": r["cat_id"], "total_cents": r["total_cents"]}
-
-    # Merge into combined list keyed by category name
-    all_cats = set(left_map.keys()) | set(right_map.keys())
-    merged = []
-    for cat_name in all_cats:
-        left_data = left_map.get(cat_name, {"cat_id": None, "total_cents": 0})
-        right_data = right_map.get(cat_name, {"cat_id": None, "total_cents": 0})
-        cat_id = left_data["cat_id"] or right_data["cat_id"]
-        left_cents = left_data["total_cents"]
-        right_cents = right_data["total_cents"]
-        merged.append({
-            "name": cat_name,
-            "cat_id": cat_id,
-            "left_cents": left_cents,
-            "right_cents": right_cents,
-            "combined": left_cents + right_cents,
-        })
-
-    # Sort by combined total desc, take top 12
-    merged.sort(key=lambda x: x["combined"], reverse=True)
-    top = merged[:12]
 
     # Compute bar height percentages with common scale (from displayed categories only)
     raw_max = max((c["left_cents"] for c in top), default=0)
@@ -1062,6 +1111,10 @@ def categories_compare():
 
     period_labels = _build_period_labels()
 
+    # Build subcats JSON keyed by category name for tooltip JS
+    subcats_left_json = {cat: subs for cat, subs in subcats_left.items()}
+    subcats_right_json = {cat: subs for cat, subs in subcats_right.items()}
+
     return render_template("components/categories_compare.html",
                            categories=top,
                            y_ticks=y_ticks,
@@ -1069,5 +1122,11 @@ def categories_compare():
                            right_period=right_period,
                            left_label=period_labels.get(left_period, left_period),
                            right_label=period_labels.get(right_period, right_period),
+                           left_start=left_start,
+                           left_end=left_end,
+                           right_start=right_start,
+                           right_end=right_end,
                            left_drill=left_drill,
-                           right_drill=right_drill)
+                           right_drill=right_drill,
+                           subcats_left=subcats_left_json,
+                           subcats_right=subcats_right_json)
