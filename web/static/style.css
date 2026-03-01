@@ -1162,6 +1162,9 @@ h2 {
     left: 0.8rem;
     transform: translateY(-50%);
     z-index: 1;
+    /* Solid background breaks the panel border behind the select */
+    background: var(--bg);
+    padding: 0 0.3rem;
 }
 
 .kpi-period-select {
