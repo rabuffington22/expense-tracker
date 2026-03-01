@@ -971,17 +971,21 @@ def categories_compare():
         c["right_pct"] = int(c["right_cents"] / max_cents * 100) if c["right_cents"] else 0
 
     # Y-axis ticks: 0%, 25%, 50%, 75%, 100% of max_cents → dollar labels
+    # Guard: if max is 0 (no data), show only $0 baseline
     y_ticks = []
-    for frac in (1.0, 0.75, 0.5, 0.25, 0.0):
-        cents = int(max_cents * frac)
-        dollars = cents / 100
-        if dollars >= 1000:
-            label = f"${dollars / 1000:.1f}K"
-        elif dollars >= 1:
-            label = f"${dollars:,.0f}"
-        else:
-            label = "$0"
-        y_ticks.append({"label": label, "pct": frac * 100})
+    if max_cents <= 1:
+        y_ticks.append({"label": "$0", "pct": 0})
+    else:
+        for frac in (1.0, 0.75, 0.5, 0.25, 0.0):
+            cents = int(max_cents * frac)
+            dollars = cents / 100
+            if dollars >= 1000:
+                label = f"${dollars / 1000:.1f}K"
+            elif dollars >= 1:
+                label = f"${dollars:,.0f}"
+            else:
+                label = "$0"
+            y_ticks.append({"label": label, "pct": frac * 100})
 
     # Drill URL helpers
     def left_drill(**overrides):
