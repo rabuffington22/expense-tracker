@@ -275,6 +275,22 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-03-01 — PR #72: UI density pass + page unification
+Two combined changes: (1) unify non-dashboard pages to flat + outlined design language, (2) reduce vertical whitespace ~25% across all pages. CSS-first approach. Also folds in PR #70 equal-height fix. All 16 stale PRs closed.
+
+1. **Page-chrome primitives** — New shared CSS classes: `.section-title` (1rem/700), `.outline-panel` (transparent bg + hairline border, 14px radius), `.panel-header` (tracked uppercase), `.table-wrap` (overflow-x), `.empty-state`, `.form-narrow` (500px max), `.toggle-btn`.
+2. **Template unification** — Transactions, Reports, Upload, Vendors, Categorize, Connected Accounts pages all switched from `.card` to `.outline-panel`. Inline styles replaced with shared classes. Plaid scoped `<style>` block removed.
+3. **Density tokens** — New `:root` tokens: `--ui-font-xs` (0.68rem), `--ui-font-sm` (0.78rem), `--ui-font-base` (0.82rem), `--ui-pad-xs` (0.22rem), `--ui-pad-sm` (0.4rem), `--ui-pad-md` (0.75rem), `--ui-gap` (0.75rem), `--ui-radius` (10px).
+4. **Radius tightened** — `--radius` 12→10px, `--radius-lg` 16→14px, `--radius-xl` 18→14px.
+5. **Controls tighter** — Buttons: padding 0.52→0.4rem, font 0.88→0.82rem. Inputs: padding 0.55→0.38rem, font 0.88→0.82rem. Labels: font 0.78→0.68rem. Form-group margin 0.85→0.55rem.
+6. **Tables tighter** — th/td padding 0.55→0.35rem. Font 0.85→0.82rem.
+7. **Panels/headings tighter** — Page title 2→1.6rem (margin 1.4→0.9rem). Section title 1.15→1rem. Outline-panel padding 1rem→0.75rem. Card padding 1.2→0.85rem.
+8. **Reports tighter** — Stat cards padding 1.2→0.8rem, value font 1.8→1.5rem. Category rows 0.75→0.5rem. Chart card 1.6→1.1rem. Month nav arrows 36→32px, name 1.5→1.3rem.
+9. **Filter bar tighter** — Padding 0.75→0.55rem. Input-sm padding 0.35→0.28rem, height 34→30px (light mode).
+10. **Main content padding** — Desktop 2rem→1.5rem, tablet 1.5→1.2rem, mobile 68px→60px top.
+11. **Equal-height fix** — `.iu-row-grid` `align-items: start` → `stretch` (PR #70 folded in).
+12. **Stale PR cleanup** — Closed PRs #29, #32, #34, #46, #47, #49, #50, #56, #57, #58, #62, #64, #66, #67, #70, #71 (all superseded).
+
 ### 2026-03-01 — PR #70: Insights + Upcoming equal height on desktop
 Single CSS fix: `.iu-row-grid` `align-items: start` → `align-items: stretch`. Both cards now fill identical height regardless of content length. Empty states remain vertically centered via existing flex layout.
 
