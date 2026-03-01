@@ -1210,11 +1210,6 @@ h2 {
     border-width: 2px;
 }
 #kpi-right .kpi-panel-cell:first-child .kpi-panel-value { color: var(--series-right); }
-/* Empty state — dim the colored border */
-#kpi-left.kpi-panel--empty  { border-color: rgba(64,156,255,0.35); }
-#kpi-right.kpi-panel--empty { border-color: rgba(191,90,242,0.35); }
-.kpi-panel--empty .kpi-panel-grid { opacity: 0.45; }
-
 /* Neutralize green/red on Income and Net inside KPI panels */
 .kpi-panel .kpi-panel-value.kpi-pos,
 .kpi-panel .kpi-panel-value.kpi-neg { color: var(--text-secondary); }
@@ -1313,16 +1308,6 @@ a.kpi-panel-cell:hover {
     margin-top: 0.2rem;
     opacity: 0.6;
 }
-.kpi-panel-empty-hint {
-    text-align: center;
-    font-size: 0.52rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    opacity: 0.5;
-    margin-top: 0.15rem;
-    padding-bottom: 0.1rem;
-}
-
 @media (max-width: 900px) {
     .kpi-compare-row { max-width: 100%; }
 }

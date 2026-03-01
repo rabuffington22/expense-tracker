@@ -1,5 +1,4 @@
-{% set is_empty = (spend_cents == 0 and income_cents == 0 and net_cents == 0) %}
-<div class="kpi-panel{% if is_empty %} kpi-panel--empty{% endif %}" id="kpi-{{ panel }}">
+<div class="kpi-panel" id="kpi-{{ panel }}">
   <div class="kpi-panel-header">
     <select class="kpi-period-select"
             name="period"
@@ -36,9 +35,6 @@
       </div>
     </div>
   </div>
-  {% if is_empty %}
-  <div class="kpi-panel-empty-hint">No activity in this period</div>
-  {% endif %}
 </div>
 <script>
 /* After HTMX swaps in a KPI panel, refresh the categories comparison section
