@@ -254,6 +254,9 @@ def _query_dashboard(conn, params):
     # ── Insights ─────────────────────────────────────────────────────────────
     data["insights"] = _compute_insights(conn, params, drill_url)
 
+    # ── Income vs Expenses 12-month line chart ─────────────────────────────
+    data["ie_points"] = _query_income_vs_expenses(conn)
+
     return data
 
 
@@ -908,6 +911,52 @@ def _nice_y_ticks(max_cents):
         ticks.append({"label": "$0", "pct": 0})
 
     return ticks, axis_max_cents
+
+
+def _query_income_vs_expenses(conn):
+    """Return 12 months of income + expense totals (current month back 11).
+
+    Each point: {ym, label, income_cents, expense_cents}.
+    Excludes Internal Transfer and Credit Card Payment.
+    Returns oldest→newest.
+    """
+    now = datetime.now()
+    points = []
+    y, m = now.year, now.month
+    # Walk back 11 months to build list oldest→newest
+    months = []
+    for _ in range(12):
+        months.append((y, m))
+        m -= 1
+        if m == 0:
+            m = 12
+            y -= 1
+    months.reverse()  # oldest first
+
+    for yr, mo in months:
+        start = f"{yr:04d}-{mo:02d}-01"
+        last_day = calendar.monthrange(yr, mo)[1]
+        end = f"{yr:04d}-{mo:02d}-{last_day:02d}"
+
+        row = conn.execute(
+            "SELECT "
+            "  COALESCE(SUM(CASE WHEN amount_cents < 0 THEN ABS(amount_cents) ELSE 0 END), 0) AS exp, "
+            "  COALESCE(SUM(CASE WHEN amount_cents > 0 THEN amount_cents ELSE 0 END), 0) AS inc "
+            "FROM transactions "
+            "WHERE date >= ? AND date <= ? "
+            "  AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')",
+            [start, end],
+        ).fetchone()
+
+        label = calendar.month_abbr[mo]
+        points.append({
+            "ym": f"{yr:04d}-{mo:02d}",
+            "label": label,
+            "income_cents": row["inc"],
+            "expense_cents": row["exp"],
+        })
+
+    return points
 
 
 def _query_category_totals(conn, start, end):

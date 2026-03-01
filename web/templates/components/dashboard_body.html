@@ -8,6 +8,192 @@
 <!-- ── Categories Comparison (populated by KPI panel scripts) ──────────── -->
 <div id="categories-compare"></div>
 
+<!-- ── Income vs Expenses (12 months) ────────────────────────────────── -->
+{% set ie_max = ie_points|map(attribute='income_cents')|list + ie_points|map(attribute='expense_cents')|list %}
+{% set ie_max_val = ie_max|max if ie_max|max > 0 else 0 %}
+<div class="outline-band">
+  <div class="band-label">Income vs Expenses</div>
+  <div class="band-head">
+    <div>
+      <div class="band-title">Income vs Expenses (12 months)</div>
+    </div>
+    <div class="ie-legend">
+      <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--income"></span>Income</span>
+      <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--expense"></span>Expenses</span>
+    </div>
+  </div>
+  <div class="band-body">
+    {% if ie_max_val == 0 %}
+    <div class="ie-empty">No data in last 12 months</div>
+    {% else %}
+    {# Compute nice Y-axis ticks in Python — reuse the same algorithm #}
+    {% set ie_data = ie_points|tojson %}
+    <div class="ie-chart-wrap">
+      <div class="ie-chart" id="ie-line-chart"
+           data-points="{{ ie_data }}"
+           data-max="{{ ie_max_val }}">
+        {# SVG injected by JS so we can compute nice ticks + polyline coords #}
+      </div>
+    </div>
+    <script>
+    (function() {
+      var el = document.getElementById('ie-line-chart');
+      if (!el) return;
+      var points = JSON.parse(el.dataset.points);
+      var rawMax = parseInt(el.dataset.max, 10);
+      if (!rawMax) { el.innerHTML = '<div class="ie-empty">No data</div>'; return; }
+
+      /* Nice-number Y ticks (same algorithm as backend) */
+      function niceTicks(maxCents) {
+        var maxD = maxCents / 100;
+        var rough = Math.max(maxD / 4, 1);
+        var mag = Math.pow(10, Math.floor(Math.log10(rough)));
+        var r = rough / mag;
+        var step = r <= 1.5 ? mag : r <= 3.5 ? 2 * mag : 5 * mag;
+        step = Math.max(step, 1);
+        var axisMax = Math.ceil(maxD / step) * step;
+        var ticks = [];
+        for (var v = axisMax; v >= 0; v = Math.round((v - step) * 100) / 100) {
+          var pct = axisMax > 0 ? (v / axisMax * 100) : 0;
+          var lbl;
+          if (v >= 1000) { lbl = '$' + (v/1000).toFixed(v % 1000 ? 1 : 0) + 'K'; }
+          else if (v >= 1) { lbl = '$' + v.toLocaleString('en-US', {maximumFractionDigits:0}); }
+          else { lbl = '$0'; }
+          ticks.push({label: lbl, pct: pct, val: v});
+          if (v <= 0) break;
+        }
+        return {ticks: ticks, axisMaxCents: Math.round(axisMax * 100)};
+      }
+
+      var nt = niceTicks(rawMax);
+      var ticks = nt.ticks;
+      var axisMax = nt.axisMaxCents;
+
+      /* SVG dimensions */
+      var W = 700, H = 200;
+      var padL = 52, padR = 12, padT = 16, padB = 28;
+      var cW = W - padL - padR;
+      var cH = H - padT - padB;
+      var n = points.length;
+
+      function xPos(i) { return padL + (n > 1 ? i / (n - 1) * cW : cW / 2); }
+      function yPos(cents) { return padT + cH - (axisMax ? cents / axisMax * cH : 0); }
+
+      /* Build SVG */
+      var svg = '<svg class="ie-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">';
+
+      /* Gridlines + Y labels */
+      for (var t = 0; t < ticks.length; t++) {
+        var gy = yPos(ticks[t].val * 100);
+        svg += '<line class="ie-grid" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + gy + '" y2="' + gy + '"/>';
+        svg += '<text class="ie-ytick" x="' + (padL - 6) + '" y="' + (gy + 3.5) + '">' + ticks[t].label + '</text>';
+      }
+
+      /* X labels */
+      for (var i = 0; i < n; i++) {
+        var lx = xPos(i);
+        svg += '<text class="ie-xtick" x="' + lx + '" y="' + (H - 6) + '">' + points[i].label + '</text>';
+      }
+
+      /* Build polyline strings */
+      var incPts = '', expPts = '';
+      for (var i = 0; i < n; i++) {
+        var px = xPos(i).toFixed(1);
+        incPts += px + ',' + yPos(points[i].income_cents).toFixed(1) + ' ';
+        expPts += px + ',' + yPos(points[i].expense_cents).toFixed(1) + ' ';
+      }
+
+      /* Area fills (subtle) */
+      var baseY = yPos(0).toFixed(1);
+      var x0 = xPos(0).toFixed(1);
+      var xN = xPos(n - 1).toFixed(1);
+      svg += '<polygon class="ie-area ie-area--income" points="' + x0 + ',' + baseY + ' ' + incPts + xN + ',' + baseY + '"/>';
+      svg += '<polygon class="ie-area ie-area--expense" points="' + x0 + ',' + baseY + ' ' + expPts + xN + ',' + baseY + '"/>';
+
+      /* Lines */
+      svg += '<polyline class="ie-line ie-line--income" points="' + incPts + '"/>';
+      svg += '<polyline class="ie-line ie-line--expense" points="' + expPts + '"/>';
+
+      /* Data dots */
+      for (var i = 0; i < n; i++) {
+        svg += '<circle class="ie-dot ie-dot--income" cx="' + xPos(i).toFixed(1) + '" cy="' + yPos(points[i].income_cents).toFixed(1) + '" r="3"/>';
+        svg += '<circle class="ie-dot ie-dot--expense" cx="' + xPos(i).toFixed(1) + '" cy="' + yPos(points[i].expense_cents).toFixed(1) + '" r="3"/>';
+      }
+
+      /* Invisible hover columns */
+      var colW = cW / n;
+      for (var i = 0; i < n; i++) {
+        svg += '<rect class="ie-hover-col" data-idx="' + i + '" x="' + (xPos(i) - colW/2).toFixed(1) + '" y="' + padT + '" width="' + colW.toFixed(1) + '" height="' + cH + '" fill="transparent"/>';
+      }
+
+      /* Vertical guide (hidden by default) */
+      svg += '<line class="ie-guide" id="ie-guide" x1="0" x2="0" y1="' + padT + '" y2="' + (padT + cH) + '" style="display:none"/>';
+
+      svg += '</svg>';
+
+      /* Tooltip container */
+      svg += '<div class="ie-tip" id="ie-tip" hidden></div>';
+
+      el.innerHTML = svg;
+
+      /* Hover logic */
+      var guide = document.getElementById('ie-guide');
+      var tipEl = document.getElementById('ie-tip');
+      var chartEl = el;
+
+      function fmtD(c) { return '$' + Math.round(Math.abs(c)/100).toLocaleString('en-US'); }
+
+      function showTip(idx, e) {
+        var p = points[idx];
+        var gx = xPos(idx);
+        guide.setAttribute('x1', gx);
+        guide.setAttribute('x2', gx);
+        guide.style.display = '';
+
+        tipEl.innerHTML =
+          '<div class="ie-tip-month">' + p.label + ' ' + p.ym.split('-')[0] + '</div>' +
+          '<div class="ie-tip-row"><span class="ie-tip-dot ie-tip-dot--income"></span>Income<span class="ie-tip-val">' + fmtD(p.income_cents) + '</span></div>' +
+          '<div class="ie-tip-row"><span class="ie-tip-dot ie-tip-dot--expense"></span>Expenses<span class="ie-tip-val">' + fmtD(p.expense_cents) + '</span></div>';
+        tipEl.hidden = false;
+
+        /* Position tooltip */
+        var cr = chartEl.getBoundingClientRect();
+        var tipW = tipEl.offsetWidth;
+        var frac = (gx / W);
+        var left = cr.width * frac;
+        if (left + tipW + 8 > cr.width) left = left - tipW - 12;
+        else left += 12;
+        tipEl.style.left = Math.max(0, left) + 'px';
+        tipEl.style.top = '12px';
+      }
+
+      function hideTip() {
+        guide.style.display = 'none';
+        tipEl.hidden = true;
+      }
+
+      el.querySelectorAll('.ie-hover-col').forEach(function(col) {
+        col.addEventListener('mouseenter', function(e) { showTip(parseInt(this.dataset.idx), e); });
+        col.addEventListener('mouseleave', hideTip);
+      });
+
+      /* Touch support */
+      el.addEventListener('touchstart', function(e) {
+        var touch = e.touches[0];
+        var cr = el.getBoundingClientRect();
+        var relX = touch.clientX - cr.left;
+        var frac = relX / cr.width;
+        var idx = Math.round(frac * (n - 1));
+        idx = Math.max(0, Math.min(n - 1, idx));
+        showTip(idx, e);
+      }, {passive: true});
+      el.addEventListener('touchend', function() { setTimeout(hideTip, 1500); }, {passive: true});
+    })();
+    </script>
+    {% endif %}
+  </div>
+</div>
+
 <div class="dash-grid">
 
 <!-- ── Spending band: Donut + Legend ────────────────────────────────────── -->
