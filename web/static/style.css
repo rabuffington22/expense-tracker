@@ -3610,6 +3610,17 @@ tr.is-selected > td:first-child {
     gap: 0.25rem;
     flex-shrink: 0;
 }
+.todo-edit-btn {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.15rem 0.3rem;
+    font-size: 0.78rem;
+    line-height: 1;
+    opacity: 0.4;
+    transition: opacity var(--transition);
+    cursor: pointer;
+}
+.todo-edit-btn:hover { opacity: 1; }
 .todo-delete-btn {
     background: transparent;
     color: var(--text-muted);
@@ -3621,6 +3632,20 @@ tr.is-selected > td:first-child {
 }
 .todo-delete-btn:hover {
     opacity: 1;
+}
+.todo-edit-row {
+    margin-top: -0.1rem;
+    padding-top: 0.15rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .todo-edit-row {
+    border-bottom-color: rgba(0,0,0,0.06);
+}
+.todo-countdown--warn {
+    color: var(--red);
+    opacity: 1;
+    font-weight: 600;
 }
 
 /* ── Empty state (compact) ──────────────────────── */

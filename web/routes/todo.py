@@ -79,7 +79,7 @@ def _periodic_next_due(task_row: dict) -> date:
     today = date.today()
     dom = task_row["day_of_month"]
     cadence = task_row["cadence"]
-    months = 3 if cadence == "quarterly" else 1
+    months = {"quarterly": 3, "annual": 12}.get(cadence, 1)
     last_done = task_row.get("last_completed_at")
 
     if last_done:
@@ -341,7 +341,7 @@ def create_task():
 
     if not name:
         return redirect(url_for("todo.index"))
-    if cadence not in ("monthly", "quarterly"):
+    if cadence not in ("monthly", "quarterly", "annual"):
         cadence = "monthly"
 
     try:
@@ -371,6 +371,38 @@ def complete_task(task_id):
         conn.execute(
             "INSERT INTO periodic_completions (task_id) VALUES (?)",
             (task_id,),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("todo.index"))
+
+
+@bp.route("/tasks/edit/<int:task_id>", methods=["POST"])
+def edit_task(task_id):
+    """Update a periodic task's name, cadence, day, notes."""
+    name = (request.form.get("name") or "").strip()
+    cadence = request.form.get("cadence", "monthly")
+    day_str = request.form.get("day_of_month", "1")
+    notes = (request.form.get("notes") or "").strip() or None
+
+    if not name:
+        return redirect(url_for("todo.index"))
+    if cadence not in ("monthly", "quarterly", "annual"):
+        cadence = "monthly"
+
+    try:
+        dom = int(day_str)
+        dom = max(1, min(28, dom))
+    except (ValueError, TypeError):
+        dom = 1
+
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "UPDATE periodic_tasks SET name=?, cadence=?, day_of_month=?, notes=? "
+            "WHERE id=?",
+            (name, cadence, dom, notes, task_id),
         )
         conn.commit()
     finally:
