@@ -3438,23 +3438,30 @@ tr.is-selected > td:first-child {
 
 .todo-page .page-title.todo-title {
     font-size: 1.3rem;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.45rem;
 }
 .todo-page .outline-panel {
-    padding: 0.5rem 0.6rem;
-    margin-bottom: 0.6rem;
+    padding: 0.4rem 0.55rem;
+    margin-bottom: 0.5rem;
 }
 .todo-page .panel-header {
     font-size: var(--ui-font-xs);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.1rem;
+}
+.todo-subtitle {
+    margin: 0 0 0.3rem;
+    padding: 0;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    opacity: 0.6;
 }
 
 /* ── Add form (single-line compact) ─────────────── */
 .todo-add-form {
     display: flex;
-    gap: 0.3rem;
+    gap: 0.25rem;
     align-items: center;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.25rem;
     flex-wrap: wrap;
 }
 .todo-input {
@@ -3469,7 +3476,7 @@ tr.is-selected > td:first-child {
     height: 28px;
 }
 .todo-input--name    { flex: 2; min-width: 90px; }
-.todo-input--day     { flex: 0 0 56px; text-align: center; }
+.todo-input--day     { flex: 0 0 auto; min-width: 72px; text-align: center; }
 .todo-input--cadence { flex: 0 0 90px; }
 .todo-input--notes-sm { flex: 1; min-width: 60px; }
 .todo-input:focus {
@@ -3492,9 +3499,9 @@ tr.is-selected > td:first-child {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.25rem 0;
+    padding: 0.2rem 0;
     border-bottom: 0.5px solid rgba(255,255,255,0.06);
-    gap: 0.35rem;
+    gap: 0.3rem;
 }
 :root[data-theme="light"] .todo-row {
     border-bottom-color: rgba(0,0,0,0.06);

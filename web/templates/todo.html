@@ -97,6 +97,7 @@
 {# ── 2. Periodic Tasks (middle) ───────────────────────────────────────── #}
 <div class="outline-panel">
     <div class="panel-header">Periodic Tasks</div>
+    <p class="todo-subtitle">Recurring admin reminders</p>
 
     <form method="post" action="{{ url_for('todo.create_task') }}" class="todo-add-form">
         <input type="text" name="name" placeholder="Task name" required class="todo-input todo-input--name">
@@ -148,6 +149,7 @@
 {# ── 3. Statement Reminders (bottom, compact) ─────────────────────────── #}
 <div class="outline-panel">
     <div class="panel-header">Statement Reminders</div>
+    <p class="todo-subtitle">Download statements on schedule</p>
 
     <form method="post" action="{{ url_for('todo.create_schedule') }}" class="todo-add-form">
         <input type="text" name="name" placeholder="Source name" required class="todo-input todo-input--name">
