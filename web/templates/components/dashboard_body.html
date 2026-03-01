@@ -8,11 +8,10 @@
 <!-- ── Categories Comparison (populated by KPI panel scripts) ──────────── -->
 <div id="categories-compare"></div>
 
-<hr class="dash-divider">
 <!-- ── Income vs Expenses (12 months) ────────────────────────────────── -->
 {% set ie_max = ie_points|map(attribute='income_cents')|list + ie_points|map(attribute='expense_cents')|list %}
 {% set ie_max_val = ie_max|max if ie_max|max > 0 else 0 %}
-<div class="outline-band" style="margin-top: 2rem;">
+<div class="outline-band" style="margin-top: 3.5rem;">
   <div class="band-label">Income vs Expenses</div>
   <div class="ie-legend">
     <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--income"></span>Income</span>
