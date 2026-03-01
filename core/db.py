@@ -385,6 +385,24 @@ CREATE TABLE IF NOT EXISTS statement_completions (
 );
 """
 
+_MIGRATION_25 = """
+CREATE TABLE IF NOT EXISTS periodic_tasks (
+    id           INTEGER PRIMARY KEY,
+    name         TEXT NOT NULL,
+    cadence      TEXT NOT NULL DEFAULT 'monthly',
+    day_of_month INTEGER NOT NULL DEFAULT 1,
+    notes        TEXT,
+    is_active    INTEGER NOT NULL DEFAULT 1,
+    created_at   TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS periodic_completions (
+    id           INTEGER PRIMARY KEY,
+    task_id      INTEGER NOT NULL REFERENCES periodic_tasks(id) ON DELETE CASCADE,
+    completed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -410,6 +428,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (22, _MIGRATION_22),
     (23, _MIGRATION_23),
     (24, _MIGRATION_24),
+    (25, _MIGRATION_25),
 ]
 
 _DEFAULT_CATEGORIES = [

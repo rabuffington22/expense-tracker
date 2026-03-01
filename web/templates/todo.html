@@ -4,9 +4,9 @@
 {% block content %}
 <div class="todo-page">
 
-<h1 class="page-title">To Do</h1>
+<h1 class="page-title todo-title">To Do</h1>
 
-{# ── Review Queues (primary) ──────────────────────────────────────────── #}
+{# ── 1. Review Queues (primary) ───────────────────────────────────────── #}
 <div class="outline-panel">
     <div class="panel-header">Review Queues</div>
 
@@ -94,19 +94,68 @@
     </div>
 </div>
 
-{# ── Statement Reminders (secondary, compact) ────────────────────────── #}
+{# ── 2. Periodic Tasks (middle) ───────────────────────────────────────── #}
 <div class="outline-panel">
-    <div class="panel-header">Statement Reminders</div>
+    <div class="panel-header">Periodic Tasks</div>
 
-    {# Compact single-line add form #}
-    <form method="post" action="{{ url_for('todo.create_schedule') }}" class="todo-add-form">
-        <input type="text" name="name" placeholder="Source name" required class="todo-input todo-input--name">
-        <input type="number" name="statement_day" min="1" max="31" placeholder="Day" required class="todo-input todo-input--day">
-        <input type="text" name="notes" placeholder="Notes (optional)" class="todo-input todo-input--notes">
+    <form method="post" action="{{ url_for('todo.create_task') }}" class="todo-add-form">
+        <input type="text" name="name" placeholder="Task name" required class="todo-input todo-input--name">
+        <select name="cadence" class="todo-input todo-input--cadence">
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+        </select>
+        <input type="number" name="day_of_month" min="1" max="28" placeholder="Day" value="1" required class="todo-input todo-input--day">
+        <input type="text" name="notes" placeholder="Notes (optional)" class="todo-input todo-input--notes-sm">
         <button type="submit" class="btn btn-primary btn-sm">Add</button>
     </form>
 
-    {# Compact schedule rows #}
+    {% if periodic_tasks %}
+    <div class="todo-list">
+        {% for t in periodic_tasks %}
+        <div class="todo-row todo-sched-row">
+            <div class="todo-sched-left">
+                <span class="todo-name">{{ t.name }}</span>
+                <span class="text-muted todo-meta">{{ t.cadence|capitalize }} &middot; Day {{ t.day_of_month }} &middot; {{ t.next_due.strftime('%b %-d') }}</span>
+                {% if t.notes %}
+                <span class="text-muted todo-notes">{{ t.notes }}</span>
+                {% endif %}
+            </div>
+            <div class="todo-row-actions">
+                {% if t.status == 'done' %}
+                    <span class="badge badge-green">Done</span>
+                {% elif t.status == 'due' %}
+                    <form method="post" action="{{ url_for('todo.complete_task', task_id=t.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-success btn-sm">Mark done</button>
+                    </form>
+                {% else %}
+                    <span class="text-muted todo-countdown">Due in {{ t.days_until }}d</span>
+                {% endif %}
+                <form method="post" action="{{ url_for('todo.delete_task', task_id=t.id) }}"
+                      style="display:inline;"
+                      onsubmit="return confirm('Delete this task?');">
+                    <button type="submit" class="btn btn-sm todo-delete-btn"
+                            title="Delete">&times;</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="todo-hint">No periodic tasks yet.</p>
+    {% endif %}
+</div>
+
+{# ── 3. Statement Reminders (bottom, compact) ─────────────────────────── #}
+<div class="outline-panel">
+    <div class="panel-header">Statement Reminders</div>
+
+    <form method="post" action="{{ url_for('todo.create_schedule') }}" class="todo-add-form">
+        <input type="text" name="name" placeholder="Source name" required class="todo-input todo-input--name">
+        <input type="number" name="statement_day" min="1" max="31" placeholder="Day" required class="todo-input todo-input--day">
+        <input type="text" name="notes" placeholder="Notes (optional)" class="todo-input todo-input--notes-sm">
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+    </form>
+
     {% if schedules %}
     <div class="todo-list">
         {% for s in schedules %}

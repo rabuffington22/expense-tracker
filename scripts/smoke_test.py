@@ -677,24 +677,23 @@ def main() -> None:
         # ── 10. To Do page tests ──────────────────────────────────────
         print("\n10. To Do page tests…")
 
+        import hashlib
+        from datetime import date as _date, timedelta as _td
+
         client.set_cookie("entity", "Personal")
 
-        # 10a. GET /todo returns 200 with both sections
+        # 10a. GET /todo returns 200 with all 3 sections
         resp = client.get("/todo/")
         _check(resp.status_code == 200, "todo index: expected 200")
         body = resp.get_data(as_text=True)
         _check("Review Queues" in body, "todo: should contain 'Review Queues'")
+        _check("Periodic Tasks" in body, "todo: should contain 'Periodic Tasks'")
         _check("Statement Reminders" in body, "todo: should contain 'Statement Reminders'")
 
         # 10b. Insert fixture data to make new queues non-zero
-        import hashlib
-        from datetime import date as _date, timedelta as _td
-
         conn_fix = get_connection("personal")
         today_str = _date.today().isoformat()
-        yesterday_str = (_date.today() - _td(days=1)).isoformat()
 
-        # Insert a large transaction (>=$500) in last 30 days
         large_txn_id = hashlib.sha256(
             f"{today_str}|-750.00|LARGE PURCHASE TEST".encode()
         ).hexdigest()[:24]
@@ -705,7 +704,6 @@ def main() -> None:
             (large_txn_id, today_str, today_str),
         )
 
-        # Insert a transaction with a unique merchant (new merchant — not seen before)
         new_merch_id = hashlib.sha256(
             f"{today_str}|-15.00|BRAND NEW MERCHANT XYZ".encode()
         ).hexdigest()[:24]
@@ -718,44 +716,35 @@ def main() -> None:
         conn_fix.commit()
         conn_fix.close()
 
-        # 10b-ii. Verify counts are now non-zero on the page
         resp = client.get("/todo/")
         body = resp.get_data(as_text=True)
-        # Large txn badge should be visible (count >= 1)
         _check("Large transactions" in body, "todo queues: Large transactions row should appear")
-        # New merchants badge should be visible
         _check("New merchants" in body, "todo queues: New merchants row should appear")
 
-        # 10c. Create a schedule
+        # ── 10c. Statement schedule CRUD ──────────────────────────────
         resp = client.post("/todo/schedules/create", data={
-            "name": "US Bank",
+            "name": "Citi Statement",
             "statement_day": "5",
             "notes": "Check monthly",
         }, follow_redirects=True)
-        _check(resp.status_code == 200, "todo create: expected 200 after redirect")
+        _check(resp.status_code == 200, "todo sched create: expected 200")
         body = resp.get_data(as_text=True)
-        _check("US Bank" in body, "todo create: schedule name should appear on page")
+        _check("Citi Statement" in body, "todo sched create: name should appear")
 
-        # 10d. Verify schedule exists in DB
         conn_todo = get_connection("personal")
         sched = conn_todo.execute(
-            "SELECT id, name, statement_day FROM statement_schedules WHERE name = 'US Bank'"
+            "SELECT id, statement_day FROM statement_schedules WHERE name = 'Citi Statement'"
         ).fetchone()
         conn_todo.close()
-        _check(sched is not None, "todo: schedule row should exist in DB")
-        _check(sched["statement_day"] == 5, "todo: statement_day should be 5")
+        _check(sched is not None, "todo sched: row should exist in DB")
+        _check(sched["statement_day"] == 5, "todo sched: statement_day should be 5")
         sched_id = sched["id"]
 
-        # 10e. Mark schedule as complete
-        resp = client.post(
-            f"/todo/schedules/complete/{sched_id}",
-            follow_redirects=True,
-        )
-        _check(resp.status_code == 200, "todo complete: expected 200 after redirect")
+        resp = client.post(f"/todo/schedules/complete/{sched_id}", follow_redirects=True)
+        _check(resp.status_code == 200, "todo sched complete: expected 200")
         body = resp.get_data(as_text=True)
-        _check("Done" in body, "todo complete: should show 'Done' badge")
+        _check("Done" in body, "todo sched complete: should show Done badge")
 
-        # 10f. Verify completion in DB
         period_key = _date.today().strftime("%Y-%m")
         conn_todo = get_connection("personal")
         comp = conn_todo.execute(
@@ -763,35 +752,107 @@ def main() -> None:
             (sched_id, period_key),
         ).fetchone()
         conn_todo.close()
-        _check(comp is not None, "todo: completion row should exist in DB")
+        _check(comp is not None, "todo sched: completion row should exist")
 
-        # 10g. Entity isolation — BFM should NOT see Personal's schedule or queue data
+        # ── 10d. Periodic task CRUD ───────────────────────────────────
+
+        # Create monthly task
+        resp = client.post("/todo/tasks/create", data={
+            "name": "Update Amazon orders",
+            "cadence": "monthly",
+            "day_of_month": "15",
+            "notes": "Download CSV",
+        }, follow_redirects=True)
+        _check(resp.status_code == 200, "todo task create monthly: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("Update Amazon orders" in body, "todo task create: name should appear")
+        _check("Monthly" in body, "todo task create: cadence should appear")
+
+        conn_todo = get_connection("personal")
+        task = conn_todo.execute(
+            "SELECT id, cadence, day_of_month FROM periodic_tasks WHERE name = 'Update Amazon orders'"
+        ).fetchone()
+        conn_todo.close()
+        _check(task is not None, "todo task: row should exist in DB")
+        _check(task["cadence"] == "monthly", "todo task: cadence should be monthly")
+        _check(task["day_of_month"] == 15, "todo task: day_of_month should be 15")
+        task_id = task["id"]
+
+        # Create quarterly task
+        resp = client.post("/todo/tasks/create", data={
+            "name": "Quarterly bank login",
+            "cadence": "quarterly",
+            "day_of_month": "1",
+        }, follow_redirects=True)
+        _check(resp.status_code == 200, "todo task create quarterly: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("Quarterly bank login" in body, "todo task create quarterly: name should appear")
+        _check("Quarterly" in body, "todo task create quarterly: cadence should appear")
+
+        conn_todo = get_connection("personal")
+        q_task = conn_todo.execute(
+            "SELECT id, cadence FROM periodic_tasks WHERE name = 'Quarterly bank login'"
+        ).fetchone()
+        conn_todo.close()
+        _check(q_task is not None, "todo quarterly task: row should exist in DB")
+        _check(q_task["cadence"] == "quarterly", "todo quarterly task: cadence should be quarterly")
+        q_task_id = q_task["id"]
+
+        # Mark monthly task done
+        resp = client.post(f"/todo/tasks/complete/{task_id}", follow_redirects=True)
+        _check(resp.status_code == 200, "todo task complete: expected 200")
+
+        conn_todo = get_connection("personal")
+        pc = conn_todo.execute(
+            "SELECT id FROM periodic_completions WHERE task_id = ?",
+            (task_id,),
+        ).fetchone()
+        conn_todo.close()
+        _check(pc is not None, "todo task: completion row should exist")
+
+        # ── 10e. Entity isolation ─────────────────────────────────────
         client.set_cookie("entity", "BFM")
         resp = client.get("/todo/")
         _check(resp.status_code == 200, "todo BFM: expected 200")
         body = resp.get_data(as_text=True)
-        _check("US Bank" not in body, "todo isolation: BFM should not see Personal's schedule")
+        _check("Citi Statement" not in body, "todo isolation: BFM should not see Personal's schedule")
+        _check("Update Amazon orders" not in body, "todo isolation: BFM should not see Personal's task")
+        _check("Quarterly bank login" not in body, "todo isolation: BFM should not see Personal's quarterly task")
 
-        # 10h. Delete schedule
+        # ── 10f. Delete with cascade ──────────────────────────────────
         client.set_cookie("entity", "Personal")
-        resp = client.post(
-            f"/todo/schedules/delete/{sched_id}",
-            follow_redirects=True,
-        )
-        _check(resp.status_code == 200, "todo delete: expected 200 after redirect")
-        body = resp.get_data(as_text=True)
-        _check("US Bank" not in body, "todo delete: schedule should be gone from page")
 
-        # Verify cascade deleted completion
+        # Delete schedule (cascades completions)
+        resp = client.post(f"/todo/schedules/delete/{sched_id}", follow_redirects=True)
+        _check(resp.status_code == 200, "todo sched delete: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("Citi Statement" not in body, "todo sched delete: should be gone")
+
         conn_todo = get_connection("personal")
         comp = conn_todo.execute(
-            "SELECT id FROM statement_completions WHERE schedule_id = ?",
-            (sched_id,),
+            "SELECT id FROM statement_completions WHERE schedule_id = ?", (sched_id,)
         ).fetchone()
         conn_todo.close()
-        _check(comp is None, "todo delete: completion should be cascade-deleted")
+        _check(comp is None, "todo sched delete: completion should be cascade-deleted")
 
-        # Cleanup fixture data
+        # Delete periodic task (cascades completions)
+        resp = client.post(f"/todo/tasks/delete/{task_id}", follow_redirects=True)
+        _check(resp.status_code == 200, "todo task delete: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("Update Amazon orders" not in body, "todo task delete: should be gone")
+
+        conn_todo = get_connection("personal")
+        pc = conn_todo.execute(
+            "SELECT id FROM periodic_completions WHERE task_id = ?", (task_id,)
+        ).fetchone()
+        conn_todo.close()
+        _check(pc is None, "todo task delete: completion should be cascade-deleted")
+
+        # Delete quarterly task
+        resp = client.post(f"/todo/tasks/delete/{q_task_id}", follow_redirects=True)
+        _check(resp.status_code == 200, "todo quarterly task delete: expected 200")
+
+        # Cleanup fixture txns
         conn_fix = get_connection("personal")
         conn_fix.execute("DELETE FROM transactions WHERE transaction_id IN (?, ?)",
                          (large_txn_id, new_merch_id))
@@ -800,7 +861,7 @@ def main() -> None:
 
         client.set_cookie("entity", "Personal")
 
-        print("   ✅ All To Do tests passed (CRUD + new queues + isolation + cascade)")
+        print("   ✅ All To Do tests passed (schedules + periodic tasks + queues + isolation + cascade)")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
