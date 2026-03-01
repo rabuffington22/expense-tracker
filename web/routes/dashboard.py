@@ -406,6 +406,112 @@ def _compute_insights(conn, params, drill_url):
     return insights[:3]
 
 
+def _compute_compare_insights(conn, left_start, left_end, right_start, right_end,
+                               drill_url_left, drill_url_right):
+    """Return up to 3 cross-period comparison insights.
+
+    Each insight: {"text": str, "url": str}.
+    Compares left period vs right period.
+    """
+    insights = []
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+
+    # ── Compare A: Total spending change ────────────────────────────────────
+    try:
+        left_spend = conn.execute(
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            [left_start, left_end],
+        ).fetchone()[0]
+        right_spend = conn.execute(
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            [right_start, right_end],
+        ).fetchone()[0]
+
+        if right_spend > 0:
+            diff = left_spend - right_spend
+            diff_dollars = abs(diff) // 100
+            pct = abs(diff) * 100 // right_spend if right_spend else 0
+            if diff_dollars >= 50:
+                direction = "up" if diff > 0 else "down"
+                insights.append({
+                    "text": f"Spending {direction} ${diff_dollars:,} ({pct}%) vs prior period",
+                    "url": drill_url_left(),
+                })
+    except Exception:
+        pass
+
+    # ── Compare B: Biggest category shift ───────────────────────────────────
+    try:
+        left_cats = conn.execute(
+            f"SELECT category, COALESCE(SUM(ABS(amount_cents)), 0) AS total "
+            f"FROM transactions WHERE amount_cents < 0 "
+            f"AND date >= ? AND date <= ? {xfer_exclude} "
+            f"AND category IS NOT NULL AND category != '' "
+            f"GROUP BY category",
+            [left_start, left_end],
+        ).fetchall()
+        right_cats = conn.execute(
+            f"SELECT category, COALESCE(SUM(ABS(amount_cents)), 0) AS total "
+            f"FROM transactions WHERE amount_cents < 0 "
+            f"AND date >= ? AND date <= ? {xfer_exclude} "
+            f"AND category IS NOT NULL AND category != '' "
+            f"GROUP BY category",
+            [right_start, right_end],
+        ).fetchall()
+
+        left_map = {r["category"]: r["total"] for r in left_cats}
+        right_map = {r["category"]: r["total"] for r in right_cats}
+
+        best_cat, best_shift = None, 0
+        for cat in set(left_map) | set(right_map):
+            shift = abs(left_map.get(cat, 0) - right_map.get(cat, 0))
+            if shift > best_shift:
+                best_shift = shift
+                best_cat = cat
+
+        if best_cat and best_shift > 5000:  # > $50
+            shift_dollars = best_shift // 100
+            cat_id_row = conn.execute(
+                "SELECT id FROM categories WHERE name = ?", (best_cat,)
+            ).fetchone()
+            cat_id = cat_id_row["id"] if cat_id_row else None
+            url = drill_url_left(category_id=cat_id) if cat_id else drill_url_left()
+            insights.append({
+                "text": f"{best_cat} shifted ${shift_dollars:,} between periods",
+                "url": url,
+            })
+    except Exception:
+        pass
+
+    # ── Compare C: Income change ────────────────────────────────────────────
+    try:
+        left_inc = conn.execute(
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            [left_start, left_end],
+        ).fetchone()[0]
+        right_inc = conn.execute(
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            [right_start, right_end],
+        ).fetchone()[0]
+
+        diff = left_inc - right_inc
+        diff_dollars = abs(diff) // 100
+        if diff_dollars >= 100:
+            direction = "up" if diff > 0 else "down"
+            insights.append({
+                "text": f"Income {direction} ${diff_dollars:,} vs prior period",
+                "url": drill_url_left(type="income"),
+            })
+    except Exception:
+        pass
+
+    return insights[:3]
+
+
 # ── Cash flow chart builder ──────────────────────────────────────────────────
 
 def _build_cash_flow_bars(conn, end_date_str):
@@ -1202,3 +1308,78 @@ def categories_compare():
                            right_drill=right_drill,
                            subcats_left=subcats_left_json,
                            subcats_right=subcats_right_json)
+
+
+@bp.route("/dashboard/insights-upcoming")
+def insights_upcoming():
+    """Render the Insights + Upcoming section (HTMX endpoint).
+
+    Reads left_period and right_period from querystring, computes
+    per-period insights, cross-period compare insights, and upcoming
+    recurring items.
+    """
+    left_period = request.args.get("left_period", "this_month")
+    right_period = request.args.get("right_period", "last_month")
+    account = request.args.get("account", "")
+
+    left_start, left_end = _period_to_dates(left_period)
+    right_start, right_end = _period_to_dates(right_period)
+
+    period_labels = _build_period_labels()
+    left_label = period_labels.get(left_period, left_period)
+    right_label = period_labels.get(right_period, right_period)
+
+    # Build params dicts for insight queries
+    left_params = {"start": left_start, "end": left_end, "account": account}
+    right_params = {"start": right_start, "end": right_end, "account": account}
+
+    # Drill URL builders
+    def left_drill(**overrides):
+        qp = {"start": left_start, "end": left_end}
+        if account:
+            qp["account"] = account
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    def right_drill(**overrides):
+        qp = {"start": right_start, "end": right_end}
+        if account:
+            qp["account"] = account
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    conn = get_connection(g.entity_key)
+    try:
+        # Per-period insights
+        left_insights = _compute_insights(conn, left_params, left_drill)
+        right_insights = _compute_insights(conn, right_params, right_drill)
+
+        # Cross-period compare insights
+        compare_insights = _compute_compare_insights(
+            conn, left_start, left_end, right_start, right_end,
+            left_drill, right_drill,
+        )
+
+        # Upcoming recurring
+        upcoming_params = {"start": left_start, "end": left_end, "account": account}
+        recurring = _detect_recurring(conn, upcoming_params)
+        upcoming_raw = _build_upcoming(recurring)
+    finally:
+        conn.close()
+
+    # Add drill URLs to upcoming items
+    upcoming = []
+    for item in upcoming_raw:
+        item["url"] = url_for("transactions.index",
+                              merchant=item["merchant_canonical"],
+                              start=item["drill_start"],
+                              end=item["drill_end"])
+        upcoming.append(item)
+
+    return render_template("components/insights_upcoming.html",
+                           left_insights=left_insights,
+                           right_insights=right_insights,
+                           compare_insights=compare_insights,
+                           left_label=left_label,
+                           right_label=right_label,
+                           upcoming=upcoming)
