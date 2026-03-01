@@ -1140,6 +1140,19 @@ h2 {
 :root[data-theme="light"] .kpi-panel {
     border-color: rgba(0,0,0,0.08);
 }
+/* Left panel = blue series, Right panel = orange series */
+#kpi-left {
+    border-color: rgba(10,132,255,0.30);
+}
+:root[data-theme="light"] #kpi-left {
+    border-color: rgba(10,132,255,0.25);
+}
+#kpi-right {
+    border-color: rgba(255,159,10,0.30);
+}
+:root[data-theme="light"] #kpi-right {
+    border-color: rgba(255,159,10,0.25);
+}
 
 .kpi-panel-header {
     position: absolute;
