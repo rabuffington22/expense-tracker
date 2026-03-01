@@ -86,7 +86,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     style.css                      # Apple-style dual theme (dark default + light), CSS custom properties on data-theme, SF Pro fonts
     htmx.min.js                    # HTMX library (~14KB)
 core/                              # Business logic (unchanged from Streamlit era)
-  db.py                            # Schema migrations (20 so far), DB init, connections
+  db.py                            # Schema migrations (24 so far), DB init, connections
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
   amazon.py                        # Amazon order CSV parsing + vendor order matching
@@ -274,6 +274,16 @@ Each insight links to a drill-down in `/transactions`.
 **Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
 
 ## Change Log
+
+### 2026-03-01 — PR #73: Per-entity To Do page (statement reminders + review queues)
+New `/todo` page combining ops checklist functionality with data-driven review queues.
+
+1. **Migration 24** — Two new tables: `statement_schedules` (id, name, statement_day 1–31, notes, is_active, created_at) and `statement_completions` (id, schedule_id FK CASCADE, period_key YYYY-MM, completed_at, UNIQUE(schedule_id, period_key)).
+2. **Statement Reminders section** — Inline add form (name + day + notes + Add button). Active schedules sorted by due date ascending. Status logic: "Done" if completion exists for current YYYY-MM period, "Due" if today >= clamped statement day and not done, "Upcoming" otherwise. Clamped day handles months with fewer days (e.g. day 31 in Feb → Feb 28). Mark Done button (UPSERT ignore on conflict). Delete with confirm.
+3. **Review Queues section** — Count-driven links to existing filtered pages: Uncategorized transactions (`/transactions/?uncategorized=1`), Vendor breakdown needed (`/transactions/?vendor_breakdown=1`), Possible transfers (`/transactions/?possible_transfer=1`), Orders to match (`/match/`), Orders to categorize (`/categorize-vendors/`). "All caught up" empty state when all counts are zero.
+4. **Route** — `web/routes/todo.py` blueprint (url_prefix `/todo`). Endpoints: GET `/todo/`, POST `schedules/create`, POST `schedules/complete/<id>`, POST `schedules/toggle/<id>`, POST `schedules/delete/<id>`.
+5. **Sidebar** — "To Do" link added to primary nav between Dashboard and Transactions.
+6. **Smoke tests** — Section 10: CRUD, entity isolation (BFM can't see Personal schedules), cascade delete (completions removed when schedule deleted).
 
 ### 2026-03-01 — PR #72: UI density pass + page unification
 Two combined changes: (1) unify non-dashboard pages to flat + outlined design language, (2) reduce vertical whitespace ~25% across all pages. CSS-first approach. Also folds in PR #70 equal-height fix. All 16 stale PRs closed.
