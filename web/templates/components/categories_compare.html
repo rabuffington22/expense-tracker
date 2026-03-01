@@ -110,11 +110,6 @@
     var priLabel  = side === 'left' ? meta.leftLabel : meta.rightLabel;
     var secLabel  = side === 'left' ? meta.rightLabel : meta.leftLabel;
 
-    /* Delta is always Left - Right (no sign, no color) */
-    var deltaC    = leftC - rightC;
-    var deltaPct  = rightC ? ((leftC - rightC) / rightC * 100) : (leftC ? 100 : 0);
-    var deltaAbs  = Math.abs(deltaC);
-
     var html = '';
     html += '<div class="cat-tip-title">' + esc(catName) + '</div>';
 
@@ -130,14 +125,6 @@
     html += '<span class="cat-tip-sec-amount">' + fmtDollars(secondC) + '</span>';
     html += '</div>';
 
-    /* Delta line */
-    html += '<div class="cat-tip-delta">';
-    html += '\u0394 ' + fmtDollars(deltaAbs);
-    if (rightC) {
-      html += ' (' + Math.abs(deltaPct).toFixed(1) + '%)';
-    }
-    html += '</div>';
-
     /* Subcategories for hovered period */
     var subcats = side === 'left' ? subcatsLeft[catName] : subcatsRight[catName];
     if (subcats && subcats.length > 0) {
@@ -145,7 +132,6 @@
       var hoverEnd   = side === 'left' ? meta.leftEnd   : meta.rightEnd;
 
       html += '<div class="cat-tip-subcats">';
-      html += '<div class="cat-tip-subcats-hdr">Top subcategories</div>';
       for (var i = 0; i < subcats.length; i++) {
         var s = subcats[i];
         var drillUrl = meta.txnBaseUrl

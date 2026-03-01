@@ -981,7 +981,7 @@ def _query_category_totals(conn, start, end):
 
 
 def _query_subcategory_rollups(conn, start, end, category_names):
-    """Return top-3 subcategories per category for a date range.
+    """Return all subcategories per category for a date range.
 
     Returns dict: category_name -> [{name, cents, pct}]
     Only includes categories in *category_names* (the displayed set).
@@ -1005,7 +1005,7 @@ def _query_subcategory_rollups(conn, start, end, category_names):
         [start, end] + list(category_names),
     ).fetchall()
 
-    # Group by category, keep top 3, compute pct of category total
+    # Group by category, compute pct of category total
     from collections import defaultdict
     grouped = defaultdict(list)
     for r in rows:
@@ -1016,11 +1016,10 @@ def _query_subcategory_rollups(conn, start, end, category_names):
 
     result = {}
     for cat_name, subs in grouped.items():
-        top3 = subs[:3]
         cat_total = sum(s["cents"] for s in subs)
-        for s in top3:
+        for s in subs:
             s["pct"] = round(s["cents"] / cat_total * 100, 1) if cat_total else 0
-        result[cat_name] = top3
+        result[cat_name] = subs
     return result
 
 
