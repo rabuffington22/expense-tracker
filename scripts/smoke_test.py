@@ -674,6 +674,88 @@ def main() -> None:
 
         print("   ✅ All Saved Views tests passed (CRUD + rename + default + update)")
 
+        # ── 10. To Do page tests ──────────────────────────────────────
+        print("\n10. To Do page tests…")
+
+        client.set_cookie("entity", "Personal")
+
+        # 10a. GET /todo returns 200
+        resp = client.get("/todo/")
+        _check(resp.status_code == 200, "todo index: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("Statement Reminders" in body, "todo: should contain 'Statement Reminders'")
+        _check("Review Queues" in body, "todo: should contain 'Review Queues'")
+
+        # 10b. Create a schedule
+        resp = client.post("/todo/schedules/create", data={
+            "name": "US Bank",
+            "statement_day": "5",
+            "notes": "Check monthly",
+        }, follow_redirects=True)
+        _check(resp.status_code == 200, "todo create: expected 200 after redirect")
+        body = resp.get_data(as_text=True)
+        _check("US Bank" in body, "todo create: schedule name should appear on page")
+
+        # 10c. Verify schedule exists in DB
+        conn_todo = get_connection("personal")
+        sched = conn_todo.execute(
+            "SELECT id, name, statement_day FROM statement_schedules WHERE name = 'US Bank'"
+        ).fetchone()
+        conn_todo.close()
+        _check(sched is not None, "todo: schedule row should exist in DB")
+        _check(sched["statement_day"] == 5, "todo: statement_day should be 5")
+        sched_id = sched["id"]
+
+        # 10d. Mark schedule as complete
+        resp = client.post(
+            f"/todo/schedules/complete/{sched_id}",
+            follow_redirects=True,
+        )
+        _check(resp.status_code == 200, "todo complete: expected 200 after redirect")
+        body = resp.get_data(as_text=True)
+        _check("Done" in body, "todo complete: should show 'Done' badge")
+
+        # 10e. Verify completion in DB
+        from datetime import date as _date
+        period_key = _date.today().strftime("%Y-%m")
+        conn_todo = get_connection("personal")
+        comp = conn_todo.execute(
+            "SELECT id FROM statement_completions WHERE schedule_id = ? AND period_key = ?",
+            (sched_id, period_key),
+        ).fetchone()
+        conn_todo.close()
+        _check(comp is not None, "todo: completion row should exist in DB")
+
+        # 10f. Entity isolation — BFM should NOT see Personal's schedule
+        client.set_cookie("entity", "BFM")
+        resp = client.get("/todo/")
+        _check(resp.status_code == 200, "todo BFM: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("US Bank" not in body, "todo isolation: BFM should not see Personal's schedule")
+
+        # 10g. Delete schedule
+        client.set_cookie("entity", "Personal")
+        resp = client.post(
+            f"/todo/schedules/delete/{sched_id}",
+            follow_redirects=True,
+        )
+        _check(resp.status_code == 200, "todo delete: expected 200 after redirect")
+        body = resp.get_data(as_text=True)
+        _check("US Bank" not in body, "todo delete: schedule should be gone from page")
+
+        # Verify cascade deleted completion
+        conn_todo = get_connection("personal")
+        comp = conn_todo.execute(
+            "SELECT id FROM statement_completions WHERE schedule_id = ?",
+            (sched_id,),
+        ).fetchone()
+        conn_todo.close()
+        _check(comp is None, "todo delete: completion should be cascade-deleted")
+
+        client.set_cookie("entity", "Personal")
+
+        print("   ✅ All To Do tests passed (CRUD + isolation + cascade)")
+
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
     print("=" * 60 + "\n")
