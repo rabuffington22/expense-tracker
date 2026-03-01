@@ -1,56 +1,22 @@
+<!-- ── KPI Compare Panels ──────────────────────────────────────────────── -->
+<div class="kpi-compare-row">
+  <div hx-get="{{ url_for('dashboard.kpi_panel', panel='left', period='this_month') }}"
+       hx-trigger="load" hx-swap="innerHTML"></div>
+  <div hx-get="{{ url_for('dashboard.kpi_panel', panel='right', period='last_month') }}"
+       hx-trigger="load" hx-swap="innerHTML"></div>
+</div>
+
 {% if total_txn_count == 0 %}
 <!-- ── Empty state ──────────────────────────────────────────────────────── -->
 <div class="card" style="padding:2rem; text-align:center;">
   <div style="font-size:2rem; margin-bottom:0.5rem;">📭</div>
-  <div style="font-weight:600; margin-bottom:0.3rem;">No transactions found</div>
+  <div style="font-weight:600; margin-bottom:0.3rem;">No transactions yet</div>
   <div class="text-sm" style="color:var(--text-muted); margin-bottom:1rem;">
-    {% if params.account %}Try clearing the account filter or {% endif %}
-    adjust the date range to see data.
+    Import bank statements to get started.
   </div>
-  <a href="{{ drill_url(start=params.start, end=params.end, account=params.account) }}" class="btn btn-primary btn-sm">View All Transactions</a>
 </div>
 {% else %}
 <div class="dash-grid">
-
-<!-- ── KPI band (Provider-style) ────────────────────────────────────────── -->
-<div class="band kpi-band kpi-band--provider kpi-band--centered">
-  {% if period_label %}<div class="band-label">{{ period_label }}</div>{% endif %}
-  <div class="kpi-band-row">
-    <!-- 1) Spend / Expenses -->
-    <a class="kpi-cell" href="{{ drill_url(type='expense') }}">
-      <div class="kpi-cell-label">{{ entity_labels.spend }}</div>
-      <div class="kpi-cell-value">${{ "{:,.0f}".format(spend_cents / 100) }}</div>
-      <div class="kpi-cell-sub">{{ "{:,}".format(total_txn_count) }} txns</div>
-    </a>
-    <!-- 2) Income / Revenue -->
-    <a class="kpi-cell" href="{{ drill_url(type='income') }}">
-      <div class="kpi-cell-label">{{ entity_labels.income }}</div>
-      <div class="kpi-cell-value kpi-pos">${{ "{:,.0f}".format(income_cents / 100) }}</div>
-    </a>
-    <!-- 3) Net / Profit -->
-    <div class="kpi-cell kpi-cell--static">
-      <div class="kpi-cell-label">{{ entity_labels.net }}</div>
-      <div class="kpi-cell-value {% if net_cents < 0 %}kpi-neg{% else %}kpi-pos{% endif %}">
-        {{ "\u2212" if net_cents < 0 else "" }}${{ "{:,.0f}".format((net_cents|abs) / 100) }}
-      </div>
-      <div class="kpi-cell-sub">period net</div>
-    </div>
-    <!-- 4) Needs Review -->
-    <a class="kpi-cell" href="{{ drill_url(uncategorized='1') }}">
-      <div class="kpi-cell-label">Needs Review</div>
-      <div class="kpi-cell-value {% if review_count > 0 %}kpi-warn{% endif %}">
-        {{ "{:,}".format(review_count) }}
-      </div>
-      <div class="kpi-cell-sub">uncategorized</div>
-    </a>
-    <!-- 5) Latest Transaction -->
-    <div class="kpi-cell kpi-cell--static kpi-cell--latest">
-      <div class="kpi-cell-label">Latest</div>
-      <div class="kpi-cell-value">{{ latest_date }}</div>
-      <div class="kpi-cell-sub">last activity</div>
-    </div>
-  </div>
-</div>{# end band Overview #}
 
 <!-- ── Activity band: Spend Trend + Review Inbox + Insights ─────────────── -->
 <div class="outline-band">

@@ -1,0 +1,35 @@
+<div class="kpi-panel" id="kpi-{{ panel }}">
+  <div class="kpi-panel-header">
+    <select class="kpi-period-select"
+            name="period"
+            hx-get="{{ url_for('dashboard.kpi_panel') }}"
+            hx-vals='{"panel": "{{ panel }}"}'
+            hx-target="#kpi-{{ panel }}"
+            hx-swap="outerHTML">
+      {% for key, label in period_labels.items() %}
+      <option value="{{ key }}" {% if key == period %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="kpi-panel-grid">
+    <!-- Spending -->
+    <a class="kpi-panel-cell" href="{{ drill_url(type='expense') }}">
+      <div class="kpi-panel-label">{{ entity_labels.spend }}</div>
+      <div class="kpi-panel-value">${{ "{:,.0f}".format(spend_cents / 100) }}</div>
+      <div class="kpi-panel-sub">{{ "{:,}".format(txn_count) }} txns</div>
+    </a>
+    <!-- Income -->
+    <a class="kpi-panel-cell" href="{{ drill_url(type='income') }}">
+      <div class="kpi-panel-label">{{ entity_labels.income }}</div>
+      <div class="kpi-panel-value kpi-pos">${{ "{:,.0f}".format(income_cents / 100) }}</div>
+    </a>
+    <!-- Net -->
+    <div class="kpi-panel-cell kpi-panel-cell--static">
+      <div class="kpi-panel-label">{{ entity_labels.net }}</div>
+      <div class="kpi-panel-value {% if net_cents < 0 %}kpi-neg{% else %}kpi-pos{% endif %}">
+        {{ "\u2212" if net_cents < 0 else "" }}${{ "{:,.0f}".format((net_cents|abs) / 100) }}
+      </div>
+      <div class="kpi-panel-sub">period net</div>
+    </div>
+  </div>
+</div>

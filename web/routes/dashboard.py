@@ -736,17 +736,83 @@ def _format_period_label(params):
         return f"{s.strftime('%b')} {s.day}\u2009\u2013\u2009{e.strftime('%b')} {e.day}"
 
 
+# ── Period helpers (KPI compare panels) ───────────────────────────────────────
+
+_PERIOD_LABELS = {
+    "this_month": "This Month",
+    "last_month": "Last Month",
+    "last_30": "Last 30 Days",
+    "last_90": "Last 90 Days",
+}
+
+
+def _period_to_dates(period_key):
+    """Map a period key to (start_date, end_date) strings in YYYY-MM-DD format."""
+    now = datetime.now()
+    if period_key == "this_month":
+        start = f"{now.year:04d}-{now.month:02d}-01"
+        last_day = calendar.monthrange(now.year, now.month)[1]
+        end = f"{now.year:04d}-{now.month:02d}-{last_day:02d}"
+    elif period_key == "last_month":
+        # Go to last month
+        if now.month == 1:
+            y, m = now.year - 1, 12
+        else:
+            y, m = now.year, now.month - 1
+        start = f"{y:04d}-{m:02d}-01"
+        last_day = calendar.monthrange(y, m)[1]
+        end = f"{y:04d}-{m:02d}-{last_day:02d}"
+    elif period_key == "last_30":
+        end_dt = now
+        start_dt = now - timedelta(days=29)
+        start = start_dt.strftime("%Y-%m-%d")
+        end = end_dt.strftime("%Y-%m-%d")
+    elif period_key == "last_90":
+        end_dt = now
+        start_dt = now - timedelta(days=89)
+        start = start_dt.strftime("%Y-%m-%d")
+        end = end_dt.strftime("%Y-%m-%d")
+    else:
+        # Default to this month
+        return _period_to_dates("this_month")
+    return start, end
+
+
+def _query_kpi(conn, start, end):
+    """Run KPI queries for a date range. Returns dict with spend/income/net + txn count."""
+    da_where = "date >= ? AND date <= ?"
+    binds = [start, end]
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+
+    spend_cents = conn.execute(
+        f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+        f"WHERE amount_cents < 0 AND {da_where} {xfer_exclude}",
+        binds,
+    ).fetchone()[0]
+
+    income_cents = conn.execute(
+        f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+        f"WHERE amount_cents > 0 AND {da_where} {xfer_exclude}",
+        binds,
+    ).fetchone()[0]
+
+    txn_count = conn.execute(
+        f"SELECT COUNT(*) FROM transactions WHERE {da_where}",
+        binds,
+    ).fetchone()[0]
+
+    return {
+        "spend_cents": spend_cents,
+        "income_cents": income_cents,
+        "net_cents": income_cents - spend_cents,
+        "txn_count": txn_count,
+    }
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @bp.route("/")
 def index():
-    # Auto-apply default saved view when no query params present
-    if not request.query_string:
-        from web.routes.saved_views import get_default_qs
-        default_qs = get_default_qs(g.entity_key, "dashboard")
-        if default_qs and default_qs != request.query_string.decode():
-            return redirect(f"/?{default_qs}")
-
     params = _apply_date_defaults(_get_filter_params())
     conn = get_connection(g.entity_key)
     try:
@@ -767,3 +833,29 @@ def partial():
         conn.close()
     return render_template("components/dashboard_body.html", **data, params=params,
                            period_label=_format_period_label(params))
+
+
+@bp.route("/dashboard/kpi-panel")
+def kpi_panel():
+    """Render a single KPI panel partial (HTMX endpoint)."""
+    panel = request.args.get("panel", "left")
+    period = request.args.get("period", "this_month" if panel == "left" else "last_month")
+
+    start, end = _period_to_dates(period)
+    conn = get_connection(g.entity_key)
+    try:
+        kpi = _query_kpi(conn, start, end)
+    finally:
+        conn.close()
+
+    # Build drill URL helper for this panel's date range
+    def drill_url(**overrides):
+        qp = {"start": start, "end": end}
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    return render_template("components/kpi_panel.html",
+                           panel=panel, period=period, start=start, end=end,
+                           period_labels=_PERIOD_LABELS,
+                           drill_url=drill_url,
+                           **kpi)

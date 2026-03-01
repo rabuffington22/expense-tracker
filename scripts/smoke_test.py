@@ -518,17 +518,13 @@ def main() -> None:
             _check(a_row["is_default"] == 1, "default: A should be default after set")
             _check(b_row["is_default"] == 0, "default: B should not be default")
 
-            # 9l-iv. GET / with NO query params → 302 redirect to A's querystring
+            # 9l-iv. GET / with NO query params → 200 (no saved-view redirect on dashboard)
             resp = client.get("/")
-            _check(resp.status_code == 302, "default: GET / with no params should redirect")
-            _check(
-                "start=2024-06-01" in resp.headers.get("Location", ""),
-                "default: redirect Location should contain A's querystring",
-            )
+            _check(resp.status_code == 200, "default: GET / with no params should render 200")
 
-            # 9l-v. GET / WITH query params → 200, no redirect
+            # 9l-v. GET / WITH query params → 200
             resp = client.get("/?start=2025-01-01")
-            _check(resp.status_code == 200, "default: GET / with params should not redirect")
+            _check(resp.status_code == 200, "default: GET / with params should render 200")
 
             # 9m. Switch default to B — A should lose default
             resp = client.post("/saved-views/set-default", data={
