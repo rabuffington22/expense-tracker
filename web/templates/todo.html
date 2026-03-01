@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}To Do{% endblock %}
+
+{% block content %}
+<h1 class="page-title">To Do</h1>
+
+{# ── Statement Reminders ────────────────────────────────────────────────── #}
+<div class="outline-panel">
+    <div class="panel-header">Statement Reminders</div>
+
+    {# Add form #}
+    <form method="post" action="{{ url_for('todo.create_schedule') }}" class="todo-add-form">
+        <input type="text" name="name" placeholder="Source name" required class="todo-input todo-input--name">
+        <input type="number" name="statement_day" min="1" max="31" placeholder="Day" required class="todo-input todo-input--day">
+        <input type="text" name="notes" placeholder="Notes (optional)" class="todo-input todo-input--notes">
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+    </form>
+
+    {# Schedule list #}
+    {% if schedules %}
+    <div class="todo-list">
+        {% for s in schedules %}
+        <div class="todo-row">
+            <div class="todo-row-main">
+                <span class="todo-name">{{ s.name }}</span>
+                <span class="text-muted todo-meta">Day {{ s.statement_day }}
+                    &middot; {{ s.due_date.strftime('%b %-d') }}</span>
+                {% if s.notes %}
+                <span class="text-muted todo-notes">{{ s.notes }}</span>
+                {% endif %}
+            </div>
+            <div class="todo-row-actions">
+                {% if s.status == 'done' %}
+                    <span class="badge badge-green">Done</span>
+                {% elif s.status == 'due' %}
+                    <form method="post" action="{{ url_for('todo.complete_schedule', schedule_id=s.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-success btn-sm">Mark done</button>
+                    </form>
+                {% else %}
+                    <span class="badge badge-muted">Upcoming</span>
+                {% endif %}
+                <form method="post" action="{{ url_for('todo.delete_schedule', schedule_id=s.id) }}"
+                      style="display:inline;"
+                      onsubmit="return confirm('Delete this schedule?');">
+                    <button type="submit" class="btn btn-sm" style="background:transparent; color:var(--text-muted);"
+                            title="Delete">&times;</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        No statement reminders yet. Add one above.
+    </div>
+    {% endif %}
+</div>
+
+{# ── Queues ─────────────────────────────────────────────────────────────── #}
+<div class="outline-panel">
+    <div class="panel-header">Review Queues</div>
+
+    <div class="todo-list">
+        {% if counts.uncategorized > 0 %}
+        <a href="{{ url_for('transactions.index', uncategorized=1) }}" class="todo-row todo-row--link">
+            <span class="todo-name">Uncategorized transactions</span>
+            <span class="badge badge-red">{{ counts.uncategorized }}</span>
+        </a>
+        {% endif %}
+
+        {% if counts.vendor_breakdown > 0 %}
+        <a href="{{ url_for('transactions.index', vendor_breakdown=1) }}" class="todo-row todo-row--link">
+            <span class="todo-name">Vendor breakdown needed</span>
+            <span class="badge badge-red">{{ counts.vendor_breakdown }}</span>
+        </a>
+        {% endif %}
+
+        {% if counts.possible_transfer > 0 %}
+        <a href="{{ url_for('transactions.index', possible_transfer=1) }}" class="todo-row todo-row--link">
+            <span class="todo-name">Possible transfers</span>
+            <span class="badge badge-muted">{{ counts.possible_transfer }}</span>
+        </a>
+        {% endif %}
+
+        {% if counts.orders_unmatched > 0 %}
+        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Orders to match</span>
+            <span class="badge badge-blue">{{ counts.orders_unmatched }}</span>
+        </a>
+        {% endif %}
+
+        {% if counts.orders_uncategorized > 0 %}
+        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Orders to categorize</span>
+            <span class="badge badge-blue">{{ counts.orders_uncategorized }}</span>
+        </a>
+        {% endif %}
+
+        {% if counts.uncategorized == 0 and counts.vendor_breakdown == 0
+              and counts.possible_transfer == 0 and counts.orders_unmatched == 0
+              and counts.orders_uncategorized == 0 %}
+        <div class="empty-state">
+            All caught up. No items need attention.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

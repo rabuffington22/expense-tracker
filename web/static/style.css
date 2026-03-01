@@ -3432,6 +3432,92 @@ tr.is-selected > td:first-child {
     border-top: 1px solid rgba(0,0,0,0.08);
 }
 
+/* ── To Do page ────────────────────────────────────────────────────────── */
+
+.todo-add-form {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+.todo-input {
+    background: var(--control-bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--ui-radius);
+    color: var(--text);
+    padding: 0.32rem 0.6rem;
+    font-size: var(--ui-font-base);
+    font-family: inherit;
+    width: auto;
+}
+.todo-input--name  { flex: 2; min-width: 120px; }
+.todo-input--day   { flex: 0 0 60px; text-align: center; }
+.todo-input--notes { flex: 2; min-width: 100px; }
+.todo-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px rgba(10,132,255,0.25);
+}
+
+.todo-list {
+    display: flex;
+    flex-direction: column;
+}
+.todo-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 0.5px solid var(--border);
+    gap: 0.5rem;
+}
+.todo-row:last-child { border-bottom: none; }
+.todo-row--link {
+    text-decoration: none;
+    color: inherit;
+    border-radius: 6px;
+    padding: 0.4rem 0.35rem;
+    margin: 0 -0.35rem;
+    transition: background var(--transition);
+}
+.todo-row--link:hover {
+    background: var(--hover-bg);
+    text-decoration: none;
+}
+.todo-row-main {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+.todo-name {
+    font-size: var(--ui-font-base);
+    font-weight: 600;
+}
+.todo-meta {
+    font-size: var(--ui-font-xs);
+    white-space: nowrap;
+}
+.todo-notes {
+    font-size: var(--ui-font-xs);
+    font-style: italic;
+}
+.todo-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+    .todo-add-form { flex-direction: column; }
+    .todo-input { width: 100%; }
+    .todo-input--day { flex: 1; }
+    .todo-row { flex-wrap: wrap; }
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 
 /* Tablet */

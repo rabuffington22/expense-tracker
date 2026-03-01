@@ -366,6 +366,25 @@ _MIGRATION_23 = """
 ALTER TABLE saved_views ADD COLUMN is_default INTEGER NOT NULL DEFAULT 0;
 """
 
+_MIGRATION_24 = """
+CREATE TABLE IF NOT EXISTS statement_schedules (
+    id           INTEGER PRIMARY KEY,
+    name         TEXT NOT NULL,
+    statement_day INTEGER NOT NULL,
+    notes        TEXT,
+    is_active    INTEGER NOT NULL DEFAULT 1,
+    created_at   TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS statement_completions (
+    id           INTEGER PRIMARY KEY,
+    schedule_id  INTEGER NOT NULL REFERENCES statement_schedules(id) ON DELETE CASCADE,
+    period_key   TEXT NOT NULL,
+    completed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(schedule_id, period_key)
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -390,6 +409,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (21, _MIGRATION_21),
     (22, _MIGRATION_22),
     (23, _MIGRATION_23),
+    (24, _MIGRATION_24),
 ]
 
 _DEFAULT_CATEGORIES = [
