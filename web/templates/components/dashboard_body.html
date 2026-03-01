@@ -13,11 +13,9 @@
 {% set ie_max_val = ie_max|max if ie_max|max > 0 else 0 %}
 <div class="outline-band" style="margin-top: 2rem;">
   <div class="band-label">Income vs Expenses</div>
-  <div class="band-head">
-    <div class="ie-legend">
-      <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--income"></span>Income</span>
-      <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--expense"></span>Expenses</span>
-    </div>
+  <div class="ie-legend">
+    <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--income"></span>Income</span>
+    <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--expense"></span>Expenses</span>
   </div>
   <div class="band-body">
     {% if ie_max_val == 0 %}
