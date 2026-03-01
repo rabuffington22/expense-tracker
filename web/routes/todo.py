@@ -453,6 +453,7 @@ def quick_add_task():
                 (preset["name"], preset["cadence"], preset["day_of_month"], preset["notes"]),
             )
             conn.commit()
+            return redirect(url_for("todo.index", highlight=preset["name"]))
     finally:
         conn.close()
     return redirect(url_for("todo.index"))
