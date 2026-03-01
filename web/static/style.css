@@ -1613,9 +1613,9 @@ a.kpi-panel-cell:hover {
     color: var(--text-muted);
 }
 .ie-legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
 }
 .ie-legend-dot--income  { background: var(--green); }
 .ie-legend-dot--expense { background: var(--red); }
