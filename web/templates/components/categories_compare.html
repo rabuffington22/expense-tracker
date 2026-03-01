@@ -3,18 +3,6 @@
   <div class="band-label">Expense Categories</div>
   <div class="band-body">
     <div class="cat-compare">
-      <!-- Legend -->
-      <div class="cat-compare-legend">
-        <span class="cat-compare-legend-item">
-          <span class="cat-compare-swatch cat-compare-swatch--left"></span>
-          {{ left_label }}
-        </span>
-        <span class="cat-compare-legend-item">
-          <span class="cat-compare-swatch cat-compare-swatch--right"></span>
-          {{ right_label }}
-        </span>
-      </div>
-
       <!-- Y-axis + Chart area -->
       <div class="cat-compare-chart-wrap">
         <!-- Y-axis tick labels -->
@@ -266,6 +254,22 @@
 
   /* Close on scroll (prevents stale position) */
   window.addEventListener('scroll', hideTip, {passive: true});
+})();
+</script>
+<!-- Populate the compare-group legend with period labels -->
+<script>
+(function() {
+  var target = document.getElementById('compare-legend');
+  if (!target) return;
+  target.innerHTML =
+    '<span class="cat-compare-legend-item">' +
+      '<span class="cat-compare-swatch cat-compare-swatch--left"></span>' +
+      {{ left_label|tojson }} +
+    '</span>' +
+    '<span class="cat-compare-legend-item">' +
+      '<span class="cat-compare-swatch cat-compare-swatch--right"></span>' +
+      {{ right_label|tojson }} +
+    '</span>';
 })();
 </script>
 {% endif %}

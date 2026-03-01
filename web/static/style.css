@@ -736,6 +736,67 @@ h2 {
     border: none;
 }
 
+/* ── Compare group (wraps KPI panels + Expense Categories) ────────────── */
+.compare-group {
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-xl);
+    padding: 1.2rem 1rem 1rem;
+    background: transparent;
+}
+:root[data-theme="light"] .compare-group {
+    border-color: rgba(0,0,0,0.08);
+}
+.compare-group-label {
+    position: absolute;
+    top: -0.55rem;
+    left: 1rem;
+    padding: 0.1rem 0.55rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 0.7;
+    background: var(--bg);
+    border-radius: 999px;
+}
+.compare-group-legend {
+    position: absolute;
+    top: -0.55rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.1rem 0.55rem;
+    background: var(--bg);
+    border-radius: 999px;
+}
+/* Flatten nested outline-band inside compare-group */
+.compare-group .outline-band {
+    border: none;
+    border-radius: 0;
+    padding: 0.6rem 0 0;
+}
+.compare-group .outline-band .band-label {
+    position: static;
+    display: inline-block;
+    padding: 0;
+    margin: 0 0 0.6rem 0.1rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 0.65;
+    background: none;
+    border: none;
+}
+/* KPI row inside compare group needs no extra top margin */
+.compare-group .kpi-compare-row {
+    margin-bottom: 0.5rem;
+}
+
 /* ── Flat band interior components ─────────────────────────────────────── */
 .band-head {
     display: flex;
