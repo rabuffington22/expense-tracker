@@ -130,9 +130,8 @@
     var html = '';
     html += '<div class="cat-tip-title">' + esc(catName) + '</div>';
 
-    /* Primary line (hovered period) */
-    html += '<div class="cat-tip-primary">';
-    html += '<span class="cat-tip-dot cat-tip-dot--' + side + '"></span>';
+    /* Primary line (hovered period) — colored by series */
+    html += '<div class="cat-tip-primary cat-tip-primary--' + side + '">';
     html += '<span class="cat-tip-pri-label">' + esc(priLabel) + '</span>';
     html += '<span class="cat-tip-pri-amount">' + fmtDollars(primaryC) + '</span>';
     html += '</div>';
@@ -145,7 +144,7 @@
 
     /* Delta line */
     html += '<div class="cat-tip-delta">';
-    html += 'delta ' + fmtDollars(deltaAbs);
+    html += '\u0394 ' + fmtDollars(deltaAbs);
     if (rightC) {
       html += ' (' + Math.abs(deltaPct).toFixed(1) + '%)';
     }

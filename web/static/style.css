@@ -1444,13 +1444,11 @@ a.kpi-panel-cell:hover {
     z-index: 1000;
     max-width: 260px;
     min-width: 200px;
-    background: rgba(44, 44, 46, 0.88);
-    backdrop-filter: blur(40px) saturate(1.8);
-    -webkit-backdrop-filter: blur(40px) saturate(1.8);
-    border: 0.5px solid rgba(255,255,255,0.14);
+    background: #000000;
+    border: 0.5px solid rgba(255,255,255,0.12);
     border-radius: 14px;
     padding: 11px 13px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.36), 0 0 0 0.5px rgba(255,255,255,0.08);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.06);
     font-family: var(--font);
     pointer-events: auto;
     opacity: 0;
@@ -1479,25 +1477,20 @@ a.kpi-panel-cell:hover {
     line-height: 1.2;
 }
 
-/* Primary line (hovered period) */
+/* Primary line (hovered period) — entire line tinted by series color */
 .cat-tip-primary {
     display: flex;
     align-items: center;
     gap: 6px;
     margin-bottom: 3px;
 }
-.cat-tip-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 2px;
-    flex-shrink: 0;
-}
-.cat-tip-dot--left  { background: var(--series-left); }
-.cat-tip-dot--right { background: var(--series-right); }
+.cat-tip-primary--left  .cat-tip-pri-label,
+.cat-tip-primary--left  .cat-tip-pri-amount { color: var(--series-left); }
+.cat-tip-primary--right .cat-tip-pri-label,
+.cat-tip-primary--right .cat-tip-pri-amount { color: var(--series-right); }
 .cat-tip-pri-label {
     font-size: 0.68rem;
     font-weight: 500;
-    color: var(--text-secondary);
     flex: 1;
     min-width: 0;
     overflow: hidden;
@@ -1508,7 +1501,6 @@ a.kpi-panel-cell:hover {
     font-size: 0.82rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    color: var(--text);
 }
 
 /* Secondary line */
@@ -1516,7 +1508,6 @@ a.kpi-panel-cell:hover {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding-left: 13px;  /* align with primary text (dot width + gap) */
     margin-bottom: 6px;
 }
 .cat-tip-sec-label {
@@ -1542,7 +1533,6 @@ a.kpi-panel-cell:hover {
     font-weight: 500;
     font-variant-numeric: tabular-nums;
     color: var(--text-muted);
-    padding-left: 13px;
     margin-bottom: 2px;
     line-height: 1.3;
 }
