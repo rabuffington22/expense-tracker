@@ -725,8 +725,37 @@ def main() -> None:
         _check("todo-pill" in body, "todo pills: pill class should appear")
         _check("todo-pill-badge" in body, "todo pills: badge class should appear")
         _check("Large txns" in body, "todo pills: 'Large txns' pill should appear")
+        _check("New merchants" in body, "todo pills: 'New merchants' pill should appear")
         # Uncategorized pill (fixture txns have no category)
         _check("Uncategorized" in body, "todo pills: 'Uncategorized' pill should appear")
+
+        # 10b3. Quick-add presets
+        _check("todo-preset-pill" in body, "todo presets: preset pill class should appear")
+        resp = client.post("/todo/tasks/quick-add", data={"preset": "us_bank_login"}, follow_redirects=True)
+        _check(resp.status_code == 200, "todo quick-add: expected 200")
+        body = resp.get_data(as_text=True)
+        _check("US Bank login" in body, "todo quick-add: preset task should appear")
+
+        conn_qa = get_connection("personal")
+        qa_task = conn_qa.execute(
+            "SELECT id, cadence FROM periodic_tasks WHERE name = 'US Bank login'"
+        ).fetchone()
+        conn_qa.close()
+        _check(qa_task is not None, "todo quick-add: task should exist in DB")
+        _check(qa_task["cadence"] == "quarterly", "todo quick-add: US Bank login should be quarterly")
+        qa_task_id = qa_task["id"]
+
+        # Idempotent: second quick-add should not create duplicate
+        resp = client.post("/todo/tasks/quick-add", data={"preset": "us_bank_login"}, follow_redirects=True)
+        conn_qa = get_connection("personal")
+        qa_count = conn_qa.execute(
+            "SELECT COUNT(*) FROM periodic_tasks WHERE name = 'US Bank login'"
+        ).fetchone()[0]
+        conn_qa.close()
+        _check(qa_count == 1, "todo quick-add idempotent: should still be exactly 1 row")
+
+        # Clean up quick-add task
+        client.post(f"/todo/tasks/delete/{qa_task_id}", follow_redirects=True)
 
         # ── 10c. Statement schedule CRUD ──────────────────────────────
         resp = client.post("/todo/schedules/create", data={
