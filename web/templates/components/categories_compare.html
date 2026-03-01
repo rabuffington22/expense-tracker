@@ -122,12 +122,10 @@
     var priLabel  = side === 'left' ? meta.leftLabel : meta.rightLabel;
     var secLabel  = side === 'left' ? meta.rightLabel : meta.leftLabel;
 
-    /* Delta is always Left - Right */
+    /* Delta is always Left - Right (no sign, no color) */
     var deltaC    = leftC - rightC;
     var deltaPct  = rightC ? ((leftC - rightC) / rightC * 100) : (leftC ? 100 : 0);
-    var deltaSign = deltaC > 0 ? '+' : (deltaC < 0 ? '\u2212' : '');
     var deltaAbs  = Math.abs(deltaC);
-    var deltaCls  = deltaC > 0 ? 'cat-tip-delta--pos' : (deltaC < 0 ? 'cat-tip-delta--neg' : '');
 
     var html = '';
     html += '<div class="cat-tip-title">' + esc(catName) + '</div>';
@@ -146,10 +144,10 @@
     html += '</div>';
 
     /* Delta line */
-    html += '<div class="cat-tip-delta ' + deltaCls + '">';
-    html += '\u0394 ' + deltaSign + fmtDollars(deltaAbs);
+    html += '<div class="cat-tip-delta">';
+    html += 'delta ' + fmtDollars(deltaAbs);
     if (rightC) {
-      html += ' (' + deltaSign + Math.abs(deltaPct).toFixed(1) + '%)';
+      html += ' (' + Math.abs(deltaPct).toFixed(1) + '%)';
     }
     html += '</div>';
 
