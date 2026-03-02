@@ -4834,10 +4834,14 @@ select.input-sm {
     background: rgba(167,139,250,0.05);
     border-color: rgba(167,139,250,0.12);
 }
+.cf-box-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+}
 .cf-box-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 0.3rem;
 }
 .cf-box-name {
