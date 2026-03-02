@@ -160,16 +160,14 @@
             {# Balance — editable #}
             <div class="cf-box-balance">
                 <span class="cf-box-label">Balance</span>
-                <span class="cf-box-value cf-modal-editable"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input cf-modal-input--balance" onfocus="this.select()"></span>
+                <div class="cf-modal-balance-stack">
+                    <span class="cf-box-value cf-modal-editable"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input cf-modal-input--balance" onfocus="this.select()"></span>
+                    <span class="cf-credit-line cf-modal-editable cf-modal-limit-line" id="cf-modal-limit-wrap" hidden><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()"></span>
+                </div>
             </div>
 
             {# Credit card fields — shown/hidden by JS #}
             <div id="cf-modal-card-fields" hidden>
-                <div class="cf-box-balance">
-                    <span class="cf-box-label">Limit</span>
-                    <span class="cf-credit-line cf-modal-editable"><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()"></span>
-                </div>
-
                 <div class="cf-pymt-divider"></div>
 
                 <span class="cf-credit-line cf-pymt-line cf-modal-pymt-edit">
@@ -223,13 +221,16 @@ function cfOpenModal(btn) {
 
     /* Credit card fields */
     var cardFields = document.getElementById('cf-modal-card-fields');
+    var limitWrap = document.getElementById('cf-modal-limit-wrap');
     if (isCard) {
         cardFields.hidden = false;
+        limitWrap.hidden = false;
         document.getElementById('cf-modal-limit').value = d.limit;
         document.getElementById('cf-modal-due-day').value = d.dueDay;
         document.getElementById('cf-modal-payment').value = d.payment;
     } else {
         cardFields.hidden = true;
+        limitWrap.hidden = true;
     }
 
     /* Copy upcoming charges from the card */
