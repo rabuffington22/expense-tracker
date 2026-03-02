@@ -4858,6 +4858,14 @@ select.input-sm {
 .cf-box-value--inline {
     margin-left: auto;
     flex-shrink: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.cf-card-subline {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -0.15rem;
 }
 .cf-box-name {
     font-size: var(--ui-font-sm);
