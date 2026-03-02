@@ -25,7 +25,7 @@
 /* ── Dark Theme ────────────────────────────────────────────────────────── */
 :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg:          #000000;
+    --bg:          #0c0c0c;
     --bg-elevated: #1c1c1e;
     --bg-card:     #1c1c1e;
     --bg-hover:    #2c2c2e;
