@@ -3498,7 +3498,10 @@ tr.is-selected > td:first-child {
     align-items: center;
     gap: 0.35rem;
     flex-shrink: 0;
-    margin-left: 0.5rem;
+    margin-left: auto;
+}
+.todo-page .outline-panel {
+    max-width: 420px;
 }
 .todo-chevron {
     font-size: 1.1rem;
