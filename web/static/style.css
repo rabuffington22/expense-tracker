@@ -3471,7 +3471,6 @@ tr.is-selected > td:first-child {
 .todo-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 0.25rem 0;
     border-bottom: 0.5px solid rgba(255,255,255,0.06);
     gap: 0.35rem;
@@ -3499,7 +3498,7 @@ tr.is-selected > td:first-child {
     align-items: center;
     gap: 0.35rem;
     flex-shrink: 0;
-    margin-left: auto;
+    margin-left: 0.5rem;
 }
 .todo-chevron {
     font-size: 1.1rem;
