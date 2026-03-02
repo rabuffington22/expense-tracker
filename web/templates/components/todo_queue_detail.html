@@ -55,9 +55,12 @@
 {% endif %}
 
 <div class="tq-detail-footer">
-    <form method="post" action="{{ url_for('todo.queue_dismiss') }}" class="tq-dismiss-form">
-        <input type="hidden" name="queue_type" value="{{ queue_type }}">
-        <button type="submit" class="btn btn-secondary btn-sm tq-dismiss-btn">Dismiss All</button>
-    </form>
     <a href="{{ fallback_url }}" class="tq-view-all">View all in Transactions &#x203A;</a>
+    <div class="tq-footer-buttons">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="tqCloseModal()">Come Back Later</button>
+        <form method="post" action="{{ url_for('todo.queue_dismiss') }}" class="tq-dismiss-form">
+            <input type="hidden" name="queue_type" value="{{ queue_type }}">
+            <button type="submit" class="btn btn-primary btn-sm tq-dismiss-btn">Dismiss All</button>
+        </form>
+    </div>
 </div>

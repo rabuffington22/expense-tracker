@@ -3652,9 +3652,13 @@ tr.is-selected > td:first-child {
 :root[data-theme="light"] .tq-detail-footer {
     border-top-color: rgba(0,0,0,0.06);
 }
-.tq-dismiss-form {
-    margin-bottom: 0.4rem;
+.tq-footer-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
 }
+.tq-dismiss-form { display: inline; }
 .tq-dismiss-btn {
     font-size: var(--ui-font-xs);
 }
