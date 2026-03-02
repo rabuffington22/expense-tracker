@@ -4844,6 +4844,10 @@ select.input-sm {
     align-items: center;
     gap: 0.3rem;
 }
+.cf-box-value--inline {
+    margin-left: auto;
+    flex-shrink: 0;
+}
 .cf-box-name {
     font-size: var(--ui-font-sm);
     font-weight: 600;

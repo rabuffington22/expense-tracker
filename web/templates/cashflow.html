@@ -47,11 +47,7 @@
         {% if acct.balance_source == 'plaid' %}
         <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% endif %}
-    </div>
-
-    <div class="cf-box-balance">
-        <span class="cf-box-label">Balance</span>
-        <span class="cf-box-value {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
+        <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_cents(acct.balance_cents) }}
         </span>
     </div>
