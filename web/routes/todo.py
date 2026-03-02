@@ -205,22 +205,29 @@ def _get_queue_counts(conn) -> dict:
     except Exception:
         pass  # Table may not exist yet pre-migration
 
+    # Load per-item dismissals
+    lt_item_dismissed = _get_item_dismissals(conn, "large_txns")
+    nm_item_dismissed = _get_item_dismissals(conn, "new_merchants")
+
     # Large transactions (>=500, last 30 days, exclude transfers/CC payments)
     lt_cutoff = dismissals.get("large_txns", "")
     lt_start = max(cutoff_30, lt_cutoff) if lt_cutoff else cutoff_30
-    counts["large_txns"] = conn.execute(
-        "SELECT COUNT(*) FROM transactions "
+    lt_rows = conn.execute(
+        "SELECT transaction_id FROM transactions "
         "WHERE ABS(amount_cents) >= 50000 "
         "AND date > ? AND date <= ? "
         "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')",
         (lt_start, today_iso),
-    ).fetchone()[0]
+    ).fetchall()
+    counts["large_txns"] = sum(
+        1 for r in lt_rows if r[0] not in lt_item_dismissed
+    )
 
     # New merchants (last 30 days not seen in prior 90 days)
     nm_cutoff = dismissals.get("new_merchants", "")
     nm_start = max(cutoff_30, nm_cutoff) if nm_cutoff else cutoff_30
-    counts["new_merchants"] = conn.execute(
-        "SELECT COUNT(DISTINCT merchant_canonical) FROM transactions "
+    nm_rows = conn.execute(
+        "SELECT DISTINCT merchant_canonical FROM transactions "
         "WHERE date > ? AND date <= ? "
         "AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
         "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment') "
@@ -230,7 +237,10 @@ def _get_queue_counts(conn) -> dict:
         "  AND merchant_canonical IS NOT NULL AND merchant_canonical != ''"
         ")",
         (nm_start, today_iso, cutoff_120, cutoff_30),
-    ).fetchone()[0]
+    ).fetchall()
+    counts["new_merchants"] = sum(
+        1 for r in nm_rows if r[0] not in nm_item_dismissed
+    )
 
     # Store date range strings for link building
     counts["_30d_start"] = cutoff_30
@@ -253,6 +263,18 @@ def _get_dismissal(conn, queue_type: str) -> str:
         return ""
 
 
+def _get_item_dismissals(conn, queue_type: str) -> set:
+    """Return set of dismissed item_keys for a queue type."""
+    try:
+        rows = conn.execute(
+            "SELECT item_key FROM queue_item_dismissals WHERE queue_type=?",
+            (queue_type,),
+        ).fetchall()
+        return {r[0] for r in rows}
+    except Exception:
+        return set()
+
+
 def _get_large_txns(conn) -> list[dict]:
     """Return large transactions (>=$500) from the last 30 days."""
     today = date.today()
@@ -260,8 +282,9 @@ def _get_large_txns(conn) -> list[dict]:
     today_iso = today.isoformat()
     dismissed = _get_dismissal(conn, "large_txns")
     start = max(cutoff, dismissed) if dismissed else cutoff
+    dismissed_items = _get_item_dismissals(conn, "large_txns")
     rows = conn.execute(
-        "SELECT date, merchant_canonical, description_raw, "
+        "SELECT transaction_id, date, merchant_canonical, description_raw, "
         "       amount_cents, category "
         "FROM transactions "
         "WHERE ABS(amount_cents) >= 50000 "
@@ -271,7 +294,8 @@ def _get_large_txns(conn) -> list[dict]:
         "ORDER BY ABS(amount_cents) DESC",
         (start, today_iso),
     ).fetchall()
-    return [dict(r) for r in rows]
+    result = [dict(r) for r in rows if r["transaction_id"] not in dismissed_items]
+    return result
 
 
 def _get_new_merchants(conn) -> list[dict]:
@@ -282,6 +306,7 @@ def _get_new_merchants(conn) -> list[dict]:
     today_iso = today.isoformat()
     dismissed = _get_dismissal(conn, "new_merchants")
     start = max(cutoff_30, dismissed) if dismissed else cutoff_30
+    dismissed_items = _get_item_dismissals(conn, "new_merchants")
     rows = conn.execute(
         "SELECT merchant_canonical, "
         "       MIN(date) AS first_date, "
@@ -301,7 +326,8 @@ def _get_new_merchants(conn) -> list[dict]:
         "ORDER BY total_cents ASC",
         (start, today_iso, cutoff_120, cutoff_30),
     ).fetchall()
-    return [dict(r) for r in rows]
+    result = [dict(r) for r in rows if r["merchant_canonical"] not in dismissed_items]
+    return result
 
 
 # ── Routes ───────────────────────────────────────────────────────────────────
@@ -396,10 +422,35 @@ def queue_dismiss():
             "dismissed_at=datetime('now')",
             (queue_type, today_iso),
         )
+        # Also clear per-item dismissals since bulk dismiss covers them
+        conn.execute(
+            "DELETE FROM queue_item_dismissals WHERE queue_type=?",
+            (queue_type,),
+        )
         conn.commit()
     finally:
         conn.close()
     return redirect(url_for("todo.index"))
+
+
+@bp.route("/queue/dismiss-item", methods=["POST"])
+def queue_dismiss_item():
+    """Dismiss a single item from a queue. Returns empty HTML (HTMX removes row)."""
+    queue_type = request.form.get("queue_type", "")
+    item_key = request.form.get("item_key", "")
+    if queue_type not in ("large_txns", "new_merchants") or not item_key:
+        return "", 400
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "INSERT OR IGNORE INTO queue_item_dismissals (queue_type, item_key) "
+            "VALUES (?, ?)",
+            (queue_type, item_key),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return ""  # HTMX will remove the row via hx-swap="outerHTML"
 
 
 # ── Statement schedule routes ─────────────────────────────────────────────────

@@ -16,6 +16,7 @@
                 <th>Merchant</th>
                 <th class="text-right">Amount</th>
                 <th>Category</th>
+                <th class="tq-col-dismiss"></th>
             </tr>
         </thead>
         <tbody>
@@ -25,10 +26,17 @@
                 <td>{{ txn.merchant_canonical or (txn.description_raw[:40] if txn.description_raw else '') }}</td>
                 <td class="text-right">{{ fmt_cents(txn.amount_cents) }}</td>
                 <td>{{ txn.category or '' }}</td>
+                <td class="tq-cell-dismiss">
+                    <button type="button" class="tq-item-dismiss"
+                            hx-post="{{ url_for('todo.queue_dismiss_item') }}"
+                            hx-vals='{"queue_type": "large_txns", "item_key": "{{ txn.transaction_id }}"}'
+                            hx-target="closest tr" hx-swap="outerHTML"
+                            title="Dismiss">&times;</button>
+                </td>
             </tr>
             {% endfor %}
             {% if not txns %}
-            <tr><td colspan="4" class="tq-empty">No large transactions found.</td></tr>
+            <tr><td colspan="5" class="tq-empty">No large transactions found.</td></tr>
             {% endif %}
         </tbody>
     </table>
@@ -38,14 +46,21 @@
 <div class="tq-merchant-list">
     {% for m in merchants %}
     <div class="tq-merchant-row">
-        <span class="tq-merchant-name">{{ m.merchant_canonical }}</span>
-        <span class="tq-merchant-meta">
-            {{ fmt_date(m.first_date) }}
-            &middot;
-            {{ m.txn_count }} txn{{ 's' if m.txn_count != 1 else '' }}
-            &middot;
-            {{ fmt_cents(m.total_cents) }}
-        </span>
+        <div class="tq-merchant-info">
+            <span class="tq-merchant-name">{{ m.merchant_canonical }}</span>
+            <span class="tq-merchant-meta">
+                {{ fmt_date(m.first_date) }}
+                &middot;
+                {{ m.txn_count }} txn{{ 's' if m.txn_count != 1 else '' }}
+                &middot;
+                {{ fmt_cents(m.total_cents) }}
+            </span>
+        </div>
+        <button type="button" class="tq-item-dismiss"
+                hx-post="{{ url_for('todo.queue_dismiss_item') }}"
+                hx-vals='{"queue_type": "new_merchants", "item_key": "{{ m.merchant_canonical }}"}'
+                hx-target="closest .tq-merchant-row" hx-swap="outerHTML"
+                title="Dismiss">&times;</button>
     </div>
     {% endfor %}
     {% if not merchants %}

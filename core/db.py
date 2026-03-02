@@ -458,6 +458,16 @@ CREATE TABLE IF NOT EXISTS queue_dismissals (
 );
 """
 
+_MIGRATION_31 = """
+CREATE TABLE IF NOT EXISTS queue_item_dismissals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    queue_type TEXT NOT NULL,
+    item_key TEXT NOT NULL,
+    dismissed_at TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(queue_type, item_key)
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -489,6 +499,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (28, _MIGRATION_28),
     (29, _MIGRATION_29),
     (30, _MIGRATION_30),
+    (31, _MIGRATION_31),
 ]
 
 _DEFAULT_CATEGORIES = [

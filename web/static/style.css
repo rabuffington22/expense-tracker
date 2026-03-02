@@ -3615,6 +3615,29 @@ tr.is-selected > td:first-child {
 }
 .tq-table tbody tr:last-child { border-bottom: none; }
 
+/* Per-item dismiss button */
+.tq-col-dismiss { width: 28px; }
+.tq-cell-dismiss { text-align: center; padding: 0 !important; }
+.tq-item-dismiss {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.15rem 0.3rem;
+    border-radius: 4px;
+    opacity: 0.5;
+    transition: opacity 0.15s, background 0.15s;
+}
+.tq-item-dismiss:hover {
+    opacity: 1;
+    background: rgba(255,255,255,0.08);
+}
+:root[data-theme="light"] .tq-item-dismiss:hover {
+    background: rgba(0,0,0,0.06);
+}
+
 /* New merchant rows */
 .tq-merchant-list {
     display: flex;
@@ -3623,14 +3646,22 @@ tr.is-selected > td:first-child {
 .tq-merchant-row {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     padding: 0.35rem 0;
     border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    gap: 0.4rem;
 }
 :root[data-theme="light"] .tq-merchant-row {
     border-bottom-color: rgba(0,0,0,0.06);
 }
 .tq-merchant-row:last-child { border-bottom: none; }
+.tq-merchant-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex: 1;
+    min-width: 0;
+}
 
 .tq-merchant-name {
     font-size: var(--ui-font-sm);
@@ -3642,21 +3673,22 @@ tr.is-selected > td:first-child {
     white-space: nowrap;
 }
 
-/* Footer link */
+/* Footer — "View all" left, buttons right */
 .tq-detail-footer {
     margin-top: 0.5rem;
     padding-top: 0.4rem;
     border-top: 0.5px solid rgba(255,255,255,0.06);
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 :root[data-theme="light"] .tq-detail-footer {
     border-top-color: rgba(0,0,0,0.06);
 }
 .tq-footer-buttons {
     display: flex;
-    justify-content: flex-end;
     gap: 0.4rem;
-    margin-top: 0.4rem;
+    align-items: center;
 }
 .tq-dismiss-form { display: inline; }
 .tq-dismiss-btn {
@@ -3686,6 +3718,7 @@ tr.is-selected > td:first-child {
 @media (max-width: 480px) {
     .tq-modal-card { width: 100%; max-width: 100vw; }
     .tq-merchant-row { flex-wrap: wrap; }
+    .tq-detail-footer { flex-wrap: wrap; gap: 0.3rem; }
 }
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
