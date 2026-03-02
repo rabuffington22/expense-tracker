@@ -311,12 +311,16 @@ New `/cashflow` page showing per-account balances and upcoming recurring charges
 12. **Payment line left-justified** — "$150.00 due Mar 20" left-aligned on both card and modal. CSS cascade fix: `.cf-pymt-line` placed after `.cf-credit-line` so `text-align: left` overrides `text-align: right`. Modal uses `justify-content: flex-start`.
 13. **Manual recurring charges** — "Add Manual Recurring" labeled section inside edit modal with inline form: merchant name, amount, "on" label, day of month, + button. Row constrained to 50% width. POST `/cashflow/recurring/add`. Delete via POST `/cashflow/recurring/delete/<id>`. `_get_manual_recurring()` calculates next occurrence date (handles month rollover + day clamping).
 14. **CSS specificity** — Modal inputs use `input.cf-modal-input` selector (not just `.cf-modal-input`) to override global `input[type="text"]` styles. Explicit resets for border-radius, box-shadow, appearance.
-15. **Bank boxes** — Account name, pencil edit icon, balance display, upcoming charges section.
-16. **Credit card boxes** — Same as bank plus: credit limit display, payment info (amount due on date), divider line with vertical spacing.
-17. **Sidebar refinements** — Width shrunk to 210px. Entity toggle `max-width: 181px` to align with LEDGER OAK text. Nav links `max-width: 178.5px` so active highlight aligns with toggle right edge. "Expense Tracker" subtitle centered under "LEDGER OAK" with `text-indent` compensating for `letter-spacing`.
-18. **Color palette refresh** — LL accent: gold → dusty mauve (`#c4909a`). Dashboard series: blue `#14a9f8` (Personal blue) + violet `#a78bfa`. Green/red harmonized: `#4ade80`/`#f87171` (dark), `#22c55e`/`#ef4444` (light) — cooler tones to match new palette.
-19. **CSS** — `.cf-*` scoped styles. Bank grid: `repeat(4, 1fr)`. Card grid: `auto-fill, minmax(140px, 1fr)` for equal-width cards. Balance text 1.15rem, upcoming text 0.45rem.
-20. **Deploy** — Two gunicorn workers (`-w 2`) to prevent single-worker blocking. `--graceful-timeout 5` added.
+15. **Clickable cards** — Entire card is clickable to open edit modal (no pencil icon). Data attributes and `onclick` on the `.cf-box` div. Event guard (`evt.target.closest('button'/'form'/'a')`) prevents modal from opening when clicking nested interactive elements (e.g. manual recurring delete buttons).
+16. **Glass-like card backgrounds** — Banks: `rgba(10,132,255,0.06)` blue tint. Credit cards: `rgba(167,139,250,0.06)` soft violet tint. Both with `backdrop-filter: blur(16px)` and color-matched `1px solid` borders. Light-mode variants at slightly different opacities. Hover states bump opacity to 0.10.
+17. **Inline balance on all cards** — Balance right-aligned on header line next to account name (`.cf-box-value--inline`). "Balance" label removed from both bank and credit card boxes. Account name at 0.60rem, balance at 0.72rem for compact fit. Credit cards show credit limit as a subtle right-aligned subline below header.
+18. **Bank boxes** — Account name + balance on one line, upcoming charges section below.
+19. **Credit card boxes** — Same header line as banks, plus credit limit subline, payment info (amount due on date), and upcoming charges.
+20. **Modal × removed** — Close button removed from modal header. Modal closes via Cancel button, clicking outside (scrim), or Escape key.
+21. **Sidebar refinements** — Width shrunk to 210px. Entity toggle `max-width: 181px` to align with LEDGER OAK text. Nav links `max-width: 178.5px` so active highlight aligns with toggle right edge. "Expense Tracker" subtitle centered under "LEDGER OAK" with `text-indent` compensating for `letter-spacing`.
+22. **Color palette refresh** — LL accent: gold → dusty mauve (`#c4909a`). Dashboard series: blue `#14a9f8` (Personal blue) + violet `#a78bfa`. Green/red harmonized: `#4ade80`/`#f87171` (dark), `#22c55e`/`#ef4444` (light) — cooler tones to match new palette.
+23. **CSS** — `.cf-*` scoped styles. Bank grid: `repeat(4, 1fr)`. Card grid: `auto-fill, minmax(140px, 1fr)` for equal-width cards. Upcoming text 0.45rem.
+24. **Deploy** — Two gunicorn workers (`-w 2`) to prevent single-worker blocking. `--graceful-timeout 5` added.
 
 ### 2026-03-01 — PR #73: Per-entity To Do page (statement reminders + review queues)
 New `/todo` page combining ops checklist functionality with data-driven review queues.
