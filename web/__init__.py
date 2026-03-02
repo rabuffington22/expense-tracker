@@ -30,7 +30,7 @@ from core.db import init_db, get_connection
 _ENTITY_MAP = {"Personal": "personal", "BFM": "company", "LL": "luxelegacy"}
 _ENTITY_COLORS = {
     "Personal": "#30d158",
-    "BFM": "#0a84ff",
+    "BFM": "#14a9f8",
     "LL": "#bf5af2",
 }
 _ENTITY_LABELS = {
