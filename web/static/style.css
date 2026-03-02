@@ -4709,6 +4709,7 @@ select.input-sm {
     max-width: 90vw;
     box-shadow: 0 16px 48px rgba(0,0,0,0.45);
     padding: 0.75rem;
+    background: var(--bg-card);
 }
 .cf-modal-card .cf-box-header { margin-bottom: 0.3rem; }
 .cf-modal-card .cf-edit-btn { font-size: 1.2rem; line-height: 1; }
