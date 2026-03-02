@@ -586,6 +586,13 @@ def init_db(entity: str) -> None:
         try:
             if conn.execute("SELECT COUNT(*) FROM subcategories").fetchone()[0] == 0:
                 now = datetime.now(timezone.utc).isoformat()
+                # Add "General" subcategory to every category
+                for cat in _DEFAULT_CATEGORIES:
+                    conn.execute(
+                        "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
+                        "VALUES (?,?,?)",
+                        (cat, "General", now),
+                    )
                 for cat, subs in _DEFAULT_SUBCATEGORIES.items():
                     for sub in subs:
                         conn.execute(

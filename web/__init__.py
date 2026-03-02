@@ -65,7 +65,7 @@ def get_categories(entity_key):
 
 
 def get_subcategories(entity_key, category):
-    """Return subcategory names for a given category. Always includes 'Unknown'."""
+    """Return subcategory names for a given category. General first, Unknown last."""
     conn = get_connection(entity_key)
     try:
         rows = conn.execute(
@@ -73,11 +73,20 @@ def get_subcategories(entity_key, category):
             (category,),
         ).fetchall()
         subs = [r[0] for r in rows]
+        if "General" not in subs:
+            subs.insert(0, "General")
         if "Unknown" not in subs:
             subs.append("Unknown")
-        return subs
+        # Move General to top, Unknown to bottom
+        ordered = []
+        if "General" in subs:
+            ordered.append("General")
+        ordered.extend(s for s in subs if s not in ("General", "Unknown"))
+        if "Unknown" in subs:
+            ordered.append("Unknown")
+        return ordered
     except Exception:
-        return ["Unknown"]
+        return ["General", "Unknown"]
     finally:
         conn.close()
 
