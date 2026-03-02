@@ -266,6 +266,11 @@ def _fetch_plaid_liabilities(conn) -> dict:
     Returns dict keyed by plaid_account_id with credit card details.
     Silently returns empty dict if Plaid is not configured or fails.
     """
+    import os
+    # Skip entirely if Plaid env vars aren't set — avoids hanging on API calls
+    if not os.environ.get("PLAID_CLIENT_ID") or not os.environ.get("PLAID_SECRET"):
+        return {}
+
     try:
         from core.plaid_client import get_liabilities
     except (ImportError, RuntimeError):
