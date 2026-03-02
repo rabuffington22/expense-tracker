@@ -4649,7 +4649,7 @@ select.input-sm {
     letter-spacing: 0.05em;
 }
 .cf-box-value {
-    font-size: 1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
@@ -4789,7 +4789,7 @@ select.input-sm {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: var(--ui-font-xs);
+    font-size: 0.6rem;
 }
 .cf-upcoming-merchant {
     white-space: nowrap;
