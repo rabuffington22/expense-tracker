@@ -445,6 +445,10 @@ CREATE TABLE IF NOT EXISTS manual_recurring (
 );
 """
 
+_MIGRATION_29 = """
+ALTER TABLE account_balances ADD COLUMN payment_due_date TEXT;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -474,6 +478,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (26, _MIGRATION_26),
     (27, _MIGRATION_27),
     (28, _MIGRATION_28),
+    (29, _MIGRATION_29),
 ]
 
 _DEFAULT_CATEGORIES = [

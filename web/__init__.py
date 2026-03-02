@@ -177,10 +177,22 @@ def create_app():
         sign = "\u2212" if cents < 0 else ""
         return f"{sign}${abs(cents) / 100:,.0f}"
 
+    def fmt_due_date(date_str):
+        """Format YYYY-MM-DD as 'Apr 15' or 'Apr 15, 2025' if not current year."""
+        try:
+            from datetime import datetime
+            d = datetime.strptime(date_str, "%Y-%m-%d")
+            if d.year == datetime.now().year:
+                return d.strftime("%b %-d")
+            return d.strftime("%b %-d, %Y")
+        except (ValueError, TypeError):
+            return date_str or ""
+
     app.jinja_env.globals["fmt_date"] = fmt_date
     app.jinja_env.globals["fmt_month_short"] = fmt_month_short
     app.jinja_env.globals["fmt_cents"] = fmt_cents
     app.jinja_env.globals["fmt_dollars"] = fmt_dollars
+    app.jinja_env.globals["fmt_due_date"] = fmt_due_date
     app.jinja_env.globals["cache_bust"] = str(int(time.time()))
 
     # ── Register blueprints ──────────────────────────────────────────────────

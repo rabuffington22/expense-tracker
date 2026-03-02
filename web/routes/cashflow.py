@@ -318,8 +318,9 @@ def _apply_plaid_liabilities(accts: dict, liabilities: dict, conn):
             limit_cents = int(round(liab["credit_limit"] * 100))
             acct["credit_limit_cents"] = limit_cents
 
-        # Payment info from Plaid
+        # Payment info from Plaid — store full date
         if liab["next_payment_due_date"]:
+            acct["payment_due_date"] = liab["next_payment_due_date"]
             try:
                 due_date = datetime.datetime.strptime(
                     liab["next_payment_due_date"], "%Y-%m-%d"
@@ -334,12 +335,13 @@ def _apply_plaid_liabilities(accts: dict, liabilities: dict, conn):
         # Persist to DB so values are cached between Plaid refreshes
         conn.execute(
             "UPDATE account_balances SET balance_cents=?, credit_limit_cents=?, "
-            "payment_due_day=?, payment_amount_cents=?, balance_source='plaid', "
-            "updated_at=? WHERE id=?",
+            "payment_due_day=?, payment_due_date=?, payment_amount_cents=?, "
+            "balance_source='plaid', updated_at=? WHERE id=?",
             (
                 acct["balance_cents"],
                 acct.get("credit_limit_cents", 0),
                 acct.get("payment_due_day"),
+                acct.get("payment_due_date"),
                 acct.get("payment_amount_cents", 0),
                 now,
                 acct["id"],
