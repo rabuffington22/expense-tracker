@@ -294,6 +294,8 @@ def update_card(acct_id):
     due_day = request.form.get("payment_due_day", "").strip()
     payment_cents = _parse_dollar_to_cents(request.form.get("payment_amount", "0"))
     now = datetime.datetime.now().isoformat()
+    import sys
+    print(f"[CF DEBUG] acct={acct_id} form={dict(request.form)} due_day={due_day!r}", file=sys.stderr, flush=True)
 
     due_day_int = None
     if due_day:
