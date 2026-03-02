@@ -4,7 +4,7 @@ import datetime
 
 from flask import Blueprint, render_template, request, g, redirect, url_for
 
-from core.db import get_connection
+from core.db import get_connection, init_db
 
 bp = Blueprint("cashflow", __name__, url_prefix="/cashflow")
 
@@ -53,6 +53,7 @@ def index():
     # Cross-entity accounts
     cross_sections = []
     for other_key in _CROSS_ENTITY.get(g.entity_key, []):
+        init_db(other_key)  # Ensure migrations run on cross-entity DB
         other_conn = get_connection(other_key)
         try:
             other_accounts = _get_accounts(other_conn)
