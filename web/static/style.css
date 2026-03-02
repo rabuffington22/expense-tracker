@@ -4653,16 +4653,32 @@ select.input-sm {
 }
 .cf-negative { color: var(--red); }
 
-/* Inline balance form (bank accounts) */
-.cf-inline-form {
-    display: flex;
-    align-items: center;
-    gap: 0.15rem;
-    padding-top: 0.2rem;
+/* Edit icon button (ⓘ) */
+.cf-edit-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.1rem;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.cf-edit-btn:hover { opacity: 1; }
+
+/* Edit popover */
+.cf-edit-pop {
+    padding-top: 0.3rem;
     border-top: 0.5px solid rgba(255,255,255,0.06);
 }
-:root[data-theme="light"] .cf-inline-form {
+:root[data-theme="light"] .cf-edit-pop {
     border-top-color: rgba(0,0,0,0.06);
+}
+.cf-edit-pop-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 .cf-dollar {
     font-size: var(--ui-font-sm);

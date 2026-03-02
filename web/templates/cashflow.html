@@ -3,14 +3,23 @@
 
 {# ── Macros ────────────────────────────────────────────────────────────── #}
 
+{% macro edit_icon(acct_id) %}
+<button type="button" class="cf-edit-btn" onclick="cfToggleEdit(this, '{{ acct_id }}')" title="Edit">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+</button>
+{% endmacro %}
+
+
 {% macro bank_card(acct, entity_key) %}
 <div class="outline-panel cf-box">
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
         {% if acct.balance_source == 'plaid' %}
-        <span class="badge badge-blue">Plaid</span>
+        <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% else %}
-        <span class="badge badge-muted">Manual</span>
+        {{ edit_icon(acct.id) }}
         {% endif %}
     </div>
 
@@ -21,14 +30,17 @@
         </span>
     </div>
 
-    <form method="post" action="{{ url_for('cashflow.update_account', acct_id=acct.id) }}" class="cf-inline-form">
-        <input type="hidden" name="entity_key" value="{{ entity_key }}">
-        <span class="cf-dollar">$</span>
-        <input type="text" name="balance" class="input-sm cf-input-num"
-               value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
-               onfocus="this.select()">
-        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-    </form>
+    {# Hidden edit popover #}
+    <div class="cf-edit-pop" id="cf-edit-{{ acct.id }}" hidden>
+        <form method="post" action="{{ url_for('cashflow.update_account', acct_id=acct.id) }}" class="cf-edit-pop-form">
+            <input type="hidden" name="entity_key" value="{{ entity_key }}">
+            <label class="cf-form-label">Balance
+                <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="balance" class="input-sm cf-input-num"
+                    value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}" onfocus="this.select()"></span>
+            </label>
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+        </form>
+    </div>
 
     {% if acct.upcoming %}
     <div class="cf-upcoming">
@@ -58,9 +70,9 @@
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
         {% if acct.balance_source == 'plaid' %}
-        <span class="badge badge-blue">Plaid</span>
+        <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% else %}
-        <span class="badge badge-muted">Manual</span>
+        {{ edit_icon(acct.id) }}
         {% endif %}
     </div>
 
@@ -91,28 +103,31 @@
     </div>
     {% endif %}
 
-    <form method="post" action="{{ url_for('cashflow.update_card', acct_id=acct.id) }}" class="cf-card-form">
-        <input type="hidden" name="entity_key" value="{{ entity_key }}">
-        <div class="cf-card-form-grid">
-            <label class="cf-form-label">Balance
-                <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="balance" class="input-sm cf-input-num"
-                    value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}" onfocus="this.select()"></span>
-            </label>
-            <label class="cf-form-label">Limit
-                <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="credit_limit" class="input-sm cf-input-num"
-                    value="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}" onfocus="this.select()"></span>
-            </label>
-            <label class="cf-form-label">Due Day
-                <input type="text" name="payment_due_day" class="input-sm cf-input-num cf-input-narrow"
-                       value="{{ acct.payment_due_day or '' }}" placeholder="15">
-            </label>
-            <label class="cf-form-label">Payment
-                <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="payment_amount" class="input-sm cf-input-num"
-                    value="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}" onfocus="this.select()"></span>
-            </label>
-        </div>
-        <button type="submit" class="btn btn-primary btn-sm cf-card-save">Save</button>
-    </form>
+    {# Hidden edit popover #}
+    <div class="cf-edit-pop" id="cf-edit-{{ acct.id }}" hidden>
+        <form method="post" action="{{ url_for('cashflow.update_card', acct_id=acct.id) }}" class="cf-edit-pop-form">
+            <input type="hidden" name="entity_key" value="{{ entity_key }}">
+            <div class="cf-card-form-grid">
+                <label class="cf-form-label">Balance
+                    <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="balance" class="input-sm cf-input-num"
+                        value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}" onfocus="this.select()"></span>
+                </label>
+                <label class="cf-form-label">Limit
+                    <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="credit_limit" class="input-sm cf-input-num"
+                        value="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}" onfocus="this.select()"></span>
+                </label>
+                <label class="cf-form-label">Due Day
+                    <input type="text" name="payment_due_day" class="input-sm cf-input-num cf-input-narrow"
+                           value="{{ acct.payment_due_day or '' }}" placeholder="15">
+                </label>
+                <label class="cf-form-label">Payment
+                    <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="payment_amount" class="input-sm cf-input-num"
+                        value="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}" onfocus="this.select()"></span>
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm cf-card-save">Save</button>
+        </form>
+    </div>
 
     {% if acct.upcoming %}
     <div class="cf-upcoming">
@@ -175,4 +190,37 @@
 {{ entity_section(section.entity_display, section.entity_key, section.banks, section.cards, 'cf-cross') }}
 {% endfor %}
 
+<script>
+/* Toggle edit popover for an account box */
+function cfToggleEdit(btn, acctId) {
+    var pop = document.getElementById('cf-edit-' + acctId);
+    if (!pop) return;
+    var show = pop.hidden;
+    /* Close all other open popovers first */
+    document.querySelectorAll('.cf-edit-pop:not([hidden])').forEach(function(el) {
+        el.hidden = true;
+    });
+    pop.hidden = !show;
+    if (show) {
+        var input = pop.querySelector('input[name="balance"]');
+        if (input) { input.focus(); input.select(); }
+    }
+}
+/* Close popover on outside click */
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.cf-edit-pop') && !e.target.closest('.cf-edit-btn')) {
+        document.querySelectorAll('.cf-edit-pop:not([hidden])').forEach(function(el) {
+            el.hidden = true;
+        });
+    }
+});
+/* Close popover on Escape */
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.cf-edit-pop:not([hidden])').forEach(function(el) {
+            el.hidden = true;
+        });
+    }
+});
+</script>
 {% endblock %}
