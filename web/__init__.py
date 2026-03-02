@@ -31,7 +31,7 @@ _ENTITY_MAP = {"Personal": "personal", "BFM": "company", "LL": "luxelegacy"}
 _ENTITY_COLORS = {
     "Personal": "#30d158",
     "BFM": "#003eb6",
-    "LL": "#f8de08",
+    "LL": "#d4a017",
 }
 _ENTITY_LABELS = {
     "Personal": {"income": "Income",  "spend": "Spending", "net": "Net",    "type": "personal"},
