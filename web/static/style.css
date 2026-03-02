@@ -4664,15 +4664,15 @@ select.input-sm {
 :root[data-theme="light"] .cf-pymt-divider {
     background: rgba(0,0,0,0.06);
 }
-.cf-pymt-line {
-    text-align: left;
-}
 .cf-credit-line {
     font-size: 0.55rem;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
     width: 100%;
     text-align: right;
+}
+.cf-pymt-line {
+    text-align: left;
 }
 
 /* Edit icon button (ⓘ) */
