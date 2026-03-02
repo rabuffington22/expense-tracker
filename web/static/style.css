@@ -4713,7 +4713,7 @@ select.input-sm {
 .cf-modal-close { font-size: 1.1rem; opacity: 0.7; }
 .cf-modal-close:hover { opacity: 1; }
 
-/* Editable values — look like static text until focused */
+/* Editable values — invisible inputs, look like static card text */
 .cf-modal-editable {
     display: flex;
     align-items: baseline;
@@ -4722,30 +4722,24 @@ select.input-sm {
 .cf-modal-input {
     background: transparent;
     border: none;
-    border-bottom: 1px solid transparent;
     color: var(--text);
     font-variant-numeric: tabular-nums;
+    font-family: inherit;
     padding: 0;
     outline: none;
-    transition: border-color 0.15s;
-}
-.cf-modal-input:hover {
-    border-bottom-color: rgba(255,255,255,0.10);
+    cursor: text;
 }
 .cf-modal-input:focus {
-    border-bottom-color: var(--blue);
+    border-bottom: 1px solid var(--blue);
 }
-:root[data-theme="light"] .cf-modal-input:hover {
-    border-bottom-color: rgba(0,0,0,0.08);
-}
-/* Balance input — matches .cf-box-value */
+/* Balance input — matches .cf-box-value exactly */
 .cf-modal-input--balance {
     font-size: 1.15rem;
     font-weight: 700;
     width: 100%;
     text-align: right;
 }
-/* Small inputs — matches .cf-credit-line size */
+/* Small inputs — matches .cf-credit-line exactly */
 .cf-modal-input--small {
     font-size: 0.55rem;
     color: var(--text-muted);
