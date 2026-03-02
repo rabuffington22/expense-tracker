@@ -4780,7 +4780,7 @@ select.input-sm {
     border-top-color: rgba(0,0,0,0.06);
 }
 .cf-upcoming-label {
-    font-size: var(--ui-font-xs);
+    font-size: 0.45rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -4789,7 +4789,7 @@ select.input-sm {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.6rem;
+    font-size: 0.45rem;
 }
 .cf-upcoming-merchant {
     white-space: nowrap;
@@ -4810,7 +4810,7 @@ select.input-sm {
     font-weight: 600;
 }
 .cf-upcoming-none {
-    font-size: var(--ui-font-xs);
+    font-size: 0.45rem;
     color: var(--text-muted);
     font-style: italic;
 }
