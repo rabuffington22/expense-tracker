@@ -4832,6 +4832,7 @@ input.cf-modal-input--due-date {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    max-width: 50%;
 }
 input.cf-add-input {
     background: transparent;
@@ -4847,7 +4848,7 @@ input.cf-add-input {
     appearance: none;
 }
 input.cf-add-input:focus { border-bottom-color: var(--blue); box-shadow: none; }
-.cf-add-input--name { flex: 1; min-width: 0; max-width: 50%; }
+.cf-add-input--name { flex: 1; min-width: 0; }
 .cf-add-input--amt { width: 45px; text-align: right; }
 .cf-add-input--day { width: 15px; text-align: center; }
 :root[data-theme="light"] .cf-add-input {
