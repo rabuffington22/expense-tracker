@@ -4817,16 +4817,22 @@ select.input-sm {
     flex-direction: column;
     gap: 0.3rem;
     padding: 0.45rem 0.55rem;
-    background: rgba(10,132,255,0.04);
+    background: rgba(10,132,255,0.06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(10,132,255,0.10);
 }
 :root[data-theme="light"] .cf-box {
-    background: rgba(10,132,255,0.04);
+    background: rgba(10,132,255,0.05);
+    border-color: rgba(10,132,255,0.12);
 }
 .cf-box--card {
-    background: rgba(167,139,250,0.04);
+    background: rgba(167,139,250,0.06);
+    border-color: rgba(167,139,250,0.10);
 }
 :root[data-theme="light"] .cf-box--card {
-    background: rgba(167,139,250,0.04);
+    background: rgba(167,139,250,0.05);
+    border-color: rgba(167,139,250,0.12);
 }
 .cf-box-header {
     display: flex;
