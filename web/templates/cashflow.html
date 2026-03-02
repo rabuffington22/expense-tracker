@@ -87,12 +87,7 @@
     </div>
 
     {% if acct.payment_due_day %}
-    <div class="cf-cc-payment">
-        <span class="cf-box-label">Next Payment</span>
-        <span class="cf-cc-payment-detail">
-            {{ fmt_cents(acct.payment_amount_cents) }} due on the {{ acct.payment_due_day }}{{ 'st' if acct.payment_due_day == 1 else ('nd' if acct.payment_due_day == 2 else ('rd' if acct.payment_due_day == 3 else 'th')) }}
-        </span>
-    </div>
+    <span class="cf-credit-line">{{ fmt_cents(acct.payment_amount_cents) }} due on the {{ acct.payment_due_day }}{{ 'st' if acct.payment_due_day == 1 else ('nd' if acct.payment_due_day == 2 else ('rd' if acct.payment_due_day == 3 else 'th')) }}</span>
     {% endif %}
 
     {# Hidden edit popover #}
@@ -108,11 +103,11 @@
                     <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="credit_limit" class="input-sm cf-input-num"
                         value="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}" onfocus="this.select()"></span>
                 </label>
-                <label class="cf-form-label">Due Day
+                <label class="cf-form-label">Payment Due Day
                     <input type="text" name="payment_due_day" class="input-sm cf-input-num cf-input-narrow"
                            value="{{ acct.payment_due_day or '' }}" placeholder="15">
                 </label>
-                <label class="cf-form-label">Payment
+                <label class="cf-form-label">Payment Amount
                     <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="payment_amount" class="input-sm cf-input-num"
                         value="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}" onfocus="this.select()"></span>
                 </label>
