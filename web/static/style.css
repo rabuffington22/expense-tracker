@@ -4744,20 +4744,20 @@ input.cf-modal-input--balance {
     width: 40px;
     text-align: right;
 }
-/* Small inputs — matches .cf-credit-line exactly */
+/* Small inputs — credit limit line */
 input.cf-modal-input--small {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
-    width: 18px;
+    width: 40px;
     text-align: right;
 }
 /* Inline inputs in the payment line */
 input.cf-modal-input--inline {
-    width: 27px;
+    width: 35px;
     text-align: center;
 }
 input.cf-modal-input--day {
-    width: 6px;
+    width: 18px;
 }
 /* Payment edit line */
 .cf-modal-pymt-edit {
@@ -4767,7 +4767,7 @@ input.cf-modal-input--day {
     gap: 0.15rem;
 }
 .cf-pymt-label {
-    font-size: 0.45rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
 }
 /* Dollar signs */
@@ -4775,7 +4775,7 @@ input.cf-modal-input--day {
     color: var(--text-muted);
 }
 .cf-dollar--sm {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
 }
 /* Footer */
 .cf-modal-footer {
@@ -4801,7 +4801,10 @@ input.cf-modal-input--day {
 /* Add recurring row */
 .cf-add-recurring {
     border-top: 0.5px solid rgba(255,255,255,0.06);
-    padding: 0.3rem 0.55rem 0.2rem;
+    padding: 0.3rem 0.55rem 0.35rem;
+}
+.cf-add-recurring .cf-dollar--sm {
+    font-size: 0.65rem;
 }
 :root[data-theme="light"] .cf-add-recurring {
     border-top-color: rgba(0,0,0,0.06);
@@ -4818,8 +4821,8 @@ input.cf-add-input {
     border-radius: 0;
     box-shadow: none;
     color: var(--text);
-    font-size: 0.45rem;
-    padding: 0.1rem 0;
+    font-size: 0.65rem;
+    padding: 0.15rem 0;
     outline: none;
     -webkit-appearance: none;
     appearance: none;
@@ -4835,7 +4838,7 @@ input.cf-add-input:focus { border-bottom-color: var(--blue); box-shadow: none; }
     background: none;
     border: none;
     color: var(--blue);
-    font-size: 0.65rem;
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
     padding: 0;
@@ -4887,6 +4890,16 @@ input.cf-add-input:focus { border-bottom-color: var(--blue); box-shadow: none; }
     font-size: 0.45rem;
     color: var(--text-muted);
     font-style: italic;
+}
+/* Bigger upcoming text inside modal */
+.cf-modal-card .cf-upcoming-label {
+    font-size: 0.65rem;
+}
+.cf-modal-card .cf-upcoming-row {
+    font-size: 0.65rem;
+}
+.cf-modal-card .cf-upcoming-none {
+    font-size: 0.65rem;
 }
 
 /* Responsive */
