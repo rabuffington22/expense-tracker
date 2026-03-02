@@ -1,4 +1,8 @@
-<tr id="txn-{{ txn.transaction_id }}">
+<tr id="txn-{{ txn.transaction_id }}" class="txn-clickable"
+    hx-get="{{ url_for('transactions.edit_row', txn_id=txn.transaction_id) }}"
+    hx-target="#txn-modal"
+    hx-swap="innerHTML"
+    style="cursor:pointer;">
   <td class="text-sm">{{ fmt_date(txn.date) }}</td>
   <td class="text-sm">
     {{ txn.merchant_canonical or (txn.description_raw[:55] if txn.description_raw else '—') }}
@@ -6,27 +10,15 @@
     {% if txn.alloc_count and txn.alloc_count > 0 %}
       {% set cov = (txn.alloc_total_cents * 100 // (txn.amount_cents|abs)) if txn.amount_cents else 0 %}
       <span class="badge {% if cov >= 95 %}badge-green{% else %}badge-muted{% endif %}">{{ cov }}%</span>
-      <details style="margin-top:0.25rem;">
-        <summary class="text-xs text-muted">{{ txn.alloc_count }} item{{ 's' if txn.alloc_count != 1 }}</summary>
-        <div class="text-xs" style="padding-left:0.5rem;">
-          {% if txn.alloc_products %}
-          {% for prod in txn.alloc_products.split(' || ') %}
-          <div style="color:var(--text-secondary);">{{ prod[:80] }}</div>
-          {% endfor %}
-          {% endif %}
-        </div>
-      </details>
     {% endif %}
   </td>
   <td class="text-sm text-right" style="{% if txn.amount_cents and txn.amount_cents > 0 %}color:var(--green);{% endif %}">
     {{ fmt_cents(txn.amount_cents) }}
   </td>
-  <td class="text-sm">{{ txn.category or '—' }}</td>
-  <td>
-    <button class="btn-icon"
-            hx-get="{{ url_for('transactions.edit_row', txn_id=txn.transaction_id) }}"
-            hx-target="#txn-{{ txn.transaction_id }}"
-            hx-swap="outerHTML"
-            title="Edit">&#9998;</button>
+  <td class="text-sm">
+    {{ txn.category or '—' }}
+    {% if txn.subcategory and txn.subcategory != 'Unknown' %}
+      <div class="text-xs text-muted">{{ txn.subcategory }}</div>
+    {% endif %}
   </td>
 </tr>

@@ -1,56 +1,48 @@
-<tr id="txn-{{ txn.transaction_id }}" class="txn-editing">
-  <td class="text-sm">{{ fmt_date(txn.date) }}</td>
-  <td class="text-sm">
-    {{ txn.merchant_canonical or (txn.description_raw[:55] if txn.description_raw else '—') }}
-  </td>
-  <td class="text-sm text-right" style="{% if txn.amount_cents and txn.amount_cents > 0 %}color:var(--green);{% endif %}">
-    {{ fmt_cents(txn.amount_cents) }}
-  </td>
-  <td colspan="2">
-    <form class="txn-edit-form"
+<div class="txn-modal-backdrop" onclick="if(event.target===this)this.parentElement.innerHTML=''">
+  <div class="txn-modal-card">
+    <div class="txn-modal-header">
+      <div>
+        <div class="txn-modal-merchant">{{ txn.merchant_canonical or (txn.description_raw[:60] if txn.description_raw else '—') }}</div>
+        <div class="txn-modal-meta">{{ fmt_date(txn.date) }} · {{ fmt_cents(txn.amount_cents) }}</div>
+      </div>
+      <button type="button" class="btn-icon" onclick="document.getElementById('txn-modal').innerHTML=''" title="Close">&#10005;</button>
+    </div>
+
+    <form class="txn-modal-form"
           hx-post="{{ url_for('transactions.update', txn_id=txn.transaction_id) }}"
           hx-target="#txn-{{ txn.transaction_id }}"
-          hx-swap="outerHTML">
+          hx-swap="outerHTML"
+          hx-on::after-request="document.getElementById('txn-modal').innerHTML=''">
 
-      <div class="txn-edit-fields">
-        <select name="category" class="input-sm txn-edit-cat"
-                onchange="txnLoadSubcats(this, '{{ txn.transaction_id }}')">
-          {% for cat in categories %}
-          <option value="{{ cat }}" {% if cat == (txn.category or '') %}selected{% endif %}>{{ cat }}</option>
-          {% endfor %}
-        </select>
+      <label class="text-xs text-muted">Category</label>
+      <select name="category" class="input-sm txn-edit-cat"
+              onchange="txnLoadSubcats(this, '{{ txn.transaction_id }}')">
+        {% for cat in categories %}
+        <option value="{{ cat }}" {% if cat == (txn.category or '') %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
 
-        <select name="subcategory" class="input-sm"
-                id="txn-subcat-{{ txn.transaction_id }}"
-                data-current="{{ txn.subcategory or '' }}">
-          {% for sub in subcategories %}
-          <option value="{{ sub }}" {% if sub == (txn.subcategory or 'Unknown') %}selected{% endif %}>{{ sub }}</option>
-          {% endfor %}
-        </select>
+      <label class="text-xs text-muted">Subcategory</label>
+      <select name="subcategory" class="input-sm"
+              id="txn-subcat-{{ txn.transaction_id }}"
+              data-current="{{ txn.subcategory or '' }}">
+        {% for sub in subcategories %}
+        <option value="{{ sub }}" {% if sub == (txn.subcategory or 'Unknown') %}selected{% endif %}>{{ sub }}</option>
+        {% endfor %}
+      </select>
 
-        <input type="text" name="notes" class="input-sm" placeholder="Notes..."
-               value="{{ txn.notes or '' }}" style="min-width:100px;">
-      </div>
+      <label class="text-xs text-muted">Notes</label>
+      <input type="text" name="notes" class="input-sm" placeholder="Notes..."
+             value="{{ txn.notes or '' }}">
 
-      <div class="txn-edit-actions">
+      <div class="txn-modal-actions">
         <button type="submit" class="btn btn-primary btn-sm">Save</button>
-        <button type="button" class="btn btn-secondary btn-sm"
-                hx-post="{{ url_for('transactions.mark_transfer', txn_id=txn.transaction_id) }}"
-                hx-target="#txn-{{ txn.transaction_id }}"
-                hx-swap="outerHTML"
-                hx-confirm="Mark as Internal Transfer?"
-                title="Mark as transfer">Transfer</button>
-        <button type="button" class="btn btn-secondary btn-sm"
+<button type="button" class="btn btn-secondary btn-sm"
                 hx-post="{{ url_for('transactions.create_rule', txn_id=txn.transaction_id) }}"
                 hx-target="#txn-{{ txn.transaction_id }}"
                 hx-swap="outerHTML"
-                title="Create merchant alias rule">+ Rule</button>
-        <button type="button" class="btn-icon"
-                hx-get="{{ url_for('transactions.view_row', txn_id=txn.transaction_id) }}"
-                hx-target="#txn-{{ txn.transaction_id }}"
-                hx-swap="outerHTML"
-                title="Cancel">&#10005;</button>
+                hx-on::after-request="document.getElementById('txn-modal').innerHTML=''">+ Rule</button>
       </div>
     </form>
-  </td>
-</tr>
+  </div>
+</div>
