@@ -87,7 +87,8 @@
     </div>
 
     {% if acct.payment_due_day %}
-    <span class="cf-credit-line">{{ fmt_cents(acct.payment_amount_cents) }} due on the {{ acct.payment_due_day }}{{ 'st' if acct.payment_due_day == 1 else ('nd' if acct.payment_due_day == 2 else ('rd' if acct.payment_due_day == 3 else 'th')) }}</span>
+    <div class="cf-pymt-divider"></div>
+    <span class="cf-credit-line">Next PYMT {{ fmt_cents(acct.payment_amount_cents) }} · {{ acct.payment_due_day }}{{ 'st' if acct.payment_due_day == 1 else ('nd' if acct.payment_due_day == 2 else ('rd' if acct.payment_due_day == 3 else 'th')) }}</span>
     {% endif %}
 
     {# Hidden edit popover #}
