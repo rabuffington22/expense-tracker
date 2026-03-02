@@ -3573,8 +3573,9 @@ tr.is-selected > td:first-child {
 /* Detail header */
 .tq-detail-header {
     display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
     margin-bottom: 0.5rem;
 }
 .tq-detail-title {
