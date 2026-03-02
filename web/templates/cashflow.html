@@ -21,6 +21,24 @@
 {% endmacro %}
 
 
+{% macro upcoming_rows(acct, entity_key) %}
+{% for item in acct.upcoming %}
+<div class="cf-upcoming-row">
+    <span class="cf-upcoming-merchant">{{ item.merchant }}</span>
+    <span class="cf-upcoming-right">
+        <span class="cf-upcoming-date">{{ item.display_date }}</span>
+        <span class="cf-upcoming-amt">{{ fmt_cents(item.amount_cents) }}</span>
+        {% if item.manual %}
+        <form method="post" action="/cashflow/recurring/delete/{{ item.manual_id }}" class="cf-del-form">
+            <input type="hidden" name="entity_key" value="{{ entity_key }}">
+            <button type="submit" class="cf-del-btn" title="Remove">&times;</button>
+        </form>
+        {% endif %}
+    </span>
+</div>
+{% endfor %}
+{% endmacro %}
+
 {% macro bank_card(acct, entity_key) %}
 <div class="outline-panel cf-box">
     <div class="cf-box-header">
@@ -39,25 +57,14 @@
         </span>
     </div>
 
-    {% if acct.upcoming %}
     <div class="cf-upcoming">
         <span class="cf-upcoming-label">Upcoming</span>
-        {% for item in acct.upcoming %}
-        <div class="cf-upcoming-row">
-            <span class="cf-upcoming-merchant">{{ item.merchant }}</span>
-            <span class="cf-upcoming-right">
-                <span class="cf-upcoming-date">{{ item.display_date }}</span>
-                <span class="cf-upcoming-amt">{{ fmt_cents(item.amount_cents) }}</span>
-            </span>
-        </div>
-        {% endfor %}
+        {% if acct.upcoming %}
+            {{ upcoming_rows(acct, entity_key) }}
+        {% else %}
+            <span class="cf-upcoming-none">No upcoming charges</span>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="cf-upcoming">
-        <span class="cf-upcoming-label">Upcoming</span>
-        <span class="cf-upcoming-none">No upcoming charges</span>
-    </div>
-    {% endif %}
 </div>
 {% endmacro %}
 
@@ -88,25 +95,14 @@
     <span class="cf-credit-line cf-pymt-line">Payment of {{ fmt_cents(acct.payment_amount_cents) }} due {{ acct.payment_due_day }}{{ 'st' if acct.payment_due_day == 1 else ('nd' if acct.payment_due_day == 2 else ('rd' if acct.payment_due_day == 3 else 'th')) }}</span>
     {% endif %}
 
-    {% if acct.upcoming %}
     <div class="cf-upcoming">
         <span class="cf-upcoming-label">Upcoming</span>
-        {% for item in acct.upcoming %}
-        <div class="cf-upcoming-row">
-            <span class="cf-upcoming-merchant">{{ item.merchant }}</span>
-            <span class="cf-upcoming-right">
-                <span class="cf-upcoming-date">{{ item.display_date }}</span>
-                <span class="cf-upcoming-amt">{{ fmt_cents(item.amount_cents) }}</span>
-            </span>
-        </div>
-        {% endfor %}
+        {% if acct.upcoming %}
+            {{ upcoming_rows(acct, entity_key) }}
+        {% else %}
+            <span class="cf-upcoming-none">No upcoming charges</span>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="cf-upcoming">
-        <span class="cf-upcoming-label">Upcoming</span>
-        <span class="cf-upcoming-none">No upcoming charges</span>
-    </div>
-    {% endif %}
 </div>
 {% endmacro %}
 
@@ -149,43 +145,63 @@
 {{ entity_section(section.entity_display, section.entity_key, section.banks, section.cards, 'cf-cross') }}
 {% endfor %}
 
-{# ── Edit Modal (card-style) ───────────────────────────────────────────── #}
+{# ── Edit Modal (card clone with editable fields) ────────────────────── #}
 <div class="cf-modal-scrim" id="cf-modal-scrim" hidden>
-    <div class="outline-panel cf-modal-card">
+    <div class="outline-panel cf-box cf-modal-card">
         <form method="post" id="cf-modal-form">
             <input type="hidden" name="entity_key" id="cf-modal-entity">
 
+            {# Header — same as card #}
             <div class="cf-box-header">
                 <span class="cf-box-name" id="cf-modal-title"></span>
-                <button type="button" class="cf-edit-btn" onclick="cfCloseModal()" title="Close">&times;</button>
+                <button type="button" class="cf-edit-btn cf-modal-close" onclick="cfCloseModal()" title="Close">&times;</button>
             </div>
 
+            {# Balance — editable #}
             <div class="cf-box-balance">
                 <span class="cf-box-label">Balance</span>
-                <span class="cf-inline-input cf-modal-val"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input" onfocus="this.select()"></span>
+                <span class="cf-box-value cf-modal-editable"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input cf-modal-input--balance" onfocus="this.select()"></span>
             </div>
 
+            {# Credit card fields — shown/hidden by JS #}
             <div id="cf-modal-card-fields" hidden>
                 <div class="cf-box-balance">
-                    <span class="cf-box-label">Credit Limit</span>
-                    <span class="cf-inline-input cf-modal-val"><span class="cf-dollar">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input" onfocus="this.select()"></span>
+                    <span class="cf-box-label" style="visibility:hidden">Limit</span>
+                    <span class="cf-credit-line cf-modal-editable"><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()"></span>
                 </div>
 
                 <div class="cf-pymt-divider"></div>
 
-                <div class="cf-modal-pymt-row">
-                    <span class="cf-box-label">Payment Amount</span>
-                    <span class="cf-inline-input cf-modal-val"><span class="cf-dollar">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="cf-modal-input" onfocus="this.select()"></span>
-                </div>
-                <div class="cf-modal-pymt-row">
-                    <span class="cf-box-label">Due Day of Month</span>
-                    <input type="text" name="payment_due_day" id="cf-modal-due-day" class="cf-modal-input cf-modal-input--narrow" placeholder="15">
-                </div>
+                <span class="cf-credit-line cf-pymt-line cf-modal-pymt-edit">
+                    <span class="cf-pymt-label">Payment of</span>
+                    <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" onfocus="this.select()">
+                    <span class="cf-pymt-label">due</span>
+                    <input type="text" name="payment_due_day" id="cf-modal-due-day" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-modal-input--day" placeholder="15" onfocus="this.select()"><span class="cf-pymt-label" id="cf-modal-day-suffix">th</span>
+                </span>
             </div>
 
+            {# Upcoming section — cloned from card + add row #}
+            <div class="cf-upcoming" id="cf-modal-upcoming">
+                <span class="cf-upcoming-label">Upcoming</span>
+                <div id="cf-modal-upcoming-list"></div>
+            </div>
+
+            {# Footer #}
             <div class="cf-modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" onclick="cfCloseModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </div>
+        </form>
+
+        {# Add recurring form (separate form, outside main edit form) #}
+        <form method="post" action="/cashflow/recurring/add" id="cf-add-recurring-form" class="cf-add-recurring" hidden>
+            <input type="hidden" name="entity_key" id="cf-add-entity">
+            <input type="hidden" name="account_id" id="cf-add-acct-id">
+            <div class="cf-add-recurring-row">
+                <input type="text" name="merchant" placeholder="Name" class="cf-add-input cf-add-input--name">
+                <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="amount" placeholder="0.00" class="cf-add-input cf-add-input--amt">
+                <input type="text" name="day_of_month" placeholder="Day" class="cf-add-input cf-add-input--day">
+                <button type="submit" class="cf-add-btn" title="Add">+</button>
             </div>
         </form>
     </div>
@@ -199,20 +215,47 @@ function cfOpenModal(btn) {
         ? '/cashflow/accounts/update-card/' + d.acctId
         : '/cashflow/accounts/update/' + d.acctId;
 
-    document.getElementById('cf-modal-title').textContent = 'Edit ' + d.acctName;
+    /* Title — just the name, no "Edit" prefix */
+    document.getElementById('cf-modal-title').textContent = d.acctName;
     document.getElementById('cf-modal-form').action = action;
     document.getElementById('cf-modal-entity').value = d.entityKey;
     document.getElementById('cf-modal-balance').value = d.balance;
 
+    /* Credit card fields */
     var cardFields = document.getElementById('cf-modal-card-fields');
     if (isCard) {
         cardFields.hidden = false;
         document.getElementById('cf-modal-limit').value = d.limit;
         document.getElementById('cf-modal-due-day').value = d.dueDay;
         document.getElementById('cf-modal-payment').value = d.payment;
+        _updateDaySuffix();
     } else {
         cardFields.hidden = true;
     }
+
+    /* Copy upcoming charges from the card */
+    var card = btn.closest('.cf-box');
+    var upcomingEl = card.querySelector('.cf-upcoming');
+    var listTarget = document.getElementById('cf-modal-upcoming-list');
+    listTarget.innerHTML = '';
+    if (upcomingEl) {
+        var rows = upcomingEl.querySelectorAll('.cf-upcoming-row');
+        rows.forEach(function(row) {
+            var clone = row.cloneNode(true);
+            /* Check if manual (has a delete form) — keep it */
+            listTarget.appendChild(clone);
+        });
+        if (rows.length === 0) {
+            listTarget.innerHTML = '<span class="cf-upcoming-none">No upcoming charges</span>';
+        }
+    } else {
+        listTarget.innerHTML = '<span class="cf-upcoming-none">No upcoming charges</span>';
+    }
+
+    /* Set up add-recurring form */
+    document.getElementById('cf-add-entity').value = d.entityKey;
+    document.getElementById('cf-add-acct-id').value = d.acctId;
+    document.getElementById('cf-add-recurring-form').hidden = false;
 
     document.getElementById('cf-modal-scrim').hidden = false;
     document.getElementById('cf-modal-balance').focus();
@@ -221,7 +264,19 @@ function cfOpenModal(btn) {
 
 function cfCloseModal() {
     document.getElementById('cf-modal-scrim').hidden = true;
+    document.getElementById('cf-add-recurring-form').hidden = true;
 }
+
+function _updateDaySuffix() {
+    var day = parseInt(document.getElementById('cf-modal-due-day').value) || 0;
+    var suffix = 'th';
+    if (day === 1 || day === 21 || day === 31) suffix = 'st';
+    else if (day === 2 || day === 22) suffix = 'nd';
+    else if (day === 3 || day === 23) suffix = 'rd';
+    document.getElementById('cf-modal-day-suffix').textContent = suffix;
+}
+
+document.getElementById('cf-modal-due-day').addEventListener('input', _updateDaySuffix);
 
 /* Close on scrim click */
 document.getElementById('cf-modal-scrim').addEventListener('click', function(e) {

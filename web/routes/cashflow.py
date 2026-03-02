@@ -214,6 +214,49 @@ def _detect_upcoming_for_account(conn, account_names: list, horizon_days: int = 
     return upcoming
 
 
+def _get_manual_recurring(conn, account_id: int) -> list:
+    """Get manually-added recurring charges for an account, projected to next date."""
+    rows = conn.execute(
+        "SELECT id, merchant, amount_cents, day_of_month "
+        "FROM manual_recurring WHERE account_id=? ORDER BY day_of_month",
+        (account_id,),
+    ).fetchall()
+    today = datetime.date.today()
+    items = []
+    for r in rows:
+        day = r["day_of_month"]
+        # Next occurrence: this month if day >= today, else next month
+        try:
+            next_date = today.replace(day=day)
+        except ValueError:
+            # Day doesn't exist in this month (e.g. 31 in Feb) — clamp
+            import calendar
+            last_day = calendar.monthrange(today.year, today.month)[1]
+            next_date = today.replace(day=min(day, last_day))
+        if next_date < today:
+            # Move to next month
+            if today.month == 12:
+                next_date = next_date.replace(year=today.year + 1, month=1)
+            else:
+                next_date = next_date.replace(month=today.month + 1)
+            # Re-clamp for next month
+            try:
+                next_date = next_date.replace(day=day)
+            except ValueError:
+                import calendar
+                last_day = calendar.monthrange(next_date.year, next_date.month)[1]
+                next_date = next_date.replace(day=min(day, last_day))
+        items.append({
+            "merchant": r["merchant"],
+            "amount_cents": r["amount_cents"],
+            "expected_date": next_date.isoformat(),
+            "display_date": next_date.strftime("%b %-d"),
+            "manual": True,
+            "manual_id": r["id"],
+        })
+    return items
+
+
 def _load_entity_section(entity_key: str) -> dict:
     """Load full account data for an entity (banks, cards, upcoming charges)."""
     init_db(entity_key)
@@ -225,12 +268,18 @@ def _load_entity_section(entity_key: str) -> dict:
         txn_map = {}
         for d in defs["banks"] + defs["cards"]:
             txn_map[d["name"]] = d.get("txn_accounts", [d["name"]])
-        # Attach upcoming charges per account
+        # Attach upcoming charges per account (auto-detected + manual)
         for acct in accts["banks"] + accts["cards"]:
             match_names = txn_map.get(acct["account_name"], [acct["account_name"]])
-            acct["upcoming"] = _detect_upcoming_for_account(
-                conn, match_names
-            )
+            auto = _detect_upcoming_for_account(conn, match_names)
+            # Mark auto items
+            for item in auto:
+                item["manual"] = False
+                item["manual_id"] = None
+            manual = _get_manual_recurring(conn, acct["id"])
+            combined = auto + manual
+            combined.sort(key=lambda x: x["expected_date"])
+            acct["upcoming"] = combined
         return accts
     finally:
         conn.close()
@@ -310,6 +359,51 @@ def update_card(acct_id):
             "balance_source='manual' WHERE id=?",
             (balance_cents, limit_cents, due_day_int, payment_cents, now, acct_id),
         )
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("cashflow.index"))
+
+
+# ── Manual Recurring Charges ────────────────────────────────────────────────
+
+@bp.route("/recurring/add", methods=["POST"])
+def add_recurring():
+    """Add a manual recurring charge to an account."""
+    entity_key = request.form.get("entity_key", g.entity_key)
+    account_id = request.form.get("account_id")
+    merchant = request.form.get("merchant", "").strip()
+    amount_cents = _parse_dollar_to_cents(request.form.get("amount", "0"))
+    day_str = request.form.get("day_of_month", "").strip()
+
+    if not merchant or not account_id or not day_str:
+        return redirect(url_for("cashflow.index"))
+
+    try:
+        day = max(1, min(31, int(day_str)))
+    except ValueError:
+        return redirect(url_for("cashflow.index"))
+
+    conn = get_connection(entity_key)
+    try:
+        conn.execute(
+            "INSERT INTO manual_recurring (account_id, merchant, amount_cents, day_of_month) "
+            "VALUES (?, ?, ?, ?)",
+            (int(account_id), merchant, amount_cents, day),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("cashflow.index"))
+
+
+@bp.route("/recurring/delete/<int:rec_id>", methods=["POST"])
+def delete_recurring(rec_id):
+    """Delete a manual recurring charge."""
+    entity_key = request.form.get("entity_key", g.entity_key)
+    conn = get_connection(entity_key)
+    try:
+        conn.execute("DELETE FROM manual_recurring WHERE id=?", (rec_id,))
         conn.commit()
     finally:
         conn.close()

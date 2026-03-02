@@ -434,6 +434,17 @@ ALTER TABLE account_balances ADD COLUMN payment_amount_cents INTEGER NOT NULL DE
 ALTER TABLE account_balances ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0;
 """
 
+_MIGRATION_28 = """
+CREATE TABLE IF NOT EXISTS manual_recurring (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    account_id INTEGER NOT NULL REFERENCES account_balances(id) ON DELETE CASCADE,
+    merchant TEXT NOT NULL,
+    amount_cents INTEGER NOT NULL,
+    day_of_month INTEGER NOT NULL CHECK(day_of_month BETWEEN 1 AND 31),
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -462,6 +473,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (25, _MIGRATION_25),
     (26, _MIGRATION_26),
     (27, _MIGRATION_27),
+    (28, _MIGRATION_28),
 ]
 
 _DEFAULT_CATEGORIES = [

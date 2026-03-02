@@ -4703,76 +4703,141 @@ select.input-sm {
 .cf-modal-scrim[hidden] {
     display: none;
 }
-/* Card-style edit modal */
+/* Card-clone edit modal */
 .cf-modal-card {
-    width: 260px;
+    width: 280px;
     max-width: 90vw;
     box-shadow: 0 16px 48px rgba(0,0,0,0.45);
-    padding: 0.75rem;
     background: var(--bg-card);
 }
-.cf-modal-card .cf-box-header { margin-bottom: 0.3rem; }
-.cf-modal-card .cf-edit-btn { font-size: 1.2rem; line-height: 1; }
-.cf-modal-card .cf-box-balance { margin-bottom: 0.15rem; }
-.cf-modal-val {
+.cf-modal-close { font-size: 1.1rem; opacity: 0.7; }
+.cf-modal-close:hover { opacity: 1; }
+
+/* Editable values — look like static text until focused */
+.cf-modal-editable {
     display: flex;
-    align-items: center;
-    gap: 0.15rem;
-    font-size: 1.15rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
+    align-items: baseline;
+    gap: 0.1rem;
 }
 .cf-modal-input {
     background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid transparent;
     color: var(--text);
-    font-size: 1.15rem;
-    font-weight: 700;
     font-variant-numeric: tabular-nums;
-    width: 100%;
-    padding: 0.1rem 0;
+    padding: 0;
     outline: none;
+    transition: border-color 0.15s;
+}
+.cf-modal-input:hover {
+    border-bottom-color: rgba(255,255,255,0.10);
 }
 .cf-modal-input:focus {
     border-bottom-color: var(--blue);
 }
-.cf-modal-input--narrow {
-    width: 60px;
-    font-size: 0.82rem;
-    font-weight: 500;
+:root[data-theme="light"] .cf-modal-input:hover {
+    border-bottom-color: rgba(0,0,0,0.08);
 }
-.cf-modal-pymt-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.15rem 0;
-}
-.cf-modal-pymt-row .cf-box-label { font-size: 0.55rem; }
-.cf-modal-pymt-row .cf-modal-val { font-size: 0.55rem; font-weight: 500; }
-.cf-modal-pymt-row .cf-modal-input {
-    font-size: 0.55rem;
-    font-weight: 500;
+/* Balance input — matches .cf-box-value */
+.cf-modal-input--balance {
+    font-size: 1.15rem;
+    font-weight: 700;
+    width: 100%;
     text-align: right;
 }
+/* Small inputs — matches .cf-credit-line size */
+.cf-modal-input--small {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    width: 100%;
+    text-align: right;
+}
+/* Inline inputs in the payment line */
+.cf-modal-input--inline {
+    width: auto;
+    max-width: 60px;
+    text-align: center;
+}
+.cf-modal-input--day {
+    max-width: 28px;
+}
+/* Payment edit line */
+.cf-modal-pymt-edit {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.15rem;
+}
+.cf-pymt-label {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+}
+/* Dollar signs */
+.cf-dollar {
+    color: var(--text-muted);
+}
+.cf-dollar--sm {
+    font-size: 0.55rem;
+}
+/* Footer */
 .cf-modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
-    padding-top: 0.5rem;
-    margin-top: 0.3rem;
+    padding-top: 0.4rem;
+    margin-top: 0.2rem;
 }
-:root[data-theme="light"] .cf-modal-input {
-    border-bottom-color: rgba(0,0,0,0.12);
-}
-.cf-dollar {
-    font-size: 0.88rem;
+/* Delete button on manual recurring items */
+.cf-del-form { display: inline; margin: 0; padding: 0; }
+.cf-del-btn {
+    background: none;
+    border: none;
     color: var(--text-muted);
+    font-size: 0.5rem;
+    cursor: pointer;
+    padding: 0 0.1rem;
+    opacity: 0.4;
+    line-height: 1;
 }
-.cf-inline-input {
+.cf-del-btn:hover { opacity: 1; color: var(--red); }
+/* Add recurring row */
+.cf-add-recurring {
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+    padding: 0.3rem 0.55rem 0.2rem;
+}
+:root[data-theme="light"] .cf-add-recurring {
+    border-top-color: rgba(0,0,0,0.06);
+}
+.cf-add-recurring-row {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+}
+.cf-add-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+    color: var(--text);
+    font-size: 0.45rem;
+    padding: 0.1rem 0;
+    outline: none;
+}
+.cf-add-input:focus { border-bottom-color: var(--blue); }
+.cf-add-input--name { flex: 1; min-width: 0; }
+.cf-add-input--amt { width: 45px; text-align: right; }
+.cf-add-input--day { width: 30px; text-align: center; }
+:root[data-theme="light"] .cf-add-input {
+    border-bottom-color: rgba(0,0,0,0.08);
+}
+.cf-add-btn {
+    background: none;
+    border: none;
+    color: var(--blue);
+    font-size: 0.65rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
 }
 
 /* Upcoming charges */
