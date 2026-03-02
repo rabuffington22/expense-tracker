@@ -354,6 +354,7 @@ a:hover { text-decoration: underline; }
     font-size: 0.52rem;
     letter-spacing: 0.38em;
     opacity: 0.55;
+    text-align: center;
 }
 .sb-divider {
     height: 0.5px;
