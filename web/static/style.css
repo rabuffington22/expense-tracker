@@ -4605,12 +4605,10 @@ select.input-sm {
     margin-bottom: 0.8rem;
 }
 .cf-grid--banks {
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    max-width: 66%;
+    grid-template-columns: repeat(4, 1fr);
 }
 .cf-grid--cards {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    max-width: 50%;
+    grid-template-columns: repeat(7, 1fr);
 }
 
 /* Individual account box */
@@ -4815,12 +4813,12 @@ select.input-sm {
 
 /* Responsive */
 @media (max-width: 900px) {
-    .cf-grid--banks { max-width: 100%; }
-    .cf-grid--cards { max-width: 80%; }
+    .cf-grid--banks { grid-template-columns: repeat(2, 1fr); }
+    .cf-grid--cards { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 600px) {
-    .cf-grid--banks { grid-template-columns: 1fr 1fr; }
-    .cf-grid--cards { grid-template-columns: 1fr 1fr; max-width: 100%; }
+    .cf-grid--banks { grid-template-columns: repeat(2, 1fr); }
+    .cf-grid--cards { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 400px) {
     .cf-grid--banks { grid-template-columns: 1fr; }

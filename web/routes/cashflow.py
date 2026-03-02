@@ -34,7 +34,6 @@ _ACCOUNT_DEFS = {
             {"name": "First Horizon Mortgage"},
         ],
         "cards": [
-            {"name": "Amex Credit Card"},
             {"name": "Apple Card (Kristine)"},
             {"name": "Apple Card (Ryan)"},
             {"name": "Barclay CC"},
@@ -72,19 +71,29 @@ def _parse_dollar_to_cents(dollar_str: str) -> int:
 
 
 def _ensure_accounts(conn, entity_key: str):
-    """Create any missing hardcoded accounts in the DB."""
+    """Sync DB accounts to match hardcoded definitions (add missing, remove stale)."""
     defs = _ACCOUNT_DEFS.get(entity_key, {"banks": [], "cards": []})
+    expected_names = set()
     for i, bank in enumerate(defs["banks"]):
+        expected_names.add(bank["name"])
         conn.execute(
             "INSERT OR IGNORE INTO account_balances "
             "(account_name, account_type, sort_order) VALUES (?, 'bank', ?)",
             (bank["name"], i),
         )
     for i, card in enumerate(defs["cards"]):
+        expected_names.add(card["name"])
         conn.execute(
             "INSERT OR IGNORE INTO account_balances "
             "(account_name, account_type, sort_order) VALUES (?, 'credit_card', ?)",
             (card["name"], 100 + i),
+        )
+    # Remove accounts no longer in the hardcoded list
+    if expected_names:
+        placeholders = ",".join("?" for _ in expected_names)
+        conn.execute(
+            f"DELETE FROM account_balances WHERE account_name NOT IN ({placeholders})",
+            list(expected_names),
         )
     conn.commit()
 
