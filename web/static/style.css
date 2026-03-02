@@ -3578,8 +3578,10 @@ tr.is-selected > td:first-child {
     margin-bottom: 0.5rem;
 }
 .tq-detail-title {
-    font-size: var(--ui-font-base);
+    font-size: var(--ui-font-xs);
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
 }
 .tq-detail-hint {
     font-size: var(--ui-font-xs);
