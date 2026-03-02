@@ -176,7 +176,7 @@
                     <span class="cf-pymt-label">Payment of</span>
                     <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" onfocus="this.select()">
                     <span class="cf-pymt-label">due</span>
-                    <input type="text" name="payment_due_day" id="cf-modal-due-day" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-modal-input--day" placeholder="15" onfocus="this.select()"><span class="cf-pymt-label" id="cf-modal-day-suffix">th</span>
+                    <input type="text" name="payment_due_day" id="cf-modal-due-day" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-modal-input--day" placeholder="15" onfocus="this.select()">
                 </span>
             </div>
 
@@ -228,7 +228,6 @@ function cfOpenModal(btn) {
         document.getElementById('cf-modal-limit').value = d.limit;
         document.getElementById('cf-modal-due-day').value = d.dueDay;
         document.getElementById('cf-modal-payment').value = d.payment;
-        _updateDaySuffix();
     } else {
         cardFields.hidden = true;
     }
@@ -264,17 +263,6 @@ function cfCloseModal() {
     document.getElementById('cf-modal-scrim').hidden = true;
     document.getElementById('cf-add-recurring-form').hidden = true;
 }
-
-function _updateDaySuffix() {
-    var day = parseInt(document.getElementById('cf-modal-due-day').value) || 0;
-    var suffix = 'th';
-    if (day === 1 || day === 21 || day === 31) suffix = 'st';
-    else if (day === 2 || day === 22) suffix = 'nd';
-    else if (day === 3 || day === 23) suffix = 'rd';
-    document.getElementById('cf-modal-day-suffix').textContent = suffix;
-}
-
-document.getElementById('cf-modal-due-day').addEventListener('input', _updateDaySuffix);
 
 /* Close on scrim click */
 document.getElementById('cf-modal-scrim').addEventListener('click', function(e) {

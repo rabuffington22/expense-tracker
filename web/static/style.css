@@ -4736,24 +4736,23 @@ select.input-sm {
 .cf-modal-input--balance {
     font-size: 1.15rem;
     font-weight: 700;
-    width: 100%;
+    width: 80px;
     text-align: right;
 }
 /* Small inputs — matches .cf-credit-line exactly */
 .cf-modal-input--small {
     font-size: 0.55rem;
     color: var(--text-muted);
-    width: 100%;
+    width: 55px;
     text-align: right;
 }
 /* Inline inputs in the payment line */
 .cf-modal-input--inline {
-    width: auto;
-    max-width: 60px;
+    width: 40px;
     text-align: center;
 }
 .cf-modal-input--day {
-    max-width: 28px;
+    width: 22px;
 }
 /* Payment edit line */
 .cf-modal-pymt-edit {
@@ -4763,7 +4762,7 @@ select.input-sm {
     gap: 0.15rem;
 }
 .cf-pymt-label {
-    font-size: 0.55rem;
+    font-size: 0.45rem;
     color: var(--text-muted);
 }
 /* Dollar signs */
