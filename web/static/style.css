@@ -4703,61 +4703,66 @@ select.input-sm {
 .cf-modal-scrim[hidden] {
     display: none;
 }
-.cf-modal {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    width: 380px;
+/* Card-style edit modal */
+.cf-modal-card {
+    width: 260px;
     max-width: 90vw;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.45);
+    padding: 0.75rem;
 }
-.cf-modal-header {
+.cf-modal-card .cf-box-header { margin-bottom: 0.3rem; }
+.cf-modal-card .cf-edit-btn { font-size: 1.2rem; line-height: 1; }
+.cf-modal-card .cf-box-balance { margin-bottom: 0.15rem; }
+.cf-modal-val {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.cf-modal-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    color: var(--text);
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    width: 100%;
+    padding: 0.1rem 0;
+    outline: none;
+}
+.cf-modal-input:focus {
+    border-bottom-color: var(--blue);
+}
+.cf-modal-input--narrow {
+    width: 60px;
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+.cf-modal-pymt-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.25rem 0.5rem;
+    padding: 0.15rem 0;
 }
-.cf-modal-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
-}
-.cf-modal-close {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 1.4rem;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-}
-.cf-modal-close:hover { color: var(--text); }
-.cf-modal-body {
-    padding: 0.5rem 1.25rem 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
-.cf-modal-label {
-    font-size: 0.78rem;
-    color: var(--text-secondary);
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-}
-.cf-modal-input {
-    width: 100%;
-    font-size: 0.88rem;
-    font-variant-numeric: tabular-nums;
-}
-.cf-modal-input--narrow {
-    width: 80px;
+.cf-modal-pymt-row .cf-box-label { font-size: 0.55rem; }
+.cf-modal-pymt-row .cf-modal-val { font-size: 0.55rem; font-weight: 500; }
+.cf-modal-pymt-row .cf-modal-input {
+    font-size: 0.55rem;
+    font-weight: 500;
+    text-align: right;
 }
 .cf-modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
-    padding: 0.5rem 1.25rem 1rem;
+    padding-top: 0.5rem;
+    margin-top: 0.3rem;
+}
+:root[data-theme="light"] .cf-modal-input {
+    border-bottom-color: rgba(0,0,0,0.12);
 }
 .cf-dollar {
     font-size: 0.88rem;

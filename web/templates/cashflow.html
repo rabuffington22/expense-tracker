@@ -149,31 +149,40 @@
 {{ entity_section(section.entity_display, section.entity_key, section.banks, section.cards, 'cf-cross') }}
 {% endfor %}
 
-{# ── Edit Modal ────────────────────────────────────────────────────────── #}
+{# ── Edit Modal (card-style) ───────────────────────────────────────────── #}
 <div class="cf-modal-scrim" id="cf-modal-scrim" hidden>
-    <div class="cf-modal">
-        <div class="cf-modal-header">
-            <h3 class="cf-modal-title" id="cf-modal-title">Edit Account</h3>
-            <button type="button" class="cf-modal-close" onclick="cfCloseModal()" title="Close">&times;</button>
-        </div>
+    <div class="outline-panel cf-modal-card">
         <form method="post" id="cf-modal-form">
             <input type="hidden" name="entity_key" id="cf-modal-entity">
-            <div class="cf-modal-body">
-                <label class="cf-modal-label">Balance
-                    <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="input-sm cf-modal-input" onfocus="this.select()"></span>
-                </label>
-                <div id="cf-modal-card-fields" hidden>
-                    <label class="cf-modal-label">Credit Limit
-                        <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="input-sm cf-modal-input" onfocus="this.select()"></span>
-                    </label>
-                    <label class="cf-modal-label">Payment Due Day
-                        <input type="text" name="payment_due_day" id="cf-modal-due-day" class="input-sm cf-modal-input cf-modal-input--narrow" placeholder="15">
-                    </label>
-                    <label class="cf-modal-label">Payment Amount
-                        <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="input-sm cf-modal-input" onfocus="this.select()"></span>
-                    </label>
+
+            <div class="cf-box-header">
+                <span class="cf-box-name" id="cf-modal-title"></span>
+                <button type="button" class="cf-edit-btn" onclick="cfCloseModal()" title="Close">&times;</button>
+            </div>
+
+            <div class="cf-box-balance">
+                <span class="cf-box-label">Balance</span>
+                <span class="cf-inline-input cf-modal-val"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input" onfocus="this.select()"></span>
+            </div>
+
+            <div id="cf-modal-card-fields" hidden>
+                <div class="cf-box-balance">
+                    <span class="cf-box-label">Credit Limit</span>
+                    <span class="cf-inline-input cf-modal-val"><span class="cf-dollar">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input" onfocus="this.select()"></span>
+                </div>
+
+                <div class="cf-pymt-divider"></div>
+
+                <div class="cf-modal-pymt-row">
+                    <span class="cf-box-label">Payment Amount</span>
+                    <span class="cf-inline-input cf-modal-val"><span class="cf-dollar">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="cf-modal-input" onfocus="this.select()"></span>
+                </div>
+                <div class="cf-modal-pymt-row">
+                    <span class="cf-box-label">Due Day of Month</span>
+                    <input type="text" name="payment_due_day" id="cf-modal-due-day" class="cf-modal-input cf-modal-input--narrow" placeholder="15">
                 </div>
             </div>
+
             <div class="cf-modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" onclick="cfCloseModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary btn-sm">Save</button>
