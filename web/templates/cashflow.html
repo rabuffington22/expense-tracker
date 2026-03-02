@@ -82,20 +82,9 @@
             {{ fmt_cents(acct.balance_cents) }}
         </span>
         {% if acct.credit_limit_cents %}
-        <span class="cf-credit-line">{{ fmt_cents(acct.credit_limit_cents) }}</span>
+        <span class="cf-credit-line">${{ "{:,.0f}".format(acct.credit_limit_cents / 100) }}</span>
         {% endif %}
     </div>
-
-    {% if acct.credit_limit_cents %}
-    <div class="cf-cc-utilization">
-        <div class="cf-cc-bar-track">
-            {% set pct = (acct.balance_cents / acct.credit_limit_cents * 100) if acct.credit_limit_cents else 0 %}
-            <div class="cf-cc-bar-fill {% if pct > 75 %}cf-cc-bar--warn{% elif pct > 50 %}cf-cc-bar--mid{% endif %}"
-                 style="width: {{ [pct, 100]|min }}%"></div>
-        </div>
-        <span class="cf-cc-util-text">{{ fmt_cents(acct.balance_cents) }} / {{ fmt_cents(acct.credit_limit_cents) }}</span>
-    </div>
-    {% endif %}
 
     {% if acct.payment_due_day %}
     <div class="cf-cc-payment">
