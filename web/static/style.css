@@ -4641,6 +4641,7 @@ select.input-sm {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    flex-wrap: wrap;
 }
 .cf-box-label {
     font-size: var(--ui-font-xs);
@@ -4658,6 +4659,8 @@ select.input-sm {
     font-size: 0.55rem;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
+    width: 100%;
+    text-align: right;
 }
 
 /* Edit icon button (ⓘ) */
