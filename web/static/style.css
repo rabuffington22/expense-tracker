@@ -4665,7 +4665,7 @@ select.input-sm {
     background: rgba(0,0,0,0.06);
 }
 .cf-pymt-line {
-    text-align: center;
+    text-align: left;
 }
 .cf-credit-line {
     font-size: 0.55rem;
@@ -4772,7 +4772,7 @@ input.cf-modal-input--day {
 .cf-modal-pymt-edit {
     display: flex;
     align-items: baseline;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.15rem;
 }
 .cf-pymt-label {
