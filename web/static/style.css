@@ -4840,14 +4840,14 @@ input.cf-add-input {
     border-radius: 0;
     box-shadow: none;
     color: var(--text);
-    font-size: 0.32rem;
-    padding: 0.1rem 0;
+    font-size: 0.65rem;
+    padding: 0.15rem 0;
     outline: none;
     -webkit-appearance: none;
     appearance: none;
 }
 input.cf-add-input:focus { border-bottom-color: var(--blue); box-shadow: none; }
-.cf-add-input--name { flex: 1; min-width: 0; }
+.cf-add-input--name { flex: 1; min-width: 0; max-width: 50%; }
 .cf-add-input--amt { width: 45px; text-align: right; }
 .cf-add-input--day { width: 15px; text-align: center; }
 :root[data-theme="light"] .cf-add-input {
@@ -4909,7 +4909,7 @@ input.cf-add-input:focus { border-bottom-color: var(--blue); box-shadow: none; }
     font-size: 0.45rem;
     color: var(--text-muted);
     font-style: italic;
-    padding-left: 0.4rem;
+    padding-left: 0.8rem;
 }
 /* Bigger upcoming text inside modal */
 .cf-modal-card .cf-upcoming-label {
