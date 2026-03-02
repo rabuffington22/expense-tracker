@@ -122,7 +122,7 @@ Pattern used across routes:
 
 Plus **Dashboard**, **To Do**, **Cash Flow**, and **Reports** pages.
 
-## Database (28 Migrations)
+## Database (31 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Seeded defaults (Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
@@ -277,6 +277,22 @@ Each insight links to a drill-down in `/transactions`.
 **Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
 
 ## Change Log
+
+### 2026-03-02 — To Do queue detail popups + per-item dismiss
+Inline HTMX-powered modal popups for "Large transactions" and "New merchants" review queues on the To Do page. Per-item and bulk dismiss with date-based cutoff tracking.
+
+1. **Migration 30** — `queue_dismissals` table: queue_type (UNIQUE), dismissed_at, dismissed_before. Stores bulk dismiss date cutoff per queue type.
+2. **Migration 31** — `queue_item_dismissals` table: queue_type, item_key (UNIQUE together), dismissed_at. Tracks individually dismissed transactions/merchants.
+3. **Queue detail endpoints** — `GET /todo/queue/large-txns` and `GET /todo/queue/new-merchants` return HTML partials. Large txns: table with Date, Merchant, Amount, Category. New merchants: compact rows with first seen date, txn count, total spent.
+4. **Modal popup** — `.tq-modal-scrim` + `.tq-modal-card` (520px, 80vh max). Same pattern as Cash Flow edit modal: fixed overlay, click-outside-to-close, Escape key, × button.
+5. **HTMX lazy loading** — Queue rows changed from `<a>` to `<div>` with `hx-get` + `hx-target="#tq-modal-body"`. `onclick="tqOpenModal()"` shows loading state immediately.
+6. **Per-item dismiss** — × button on each row uses `hx-post` to `/todo/queue/dismiss-item` with `hx-target="closest tr"` (or `.tq-merchant-row`) + `hx-swap="outerHTML"`. Returns empty response to remove the row inline. Item key: `transaction_id` for large txns, `merchant_canonical` for new merchants.
+7. **Bulk dismiss** — "Dismiss All" button upserts `queue_dismissals` with today's date. Also clears per-item dismissals for that queue type.
+8. **Count queries updated** — Both `_get_queue_counts()` and detail query functions exclude items in `queue_item_dismissals` via Python-side set filtering after SQL fetch.
+9. **Footer layout** — "View all in Transactions ›" on bottom-left, "Come Back Later" + "Dismiss All" buttons on bottom-right. Flexbox `space-between`.
+10. **Popup title typography** — Uppercase tracked Apple style (`.tq-detail-title`: `text-transform: uppercase`, `letter-spacing: var(--label-tracking)`, centered).
+11. **To Do page layout** — Review Queues panel header removed. Panel capped at `max-width: 420px`. Badge counts right-aligned with `margin-left: auto`.
+12. **Transaction filters** — Added `large_txns` and `new_merchants` filter params to `transactions.py` `_get_filter_params()` and `_build_base_cte()` for "View all in Transactions" drill-through links.
 
 ### 2026-03-02 — Cash Flow page + color palette refresh + edit modal redesign
 New `/cashflow` page showing per-account balances and upcoming recurring charges. Plus sidebar and dashboard color updates. Edit modal redesigned as card clone with inline-editable fields and manual recurring charge support. Plaid liabilities integration for auto-populating credit card data.
