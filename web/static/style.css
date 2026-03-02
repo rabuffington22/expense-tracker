@@ -4700,6 +4700,9 @@ select.input-sm {
     align-items: center;
     justify-content: center;
 }
+.cf-modal-scrim[hidden] {
+    display: none;
+}
 .cf-modal {
     background: var(--bg-card);
     border: 1px solid var(--border);

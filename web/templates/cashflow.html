@@ -3,12 +3,12 @@
 
 {# ── Macros ────────────────────────────────────────────────────────────── #}
 
-{% macro edit_icon(acct) %}
+{% macro edit_icon(acct, ek) %}
 <button type="button" class="cf-edit-btn" title="Edit"
     data-acct-id="{{ acct.id }}"
     data-acct-name="{{ acct.account_name }}"
     data-acct-type="{{ acct.account_type }}"
-    data-entity-key="{{ entity_key }}"
+    data-entity-key="{{ ek }}"
     data-balance="{{ '{:.2f}'.format(acct.balance_cents / 100) }}"
     data-limit="{{ '{:.2f}'.format(acct.credit_limit_cents / 100) }}"
     data-due-day="{{ acct.payment_due_day or '' }}"
@@ -28,7 +28,7 @@
         {% if acct.balance_source == 'plaid' %}
         <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% else %}
-        {{ edit_icon(acct) }}
+        {{ edit_icon(acct, entity_key) }}
         {% endif %}
     </div>
 
@@ -69,7 +69,7 @@
         {% if acct.balance_source == 'plaid' %}
         <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% else %}
-        {{ edit_icon(acct) }}
+        {{ edit_icon(acct, entity_key) }}
         {% endif %}
     </div>
 
