@@ -1,12 +1,12 @@
-"""Reports route — monthly detail + spending trend, category breakdown, drill-down, CSV export."""
+"""Reports route — quick monthly exports + traditional report builder."""
 
 import calendar
 import datetime
-from dateutil.relativedelta import relativedelta
 
 from flask import Blueprint, render_template, request, g, Response
 
 from core.db import get_connection
+from web.export_helpers import dataframe_to_pdf, transactions_to_qbo
 from core.reporting import (
     get_available_months,
     get_category_totals,
@@ -14,18 +14,25 @@ from core.reporting import (
     get_merchant_totals,
     get_monthly_totals,
     get_transactions,
+    # Date-range report builder queries
+    get_transactions_daterange,
+    get_category_totals_daterange,
+    get_merchant_totals_daterange,
+    get_month_over_month,
+    get_income_vs_expenses_daterange,
+    get_recurring_charges,
+    get_tax_summary,
+    get_account_summary,
 )
 
 bp = Blueprint("reports", __name__, url_prefix="/reports")
 
-# Curated palette — distinct, readable on dark backgrounds
+# Curated palette — imported by dashboard.py for donut chart
 COLORS = [
     "#0a84ff", "#30d158", "#ff453a", "#ff9f0a", "#bf5af2",
     "#64d2ff", "#ffd60a", "#ac8e68", "#98989d", "#ff6482",
     "#30b0c7", "#8e8e93",
 ]
-
-_VALID_PERIODS = (3, 6, 12, 24)
 
 
 # ── Date formatting helpers ──────────────────────────────────────────────────
@@ -66,7 +73,7 @@ def fmt_date(date_str):
     return dt.strftime("%b") + " " + str(dt.day) + ", " + str(dt.year)
 
 
-# ── CSV filename helper ───────────────────────────────────────────────────────
+# ── CSV filename helpers ─────────────────────────────────────────────────────
 
 def _month_range(ym_str):
     """Return (start_date, end_date) as YYYY-MM-DD strings for a month."""
@@ -84,112 +91,48 @@ def _csv_filename(entity_key, report_type, ym_str):
     return f"{entity_key}_{report_type}_{start}_{end}.csv"
 
 
+def _csv_filename_range(entity_key, report_type, start_date, end_date):
+    """Build filename: <entity>_<report>_<start>_<end>.csv"""
+    return f"{entity_key}_{report_type}_{start_date}_{end_date}.csv"
+
+
 # ── Routes ───────────────────────────────────────────────────────────────────
 
 @bp.route("/")
 def index():
     months = get_available_months(g.entity_key)
     if not months:
-        return render_template("reports.html", months=[], has_data=False)
+        return render_template("reports.html", months=[], has_data=False,
+                               summary={"total_txns": 0})
 
-    # ── Parse params ──────────────────────────────────────────────────────
+    # Selected month for quick export cards
     selected_month = request.args.get("month", months[-1])
     if selected_month not in months:
         selected_month = months[-1]
 
-    period = request.args.get("period", "6")
-    try:
-        period = int(period)
-    except ValueError:
-        period = 6
-    if period not in _VALID_PERIODS:
-        period = 6
-
-    # ── Top Section: Month navigation ─────────────────────────────────────
-    month_idx = months.index(selected_month)
-    prev_month = months[month_idx - 1] if month_idx > 0 else None
-    next_month = months[month_idx + 1] if month_idx < len(months) - 1 else None
-
-    # ── Top Section: Category breakdown ───────────────────────────────────
+    # Summary for has_data / total_txns check
     cat_df = get_category_totals(g.entity_key, selected_month)
-    cat_rows = []
-    if not cat_df.empty:
-        # Look up category IDs for drill links (D5)
-        conn = get_connection(g.entity_key)
-        try:
-            cat_id_map = {}
-            for id_row in conn.execute("SELECT id, name FROM categories").fetchall():
-                cat_id_map[id_row["name"]] = id_row["id"]
-        finally:
-            conn.close()
+    total_txns = int(cat_df["count"].sum()) if not cat_df.empty else 0
+    summary = {"total_txns": total_txns}
 
-        for _, row in cat_df.iterrows():
-            cat_rows.append({
-                "category": row["category"],
-                "count": int(row["count"]),
-                "total_amount": float(row["total_amount"]),
-                "cat_id": cat_id_map.get(row["category"]),
-            })
-
-    max_cat_amount = cat_rows[0]["total_amount"] if cat_rows else 1
-    for r in cat_rows:
-        r["pct"] = round(r["total_amount"] / max_cat_amount * 100, 1) if max_cat_amount else 0
-
-    # Month date range for drill links
-    sel_dt = _parse_ym(selected_month)
-    month_start = f"{sel_dt.year:04d}-{sel_dt.month:02d}-01"
-    last_day = calendar.monthrange(sel_dt.year, sel_dt.month)[1]
-    month_end = f"{sel_dt.year:04d}-{sel_dt.month:02d}-{last_day:02d}"
-
-    # ── Top Section: Summary stats ────────────────────────────────────────
-    detail_income = get_income_total(g.entity_key, selected_month)
-    total_spend = sum(r["total_amount"] for r in cat_rows)
-    summary = {
-        "total_spend": total_spend,
-        "total_income": detail_income,
-        "net": detail_income - total_spend,
-        "total_txns": sum(r["count"] for r in cat_rows),
-    }
-
-    # ── Top Section: Drill-down ───────────────────────────────────────────
-    drill_cat = request.args.get("drill")
-    drill_txns = []
-    if drill_cat:
-        txn_df = get_transactions(g.entity_key, month=selected_month, category=drill_cat)
-        if not txn_df.empty:
-            for _, row in txn_df.iterrows():
-                drill_txns.append({
-                    "date": row.get("date", ""),
-                    "description_raw": row.get("description_raw", ""),
-                    "merchant_canonical": row.get("merchant_canonical", ""),
-                    "amount": float(row.get("amount", 0)),
-                    "account": row.get("account", ""),
-                })
-
-    # ── Bottom Section: Spending trend chart ──────────────────────────────
-    chart_bars = _build_chart_bars(g.entity_key, months[-1], period, selected_month)
+    # Default date range for report builder: first of current month → today
+    today = datetime.date.today()
+    default_start = today.replace(day=1).isoformat()
+    default_end = today.isoformat()
 
     return render_template(
         "reports.html",
         has_data=True,
         months=months,
         selected_month=selected_month,
-        prev_month=prev_month,
-        next_month=next_month,
-        period=period,
-        chart_bars=chart_bars,
-        cat_rows=cat_rows,
-        drill_cat=drill_cat,
-        drill_txns=drill_txns,
         summary=summary,
-        colors=COLORS,
         fmt_month=fmt_month_full,
-        fmt_month_short=fmt_month_short,
-        fmt_date=fmt_date,
-        month_start=month_start,
-        month_end=month_end,
+        default_start=default_start,
+        default_end=default_end,
     )
 
+
+# ── Quick monthly exports (used by export cards) ────────────────────────────
 
 @bp.route("/export-csv")
 def export_csv():
@@ -203,7 +146,6 @@ def export_csv():
     if txn_df.empty:
         return "No data", 404
 
-    # Format for CPA-friendly output: ISO dates, decimal dollars, minus sign
     out = txn_df[["date", "description_raw", "merchant_canonical",
                    "amount", "category", "account"]].copy()
     out.columns = ["Date", "Description", "Merchant", "Amount", "Category", "Account"]
@@ -270,45 +212,154 @@ def export_merchants():
     )
 
 
-# ── Chart builder ────────────────────────────────────────────────────────────
+# ── Unified report builder export ────────────────────────────────────────────
 
-def _build_chart_bars(entity_key, latest_month, period, selected_month):
-    """Build template-ready bar data for a variable-length trend chart."""
-    try:
-        end_dt = datetime.datetime.strptime(latest_month, "%Y-%m")
-    except ValueError:
-        end_dt = datetime.datetime.now().replace(day=1)
+@bp.route("/export")
+def export():
+    """Unified export endpoint for the report builder."""
+    report_type = request.args.get("report_type", "transactions")
+    start_date = request.args.get("start", "")
+    end_date = request.args.get("end", "")
 
-    # Generate month keys for the period
-    month_keys = []
-    for i in range(period - 1, -1, -1):
-        dt = end_dt - relativedelta(months=i)
-        month_keys.append(dt.strftime("%Y-%m"))
+    if not start_date or not end_date:
+        return "Missing date range", 400
 
-    # Fetch spending data
-    start_key = month_keys[0]
-    end_key = month_keys[-1]
-    monthly_df = get_monthly_totals(entity_key, start_key, end_key)
+    entity = g.entity_key
 
-    totals = {}
-    if not monthly_df.empty:
-        totals = monthly_df.groupby("month")["total_amount"].sum().to_dict()
+    if report_type == "transactions":
+        df = get_transactions_daterange(entity, start_date, end_date)
+        if df.empty:
+            return "No data for this date range", 404
+        out = df[["date", "description_raw", "merchant_canonical",
+                   "amount", "category", "subcategory", "account", "notes"]].copy()
+        out.columns = ["Date", "Description", "Merchant", "Amount",
+                        "Category", "Subcategory", "Account", "Notes"]
+        out["Amount"] = out["Amount"].apply(lambda v: f"{v:.2f}")
+        label = "transactions"
 
-    # Build bar dicts
-    bars = []
-    max_val = max((totals.get(m, 0) for m in month_keys), default=0) or 1
-    for m in month_keys:
-        val = float(totals.get(m, 0))
-        raw_pct = round(val / max_val * 100, 1) if max_val else 0
-        pct = max(raw_pct, 4) if val > 0 else 0  # Floor so tiny bars stay visible
-        bars.append({
-            "month_key": m,
-            "label": fmt_month_short(m),
-            "value": val,
-            "display": "${:,.0f}".format(val) if val > 0 else "",
-            "pct": pct,
-            "has_data": val > 0,
-            "is_selected": m == selected_month,
-        })
+    elif report_type == "categories":
+        df = get_category_totals_daterange(entity, start_date, end_date)
+        if df.empty:
+            return "No data for this date range", 404
+        out = df[["category", "count", "total_amount"]].copy()
+        out.columns = ["Category", "Transactions", "Total"]
+        out["Total"] = out["Total"].apply(lambda v: f"{v:.2f}")
+        label = "category_summary"
 
-    return bars
+    elif report_type == "merchants":
+        df = get_merchant_totals_daterange(entity, start_date, end_date)
+        if df.empty:
+            return "No data for this date range", 404
+        out = df[["merchant", "count", "total_amount"]].copy()
+        out.columns = ["Merchant", "Transactions", "Total"]
+        out["Total"] = out["Total"].apply(lambda v: f"{v:.2f}")
+        label = "merchant_summary"
+
+    elif report_type == "month_over_month":
+        df = get_month_over_month(entity, start_date, end_date)
+        if df.empty:
+            return "No data for this date range", 404
+        pivot = df.pivot_table(
+            index="category", columns="month",
+            values="total_amount", fill_value=0,
+        )
+        pivot["Total"] = pivot.sum(axis=1)
+        pivot = pivot.sort_values("Total", ascending=False)
+        for col in pivot.columns:
+            pivot[col] = pivot[col].apply(lambda v: f"{v:.2f}")
+        pivot.index.name = "Category"
+        out = pivot.reset_index()
+        label = "month_over_month"
+
+    elif report_type == "income_expenses":
+        df = get_income_vs_expenses_daterange(entity, start_date, end_date)
+        if df.empty:
+            return "No data for this date range", 404
+        out = df.copy()
+        out.columns = ["Month", "Expenses", "Income"]
+        out["Net"] = out["Income"].astype(float) - out["Expenses"].astype(float)
+        for col in ["Expenses", "Income", "Net"]:
+            out[col] = out[col].apply(lambda v: f"{v:.2f}")
+        label = "income_vs_expenses"
+
+    elif report_type == "recurring":
+        df = get_recurring_charges(entity, start_date, end_date)
+        if df.empty:
+            return "No data for this date range", 404
+        out = df[["merchant", "count", "avg_amount", "min_amount",
+                   "max_amount", "first_date", "last_date", "category"]].copy()
+        out.columns = ["Merchant", "Charges", "Avg Amount", "Min Amount",
+                        "Max Amount", "First Date", "Last Date", "Category"]
+        for col in ["Avg Amount", "Min Amount", "Max Amount"]:
+            out[col] = out[col].apply(lambda v: f"{v:.2f}")
+        label = "recurring_charges"
+
+    elif report_type == "tax_summary":
+        df = get_tax_summary(entity, start_date, end_date)
+        if df.empty:
+            return "No data for this date range", 404
+        out = df.copy()
+        out.columns = ["Category", "Subcategory", "Transactions", "Total"]
+        out["Total"] = out["Total"].apply(lambda v: f"{v:.2f}")
+        label = "tax_summary"
+
+    elif report_type == "accounts":
+        df = get_account_summary(entity, start_date, end_date)
+        if df.empty:
+            return "No data for this date range", 404
+        out = df.copy()
+        out.columns = ["Account", "Transactions", "Total Spending", "Total Income", "Net"]
+        for col in ["Total Spending", "Total Income", "Net"]:
+            out[col] = out[col].apply(lambda v: f"{v:.2f}")
+        label = "account_summary"
+
+    else:
+        return "Unknown report type", 400
+
+    # ── Format dispatch ────────────────────────────────────────────────
+    fmt = request.args.get("format", "csv")
+
+    if fmt == "qbo":
+        # QBO only works for transactions
+        if report_type != "transactions":
+            return "QBO format is only available for Transactions reports", 400
+        qbo_data = transactions_to_qbo(df, entity, start_date, end_date)
+        filename = _csv_filename_range(entity, label, start_date, end_date)
+        filename = filename.replace(".csv", ".qbo")
+        return Response(
+            qbo_data,
+            mimetype="application/x-ofx",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+
+    elif fmt == "pdf":
+        report_names = {
+            "transactions": "Transactions",
+            "categories": "Category Summary",
+            "merchants": "Merchant Summary",
+            "month_over_month": "Month-over-Month Comparison",
+            "income_expenses": "Income vs Expenses",
+            "recurring": "Recurring Charges",
+            "tax_summary": "Tax Summary",
+            "accounts": "Account Summary",
+        }
+        title = report_names.get(report_type, report_type)
+        subtitle = f"{entity.title()} \u2014 {start_date} to {end_date}"
+        pdf_bytes = dataframe_to_pdf(out, title, subtitle)
+        filename = _csv_filename_range(entity, label, start_date, end_date)
+        filename = filename.replace(".csv", ".pdf")
+        return Response(
+            pdf_bytes,
+            mimetype="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+
+    else:
+        # Default: CSV
+        csv_data = out.to_csv(index=False)
+        filename = _csv_filename_range(entity, label, start_date, end_date)
+        return Response(
+            csv_data,
+            mimetype="text/csv",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )

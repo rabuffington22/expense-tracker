@@ -9,193 +9,84 @@
 {% else %}
 
 <!-- ================================================================= -->
-<!-- TOP SECTION: Monthly Detail                                        -->
+<!-- Report Builder                                                     -->
 <!-- ================================================================= -->
+<form class="rpt-builder-form" action="{{ url_for('reports.export') }}" method="get">
+    <div class="form-row">
+        <div class="form-group" style="flex:0 0 200px;">
+            <label class="text-xs text-muted" for="report_type">Report</label>
+            <select id="report_type" name="report_type" class="input-sm" style="width:100%;">
+                <option value="transactions">Transactions</option>
+                <option value="categories">Category Summary</option>
+                <option value="merchants">Merchant Summary</option>
+                <option value="month_over_month">Month-over-Month</option>
+                <option value="income_expenses">Income vs Expenses</option>
+                <option value="recurring">Recurring Charges</option>
+                <option value="tax_summary">Tax Summary</option>
+                <option value="accounts">Account Summary</option>
+            </select>
+        </div>
+        <div class="form-group" style="flex:0 0 140px;">
+            <label class="text-xs text-muted" for="rpt-start">From</label>
+            <input type="date" id="rpt-start" name="start" class="input-sm" style="width:100%;" value="{{ default_start }}">
+        </div>
+        <div class="form-group" style="flex:0 0 140px;">
+            <label class="text-xs text-muted" for="rpt-end">To</label>
+            <input type="date" id="rpt-end" name="end" class="input-sm" style="width:100%;" value="{{ default_end }}">
+        </div>
+        <div class="form-group" style="flex:0 0 90px;">
+            <label class="text-xs text-muted" for="rpt-format">Format</label>
+            <select id="rpt-format" name="format" class="input-sm" style="width:100%;">
+                <option value="csv">CSV</option>
+                <option value="pdf">PDF</option>
+                <option value="qbo">QBO</option>
+            </select>
+        </div>
+        <div class="form-group" style="flex:0 0 auto;">
+            <label class="text-xs text-muted">&nbsp;</label>
+            <button type="submit" class="btn btn-primary btn-sm">Export</button>
+        </div>
+    </div>
+</form>
 
-<!-- Month Navigator -->
-<div class="rpt-month-nav">
-    {% if prev_month %}
-    <a href="{{ url_for('reports.index', month=prev_month, period=period) }}"
-       class="rpt-month-arrow" aria-label="Previous month">‹</a>
-    {% else %}
-    <span class="rpt-month-arrow rpt-month-arrow--disabled">‹</span>
-    {% endif %}
-
-    <span class="rpt-month-name">{{ fmt_month(selected_month) }}</span>
-
-    {% if next_month %}
-    <a href="{{ url_for('reports.index', month=next_month, period=period) }}"
-       class="rpt-month-arrow" aria-label="Next month">›</a>
-    {% else %}
-    <span class="rpt-month-arrow rpt-month-arrow--disabled">›</span>
-    {% endif %}
+<div class="rpt-builder-descriptions">
+    <div class="rpt-desc" data-report="transactions">All transactions with dates, amounts, merchants, categories, subcategories, and notes.</div>
+    <div class="rpt-desc" data-report="categories">Spending totals grouped by category with transaction counts.</div>
+    <div class="rpt-desc" data-report="merchants">Spending totals grouped by merchant with transaction counts.</div>
+    <div class="rpt-desc" data-report="month_over_month">Category spending broken down by month — one column per month, one row per category.</div>
+    <div class="rpt-desc" data-report="income_expenses">Monthly income, expenses, and net totals side by side.</div>
+    <div class="rpt-desc" data-report="recurring">Merchants with 2+ charges — average, min, max amounts and date range.</div>
+    <div class="rpt-desc" data-report="tax_summary">Spending by category and subcategory — detailed breakdown for tax preparation.</div>
+    <div class="rpt-desc" data-report="accounts">Spending, income, and net totals by account.</div>
 </div>
 
-<!-- Stat Cards -->
-{% if summary.total_txns > 0 or summary.total_income > 0 %}
-<div class="outline-panel">
-    <div class="rpt-stats">
-        <div class="rpt-stat-card">
-            <div class="rpt-stat-label">Spending</div>
-            <div class="rpt-stat-value">${{ "{:,.0f}".format(summary.total_spend) }}</div>
-            <div class="rpt-stat-sub">{{ summary.total_txns }} transaction{{ 's' if summary.total_txns != 1 }}</div>
-        </div>
-        <div class="rpt-stat-card">
-            <div class="rpt-stat-label">Income</div>
-            <div class="rpt-stat-value" style="color: var(--green);">${{ "{:,.0f}".format(summary.total_income) }}</div>
-            <div class="rpt-stat-sub">{{ fmt_month(selected_month) }}</div>
-        </div>
-        <div class="rpt-stat-card">
-            <div class="rpt-stat-label">Net</div>
-            <div class="rpt-stat-value" style="color: {{ 'var(--green)' if summary.net >= 0 else 'var(--red)' }};">
-                {{ '+' if summary.net >= 0 else '' }}${{ "{:,.0f}".format(summary.net) }}
-            </div>
-            <div class="rpt-stat-sub">{{ fmt_month(selected_month) }}</div>
-        </div>
-    </div>
-</div>
-{% endif %}
+<script>
+/* Show description for selected report type + toggle QBO availability */
+(function() {
+    var sel = document.getElementById('report_type');
+    var fmt = document.getElementById('rpt-format');
+    var descs = document.querySelectorAll('.rpt-desc');
+    var qboOpt = fmt.querySelector('option[value="qbo"]');
 
-<!-- Category Breakdown -->
-<div class="outline-panel rpt-categories-section">
-    <div class="rpt-categories-header">
-        <h2 class="rpt-section-title">Categories</h2>
-    </div>
-
-    {% if cat_rows %}
-    <div class="rpt-cat-list">
-        {% for row in cat_rows %}
-        <a class="rpt-cat-row"
-           href="{{ url_for('transactions.index', category_id=row.cat_id, start=month_start, end=month_end) if row.cat_id else url_for('reports.index', month=selected_month, period=period, drill=row.category) }}">
-            <div class="rpt-cat-left">
-                <div class="rpt-cat-dot" style="background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-                <div class="rpt-cat-info">
-                    <div class="rpt-cat-name">{{ row.category }}</div>
-                    <div class="rpt-cat-count">{{ row.count }} txn{{ 's' if row.count != 1 }}</div>
-                </div>
-            </div>
-            <div class="rpt-cat-right">
-                <div class="rpt-cat-bar-wrap">
-                    <div class="rpt-cat-bar" style="width:{{ row.pct }}%; background:{{ colors[loop.index0 % (colors|length)] }}"></div>
-                </div>
-                <div class="rpt-cat-amount">${{ "{:,.0f}".format(row.total_amount) }}</div>
-            </div>
-            <div class="rpt-cat-chevron">›</div>
-        </a>
-        {% endfor %}
-        <div class="rpt-cat-row rpt-cat-total">
-            <div class="rpt-cat-left">
-                <div class="rpt-cat-dot" style="background:transparent"></div>
-                <div class="rpt-cat-info">
-                    <div class="rpt-cat-name">Total</div>
-                    <div class="rpt-cat-count">{{ summary.total_txns }} transactions</div>
-                </div>
-            </div>
-            <div class="rpt-cat-right">
-                <div class="rpt-cat-bar-wrap" style="visibility:hidden"></div>
-                <div class="rpt-cat-amount">${{ "{:,.0f}".format(summary.total_spend) }}</div>
-            </div>
-            <div class="rpt-cat-chevron"></div>
-        </div>
-    </div>
-
-    <a href="{{ url_for('reports.export_csv', month=selected_month) }}"
-       class="rpt-export-link">Export All — {{ fmt_month(selected_month) }}</a>
-    {% else %}
-    <div class="alert alert-info" style="margin-top:0.8rem;">No expense transactions in {{ fmt_month(selected_month) }}.</div>
-    {% endif %}
-</div>
-
-<!-- Drill-down -->
-{% if drill_cat %}
-<div class="rpt-drill-section">
-    <div class="rpt-drill-header">
-        <h2 class="rpt-section-title">{{ drill_cat }}</h2>
-        <span class="rpt-drill-badge">{{ drill_txns|length }} transaction{{ 's' if drill_txns|length != 1 }}</span>
-    </div>
-
-    {% if drill_txns %}
-    <div class="rpt-drill-list">
-        {% for txn in drill_txns %}
-        <div class="rpt-drill-row">
-            <div class="rpt-drill-date">{{ fmt_date(txn.date) }}</div>
-            <div class="rpt-drill-merchant">{{ txn.merchant_canonical or txn.description_raw[:45] }}</div>
-            <div class="rpt-drill-amount">${{ "{:,.2f}".format(txn.amount|abs) }}</div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <a href="{{ url_for('reports.export_csv', month=selected_month, category=drill_cat) }}"
-       class="rpt-export-link">Export CSV</a>
-    {% else %}
-    <p class="text-muted" style="margin-top:0.5rem;">No transactions found.</p>
-    {% endif %}
-</div>
-{% endif %}
-
-<!-- ================================================================= -->
-<!-- CPA Export                                                          -->
-<!-- ================================================================= -->
-{% if summary.total_txns > 0 %}
-<div class="outline-panel rpt-export-section">
-    <div class="panel-header">Export — {{ fmt_month(selected_month) }}</div>
-    <div class="rpt-export-grid">
-        <a href="{{ url_for('reports.export_csv', month=selected_month) }}" class="rpt-export-card">
-            <span class="rpt-export-card-title">Transactions</span>
-            <span class="rpt-export-card-desc">All transactions with dates, amounts, merchants, categories</span>
-        </a>
-        <a href="{{ url_for('reports.export_categories', month=selected_month) }}" class="rpt-export-card">
-            <span class="rpt-export-card-title">Category Summary</span>
-            <span class="rpt-export-card-desc">Spending totals grouped by category</span>
-        </a>
-        <a href="{{ url_for('reports.export_merchants', month=selected_month) }}" class="rpt-export-card">
-            <span class="rpt-export-card-title">Merchant Summary</span>
-            <span class="rpt-export-card-desc">Spending totals grouped by merchant</span>
-        </a>
-    </div>
-</div>
-{% endif %}
-
-<!-- ================================================================= -->
-<!-- DIVIDER                                                            -->
-<!-- ================================================================= -->
-<hr class="rpt-divider">
-
-<!-- ================================================================= -->
-<!-- BOTTOM SECTION: Spending Trend                                     -->
-<!-- ================================================================= -->
-
-<div class="rpt-trend-section">
-    <div class="rpt-trend-header">
-        <h2 class="rpt-section-title">Spending Trend</h2>
-
-        <div class="rpt-period-toggle">
-            {% for p, label in [(3, '3M'), (6, '6M'), (12, '1Y'), (24, '2Y')] %}
-            <a href="{{ url_for('reports.index', month=selected_month, period=p) }}"
-               class="rpt-period-btn{% if period == p %} active{% endif %}">{{ label }}</a>
-            {% endfor %}
-        </div>
-    </div>
-
-    {% if chart_bars %}
-    <div class="outline-panel" style="padding: 1rem 1rem 0.75rem;">
-        <div class="chart-bars chart-bars--period-{{ period }}">
-            {% for bar in chart_bars %}
-            <div class="chart-col{% if bar.is_selected %} chart-col--selected{% endif %}">
-                <div class="chart-value">{{ bar.display }}</div>
-                <div class="chart-track">
-                    <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_selected %} chart-fill--selected{% endif %}"
-                         style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
-                </div>
-                <div class="chart-label">{{ bar.label }}</div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% else %}
-    <div class="alert alert-info" style="margin-top:1rem;">No expense transactions found.</div>
-    {% endif %}
-</div>
+    function update() {
+        /* Toggle report description */
+        descs.forEach(function(d) {
+            d.style.display = d.getAttribute('data-report') === sel.value ? 'block' : 'none';
+        });
+        /* QBO only available for Transactions */
+        if (sel.value === 'transactions') {
+            qboOpt.disabled = false;
+            qboOpt.style.display = '';
+        } else {
+            qboOpt.disabled = true;
+            qboOpt.style.display = 'none';
+            if (fmt.value === 'qbo') fmt.value = 'csv';
+        }
+    }
+    sel.addEventListener('change', update);
+    update();
+})();
+</script>
 
 {% endif %}
 {% endblock %}

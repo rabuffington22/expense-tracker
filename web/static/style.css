@@ -336,6 +336,15 @@ a:hover { text-decoration: underline; }
 .sb-brand {
     padding: 0 0.45rem;
     margin-bottom: 0.05rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.sb-brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    flex-shrink: 0;
 }
 .sb-brand .sidebar-title {
     font-size: 1.15rem;
@@ -3054,6 +3063,31 @@ input[type="checkbox"] {
 @media (max-width: 600px) {
     .rpt-export-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ── Report Builder ──────────────────────────── */
+.rpt-builder-section {
+    margin-top: 1rem;
+}
+.rpt-builder-form .form-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+.rpt-builder-descriptions {
+    margin-top: 0.5rem;
+}
+.rpt-desc {
+    display: none;
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+@media (max-width: 600px) {
+    .rpt-builder-form .form-row .form-group {
+        flex: 1 1 100% !important;
     }
 }
 

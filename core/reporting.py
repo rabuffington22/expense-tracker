@@ -196,3 +196,178 @@ def get_available_months(entity: str) -> list[str]:
         return [r[0] for r in rows if r[0]]
     finally:
         conn.close()
+
+
+# ── Date-range query helpers (for Report Builder) ────────────────────────────
+
+def get_transactions_daterange(entity: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """Return all transactions between start_date and end_date (YYYY-MM-DD)."""
+    sql = """
+        SELECT date, description_raw, merchant_canonical,
+               amount, category, subcategory, account, notes
+        FROM transactions
+        WHERE date BETWEEN ? AND ?
+        ORDER BY date DESC
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_date, end_date))
+    finally:
+        conn.close()
+
+
+def get_category_totals_daterange(entity: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """Category summary for a date range (YYYY-MM-DD)."""
+    sql = """
+        SELECT
+            COALESCE(NULLIF(category,''), 'Uncategorized') AS category,
+            COUNT(*) AS count,
+            ABS(SUM(amount)) AS total_amount
+        FROM transactions
+        WHERE date BETWEEN ? AND ?
+          AND amount < 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+        GROUP BY category
+        ORDER BY total_amount DESC
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_date, end_date))
+    finally:
+        conn.close()
+
+
+def get_merchant_totals_daterange(entity: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """Merchant summary for a date range (YYYY-MM-DD)."""
+    sql = """
+        SELECT
+            COALESCE(NULLIF(merchant_canonical,''), description_raw) AS merchant,
+            COUNT(*) AS count,
+            ABS(SUM(amount)) AS total_amount
+        FROM transactions
+        WHERE date BETWEEN ? AND ?
+          AND amount < 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+        GROUP BY merchant
+        ORDER BY total_amount DESC
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_date, end_date))
+    finally:
+        conn.close()
+
+
+def get_month_over_month(entity: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """Category spend per month for a date range (pivot-ready)."""
+    sql = """
+        SELECT
+            strftime('%Y-%m', date) AS month,
+            COALESCE(NULLIF(category,''), 'Uncategorized') AS category,
+            ABS(SUM(amount)) AS total_amount
+        FROM transactions
+        WHERE date BETWEEN ? AND ?
+          AND amount < 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+        GROUP BY month, category
+        ORDER BY month, total_amount DESC
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_date, end_date))
+    finally:
+        conn.close()
+
+
+def get_income_vs_expenses_daterange(entity: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """Monthly income and expenses for a date range (YYYY-MM-DD)."""
+    sql = """
+        SELECT
+            strftime('%Y-%m', date) AS month,
+            ABS(SUM(CASE WHEN amount < 0
+                         AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Income')
+                         THEN amount ELSE 0 END)) AS expenses,
+            SUM(CASE WHEN amount > 0
+                     AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')
+                     THEN amount ELSE 0 END) AS income
+        FROM transactions
+        WHERE date BETWEEN ? AND ?
+        GROUP BY month
+        ORDER BY month
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_date, end_date))
+    finally:
+        conn.close()
+
+
+def get_recurring_charges(entity: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """Detect recurring merchants in date range (>= 2 charges)."""
+    sql = """
+        SELECT
+            COALESCE(NULLIF(merchant_canonical,''), description_raw) AS merchant,
+            COUNT(*) AS count,
+            ABS(AVG(amount)) AS avg_amount,
+            ABS(MIN(amount)) AS min_amount,
+            ABS(MAX(amount)) AS max_amount,
+            MIN(date) AS first_date,
+            MAX(date) AS last_date,
+            COALESCE(category, '') AS category
+        FROM transactions
+        WHERE date BETWEEN ? AND ?
+          AND amount < 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+        GROUP BY merchant
+        HAVING COUNT(*) >= 2
+        ORDER BY count DESC, avg_amount DESC
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_date, end_date))
+    finally:
+        conn.close()
+
+
+def get_tax_summary(entity: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """Category + subcategory breakdown for tax prep (date range YYYY-MM-DD)."""
+    sql = """
+        SELECT
+            COALESCE(NULLIF(category,''), 'Uncategorized') AS category,
+            COALESCE(NULLIF(subcategory,''), 'Unknown') AS subcategory,
+            COUNT(*) AS count,
+            ABS(SUM(amount)) AS total_amount
+        FROM transactions
+        WHERE date BETWEEN ? AND ?
+          AND amount < 0
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+        GROUP BY category, subcategory
+        ORDER BY category, total_amount DESC
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_date, end_date))
+    finally:
+        conn.close()
+
+
+def get_account_summary(entity: str, start_date: str, end_date: str) -> pd.DataFrame:
+    """Spending and income by account for a date range (YYYY-MM-DD)."""
+    sql = """
+        SELECT
+            COALESCE(account, 'Unknown') AS account,
+            COUNT(*) AS transactions,
+            ABS(SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END)) AS total_spending,
+            SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS total_income,
+            SUM(amount) AS net
+        FROM transactions
+        WHERE date BETWEEN ? AND ?
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')
+        GROUP BY account
+        ORDER BY total_spending DESC
+    """
+    conn = get_connection(entity)
+    try:
+        return pd.read_sql_query(sql, conn, params=(start_date, end_date))
+    finally:
+        conn.close()
