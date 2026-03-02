@@ -4774,6 +4774,7 @@ input.cf-modal-input--day {
     align-items: baseline;
     justify-content: flex-start;
     gap: 0.15rem;
+    margin: 0.35rem 0;
 }
 .cf-pymt-label {
     font-size: 0.65rem;
