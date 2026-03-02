@@ -42,25 +42,31 @@
         {% endif %}
 
         {% if counts.large_txns > 0 %}
-        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, large_txns=1, sort='amount', dir='desc') }}" class="todo-row todo-row--link">
+        <div class="todo-row todo-row--link" tabindex="0" role="button"
+             hx-get="{{ url_for('todo.queue_large_txns') }}"
+             hx-target="#tq-modal-body" hx-swap="innerHTML"
+             onclick="tqOpenModal()">
             <span class="todo-name">Large transactions</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
                 <span class="badge badge-muted">{{ counts.large_txns }}</span>
                 <span class="todo-chevron">&#x203A;</span>
             </span>
-        </a>
+        </div>
         {% endif %}
 
         {% if counts.new_merchants > 0 %}
-        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, new_merchants=1) }}" class="todo-row todo-row--link">
+        <div class="todo-row todo-row--link" tabindex="0" role="button"
+             hx-get="{{ url_for('todo.queue_new_merchants') }}"
+             hx-target="#tq-modal-body" hx-swap="innerHTML"
+             onclick="tqOpenModal()">
             <span class="todo-name">New merchants</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
                 <span class="badge badge-muted">{{ counts.new_merchants }}</span>
                 <span class="todo-chevron">&#x203A;</span>
             </span>
-        </a>
+        </div>
         {% endif %}
 
         {% if counts.orders_unmatched > 0 %}
@@ -95,4 +101,42 @@
 </div>
 
 </div>{# .todo-page #}
+
+{# ── Queue Detail Modal ─────────────────────────────────────────── #}
+<div class="tq-modal-scrim" id="tq-modal-scrim" hidden>
+    <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
+        <div class="tq-modal-top">
+            <button type="button" class="cf-edit-btn tq-modal-close"
+                    onclick="tqCloseModal()" title="Close">&times;</button>
+        </div>
+        <div id="tq-modal-body" class="tq-modal-body">
+            <div class="tq-loading">Loading&hellip;</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function tqOpenModal() {
+    document.getElementById('tq-modal-scrim').hidden = false;
+    document.getElementById('tq-modal-body').innerHTML =
+        '<div class="tq-loading">Loading\u2026</div>';
+}
+
+function tqCloseModal() {
+    document.getElementById('tq-modal-scrim').hidden = true;
+    document.getElementById('tq-modal-body').innerHTML = '';
+}
+
+/* Close on scrim click */
+document.getElementById('tq-modal-scrim').addEventListener('click', function(e) {
+    if (e.target === this) tqCloseModal();
+});
+
+/* Close on Escape */
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !document.getElementById('tq-modal-scrim').hidden) {
+        tqCloseModal();
+    }
+});
+</script>
 {% endblock %}

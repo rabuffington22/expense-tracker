@@ -225,6 +225,55 @@ def _get_queue_counts(conn) -> dict:
     return counts
 
 
+# ── Queue detail queries (for inline popups) ─────────────────────────────────
+
+def _get_large_txns(conn) -> list[dict]:
+    """Return large transactions (>=$500) from the last 30 days."""
+    today = date.today()
+    cutoff = (today - timedelta(days=30)).isoformat()
+    today_iso = today.isoformat()
+    rows = conn.execute(
+        "SELECT date, merchant_canonical, description_raw, "
+        "       amount_cents, category "
+        "FROM transactions "
+        "WHERE ABS(amount_cents) >= 50000 "
+        "AND date >= ? AND date <= ? "
+        "AND COALESCE(category, '') NOT IN "
+        "    ('Internal Transfer', 'Credit Card Payment') "
+        "ORDER BY ABS(amount_cents) DESC",
+        (cutoff, today_iso),
+    ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def _get_new_merchants(conn) -> list[dict]:
+    """Return merchants seen in last 30 days but not in prior 90 days."""
+    today = date.today()
+    cutoff_30 = (today - timedelta(days=30)).isoformat()
+    cutoff_120 = (today - timedelta(days=120)).isoformat()
+    today_iso = today.isoformat()
+    rows = conn.execute(
+        "SELECT merchant_canonical, "
+        "       MIN(date) AS first_date, "
+        "       COUNT(*) AS txn_count, "
+        "       SUM(amount_cents) AS total_cents "
+        "FROM transactions "
+        "WHERE date >= ? AND date <= ? "
+        "AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+        "AND COALESCE(category, '') NOT IN "
+        "    ('Internal Transfer', 'Credit Card Payment') "
+        "AND merchant_canonical NOT IN ("
+        "  SELECT DISTINCT merchant_canonical FROM transactions "
+        "  WHERE date >= ? AND date < ? "
+        "  AND merchant_canonical IS NOT NULL AND merchant_canonical != ''"
+        ") "
+        "GROUP BY merchant_canonical "
+        "ORDER BY total_cents ASC",
+        (cutoff_30, today_iso, cutoff_120, cutoff_30),
+    ).fetchall()
+    return [dict(r) for r in rows]
+
+
 # ── Routes ───────────────────────────────────────────────────────────────────
 
 @bp.route("/")
@@ -243,6 +292,58 @@ def index():
             periodic_tasks=periodic_tasks,
             period_key=period_key,
             today=date.today(),
+        )
+    finally:
+        conn.close()
+
+
+# ── Queue detail endpoints (HTMX partials for inline popups) ─────────────────
+
+@bp.route("/queue/large-txns")
+def queue_large_txns():
+    """Return HTML partial listing large transactions (last 30 days)."""
+    today = date.today()
+    cutoff = (today - timedelta(days=30)).isoformat()
+    conn = get_connection(g.entity_key)
+    try:
+        txns = _get_large_txns(conn)
+        return render_template(
+            "components/todo_queue_detail.html",
+            queue_type="large_txns",
+            queue_title="Large Transactions",
+            queue_hint="last 30 days",
+            txns=txns,
+            merchants=None,
+            fallback_url=url_for(
+                "transactions.index",
+                start=cutoff, end=today.isoformat(),
+                large_txns=1, sort="amount", dir="desc",
+            ),
+        )
+    finally:
+        conn.close()
+
+
+@bp.route("/queue/new-merchants")
+def queue_new_merchants():
+    """Return HTML partial listing new merchants (last 30 days)."""
+    today = date.today()
+    cutoff = (today - timedelta(days=30)).isoformat()
+    conn = get_connection(g.entity_key)
+    try:
+        merchants = _get_new_merchants(conn)
+        return render_template(
+            "components/todo_queue_detail.html",
+            queue_type="new_merchants",
+            queue_title="New Merchants",
+            queue_hint="last 30 days",
+            txns=None,
+            merchants=merchants,
+            fallback_url=url_for(
+                "transactions.index",
+                start=cutoff, end=today.isoformat(),
+                new_merchants=1,
+            ),
         )
     finally:
         conn.close()

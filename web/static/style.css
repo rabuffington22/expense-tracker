@@ -3530,6 +3530,154 @@ tr.is-selected > td:first-child {
     .todo-row { flex-wrap: wrap; }
 }
 
+/* ── Todo Queue Detail Modal ─────────────────── */
+.tq-modal-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tq-modal-scrim[hidden] { display: none; }
+
+.tq-modal-card {
+    width: 520px;
+    max-width: 92vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.45);
+    background: var(--bg-card);
+    padding: 0;
+}
+
+.tq-modal-top {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.45rem 0.55rem 0;
+}
+.tq-modal-close {
+    font-size: 1.1rem;
+    opacity: 0.7;
+}
+.tq-modal-close:hover { opacity: 1; }
+
+.tq-modal-body {
+    overflow-y: auto;
+    padding: 0 0.75rem 0.75rem;
+    flex: 1;
+}
+
+/* Detail header */
+.tq-detail-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.tq-detail-title {
+    font-size: var(--ui-font-base);
+    font-weight: 700;
+}
+.tq-detail-hint {
+    font-size: var(--ui-font-xs);
+}
+
+/* Transaction table inside modal */
+.tq-table { width: 100%; border-collapse: collapse; }
+.tq-table th,
+.tq-table td {
+    padding: 0.3rem 0.4rem;
+    font-size: var(--ui-font-xs);
+    white-space: nowrap;
+}
+.tq-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+    font-size: 0.6rem;
+    text-align: left;
+}
+.tq-table td:nth-child(2) {
+    white-space: normal;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tq-table tbody tr {
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .tq-table tbody tr {
+    border-bottom-color: rgba(0,0,0,0.06);
+}
+.tq-table tbody tr:last-child { border-bottom: none; }
+
+/* New merchant rows */
+.tq-merchant-list {
+    display: flex;
+    flex-direction: column;
+}
+.tq-merchant-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.35rem 0;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .tq-merchant-row {
+    border-bottom-color: rgba(0,0,0,0.06);
+}
+.tq-merchant-row:last-child { border-bottom: none; }
+
+.tq-merchant-name {
+    font-size: var(--ui-font-sm);
+    font-weight: 600;
+}
+.tq-merchant-meta {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* Footer link */
+.tq-detail-footer {
+    margin-top: 0.5rem;
+    padding-top: 0.4rem;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+    text-align: center;
+}
+:root[data-theme="light"] .tq-detail-footer {
+    border-top-color: rgba(0,0,0,0.06);
+}
+.tq-view-all {
+    font-size: var(--ui-font-xs);
+    color: var(--blue);
+    text-decoration: none;
+}
+.tq-view-all:hover { text-decoration: underline; }
+
+/* Loading / empty */
+.tq-loading {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+    font-size: var(--ui-font-sm);
+}
+.tq-empty {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+}
+
+@media (max-width: 480px) {
+    .tq-modal-card { width: 100%; max-width: 100vw; }
+    .tq-merchant-row { flex-wrap: wrap; }
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 
 /* Tablet */

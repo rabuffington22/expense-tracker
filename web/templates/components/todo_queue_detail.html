@@ -1,0 +1,59 @@
+{# Partial returned by /todo/queue/* endpoints — swapped into #tq-modal-body #}
+
+<div class="tq-detail-header">
+    <span class="tq-detail-title">{{ queue_title }}</span>
+    {% if queue_hint %}
+    <span class="text-muted tq-detail-hint">{{ queue_hint }}</span>
+    {% endif %}
+</div>
+
+{% if queue_type == "large_txns" %}
+<div class="table-wrap">
+    <table class="tq-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Merchant</th>
+                <th class="text-right">Amount</th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for txn in txns %}
+            <tr>
+                <td>{{ fmt_date(txn.date) }}</td>
+                <td>{{ txn.merchant_canonical or (txn.description_raw[:40] if txn.description_raw else '') }}</td>
+                <td class="text-right">{{ fmt_cents(txn.amount_cents) }}</td>
+                <td>{{ txn.category or '' }}</td>
+            </tr>
+            {% endfor %}
+            {% if not txns %}
+            <tr><td colspan="4" class="tq-empty">No large transactions found.</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% elif queue_type == "new_merchants" %}
+<div class="tq-merchant-list">
+    {% for m in merchants %}
+    <div class="tq-merchant-row">
+        <span class="tq-merchant-name">{{ m.merchant_canonical }}</span>
+        <span class="tq-merchant-meta">
+            {{ fmt_date(m.first_date) }}
+            &middot;
+            {{ m.txn_count }} txn{{ 's' if m.txn_count != 1 else '' }}
+            &middot;
+            {{ fmt_cents(m.total_cents) }}
+        </span>
+    </div>
+    {% endfor %}
+    {% if not merchants %}
+    <div class="tq-empty">No new merchants found.</div>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="tq-detail-footer">
+    <a href="{{ fallback_url }}" class="tq-view-all">View all in Transactions &#x203A;</a>
+</div>
