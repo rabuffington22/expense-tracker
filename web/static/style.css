@@ -4812,16 +4812,20 @@ input.cf-modal-input--due-date {
     line-height: 1;
 }
 .cf-del-btn:hover { opacity: 1; color: var(--red); }
-/* Add recurring row */
-.cf-add-recurring {
+/* Add recurring section */
+.cf-add-recurring-section {
     border-top: 0.5px solid rgba(255,255,255,0.06);
-    padding: 0.3rem 0.55rem 0.35rem;
+    padding: 0.45rem 0.55rem 0.35rem;
+}
+:root[data-theme="light"] .cf-add-recurring-section {
+    border-top-color: rgba(0,0,0,0.06);
+}
+/* Add recurring form */
+.cf-add-recurring {
+    margin-top: 0.35rem;
 }
 .cf-add-recurring .cf-dollar--sm {
     font-size: 0.65rem;
-}
-:root[data-theme="light"] .cf-add-recurring {
-    border-top-color: rgba(0,0,0,0.06);
 }
 .cf-add-recurring-row {
     display: flex;

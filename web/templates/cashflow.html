@@ -185,16 +185,19 @@
         </form>
 
         {# Add recurring form (separate form, outside main edit form) #}
-        <form method="post" action="/cashflow/recurring/add" id="cf-add-recurring-form" class="cf-add-recurring" hidden>
-            <input type="hidden" name="entity_key" id="cf-add-entity">
-            <input type="hidden" name="account_id" id="cf-add-acct-id">
-            <div class="cf-add-recurring-row">
-                <input type="text" name="merchant" placeholder="Name" class="cf-add-input cf-add-input--name">
-                <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="amount" placeholder="0.00" class="cf-add-input cf-add-input--amt">
-                <input type="text" name="day_of_month" placeholder="Day" class="cf-add-input cf-add-input--day">
-                <button type="submit" class="cf-add-btn" title="Add">+</button>
-            </div>
-        </form>
+        <div class="cf-add-recurring-section" id="cf-add-recurring-section" hidden>
+            <span class="cf-upcoming-label">Add Manual Recurring</span>
+            <form method="post" action="/cashflow/recurring/add" id="cf-add-recurring-form" class="cf-add-recurring">
+                <input type="hidden" name="entity_key" id="cf-add-entity">
+                <input type="hidden" name="account_id" id="cf-add-acct-id">
+                <div class="cf-add-recurring-row">
+                    <input type="text" name="merchant" placeholder="Name" class="cf-add-input cf-add-input--name">
+                    <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="amount" placeholder="0.00" class="cf-add-input cf-add-input--amt">
+                    <input type="text" name="day_of_month" placeholder="Day" class="cf-add-input cf-add-input--day">
+                    <button type="submit" class="cf-add-btn" title="Add">+</button>
+                </div>
+            </form>
+        </div>
 
         {# Footer — at very bottom of modal #}
         <div class="cf-modal-footer">
@@ -292,14 +295,14 @@ function cfOpenModal(btn) {
     /* Set up add-recurring form */
     document.getElementById('cf-add-entity').value = d.entityKey;
     document.getElementById('cf-add-acct-id').value = d.acctId;
-    document.getElementById('cf-add-recurring-form').hidden = false;
+    document.getElementById('cf-add-recurring-section').hidden = false;
 
     document.getElementById('cf-modal-scrim').hidden = false;
 }
 
 function cfCloseModal() {
     document.getElementById('cf-modal-scrim').hidden = true;
-    document.getElementById('cf-add-recurring-form').hidden = true;
+    document.getElementById('cf-add-recurring-section').hidden = true;
 }
 
 /* Close on scrim click */

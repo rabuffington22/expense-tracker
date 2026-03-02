@@ -35,7 +35,7 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 
 ## Deploy with Plaid (Full Restart)
 ```bash
-ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && .venv/bin/pip install plaid-python -q && pkill -9 -f gunicorn; sleep 2 && PLAID_CLIENT_ID=69a02460632219000ea2ea03 PLAID_SECRET=<secret> PLAID_ENV=sandbox OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES nohup .venv/bin/gunicorn -w 1 -b 0.0.0.0:8501 --timeout 120 --graceful-timeout 5 --access-logfile - 'web:create_app()' > /tmp/flask.log 2>&1 &"
+ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && .venv/bin/pip install plaid-python -q && pkill -9 -f gunicorn; sleep 2 && PLAID_CLIENT_ID=69a02460632219000ea2ea03 PLAID_SECRET=<secret> PLAID_ENV=sandbox OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES nohup .venv/bin/gunicorn -w 2 -b 0.0.0.0:8501 --timeout 120 --graceful-timeout 5 --access-logfile - 'web:create_app()' > /tmp/flask.log 2>&1 &"
 ```
 
 > **DATA_DIR pitfall:** Do NOT pass `DATA_DIR` to deploy commands -- keep everything on `local_state/`.
@@ -43,7 +43,7 @@ ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && .venv/bi
 ## Deploy to Atlas
 ```bash
 # Full restart (always use this — kills and restarts gunicorn cleanly)
-ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && pkill -9 -f gunicorn; sleep 2 && OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES nohup .venv/bin/gunicorn -w 1 -b 0.0.0.0:8501 --timeout 120 --graceful-timeout 5 --access-logfile - 'web:create_app()' > /tmp/flask.log 2>&1 &"
+ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && pkill -9 -f gunicorn; sleep 2 && OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES nohup .venv/bin/gunicorn -w 2 -b 0.0.0.0:8501 --timeout 120 --graceful-timeout 5 --access-logfile - 'web:create_app()' > /tmp/flask.log 2>&1 &"
 ```
 
 Notes:
@@ -51,7 +51,7 @@ Notes:
 - `--graceful-timeout 5` kills stuck workers after 5s during reload
 - `OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` required on macOS for gunicorn fork()
 - `--timeout 120` needed because matching algorithm can take >30s
-- Single worker (`-w 1`) because SQLite doesn't support concurrent writers
+- Two workers (`-w 2`) so one slow request doesn't block the whole app. SQLite write contention is rare since writes are quick
 - If LAN times out, try Tailscale IP `100.79.127.29`
 - **Cache-busting**: `style.css?v=<timestamp>` set at app startup — browser always gets fresh CSS after restart
 
