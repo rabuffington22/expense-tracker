@@ -29,6 +29,8 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 - **Connected Accounts page:** `/plaid/` — connect banks, sync, disconnect
 - **Sync:** Manual only (no auto-sync on startup) — POST `/plaid/sync`
 - **Migration 18:** Added `plaid_items`, `plaid_accounts` tables + `plaid_item_id` on transactions
+- **Plaid products:** `transactions` + `liabilities` (both requested in Link token)
+- **Liabilities integration:** `get_liabilities()` in `plaid_client.py` fetches credit card balance, credit limit, next payment due date, minimum payment. Cash Flow page auto-populates from Plaid when `plaid_account_id` is linked. Falls back to manual entry if Plaid unavailable. Payment section hidden when no data from either source.
 - **To switch to production:** Update `PLAID_SECRET` to production secret and set `PLAID_ENV=production`, then restart gunicorn
 
 ## Deploy with Plaid (Full Restart)
