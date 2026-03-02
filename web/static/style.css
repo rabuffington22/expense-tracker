@@ -4608,14 +4608,8 @@ select.input-sm {
     flex: 1;
     padding: 0.25rem 0 0;
 }
-/* Top row: two equal halves side by side */
-.iu-top-row {
-    display: flex;
-    flex: 1;
-    min-height: 0;
-}
-.iu-half {
-    flex: 1;
+/* Stacked insight sections */
+.iu-section {
     display: flex;
     flex-direction: column;
     padding: 0.2rem 0;
@@ -4650,36 +4644,7 @@ select.input-sm {
 :root[data-theme="light"] .iu-hdiv {
     background: rgba(0,0,0,0.05);
 }
-/* Compare section */
-.iu-compare {
-    padding: 0.2rem 0 0.15rem;
-}
-.iu-compare-header {
-    display: flex;
-    align-items: baseline;
-    gap: 0.3rem;
-    padding: 0 0.7rem 0.15rem;
-}
-.iu-compare-title {
-    font-size: 0.58rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: var(--label-tracking);
-    color: var(--text-muted);
-    opacity: 0.5;
-}
-.iu-compare-periods {
-    font-size: 0.58rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: var(--label-tracking);
-    color: var(--text-muted);
-    opacity: 0.5;
-}
-.iu-compare-list {
-    display: flex;
-    flex-direction: column;
-}
+/* (compare section now uses .iu-section + .iu-half-label) */
 /* Shared insight/upcoming row styles */
 .iu-list {
     display: flex;
