@@ -4823,10 +4823,10 @@ select.input-sm {
     background: rgba(10,132,255,0.04);
 }
 .cf-box--card {
-    background: rgba(255,159,10,0.05);
+    background: rgba(167,139,250,0.04);
 }
 :root[data-theme="light"] .cf-box--card {
-    background: rgba(255,159,10,0.05);
+    background: rgba(167,139,250,0.04);
 }
 .cf-box-header {
     display: flex;
