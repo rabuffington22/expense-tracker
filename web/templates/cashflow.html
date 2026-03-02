@@ -182,12 +182,6 @@
                 <span class="cf-upcoming-label">Upcoming</span>
                 <div id="cf-modal-upcoming-list"></div>
             </div>
-
-            {# Footer #}
-            <div class="cf-modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="cfCloseModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary btn-sm">Save</button>
-            </div>
         </form>
 
         {# Add recurring form (separate form, outside main edit form) #}
@@ -201,6 +195,12 @@
                 <button type="submit" class="cf-add-btn" title="Add">+</button>
             </div>
         </form>
+
+        {# Footer — at very bottom of modal #}
+        <div class="cf-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="cfCloseModal()">Cancel</button>
+            <button type="submit" form="cf-modal-form" class="btn btn-primary btn-sm">Save</button>
+        </div>
     </div>
 </div>
 
