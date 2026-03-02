@@ -4757,7 +4757,7 @@ input.cf-modal-input--balance {
 input.cf-modal-input--small {
     font-size: 0.65rem;
     color: var(--text-muted);
-    width: 40px;
+    width: 60px;
     text-align: right;
 }
 /* Inline inputs in the payment line */
