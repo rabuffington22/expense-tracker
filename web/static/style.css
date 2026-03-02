@@ -4753,12 +4753,12 @@ input.cf-modal-input--balance {
     width: 40px;
     text-align: right;
 }
-/* Small inputs — credit limit line */
+/* Small inputs — credit limit + payment */
 input.cf-modal-input--small {
     font-size: 0.65rem;
     color: var(--text-muted);
     width: 60px;
-    text-align: right;
+    text-align: left;
 }
 /* Inline inputs in the payment line */
 input.cf-modal-input--inline {
