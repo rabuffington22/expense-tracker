@@ -14,7 +14,7 @@
     data-due-day="{{ acct.payment_due_day or '' }}"
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}"
-    onclick="cfOpenModal(this)">
+    onclick="cfOpenModal(this, event)">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
     </svg>
@@ -41,7 +41,17 @@
 {% endmacro %}
 
 {% macro bank_card(acct, entity_key) %}
-<div class="outline-panel cf-box">
+<div class="outline-panel cf-box cf-box--clickable"
+    data-acct-id="{{ acct.id }}"
+    data-acct-name="{{ acct.account_name }}"
+    data-acct-type="{{ acct.account_type }}"
+    data-entity-key="{{ entity_key }}"
+    data-balance="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
+    data-limit="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}"
+    data-due-day="{{ acct.payment_due_day or '' }}"
+    data-due-date="{{ acct.payment_due_date or '' }}"
+    data-payment="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}"
+    onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
         {% if acct.balance_source == 'plaid' %}
@@ -60,16 +70,22 @@
             <span class="cf-upcoming-none">No upcoming charges</span>
         {% endif %}
     </div>
-
-    <div class="cf-box-footer">
-        {{ edit_icon(acct, entity_key) }}
-    </div>
 </div>
 {% endmacro %}
 
 
 {% macro credit_card(acct, entity_key) %}
-<div class="outline-panel cf-box cf-box--card">
+<div class="outline-panel cf-box cf-box--card cf-box--clickable"
+    data-acct-id="{{ acct.id }}"
+    data-acct-name="{{ acct.account_name }}"
+    data-acct-type="{{ acct.account_type }}"
+    data-entity-key="{{ entity_key }}"
+    data-balance="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
+    data-limit="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}"
+    data-due-day="{{ acct.payment_due_day or '' }}"
+    data-due-date="{{ acct.payment_due_date or '' }}"
+    data-payment="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}"
+    onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
         {% if acct.balance_source == 'plaid' %}
@@ -99,10 +115,6 @@
         {% else %}
             <span class="cf-upcoming-none">No upcoming charges</span>
         {% endif %}
-    </div>
-
-    <div class="cf-box-footer">
-        {{ edit_icon(acct, entity_key) }}
     </div>
 </div>
 {% endmacro %}
@@ -239,7 +251,9 @@ function cfSizeInput(el) {
     el.style.width = Math.max(2, el.value.length + 1) + 'ch';
 }
 
-function cfOpenModal(btn) {
+function cfOpenModal(btn, evt) {
+    /* Don't open modal when clicking interactive elements inside the card */
+    if (evt && (evt.target.closest('button') || evt.target.closest('form') || evt.target.closest('a'))) return;
     var d = btn.dataset;
     var isCard = d.acctType === 'credit_card';
     var action = isCard

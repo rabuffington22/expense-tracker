@@ -4822,6 +4822,16 @@ select.input-sm {
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(10,132,255,0.10);
 }
+.cf-box--clickable {
+    cursor: pointer;
+    transition: background var(--transition);
+}
+.cf-box--clickable:hover {
+    background: rgba(10,132,255,0.10);
+}
+.cf-box--clickable.cf-box--card:hover {
+    background: rgba(167,139,250,0.10);
+}
 :root[data-theme="light"] .cf-box {
     background: rgba(10,132,255,0.05);
     border-color: rgba(10,132,255,0.12);
@@ -4834,10 +4844,11 @@ select.input-sm {
     background: rgba(167,139,250,0.05);
     border-color: rgba(167,139,250,0.12);
 }
-.cf-box-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: auto;
+:root[data-theme="light"] .cf-box--clickable:hover {
+    background: rgba(10,132,255,0.10);
+}
+:root[data-theme="light"] .cf-box--clickable.cf-box--card:hover {
+    background: rgba(167,139,250,0.10);
 }
 .cf-box-header {
     display: flex;
