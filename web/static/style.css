@@ -417,6 +417,7 @@ a:hover { text-decoration: underline; }
     display: flex;
     flex-direction: column;
     gap: 1px;
+    max-width: 178.5px;
 }
 .sb-link {
     display: block;
