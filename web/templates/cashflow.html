@@ -161,8 +161,8 @@
             <div class="cf-box-balance">
                 <span class="cf-box-label">Balance</span>
                 <div class="cf-modal-balance-stack">
-                    <span class="cf-box-value cf-modal-editable"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input cf-modal-input--balance" onfocus="this.select()"></span>
-                    <span class="cf-credit-line cf-modal-editable cf-modal-limit-line" id="cf-modal-limit-wrap" hidden><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()"></span>
+                    <span class="cf-box-value cf-modal-editable"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input cf-modal-input--balance" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
+                    <span class="cf-credit-line cf-modal-editable cf-modal-limit-line" id="cf-modal-limit-wrap" hidden><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
                 </div>
             </div>
 
@@ -172,7 +172,7 @@
 
                 <span class="cf-credit-line cf-pymt-line cf-modal-pymt-edit">
                     <span class="cf-pymt-label">Payment of</span>
-                    <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" onfocus="this.select()">
+                    <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" onfocus="this.select()" oninput="cfSizeInput(this)">
                     <span class="cf-pymt-label">due</span>
                     <input type="text" name="payment_due_day" id="cf-modal-due-day" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-modal-input--day" placeholder="15" onfocus="this.select()">
                 </span>
@@ -206,6 +206,10 @@
 </div>
 
 <script>
+function cfSizeInput(el) {
+    el.style.width = Math.max(2, el.value.length + 1) + 'ch';
+}
+
 function cfOpenModal(btn) {
     var d = btn.dataset;
     var isCard = d.acctType === 'credit_card';
@@ -217,7 +221,9 @@ function cfOpenModal(btn) {
     document.getElementById('cf-modal-title').textContent = d.acctName;
     document.getElementById('cf-modal-form').action = action;
     document.getElementById('cf-modal-entity').value = d.entityKey;
-    document.getElementById('cf-modal-balance').value = d.balance;
+    var balInput = document.getElementById('cf-modal-balance');
+    balInput.value = d.balance;
+    cfSizeInput(balInput);
 
     /* Credit card fields */
     var cardFields = document.getElementById('cf-modal-card-fields');
@@ -227,11 +233,11 @@ function cfOpenModal(btn) {
         limitWrap.hidden = false;
         var limitInput = document.getElementById('cf-modal-limit');
         limitInput.value = d.limit;
-        limitInput.style.width = (d.limit.length + 1) + 'ch';
+        cfSizeInput(limitInput);
         document.getElementById('cf-modal-due-day').value = d.dueDay;
         var payInput = document.getElementById('cf-modal-payment');
         payInput.value = d.payment;
-        payInput.style.width = (d.payment.length + 1) + 'ch';
+        cfSizeInput(payInput);
     } else {
         cardFields.hidden = true;
         limitWrap.hidden = true;

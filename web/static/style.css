@@ -4750,7 +4750,7 @@ input.cf-modal-input:focus {
 input.cf-modal-input--balance {
     font-size: 1.15rem;
     font-weight: 700;
-    width: 40px;
+    width: auto;
     text-align: right;
 }
 /* Small inputs — credit limit + payment */
