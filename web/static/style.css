@@ -3652,6 +3652,12 @@ tr.is-selected > td:first-child {
 :root[data-theme="light"] .tq-detail-footer {
     border-top-color: rgba(0,0,0,0.06);
 }
+.tq-dismiss-form {
+    margin-bottom: 0.4rem;
+}
+.tq-dismiss-btn {
+    font-size: var(--ui-font-xs);
+}
 .tq-view-all {
     font-size: var(--ui-font-xs);
     color: var(--blue);

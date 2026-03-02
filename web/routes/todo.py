@@ -195,19 +195,33 @@ def _get_queue_counts(conn) -> dict:
     cutoff_120 = (today - timedelta(days=120)).isoformat()
     today_iso = today.isoformat()
 
+    # Load dismissal cutoffs (items with date <= dismissed_before are hidden)
+    dismissals = {}
+    try:
+        for row in conn.execute(
+            "SELECT queue_type, dismissed_before FROM queue_dismissals"
+        ).fetchall():
+            dismissals[row[0]] = row[1]
+    except Exception:
+        pass  # Table may not exist yet pre-migration
+
     # Large transactions (>=500, last 30 days, exclude transfers/CC payments)
+    lt_cutoff = dismissals.get("large_txns", "")
+    lt_start = max(cutoff_30, lt_cutoff) if lt_cutoff else cutoff_30
     counts["large_txns"] = conn.execute(
         "SELECT COUNT(*) FROM transactions "
         "WHERE ABS(amount_cents) >= 50000 "
-        "AND date >= ? AND date <= ? "
+        "AND date > ? AND date <= ? "
         "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')",
-        (cutoff_30, today_iso),
+        (lt_start, today_iso),
     ).fetchone()[0]
 
     # New merchants (last 30 days not seen in prior 90 days)
+    nm_cutoff = dismissals.get("new_merchants", "")
+    nm_start = max(cutoff_30, nm_cutoff) if nm_cutoff else cutoff_30
     counts["new_merchants"] = conn.execute(
         "SELECT COUNT(DISTINCT merchant_canonical) FROM transactions "
-        "WHERE date >= ? AND date <= ? "
+        "WHERE date > ? AND date <= ? "
         "AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
         "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment') "
         "AND merchant_canonical NOT IN ("
@@ -215,7 +229,7 @@ def _get_queue_counts(conn) -> dict:
         "  WHERE date >= ? AND date < ? "
         "  AND merchant_canonical IS NOT NULL AND merchant_canonical != ''"
         ")",
-        (cutoff_30, today_iso, cutoff_120, cutoff_30),
+        (nm_start, today_iso, cutoff_120, cutoff_30),
     ).fetchone()[0]
 
     # Store date range strings for link building
@@ -227,21 +241,35 @@ def _get_queue_counts(conn) -> dict:
 
 # ── Queue detail queries (for inline popups) ─────────────────────────────────
 
+def _get_dismissal(conn, queue_type: str) -> str:
+    """Return dismissed_before date for a queue type, or empty string."""
+    try:
+        row = conn.execute(
+            "SELECT dismissed_before FROM queue_dismissals WHERE queue_type=?",
+            (queue_type,),
+        ).fetchone()
+        return row[0] if row else ""
+    except Exception:
+        return ""
+
+
 def _get_large_txns(conn) -> list[dict]:
     """Return large transactions (>=$500) from the last 30 days."""
     today = date.today()
     cutoff = (today - timedelta(days=30)).isoformat()
     today_iso = today.isoformat()
+    dismissed = _get_dismissal(conn, "large_txns")
+    start = max(cutoff, dismissed) if dismissed else cutoff
     rows = conn.execute(
         "SELECT date, merchant_canonical, description_raw, "
         "       amount_cents, category "
         "FROM transactions "
         "WHERE ABS(amount_cents) >= 50000 "
-        "AND date >= ? AND date <= ? "
+        "AND date > ? AND date <= ? "
         "AND COALESCE(category, '') NOT IN "
         "    ('Internal Transfer', 'Credit Card Payment') "
         "ORDER BY ABS(amount_cents) DESC",
-        (cutoff, today_iso),
+        (start, today_iso),
     ).fetchall()
     return [dict(r) for r in rows]
 
@@ -252,13 +280,15 @@ def _get_new_merchants(conn) -> list[dict]:
     cutoff_30 = (today - timedelta(days=30)).isoformat()
     cutoff_120 = (today - timedelta(days=120)).isoformat()
     today_iso = today.isoformat()
+    dismissed = _get_dismissal(conn, "new_merchants")
+    start = max(cutoff_30, dismissed) if dismissed else cutoff_30
     rows = conn.execute(
         "SELECT merchant_canonical, "
         "       MIN(date) AS first_date, "
         "       COUNT(*) AS txn_count, "
         "       SUM(amount_cents) AS total_cents "
         "FROM transactions "
-        "WHERE date >= ? AND date <= ? "
+        "WHERE date > ? AND date <= ? "
         "AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
         "AND COALESCE(category, '') NOT IN "
         "    ('Internal Transfer', 'Credit Card Payment') "
@@ -269,7 +299,7 @@ def _get_new_merchants(conn) -> list[dict]:
         ") "
         "GROUP BY merchant_canonical "
         "ORDER BY total_cents ASC",
-        (cutoff_30, today_iso, cutoff_120, cutoff_30),
+        (start, today_iso, cutoff_120, cutoff_30),
     ).fetchall()
     return [dict(r) for r in rows]
 
@@ -347,6 +377,29 @@ def queue_new_merchants():
         )
     finally:
         conn.close()
+
+
+@bp.route("/queue/dismiss", methods=["POST"])
+def queue_dismiss():
+    """Dismiss all items in a queue (mark as reviewed up to today)."""
+    queue_type = request.form.get("queue_type", "")
+    if queue_type not in ("large_txns", "new_merchants"):
+        return redirect(url_for("todo.index"))
+    today_iso = date.today().isoformat()
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "INSERT INTO queue_dismissals (queue_type, dismissed_before) "
+            "VALUES (?, ?) "
+            "ON CONFLICT(queue_type) DO UPDATE SET "
+            "dismissed_before=excluded.dismissed_before, "
+            "dismissed_at=datetime('now')",
+            (queue_type, today_iso),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("todo.index"))
 
 
 # ── Statement schedule routes ─────────────────────────────────────────────────

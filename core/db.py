@@ -449,6 +449,15 @@ _MIGRATION_29 = """
 ALTER TABLE account_balances ADD COLUMN payment_due_date TEXT;
 """
 
+_MIGRATION_30 = """
+CREATE TABLE IF NOT EXISTS queue_dismissals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    queue_type TEXT NOT NULL UNIQUE,
+    dismissed_at TEXT NOT NULL DEFAULT (datetime('now')),
+    dismissed_before TEXT NOT NULL
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -479,6 +488,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (27, _MIGRATION_27),
     (28, _MIGRATION_28),
     (29, _MIGRATION_29),
+    (30, _MIGRATION_30),
 ]
 
 _DEFAULT_CATEGORIES = [
