@@ -4858,7 +4858,7 @@ select.input-sm {
 .cf-box-value--inline {
     margin-left: auto;
     flex-shrink: 0;
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
@@ -4868,7 +4868,7 @@ select.input-sm {
     margin-top: -0.15rem;
 }
 .cf-box-name {
-    font-size: var(--ui-font-xs);
+    font-size: 0.60rem;
     font-weight: 600;
     min-width: 0;
     white-space: nowrap;
