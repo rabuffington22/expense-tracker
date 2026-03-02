@@ -4817,6 +4817,16 @@ select.input-sm {
     flex-direction: column;
     gap: 0.3rem;
     padding: 0.45rem 0.55rem;
+    background: rgba(10,132,255,0.04);
+}
+:root[data-theme="light"] .cf-box {
+    background: rgba(10,132,255,0.04);
+}
+.cf-box--card {
+    background: rgba(255,159,10,0.05);
+}
+:root[data-theme="light"] .cf-box--card {
+    background: rgba(255,159,10,0.05);
 }
 .cf-box-header {
     display: flex;
