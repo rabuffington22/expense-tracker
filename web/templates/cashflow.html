@@ -225,9 +225,13 @@ function cfOpenModal(btn) {
     if (isCard) {
         cardFields.hidden = false;
         limitWrap.hidden = false;
-        document.getElementById('cf-modal-limit').value = d.limit;
+        var limitInput = document.getElementById('cf-modal-limit');
+        limitInput.value = d.limit;
+        limitInput.style.width = (d.limit.length + 1) + 'ch';
         document.getElementById('cf-modal-due-day').value = d.dueDay;
-        document.getElementById('cf-modal-payment').value = d.payment;
+        var payInput = document.getElementById('cf-modal-payment');
+        payInput.value = d.payment;
+        payInput.style.width = (d.payment.length + 1) + 'ch';
     } else {
         cardFields.hidden = true;
         limitWrap.hidden = true;
