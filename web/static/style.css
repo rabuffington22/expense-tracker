@@ -4719,39 +4719,44 @@ select.input-sm {
     align-items: baseline;
     gap: 0.1rem;
 }
-.cf-modal-input {
+input.cf-modal-input {
     background: transparent;
     border: none;
+    border-radius: 0;
+    box-shadow: none;
     color: var(--text);
     font-variant-numeric: tabular-nums;
     font-family: inherit;
     padding: 0;
     outline: none;
     cursor: text;
+    -webkit-appearance: none;
+    appearance: none;
 }
-.cf-modal-input:focus {
+input.cf-modal-input:focus {
     border-bottom: 1px solid var(--blue);
+    box-shadow: none;
 }
 /* Balance input — matches .cf-box-value exactly */
-.cf-modal-input--balance {
+input.cf-modal-input--balance {
     font-size: 1.15rem;
     font-weight: 700;
     width: 40px;
     text-align: right;
 }
 /* Small inputs — matches .cf-credit-line exactly */
-.cf-modal-input--small {
+input.cf-modal-input--small {
     font-size: 0.55rem;
     color: var(--text-muted);
     width: 18px;
     text-align: right;
 }
 /* Inline inputs in the payment line */
-.cf-modal-input--inline {
+input.cf-modal-input--inline {
     width: 27px;
     text-align: center;
 }
-.cf-modal-input--day {
+input.cf-modal-input--day {
     width: 6px;
 }
 /* Payment edit line */
@@ -4806,16 +4811,20 @@ select.input-sm {
     align-items: center;
     gap: 0.25rem;
 }
-.cf-add-input {
+input.cf-add-input {
     background: transparent;
     border: none;
     border-bottom: 1px solid rgba(255,255,255,0.10);
+    border-radius: 0;
+    box-shadow: none;
     color: var(--text);
     font-size: 0.45rem;
     padding: 0.1rem 0;
     outline: none;
+    -webkit-appearance: none;
+    appearance: none;
 }
-.cf-add-input:focus { border-bottom-color: var(--blue); }
+input.cf-add-input:focus { border-bottom-color: var(--blue); box-shadow: none; }
 .cf-add-input--name { flex: 1; min-width: 0; }
 .cf-add-input--amt { width: 45px; text-align: right; }
 .cf-add-input--day { width: 30px; text-align: center; }
