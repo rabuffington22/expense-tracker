@@ -13,6 +13,7 @@ from plaid.model.accounts_get_request import AccountsGetRequest
 from plaid.model.country_code import CountryCode
 from plaid.model.products import Products
 from plaid.model.item_remove_request import ItemRemoveRequest
+from plaid.model.liabilities_get_request import LiabilitiesGetRequest
 
 
 def _get_env():
@@ -45,7 +46,7 @@ def create_link_token(user_id: str = "expense-tracker-user") -> str:
     req = LinkTokenCreateRequest(
         user=LinkTokenCreateRequestUser(client_user_id=user_id),
         client_name="Ledger Oak",
-        products=[Products("transactions")],
+        products=[Products("transactions"), Products("liabilities")],
         country_codes=[CountryCode("US")],
         language="en",
     )
@@ -129,6 +130,62 @@ def get_transactions(access_token: str, cursor: str | None = None) -> dict:
         "next_cursor": cursor,
         "has_more": False,
     }
+
+
+def get_liabilities(access_token: str) -> dict:
+    """
+    Fetch credit card liabilities for an item.
+
+    Returns dict keyed by Plaid account_id with credit card details:
+    {
+        "plaid_account_id": {
+            "account_id": str,
+            "balance": float (current balance),
+            "credit_limit": float,
+            "next_payment_due_date": str|None (YYYY-MM-DD),
+            "minimum_payment_amount": float|None,
+            "last_payment_amount": float|None,
+            "last_payment_date": str|None,
+            "last_statement_balance": float|None,
+            "last_statement_issue_date": str|None,
+        }
+    }
+
+    Returns empty dict if liabilities product is not available.
+    """
+    client = _get_client()
+    req = LiabilitiesGetRequest(access_token=access_token)
+    try:
+        resp = client.liabilities_get(req)
+    except plaid.ApiException:
+        # Liabilities product not enabled or not available for this item
+        return {}
+
+    result = {}
+    credit_cards = resp.liabilities.credit or []
+    # Also grab account balances from the response
+    account_map = {}
+    for acct in resp.accounts:
+        account_map[acct.account_id] = acct
+
+    for cc in credit_cards:
+        acct = account_map.get(cc.account_id)
+        balance = float(acct.balances.current) if acct and acct.balances.current is not None else 0.0
+        credit_limit = float(acct.balances.limit) if acct and acct.balances.limit is not None else 0.0
+
+        result[cc.account_id] = {
+            "account_id": cc.account_id,
+            "balance": balance,
+            "credit_limit": credit_limit,
+            "next_payment_due_date": str(cc.next_payment_due_date) if cc.next_payment_due_date else None,
+            "minimum_payment_amount": float(cc.minimum_payment_amount) if cc.minimum_payment_amount is not None else None,
+            "last_payment_amount": float(cc.last_payment_amount) if cc.last_payment_amount is not None else None,
+            "last_payment_date": str(cc.last_payment_date) if cc.last_payment_date else None,
+            "last_statement_balance": float(cc.last_statement_balance) if cc.last_statement_balance is not None else None,
+            "last_statement_issue_date": str(cc.last_statement_issue_date) if cc.last_statement_issue_date else None,
+        }
+
+    return result
 
 
 def remove_item(access_token: str) -> bool:

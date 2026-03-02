@@ -1,12 +1,15 @@
 """Cash Flow page — account balances, upcoming bills, projections."""
 
 import datetime
+import logging
 import statistics
 from datetime import timedelta
 
 from flask import Blueprint, render_template, request, g, redirect, url_for
 
 from core.db import get_connection, init_db
+
+log = logging.getLogger(__name__)
 
 bp = Blueprint("cashflow", __name__, url_prefix="/cashflow")
 
@@ -257,12 +260,105 @@ def _get_manual_recurring(conn, account_id: int) -> list:
     return items
 
 
+def _fetch_plaid_liabilities(conn) -> dict:
+    """Fetch Plaid liabilities for all connected credit card accounts.
+
+    Returns dict keyed by plaid_account_id with credit card details.
+    Silently returns empty dict if Plaid is not configured or fails.
+    """
+    try:
+        from core.plaid_client import get_liabilities
+    except (ImportError, RuntimeError):
+        return {}
+
+    # Find all Plaid items with access tokens
+    items = conn.execute(
+        "SELECT item_id, access_token FROM plaid_items"
+    ).fetchall()
+    if not items:
+        return {}
+
+    all_liabilities = {}
+    for item in items:
+        try:
+            liab = get_liabilities(item["access_token"])
+            all_liabilities.update(liab)
+        except Exception as e:
+            log.warning("Failed to fetch liabilities for item %s: %s", item["item_id"], e)
+    return all_liabilities
+
+
+def _apply_plaid_liabilities(accts: dict, liabilities: dict, conn):
+    """Update account data with Plaid liabilities where linked.
+
+    For credit cards with a plaid_account_id that matches a liabilities entry:
+    - Updates balance_cents, credit_limit_cents from Plaid
+    - Sets payment_due_day and payment_amount_cents from Plaid's next_payment_due_date
+      and minimum_payment_amount
+    - Sets balance_source to 'plaid'
+    """
+    if not liabilities:
+        return
+
+    for acct in accts["banks"] + accts["cards"]:
+        plaid_id = acct.get("plaid_account_id")
+        if not plaid_id or plaid_id not in liabilities:
+            continue
+
+        liab = liabilities[plaid_id]
+        now = datetime.datetime.now().isoformat()
+
+        # Update balance from Plaid (Plaid returns positive for credit cards)
+        balance_cents = int(round(liab["balance"] * 100))
+        acct["balance_cents"] = balance_cents
+        acct["balance_source"] = "plaid"
+
+        # Credit limit
+        if liab["credit_limit"]:
+            limit_cents = int(round(liab["credit_limit"] * 100))
+            acct["credit_limit_cents"] = limit_cents
+
+        # Payment info from Plaid
+        if liab["next_payment_due_date"]:
+            try:
+                due_date = datetime.datetime.strptime(
+                    liab["next_payment_due_date"], "%Y-%m-%d"
+                ).date()
+                acct["payment_due_day"] = due_date.day
+            except (ValueError, TypeError):
+                pass
+
+        if liab["minimum_payment_amount"] is not None:
+            acct["payment_amount_cents"] = int(round(liab["minimum_payment_amount"] * 100))
+
+        # Persist to DB so values are cached between Plaid refreshes
+        conn.execute(
+            "UPDATE account_balances SET balance_cents=?, credit_limit_cents=?, "
+            "payment_due_day=?, payment_amount_cents=?, balance_source='plaid', "
+            "updated_at=? WHERE id=?",
+            (
+                acct["balance_cents"],
+                acct.get("credit_limit_cents", 0),
+                acct.get("payment_due_day"),
+                acct.get("payment_amount_cents", 0),
+                now,
+                acct["id"],
+            ),
+        )
+        conn.commit()
+
+
 def _load_entity_section(entity_key: str) -> dict:
     """Load full account data for an entity (banks, cards, upcoming charges)."""
     init_db(entity_key)
     conn = get_connection(entity_key)
     try:
         accts = _get_accounts_by_type(conn, entity_key)
+
+        # Fetch and apply Plaid liabilities for connected accounts
+        liabilities = _fetch_plaid_liabilities(conn)
+        _apply_plaid_liabilities(accts, liabilities, conn)
+
         # Build lookup of txn_accounts from defs
         defs = _ACCOUNT_DEFS.get(entity_key, {"banks": [], "cards": []})
         txn_map = {}
