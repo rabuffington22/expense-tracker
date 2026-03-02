@@ -4664,6 +4664,9 @@ select.input-sm {
 :root[data-theme="light"] .cf-pymt-divider {
     background: rgba(0,0,0,0.06);
 }
+.cf-pymt-line {
+    text-align: center;
+}
 .cf-credit-line {
     font-size: 0.55rem;
     color: var(--text-muted);
