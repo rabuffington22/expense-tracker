@@ -28,6 +28,9 @@
         <a href="{{ url_for('dashboard.index') }}" class="sb-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
         <a href="{{ url_for('todo.index') }}" class="sb-link {% if request.path.startswith('/todo') %}active{% endif %}">To Do</a>
         <a href="{{ url_for('cashflow.index') }}" class="sb-link {% if request.path.startswith('/cashflow') %}active{% endif %}">Cash Flow</a>
+        {% if entity_key != 'luxelegacy' %}
+        <a href="{{ url_for('planning.index') }}" class="sb-link {% if request.path.startswith('/planning') %}active{% endif %}">Planning</a>
+        {% endif %}
         <a href="{{ url_for('transactions.index') }}" class="sb-link {% if request.path.startswith('/transactions') %}active{% endif %}">Transactions</a>
         <a href="{{ url_for('reports.index') }}" class="sb-link {% if request.path.startswith('/reports') %}active{% endif %}">Reports</a>
     </div>

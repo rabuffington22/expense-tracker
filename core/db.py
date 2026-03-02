@@ -468,6 +468,34 @@ CREATE TABLE IF NOT EXISTS queue_item_dismissals (
 );
 """
 
+_MIGRATION_32 = """
+CREATE TABLE IF NOT EXISTS planning_settings (
+    id               INTEGER PRIMARY KEY CHECK (id = 1),
+    inflation_rate   INTEGER NOT NULL DEFAULT 300,
+    current_age      INTEGER NOT NULL DEFAULT 48,
+    custom_milestone INTEGER,
+    updated_at       TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+INSERT OR IGNORE INTO planning_settings (id) VALUES (1);
+
+CREATE TABLE IF NOT EXISTS planning_items (
+    id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_type             TEXT NOT NULL CHECK(item_type IN ('asset', 'liability')),
+    name                  TEXT NOT NULL,
+    current_value_cents   INTEGER NOT NULL DEFAULT 0,
+    annual_rate_bps       INTEGER NOT NULL DEFAULT 0,
+    monthly_contrib_cents INTEGER NOT NULL DEFAULT 0,
+    monthly_payment_cents INTEGER NOT NULL DEFAULT 0,
+    source                TEXT NOT NULL DEFAULT 'manual'
+                          CHECK(source IN ('manual', 'cashflow')),
+    cashflow_account_name TEXT,
+    sort_order            INTEGER NOT NULL DEFAULT 0,
+    created_at            TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at            TEXT NOT NULL DEFAULT (datetime('now'))
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -500,6 +528,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (29, _MIGRATION_29),
     (30, _MIGRATION_30),
     (31, _MIGRATION_31),
+    (32, _MIGRATION_32),
 ]
 
 _DEFAULT_CATEGORIES = [
