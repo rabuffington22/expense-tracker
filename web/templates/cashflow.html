@@ -9,10 +9,10 @@
     data-acct-name="{{ acct.account_name }}"
     data-acct-type="{{ acct.account_type }}"
     data-entity-key="{{ ek }}"
-    data-balance="{{ '{:.2f}'.format(acct.balance_cents / 100) }}"
-    data-limit="{{ '{:.2f}'.format(acct.credit_limit_cents / 100) }}"
+    data-balance="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
+    data-limit="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}"
     data-due-day="{{ acct.payment_due_day or '' }}"
-    data-payment="{{ '{:.2f}'.format(acct.payment_amount_cents / 100) }}"
+    data-payment="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}"
     onclick="cfOpenModal(this)">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
