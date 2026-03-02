@@ -3,8 +3,17 @@
 
 {# ── Macros ────────────────────────────────────────────────────────────── #}
 
-{% macro edit_icon(acct_id) %}
-<button type="button" class="cf-edit-btn" onclick="cfToggleEdit(this, '{{ acct_id }}')" title="Edit">
+{% macro edit_icon(acct) %}
+<button type="button" class="cf-edit-btn" title="Edit"
+    data-acct-id="{{ acct.id }}"
+    data-acct-name="{{ acct.account_name }}"
+    data-acct-type="{{ acct.account_type }}"
+    data-entity-key="{{ entity_key }}"
+    data-balance="{{ '{:.2f}'.format(acct.balance_cents / 100) }}"
+    data-limit="{{ '{:.2f}'.format(acct.credit_limit_cents / 100) }}"
+    data-due-day="{{ acct.payment_due_day or '' }}"
+    data-payment="{{ '{:.2f}'.format(acct.payment_amount_cents / 100) }}"
+    onclick="cfOpenModal(this)">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
     </svg>
@@ -19,7 +28,7 @@
         {% if acct.balance_source == 'plaid' %}
         <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% else %}
-        {{ edit_icon(acct.id) }}
+        {{ edit_icon(acct) }}
         {% endif %}
     </div>
 
@@ -28,18 +37,6 @@
         <span class="cf-box-value {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_cents(acct.balance_cents) }}
         </span>
-    </div>
-
-    {# Hidden edit popover #}
-    <div class="cf-edit-pop" id="cf-edit-{{ acct.id }}" hidden>
-        <form method="post" action="{{ url_for('cashflow.update_account', acct_id=acct.id) }}" class="cf-edit-pop-form">
-            <input type="hidden" name="entity_key" value="{{ entity_key }}">
-            <label class="cf-form-label">Balance
-                <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="balance" class="input-sm cf-input-num"
-                    value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}" onfocus="this.select()"></span>
-            </label>
-            <button type="submit" class="btn btn-primary btn-sm">Save</button>
-        </form>
     </div>
 
     {% if acct.upcoming %}
@@ -72,7 +69,7 @@
         {% if acct.balance_source == 'plaid' %}
         <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% else %}
-        {{ edit_icon(acct.id) }}
+        {{ edit_icon(acct) }}
         {% endif %}
     </div>
 
@@ -90,32 +87,6 @@
     <div class="cf-pymt-divider"></div>
     <span class="cf-credit-line cf-pymt-line">Payment of {{ fmt_cents(acct.payment_amount_cents) }} due {{ acct.payment_due_day }}{{ 'st' if acct.payment_due_day == 1 else ('nd' if acct.payment_due_day == 2 else ('rd' if acct.payment_due_day == 3 else 'th')) }}</span>
     {% endif %}
-
-    {# Hidden edit popover #}
-    <div class="cf-edit-pop" id="cf-edit-{{ acct.id }}" hidden>
-        <form method="post" action="{{ url_for('cashflow.update_card', acct_id=acct.id) }}" class="cf-edit-pop-form">
-            <input type="hidden" name="entity_key" value="{{ entity_key }}">
-            <div class="cf-card-form-grid">
-                <label class="cf-form-label">Balance
-                    <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="balance" class="input-sm cf-input-num"
-                        value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}" onfocus="this.select()"></span>
-                </label>
-                <label class="cf-form-label">Limit
-                    <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="credit_limit" class="input-sm cf-input-num"
-                        value="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}" onfocus="this.select()"></span>
-                </label>
-                <label class="cf-form-label">Payment Due Day
-                    <input type="text" name="payment_due_day" class="input-sm cf-input-num cf-input-narrow"
-                           value="{{ acct.payment_due_day or '' }}" placeholder="15">
-                </label>
-                <label class="cf-form-label">Payment Amount
-                    <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="payment_amount" class="input-sm cf-input-num"
-                        value="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}" onfocus="this.select()"></span>
-                </label>
-            </div>
-            <button type="submit" class="btn btn-primary btn-sm cf-card-save">Save</button>
-        </form>
-    </div>
 
     {% if acct.upcoming %}
     <div class="cf-upcoming">
@@ -178,37 +149,79 @@
 {{ entity_section(section.entity_display, section.entity_key, section.banks, section.cards, 'cf-cross') }}
 {% endfor %}
 
+{# ── Edit Modal ────────────────────────────────────────────────────────── #}
+<div class="cf-modal-scrim" id="cf-modal-scrim" hidden>
+    <div class="cf-modal">
+        <div class="cf-modal-header">
+            <h3 class="cf-modal-title" id="cf-modal-title">Edit Account</h3>
+            <button type="button" class="cf-modal-close" onclick="cfCloseModal()" title="Close">&times;</button>
+        </div>
+        <form method="post" id="cf-modal-form">
+            <input type="hidden" name="entity_key" id="cf-modal-entity">
+            <div class="cf-modal-body">
+                <label class="cf-modal-label">Balance
+                    <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="input-sm cf-modal-input" onfocus="this.select()"></span>
+                </label>
+                <div id="cf-modal-card-fields" hidden>
+                    <label class="cf-modal-label">Credit Limit
+                        <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="input-sm cf-modal-input" onfocus="this.select()"></span>
+                    </label>
+                    <label class="cf-modal-label">Payment Due Day
+                        <input type="text" name="payment_due_day" id="cf-modal-due-day" class="input-sm cf-modal-input cf-modal-input--narrow" placeholder="15">
+                    </label>
+                    <label class="cf-modal-label">Payment Amount
+                        <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="input-sm cf-modal-input" onfocus="this.select()"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="cf-modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="cfCloseModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-/* Toggle edit popover for an account box */
-function cfToggleEdit(btn, acctId) {
-    var pop = document.getElementById('cf-edit-' + acctId);
-    if (!pop) return;
-    var show = pop.hidden;
-    /* Close all other open popovers first */
-    document.querySelectorAll('.cf-edit-pop:not([hidden])').forEach(function(el) {
-        el.hidden = true;
-    });
-    pop.hidden = !show;
-    if (show) {
-        var input = pop.querySelector('input[name="balance"]');
-        if (input) { input.focus(); input.select(); }
+function cfOpenModal(btn) {
+    var d = btn.dataset;
+    var isCard = d.acctType === 'credit_card';
+    var action = isCard
+        ? '/cashflow/accounts/update-card/' + d.acctId
+        : '/cashflow/accounts/update/' + d.acctId;
+
+    document.getElementById('cf-modal-title').textContent = 'Edit ' + d.acctName;
+    document.getElementById('cf-modal-form').action = action;
+    document.getElementById('cf-modal-entity').value = d.entityKey;
+    document.getElementById('cf-modal-balance').value = d.balance;
+
+    var cardFields = document.getElementById('cf-modal-card-fields');
+    if (isCard) {
+        cardFields.hidden = false;
+        document.getElementById('cf-modal-limit').value = d.limit;
+        document.getElementById('cf-modal-due-day').value = d.dueDay;
+        document.getElementById('cf-modal-payment').value = d.payment;
+    } else {
+        cardFields.hidden = true;
     }
+
+    document.getElementById('cf-modal-scrim').hidden = false;
+    document.getElementById('cf-modal-balance').focus();
+    document.getElementById('cf-modal-balance').select();
 }
-/* Close popover on outside click */
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.cf-edit-pop') && !e.target.closest('.cf-edit-btn')) {
-        document.querySelectorAll('.cf-edit-pop:not([hidden])').forEach(function(el) {
-            el.hidden = true;
-        });
-    }
+
+function cfCloseModal() {
+    document.getElementById('cf-modal-scrim').hidden = true;
+}
+
+/* Close on scrim click */
+document.getElementById('cf-modal-scrim').addEventListener('click', function(e) {
+    if (e.target === this) cfCloseModal();
 });
-/* Close popover on Escape */
+
+/* Close on Escape */
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        document.querySelectorAll('.cf-edit-pop:not([hidden])').forEach(function(el) {
-            el.hidden = true;
-        });
-    }
+    if (e.key === 'Escape') cfCloseModal();
 });
 </script>
 {% endblock %}
