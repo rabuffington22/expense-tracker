@@ -4815,7 +4815,8 @@ input.cf-modal-input--due-date {
 /* Add recurring section */
 .cf-add-recurring-section {
     border-top: 0.5px solid rgba(255,255,255,0.06);
-    padding: 0.45rem 0.55rem 0.35rem;
+    padding-top: 0.45rem;
+    padding-bottom: 0.35rem;
 }
 :root[data-theme="light"] .cf-add-recurring-section {
     border-top-color: rgba(0,0,0,0.06);
@@ -4908,6 +4909,7 @@ input.cf-add-input:focus { border-bottom-color: var(--blue); box-shadow: none; }
     font-size: 0.45rem;
     color: var(--text-muted);
     font-style: italic;
+    padding-left: 0.15rem;
 }
 /* Bigger upcoming text inside modal */
 .cf-modal-card .cf-upcoming-label {
