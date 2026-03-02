@@ -1,105 +1,178 @@
 {% extends "base.html" %}
 {% block title %}Cash Flow — Ledger Oak{% endblock %}
 
+{# ── Macros ────────────────────────────────────────────────────────────── #}
+
+{% macro bank_card(acct, entity_key) %}
+<div class="outline-panel cf-box">
+    <div class="cf-box-header">
+        <span class="cf-box-name">{{ acct.account_name }}</span>
+        {% if acct.balance_source == 'plaid' %}
+        <span class="badge badge-blue">Plaid</span>
+        {% else %}
+        <span class="badge badge-muted">Manual</span>
+        {% endif %}
+    </div>
+
+    <div class="cf-box-balance">
+        <span class="cf-box-label">Balance</span>
+        <span class="cf-box-value {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
+            {{ fmt_cents(acct.balance_cents) }}
+        </span>
+    </div>
+
+    <form method="post" action="{{ url_for('cashflow.update_account', acct_id=acct.id) }}" class="cf-inline-form">
+        <input type="hidden" name="entity_key" value="{{ entity_key }}">
+        <span class="cf-dollar">$</span>
+        <input type="text" name="balance" class="input-sm cf-input-num"
+               value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
+               onfocus="this.select()">
+        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+    </form>
+
+    {% if acct.upcoming %}
+    <div class="cf-upcoming">
+        <span class="cf-upcoming-label">Upcoming</span>
+        {% for item in acct.upcoming %}
+        <div class="cf-upcoming-row">
+            <span class="cf-upcoming-merchant">{{ item.merchant }}</span>
+            <span class="cf-upcoming-right">
+                <span class="cf-upcoming-date">{{ item.display_date }}</span>
+                <span class="cf-upcoming-amt">{{ fmt_cents(item.amount_cents) }}</span>
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="cf-upcoming">
+        <span class="cf-upcoming-label">Upcoming</span>
+        <span class="cf-upcoming-none">No upcoming charges</span>
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{% macro credit_card(acct, entity_key) %}
+<div class="outline-panel cf-box cf-box--card">
+    <div class="cf-box-header">
+        <span class="cf-box-name">{{ acct.account_name }}</span>
+        {% if acct.balance_source == 'plaid' %}
+        <span class="badge badge-blue">Plaid</span>
+        {% else %}
+        <span class="badge badge-muted">Manual</span>
+        {% endif %}
+    </div>
+
+    <div class="cf-box-balance">
+        <span class="cf-box-label">Balance</span>
+        <span class="cf-box-value {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
+            {{ fmt_cents(acct.balance_cents) }}
+        </span>
+    </div>
+
+    {% if acct.credit_limit_cents %}
+    <div class="cf-cc-utilization">
+        <div class="cf-cc-bar-track">
+            {% set pct = (acct.balance_cents / acct.credit_limit_cents * 100) if acct.credit_limit_cents else 0 %}
+            <div class="cf-cc-bar-fill {% if pct > 75 %}cf-cc-bar--warn{% elif pct > 50 %}cf-cc-bar--mid{% endif %}"
+                 style="width: {{ [pct, 100]|min }}%"></div>
+        </div>
+        <span class="cf-cc-util-text">{{ fmt_cents(acct.balance_cents) }} / {{ fmt_cents(acct.credit_limit_cents) }}</span>
+    </div>
+    {% endif %}
+
+    {% if acct.payment_due_day %}
+    <div class="cf-cc-payment">
+        <span class="cf-box-label">Next Payment</span>
+        <span class="cf-cc-payment-detail">
+            {{ fmt_cents(acct.payment_amount_cents) }} due on the {{ acct.payment_due_day }}{{ 'st' if acct.payment_due_day == 1 else ('nd' if acct.payment_due_day == 2 else ('rd' if acct.payment_due_day == 3 else 'th')) }}
+        </span>
+    </div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('cashflow.update_card', acct_id=acct.id) }}" class="cf-card-form">
+        <input type="hidden" name="entity_key" value="{{ entity_key }}">
+        <div class="cf-card-form-grid">
+            <label class="cf-form-label">Balance
+                <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="balance" class="input-sm cf-input-num"
+                    value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}" onfocus="this.select()"></span>
+            </label>
+            <label class="cf-form-label">Limit
+                <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="credit_limit" class="input-sm cf-input-num"
+                    value="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}" onfocus="this.select()"></span>
+            </label>
+            <label class="cf-form-label">Due Day
+                <input type="text" name="payment_due_day" class="input-sm cf-input-num cf-input-narrow"
+                       value="{{ acct.payment_due_day or '' }}" placeholder="15">
+            </label>
+            <label class="cf-form-label">Payment
+                <span class="cf-inline-input"><span class="cf-dollar">$</span><input type="text" name="payment_amount" class="input-sm cf-input-num"
+                    value="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}" onfocus="this.select()"></span>
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm cf-card-save">Save</button>
+    </form>
+
+    {% if acct.upcoming %}
+    <div class="cf-upcoming">
+        <span class="cf-upcoming-label">Upcoming</span>
+        {% for item in acct.upcoming %}
+        <div class="cf-upcoming-row">
+            <span class="cf-upcoming-merchant">{{ item.merchant }}</span>
+            <span class="cf-upcoming-right">
+                <span class="cf-upcoming-date">{{ item.display_date }}</span>
+                <span class="cf-upcoming-amt">{{ fmt_cents(item.amount_cents) }}</span>
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="cf-upcoming">
+        <span class="cf-upcoming-label">Upcoming</span>
+        <span class="cf-upcoming-none">No upcoming charges</span>
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{# ── Entity section macro (reused for primary + cross-entity) ──────── #}
+
+{% macro entity_section(display_name, entity_key, banks, cards, accent_class='') %}
+<div class="cf-entity-section {{ accent_class }}">
+    <h2 class="cf-section-title">{{ display_name }}</h2>
+
+    {% if banks %}
+    <h3 class="cf-row-label">Bank Accounts</h3>
+    <div class="cf-grid cf-grid--banks">
+        {% for acct in banks %}
+            {{ bank_card(acct, entity_key) }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if cards %}
+    <h3 class="cf-row-label">Credit Cards</h3>
+    <div class="cf-grid cf-grid--cards">
+        {% for acct in cards %}
+            {{ credit_card(acct, entity_key) }}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
 {% block content %}
 <h1 class="cf-title">Cash Flow</h1>
 
-{# ── Primary entity accounts ──────────────────────────────────────── #}
-<div class="outline-panel cf-panel">
-    <div class="panel-header">{{ entity_display }} Accounts</div>
+{# ── Primary entity ───────────────────────────────────────────────────── #}
+{{ entity_section(entity_display, entity_key, primary_banks, primary_cards) }}
 
-    {% for acct in primary_accounts %}
-    <div class="cf-row">
-        <div class="cf-row-left">
-            <span class="cf-acct-name">{{ acct.account_name }}</span>
-            <span class="cf-acct-meta">
-                {% if acct.balance_source == 'plaid' %}
-                <span class="badge badge-blue">Plaid</span>
-                {% else %}
-                <span class="badge badge-muted">Manual</span>
-                {% endif %}
-                Updated {{ fmt_date(acct.updated_at[:10]) }}
-            </span>
-        </div>
-        <div class="cf-row-right">
-            <form method="post" action="{{ url_for('cashflow.update_account', acct_id=acct.id) }}" class="cf-balance-form">
-                <input type="hidden" name="entity_key" value="{{ entity_key }}">
-                <span class="cf-dollar">$</span>
-                <input type="text" name="balance" class="input-sm cf-balance-input"
-                       value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
-                       onfocus="this.select()">
-                <button type="submit" class="btn btn-primary btn-sm">Save</button>
-            </form>
-            <form method="post" action="{{ url_for('cashflow.delete_account', acct_id=acct.id) }}"
-                  onsubmit="return confirm('Delete {{ acct.account_name|tojson }}?')">
-                <input type="hidden" name="entity_key" value="{{ entity_key }}">
-                <button type="submit" class="btn-icon cf-delete" title="Delete">&times;</button>
-            </form>
-        </div>
-    </div>
-    {% endfor %}
-
-    {% if not primary_accounts %}
-    <div class="cf-empty">No accounts tracked yet.</div>
-    {% endif %}
-
-    <form method="post" action="{{ url_for('cashflow.create_account') }}" class="cf-add-form">
-        <input type="hidden" name="entity_key" value="{{ entity_key }}">
-        <input type="text" name="name" class="input-sm" placeholder="Account name" required style="flex:2">
-        <input type="text" name="balance" class="input-sm cf-add-num" placeholder="Balance" value="0.00">
-        <input type="text" name="threshold" class="input-sm cf-add-num" placeholder="Low alert" value="500">
-        <button type="submit" class="btn btn-primary btn-sm">Add</button>
-    </form>
-</div>
-
-{# ── Cross-entity account sections ────────────────────────────────── #}
+{# ── Cross-entity sections ────────────────────────────────────────────── #}
 {% for section in cross_sections %}
-<div class="outline-panel cf-panel">
-    <div class="panel-header">{{ section.entity_display }} Accounts</div>
-
-    {% for acct in section.accounts %}
-    <div class="cf-row">
-        <div class="cf-row-left">
-            <span class="cf-acct-name">{{ acct.account_name }}</span>
-            <span class="cf-acct-meta">
-                {% if acct.balance_source == 'plaid' %}
-                <span class="badge badge-blue">Plaid</span>
-                {% else %}
-                <span class="badge badge-muted">Manual</span>
-                {% endif %}
-                Updated {{ fmt_date(acct.updated_at[:10]) }}
-            </span>
-        </div>
-        <div class="cf-row-right">
-            <form method="post" action="{{ url_for('cashflow.update_account', acct_id=acct.id) }}" class="cf-balance-form">
-                <input type="hidden" name="entity_key" value="{{ section.entity_key }}">
-                <span class="cf-dollar">$</span>
-                <input type="text" name="balance" class="input-sm cf-balance-input"
-                       value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
-                       onfocus="this.select()">
-                <button type="submit" class="btn btn-primary btn-sm">Save</button>
-            </form>
-            <form method="post" action="{{ url_for('cashflow.delete_account', acct_id=acct.id) }}"
-                  onsubmit="return confirm('Delete {{ acct.account_name|tojson }}?')">
-                <input type="hidden" name="entity_key" value="{{ section.entity_key }}">
-                <button type="submit" class="btn-icon cf-delete" title="Delete">&times;</button>
-            </form>
-        </div>
-    </div>
-    {% endfor %}
-
-    {% if not section.accounts %}
-    <div class="cf-empty">No accounts tracked yet.</div>
-    {% endif %}
-
-    <form method="post" action="{{ url_for('cashflow.create_account') }}" class="cf-add-form">
-        <input type="hidden" name="entity_key" value="{{ section.entity_key }}">
-        <input type="text" name="name" class="input-sm" placeholder="Account name" required style="flex:2">
-        <input type="text" name="balance" class="input-sm cf-add-num" placeholder="Balance" value="0.00">
-        <input type="text" name="threshold" class="input-sm cf-add-num" placeholder="Low alert" value="500">
-        <button type="submit" class="btn btn-primary btn-sm">Add</button>
-    </form>
-</div>
+{{ entity_section(section.entity_display, section.entity_key, section.banks, section.cards, 'cf-cross') }}
 {% endfor %}
 
 {% endblock %}

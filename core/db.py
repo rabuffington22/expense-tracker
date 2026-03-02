@@ -425,6 +425,15 @@ CREATE TABLE IF NOT EXISTS transfer_dismissals (
 );
 """
 
+_MIGRATION_27 = """
+ALTER TABLE account_balances ADD COLUMN account_type TEXT NOT NULL DEFAULT 'bank'
+    CHECK(account_type IN ('bank', 'credit_card'));
+ALTER TABLE account_balances ADD COLUMN credit_limit_cents INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE account_balances ADD COLUMN payment_due_day INTEGER;
+ALTER TABLE account_balances ADD COLUMN payment_amount_cents INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE account_balances ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -452,6 +461,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (24, _MIGRATION_24),
     (25, _MIGRATION_25),
     (26, _MIGRATION_26),
+    (27, _MIGRATION_27),
 ]
 
 _DEFAULT_CATEGORIES = [

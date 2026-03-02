@@ -4570,100 +4570,236 @@ select.input-sm {
     font-weight: 700;
     margin-bottom: 1rem;
 }
-.cf-panel {
-    margin-bottom: 0.75rem;
+
+/* Entity section */
+.cf-entity-section {
+    margin-bottom: 1.5rem;
+}
+.cf-cross {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 0.5px solid rgba(255,255,255,0.08);
+}
+:root[data-theme="light"] .cf-cross {
+    border-top-color: rgba(0,0,0,0.08);
+}
+.cf-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+}
+.cf-row-label {
+    font-size: var(--ui-font-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    margin-top: 0.2rem;
 }
 
-/* Account row */
-.cf-row {
+/* Account card grid */
+.cf-grid {
+    display: grid;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+}
+.cf-grid--banks {
+    grid-template-columns: repeat(3, 1fr);
+}
+.cf-grid--cards {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Individual account box */
+.cf-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.6rem 0.7rem;
+}
+.cf-box-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.4rem 0;
-    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    gap: 0.3rem;
 }
-:root[data-theme="light"] .cf-row {
-    border-bottom-color: rgba(0,0,0,0.06);
-}
-.cf-row:last-of-type { border-bottom: none; }
-
-.cf-row-left {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    min-width: 0;
-}
-.cf-acct-name {
-    font-size: var(--ui-font-base);
+.cf-box-name {
+    font-size: var(--ui-font-sm);
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.cf-acct-meta {
+
+/* Balance display */
+.cf-box-balance {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.cf-box-label {
     font-size: var(--ui-font-xs);
     color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
-
-.cf-row-right {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    flex-shrink: 0;
+.cf-box-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
 }
+.cf-negative { color: var(--red); }
 
-/* Balance inline edit */
-.cf-balance-form {
+/* Inline balance form (bank accounts) */
+.cf-inline-form {
     display: flex;
     align-items: center;
     gap: 0.15rem;
+    padding-top: 0.2rem;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .cf-inline-form {
+    border-top-color: rgba(0,0,0,0.06);
 }
 .cf-dollar {
     font-size: var(--ui-font-sm);
     color: var(--text-muted);
 }
-.cf-balance-input {
-    width: 100px;
+.cf-input-num {
+    width: 85px;
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
-.cf-delete {
-    font-size: 0.85rem;
-    padding: 0.2rem 0.3rem;
-    opacity: 0.4;
-}
-.cf-delete:hover { opacity: 1; }
-
-/* Add account form */
-.cf-add-form {
-    display: flex;
-    gap: 0.3rem;
-    align-items: center;
-    margin-top: 0.5rem;
-    padding-top: 0.4rem;
-    border-top: 0.5px solid rgba(255,255,255,0.06);
-}
-:root[data-theme="light"] .cf-add-form {
-    border-top-color: rgba(0,0,0,0.06);
-}
-.cf-add-num {
-    width: 80px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-}
-
-/* Empty state */
-.cf-empty {
-    font-size: var(--ui-font-sm);
-    color: var(--text-muted);
-    padding: 0.6rem 0;
+.cf-input-narrow {
+    width: 42px;
     text-align: center;
 }
 
-/* Mobile */
-@media (max-width: 480px) {
-    .cf-row { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
-    .cf-row-right { width: 100%; }
-    .cf-balance-form { flex: 1; }
-    .cf-add-form { flex-wrap: wrap; }
+/* Credit card utilization bar */
+.cf-cc-utilization {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.cf-cc-bar-track {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+}
+:root[data-theme="light"] .cf-cc-bar-track {
+    background: rgba(0,0,0,0.08);
+}
+.cf-cc-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--green);
+    transition: width 0.3s ease;
+}
+.cf-cc-bar--mid { background: var(--orange); }
+.cf-cc-bar--warn { background: var(--red); }
+.cf-cc-util-text {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Credit card payment info */
+.cf-cc-payment {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.cf-cc-payment-detail {
+    font-size: var(--ui-font-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Credit card edit form */
+.cf-card-form {
+    padding-top: 0.25rem;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .cf-card-form {
+    border-top-color: rgba(0,0,0,0.06);
+}
+.cf-card-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem 0.4rem;
+}
+.cf-form-label {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+.cf-inline-input {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+}
+.cf-card-save {
+    margin-top: 0.3rem;
+    width: 100%;
+}
+
+/* Upcoming charges */
+.cf-upcoming {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding-top: 0.25rem;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .cf-upcoming {
+    border-top-color: rgba(0,0,0,0.06);
+}
+.cf-upcoming-label {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.cf-upcoming-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--ui-font-xs);
+}
+.cf-upcoming-merchant {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+.cf-upcoming-right {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+.cf-upcoming-date {
+    color: var(--text-muted);
+}
+.cf-upcoming-amt {
+    font-weight: 600;
+}
+.cf-upcoming-none {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .cf-grid--banks { grid-template-columns: repeat(2, 1fr); }
+    .cf-grid--cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+    .cf-grid--banks { grid-template-columns: 1fr; }
+    .cf-grid--cards { grid-template-columns: 1fr; }
+    .cf-box-value { font-size: 1rem; }
 }

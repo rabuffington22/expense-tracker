@@ -1,6 +1,8 @@
 """Cash Flow page — account balances, upcoming bills, projections."""
 
 import datetime
+import statistics
+from datetime import timedelta
 
 from flask import Blueprint, render_template, request, g, redirect, url_for
 
@@ -21,6 +23,41 @@ _ENTITY_DISPLAY = {
     "luxelegacy": "LL",
 }
 
+# ── Hardcoded account definitions per entity ─────────────────────────────────
+
+_ACCOUNT_DEFS = {
+    "personal": {
+        "banks": [
+            {"name": "BofA Personal Checking"},
+            {"name": "BofA Second Acct"},
+            {"name": "BofA Emergency Acct"},
+        ],
+        "cards": [
+            {"name": "Amex Credit Card"},
+            {"name": "Barclay CC"},
+            {"name": "BofA Personal CC"},
+            {"name": "Capital One Personal CC"},
+            {"name": "Chase Amazon Visa"},
+            {"name": "Citi Personal CC"},
+        ],
+    },
+    "company": {
+        "banks": [
+            {"name": "Prosperity Business Checking"},
+        ],
+        "cards": [
+            {"name": "Amex Business Card"},
+            {"name": "Capital One Business CC"},
+        ],
+    },
+    "luxelegacy": {
+        "banks": [
+            {"name": "BofA Business Checking"},
+        ],
+        "cards": [],
+    },
+}
+
 
 def _parse_dollar_to_cents(dollar_str: str) -> int:
     """Parse '$1,234.56' or '1234.56' into cents (123456)."""
@@ -31,76 +68,183 @@ def _parse_dollar_to_cents(dollar_str: str) -> int:
         return 0
 
 
-def _get_accounts(conn) -> list[dict]:
-    """Fetch all account balances, sorted by name."""
+def _ensure_accounts(conn, entity_key: str):
+    """Create any missing hardcoded accounts in the DB."""
+    defs = _ACCOUNT_DEFS.get(entity_key, {"banks": [], "cards": []})
+    for i, bank in enumerate(defs["banks"]):
+        conn.execute(
+            "INSERT OR IGNORE INTO account_balances "
+            "(account_name, account_type, sort_order) VALUES (?, 'bank', ?)",
+            (bank["name"], i),
+        )
+    for i, card in enumerate(defs["cards"]):
+        conn.execute(
+            "INSERT OR IGNORE INTO account_balances "
+            "(account_name, account_type, sort_order) VALUES (?, 'credit_card', ?)",
+            (card["name"], 100 + i),
+        )
+    conn.commit()
+
+
+def _get_accounts_by_type(conn, entity_key: str) -> dict:
+    """Fetch accounts split into banks and cards, ordered by definition order."""
+    _ensure_accounts(conn, entity_key)
     rows = conn.execute(
-        "SELECT * FROM account_balances ORDER BY account_name"
+        "SELECT * FROM account_balances ORDER BY sort_order, account_name"
     ).fetchall()
-    return [dict(r) for r in rows]
+    banks = []
+    cards = []
+    for r in rows:
+        d = dict(r)
+        if d["account_type"] == "credit_card":
+            cards.append(d)
+        else:
+            banks.append(d)
+    return {"banks": banks, "cards": cards}
+
+
+# ── Recurring detection (adapted from dashboard) ─────────────────────────────
+
+_CADENCES = {
+    "Weekly": (5, 9),
+    "Biweekly": (12, 18),
+    "Monthly": (25, 35),
+    "Quarterly": (80, 100),
+    "Annual": (340, 390),
+}
+
+
+def _classify_cadence(median_interval_days):
+    for name, (lo, hi) in _CADENCES.items():
+        if lo <= median_interval_days <= hi:
+            return name
+    return None
+
+
+def _amount_is_regular(amounts):
+    """Check if amounts are regular enough to be recurring."""
+    if len(amounts) < 2:
+        return False
+    abs_amounts = [abs(a) for a in amounts]
+    median = statistics.median(abs_amounts)
+    threshold = max(300, int(median * 0.05))  # $3 or 5%
+    recent = abs_amounts[-3:] if len(abs_amounts) >= 3 else abs_amounts
+    within = sum(1 for a in recent if abs(a - median) <= threshold)
+    return within >= 2
+
+
+def _detect_upcoming_for_account(conn, account_name: str, horizon_days: int = 30) -> list:
+    """Detect recurring charges for a specific account, return upcoming items."""
+    cutoff = (datetime.datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
+    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+    today = datetime.datetime.now().date()
+    horizon_end = today + timedelta(days=horizon_days)
+
+    rows = conn.execute(
+        "SELECT merchant_canonical, date, amount_cents "
+        "FROM transactions "
+        "WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+        "  AND amount_cents < 0 "
+        "  AND date >= ? AND date <= ? "
+        "  AND account = ? "
+        "ORDER BY merchant_canonical, date",
+        [cutoff, today_str, account_name],
+    ).fetchall()
+
+    # Group by merchant
+    groups = {}
+    for r in rows:
+        merchant = r["merchant_canonical"]
+        if merchant not in groups:
+            groups[merchant] = []
+        groups[merchant].append({"date": r["date"], "amount_cents": r["amount_cents"]})
+
+    upcoming = []
+    for merchant, txns in groups.items():
+        if len(txns) < 2:
+            continue
+        dates, amounts = [], []
+        for t in txns:
+            try:
+                dates.append(datetime.datetime.strptime(t["date"], "%Y-%m-%d").date())
+            except (ValueError, TypeError):
+                continue
+            amounts.append(t["amount_cents"])
+        if len(dates) < 2:
+            continue
+        intervals = [(dates[i + 1] - dates[i]).days for i in range(len(dates) - 1)]
+        intervals = [iv for iv in intervals if iv > 0]
+        if not intervals:
+            continue
+        median_interval = statistics.median(intervals)
+        cadence = _classify_cadence(median_interval)
+        if cadence is None:
+            continue
+        if not _amount_is_regular(amounts):
+            continue
+        last_date = dates[-1]
+        if (today - last_date).days > 2 * median_interval:
+            continue
+        next_date = last_date + timedelta(days=int(median_interval))
+        if next_date < today or next_date > horizon_end:
+            continue
+        median_amount = int(statistics.median([abs(a) for a in amounts]))
+        upcoming.append({
+            "merchant": merchant,
+            "cadence": cadence,
+            "amount_cents": median_amount,
+            "expected_date": next_date.isoformat(),
+            "display_date": next_date.strftime("%b %-d"),
+        })
+
+    upcoming.sort(key=lambda x: x["expected_date"])
+    return upcoming
+
+
+def _load_entity_section(entity_key: str) -> dict:
+    """Load full account data for an entity (banks, cards, upcoming charges)."""
+    init_db(entity_key)
+    conn = get_connection(entity_key)
+    try:
+        accts = _get_accounts_by_type(conn, entity_key)
+        # Attach upcoming charges per account
+        for acct in accts["banks"] + accts["cards"]:
+            acct["upcoming"] = _detect_upcoming_for_account(
+                conn, acct["account_name"]
+            )
+        return accts
+    finally:
+        conn.close()
 
 
 # ── Routes ───────────────────────────────────────────────────────────────────
 
 @bp.route("/")
 def index():
-    # Primary entity accounts
-    conn = get_connection(g.entity_key)
-    try:
-        primary_accounts = _get_accounts(conn)
-    finally:
-        conn.close()
+    # Primary entity
+    primary = _load_entity_section(g.entity_key)
 
-    # Cross-entity accounts
+    # Cross-entity sections
     cross_sections = []
     for other_key in _CROSS_ENTITY.get(g.entity_key, []):
-        init_db(other_key)  # Ensure migrations run on cross-entity DB
-        other_conn = get_connection(other_key)
-        try:
-            other_accounts = _get_accounts(other_conn)
-        finally:
-            other_conn.close()
-        if other_accounts or True:  # Always show section (even empty)
-            cross_sections.append({
-                "entity_key": other_key,
-                "entity_display": _ENTITY_DISPLAY.get(other_key, other_key),
-                "accounts": other_accounts,
-            })
+        other = _load_entity_section(other_key)
+        cross_sections.append({
+            "entity_key": other_key,
+            "entity_display": _ENTITY_DISPLAY.get(other_key, other_key),
+            "banks": other["banks"],
+            "cards": other["cards"],
+        })
 
     return render_template(
         "cashflow.html",
-        primary_accounts=primary_accounts,
+        primary_banks=primary["banks"],
+        primary_cards=primary["cards"],
         cross_sections=cross_sections,
         today=datetime.date.today(),
     )
 
 
 # ── Account CRUD ─────────────────────────────────────────────────────────────
-
-@bp.route("/accounts/create", methods=["POST"])
-def create_account():
-    entity_key = request.form.get("entity_key", g.entity_key)
-    name = (request.form.get("name") or "").strip()
-    balance_str = request.form.get("balance", "0")
-    threshold_str = request.form.get("threshold", "500")
-
-    if not name:
-        return redirect(url_for("cashflow.index"))
-
-    balance_cents = _parse_dollar_to_cents(balance_str)
-    threshold_cents = _parse_dollar_to_cents(threshold_str)
-
-    conn = get_connection(entity_key)
-    try:
-        conn.execute(
-            "INSERT OR IGNORE INTO account_balances "
-            "(account_name, balance_cents, low_threshold_cents) VALUES (?, ?, ?)",
-            (name, balance_cents, threshold_cents),
-        )
-        conn.commit()
-    finally:
-        conn.close()
-    return redirect(url_for("cashflow.index"))
-
 
 @bp.route("/accounts/update/<int:acct_id>", methods=["POST"])
 def update_account(acct_id):
@@ -122,13 +266,31 @@ def update_account(acct_id):
     return redirect(url_for("cashflow.index"))
 
 
-@bp.route("/accounts/delete/<int:acct_id>", methods=["POST"])
-def delete_account(acct_id):
+@bp.route("/accounts/update-card/<int:acct_id>", methods=["POST"])
+def update_card(acct_id):
+    """Update credit card balance + credit-card-specific fields."""
     entity_key = request.form.get("entity_key", g.entity_key)
+    balance_cents = _parse_dollar_to_cents(request.form.get("balance", "0"))
+    limit_cents = _parse_dollar_to_cents(request.form.get("credit_limit", "0"))
+    due_day = request.form.get("payment_due_day", "").strip()
+    payment_cents = _parse_dollar_to_cents(request.form.get("payment_amount", "0"))
+    now = datetime.datetime.now().isoformat()
+
+    due_day_int = None
+    if due_day:
+        try:
+            due_day_int = max(1, min(31, int(due_day)))
+        except ValueError:
+            pass
 
     conn = get_connection(entity_key)
     try:
-        conn.execute("DELETE FROM account_balances WHERE id=?", (acct_id,))
+        conn.execute(
+            "UPDATE account_balances SET balance_cents=?, credit_limit_cents=?, "
+            "payment_due_day=?, payment_amount_cents=?, updated_at=?, "
+            "balance_source='manual' WHERE id=?",
+            (balance_cents, limit_cents, due_day_int, payment_cents, now, acct_id),
+        )
         conn.commit()
     finally:
         conn.close()
