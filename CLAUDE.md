@@ -67,6 +67,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     categorize_vendors.py          # GET/POST /categorize-vendors (label vendor orders)
     categorize.py                  # GET/POST /categorize (remaining txns + settings)
     reports.py                     # GET /reports (monthly detail + spending trend)
+    cashflow.py                    # GET /cashflow (account balances, upcoming bills)
   templates/
     base.html                      # Layout: sidebar + main content, mobile header/hamburger, skip-link, scrim overlay
     components/
@@ -119,9 +120,9 @@ Pattern used across routes:
 4. **Categorize Vendors** -- Label each vendor order with category/subcategory
 5. **Categorize Remaining** -- Review + categorize remaining bank transactions
 
-Plus **Dashboard** and **Reports** pages.
+Plus **Dashboard**, **To Do**, **Cash Flow**, and **Reports** pages.
 
-## Database (20 Migrations)
+## Database (27 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Seeded defaults (Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
@@ -130,6 +131,7 @@ Key tables:
 - **`import_profiles`** -- Saved CSV column mappings per bank (Amex, Chase, Capital One, Citi, BofA)
 - **`import_checklist` / `import_checklist_status`** -- Monthly source tracking
 - **`amazon_orders`** -- Vendor orders for deferred matching. `matched_transaction_id` tracks matches. Has `category`/`subcategory` (Migration 16) and `vendor` (Migration 17, default `'amazon'`). Stores both Amazon and Henry Schein orders.
+- **`account_balances`** -- Cash Flow account tracking (Migration 26+27). Fields: account_name, balance_cents, balance_source (manual/plaid), account_type (bank/credit_card), credit_limit_cents, payment_due_day, payment_amount_cents, sort_order, plaid_account_id.
 
 ## Vendor Workflow (Three-Phase)
 
@@ -274,6 +276,22 @@ Each insight links to a drill-down in `/transactions`.
 **Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
 
 ## Change Log
+
+### 2026-03-02 — Cash Flow page + color palette refresh
+New `/cashflow` page showing per-account balances and upcoming recurring charges. Plus sidebar and dashboard color updates.
+
+1. **Migration 26+27** — `account_balances` table with fields for balance, source (manual/plaid), account type (bank/credit_card), credit limit, payment due day/amount, sort order. Future Plaid linking via `plaid_account_id`.
+2. **Hardcoded account definitions** — `_ACCOUNT_DEFS` in `cashflow.py` defines accounts per entity. `_ensure_accounts()` syncs DB on page load (creates missing, deletes stale). Display names are short (e.g. "BOA Primary"), with `txn_accounts` mapping to original import names for transaction matching.
+3. **Personal accounts** — 4 banks (BOA Primary, BOA Secondary, BOA Emergency, First Horizon Mortgage) + 7 credit cards (Apple (K), Apple (R), Barclay, BOA Rewards, Capital One, Chase Amazon, Citi).
+4. **BFM accounts** — 1 bank (Prosperity Business) + 2 cards (Amex, Capital One BFM).
+5. **LL accounts** — 1 bank (BOA LL Business).
+6. **Cross-entity visibility** — Personal and BFM share view (each sees the other's accounts below). LL is isolated.
+7. **Per-account recurring detection** — `_detect_upcoming_for_account()` filters transactions by account name(s), detects recurring merchants (90-day lookback, cadence classification), shows next expected charge date and amount.
+8. **Bank boxes** — Account name, pencil edit icon, balance display, hidden edit popover (inline balance input + Save), upcoming charges section.
+9. **Credit card boxes** — Same as bank plus: utilization bar (balance/limit), payment info (amount due on Nth), multi-field edit form (balance, limit, due day, payment amount).
+10. **Sidebar refinements** — Width shrunk to 210px. Entity toggle `max-width: 181px` to align with LEDGER OAK text. Nav links `max-width: 178.5px` so active highlight aligns with toggle right edge. "Expense Tracker" subtitle centered under "LEDGER OAK" with `text-indent` compensating for `letter-spacing`.
+11. **Color palette refresh** — LL accent: gold → dusty mauve (`#c4909a`). Dashboard series: blue `#14a9f8` (Personal blue) + violet `#a78bfa`. Green/red harmonized: `#4ade80`/`#f87171` (dark), `#22c55e`/`#ef4444` (light) — cooler tones to match new palette.
+12. **CSS** — `.cf-*` scoped styles. Bank grid: `repeat(4, 1fr)`. Card grid: `auto-fill, minmax(140px, 1fr)` for equal-width cards. Balance text 1.15rem, upcoming text 0.45rem.
 
 ### 2026-03-01 — PR #73: Per-entity To Do page (statement reminders + review queues)
 New `/todo` page combining ops checklist functionality with data-driven review queues.
