@@ -42,7 +42,7 @@
         {% endif %}
 
         {% if counts.large_txns > 0 %}
-        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, sort='amount', dir='desc') }}" class="todo-row todo-row--link">
+        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, large_txns=1, sort='amount', dir='desc') }}" class="todo-row todo-row--link">
             <span class="todo-name">Large transactions</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
@@ -53,7 +53,7 @@
         {% endif %}
 
         {% if counts.new_merchants > 0 %}
-        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end) }}" class="todo-row todo-row--link">
+        <a href="{{ url_for('transactions.index', start=counts._30d_start, end=counts._30d_end, new_merchants=1) }}" class="todo-row todo-row--link">
             <span class="todo-name">New merchants</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">

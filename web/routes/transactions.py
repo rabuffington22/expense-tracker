@@ -125,6 +125,37 @@ def _build_base_cte(conn, params):
         conditions.append("t.account = ?")
         sql_params.append(params["account"])
 
+    # Large transactions (>= $500, exclude transfers/CC payments)
+    if params.get("large_txns") == "1":
+        conditions.append("ABS(t.amount_cents) >= 50000")
+        conditions.append(
+            "COALESCE(t.category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')"
+        )
+
+    # New merchants (seen in date range but not in prior 90 days)
+    if params.get("new_merchants") == "1":
+        conditions.append("t.merchant_canonical IS NOT NULL")
+        conditions.append("t.merchant_canonical != ''")
+        conditions.append(
+            "COALESCE(t.category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')"
+        )
+        # Use 90 days before start date as the lookback cutoff
+        nm_start = params.get("start", "")
+        if nm_start:
+            import datetime
+            try:
+                start_dt = datetime.datetime.strptime(nm_start, "%Y-%m-%d").date()
+                lookback = (start_dt - datetime.timedelta(days=90)).isoformat()
+                conditions.append(
+                    "t.merchant_canonical NOT IN ("
+                    "  SELECT DISTINCT merchant_canonical FROM transactions "
+                    "  WHERE date >= ? AND date < ? "
+                    "  AND merchant_canonical IS NOT NULL AND merchant_canonical != '')"
+                )
+                sql_params.extend([lookback, nm_start])
+            except (ValueError, TypeError):
+                pass
+
     where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
 
     # Vendor breakdown: linkage-first, heuristic-fallback (D1)
@@ -177,6 +208,8 @@ def _get_filter_params():
         "uncategorized": request.args.get("uncategorized", ""),
         "vendor_breakdown": request.args.get("vendor_breakdown", ""),
         "possible_transfer": request.args.get("possible_transfer", ""),
+        "large_txns": request.args.get("large_txns", ""),
+        "new_merchants": request.args.get("new_merchants", ""),
         "q": request.args.get("q", ""),
         "start": request.args.get("start", ""),
         "end": request.args.get("end", ""),
