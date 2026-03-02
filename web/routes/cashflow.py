@@ -31,9 +31,12 @@ _ACCOUNT_DEFS = {
             {"name": "BofA Personal Checking"},
             {"name": "BofA Second Acct"},
             {"name": "BofA Emergency Acct"},
+            {"name": "First Horizon Mortgage"},
         ],
         "cards": [
             {"name": "Amex Credit Card"},
+            {"name": "Apple Card (Kristine)"},
+            {"name": "Apple Card (Ryan)"},
             {"name": "Barclay CC"},
             {"name": "BofA Personal CC"},
             {"name": "Capital One Personal CC"},

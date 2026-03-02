@@ -4601,22 +4601,24 @@ select.input-sm {
 /* Account card grid */
 .cf-grid {
     display: grid;
-    gap: 0.6rem;
+    gap: 0.5rem;
     margin-bottom: 0.8rem;
 }
 .cf-grid--banks {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    max-width: 66%;
 }
 .cf-grid--cards {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    max-width: 50%;
 }
 
 /* Individual account box */
 .cf-box {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    padding: 0.6rem 0.7rem;
+    gap: 0.3rem;
+    padding: 0.45rem 0.55rem;
 }
 .cf-box-header {
     display: flex;
@@ -4645,7 +4647,7 @@ select.input-sm {
     letter-spacing: 0.05em;
 }
 .cf-box-value {
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
@@ -4667,13 +4669,15 @@ select.input-sm {
     color: var(--text-muted);
 }
 .cf-input-num {
-    width: 85px;
+    width: 70px;
     text-align: right;
     font-variant-numeric: tabular-nums;
+    font-size: var(--ui-font-xs);
 }
 .cf-input-narrow {
-    width: 42px;
+    width: 36px;
     text-align: center;
+    font-size: var(--ui-font-xs);
 }
 
 /* Credit card utilization bar */
@@ -4795,11 +4799,14 @@ select.input-sm {
 
 /* Responsive */
 @media (max-width: 900px) {
-    .cf-grid--banks { grid-template-columns: repeat(2, 1fr); }
-    .cf-grid--cards { grid-template-columns: repeat(2, 1fr); }
+    .cf-grid--banks { max-width: 100%; }
+    .cf-grid--cards { max-width: 80%; }
 }
 @media (max-width: 600px) {
+    .cf-grid--banks { grid-template-columns: 1fr 1fr; }
+    .cf-grid--cards { grid-template-columns: 1fr 1fr; max-width: 100%; }
+}
+@media (max-width: 400px) {
     .cf-grid--banks { grid-template-columns: 1fr; }
     .cf-grid--cards { grid-template-columns: 1fr; }
-    .cf-box-value { font-size: 1rem; }
 }
