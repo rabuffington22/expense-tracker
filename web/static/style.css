@@ -4824,6 +4824,7 @@ input.cf-modal-input--due-date {
 /* Add recurring form */
 .cf-add-recurring {
     margin-top: 0.35rem;
+    padding-left: 0.8rem;
 }
 .cf-add-recurring .cf-dollar--sm {
     font-size: 0.65rem;
