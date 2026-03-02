@@ -90,7 +90,7 @@
 
     {% if acct.payment_due_day %}
     <div class="cf-pymt-divider"></div>
-    <span class="cf-credit-line cf-pymt-line">Payment of {{ fmt_cents(acct.payment_amount_cents) }} due {% if acct.payment_due_date %}{{ fmt_due_date(acct.payment_due_date) }}{% else %}{{ acct.payment_due_day }}{{ 'st' if acct.payment_due_day == 1 else ('nd' if acct.payment_due_day == 2 else ('rd' if acct.payment_due_day == 3 else 'th')) }}{% endif %}</span>
+    <span class="cf-credit-line cf-pymt-line">Payment of {{ fmt_cents(acct.payment_amount_cents) }} due {{ fmt_due_date(acct.payment_due_date) }}</span>
     {% endif %}
 
     <div class="cf-upcoming">

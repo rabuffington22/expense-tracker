@@ -361,6 +361,29 @@ def _load_entity_section(entity_key: str) -> dict:
         liabilities = _fetch_plaid_liabilities(conn)
         _apply_plaid_liabilities(accts, liabilities, conn)
 
+        # Compute payment_due_date from payment_due_day for manual accounts
+        import calendar
+        today = datetime.date.today()
+        for acct in accts["banks"] + accts["cards"]:
+            if acct.get("payment_due_day") and not acct.get("payment_due_date"):
+                day = acct["payment_due_day"]
+                try:
+                    next_date = today.replace(day=day)
+                except ValueError:
+                    last_day = calendar.monthrange(today.year, today.month)[1]
+                    next_date = today.replace(day=min(day, last_day))
+                if next_date < today:
+                    if today.month == 12:
+                        next_date = next_date.replace(year=today.year + 1, month=1)
+                    else:
+                        next_date = next_date.replace(month=today.month + 1)
+                    try:
+                        next_date = next_date.replace(day=day)
+                    except ValueError:
+                        last_day = calendar.monthrange(next_date.year, next_date.month)[1]
+                        next_date = next_date.replace(day=min(day, last_day))
+                acct["payment_due_date"] = next_date.isoformat()
+
         # Build lookup of txn_accounts from defs
         defs = _ACCOUNT_DEFS.get(entity_key, {"banks": [], "cards": []})
         txn_map = {}
