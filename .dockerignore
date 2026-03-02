@@ -1,0 +1,16 @@
+local_state/
+*.sqlite
+.venv/
+__pycache__/
+*.pyc
+.git/
+.claude/
+uploads/
+backups/
+statements/
+docs/
+*.png
+*.md
+mockup-cashflow.html
+scripts/debug_amazon_match.py
+web/static/mockup-cashflow.html
