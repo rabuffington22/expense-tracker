@@ -369,9 +369,9 @@ a:hover { text-decoration: underline; }
     display: flex;
     background: transparent;
     border: 1px solid var(--seg-border);
-    border-radius: 10px;
-    padding: 2px;
-    gap: 2px;
+    border-radius: 8px;
+    padding: 1.5px;
+    gap: 1.5px;
     margin-bottom: 0.1rem;
 }
 :root[data-theme="dark"] .sb-entity {
