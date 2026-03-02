@@ -181,6 +181,7 @@ def create_app():
     app.jinja_env.globals["fmt_month_short"] = fmt_month_short
     app.jinja_env.globals["fmt_cents"] = fmt_cents
     app.jinja_env.globals["fmt_dollars"] = fmt_dollars
+    app.jinja_env.globals["cache_bust"] = str(int(time.time()))
 
     # ── Register blueprints ──────────────────────────────────────────────────
     from web.routes.dashboard import bp as dashboard_bp
