@@ -4779,6 +4779,11 @@ input.cf-modal-input--day {
     font-size: 0.65rem;
     color: var(--text-muted);
 }
+/* Due date display input */
+input.cf-modal-input--due-date {
+    width: auto;
+    min-width: 3ch;
+}
 /* Dollar signs */
 .cf-dollar {
     color: var(--text-muted);

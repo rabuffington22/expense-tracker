@@ -12,6 +12,7 @@
     data-balance="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
     data-limit="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}"
     data-due-day="{{ acct.payment_due_day or '' }}"
+    data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}"
     onclick="cfOpenModal(this)">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -90,7 +91,7 @@
 
     {% if acct.payment_due_day %}
     <div class="cf-pymt-divider"></div>
-    <span class="cf-credit-line cf-pymt-line">Payment of {{ fmt_cents(acct.payment_amount_cents) }} due {{ fmt_due_date(acct.payment_due_date) }}</span>
+    <span class="cf-credit-line cf-pymt-line">{{ fmt_cents(acct.payment_amount_cents) }} due {{ fmt_due_date(acct.payment_due_date) }}</span>
     {% endif %}
 
     <div class="cf-upcoming">
@@ -169,10 +170,10 @@
                 <div class="cf-pymt-divider"></div>
 
                 <span class="cf-credit-line cf-pymt-line cf-modal-pymt-edit">
-                    <span class="cf-pymt-label">Payment of</span>
                     <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" onfocus="this.select()" oninput="cfSizeInput(this)">
                     <span class="cf-pymt-label">due</span>
-                    <input type="text" name="payment_due_day" id="cf-modal-due-day" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-modal-input--day" placeholder="15" onfocus="this.select()">
+                    <input type="hidden" name="payment_due_day" id="cf-modal-due-day-hidden">
+                    <input type="text" id="cf-modal-due-display" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-modal-input--due-date" placeholder="15" onfocus="this.select()" oninput="cfParseDueDay(this)">
                 </span>
             </div>
 
@@ -204,6 +205,30 @@
 </div>
 
 <script>
+var _MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function cfFormatDate(isoStr) {
+    /* Format YYYY-MM-DD as "Mar 20" */
+    if (!isoStr) return '';
+    var parts = isoStr.split('-');
+    if (parts.length !== 3) return isoStr;
+    var m = parseInt(parts[1], 10) - 1;
+    var d = parseInt(parts[2], 10);
+    return _MONTHS[m] + ' ' + d;
+}
+
+function cfParseDueDay(el) {
+    /* When user types in the due date display, extract day number for hidden field */
+    var val = el.value.replace(/[^0-9]/g, '');
+    var day = parseInt(val, 10);
+    if (day >= 1 && day <= 31) {
+        document.getElementById('cf-modal-due-day-hidden').value = day;
+    } else {
+        document.getElementById('cf-modal-due-day-hidden').value = '';
+    }
+    cfSizeInput(el);
+}
+
 function cfSizeInput(el) {
     el.style.width = Math.max(2, el.value.length + 1) + 'ch';
 }
@@ -232,7 +257,11 @@ function cfOpenModal(btn) {
         var limitInput = document.getElementById('cf-modal-limit');
         limitInput.value = d.limit;
         cfSizeInput(limitInput);
-        document.getElementById('cf-modal-due-day').value = d.dueDay;
+        /* Due date — show formatted date, store day in hidden field */
+        document.getElementById('cf-modal-due-day-hidden').value = d.dueDay;
+        var dueDisplay = document.getElementById('cf-modal-due-display');
+        dueDisplay.value = d.dueDate ? cfFormatDate(d.dueDate) : (d.dueDay || '');
+        cfSizeInput(dueDisplay);
         var payInput = document.getElementById('cf-modal-payment');
         payInput.value = d.payment;
         cfSizeInput(payInput);
