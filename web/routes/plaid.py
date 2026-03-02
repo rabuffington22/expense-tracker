@@ -7,6 +7,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 
 from core.db import get_connection
 from core.imports import compute_transaction_id, commit_transactions
+from core.categorize import _get_active_aliases, _match_alias, _keyword_suggest, _strip_platform_prefix
 
 bp = Blueprint("plaid", __name__, url_prefix="/plaid")
 
@@ -324,6 +325,28 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
              amount_cents, "USD", "plaid-sync", now, item_id,
              txn["plaid_transaction_id"]),
         )
-        return 1 if cur.rowcount > 0 else 0
+        if cur.rowcount > 0:
+            # Auto-categorize using alias rules + keyword heuristics
+            aliases = _get_active_aliases(entity_key)
+            stripped = _strip_platform_prefix(description)
+            alias = _match_alias(description, aliases) or _match_alias(stripped, aliases)
+            if alias:
+                merchant_canonical = alias["merchant_canonical"]
+                cat = alias.get("default_category")
+                conn.execute(
+                    "UPDATE transactions SET merchant_canonical=?, category=?, "
+                    "confidence=? WHERE transaction_id=?",
+                    (merchant_canonical, cat, 0.95 if cat else None, txn_id),
+                )
+            else:
+                cat, subcat, confidence = _keyword_suggest(description)
+                if cat:
+                    conn.execute(
+                        "UPDATE transactions SET category=?, subcategory=?, "
+                        "confidence=? WHERE transaction_id=?",
+                        (cat, subcat, confidence, txn_id),
+                    )
+            return 1
+        return 0
     except Exception:
         return 0
