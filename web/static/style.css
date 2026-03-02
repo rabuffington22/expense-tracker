@@ -373,7 +373,7 @@ a:hover { text-decoration: underline; }
     padding: 1.5px;
     gap: 1.5px;
     margin-bottom: 0.1rem;
-    max-width: 172px;
+    max-width: 181px;
 }
 :root[data-theme="dark"] .sb-entity {
     background: #000;
