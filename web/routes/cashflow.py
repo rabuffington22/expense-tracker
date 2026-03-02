@@ -28,33 +28,33 @@ _ENTITY_DISPLAY = {
 _ACCOUNT_DEFS = {
     "personal": {
         "banks": [
-            {"name": "BofA Personal Checking"},
-            {"name": "BofA Second Acct"},
-            {"name": "BofA Emergency Acct"},
+            {"name": "BOA Primary", "txn_accounts": ["BofA Personal Checking"]},
+            {"name": "BOA Secondary", "txn_accounts": ["BofA Second Acct"]},
+            {"name": "BOA Emergency", "txn_accounts": ["BofA Emergency Acct"]},
             {"name": "First Horizon Mortgage"},
         ],
         "cards": [
-            {"name": "Apple Card (Kristine)"},
-            {"name": "Apple Card (Ryan)"},
-            {"name": "Barclay CC"},
-            {"name": "BofA Personal CC"},
-            {"name": "Capital One Personal CC"},
-            {"name": "Chase Amazon Visa"},
-            {"name": "Citi Personal CC"},
+            {"name": "Apple (K)"},
+            {"name": "Apple (R)"},
+            {"name": "Barclay", "txn_accounts": ["Barclay CC"]},
+            {"name": "BOA Rewards", "txn_accounts": ["BofA Personal CC"]},
+            {"name": "Capital One", "txn_accounts": ["Capital One Personal CC"]},
+            {"name": "Chase Amazon", "txn_accounts": ["Chase Amazon Visa"]},
+            {"name": "Citi", "txn_accounts": ["Citi Personal CC"]},
         ],
     },
     "company": {
         "banks": [
-            {"name": "Prosperity Business Checking"},
+            {"name": "Prosperity Business", "txn_accounts": ["Prosperity Business Checking"]},
         ],
         "cards": [
-            {"name": "Amex Business Card"},
-            {"name": "Capital One Business CC"},
+            {"name": "Amex", "txn_accounts": ["Amex Business Card"]},
+            {"name": "Capital One BFM", "txn_accounts": ["Capital One Business CC"]},
         ],
     },
     "luxelegacy": {
         "banks": [
-            {"name": "BofA Business Checking"},
+            {"name": "BOA LL Business", "txn_accounts": ["BofA Business Checking (LL)"]},
         ],
         "cards": [],
     },
@@ -145,22 +145,23 @@ def _amount_is_regular(amounts):
     return within >= 2
 
 
-def _detect_upcoming_for_account(conn, account_name: str, horizon_days: int = 30) -> list:
+def _detect_upcoming_for_account(conn, account_names: list, horizon_days: int = 30) -> list:
     """Detect recurring charges for a specific account, return upcoming items."""
     cutoff = (datetime.datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
     today = datetime.datetime.now().date()
     horizon_end = today + timedelta(days=horizon_days)
 
+    placeholders = ",".join("?" for _ in account_names)
     rows = conn.execute(
         "SELECT merchant_canonical, date, amount_cents "
         "FROM transactions "
         "WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
         "  AND amount_cents < 0 "
         "  AND date >= ? AND date <= ? "
-        "  AND account = ? "
+        f"  AND account IN ({placeholders}) "
         "ORDER BY merchant_canonical, date",
-        [cutoff, today_str, account_name],
+        [cutoff, today_str] + account_names,
     ).fetchall()
 
     # Group by merchant
@@ -219,10 +220,16 @@ def _load_entity_section(entity_key: str) -> dict:
     conn = get_connection(entity_key)
     try:
         accts = _get_accounts_by_type(conn, entity_key)
+        # Build lookup of txn_accounts from defs
+        defs = _ACCOUNT_DEFS.get(entity_key, {"banks": [], "cards": []})
+        txn_map = {}
+        for d in defs["banks"] + defs["cards"]:
+            txn_map[d["name"]] = d.get("txn_accounts", [d["name"]])
         # Attach upcoming charges per account
         for acct in accts["banks"] + accts["cards"]:
+            match_names = txn_map.get(acct["account_name"], [acct["account_name"]])
             acct["upcoming"] = _detect_upcoming_for_account(
-                conn, acct["account_name"]
+                conn, match_names
             )
         return accts
     finally:
