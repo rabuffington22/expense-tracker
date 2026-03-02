@@ -4654,6 +4654,11 @@ select.input-sm {
     font-variant-numeric: tabular-nums;
 }
 .cf-negative { color: var(--red); }
+.cf-credit-line {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
 
 /* Edit icon button (ⓘ) */
 .cf-edit-btn {

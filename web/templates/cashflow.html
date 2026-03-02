@@ -81,6 +81,9 @@
         <span class="cf-box-value {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_cents(acct.balance_cents) }}
         </span>
+        {% if acct.credit_limit_cents %}
+        <span class="cf-credit-line">{{ fmt_cents(acct.credit_limit_cents) }}</span>
+        {% endif %}
     </div>
 
     {% if acct.credit_limit_cents %}
