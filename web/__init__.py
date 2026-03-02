@@ -194,6 +194,7 @@ def create_app():
     from web.routes.transactions import bp as transactions_bp
     from web.routes.saved_views import bp as saved_views_bp
     from web.routes.todo import bp as todo_bp
+    from web.routes.cashflow import bp as cashflow_bp
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(upload_bp)
@@ -206,5 +207,6 @@ def create_app():
     app.register_blueprint(transactions_bp)
     app.register_blueprint(saved_views_bp)
     app.register_blueprint(todo_bp)
+    app.register_blueprint(cashflow_bp)
 
     return app

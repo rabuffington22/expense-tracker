@@ -403,6 +403,28 @@ CREATE TABLE IF NOT EXISTS periodic_completions (
 );
 """
 
+_MIGRATION_26 = """
+CREATE TABLE IF NOT EXISTS account_balances (
+    id                INTEGER PRIMARY KEY,
+    account_name      TEXT NOT NULL UNIQUE,
+    balance_cents     INTEGER NOT NULL DEFAULT 0,
+    balance_source    TEXT NOT NULL DEFAULT 'manual'
+                      CHECK(balance_source IN ('manual', 'plaid')),
+    plaid_account_id  TEXT,
+    low_threshold_cents INTEGER NOT NULL DEFAULT 50000,
+    updated_at        TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at        TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS transfer_dismissals (
+    id                INTEGER PRIMARY KEY,
+    from_account      TEXT NOT NULL,
+    to_account        TEXT NOT NULL,
+    dismissed_at      TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at        TEXT NOT NULL
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -429,6 +451,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (23, _MIGRATION_23),
     (24, _MIGRATION_24),
     (25, _MIGRATION_25),
+    (26, _MIGRATION_26),
 ]
 
 _DEFAULT_CATEGORIES = [

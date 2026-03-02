@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Cash Flow — Ledger Oak{% endblock %}
+
+{% block content %}
+<h1 class="cf-title">Cash Flow</h1>
+
+{# ── Primary entity accounts ──────────────────────────────────────── #}
+<div class="outline-panel cf-panel">
+    <div class="panel-header">{{ entity_display }} Accounts</div>
+
+    {% for acct in primary_accounts %}
+    <div class="cf-row">
+        <div class="cf-row-left">
+            <span class="cf-acct-name">{{ acct.account_name }}</span>
+            <span class="cf-acct-meta">
+                {% if acct.balance_source == 'plaid' %}
+                <span class="badge badge-blue">Plaid</span>
+                {% else %}
+                <span class="badge badge-muted">Manual</span>
+                {% endif %}
+                Updated {{ fmt_date(acct.updated_at[:10]) }}
+            </span>
+        </div>
+        <div class="cf-row-right">
+            <form method="post" action="{{ url_for('cashflow.update_account', acct_id=acct.id) }}" class="cf-balance-form">
+                <input type="hidden" name="entity_key" value="{{ entity_key }}">
+                <span class="cf-dollar">$</span>
+                <input type="text" name="balance" class="input-sm cf-balance-input"
+                       value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
+                       onfocus="this.select()">
+                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </form>
+            <form method="post" action="{{ url_for('cashflow.delete_account', acct_id=acct.id) }}"
+                  onsubmit="return confirm('Delete {{ acct.account_name|tojson }}?')">
+                <input type="hidden" name="entity_key" value="{{ entity_key }}">
+                <button type="submit" class="btn-icon cf-delete" title="Delete">&times;</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if not primary_accounts %}
+    <div class="cf-empty">No accounts tracked yet.</div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('cashflow.create_account') }}" class="cf-add-form">
+        <input type="hidden" name="entity_key" value="{{ entity_key }}">
+        <input type="text" name="name" class="input-sm" placeholder="Account name" required style="flex:2">
+        <input type="text" name="balance" class="input-sm cf-add-num" placeholder="Balance" value="0.00">
+        <input type="text" name="threshold" class="input-sm cf-add-num" placeholder="Low alert" value="500">
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+    </form>
+</div>
+
+{# ── Cross-entity account sections ────────────────────────────────── #}
+{% for section in cross_sections %}
+<div class="outline-panel cf-panel">
+    <div class="panel-header">{{ section.entity_display }} Accounts</div>
+
+    {% for acct in section.accounts %}
+    <div class="cf-row">
+        <div class="cf-row-left">
+            <span class="cf-acct-name">{{ acct.account_name }}</span>
+            <span class="cf-acct-meta">
+                {% if acct.balance_source == 'plaid' %}
+                <span class="badge badge-blue">Plaid</span>
+                {% else %}
+                <span class="badge badge-muted">Manual</span>
+                {% endif %}
+                Updated {{ fmt_date(acct.updated_at[:10]) }}
+            </span>
+        </div>
+        <div class="cf-row-right">
+            <form method="post" action="{{ url_for('cashflow.update_account', acct_id=acct.id) }}" class="cf-balance-form">
+                <input type="hidden" name="entity_key" value="{{ section.entity_key }}">
+                <span class="cf-dollar">$</span>
+                <input type="text" name="balance" class="input-sm cf-balance-input"
+                       value="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
+                       onfocus="this.select()">
+                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </form>
+            <form method="post" action="{{ url_for('cashflow.delete_account', acct_id=acct.id) }}"
+                  onsubmit="return confirm('Delete {{ acct.account_name|tojson }}?')">
+                <input type="hidden" name="entity_key" value="{{ section.entity_key }}">
+                <button type="submit" class="btn-icon cf-delete" title="Delete">&times;</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if not section.accounts %}
+    <div class="cf-empty">No accounts tracked yet.</div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('cashflow.create_account') }}" class="cf-add-form">
+        <input type="hidden" name="entity_key" value="{{ section.entity_key }}">
+        <input type="text" name="name" class="input-sm" placeholder="Account name" required style="flex:2">
+        <input type="text" name="balance" class="input-sm cf-add-num" placeholder="Balance" value="0.00">
+        <input type="text" name="threshold" class="input-sm cf-add-num" placeholder="Low alert" value="500">
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+    </form>
+</div>
+{% endfor %}
+
+{% endblock %}

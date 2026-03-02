@@ -4562,3 +4562,108 @@ select.input-sm {
     .iu-top-row { flex-direction: column; }
     .iu-vdiv { width: auto; height: 1px; margin: 0.15rem 0.4rem; }
 }
+
+/* ── Cash Flow page ──────────────────────────────────────────────── */
+
+.cf-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.cf-panel {
+    margin-bottom: 0.75rem;
+}
+
+/* Account row */
+.cf-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .cf-row {
+    border-bottom-color: rgba(0,0,0,0.06);
+}
+.cf-row:last-of-type { border-bottom: none; }
+
+.cf-row-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+.cf-acct-name {
+    font-size: var(--ui-font-base);
+    font-weight: 600;
+}
+.cf-acct-meta {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.cf-row-right {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+}
+
+/* Balance inline edit */
+.cf-balance-form {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+}
+.cf-dollar {
+    font-size: var(--ui-font-sm);
+    color: var(--text-muted);
+}
+.cf-balance-input {
+    width: 100px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.cf-delete {
+    font-size: 0.85rem;
+    padding: 0.2rem 0.3rem;
+    opacity: 0.4;
+}
+.cf-delete:hover { opacity: 1; }
+
+/* Add account form */
+.cf-add-form {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding-top: 0.4rem;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .cf-add-form {
+    border-top-color: rgba(0,0,0,0.06);
+}
+.cf-add-num {
+    width: 80px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Empty state */
+.cf-empty {
+    font-size: var(--ui-font-sm);
+    color: var(--text-muted);
+    padding: 0.6rem 0;
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .cf-row { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+    .cf-row-right { width: 100%; }
+    .cf-balance-form { flex: 1; }
+    .cf-add-form { flex-wrap: wrap; }
+}
