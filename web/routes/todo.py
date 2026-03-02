@@ -149,7 +149,6 @@ def _get_queue_counts(conn) -> dict:
     counts["uncategorized"] = conn.execute(
         "SELECT COUNT(*) FROM transactions "
         "WHERE (category IS NULL OR category = '' OR confidence < 0.6) "
-        "AND category NOT IN ('Internal Transfer', 'Credit Card Payment') "
         "AND (category IS NULL OR category NOT IN ('Internal Transfer', 'Credit Card Payment'))"
     ).fetchone()[0]
 
