@@ -4843,7 +4843,7 @@ select.input-sm {
 .cf-box-value--inline {
     margin-left: auto;
     flex-shrink: 0;
-    font-size: 0.72rem;
+    font-size: 0.58rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
