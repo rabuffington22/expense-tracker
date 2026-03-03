@@ -4790,7 +4790,7 @@ select.input-sm {
     margin-bottom: 0.8rem;
 }
 .cf-grid--banks {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
 }
 .cf-grid--cards {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -4843,7 +4843,7 @@ select.input-sm {
 .cf-box-value--inline {
     margin-left: auto;
     flex-shrink: 0;
-    font-size: 0.46rem;
+    font-size: 0.40rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
