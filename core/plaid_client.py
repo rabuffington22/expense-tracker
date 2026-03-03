@@ -14,6 +14,7 @@ from plaid.model.country_code import CountryCode
 from plaid.model.products import Products
 from plaid.model.item_remove_request import ItemRemoveRequest
 from plaid.model.liabilities_get_request import LiabilitiesGetRequest
+from plaid.model.link_token_create_request_statements import LinkTokenCreateRequestStatements
 
 
 def _get_env():
@@ -46,7 +47,8 @@ def create_link_token(user_id: str = "expense-tracker-user") -> str:
     req = LinkTokenCreateRequest(
         user=LinkTokenCreateRequestUser(client_user_id=user_id),
         client_name="Ledger Oak",
-        products=[Products("transactions"), Products("liabilities")],
+        products=[Products("transactions")],
+        optional_products=[Products("liabilities")],
         country_codes=[CountryCode("US")],
         language="en",
     )
