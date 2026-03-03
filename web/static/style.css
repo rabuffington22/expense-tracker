@@ -5055,13 +5055,19 @@ input.cf-modal-input--due-date {
 }
 .cf-add-recurring-section .cf-upcoming-label {
     font-size: 0.55rem;
+    opacity: 0.5;
 }
 :root[data-theme="light"] .cf-add-recurring-section {
     border-top-color: rgba(0,0,0,0.06);
 }
 /* Add recurring form — reuses payment line classes */
 .cf-add-recurring {
-    margin-top: 0.25rem;
+    margin-top: 0.1rem;
+}
+.cf-add-recurring .cf-modal-input--small,
+.cf-add-recurring .cf-pymt-label,
+.cf-add-recurring .cf-dollar--sm {
+    opacity: 0.5;
 }
 .cf-modal-pymt-edit--left {
     justify-content: flex-start;
