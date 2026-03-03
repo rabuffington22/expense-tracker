@@ -4802,38 +4802,38 @@ select.input-sm {
     flex-direction: column;
     gap: 0.3rem;
     padding: 0.45rem 0.55rem;
-    background: rgba(20,169,248,0.15);
+    background: rgba(20,169,248,0.10);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(20,169,248,0.22);
+    border: 1px solid rgba(20,169,248,0.18);
 }
 .cf-box--clickable {
     cursor: pointer;
     transition: background var(--transition);
 }
 .cf-box--clickable:hover {
-    background: rgba(20,169,248,0.20);
+    background: rgba(20,169,248,0.15);
 }
 .cf-box--clickable.cf-box--card:hover {
-    background: rgba(191,90,242,0.20);
+    background: rgba(191,90,242,0.15);
 }
 :root[data-theme="light"] .cf-box {
-    background: rgba(20,169,248,0.10);
-    border-color: rgba(20,169,248,0.18);
+    background: rgba(20,169,248,0.07);
+    border-color: rgba(20,169,248,0.14);
 }
 .cf-box--card {
-    background: rgba(191,90,242,0.15);
-    border-color: rgba(191,90,242,0.22);
-}
-:root[data-theme="light"] .cf-box--card {
     background: rgba(191,90,242,0.10);
     border-color: rgba(191,90,242,0.18);
 }
+:root[data-theme="light"] .cf-box--card {
+    background: rgba(191,90,242,0.07);
+    border-color: rgba(191,90,242,0.14);
+}
 :root[data-theme="light"] .cf-box--clickable:hover {
-    background: rgba(20,169,248,0.15);
+    background: rgba(20,169,248,0.12);
 }
 :root[data-theme="light"] .cf-box--clickable.cf-box--card:hover {
-    background: rgba(191,90,242,0.15);
+    background: rgba(191,90,242,0.12);
 }
 .cf-box-header {
     display: flex;
@@ -4884,11 +4884,11 @@ select.input-sm {
 .cf-pymt-divider {
     width: 100%;
     height: 0.5px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.12);
     margin: 0.15rem 0;
 }
 :root[data-theme="light"] .cf-pymt-divider {
-    background: rgba(0,0,0,0.06);
+    background: rgba(0,0,0,0.10);
 }
 .cf-credit-line {
     font-size: 0.55rem;
@@ -5137,7 +5137,7 @@ input.cf-add-input:focus { border-bottom-color: var(--blue); box-shadow: none; }
 .cf-upcoming-none {
     font-size: 0.55rem;
     color: var(--text-muted);
-    font-style: italic;
+    font-style: normal;
     padding-left: 0.8rem;
 }
 .cf-upcoming-none--centered {
