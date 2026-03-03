@@ -4948,7 +4948,7 @@ select.input-sm {
 .cf-modal-close { font-size: 1.1rem; opacity: 0.7; }
 .cf-modal-close:hover { opacity: 1; }
 
-/* Modal name — larger than card name */
+/* Modal overrides */
 .cf-modal-name {
     font-size: 0.80rem;
 }
@@ -5005,7 +5005,7 @@ input.cf-modal-input--day {
 .cf-modal-pymt-edit {
     display: flex;
     align-items: baseline;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.15rem;
     margin: 0.35rem 0;
 }
@@ -5146,6 +5146,8 @@ input.cf-modal-input--due-date {
 }
 .cf-modal-card .cf-upcoming-none {
     font-size: 0.65rem;
+    text-align: left;
+    padding-left: 0;
 }
 
 /* Responsive */
