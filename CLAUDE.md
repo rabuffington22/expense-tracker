@@ -29,7 +29,7 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 - **Connected Accounts page:** `/plaid/` — connect banks, sync, disconnect
 - **Sync:** Manual only (no auto-sync on startup) — POST `/plaid/sync`
 - **Migration 18:** Added `plaid_items`, `plaid_accounts` tables + `plaid_item_id` on transactions
-- **Plaid products:** `transactions` + `liabilities` (both requested in Link token)
+- **Plaid products:** `transactions` only (liabilities removed from Link token — was causing errors)
 - **Liabilities integration:** `get_liabilities()` in `plaid_client.py` fetches credit card balance, credit limit, next payment due date, minimum payment. Cash Flow page auto-populates from Plaid when `plaid_account_id` is linked. Falls back to manual entry if Plaid unavailable. Payment section hidden when no data from either source.
 - **To switch to production:** Update `PLAID_SECRET` to production secret and set `PLAID_ENV=production`, then restart gunicorn
 
@@ -87,7 +87,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     style.css                      # Apple-style dual theme (dark default + light), CSS custom properties on data-theme, SF Pro fonts
     htmx.min.js                    # HTMX library (~14KB)
 core/                              # Business logic (unchanged from Streamlit era)
-  db.py                            # Schema migrations (24 so far), DB init, connections
+  db.py                            # Schema migrations (31 so far), DB init, connections
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
   amazon.py                        # Amazon order CSV parsing + vendor order matching
@@ -113,14 +113,22 @@ Pattern used across routes:
 - `_load_temp(key)` -- reads + deletes the temp file
 - `_TEMP_DIR` created on module import
 
-## 5-Page Workflow (sidebar order)
+## Pages
+- **Dashboard** -- KPI compare panels, categories chart, income vs expenses chart
+- **To Do** -- Review queues (uncategorized, vendor breakdown, transfers, large txns, new merchants, orders) + Workflow links
+- **Transactions** -- Filterable transaction list with inline editing, saved views
+- **Cash Flow** -- Per-account balances, upcoming recurring charges, Plaid liabilities
+- **Reports** -- Monthly detail + spending trend (pure CSS bar chart)
+- **Connected Accounts** -- Plaid Link, sync, disconnect
+
+### 5-Step Workflow (linked from To Do page)
 1. **Upload from Bank/CC** -- Import CSV/PDF bank statements
 2. **Upload from Vendors** -- Upload Amazon/Henry Schein order data
 3. **Match** -- Link vendor orders to bank transactions
 4. **Categorize Vendors** -- Label each vendor order with category/subcategory
 5. **Categorize Remaining** -- Review + categorize remaining bank transactions
 
-Plus **Dashboard**, **To Do**, **Cash Flow**, and **Reports** pages.
+Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
 ## Database (31 Migrations)
 Key tables:
@@ -277,6 +285,17 @@ Each insight links to a drill-down in `/transactions`.
 **Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
 
 ## Change Log
+
+### 2026-03-02 — Workflow links on To Do page + compact font fix
+Restored access to the 5 workflow pages (Upload from Bank/CC, Upload from Vendors, Match, Categorize Vendors, Categorize Remaining) which were removed from the sidebar in PR #23.
+
+1. **Workflows section on To Do page** — New "Workflows" panel below the "Review" queues panel with links to all 5 workflow pages. Always visible (not count-driven) since these are proactive tools.
+2. **Section labels** — `.todo-section-label` CSS class added for "REVIEW" and "WORKFLOWS" uppercase tracked headers above each panel.
+3. **Compact font fix** — Added `font-size: var(--ui-font-base)` to `.main` content container. Workflow pages (Upload, Vendors, Match, Categorize) were using the default 15px body font for `<p>`, `<strong>`, etc., making them look oversized vs. the redesigned pages. All `rem`-based explicit sizes (KPI values, page titles, charts) unaffected.
+4. **Plaid Link token fix** — Removed `liabilities` from Plaid Link token products (was causing errors). Cash Flow liabilities integration still works via separate `get_liabilities()` call.
+5. **Bulk categorization** — All Personal (142) and Business (68) uncategorized transactions categorized via merchant alias rules. 55 Personal + 32 Business alias rules created. New "Needs Review" category added to Business entity.
+6. **Data cleanup** — Removed 364 business transactions (Amex Amazon Business + Capital One Spark Cash Select) accidentally synced into Personal entity. Plaid accounts/items cleaned.
+7. **Stale PR closed** — PR #76 (To Do v2 polish) closed as superseded.
 
 ### 2026-03-02 — To Do queue detail popups + per-item dismiss
 Inline HTMX-powered modal popups for "Large transactions" and "New merchants" review queues on the To Do page. Per-item and bulk dismiss with date-based cutoff tracking.
