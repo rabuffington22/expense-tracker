@@ -4843,8 +4843,6 @@ select.input-sm {
 .cf-box-value--inline {
     margin-left: auto;
     flex-shrink: 0;
-    font-size: 0.24rem;
-    font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 .cf-card-subline {
@@ -4878,6 +4876,9 @@ select.input-sm {
     font-size: 1.15rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+}
+.cf-box-value.cf-box-value--inline {
+    font-size: 0.72rem;
 }
 .cf-negative { color: var(--red); }
 .cf-pymt-divider {
