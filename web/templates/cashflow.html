@@ -54,9 +54,6 @@
     onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
-        {% if acct.balance_source == 'plaid' %}
-        <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
-        {% endif %}
         <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_dollars(acct.balance_cents) }}
         </span>
@@ -88,9 +85,6 @@
     onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
-        {% if acct.balance_source == 'plaid' %}
-        <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
-        {% endif %}
         <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_dollars(acct.balance_cents) }}
         </span>

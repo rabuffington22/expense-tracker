@@ -76,6 +76,8 @@ def _sync_plaid_accounts(conn, entity_key: str):
 
     bank_sort = 0
     card_sort = 100
+    synced_plaid_ids = set()  # Track which accounts we actually want on Cash Flow
+
     for item in items:
         try:
             accounts = get_accounts(item["access_token"])
@@ -95,6 +97,8 @@ def _sync_plaid_accounts(conn, entity_key: str):
             ).fetchone()
             if pa_row and not pa_row["enabled"]:
                 continue
+
+            synced_plaid_ids.add(acct["account_id"])
 
             acct_type = "credit_card" if acct["type"] == "credit" else "bank"
             if acct_type == "bank":
@@ -147,14 +151,18 @@ def _sync_plaid_accounts(conn, entity_key: str):
                      acct_type, limit_cents, sort, now),
                 )
 
-    # Remove old hardcoded accounts that were never linked to Plaid.
-    # These are leftover from the previous _ensure_accounts() approach.
-    has_plaid = conn.execute(
-        "SELECT 1 FROM account_balances WHERE plaid_account_id IS NOT NULL LIMIT 1"
-    ).fetchone()
-    if has_plaid:
+    # Remove accounts that shouldn't be on Cash Flow:
+    # - Old hardcoded accounts (plaid_account_id IS NULL)
+    # - Investment/disabled accounts that were synced before filters were added
+    if synced_plaid_ids:
         conn.execute(
             "DELETE FROM account_balances WHERE plaid_account_id IS NULL"
+        )
+        placeholders = ",".join("?" for _ in synced_plaid_ids)
+        conn.execute(
+            f"DELETE FROM account_balances WHERE plaid_account_id IS NOT NULL "
+            f"AND plaid_account_id NOT IN ({placeholders})",
+            list(synced_plaid_ids),
         )
 
     conn.commit()
