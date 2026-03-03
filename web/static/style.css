@@ -5049,8 +5049,8 @@ input.cf-modal-input--due-date {
 /* Add recurring section */
 .cf-add-recurring-section {
     border-top: 0.5px solid rgba(255,255,255,0.06);
-    padding-top: 0.45rem;
-    padding-bottom: 0.35rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.2rem;
     font-size: 0.55rem;
 }
 .cf-add-recurring-section .cf-upcoming-label {
@@ -5071,6 +5071,7 @@ input.cf-modal-input--due-date {
 }
 .cf-modal-pymt-edit--left {
     justify-content: flex-start;
+    margin: 0.1rem 0;
 }
 .cf-add-input--name { width: 50px; }
 .cf-add-btn {
