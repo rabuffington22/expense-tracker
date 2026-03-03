@@ -7,6 +7,7 @@
 <h1 class="page-title todo-title">To Do</h1>
 
 {# ── Review Queues ────────────────────────────────────────────────────── #}
+<div class="todo-section-label">Review</div>
 <div class="outline-panel">
 
     <div class="todo-list">
@@ -96,6 +97,43 @@
             All caught up. No items need attention.
         </div>
         {% endif %}
+    </div>
+</div>
+
+{# ── Workflows ────────────────────────────────────────────────────────── #}
+<div class="todo-section-label">Workflows</div>
+<div class="outline-panel">
+    <div class="todo-list">
+        <a href="{{ url_for('upload.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Upload from Bank/CC</span>
+            <span class="todo-row-right">
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        <a href="{{ url_for('vendors.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Upload from Vendors</span>
+            <span class="todo-row-right">
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Match Orders</span>
+            <span class="todo-row-right">
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Categorize Vendor Orders</span>
+            <span class="todo-row-right">
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        <a href="{{ url_for('categorize.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Categorize Remaining</span>
+            <span class="todo-row-right">
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
     </div>
 </div>
 

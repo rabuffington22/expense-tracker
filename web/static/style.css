@@ -3464,6 +3464,17 @@ tr.is-selected > td:first-child {
     padding: 0.5rem 0.6rem;
     margin-bottom: 0.6rem;
 }
+.todo-section-label {
+    font-size: var(--ui-font-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-secondary);
+    margin: 1rem 0 0.35rem 0.25rem;
+}
+.todo-section-label:first-of-type {
+    margin-top: 0;
+}
 .todo-page .panel-header {
     font-size: var(--ui-font-xs);
     margin-bottom: 0.3rem;
