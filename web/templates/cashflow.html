@@ -290,19 +290,22 @@ function cfOpenModal(btn, evt) {
     var card = btn.closest('.cf-box');
     var upcomingEl = card.querySelector('.cf-upcoming');
     var listTarget = document.getElementById('cf-modal-upcoming-list');
+    var modalUpcomingLabel = document.querySelector('#cf-modal-upcoming > .cf-upcoming-label');
     listTarget.innerHTML = '';
+    var hasUpcoming = false;
     if (upcomingEl) {
         var rows = upcomingEl.querySelectorAll('.cf-upcoming-row');
         rows.forEach(function(row) {
             var clone = row.cloneNode(true);
-            /* Check if manual (has a delete form) — keep it */
             listTarget.appendChild(clone);
         });
-        if (rows.length === 0) {
-            listTarget.innerHTML = '<span class="cf-upcoming-none">No upcoming charges</span>';
-        }
+        hasUpcoming = rows.length > 0;
+    }
+    if (hasUpcoming) {
+        modalUpcomingLabel.hidden = false;
     } else {
-        listTarget.innerHTML = '<span class="cf-upcoming-none">No upcoming charges</span>';
+        modalUpcomingLabel.hidden = true;
+        listTarget.innerHTML = '<span class="cf-upcoming-none cf-upcoming-none--centered">No upcoming charges</span>';
     }
 
     /* Set up add-recurring form */

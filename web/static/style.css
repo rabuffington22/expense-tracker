@@ -4937,7 +4937,13 @@ select.input-sm {
     width: 280px;
     max-width: 90vw;
     box-shadow: 0 16px 48px rgba(0,0,0,0.45);
-    background: var(--bg-card);
+    background: #111;
+}
+:root[data-theme="light"] .cf-modal-card {
+    background: #f0f0f0;
+}
+.cf-modal-card .cf-box-header {
+    margin-bottom: 0.5rem;
 }
 .cf-modal-close { font-size: 1.1rem; opacity: 0.7; }
 .cf-modal-close:hover { opacity: 1; }
