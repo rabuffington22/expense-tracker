@@ -60,11 +60,11 @@
     </div>
 
     <div class="cf-upcoming">
-        <span class="cf-upcoming-label">Upcoming</span>
         {% if acct.upcoming %}
+            <span class="cf-upcoming-label">Upcoming</span>
             {{ upcoming_rows(acct, entity_key) }}
         {% else %}
-            <span class="cf-upcoming-none">No upcoming charges</span>
+            <span class="cf-upcoming-none cf-upcoming-none--centered">No upcoming charges</span>
         {% endif %}
     </div>
 </div>
@@ -102,11 +102,11 @@
     {% endif %}
 
     <div class="cf-upcoming">
-        <span class="cf-upcoming-label">Upcoming</span>
         {% if acct.upcoming %}
+            <span class="cf-upcoming-label">Upcoming</span>
             {{ upcoming_rows(acct, entity_key) }}
         {% else %}
-            <span class="cf-upcoming-none">No upcoming charges</span>
+            <span class="cf-upcoming-none cf-upcoming-none--centered">No upcoming charges</span>
         {% endif %}
     </div>
 </div>
