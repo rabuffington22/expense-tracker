@@ -123,13 +123,23 @@ def _sync_plaid_accounts(conn, entity_key: str):
             ).fetchone()
 
             if existing:
-                conn.execute(
-                    "UPDATE account_balances SET account_name=?, balance_cents=?, "
-                    "credit_limit_cents=?, balance_source='plaid', account_type=?, "
-                    "sort_order=?, updated_at=? WHERE id=?",
-                    (display_name, balance_cents, limit_cents, acct_type, sort,
-                     now, existing["id"]),
-                )
+                # Preserve manually-set credit limit when Plaid doesn't provide one
+                if limit_cents == 0:
+                    conn.execute(
+                        "UPDATE account_balances SET account_name=?, balance_cents=?, "
+                        "balance_source='plaid', account_type=?, "
+                        "sort_order=?, updated_at=? WHERE id=?",
+                        (display_name, balance_cents, acct_type, sort,
+                         now, existing["id"]),
+                    )
+                else:
+                    conn.execute(
+                        "UPDATE account_balances SET account_name=?, balance_cents=?, "
+                        "credit_limit_cents=?, balance_source='plaid', account_type=?, "
+                        "sort_order=?, updated_at=? WHERE id=?",
+                        (display_name, balance_cents, limit_cents, acct_type, sort,
+                         now, existing["id"]),
+                    )
             else:
                 # Disambiguate if another account already has this name
                 name_conflict = conn.execute(
