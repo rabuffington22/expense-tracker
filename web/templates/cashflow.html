@@ -200,13 +200,13 @@
             <form method="post" action="/cashflow/recurring/add" id="cf-add-recurring-form" class="cf-add-recurring">
                 <input type="hidden" name="entity_key" id="cf-add-entity">
                 <input type="hidden" name="account_id" id="cf-add-acct-id">
-                <div class="cf-add-recurring-row">
-                    <input type="text" name="merchant" placeholder="Name" class="cf-add-input cf-add-input--name">
-                    <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="amount" placeholder="0.00" class="cf-add-input cf-add-input--amt">
-                    <span class="cf-pymt-label" style="margin:0 0.3rem">on</span>
-                    <input type="text" name="day_of_month" placeholder="Day" class="cf-add-input cf-add-input--day">
+                <span class="cf-credit-line cf-pymt-line cf-modal-pymt-edit">
+                    <input type="text" name="merchant" placeholder="Name" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-add-input--name">
+                    <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="amount" placeholder="0" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" style="width:25px">
+                    <span class="cf-pymt-label">on</span>
+                    <input type="text" name="day_of_month" placeholder="Day" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" style="width:25px">
                     <button type="submit" class="cf-add-btn" title="Add">+</button>
-                </div>
+                </span>
             </form>
         </div>
 
