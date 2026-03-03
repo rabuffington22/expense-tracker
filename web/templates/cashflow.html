@@ -164,18 +164,15 @@
         <form method="post" id="cf-modal-form">
             <input type="hidden" name="entity_key" id="cf-modal-entity">
 
-            {# Header — same as card #}
+            {# Header — name + balance on same line #}
             <div class="cf-box-header">
-                <span class="cf-box-name" id="cf-modal-title"></span>
+                <span class="cf-box-name cf-modal-name" id="cf-modal-title"></span>
+                <span class="cf-box-value cf-box-value--inline cf-modal-editable"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input cf-modal-input--balance" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
             </div>
 
-            {# Balance — editable #}
-            <div class="cf-box-balance">
-                <span class="cf-box-label">Balance</span>
-                <div class="cf-modal-balance-stack">
-                    <span class="cf-box-value cf-modal-editable"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input cf-modal-input--balance" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
-                    <span class="cf-credit-line cf-modal-editable cf-modal-limit-line" id="cf-modal-limit-wrap" hidden><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
-                </div>
+            {# Credit limit — only shown for credit cards #}
+            <div class="cf-card-subline" id="cf-modal-limit-wrap" hidden>
+                <span class="cf-credit-line cf-modal-editable cf-modal-limit-line"><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
             </div>
 
             {# Credit card fields — shown/hidden by JS #}
