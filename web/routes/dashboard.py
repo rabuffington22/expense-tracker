@@ -8,7 +8,7 @@ from flask import Blueprint, render_template, request, g, url_for, redirect
 
 from core.db import get_connection
 from core.amazon import get_order_counts
-from web.routes.reports import fmt_month_short, fmt_date, COLORS
+from web.routes.reports import fmt_month_short, fmt_date
 
 bp = Blueprint("dashboard", __name__)
 
@@ -143,40 +143,6 @@ def _query_dashboard(conn, params):
     da_t_where = " AND ".join(da_t_clauses)
     xfer_t_clause, _ = _exclude_transfers_clause(params, prefix="t")
 
-    top_cats_rows = conn.execute(
-        f"SELECT c.id AS cat_id, t.category, "
-        f"  COUNT(*) AS txn_count, "
-        f"  COALESCE(SUM(ABS(t.amount_cents)), 0) AS total_cents "
-        f"FROM transactions t "
-        f"LEFT JOIN categories c ON c.name = t.category "
-        f"WHERE t.amount_cents < 0 AND {da_t_where} "
-        f"  AND t.category IS NOT NULL AND t.category != '' "
-        f"  {xfer_t_clause} "
-        f"GROUP BY t.category ORDER BY total_cents DESC LIMIT 8",
-        da_t_binds,
-    ).fetchall()
-
-    top_cats = []
-    max_cat_cents = top_cats_rows[0]["total_cents"] if top_cats_rows else 1
-    for r in top_cats_rows:
-        top_cats.append({
-            "cat_id": r["cat_id"],
-            "name": r["category"],
-            "txn_count": r["txn_count"],
-            "total_cents": r["total_cents"],
-            "pct": int(r["total_cents"] / max_cat_cents * 100) if max_cat_cents else 0,
-        })
-    data["top_cats"] = top_cats
-
-    # ── Donut chart percentages (relative to total spend) ────────────────────
-    cat_total = sum(c["total_cents"] for c in top_cats)
-    spend_abs = abs(data["spend_cents"]) if data["spend_cents"] else 0
-    other_cents = max(0, spend_abs - cat_total)
-    for c in top_cats:
-        c["donut_pct"] = round(c["total_cents"] / spend_abs * 100, 1) if spend_abs else 0
-    data["other_cents"] = other_cents
-    data["other_pct"] = round(other_cents / spend_abs * 100, 1) if spend_abs else 0
-
     # ── Top Merchants (8 rows) ───────────────────────────────────────────────
     top_merch_rows = conn.execute(
         f"SELECT t.merchant_canonical AS merchant, "
@@ -249,7 +215,6 @@ def _query_dashboard(conn, params):
     # ── Drill URL builder ────────────────────────────────────────────────────
     drill_url = _make_drill_url(params)
     data["drill_url"] = drill_url
-    data["colors"] = COLORS
 
     # ── Insights ─────────────────────────────────────────────────────────────
     data["insights"] = _compute_insights(conn, params, drill_url)

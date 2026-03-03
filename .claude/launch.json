@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "dashboard",
-      "runtimeExecutable": "/tmp/run-expense-tracker.sh",
-      "runtimeArgs": [],
+      "name": "expense-tracker",
+      "runtimeExecutable": "/Users/ryanbuffington/expense-tracker/.venv/bin/python",
+      "runtimeArgs": ["run.py"],
       "port": 8501
     }
   ]
