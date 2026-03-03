@@ -20,7 +20,8 @@ _ROOT = Path(__file__).parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from flask import Flask, request, g, redirect, url_for
+import base64
+from flask import Flask, request, g, redirect, url_for, Response
 
 from core.db import init_db, get_connection
 
@@ -133,6 +134,29 @@ def create_app():
     )
     app.secret_key = os.environ.get("FLASK_SECRET", "expense-tracker-dev-key")
     app.config["MAX_CONTENT_LENGTH"] = 64 * 1024 * 1024  # 64MB upload limit
+
+    # ── Before-request: HTTP Basic Auth ─────────────────────────────────────
+    _AUTH_USER = os.environ.get("APP_USERNAME", "")
+    _AUTH_PASS = os.environ.get("APP_PASSWORD", "")
+
+    @app.before_request
+    def _basic_auth():
+        if not _AUTH_USER or not _AUTH_PASS:
+            return  # Auth not configured — skip (local dev)
+        auth = request.headers.get("Authorization", "")
+        if auth.startswith("Basic "):
+            try:
+                decoded = base64.b64decode(auth[6:]).decode("utf-8")
+                username, _, password = decoded.partition(":")
+                if username == _AUTH_USER and password == _AUTH_PASS:
+                    return  # Authenticated
+            except Exception:
+                pass
+        return Response(
+            "Unauthorized",
+            401,
+            {"WWW-Authenticate": 'Basic realm="Ledger Oak"'},
+        )
 
     # ── Before-request: init DB, set entity context ──────────────────────────
     @app.before_request
