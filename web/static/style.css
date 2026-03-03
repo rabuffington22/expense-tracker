@@ -4815,25 +4815,25 @@ select.input-sm {
     background: rgba(10,132,255,0.10);
 }
 .cf-box--clickable.cf-box--card:hover {
-    background: rgba(167,139,250,0.10);
+    background: rgba(191,90,242,0.10);
 }
 :root[data-theme="light"] .cf-box {
     background: rgba(10,132,255,0.05);
     border-color: rgba(10,132,255,0.12);
 }
 .cf-box--card {
-    background: rgba(167,139,250,0.06);
-    border-color: rgba(167,139,250,0.10);
+    background: rgba(191,90,242,0.06);
+    border-color: rgba(191,90,242,0.10);
 }
 :root[data-theme="light"] .cf-box--card {
-    background: rgba(167,139,250,0.05);
-    border-color: rgba(167,139,250,0.12);
+    background: rgba(191,90,242,0.05);
+    border-color: rgba(191,90,242,0.12);
 }
 :root[data-theme="light"] .cf-box--clickable:hover {
     background: rgba(10,132,255,0.10);
 }
 :root[data-theme="light"] .cf-box--clickable.cf-box--card:hover {
-    background: rgba(167,139,250,0.10);
+    background: rgba(191,90,242,0.10);
 }
 .cf-box-header {
     display: flex;
@@ -4878,7 +4878,7 @@ select.input-sm {
     font-variant-numeric: tabular-nums;
 }
 .cf-box-value.cf-box-value--inline {
-    font-size: 0.84rem;
+    font-size: 1.0rem;
 }
 .cf-negative { color: var(--red); }
 .cf-pymt-divider {
