@@ -282,9 +282,10 @@ Replaced hardcoded `_ACCOUNT_DEFS` with Plaid-driven `_sync_plaid_accounts()`. C
 7. **Modal header** — Balance moved to same line as account name. Modal name font increased to 0.80rem.
 8. **Modal credit limit** — Hidden for bank accounts, shown for credit cards. `cf-card-subline[hidden]` rule fixes `display: flex` overriding `hidden` attribute.
 9. **Modal background** — Darker `#111` (light: `#f0f0f0`). Header gets 0.5rem bottom margin for spacing.
-10. **Modal empty state** — Same as cards: "UPCOMING" label hidden, "No upcoming charges" centered, not italicized.
-11. **Modal payment line** — Centered (`justify-content: center`). Due date placeholder changed from "15" to "Day".
-12. **Add Manual Recurring** — Reuses payment line classes (`cf-modal-input`, `cf-modal-input--small`, `cf-modal-input--inline`) for consistent look. No underlines, compact centered layout matching the payment line. Section label and inputs shrunk to 0.55rem.
+10. **Modal empty state** — "UPCOMING" label hidden, "No upcoming charges" left-justified, not italicized.
+11. **Modal payment line** — Left-justified (`justify-content: flex-start`). Due date placeholder changed from "15" to "Day".
+12. **Add Manual Recurring** — Reuses payment line classes (`cf-modal-input`, `cf-modal-input--small`, `cf-modal-input--inline`) for consistent look. No underlines, left-justified compact layout. Section label and inputs at 0.55rem, 50% opacity for subtle appearance. Tight spacing between label and input row.
+13. **Modal section alignment** — Credit limit right-aligned (matches card). Payment line, upcoming, and add recurring all left-justified.
 
 ### 2026-03-02 — Workflow links on To Do page + compact font fix
 Restored access to the 5 workflow pages (Upload from Bank/CC, Upload from Vendors, Match, Categorize Vendors, Categorize Remaining) which were removed from the sidebar in PR #23.
