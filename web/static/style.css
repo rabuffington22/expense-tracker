@@ -4802,38 +4802,38 @@ select.input-sm {
     flex-direction: column;
     gap: 0.3rem;
     padding: 0.45rem 0.55rem;
-    background: rgba(10,132,255,0.12);
+    background: rgba(20,169,248,0.20);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(10,132,255,0.18);
+    border: 1px solid rgba(20,169,248,0.28);
 }
 .cf-box--clickable {
     cursor: pointer;
     transition: background var(--transition);
 }
 .cf-box--clickable:hover {
-    background: rgba(10,132,255,0.18);
+    background: rgba(20,169,248,0.26);
 }
 .cf-box--clickable.cf-box--card:hover {
-    background: rgba(191,90,242,0.18);
+    background: rgba(191,90,242,0.26);
 }
 :root[data-theme="light"] .cf-box {
-    background: rgba(10,132,255,0.10);
-    border-color: rgba(10,132,255,0.18);
+    background: rgba(20,169,248,0.14);
+    border-color: rgba(20,169,248,0.22);
 }
 .cf-box--card {
-    background: rgba(191,90,242,0.12);
-    border-color: rgba(191,90,242,0.18);
+    background: rgba(191,90,242,0.20);
+    border-color: rgba(191,90,242,0.28);
 }
 :root[data-theme="light"] .cf-box--card {
-    background: rgba(191,90,242,0.10);
-    border-color: rgba(191,90,242,0.18);
+    background: rgba(191,90,242,0.14);
+    border-color: rgba(191,90,242,0.22);
 }
 :root[data-theme="light"] .cf-box--clickable:hover {
-    background: rgba(10,132,255,0.16);
+    background: rgba(20,169,248,0.22);
 }
 :root[data-theme="light"] .cf-box--clickable.cf-box--card:hover {
-    background: rgba(191,90,242,0.16);
+    background: rgba(191,90,242,0.22);
 }
 .cf-box-header {
     display: flex;
