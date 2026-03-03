@@ -218,6 +218,30 @@ def sync():
         except Exception as exc:
             errors.append(f"{item.get('institution_name', item['item_id'])}: {exc}")
 
+    # Backfill account column on existing Plaid transactions missing it.
+    # For items with exactly one enabled account, this is unambiguous.
+    conn = get_connection(g.entity_key)
+    try:
+        single_acct_items = conn.execute("""
+            SELECT pi.item_id, pa.name
+            FROM plaid_items pi
+            JOIN plaid_accounts pa ON pa.item_id = pi.item_id AND pa.enabled = 1
+            GROUP BY pi.item_id
+            HAVING COUNT(*) = 1
+        """).fetchall()
+        backfilled = 0
+        for row in single_acct_items:
+            cur = conn.execute(
+                "UPDATE transactions SET account=? "
+                "WHERE plaid_item_id=? AND (account IS NULL OR account = '')",
+                (row["name"], row["item_id"]),
+            )
+            backfilled += cur.rowcount
+        if backfilled:
+            conn.commit()
+    finally:
+        conn.close()
+
     parts = []
     if total_new:
         parts.append(f"{total_new} new")
@@ -225,6 +249,8 @@ def sync():
         parts.append(f"{total_modified} updated")
     if total_removed:
         parts.append(f"{total_removed} removed")
+    if backfilled:
+        parts.append(f"{backfilled} backfilled")
     if not parts:
         parts.append("no new transactions")
 
@@ -258,6 +284,39 @@ def toggle_account(account_id):
     return redirect(url_for("plaid.index"))
 
 
+@bp.route("/rename-account/<account_id>", methods=["POST"])
+def rename_account(account_id):
+    """Set a display name (alias) for a Plaid account."""
+    display_name = request.form.get("display_name", "").strip() or None
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "UPDATE plaid_accounts SET display_name=? WHERE account_id=?",
+            (display_name, account_id),
+        )
+        # Also update account_balances so Cash Flow reflects the new name immediately
+        if display_name:
+            conn.execute(
+                "UPDATE account_balances SET account_name=? WHERE plaid_account_id=?",
+                (display_name, account_id),
+            )
+        else:
+            # Revert to Plaid name
+            row = conn.execute(
+                "SELECT name FROM plaid_accounts WHERE account_id=?",
+                (account_id,),
+            ).fetchone()
+            if row:
+                conn.execute(
+                    "UPDATE account_balances SET account_name=? WHERE plaid_account_id=?",
+                    (row["name"], account_id),
+                )
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("plaid.index"))
+
+
 @bp.route("/disconnect/<item_id>", methods=["POST"])
 def disconnect(item_id):
     """Disconnect a Plaid item (remove from Plaid + local DB)."""
@@ -278,7 +337,17 @@ def disconnect(item_id):
         except Exception:
             pass  # Item may already be removed on Plaid's side
 
-        # Remove locally (cascade deletes accounts)
+        # Remove Cash Flow account_balances rows linked to this item's accounts
+        # (manual_recurring rows cascade-delete via FK on account_id)
+        acct_ids = [r["account_id"] for r in conn.execute(
+            "SELECT account_id FROM plaid_accounts WHERE item_id=?", (item_id,)
+        ).fetchall()]
+        for aid in acct_ids:
+            conn.execute(
+                "DELETE FROM account_balances WHERE plaid_account_id=?", (aid,)
+            )
+
+        # Remove locally (cascade deletes plaid_accounts)
         conn.execute("DELETE FROM plaid_accounts WHERE item_id=?", (item_id,))
         conn.execute("DELETE FROM plaid_items WHERE item_id=?", (item_id,))
         # Clear plaid_item_id on transactions (keep the transactions themselves)
@@ -311,6 +380,13 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
     amount = -txn["amount"]  # Plaid positive=debit -> our negative=debit
     amount_cents = round(amount * 100)
 
+    # Look up Plaid account name for the account column
+    acct_row = conn.execute(
+        "SELECT name FROM plaid_accounts WHERE account_id=?",
+        (txn["account_id"],),
+    ).fetchone()
+    account_name = acct_row["name"] if acct_row else None
+
     txn_id = compute_transaction_id(date, amount, description)
 
     now = datetime.now(timezone.utc).isoformat()
@@ -318,11 +394,11 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
         cur = conn.execute(
             """INSERT OR IGNORE INTO transactions
                (transaction_id, date, description_raw, merchant_raw, amount,
-                amount_cents, currency, source_filename, imported_at,
+                amount_cents, currency, account, source_filename, imported_at,
                 plaid_item_id, plaid_transaction_id)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
             (txn_id, date, description, description, amount,
-             amount_cents, "USD", "plaid-sync", now, item_id,
+             amount_cents, "USD", account_name, "plaid-sync", now, item_id,
              txn["plaid_transaction_id"]),
         )
         if cur.rowcount > 0:

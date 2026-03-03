@@ -1,7 +1,7 @@
 # Expense Tracker
 
 ## What This Is
-Flask + HTMX + SQLite personal/business expense tracker. Runs locally on Atlas Mac Mini. Bank and credit card transactions sync automatically via Plaid API (connected accounts). CSV/PDF bank statement import retained as fallback. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
+Flask + HTMX + SQLite personal/business expense tracker. Hosted on Fly.io. Bank and credit card transactions sync automatically via Plaid API (connected accounts). CSV/PDF bank statement import retained as fallback. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
 
 Previously built on Streamlit — migrated to Flask + HTMX to eliminate WebSocket disconnect issues during interactive workflows.
 
@@ -14,10 +14,7 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 
 ## Key Paths
 - **Repo (Home Mac):** `/Users/ryanbuffington/expense-tracker`
-- **Repo (Atlas):** `~/expense-tracker`
-- **DB location (Atlas):** `~/expense-tracker/local_state/` (default -- no `DATA_DIR` set)
-- **Python (Atlas):** Homebrew, venv at `~/expense-tracker/.venv`
-- **App URL:** `http://192.168.3.10:8501` (LAN) or `http://100.79.127.29:8501` (Tailscale)
+- **App URL:** `https://ledger-oak.fly.dev`
 
 ## Plaid Integration
 - **Status:** Production access submitted 2026-02-26, in review. Sandbox available now.
@@ -33,27 +30,14 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 - **Liabilities integration:** `get_liabilities()` in `plaid_client.py` fetches credit card balance, credit limit, next payment due date, minimum payment. Cash Flow page auto-populates from Plaid when `plaid_account_id` is linked. Falls back to manual entry if Plaid unavailable. Payment section hidden when no data from either source.
 - **To switch to production:** Update `PLAID_SECRET` to production secret and set `PLAID_ENV=production`, then restart gunicorn
 
-## Deploy with Plaid (Full Restart)
+## Deploy
+Push to `main` — GitHub Actions automatically deploys to Fly.io via `.github/workflows/fly-deploy.yml`.
+
 ```bash
-ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && .venv/bin/pip install plaid-python -q && pkill -9 -f gunicorn; sleep 2 && PLAID_CLIENT_ID=69a02460632219000ea2ea03 PLAID_SECRET=<secret> PLAID_ENV=sandbox OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES nohup .venv/bin/gunicorn -w 2 -b 0.0.0.0:8501 --timeout 120 --graceful-timeout 5 --access-logfile - 'web:create_app()' > /tmp/flask.log 2>&1 &"
+git push origin main
 ```
 
-> **DATA_DIR pitfall:** Do NOT pass `DATA_DIR` to deploy commands -- keep everything on `local_state/`.
-
-## Deploy to Atlas
-```bash
-# Full restart (always use this — kills and restarts gunicorn cleanly)
-ssh Atlas@192.168.3.10 "cd ~/expense-tracker && git pull origin main && pkill -9 -f gunicorn; sleep 2 && OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES nohup .venv/bin/gunicorn -w 2 -b 0.0.0.0:8501 --timeout 120 --graceful-timeout 5 --access-logfile - 'web:create_app()' > /tmp/flask.log 2>&1 &"
-```
-
-Notes:
-- **Always do a full restart after deploy** (user preference — avoids hung workers)
-- `--graceful-timeout 5` kills stuck workers after 5s during reload
-- `OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES` required on macOS for gunicorn fork()
-- `--timeout 120` needed because matching algorithm can take >30s
-- Two workers (`-w 2`) so one slow request doesn't block the whole app. SQLite write contention is rare since writes are quick
-- If LAN times out, try Tailscale IP `100.79.127.29`
-- **Cache-busting**: `style.css?v=<timestamp>` set at app startup — browser always gets fresh CSS after restart
+That's it. No SSH, no manual restart needed.
 
 ## Directory Structure
 ```

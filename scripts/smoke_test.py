@@ -202,6 +202,19 @@ def main() -> None:
 
             # (Recurring/Upcoming section removed from dashboard in PR #57)
 
+        # Cash Flow page loads (empty state when no Plaid configured)
+        _get_ok("/cashflow/", "cashflow")
+
+        # Cash Flow with each entity
+        client.set_cookie("entity", "BFM")
+        _get_ok("/cashflow/", "cashflow BFM")
+        client.set_cookie("entity", "LL")
+        _get_ok("/cashflow/", "cashflow LL")
+        client.set_cookie("entity", "Personal")
+
+        # Connected Accounts page loads
+        _get_ok("/plaid/", "connected accounts")
+
         print("   ✅ All route regression tests passed")
 
         # ── 8b. CSV export tests ────────────────────────────────────
@@ -735,11 +748,11 @@ def main() -> None:
 
         client.set_cookie("entity", "Personal")
 
-        # 10a. GET /todo returns 200 with Review Queues
+        # 10a. GET /todo returns 200 with Review section
         resp = client.get("/todo/")
         _check(resp.status_code == 200, "todo index: expected 200")
         body = resp.get_data(as_text=True)
-        _check("Review Queues" in body, "todo: should contain 'Review Queues'")
+        _check("Review" in body, "todo: should contain 'Review'")
 
         # 10b. Insert fixture data to make review queues non-zero
         conn_fix = get_connection("personal")

@@ -67,6 +67,7 @@
             <tr>
                 <th style="width: 40px;">On</th>
                 <th>Account</th>
+                <th>Display Name</th>
                 <th>Type</th>
                 <th style="width: 80px;">Mask</th>
             </tr>
@@ -83,6 +84,14 @@
                     </form>
                 </td>
                 <td>{{ acc.name or '—' }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('plaid.rename_account', account_id=acc.account_id) }}" style="margin:0; display:flex; gap:0.3rem; align-items:center;">
+                        <input type="text" name="display_name" value="{{ acc.display_name or '' }}"
+                               placeholder="{{ acc.name }}"
+                               class="input-sm" style="width: 140px; padding: 0.2rem 0.4rem;">
+                        <button type="submit" class="btn btn-sm btn-secondary" style="padding: 0.2rem 0.5rem;">Save</button>
+                    </form>
+                </td>
                 <td class="text-sm" style="color: var(--text-muted);">{{ acc.type or '' }}{% if acc.subtype %} / {{ acc.subtype }}{% endif %}</td>
                 <td class="text-sm" style="color: var(--text-muted);">{{ acc.mask or '—' }}</td>
             </tr>

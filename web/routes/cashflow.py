@@ -26,42 +26,9 @@ _ENTITY_DISPLAY = {
     "luxelegacy": "LL",
 }
 
-# ── Hardcoded account definitions per entity ─────────────────────────────────
+# ── Plaid account sync ────────────────────────────────────────────────────────
 
-_ACCOUNT_DEFS = {
-    "personal": {
-        "banks": [
-            {"name": "BOA Primary", "txn_accounts": ["BofA Personal Checking"]},
-            {"name": "BOA Secondary", "txn_accounts": ["BofA Second Acct"]},
-            {"name": "BOA Emergency", "txn_accounts": ["BofA Emergency Acct"]},
-            {"name": "First Horizon Mortgage"},
-        ],
-        "cards": [
-            {"name": "Apple (K)"},
-            {"name": "Apple (R)"},
-            {"name": "Barclay", "txn_accounts": ["Barclay CC"]},
-            {"name": "BOA Rewards", "txn_accounts": ["BofA Personal CC"]},
-            {"name": "Capital One", "txn_accounts": ["Capital One Personal CC"]},
-            {"name": "Chase Amazon", "txn_accounts": ["Chase Amazon Visa"]},
-            {"name": "Citi", "txn_accounts": ["Citi Personal CC"]},
-        ],
-    },
-    "company": {
-        "banks": [
-            {"name": "Prosperity Business", "txn_accounts": ["Prosperity Business Checking"]},
-        ],
-        "cards": [
-            {"name": "Amex", "txn_accounts": ["Amex Business Card"]},
-            {"name": "Capital One BFM", "txn_accounts": ["Capital One Business CC"]},
-        ],
-    },
-    "luxelegacy": {
-        "banks": [
-            {"name": "BOA LL Business", "txn_accounts": ["BofA Business Checking (LL)"]},
-        ],
-        "cards": [],
-    },
-}
+_BALANCE_CACHE_SECONDS = 300  # Re-fetch Plaid balances every 5 minutes
 
 
 def _parse_dollar_to_cents(dollar_str: str) -> int:
@@ -73,37 +40,134 @@ def _parse_dollar_to_cents(dollar_str: str) -> int:
         return 0
 
 
-def _ensure_accounts(conn, entity_key: str):
-    """Sync DB accounts to match hardcoded definitions (add missing, remove stale)."""
-    defs = _ACCOUNT_DEFS.get(entity_key, {"banks": [], "cards": []})
-    expected_names = set()
-    for i, bank in enumerate(defs["banks"]):
-        expected_names.add(bank["name"])
+def _sync_plaid_accounts(conn, entity_key: str):
+    """Sync Plaid accounts to account_balances table with current balances.
+
+    Creates/updates account_balances rows from connected Plaid accounts.
+    Skips API call if balances were refreshed within _BALANCE_CACHE_SECONDS.
+    Preserves manually-created accounts (plaid_account_id IS NULL).
+    """
+    import os
+    if not os.environ.get("PLAID_CLIENT_ID") or not os.environ.get("PLAID_SECRET"):
+        return
+
+    # Check staleness — skip if recently refreshed
+    latest = conn.execute(
+        "SELECT MAX(updated_at) FROM account_balances WHERE balance_source='plaid'"
+    ).fetchone()[0]
+    if latest:
+        try:
+            last = datetime.datetime.fromisoformat(latest)
+            if (datetime.datetime.now() - last).total_seconds() < _BALANCE_CACHE_SECONDS:
+                return
+        except (ValueError, TypeError):
+            pass
+
+    items = conn.execute(
+        "SELECT item_id, access_token, institution_name FROM plaid_items"
+    ).fetchall()
+    if not items:
+        return
+
+    try:
+        from core.plaid_client import get_accounts
+    except (ImportError, RuntimeError):
+        return
+
+    bank_sort = 0
+    card_sort = 100
+    for item in items:
+        try:
+            accounts = get_accounts(item["access_token"])
+        except Exception as e:
+            log.warning("Failed to fetch accounts for %s: %s", item["institution_name"], e)
+            continue
+
+        for acct in accounts:
+            # Skip disabled accounts
+            pa_row = conn.execute(
+                "SELECT enabled, display_name FROM plaid_accounts WHERE account_id=?",
+                (acct["account_id"],),
+            ).fetchone()
+            if pa_row and not pa_row["enabled"]:
+                continue
+
+            acct_type = "credit_card" if acct["type"] == "credit" else "bank"
+            if acct_type == "bank":
+                sort = bank_sort
+                bank_sort += 1
+            else:
+                sort = card_sort
+                card_sort += 1
+
+            # Display name: user alias > Plaid name
+            display_name = (pa_row["display_name"] if pa_row and pa_row["display_name"]
+                            else acct["name"])
+
+            balance_cents = int(round(acct["balance_current"] * 100)) if acct["balance_current"] is not None else 0
+            limit_cents = int(round(acct["balance_limit"] * 100)) if acct["balance_limit"] is not None else 0
+            now = datetime.datetime.now().isoformat()
+
+            # UPSERT by plaid_account_id
+            existing = conn.execute(
+                "SELECT id FROM account_balances WHERE plaid_account_id=?",
+                (acct["account_id"],),
+            ).fetchone()
+
+            if existing:
+                conn.execute(
+                    "UPDATE account_balances SET account_name=?, balance_cents=?, "
+                    "credit_limit_cents=?, balance_source='plaid', account_type=?, "
+                    "sort_order=?, updated_at=? WHERE id=?",
+                    (display_name, balance_cents, limit_cents, acct_type, sort,
+                     now, existing["id"]),
+                )
+            else:
+                # Disambiguate if another account already has this name
+                name_conflict = conn.execute(
+                    "SELECT id FROM account_balances WHERE account_name=?",
+                    (display_name,),
+                ).fetchone()
+                if name_conflict:
+                    mask = acct.get("mask") or ""
+                    inst = item["institution_name"] or ""
+                    suffix = f" ({inst} ••{mask})" if mask else f" ({inst})"
+                    display_name = f"{display_name}{suffix}"
+
+                conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, plaid_account_id, "
+                    "account_type, credit_limit_cents, sort_order, updated_at) "
+                    "VALUES (?,?,?,?,?,?,?,?)",
+                    (display_name, balance_cents, "plaid", acct["account_id"],
+                     acct_type, limit_cents, sort, now),
+                )
+
+    # Remove old hardcoded accounts that were never linked to Plaid.
+    # These are leftover from the previous _ensure_accounts() approach.
+    has_plaid = conn.execute(
+        "SELECT 1 FROM account_balances WHERE plaid_account_id IS NOT NULL LIMIT 1"
+    ).fetchone()
+    if has_plaid:
         conn.execute(
-            "INSERT OR IGNORE INTO account_balances "
-            "(account_name, account_type, sort_order) VALUES (?, 'bank', ?)",
-            (bank["name"], i),
+            "DELETE FROM account_balances WHERE plaid_account_id IS NULL"
         )
-    for i, card in enumerate(defs["cards"]):
-        expected_names.add(card["name"])
-        conn.execute(
-            "INSERT OR IGNORE INTO account_balances "
-            "(account_name, account_type, sort_order) VALUES (?, 'credit_card', ?)",
-            (card["name"], 100 + i),
-        )
-    # Remove accounts no longer in the hardcoded list
-    if expected_names:
-        placeholders = ",".join("?" for _ in expected_names)
-        conn.execute(
-            f"DELETE FROM account_balances WHERE account_name NOT IN ({placeholders})",
-            list(expected_names),
-        )
+
     conn.commit()
 
 
+def _get_account_names_for_plaid_id(conn, plaid_account_id: str) -> list:
+    """Get the account name used in transactions for a Plaid account."""
+    row = conn.execute(
+        "SELECT name FROM plaid_accounts WHERE account_id=?",
+        (plaid_account_id,),
+    ).fetchone()
+    return [row["name"]] if row else []
+
+
 def _get_accounts_by_type(conn, entity_key: str) -> dict:
-    """Fetch accounts split into banks and cards, ordered by definition order."""
-    _ensure_accounts(conn, entity_key)
+    """Fetch accounts split into banks and cards, ordered by sort_order."""
+    _sync_plaid_accounts(conn, entity_key)
     rows = conn.execute(
         "SELECT * FROM account_balances ORDER BY sort_order, account_name"
     ).fetchall()
@@ -389,15 +453,15 @@ def _load_entity_section(entity_key: str) -> dict:
                         next_date = next_date.replace(day=min(day, last_day))
                 acct["payment_due_date"] = next_date.isoformat()
 
-        # Build lookup of txn_accounts from defs
-        defs = _ACCOUNT_DEFS.get(entity_key, {"banks": [], "cards": []})
-        txn_map = {}
-        for d in defs["banks"] + defs["cards"]:
-            txn_map[d["name"]] = d.get("txn_accounts", [d["name"]])
         # Attach upcoming charges per account (auto-detected + manual)
         for acct in accts["banks"] + accts["cards"]:
-            match_names = txn_map.get(acct["account_name"], [acct["account_name"]])
-            auto = _detect_upcoming_for_account(conn, match_names)
+            plaid_id = acct.get("plaid_account_id")
+            if plaid_id:
+                match_names = _get_account_names_for_plaid_id(conn, plaid_id)
+            else:
+                match_names = [acct["account_name"]]
+            # Skip recurring detection if no account names to match against
+            auto = _detect_upcoming_for_account(conn, match_names) if match_names else []
             # Mark auto items
             for item in auto:
                 item["manual"] = False

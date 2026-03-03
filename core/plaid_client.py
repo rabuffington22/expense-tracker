@@ -64,7 +64,7 @@ def exchange_public_token(public_token: str) -> dict:
 
 
 def get_accounts(access_token: str) -> list[dict]:
-    """Fetch accounts for an item. Returns list of account dicts."""
+    """Fetch accounts for an item. Returns list of account dicts with balances."""
     client = _get_client()
     req = AccountsGetRequest(access_token=access_token)
     resp = client.accounts_get(req)
@@ -75,6 +75,9 @@ def get_accounts(access_token: str) -> list[dict]:
             "mask": a.mask,
             "type": str(a.type),
             "subtype": str(a.subtype) if a.subtype else None,
+            "balance_current": float(a.balances.current) if a.balances.current is not None else None,
+            "balance_available": float(a.balances.available) if a.balances.available is not None else None,
+            "balance_limit": float(a.balances.limit) if a.balances.limit is not None else None,
         }
         for a in resp.accounts
     ]

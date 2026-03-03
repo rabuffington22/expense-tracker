@@ -496,6 +496,10 @@ CREATE TABLE IF NOT EXISTS planning_items (
 );
 """
 
+_MIGRATION_33 = """
+ALTER TABLE plaid_accounts ADD COLUMN display_name TEXT;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -529,6 +533,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (30, _MIGRATION_30),
     (31, _MIGRATION_31),
     (32, _MIGRATION_32),
+    (33, _MIGRATION_33),
 ]
 
 _DEFAULT_CATEGORIES = [

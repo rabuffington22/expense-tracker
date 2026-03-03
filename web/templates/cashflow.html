@@ -150,7 +150,14 @@
 <h1 class="cf-title">Cash Flow</h1>
 
 {# ── Primary entity ───────────────────────────────────────────────────── #}
+{% if primary_banks or primary_cards %}
 {{ entity_section(entity_display, entity_key, primary_banks, primary_cards) }}
+{% else %}
+<div class="outline-panel" style="text-align:center; padding:2rem 1rem;">
+    <p style="color:var(--text-muted); margin-bottom:0.75rem;">No accounts connected yet.</p>
+    <a href="/plaid/" class="btn btn-primary btn-sm">Connect a Bank</a>
+</div>
+{% endif %}
 
 {# ── Cross-entity sections ────────────────────────────────────────────── #}
 {% for section in cross_sections %}
