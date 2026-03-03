@@ -270,6 +270,22 @@ Each insight links to a drill-down in `/transactions`.
 
 ## Change Log
 
+### 2026-03-03 — Cash Flow visual polish + Plaid-driven accounts + modal redesign
+Replaced hardcoded `_ACCOUNT_DEFS` with Plaid-driven `_sync_plaid_accounts()`. Card and modal visual polish pass.
+
+1. **Plaid-driven accounts** — `_sync_plaid_accounts()` dynamically creates/updates `account_balances` rows from connected Plaid accounts with live balances. Replaces hardcoded `_ACCOUNT_DEFS` and `_ensure_accounts()`. Handles duplicate account name disambiguation (appends institution + mask). Empty `match_names` guard prevents invalid SQL. Orphaned `account_balances` rows cleaned up on Plaid disconnect.
+2. **Credit limit preservation** — When Plaid returns null for credit limit (Capital One), the UPDATE skips `credit_limit_cents` to preserve manually-entered values.
+3. **Card color tints** — Bank cards: Personal accent blue `rgba(20,169,248,0.10)`. Credit cards: LL accent purple `rgba(191,90,242,0.10)`. Both with `backdrop-filter: blur(16px)` and color-matched borders. Light-mode at slightly lower opacity.
+4. **Balance font specificity fix** — `.cf-box-value.cf-box-value--inline` (two-class selector) overrides `.cf-box-value` which appeared later in CSS. Balance font tuned to 0.94rem.
+5. **Bank grid 5-column** — `.cf-grid--banks` changed to `repeat(5, 1fr)` to fit all 5 personal bank accounts on one row.
+6. **Empty state on cards** — When no upcoming charges, "UPCOMING" label hidden and "No upcoming charges" centered on card. Not italicized.
+7. **Modal header** — Balance moved to same line as account name. Modal name font increased to 0.80rem.
+8. **Modal credit limit** — Hidden for bank accounts, shown for credit cards. `cf-card-subline[hidden]` rule fixes `display: flex` overriding `hidden` attribute.
+9. **Modal background** — Darker `#111` (light: `#f0f0f0`). Header gets 0.5rem bottom margin for spacing.
+10. **Modal empty state** — Same as cards: "UPCOMING" label hidden, "No upcoming charges" centered, not italicized.
+11. **Modal payment line** — Centered (`justify-content: center`). Due date placeholder changed from "15" to "Day".
+12. **Add Manual Recurring** — Reuses payment line classes (`cf-modal-input`, `cf-modal-input--small`, `cf-modal-input--inline`) for consistent look. No underlines, compact centered layout matching the payment line. Section label and inputs shrunk to 0.55rem.
+
 ### 2026-03-02 — Workflow links on To Do page + compact font fix
 Restored access to the 5 workflow pages (Upload from Bank/CC, Upload from Vendors, Match, Categorize Vendors, Categorize Remaining) which were removed from the sidebar in PR #23.
 
@@ -298,32 +314,18 @@ Inline HTMX-powered modal popups for "Large transactions" and "New merchants" re
 12. **Transaction filters** — Added `large_txns` and `new_merchants` filter params to `transactions.py` `_get_filter_params()` and `_build_base_cte()` for "View all in Transactions" drill-through links.
 
 ### 2026-03-02 — Cash Flow page + color palette refresh + edit modal redesign
-New `/cashflow` page showing per-account balances and upcoming recurring charges. Plus sidebar and dashboard color updates. Edit modal redesigned as card clone with inline-editable fields and manual recurring charge support. Plaid liabilities integration for auto-populating credit card data.
+New `/cashflow` page showing per-account balances and upcoming recurring charges. Plus sidebar and dashboard color updates. Edit modal redesigned as card clone with inline-editable fields and manual recurring charge support. Plaid liabilities integration for auto-populating credit card data. **Note:** Hardcoded `_ACCOUNT_DEFS` replaced by Plaid-driven `_sync_plaid_accounts()` in 2026-03-03 update. Card colors and modal layout also updated — see 2026-03-03 entry.
 
-1. **Migration 26+27** — `account_balances` table with fields for balance, source (manual/plaid), account type (bank/credit_card), credit limit, payment due day/date/amount, sort order. Future Plaid linking via `plaid_account_id`.
+1. **Migration 26+27** — `account_balances` table with fields for balance, source (manual/plaid), account type (bank/credit_card), credit limit, payment due day/date/amount, sort order. Plaid linking via `plaid_account_id`.
 2. **Migration 28** — `manual_recurring` table: account_id (FK → account_balances, CASCADE), merchant, amount_cents, day_of_month (1–31), created_at. Monthly cadence only.
-3. **Hardcoded account definitions** — `_ACCOUNT_DEFS` in `cashflow.py` defines accounts per entity. `_ensure_accounts()` syncs DB on page load (creates missing, deletes stale). Display names are short (e.g. "BOA Primary"), with `txn_accounts` mapping to original import names for transaction matching.
-4. **Personal accounts** — 4 banks (BOA Primary, BOA Secondary, BOA Emergency, First Horizon Mortgage) + 7 credit cards (Apple (K), Apple (R), Barclay, BOA Rewards, Capital One, Chase Amazon, Citi).
-5. **BFM accounts** — 1 bank (Prosperity Business) + 2 cards (Amex, Capital One BFM).
-6. **LL accounts** — 1 bank (BOA LL Business).
-7. **Cross-entity visibility** — Personal and BFM share view (each sees the other's accounts below). LL is isolated.
-8. **Per-account recurring detection** — `_detect_upcoming_for_account()` filters transactions by account name(s), detects recurring merchants (90-day lookback, cadence classification), shows next expected charge date and amount. Auto-detected + manual recurring merged and sorted by date.
-9. **Plaid liabilities integration** — `_fetch_plaid_liabilities()` calls `get_liabilities()` for all connected Plaid items. `_apply_plaid_liabilities()` updates balance, credit limit, payment due date/amount, and sets `balance_source='plaid'`. Persists to DB as cache. Early env var check prevents hanging when Plaid credentials aren't configured.
-10. **Edit modal (card clone)** — Modal is a bigger version of the account card. Balance, credit limit, payment amount, and due day are inline-editable text inputs that look like static text (transparent bg, no border, matching font size/weight). Blue underline appears on focus only. Upcoming charges section shown read-only at bottom with manual charges having × delete buttons. Save/Cancel footer at very bottom below all sections.
-11. **Due date formatting** — Hidden field + display field pattern: hidden `payment_due_day` stores integer for backend, visible field shows formatted date ("Mar 20"). JS `cfFormatDate()` converts YYYY-MM-DD to "Mon D". `cfParseDueDay()` extracts day number from user edits. Card shows `fmt_due_date()` Jinja helper.
-12. **Payment line left-justified** — "$150.00 due Mar 20" left-aligned on both card and modal. CSS cascade fix: `.cf-pymt-line` placed after `.cf-credit-line` so `text-align: left` overrides `text-align: right`. Modal uses `justify-content: flex-start`.
-13. **Manual recurring charges** — "Add Manual Recurring" labeled section inside edit modal with inline form: merchant name, amount, "on" label, day of month, + button. Row constrained to 50% width. POST `/cashflow/recurring/add`. Delete via POST `/cashflow/recurring/delete/<id>`. `_get_manual_recurring()` calculates next occurrence date (handles month rollover + day clamping).
-14. **CSS specificity** — Modal inputs use `input.cf-modal-input` selector (not just `.cf-modal-input`) to override global `input[type="text"]` styles. Explicit resets for border-radius, box-shadow, appearance.
-15. **Clickable cards** — Entire card is clickable to open edit modal (no pencil icon). Data attributes and `onclick` on the `.cf-box` div. Event guard (`evt.target.closest('button'/'form'/'a')`) prevents modal from opening when clicking nested interactive elements (e.g. manual recurring delete buttons).
-16. **Glass-like card backgrounds** — Banks: `rgba(10,132,255,0.06)` blue tint. Credit cards: `rgba(167,139,250,0.06)` soft violet tint. Both with `backdrop-filter: blur(16px)` and color-matched `1px solid` borders. Light-mode variants at slightly different opacities. Hover states bump opacity to 0.10.
-17. **Inline balance on all cards** — Balance right-aligned on header line next to account name (`.cf-box-value--inline`). "Balance" label removed from both bank and credit card boxes. Account name at 0.60rem, balance at 0.72rem for compact fit. Credit cards show credit limit as a subtle right-aligned subline below header.
-18. **Bank boxes** — Account name + balance on one line, upcoming charges section below.
-19. **Credit card boxes** — Same header line as banks, plus credit limit subline, payment info (amount due on date), and upcoming charges.
-20. **Modal × removed** — Close button removed from modal header. Modal closes via Cancel button, clicking outside (scrim), or Escape key.
-21. **Sidebar refinements** — Width shrunk to 210px. Entity toggle `max-width: 181px` to align with LEDGER OAK text. Nav links `max-width: 178.5px` so active highlight aligns with toggle right edge. "Expense Tracker" subtitle centered under "LEDGER OAK" with `text-indent` compensating for `letter-spacing`.
-22. **Color palette refresh** — LL accent: gold → dusty mauve (`#c4909a`). Dashboard series: blue `#14a9f8` (Personal blue) + violet `#a78bfa`. Green/red harmonized: `#4ade80`/`#f87171` (dark), `#22c55e`/`#ef4444` (light) — cooler tones to match new palette.
-23. **CSS** — `.cf-*` scoped styles. Bank grid: `repeat(4, 1fr)`. Card grid: `auto-fill, minmax(140px, 1fr)` for equal-width cards. Upcoming text 0.45rem.
-24. **Deploy** — Two gunicorn workers (`-w 2`) to prevent single-worker blocking. `--graceful-timeout 5` added.
+3. **Cross-entity visibility** — Personal and BFM share view (each sees the other's accounts below). LL is isolated.
+4. **Per-account recurring detection** — `_detect_upcoming_for_account()` filters transactions by account name(s), detects recurring merchants (90-day lookback, cadence classification), shows next expected charge date and amount. Auto-detected + manual recurring merged and sorted by date.
+5. **Plaid liabilities integration** — `_fetch_plaid_liabilities()` calls `get_liabilities()` for all connected Plaid items. `_apply_plaid_liabilities()` updates balance, credit limit, payment due date/amount, and sets `balance_source='plaid'`. Persists to DB as cache. Early env var check prevents hanging when Plaid credentials aren't configured.
+6. **Due date formatting** — Hidden field + display field pattern: hidden `payment_due_day` stores integer for backend, visible field shows formatted date ("Mar 20"). JS `cfFormatDate()` converts YYYY-MM-DD to "Mon D". `cfParseDueDay()` extracts day number from user edits.
+7. **Manual recurring charges** — "Add Manual Recurring" section inside edit modal. POST `/cashflow/recurring/add`. Delete via POST `/cashflow/recurring/delete/<id>`. `_get_manual_recurring()` calculates next occurrence date (handles month rollover + day clamping).
+8. **Sidebar refinements** — Width shrunk to 210px. Entity toggle `max-width: 181px` to align with LEDGER OAK text.
+9. **Color palette refresh** — LL accent: gold → dusty mauve (`#c4909a`). Dashboard series: blue `#14a9f8` (Personal blue) + violet `#a78bfa`. Green/red harmonized: `#4ade80`/`#f87171` (dark), `#22c55e`/`#ef4444` (light).
+10. **Deploy** — Two gunicorn workers (`-w 2`) to prevent single-worker blocking. `--graceful-timeout 5` added.
 
 ### 2026-03-01 — PR #73: Per-entity To Do page (statement reminders + review queues)
 New `/todo` page combining ops checklist functionality with data-driven review queues.

@@ -5063,6 +5063,9 @@ input.cf-modal-input--due-date {
 .cf-add-recurring {
     margin-top: 0.25rem;
 }
+.cf-modal-pymt-edit--left {
+    justify-content: flex-start;
+}
 .cf-add-input--name { width: 50px; }
 .cf-add-btn {
     background: none;
