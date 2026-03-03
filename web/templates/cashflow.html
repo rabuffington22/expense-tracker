@@ -28,7 +28,7 @@
     <span class="cf-upcoming-merchant">{{ item.merchant }}</span>
     <span class="cf-upcoming-right">
         <span class="cf-upcoming-date">{{ item.display_date }}</span>
-        <span class="cf-upcoming-amt">{{ fmt_cents(item.amount_cents) }}</span>
+        <span class="cf-upcoming-amt">{{ fmt_dollars(item.amount_cents) }}</span>
         {% if item.manual %}
         <form method="post" action="/cashflow/recurring/delete/{{ item.manual_id }}" class="cf-del-form">
             <input type="hidden" name="entity_key" value="{{ entity_key }}">
@@ -46,11 +46,11 @@
     data-acct-name="{{ acct.account_name }}"
     data-acct-type="{{ acct.account_type }}"
     data-entity-key="{{ entity_key }}"
-    data-balance="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
-    data-limit="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}"
+    data-balance="{{ '{:,.0f}'.format(acct.balance_cents / 100) }}"
+    data-limit="{{ '{:,.0f}'.format(acct.credit_limit_cents / 100) }}"
     data-due-day="{{ acct.payment_due_day or '' }}"
     data-due-date="{{ acct.payment_due_date or '' }}"
-    data-payment="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}"
+    data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
     onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
@@ -58,7 +58,7 @@
         <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% endif %}
         <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
-            {{ fmt_cents(acct.balance_cents) }}
+            {{ fmt_dollars(acct.balance_cents) }}
         </span>
     </div>
 
@@ -80,11 +80,11 @@
     data-acct-name="{{ acct.account_name }}"
     data-acct-type="{{ acct.account_type }}"
     data-entity-key="{{ entity_key }}"
-    data-balance="{{ '{:,.2f}'.format(acct.balance_cents / 100) }}"
-    data-limit="{{ '{:,.2f}'.format(acct.credit_limit_cents / 100) }}"
+    data-balance="{{ '{:,.0f}'.format(acct.balance_cents / 100) }}"
+    data-limit="{{ '{:,.0f}'.format(acct.credit_limit_cents / 100) }}"
     data-due-day="{{ acct.payment_due_day or '' }}"
     data-due-date="{{ acct.payment_due_date or '' }}"
-    data-payment="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}"
+    data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
     onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
@@ -92,7 +92,7 @@
         <span class="badge badge-blue" style="font-size:0.6rem">Plaid</span>
         {% endif %}
         <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
-            {{ fmt_cents(acct.balance_cents) }}
+            {{ fmt_dollars(acct.balance_cents) }}
         </span>
     </div>
 
@@ -104,7 +104,7 @@
 
     {% if acct.payment_due_day %}
     <div class="cf-pymt-divider"></div>
-    <span class="cf-credit-line cf-pymt-line">{{ fmt_cents(acct.payment_amount_cents) }} due {{ fmt_due_date(acct.payment_due_date) }}</span>
+    <span class="cf-credit-line cf-pymt-line">{{ fmt_dollars(acct.payment_amount_cents) }} due {{ fmt_due_date(acct.payment_due_date) }}</span>
     {% endif %}
 
     <div class="cf-upcoming">

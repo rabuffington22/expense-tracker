@@ -84,6 +84,10 @@ def _sync_plaid_accounts(conn, entity_key: str):
             continue
 
         for acct in accounts:
+            # Skip investment/retirement accounts (IRA, 529, etc.) — those go to Planning
+            if acct["type"] == "investment":
+                continue
+
             # Skip disabled accounts
             pa_row = conn.execute(
                 "SELECT enabled, display_name FROM plaid_accounts WHERE account_id=?",
