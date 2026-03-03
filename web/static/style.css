@@ -4878,7 +4878,7 @@ select.input-sm {
     font-variant-numeric: tabular-nums;
 }
 .cf-box-value.cf-box-value--inline {
-    font-size: 0.72rem;
+    font-size: 0.76rem;
 }
 .cf-negative { color: var(--red); }
 .cf-pymt-divider {
