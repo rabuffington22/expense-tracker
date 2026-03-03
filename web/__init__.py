@@ -28,31 +28,46 @@ from core.db import init_db, get_connection
 
 # ── Entity helpers ────────────────────────────────────────────────────────────
 
-_ENTITY_MAP = {"Personal": "personal", "BFM": "company", "LL": "luxelegacy"}
+# Default entity map (production). Override via ENTITIES env var for demo:
+#   ENTITIES="Personal:personal,Business:company"
+_DEFAULT_ENTITY_MAP = {"Personal": "personal", "BFM": "company", "LL": "luxelegacy"}
+_env_entities = os.environ.get("ENTITIES")
+if _env_entities:
+    _ENTITY_MAP = {}
+    for _pair in _env_entities.split(","):
+        _display, _, _key = _pair.strip().partition(":")
+        _ENTITY_MAP[_display.strip()] = _key.strip()
+else:
+    _ENTITY_MAP = _DEFAULT_ENTITY_MAP
+
 _ENTITY_COLORS = {
     "Personal": "#14a9f8",
     "BFM": "#003eb6",
     "LL": "#a78bfa",
+    "Business": "#003eb6",
 }
 _ENTITY_LABELS = {
     "Personal": {"income": "Income",  "spend": "Spending", "net": "Net",    "type": "personal"},
     "BFM":      {"income": "Revenue", "spend": "Expenses", "net": "Profit", "type": "business"},
     "LL":       {"income": "Revenue", "spend": "Expenses", "net": "Profit", "type": "business"},
+    "Business": {"income": "Revenue", "spend": "Expenses", "net": "Profit", "type": "business"},
 }
+_DEFAULT_LABELS = {"income": "Revenue", "spend": "Expenses", "net": "Profit", "type": "business"}
 
 
 def get_entity():
     """Read entity from cookie, return (display_name, db_key)."""
-    choice = request.cookies.get("entity", "Personal")
+    _default = next(iter(_ENTITY_MAP))
+    choice = request.cookies.get("entity", _default)
     if choice not in _ENTITY_MAP:
-        choice = "Personal"
+        choice = _default
     return choice, _ENTITY_MAP[choice]
 
 
 def get_accent():
     """Return accent color for the current entity."""
     choice = request.cookies.get("entity", "Personal")
-    return _ENTITY_COLORS.get(choice, "#30d158")
+    return _ENTITY_COLORS.get(choice, "#0a84ff")
 
 
 def get_categories(entity_key):
@@ -169,7 +184,7 @@ def create_app():
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor
     def _inject_globals():
-        labels = _ENTITY_LABELS.get(g.entity_display, _ENTITY_LABELS["Personal"])
+        labels = _ENTITY_LABELS.get(g.entity_display, _DEFAULT_LABELS)
         return {
             "entity_display": g.entity_display,
             "entity_key": g.entity_key,

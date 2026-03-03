@@ -15,6 +15,7 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 ## Key Paths
 - **Repo (Home Mac):** `/Users/ryanbuffington/expense-tracker`
 - **App URL:** `https://ledger-oak.fly.dev`
+- **Demo URL:** `https://ledger-oak-demo.fly.dev` (no auth, seed data, 2 entities)
 
 ## Plaid Integration
 - **Status:** Production access submitted 2026-02-26, in review. Sandbox available now.
@@ -38,6 +39,22 @@ git push origin main
 ```
 
 That's it. No SSH, no manual restart needed.
+
+### Demo Instance
+Separate Fly app (`ledger-oak-demo`) with fake seed data, no auth, 2 entities (Personal + Business).
+
+```bash
+# Deploy demo
+fly deploy --config fly.demo.toml --remote-only
+
+# Re-seed demo data (wipe + recreate)
+fly ssh console -a ledger-oak-demo -C 'python3 /app/scripts/seed_demo_data.py'
+```
+
+- **Config:** `fly.demo.toml` — separate volume (`ledger_oak_demo_data`), `ENTITIES=Personal:personal,Business:company`
+- **Auth:** Disabled (no `APP_USERNAME`/`APP_PASSWORD` env vars)
+- **Entity override:** `ENTITIES` env var in `web/__init__.py` — format `"Display:key,Display:key"`
+- **Seed script:** `scripts/seed_demo_data.py` — ~800 personal + ~570 business transactions, accounts, recurring, categories
 
 ## Directory Structure
 ```
@@ -77,7 +94,10 @@ core/                              # Business logic (unchanged from Streamlit er
   amazon.py                        # Amazon order CSV parsing + vendor order matching
   henryschein.py                   # Henry Schein XLSX parsing
   reporting.py                     # Query helpers for Reports page
+scripts/
+  seed_demo_data.py                # Seed fake data for demo instance (2 entities)
 run.py                             # Entry point: python run.py (dev mode)
+fly.demo.toml                      # Fly.io config for demo instance (no auth, 2 entities)
 requirements.txt                   # flask, gunicorn, pandas, plotly, pdfplumber, etc.
 ```
 
@@ -269,6 +289,16 @@ Each insight links to a drill-down in `/transactions`.
 **Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
 
 ## Change Log
+
+### 2026-03-03 — Demo instance + configurable entities + Cash Flow tweaks
+Public demo at `ledger-oak-demo.fly.dev` with fake seed data, no auth, 2 entities. Made entity map configurable via env var.
+
+1. **`ENTITIES` env var** — `web/__init__.py` parses `ENTITIES=Personal:personal,Business:company` to override the default 3-entity map. Colors and labels fall back gracefully for unknown display names (e.g. "Business" gets blue accent + business labels).
+2. **`fly.demo.toml`** — Separate Fly config: `app=ledger-oak-demo`, own volume (`ledger_oak_demo_data`), `ENTITIES` override, no `APP_USERNAME`/`APP_PASSWORD` (auth disabled).
+3. **`scripts/seed_demo_data.py`** — Generates realistic fake data for 2 entities. Personal: ~800 transactions, 5 accounts (2 bank + 3 credit), 2 manual recurring, 19 categories with 125 subcategories. Business: ~570 transactions, 4 accounts (3 bank + 1 credit), 2 manual recurring, 14 categories with 76 subcategories. Business merchants: Staples, Adobe, Zoom, Delta, ADP, Google Ads, etc.
+4. **Dynamic `_ENTITY_DISPLAY`** — `cashflow.py` replaced hardcoded entity display map with `_build_entity_display()` that derives from `_ENTITY_MAP` at runtime. Cross-entity sections show correct names for both prod and demo.
+5. **Upcoming charges capped at 3** — `cashflow.py` `_load_entity_section()` slices `combined[:3]` to limit upcoming charges per account card.
+6. **Credit card balances positive** — Seed data uses positive balances (amount owed) matching Plaid convention.
 
 ### 2026-03-03 — Cash Flow visual polish + Plaid-driven accounts + modal redesign
 Replaced hardcoded `_ACCOUNT_DEFS` with Plaid-driven `_sync_plaid_accounts()`. Card and modal visual polish pass.

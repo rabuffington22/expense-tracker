@@ -20,11 +20,12 @@ _CROSS_ENTITY = {
     "luxelegacy": [],
 }
 
-_ENTITY_DISPLAY = {
-    "personal": "Personal",
-    "company": "BFM",
-    "luxelegacy": "LL",
-}
+# Build display names from the active entity map (respects ENTITIES env var)
+def _build_entity_display():
+    from web import _ENTITY_MAP
+    return {v: k for k, v in _ENTITY_MAP.items()}
+
+_ENTITY_DISPLAY = None  # lazy-init
 
 # ── Plaid account sync ────────────────────────────────────────────────────────
 
@@ -491,7 +492,7 @@ def _load_entity_section(entity_key: str) -> dict:
             manual = _get_manual_recurring(conn, acct["id"])
             combined = auto + manual
             combined.sort(key=lambda x: x["expected_date"])
-            acct["upcoming"] = combined
+            acct["upcoming"] = combined[:3]
         return accts
     finally:
         conn.close()
@@ -510,7 +511,7 @@ def index():
         other = _load_entity_section(other_key)
         cross_sections.append({
             "entity_key": other_key,
-            "entity_display": _ENTITY_DISPLAY.get(other_key, other_key),
+            "entity_display": _build_entity_display().get(other_key, other_key),
             "banks": other["banks"],
             "cards": other["cards"],
         })
