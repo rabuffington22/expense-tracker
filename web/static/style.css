@@ -5005,7 +5005,7 @@ input.cf-modal-input--day {
 .cf-modal-pymt-edit {
     display: flex;
     align-items: baseline;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 0.15rem;
     margin: 0.35rem 0;
 }
@@ -5051,6 +5051,10 @@ input.cf-modal-input--due-date {
     border-top: 0.5px solid rgba(255,255,255,0.06);
     padding-top: 0.45rem;
     padding-bottom: 0.35rem;
+    font-size: 0.55rem;
+}
+.cf-add-recurring-section .cf-upcoming-label {
+    font-size: 0.55rem;
 }
 :root[data-theme="light"] .cf-add-recurring-section {
     border-top-color: rgba(0,0,0,0.06);
@@ -5061,7 +5065,7 @@ input.cf-modal-input--due-date {
     padding-left: 0.8rem;
 }
 .cf-add-recurring .cf-dollar--sm {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
 }
 .cf-add-recurring-row {
     display: flex;
@@ -5076,7 +5080,7 @@ input.cf-add-input {
     border-radius: 0;
     box-shadow: none;
     color: var(--text);
-    font-size: 0.65rem;
+    font-size: 0.55rem;
     padding: 0.15rem 0;
     outline: none;
     -webkit-appearance: none;
