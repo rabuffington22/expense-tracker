@@ -5447,6 +5447,17 @@ select.input-sm {
     color: var(--text-muted);
     border-color: var(--text-muted);
 }
+/* AI Analysis results — blue accent */
+.iu-ai-label {
+    color: var(--blue);
+    opacity: 0.85;
+}
+.iu-ai-row:hover {
+    background: rgba(10,132,255,0.08);
+}
+:root[data-theme="light"] .iu-ai-row:hover {
+    background: rgba(10,132,255,0.06);
+}
 
 /* Responsive: stack at ≤900px */
 @media (max-width: 900px) {
