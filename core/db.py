@@ -522,6 +522,18 @@ CREATE TABLE IF NOT EXISTS subscription_dismissals (
 );
 """
 
+_MIGRATION_36 = """
+CREATE TABLE IF NOT EXISTS subscription_notes_log (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    subscription_id INTEGER NOT NULL REFERENCES subscription_watchlist(id) ON DELETE CASCADE,
+    action          TEXT NOT NULL,
+    detail          TEXT,
+    created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+ALTER TABLE subscription_watchlist ADD COLUMN cancellation_tips TEXT;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -558,6 +570,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (33, _MIGRATION_33),
     (34, _MIGRATION_34),
     (35, _MIGRATION_35),
+    (36, _MIGRATION_36),
 ]
 
 _DEFAULT_CATEGORIES = [

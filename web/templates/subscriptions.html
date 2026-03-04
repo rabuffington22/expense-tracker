@@ -64,7 +64,8 @@
 
 <div class="outline-panel sub-panel">
     {% for sub in watchlist %}
-    <div class="sub-row" data-sub-id="{{ sub.id }}">
+    <div class="sub-row sub-watchlist-row" data-sub-id="{{ sub.id }}"
+         onclick="subOpenWatchlistDetail({{ sub.id }})" role="button" tabindex="0">
         <div class="sub-row-main">
             <div class="sub-info">
                 <span class="sub-merchant">{{ sub.merchant }}</span>
@@ -80,9 +81,6 @@
                 {% else %}
                 <span class="badge badge-muted">watching</span>
                 {% endif %}
-                <button type="button" class="sub-expand-btn"
-                        onclick="subToggle({{ sub.id }})"
-                        title="Edit">&#x2026;</button>
             </div>
         </div>
 
@@ -91,36 +89,6 @@
             <span class="sub-notes-text">{{ sub.notes }}</span>
         </div>
         {% endif %}
-    </div>
-
-    {# ── Expanded edit area (hidden by default) ── #}
-    <div class="sub-expand" id="sub-expand-{{ sub.id }}" hidden>
-        <form method="post" action="{{ url_for('subscriptions.update', sub_id=sub.id) }}"
-              class="sub-edit-form">
-            <div class="sub-edit-row">
-                <label class="sub-edit-label">Status</label>
-                <select name="status" class="sub-select">
-                    <option value="watching" {{ 'selected' if sub.status == 'watching' }}>Watching</option>
-                    <option value="cancelling" {{ 'selected' if sub.status == 'cancelling' }}>Cancelling</option>
-                    <option value="cancelled" {{ 'selected' if sub.status == 'cancelled' }}>Cancelled</option>
-                </select>
-            </div>
-            <div class="sub-edit-row sub-edit-row--notes">
-                <label class="sub-edit-label">Notes</label>
-                <textarea name="notes" class="sub-textarea"
-                          rows="2" placeholder="How to cancel, contact info, progress...">{{ sub.notes or '' }}</textarea>
-            </div>
-            <div class="sub-edit-actions">
-                <button type="submit" class="btn btn-sm btn-primary">Save</button>
-                <button type="button" class="btn btn-sm btn-secondary"
-                        onclick="subToggle({{ sub.id }})">Cancel</button>
-            </div>
-        </form>
-        <form method="post" action="{{ url_for('subscriptions.delete', sub_id=sub.id) }}"
-              class="sub-delete-form"
-              onsubmit="return confirm('Remove {{ sub.merchant|e }} from watchlist?')">
-            <button type="submit" class="sub-delete-btn">Remove from list</button>
-        </form>
     </div>
     {% endfor %}
 
@@ -172,7 +140,7 @@
 
 </div>{# .sub-page #}
 
-{# ── Suggestion Detail Modal ──────────────────────────────────── #}
+{# ── Detail Modal (shared by suggestions + watchlist) ──────────── #}
 <div class="tq-modal-scrim" id="sub-detail-scrim" hidden>
     <div class="outline-panel tq-modal-card sub-detail-card" role="dialog" aria-modal="true">
         <div class="tq-modal-top">
@@ -202,32 +170,53 @@
                 <div class="sub-detail-charges-label">Recent Charges</div>
                 <div class="sub-detail-charges" id="sub-detail-charges"></div>
             </div>
+
+            {# ── Tips section (watchlist only) ── #}
+            <div class="sub-detail-tips-section" id="sub-detail-tips-section" hidden>
+                <div class="sub-detail-charges-label">How to Cancel</div>
+                <div class="sub-detail-tips" id="sub-detail-tips"></div>
+            </div>
+
+            {# ── Timeline section (watchlist only) ── #}
+            <div class="sub-detail-timeline-section" id="sub-detail-timeline-section" hidden>
+                <div class="sub-detail-charges-label">Timeline</div>
+                <div class="sub-detail-timeline" id="sub-detail-timeline"></div>
+            </div>
         </div>
 
+        {# ── Footer: suggestion mode (accept/dismiss) ── #}
         <div class="sub-detail-footer" id="sub-detail-footer"></div>
+
+        {# ── Footer: watchlist mode (edit controls) ── #}
+        <div class="sub-detail-footer sub-detail-footer--edit" id="sub-detail-edit-footer" hidden>
+            <form method="post" id="sub-detail-edit-form" class="sub-detail-edit-form">
+                <div class="sub-detail-edit-row">
+                    <label class="sub-edit-label">Status</label>
+                    <select name="status" class="sub-select" id="sub-detail-status">
+                        <option value="watching">Watching</option>
+                        <option value="cancelling">Cancelling</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="sub-detail-edit-row">
+                    <label class="sub-edit-label">Notes</label>
+                    <textarea name="notes" class="sub-textarea" id="sub-detail-notes"
+                              rows="2" placeholder="How to cancel, contact info, progress..."></textarea>
+                </div>
+                <div class="sub-detail-edit-actions">
+                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                    <button type="button" class="sub-delete-btn" id="sub-detail-delete-btn">
+                        Remove from list</button>
+                </div>
+            </form>
+            <form method="post" id="sub-detail-delete-form" class="sub-detail-delete-form" hidden>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
-function subToggle(id) {
-    var el = document.getElementById('sub-expand-' + id);
-    if (el) el.hidden = !el.hidden;
-}
-
-function subShowAdd() {
-    document.getElementById('sub-add-trigger').hidden = true;
-    document.getElementById('sub-add-panel').hidden = false;
-    var nameInput = document.querySelector('#sub-add-panel input[name="merchant"]');
-    if (nameInput) nameInput.focus();
-}
-
-function subHideAdd() {
-    document.getElementById('sub-add-trigger').hidden = false;
-    document.getElementById('sub-add-panel').hidden = true;
-    document.querySelector('#sub-add-panel form').reset();
-}
-
-/* ── Suggestion detail modal ── */
+/* ── Suggestion detail (client-side data) ── */
 var _subSuggestions = [];
 (function() {
     var el = document.getElementById('sub-suggestions-data');
@@ -245,59 +234,215 @@ function _freqSuffix(freq) {
     return m[freq] || '';
 }
 
-function subOpenDetail(idx) {
-    var s = _subSuggestions[idx];
-    if (!s) return;
+function _escapeHtml(text) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
+}
 
-    document.getElementById('sub-detail-title').textContent = s.merchant_canonical;
-    document.getElementById('sub-detail-meta').textContent =
-        _fmtDollars(s.amount_cents) + _freqSuffix(s.frequency) + '  \u00b7  ' + s.cadence_label;
-    document.getElementById('sub-detail-count').textContent = s.occurrence_count;
+var _subMode = 'suggestion'; // 'suggestion' or 'watchlist'
+
+function _populateCharges(data) {
+    // Stats
+    document.getElementById('sub-detail-count').textContent =
+        data.occurrence_count || '\u2014';
     document.getElementById('sub-detail-period').textContent =
-        s.first_date_display + ' \u2013 ' + s.last_date_display;
+        (data.first_date_display && data.last_date_display)
+            ? data.first_date_display + ' \u2013 ' + data.last_date_display
+            : '\u2014';
 
-    // Amount range
     var rangeEl = document.getElementById('sub-detail-amount-range');
-    if (s.min_amount_cents === s.max_amount_cents) {
-        rangeEl.textContent = _fmtDollars(s.amount_cents) + ' (consistent)';
+    if (data.min_amount_cents != null && data.max_amount_cents != null) {
+        if (data.min_amount_cents === data.max_amount_cents) {
+            rangeEl.textContent = _fmtDollars(data.amount_cents) + ' (consistent)';
+        } else {
+            rangeEl.textContent = _fmtDollars(data.min_amount_cents) + ' \u2013 ' +
+                _fmtDollars(data.max_amount_cents);
+        }
     } else {
-        rangeEl.textContent = _fmtDollars(s.min_amount_cents) + ' \u2013 ' + _fmtDollars(s.max_amount_cents);
+        rangeEl.textContent = data.amount_cents ? _fmtDollars(data.amount_cents) : '\u2014';
     }
 
     // Recent charges
     var chargesEl = document.getElementById('sub-detail-charges');
     chargesEl.innerHTML = '';
-    (s.recent_charges || []).forEach(function(c) {
+    var charges = data.recent_charges || [];
+    if (charges.length === 0) {
+        chargesEl.innerHTML = '<div class="sub-detail-empty">No charge data available</div>';
+    }
+    charges.forEach(function(c) {
         var row = document.createElement('div');
         row.className = 'sub-detail-charge';
         row.innerHTML = '<span class="sub-detail-charge-date">' +
-            c.date + '</span><span class="sub-detail-charge-amount">' +
+            _escapeHtml(c.date) + '</span><span class="sub-detail-charge-amount">' +
             _fmtDollars(c.amount_cents) + '</span>';
         chargesEl.appendChild(row);
     });
+}
 
-    // Footer buttons
+/* ── Open suggestion detail ── */
+function subOpenDetail(idx) {
+    var s = _subSuggestions[idx];
+    if (!s) return;
+
+    _subMode = 'suggestion';
+
+    document.getElementById('sub-detail-title').textContent = s.merchant_canonical;
+    document.getElementById('sub-detail-meta').textContent =
+        _fmtDollars(s.amount_cents) + _freqSuffix(s.frequency) + '  \u00b7  ' + s.cadence_label;
+
+    _populateCharges(s);
+
+    // Hide watchlist-only sections
+    document.getElementById('sub-detail-tips-section').hidden = true;
+    document.getElementById('sub-detail-timeline-section').hidden = true;
+    document.getElementById('sub-detail-edit-footer').hidden = true;
+
+    // Show suggestion footer
     var footer = document.getElementById('sub-detail-footer');
+    footer.hidden = false;
     footer.innerHTML =
         '<form method="post" action="{{ url_for("subscriptions.accept") }}" class="sub-detail-form">' +
-            '<input type="hidden" name="merchant" value="' + s.merchant_canonical + '">' +
-            '<input type="hidden" name="merchant_canonical" value="' + s.merchant_canonical + '">' +
+            '<input type="hidden" name="merchant" value="' + _escapeHtml(s.merchant_canonical) + '">' +
+            '<input type="hidden" name="merchant_canonical" value="' + _escapeHtml(s.merchant_canonical) + '">' +
             '<input type="hidden" name="amount" value="' + (s.amount_cents / 100).toFixed(2) + '">' +
             '<input type="hidden" name="frequency" value="' + s.frequency + '">' +
             '<button type="submit" class="btn btn-sm btn-primary">Add to Watchlist</button>' +
         '</form>' +
         '<form method="post" action="{{ url_for("subscriptions.dismiss") }}" class="sub-detail-form">' +
-            '<input type="hidden" name="merchant_canonical" value="' + s.merchant_canonical + '">' +
+            '<input type="hidden" name="merchant_canonical" value="' + _escapeHtml(s.merchant_canonical) + '">' +
             '<button type="submit" class="btn btn-sm btn-secondary">Dismiss</button>' +
         '</form>';
 
     document.getElementById('sub-detail-scrim').hidden = false;
 }
 
+/* ── Open watchlist detail (fetch from server) ── */
+function subOpenWatchlistDetail(subId) {
+    _subMode = 'watchlist';
+
+    // Show modal with loading state
+    document.getElementById('sub-detail-title').textContent = 'Loading\u2026';
+    document.getElementById('sub-detail-meta').textContent = '';
+    document.getElementById('sub-detail-count').textContent = '';
+    document.getElementById('sub-detail-period').textContent = '';
+    document.getElementById('sub-detail-amount-range').textContent = '';
+    document.getElementById('sub-detail-charges').innerHTML = '';
+    document.getElementById('sub-detail-tips-section').hidden = true;
+    document.getElementById('sub-detail-timeline-section').hidden = true;
+    document.getElementById('sub-detail-footer').hidden = true;
+    document.getElementById('sub-detail-edit-footer').hidden = true;
+    document.getElementById('sub-detail-scrim').hidden = false;
+
+    fetch('/subscriptions/detail/' + subId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) { subCloseDetail(); return; }
+
+            // Title + meta
+            document.getElementById('sub-detail-title').textContent = data.merchant;
+            var metaParts = [];
+            if (data.amount_cents) metaParts.push(_fmtDollars(data.amount_cents) + _freqSuffix(data.frequency));
+            if (data.cadence_label) metaParts.push(data.cadence_label);
+            document.getElementById('sub-detail-meta').textContent = metaParts.join('  \u00b7  ');
+
+            // Charge history
+            if (data.charges) {
+                _populateCharges(data.charges);
+            } else {
+                document.getElementById('sub-detail-count').textContent = '\u2014';
+                document.getElementById('sub-detail-period').textContent = '\u2014';
+                document.getElementById('sub-detail-amount-range').textContent = '\u2014';
+                document.getElementById('sub-detail-charges').innerHTML =
+                    '<div class="sub-detail-empty">No matching transactions found</div>';
+            }
+
+            // Cancellation tips
+            var tipsSection = document.getElementById('sub-detail-tips-section');
+            var tipsEl = document.getElementById('sub-detail-tips');
+            if (data.cancellation_tips) {
+                tipsEl.textContent = data.cancellation_tips;
+                tipsSection.hidden = false;
+            } else {
+                tipsSection.hidden = true;
+            }
+
+            // Timeline
+            var timelineSection = document.getElementById('sub-detail-timeline-section');
+            var timelineEl = document.getElementById('sub-detail-timeline');
+            timelineEl.innerHTML = '';
+            if (data.timeline && data.timeline.length > 0) {
+                data.timeline.forEach(function(entry) {
+                    var row = document.createElement('div');
+                    row.className = 'sub-detail-timeline-entry';
+
+                    var label = entry.action;
+                    if (entry.action === 'created') label = 'Added to watchlist';
+                    else if (entry.action === 'status_changed') label = 'Status: ' + (entry.detail || '');
+                    else if (entry.action === 'note_added') label = 'Note: ' + (entry.detail || '');
+                    else if (entry.action === 'tips_generated') label = 'Cancellation tips generated';
+
+                    row.innerHTML =
+                        '<span class="sub-timeline-date">' + _escapeHtml(entry.date_display) + '</span>' +
+                        '<span class="sub-timeline-action">' + _escapeHtml(label) + '</span>';
+                    timelineEl.appendChild(row);
+                });
+                timelineSection.hidden = false;
+            } else {
+                timelineSection.hidden = true;
+            }
+
+            // Edit footer
+            document.getElementById('sub-detail-footer').hidden = true;
+            var editFooter = document.getElementById('sub-detail-edit-footer');
+            editFooter.hidden = false;
+
+            // Set form action
+            var editForm = document.getElementById('sub-detail-edit-form');
+            editForm.action = '/subscriptions/update/' + data.id;
+
+            // Populate status
+            var statusSelect = document.getElementById('sub-detail-status');
+            statusSelect.value = data.status || 'watching';
+
+            // Populate notes
+            var notesEl = document.getElementById('sub-detail-notes');
+            notesEl.value = data.notes || '';
+
+            // Delete form
+            var deleteForm = document.getElementById('sub-detail-delete-form');
+            deleteForm.action = '/subscriptions/delete/' + data.id;
+
+            var deleteBtn = document.getElementById('sub-detail-delete-btn');
+            deleteBtn.onclick = function() {
+                if (confirm('Remove ' + data.merchant + ' from watchlist?')) {
+                    deleteForm.submit();
+                }
+            };
+        })
+        .catch(function() {
+            subCloseDetail();
+        });
+}
+
 function subCloseDetail() {
     document.getElementById('sub-detail-scrim').hidden = true;
 }
 
+function subShowAdd() {
+    document.getElementById('sub-add-trigger').hidden = true;
+    document.getElementById('sub-add-panel').hidden = false;
+    var nameInput = document.querySelector('#sub-add-panel input[name="merchant"]');
+    if (nameInput) nameInput.focus();
+}
+
+function subHideAdd() {
+    document.getElementById('sub-add-trigger').hidden = false;
+    document.getElementById('sub-add-panel').hidden = true;
+    document.querySelector('#sub-add-panel form').reset();
+}
+
+/* ── Modal close handlers ── */
 document.getElementById('sub-detail-scrim').addEventListener('click', function(e) {
     if (e.target === this) subCloseDetail();
 });

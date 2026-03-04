@@ -1,9 +1,12 @@
 """Subscription Tracker — tag recurring charges to consider cancelling."""
 
+from __future__ import annotations
+
 import statistics
 from datetime import datetime, timedelta
+from typing import Optional
 
-from flask import Blueprint, g, redirect, render_template, request, url_for
+from flask import Blueprint, g, jsonify, redirect, render_template, request, url_for
 
 from core.db import get_connection
 
@@ -27,6 +30,8 @@ _CADENCE_TO_FREQUENCY = {
     "Quarterly": "quarterly",
     "Annual": "annual",
 }
+
+_FREQUENCY_TO_CADENCE = {v: k for k, v in _CADENCE_TO_FREQUENCY.items()}
 
 
 def _classify_cadence(median_interval_days):
@@ -172,6 +177,139 @@ def _detect_subscriptions(conn) -> list[dict]:
     return suggestions
 
 
+# ── Merchant charge history ──────────────────────────────────────────────────
+
+def _get_merchant_charges(conn, merchant: str) -> dict | None:
+    """Get charge history for a merchant from transaction data.
+
+    Returns dict with charge stats, or None if no matching transactions found.
+    """
+    cutoff = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+    today_str = datetime.now().strftime("%Y-%m-%d")
+
+    rows = conn.execute(
+        "SELECT date, amount_cents FROM transactions "
+        "WHERE merchant_canonical = ? "
+        "  AND amount_cents < 0 "
+        "  AND date >= ? AND date <= ? "
+        "  AND category NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income') "
+        "ORDER BY date",
+        (merchant, cutoff, today_str),
+    ).fetchall()
+
+    if not rows:
+        return None
+
+    dates, amounts = [], []
+    for r in rows:
+        try:
+            dates.append(datetime.strptime(r["date"], "%Y-%m-%d").date())
+        except (ValueError, TypeError):
+            continue
+        amounts.append(r["amount_cents"])
+
+    if not dates:
+        return None
+
+    abs_amounts = [abs(a) for a in amounts]
+    median_amount = int(statistics.median(abs_amounts))
+
+    # Detect cadence
+    cadence_label = None
+    frequency = None
+    if len(dates) >= 2:
+        intervals = [(dates[i + 1] - dates[i]).days for i in range(len(dates) - 1)]
+        intervals = [iv for iv in intervals if iv > 0]
+        if intervals:
+            median_interval = statistics.median(intervals)
+            cadence = _classify_cadence(median_interval)
+            if cadence:
+                cadence_label = cadence
+                frequency = _CADENCE_TO_FREQUENCY[cadence]
+
+    # Recent charges (last 4, newest first)
+    paired = list(zip(dates, abs_amounts))
+    recent = paired[-4:]
+    recent.reverse()
+    recent_charges = [
+        {"date": d.strftime("%b %-d, %Y"), "amount_cents": a}
+        for d, a in recent
+    ]
+
+    return {
+        "occurrence_count": len(dates),
+        "first_date_display": dates[0].strftime("%b %Y"),
+        "last_date_display": dates[-1].strftime("%b %Y"),
+        "amount_cents": median_amount,
+        "min_amount_cents": min(abs_amounts),
+        "max_amount_cents": max(abs_amounts),
+        "recent_charges": recent_charges,
+        "cadence_label": cadence_label,
+        "frequency": frequency,
+    }
+
+
+# ── Timeline helpers ─────────────────────────────────────────────────────────
+
+def _log_event(conn, sub_id: int, action: str, detail: str | None = None):
+    """Append an event to the subscription timeline."""
+    try:
+        conn.execute(
+            "INSERT INTO subscription_notes_log "
+            "(subscription_id, action, detail) VALUES (?, ?, ?)",
+            (sub_id, action, detail),
+        )
+    except Exception:
+        pass  # Table may not exist pre-migration
+
+
+def _get_timeline(conn, sub_id: int) -> list[dict]:
+    """Get timeline entries for a subscription, newest first."""
+    try:
+        rows = conn.execute(
+            "SELECT action, detail, created_at "
+            "FROM subscription_notes_log "
+            "WHERE subscription_id = ? "
+            "ORDER BY created_at DESC, id DESC",
+            (sub_id,),
+        ).fetchall()
+        result = []
+        for r in rows:
+            created = r["created_at"]
+            try:
+                dt = datetime.strptime(created, "%Y-%m-%d %H:%M:%S")
+                display = dt.strftime("%b %-d")
+            except (ValueError, TypeError):
+                display = created[:10] if created else ""
+            result.append({
+                "action": r["action"],
+                "detail": r["detail"],
+                "date_display": display,
+            })
+        return result
+    except Exception:
+        return []
+
+
+# ── Cancellation tips ────────────────────────────────────────────────────────
+
+def _generate_and_store_tips(conn, sub_id: int, merchant: str):
+    """Generate cancellation tips via AI and store in DB."""
+    try:
+        from core.ai_client import generate_cancellation_tips
+
+        tips = generate_cancellation_tips(merchant)
+        if tips:
+            conn.execute(
+                "UPDATE subscription_watchlist "
+                "SET cancellation_tips = ? WHERE id = ?",
+                (tips, sub_id),
+            )
+            _log_event(conn, sub_id, "tips_generated")
+    except Exception:
+        pass  # Graceful degradation — no tips is fine
+
+
 # ── Watchlist helpers ─────────────────────────────────────────────────────────
 
 def _get_watchlist(conn) -> list[dict]:
@@ -183,7 +321,7 @@ def _get_watchlist(conn) -> list[dict]:
     try:
         rows = conn.execute(
             "SELECT id, merchant, amount_cents, frequency, status, notes, "
-            "       created_at, updated_at "
+            "       cancellation_tips, created_at, updated_at "
             "FROM subscription_watchlist "
             "WHERE status != 'cancelled' "
             "ORDER BY CASE status "
@@ -227,6 +365,43 @@ def index():
         conn.close()
 
 
+@bp.route("/detail/<int:sub_id>")
+def detail(sub_id):
+    """Return JSON detail for a watchlist item (charge history + timeline + tips)."""
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT id, merchant, amount_cents, frequency, status, notes, "
+            "       cancellation_tips, created_at "
+            "FROM subscription_watchlist WHERE id = ?",
+            (sub_id,),
+        ).fetchone()
+        if not row:
+            return jsonify({"error": "not found"}), 404
+
+        sub = dict(row)
+        charges = _get_merchant_charges(conn, sub["merchant"])
+        timeline = _get_timeline(conn, sub_id)
+
+        # Build cadence label from frequency
+        cadence_label = _FREQUENCY_TO_CADENCE.get(sub["frequency"])
+
+        return jsonify({
+            "id": sub["id"],
+            "merchant": sub["merchant"],
+            "amount_cents": sub["amount_cents"],
+            "frequency": sub["frequency"],
+            "cadence_label": cadence_label,
+            "status": sub["status"],
+            "notes": sub["notes"],
+            "cancellation_tips": sub["cancellation_tips"],
+            "charges": charges,
+            "timeline": timeline,
+        })
+    finally:
+        conn.close()
+
+
 @bp.route("/add", methods=["POST"])
 def add():
     """Add a subscription to the watchlist."""
@@ -250,12 +425,20 @@ def add():
 
     conn = get_connection(g.entity_key)
     try:
-        conn.execute(
+        cursor = conn.execute(
             "INSERT INTO subscription_watchlist "
             "(merchant, amount_cents, frequency, notes) "
             "VALUES (?, ?, ?, ?)",
             (merchant, amount_cents, frequency, notes),
         )
+        sub_id = cursor.lastrowid
+        _log_event(conn, sub_id, "created", f"Added to watchlist")
+        if notes:
+            _log_event(conn, sub_id, "note_added", notes)
+        conn.commit()
+
+        # Generate tips in background (after commit so item exists)
+        _generate_and_store_tips(conn, sub_id, merchant)
         conn.commit()
     finally:
         conn.close()
@@ -284,17 +467,23 @@ def accept():
 
     conn = get_connection(g.entity_key)
     try:
-        conn.execute(
+        cursor = conn.execute(
             "INSERT INTO subscription_watchlist "
             "(merchant, amount_cents, frequency) VALUES (?, ?, ?)",
             (merchant, amount_cents, frequency),
         )
+        sub_id = cursor.lastrowid
+        _log_event(conn, sub_id, "created", "Accepted from suggestions")
         if merchant_canonical:
             conn.execute(
                 "INSERT OR IGNORE INTO subscription_dismissals "
                 "(merchant_canonical) VALUES (?)",
                 (merchant_canonical,),
             )
+        conn.commit()
+
+        # Generate tips after commit
+        _generate_and_store_tips(conn, sub_id, merchant)
         conn.commit()
     finally:
         conn.close()
@@ -328,18 +517,33 @@ def update(sub_id):
 
     conn = get_connection(g.entity_key)
     try:
+        # Get current values for timeline logging
+        current = conn.execute(
+            "SELECT status, notes FROM subscription_watchlist WHERE id = ?",
+            (sub_id,),
+        ).fetchone()
+
         if status and status in ("watching", "cancelling", "cancelled"):
             conn.execute(
                 "UPDATE subscription_watchlist "
                 "SET status=?, updated_at=datetime('now') WHERE id=?",
                 (status, sub_id),
             )
+            if current and current["status"] != status:
+                _log_event(
+                    conn, sub_id, "status_changed",
+                    f"{current['status']} \u2192 {status}",
+                )
         if notes is not None:
+            new_notes = notes.strip() or None
             conn.execute(
                 "UPDATE subscription_watchlist "
                 "SET notes=?, updated_at=datetime('now') WHERE id=?",
-                (notes.strip() or None, sub_id),
+                (new_notes, sub_id),
             )
+            old_notes = current["notes"] if current else None
+            if new_notes and new_notes != old_notes:
+                _log_event(conn, sub_id, "note_added", new_notes)
         conn.commit()
     finally:
         conn.close()
