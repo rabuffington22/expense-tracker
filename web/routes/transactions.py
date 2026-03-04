@@ -467,6 +467,39 @@ def create_rule(txn_id):
         conn.close()
 
 
+@bp.route("/suggest/<txn_id>", methods=["POST"])
+def suggest(txn_id):
+    """Return AI-suggested category + subcategory for a transaction."""
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT merchant_canonical, description_raw, amount_cents "
+            "FROM transactions WHERE transaction_id=?",
+            (txn_id,),
+        ).fetchone()
+        if not row:
+            return jsonify({"error": "Transaction not found"}), 404
+
+        # Build categories with subcategories for the current entity
+        cats = get_categories(g.entity_key)
+        categories_with_subs = {}
+        for cat in cats:
+            categories_with_subs[cat] = get_subcategories(g.entity_key, cat)
+
+        from core.ai_client import generate_category_suggestion
+        result = generate_category_suggestion(
+            merchant=row["merchant_canonical"] or "",
+            description=row["description_raw"] or "",
+            amount_cents=row["amount_cents"] or 0,
+            categories_with_subs=categories_with_subs,
+        )
+        if result:
+            return jsonify(result)
+        return jsonify({"error": "AI suggestions unavailable"}), 503
+    finally:
+        conn.close()
+
+
 @bp.route("/subcategories")
 def subcategories():
     """Return subcategory <option> tags for a category (HTMX endpoint)."""

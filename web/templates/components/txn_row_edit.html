@@ -37,7 +37,10 @@
 
       <div class="txn-modal-actions">
         <button type="submit" class="btn btn-primary btn-sm">Save</button>
-<button type="button" class="btn btn-secondary btn-sm"
+        <button type="button" class="btn btn-secondary btn-sm"
+                id="txn-suggest-{{ txn.transaction_id }}"
+                onclick="txnSuggestCategory('{{ txn.transaction_id }}')">Suggest</button>
+        <button type="button" class="btn btn-secondary btn-sm"
                 hx-post="{{ url_for('transactions.create_rule', txn_id=txn.transaction_id) }}"
                 hx-target="#txn-{{ txn.transaction_id }}"
                 hx-swap="outerHTML"
