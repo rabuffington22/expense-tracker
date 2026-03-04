@@ -5358,6 +5358,7 @@ select.input-sm {
 }
 .iu-row:hover {
     background: rgba(255,255,255,0.04);
+    text-decoration: none;
 }
 :root[data-theme="light"] .iu-row:hover {
     background: rgba(0,0,0,0.03);
