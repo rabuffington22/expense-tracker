@@ -500,6 +500,20 @@ _MIGRATION_33 = """
 ALTER TABLE plaid_accounts ADD COLUMN display_name TEXT;
 """
 
+_MIGRATION_34 = """
+CREATE TABLE IF NOT EXISTS subscription_watchlist (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    merchant      TEXT NOT NULL,
+    amount_cents  INTEGER,
+    frequency     TEXT DEFAULT 'monthly',
+    status        TEXT NOT NULL DEFAULT 'watching'
+                  CHECK(status IN ('watching', 'cancelling', 'cancelled')),
+    notes         TEXT,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -534,6 +548,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (31, _MIGRATION_31),
     (32, _MIGRATION_32),
     (33, _MIGRATION_33),
+    (34, _MIGRATION_34),
 ]
 
 _DEFAULT_CATEGORIES = [

@@ -6,10 +6,13 @@
 
 <h1 class="page-title todo-title">To Do</h1>
 
-{# ── Review Queues ────────────────────────────────────────────────────── #}
-<div class="todo-section-label">Review</div>
-<div class="outline-panel">
+{# ── Categorize ──────────────────────────────────────────────────────────── #}
+{% set has_categorize = counts.uncategorized > 0 or counts.vendor_breakdown > 0
+       or counts.possible_transfer > 0 or counts.orders_unmatched > 0
+       or counts.orders_uncategorized > 0 %}
 
+<div class="todo-section-label">Categorize</div>
+<div class="outline-panel">
     <div class="todo-list">
         {% if counts.uncategorized > 0 %}
         <a href="{{ url_for('transactions.index', uncategorized=1) }}" class="todo-row todo-row--link">
@@ -41,6 +44,38 @@
         </a>
         {% endif %}
 
+        {% if counts.orders_unmatched > 0 %}
+        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Orders to match</span>
+            <span class="todo-row-right">
+                <span class="badge badge-blue">{{ counts.orders_unmatched }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if counts.orders_uncategorized > 0 %}
+        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Orders to categorize</span>
+            <span class="todo-row-right">
+                <span class="badge badge-blue">{{ counts.orders_uncategorized }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
+
+        {% if not has_categorize %}
+        <div class="todo-empty">All caught up.</div>
+        {% endif %}
+    </div>
+</div>
+
+{# ── Review ──────────────────────────────────────────────────────────────── #}
+{% set has_review = counts.large_txns > 0 or counts.new_merchants > 0 %}
+
+<div class="todo-section-label">Review</div>
+<div class="outline-panel">
+    <div class="todo-list">
         {% if counts.large_txns > 0 %}
         <div class="todo-row todo-row--link" tabindex="0" role="button"
              hx-get="{{ url_for('todo.queue_large_txns') }}"
@@ -69,38 +104,29 @@
         </div>
         {% endif %}
 
-        {% if counts.orders_unmatched > 0 %}
-        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Orders to match</span>
-            <span class="todo-row-right">
-                <span class="badge badge-blue">{{ counts.orders_unmatched }}</span>
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-        {% endif %}
-
-        {% if counts.orders_uncategorized > 0 %}
-        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Orders to categorize</span>
-            <span class="todo-row-right">
-                <span class="badge badge-blue">{{ counts.orders_uncategorized }}</span>
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-        {% endif %}
-
-        {% if counts.uncategorized == 0 and counts.vendor_breakdown == 0
-              and counts.possible_transfer == 0 and counts.orders_unmatched == 0
-              and counts.orders_uncategorized == 0 and counts.large_txns == 0
-              and counts.new_merchants == 0 %}
-        <div class="todo-empty">
-            All caught up. No items need attention.
-        </div>
+        {% if not has_review %}
+        <div class="todo-empty">Nothing to review.</div>
         {% endif %}
     </div>
 </div>
 
-{# ── Workflows ────────────────────────────────────────────────────────── #}
+{# ── Subscriptions ───────────────────────────────────────────────────────── #}
+<div class="todo-section-label">Subscriptions</div>
+<div class="outline-panel">
+    <div class="todo-list">
+        <a href="{{ url_for('subscriptions.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Subscription tracker</span>
+            <span class="todo-row-right">
+                {% if watchlist_count > 0 %}
+                <span class="badge badge-amber">{{ watchlist_count }}</span>
+                {% endif %}
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+    </div>
+</div>
+
+{# ── Workflows ───────────────────────────────────────────────────────────── #}
 <div class="todo-section-label">Workflows</div>
 <div class="outline-panel">
     <div class="todo-list">
@@ -164,12 +190,10 @@ function tqCloseModal() {
     document.getElementById('tq-modal-body').innerHTML = '';
 }
 
-/* Close on scrim click */
 document.getElementById('tq-modal-scrim').addEventListener('click', function(e) {
     if (e.target === this) tqCloseModal();
 });
 
-/* Close on Escape */
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && !document.getElementById('tq-modal-scrim').hidden) {
         tqCloseModal();

@@ -18,18 +18,18 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 - **Demo URL:** `https://ledger-oak-demo.fly.dev` (no auth, seed data, 2 entities)
 
 ## Plaid Integration
-- **Status:** Production access submitted 2026-02-26, in review. Sandbox available now.
+- **Status:** Production approved and running (`PLAID_ENV=production`)
 - **Plaid app name:** BFM Expense Tracker (Plaid dashboard)
 - **Client ID:** `69a02460632219000ea2ea03`
-- **Env vars required:** `PLAID_CLIENT_ID`, `PLAID_SECRET`, `PLAID_ENV` (sandbox|development|production)
-- **Current deploy:** Running in sandbox mode (`PLAID_ENV=sandbox`)
+- **Env vars required:** `PLAID_CLIENT_ID`, `PLAID_SECRET`, `PLAID_ENV` (sandbox|production)
+- **Current deploy:** Running in production mode (`PLAID_ENV=production`)
 - **Sandbox test creds:** username `user_good`, password `pass_good`
 - **Connected Accounts page:** `/plaid/` — connect banks, sync, disconnect
 - **Sync:** Manual only (no auto-sync on startup) — POST `/plaid/sync`
 - **Migration 18:** Added `plaid_items`, `plaid_accounts` tables + `plaid_item_id` on transactions
-- **Plaid products:** `transactions` only (liabilities removed from Link token — was causing errors)
+- **Plaid products:** `transactions` (required) + `liabilities` (optional). Link token uses `optional_products=[Products("liabilities")]` — silently included without separate consent screen.
 - **Liabilities integration:** `get_liabilities()` in `plaid_client.py` fetches credit card balance, credit limit, next payment due date, minimum payment. Cash Flow page auto-populates from Plaid when `plaid_account_id` is linked. Falls back to manual entry if Plaid unavailable. Payment section hidden when no data from either source.
-- **To switch to production:** Update `PLAID_SECRET` to production secret and set `PLAID_ENV=production`, then restart gunicorn
+- **SDK note:** plaid-python v38.3.0 only has `Sandbox` and `Production` environments (no `Development`)
 
 ## Deploy
 Push to `main` — GitHub Actions automatically deploys to Fly.io via `.github/workflows/fly-deploy.yml`.
@@ -137,8 +137,8 @@ Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do
 ## Database (31 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
-- **`categories`** -- Seeded defaults (Kids, Household, Health & Beauty, Clothing, Pet Supplies, Office, Kristine Business, etc.)
-- **`subcategories`** -- Two-level categorization (Migration 15). Each subcategory belongs to a parent category. "Unknown" always available.
+- **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
+- **`subcategories`** -- Two-level categorization (Migration 15). Each subcategory belongs to a parent category. No "Unknown" subcategories — unknowns go to "Needs Review" category.
 - **`merchant_aliases`** -- Pattern-based auto-categorization (contains/regex -> merchant + category)
 - **`import_profiles`** -- Saved CSV column mappings per bank (Amex, Chase, Capital One, Citi, BofA)
 - **`import_checklist` / `import_checklist_status`** -- Monthly source tracking
@@ -289,6 +289,15 @@ Each insight links to a drill-down in `/transactions`.
 **Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
 
 ## Change Log
+
+### 2026-03-04 — Plaid production + liabilities + category overhaul (BFM & Personal)
+Plaid upgraded to production. Liabilities product enabled. Major category reorganization for both BFM and Personal entities via direct SQL on live Fly databases.
+
+1. **Plaid production** — Set `PLAID_ENV=production` and `PLAID_SECRET` via Fly secrets. Added `optional_products=[Products("liabilities")]` to Link token in `plaid_client.py`. Removed non-existent `plaid.Environment.Development` (SDK only has Sandbox + Production). Liabilities data confirmed flowing on Cash Flow page.
+2. **Plaid account cleanup** — Removed American Express from Personal (business card, 0 txns). Removed Quicksilver from BFM plaid_accounts (personal card). Kept First Horizon Bank.
+3. **BFM category overhaul (29 categories)** — Removed personal categories (Office, Household, Entertainment, Groceries, etc.). Created business categories: IT Services, Facilities, HR, Patient Services, Collections, Medical Supplies, Staff Gifts, Office Environment, Office Maintenance, Training. Broke down Subscriptions into Software (AI/Productivity/Accounting/Automation/Collaboration/Communication/Financial Monitoring/HR/Marketing), Office Environment (Media), Professional Development (Membership), Patient Services (Telehealth). Subcategorized Utilities (Electric/Internet/Phone/Water). Merged Dining + Snacks into Food (Coffee/Delivery/Restaurants/Snacks/Water Delivery). Removed Shopping (merchants distributed). 60+ alias rules created/updated.
+4. **Personal category overhaul (24 categories, down from 34)** — Removed 10 categories: Unknown, Other, Gas & Auto, Personal Care, Education, Travel, Electronics, Shopping, Kids, Subscriptions, Office. Merged Dining + Groceries into Food (Coffee/Delivery/Fast Food/Groceries/Restaurant). Broke out Subscriptions: streaming → Entertainment (Streaming Video/Streaming Music), software → Entertainment/Software, Tonal → Fitness, DoorDash → Food/Delivery. Renamed: Home Improvement → Home (added Landscaping/Security/Pest Control/Plumbing/Laundry), Pet Supplies → Pets, Ask Kristine → Needs Review, Kristine Business → LL Expense. Subcategorized: Ranch (Equipment/Mortgage/Supplies/Utilities), Utilities (Electric/Gas/Trash), Fees (Interest/Wire Fees/Bank Fees). Moved Cotton Electric to Ranch/Utilities, Folds of Grace to Home/Laundry.
+5. **Category standards** — Every category has "General" subcategory. No "Unknown" subcategories. Unknowns go to "Needs Review" category. Applied across all 3 entities.
 
 ### 2026-03-03 — Demo instance + configurable entities + Cash Flow tweaks
 Public demo at `ledger-oak-demo.fly.dev` with fake seed data, no auth, 2 entities. Made entity map configurable via env var.

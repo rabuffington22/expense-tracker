@@ -331,6 +331,18 @@ def _get_new_merchants(conn) -> list[dict]:
 
 # ── Routes ───────────────────────────────────────────────────────────────────
 
+def _get_watchlist_count(conn) -> int:
+    """Return the count of active subscription watchlist items."""
+    try:
+        row = conn.execute(
+            "SELECT COUNT(*) FROM subscription_watchlist "
+            "WHERE status IN ('watching', 'cancelling')"
+        ).fetchone()
+        return row[0] if row else 0
+    except Exception:
+        return 0
+
+
 @bp.route("/")
 def index():
     """Render the To Do page."""
@@ -340,11 +352,13 @@ def index():
         schedules = _get_schedules(conn, period_key)
         counts = _get_queue_counts(conn)
         periodic_tasks = _get_periodic_tasks(conn)
+        watchlist_count = _get_watchlist_count(conn)
         return render_template(
             "todo.html",
             schedules=schedules,
             counts=counts,
             periodic_tasks=periodic_tasks,
+            watchlist_count=watchlist_count,
             period_key=period_key,
             today=date.today(),
         )
@@ -676,3 +690,5 @@ def delete_task(task_id):
     finally:
         conn.close()
     return redirect(url_for("todo.index"))
+
+

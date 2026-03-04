@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Subscription Tracker{% endblock %}
+
+{% block content %}
+<div class="sub-page">
+
+<h1 class="page-title">Subscription Tracker</h1>
+
+<div class="outline-panel sub-panel">
+    {% for sub in watchlist %}
+    <div class="sub-row" data-sub-id="{{ sub.id }}">
+        <div class="sub-row-main">
+            <div class="sub-info">
+                <span class="sub-merchant">{{ sub.merchant }}</span>
+                {% if sub.amount_cents %}
+                <span class="sub-amount">
+                    ${{ "%.0f"|format(sub.amount_cents / 100) }}{% if sub.frequency == 'monthly' %}/mo{% elif sub.frequency == 'quarterly' %}/qtr{% elif sub.frequency == 'annual' %}/yr{% endif %}
+                </span>
+                {% endif %}
+            </div>
+            <div class="sub-row-right">
+                {% if sub.status == 'cancelling' %}
+                <span class="badge badge-amber">cancelling</span>
+                {% else %}
+                <span class="badge badge-muted">watching</span>
+                {% endif %}
+                <button type="button" class="sub-expand-btn"
+                        onclick="subToggle({{ sub.id }})"
+                        title="Edit">&#x2026;</button>
+            </div>
+        </div>
+
+        {% if sub.notes %}
+        <div class="sub-notes-preview" id="sub-notes-{{ sub.id }}">
+            <span class="sub-notes-text">{{ sub.notes }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ── Expanded edit area (hidden by default) ── #}
+    <div class="sub-expand" id="sub-expand-{{ sub.id }}" hidden>
+        <form method="post" action="{{ url_for('subscriptions.update', sub_id=sub.id) }}"
+              class="sub-edit-form">
+            <div class="sub-edit-row">
+                <label class="sub-edit-label">Status</label>
+                <select name="status" class="sub-select">
+                    <option value="watching" {{ 'selected' if sub.status == 'watching' }}>Watching</option>
+                    <option value="cancelling" {{ 'selected' if sub.status == 'cancelling' }}>Cancelling</option>
+                    <option value="cancelled" {{ 'selected' if sub.status == 'cancelled' }}>Cancelled</option>
+                </select>
+            </div>
+            <div class="sub-edit-row sub-edit-row--notes">
+                <label class="sub-edit-label">Notes</label>
+                <textarea name="notes" class="sub-textarea"
+                          rows="2" placeholder="How to cancel, contact info, progress...">{{ sub.notes or '' }}</textarea>
+            </div>
+            <div class="sub-edit-actions">
+                <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                <button type="button" class="btn btn-sm btn-secondary"
+                        onclick="subToggle({{ sub.id }})">Cancel</button>
+            </div>
+        </form>
+        <form method="post" action="{{ url_for('subscriptions.delete', sub_id=sub.id) }}"
+              class="sub-delete-form"
+              onsubmit="return confirm('Remove {{ sub.merchant|e }} from watchlist?')">
+            <button type="submit" class="sub-delete-btn">Remove from list</button>
+        </form>
+    </div>
+    {% endfor %}
+
+    {% if not watchlist %}
+    <div class="sub-empty">
+        No subscriptions being tracked yet.
+    </div>
+    {% endif %}
+</div>
+
+{# ── Add subscription ─────────────────────────────────────────── #}
+<div class="sub-add-section">
+    <button type="button" class="sub-add-trigger" id="sub-add-trigger"
+            onclick="subShowAdd()">+ Add subscription</button>
+
+    <div class="outline-panel sub-add-panel" id="sub-add-panel" hidden>
+        <form method="post" action="{{ url_for('subscriptions.add') }}" class="sub-add-form">
+            <div class="sub-add-row">
+                <label class="sub-edit-label">Name</label>
+                <input type="text" name="merchant" placeholder="e.g. Adobe Creative Cloud"
+                       class="sub-input sub-input--name" required>
+            </div>
+            <div class="sub-add-row">
+                <label class="sub-edit-label">Cost</label>
+                <span class="sub-dollar">$</span>
+                <input type="text" name="amount" placeholder="0"
+                       class="sub-input sub-input--amount" inputmode="decimal">
+                <select name="frequency" class="sub-select sub-select--freq">
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="annual">Annual</option>
+                </select>
+            </div>
+            <div class="sub-add-row">
+                <label class="sub-edit-label">Notes</label>
+                <input type="text" name="notes" placeholder="Optional — how to cancel, etc."
+                       class="sub-input sub-input--notes">
+            </div>
+            <div class="sub-add-actions">
+                <button type="submit" class="btn btn-sm btn-primary">Add</button>
+                <button type="button" class="btn btn-sm btn-secondary"
+                        onclick="subHideAdd()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>{# .sub-page #}
+
+<script>
+function subToggle(id) {
+    var el = document.getElementById('sub-expand-' + id);
+    if (el) el.hidden = !el.hidden;
+}
+
+function subShowAdd() {
+    document.getElementById('sub-add-trigger').hidden = true;
+    document.getElementById('sub-add-panel').hidden = false;
+    var nameInput = document.querySelector('#sub-add-panel input[name="merchant"]');
+    if (nameInput) nameInput.focus();
+}
+
+function subHideAdd() {
+    document.getElementById('sub-add-trigger').hidden = false;
+    document.getElementById('sub-add-panel').hidden = true;
+    document.querySelector('#sub-add-panel form').reset();
+}
+</script>
+{% endblock %}
