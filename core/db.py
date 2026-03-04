@@ -545,6 +545,11 @@ CREATE TABLE IF NOT EXISTS subscription_account_info (
 );
 """
 
+_MIGRATION_38 = """
+ALTER TABLE planning_settings ADD COLUMN birth_date TEXT;
+UPDATE planning_settings SET birth_date = '1977-06-21' WHERE id = 1;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -583,6 +588,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (35, _MIGRATION_35),
     (36, _MIGRATION_36),
     (37, _MIGRATION_37),
+    (38, _MIGRATION_38),
 ]
 
 _DEFAULT_CATEGORIES = [

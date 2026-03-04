@@ -40,7 +40,7 @@
         {% else %}&mdash;{% endif %}
     </td>
     {% for m in milestones %}
-    <td class="{% if item.projections[m] == 0 and item.item_type == 'liability' %}pl-paid-off{% endif %}">
+    <td class="pl-td-milestone{% if item.projections[m] == 0 and item.item_type == 'liability' %} pl-paid-off{% endif %}">
         {% if item.projections[m] == 0 and item.item_type == 'liability' %}
             Paid off
         {% else %}
@@ -48,14 +48,6 @@
         {% endif %}
     </td>
     {% endfor %}
-    <td class="pl-td-actions">
-        <form method="post" action="{{ url_for('planning.delete_item', item_id=item.id) }}"
-              onclick="event.stopPropagation()"
-              onsubmit="return confirm('Delete {{ item.name|e }}?')">
-            <input type="hidden" name="entity_key" value="{{ entity_key }}">
-            <button type="submit" class="pl-del-btn" title="Delete">&times;</button>
-        </form>
-    </td>
 </tr>
 {% endmacro %}
 
@@ -76,8 +68,7 @@
                     <th>Value</th>
                     <th>Appr.</th>
                     <th>+/mo</th>
-                    {% for m in milestones %}<th>@{{ m }}</th>{% endfor %}
-                    <th></th>
+                    {% for m in milestones %}<th class="pl-th-milestone">@{{ m }}</th>{% endfor %}
                 </tr>
             </thead>
             <tbody>
@@ -107,8 +98,7 @@
                     <th>Balance</th>
                     <th>Rate</th>
                     <th>Pymt</th>
-                    {% for m in milestones %}<th>@{{ m }}</th>{% endfor %}
-                    <th></th>
+                    {% for m in milestones %}<th class="pl-th-milestone">@{{ m }}</th>{% endfor %}
                 </tr>
             </thead>
             <tbody>
@@ -162,9 +152,12 @@
         </label>
         <label class="pl-settings-label">
             Age
-            <input type="text" name="current_age"
-                   value="{{ settings.current_age }}"
-                   class="pl-input pl-input--sm" inputmode="numeric">
+            <span class="pl-age-display" onclick="plEditAge(this)" title="Click to change birthday">{{ settings.current_age }}</span>
+            <input type="date" name="birth_date" id="pl-birth-date"
+                   value="{{ settings.birth_date or '' }}"
+                   class="pl-input pl-input--sm pl-age-input" hidden
+                   onchange="plAgeSaved(this)"
+                   onblur="plAgeSaved(this)">
         </label>
         <label class="pl-settings-label">
             Custom Milestone
@@ -275,9 +268,14 @@
             </div>
 
             <div class="pl-modal-footer">
+                <button type="button" class="btn pl-btn-delete" id="pl-delete-btn" hidden onclick="plDelete()">Delete</button>
+                <div style="flex:1"></div>
                 <button type="button" class="btn btn-secondary" onclick="plClose()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
+        </form>
+        <form id="pl-delete-form" method="post" action="" hidden>
+            <input type="hidden" name="entity_key" id="pl-del-entity">
         </form>
     </div>
 </div>
@@ -307,6 +305,9 @@ function plOpenAdd(entityKey, itemType) {
     document.getElementById('pl-g-contrib').hidden = !isAsset;
     document.getElementById('pl-g-payment').hidden = isAsset;
 
+    /* Hide delete button when adding */
+    document.getElementById('pl-delete-btn').hidden = true;
+
     _plPopulateCfDropdown(entityKey);
     plToggleSource();
     document.getElementById('pl-modal-scrim').hidden = false;
@@ -334,6 +335,12 @@ function plOpenEdit(row) {
     document.getElementById('pl-lbl-rate').textContent = isAsset ? 'Annual Appreciation' : 'Interest Rate';
     document.getElementById('pl-g-contrib').hidden = !isAsset;
     document.getElementById('pl-g-payment').hidden = isAsset;
+
+    /* Show delete button when editing */
+    document.getElementById('pl-delete-btn').hidden = false;
+    var delForm = document.getElementById('pl-delete-form');
+    delForm.action = '/planning/items/delete/' + d.id;
+    document.getElementById('pl-del-entity').value = d.entity;
 
     _plPopulateCfDropdown(d.entity);
     document.getElementById('pl-f-cfaccount').value = d.cfAccount || '';
@@ -370,6 +377,30 @@ function plCloseModal(evt) {
 
 function plClose() {
     document.getElementById('pl-modal-scrim').hidden = true;
+}
+
+/* Delete via modal */
+function plDelete() {
+    if (confirm('Delete this item?')) {
+        document.getElementById('pl-delete-form').submit();
+    }
+}
+
+/* Age click-to-edit birthday */
+function plEditAge(span) {
+    span.hidden = true;
+    var inp = document.getElementById('pl-birth-date');
+    inp.hidden = false;
+    inp.focus();
+}
+function plAgeSaved(inp) {
+    if (!inp.value) {
+        inp.hidden = true;
+        inp.previousElementSibling.hidden = false;
+        return;
+    }
+    /* Auto-submit the settings form to save the birthday */
+    inp.closest('form').requestSubmit();
 }
 
 /* Escape key */

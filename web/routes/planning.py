@@ -1,4 +1,5 @@
 """Planning page — long-term net worth projections."""
+from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
@@ -46,14 +47,33 @@ def _parse_rate_to_bps(rate_str: str) -> int:
         return 0
 
 
+def _compute_age(birth_date_str: str | None) -> int:
+    """Compute current age from a YYYY-MM-DD birth date string."""
+    if not birth_date_str:
+        return 48  # fallback
+    try:
+        from datetime import date
+        bd = date.fromisoformat(birth_date_str)
+        today = date.today()
+        age = today.year - bd.year
+        if (today.month, today.day) < (bd.month, bd.day):
+            age -= 1
+        return age
+    except (ValueError, TypeError):
+        return 48
+
+
 def _get_settings() -> dict:
     """Read planning settings from personal.sqlite (global singleton)."""
     conn = get_connection("personal")
     try:
         row = conn.execute("SELECT * FROM planning_settings WHERE id = 1").fetchone()
         if row:
-            return dict(row)
-        return {"inflation_rate": 300, "current_age": 48, "custom_milestone": None}
+            d = dict(row)
+            # Auto-compute age from birth_date if available
+            d["current_age"] = _compute_age(d.get("birth_date"))
+            return d
+        return {"inflation_rate": 300, "current_age": 48, "custom_milestone": None, "birth_date": None}
     finally:
         conn.close()
 
@@ -249,15 +269,12 @@ def index():
 @bp.route("/settings", methods=["POST"])
 def update_settings():
     inflation = _parse_rate_to_bps(request.form.get("inflation_rate", "3.0"))
-    age = int(request.form.get("current_age", "48") or "48")
     custom_raw = request.form.get("custom_milestone", "").strip()
     custom = int(custom_raw) if custom_raw else None
+    birth_date = request.form.get("birth_date", "").strip() or None
 
-    # Clamp values
-    if age < 1:
-        age = 1
-    if age > 120:
-        age = 120
+    # Compute age from birth_date for milestone validation
+    age = _compute_age(birth_date) if birth_date else 48
     if custom is not None and (custom <= age or custom > 120):
         custom = None
 
@@ -266,8 +283,8 @@ def update_settings():
     try:
         conn.execute(
             "UPDATE planning_settings SET inflation_rate = ?, current_age = ?, "
-            "custom_milestone = ?, updated_at = ? WHERE id = 1",
-            (inflation, age, custom, now),
+            "custom_milestone = ?, birth_date = ?, updated_at = ? WHERE id = 1",
+            (inflation, age, custom, birth_date, now),
         )
         conn.commit()
     finally:

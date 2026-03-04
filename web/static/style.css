@@ -5897,6 +5897,13 @@ input.cf-modal-input--due-date {
     font-size: var(--ui-font-xs); color: var(--text-secondary); font-weight: 600;
 }
 .pl-settings-unit { font-size: var(--ui-font-xs); color: var(--text-muted); }
+.pl-age-display {
+    font-size: var(--ui-font-sm); font-weight: 700; color: var(--text);
+    padding: 0.22rem 0.4rem; cursor: pointer;
+    border-bottom: 1px dashed var(--text-muted);
+}
+.pl-age-display:hover { color: var(--blue); border-color: var(--blue); }
+.pl-age-input { width: 10ch !important; }
 .pl-input--sm {
     width: 4.5ch; text-align: center; padding: 0.22rem 0.3rem;
     font-size: var(--ui-font-sm); background: var(--input-sm-bg);
@@ -5931,7 +5938,8 @@ input.cf-modal-input--due-date {
     padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border);
     white-space: nowrap;
 }
-.pl-table th.pl-th-name { text-align: left; }
+.pl-table th.pl-th-name { text-align: left; width: 100%; }
+.pl-table th.pl-th-milestone { padding: 0.35rem 0.25rem; }
 .pl-table td {
     padding: 0.38rem 0.5rem; text-align: right;
     border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -5939,7 +5947,7 @@ input.cf-modal-input--due-date {
 }
 .pl-table tbody tr:last-child td { border-bottom: none; }
 .pl-td-name { text-align: left !important; font-weight: 500; }
-.pl-td-actions { width: 1.8rem; text-align: center !important; padding: 0 !important; }
+.pl-td-milestone { padding: 0.38rem 0.25rem !important; }
 
 /* ── Item rows ────────────────────────────────────────────────────────────── */
 .pl-item-row { cursor: pointer; transition: background 0.12s; }
@@ -5954,14 +5962,14 @@ input.cf-modal-input--due-date {
     vertical-align: middle;
 }
 
-/* ── Delete button ────────────────────────────────────────────────────────── */
-.pl-del-btn {
-    background: none; border: none; color: var(--text-muted);
-    font-size: 0.9rem; cursor: pointer; padding: 0.2rem 0.4rem;
-    border-radius: 4px; transition: color 0.12s, background 0.12s;
-    line-height: 1;
+/* ── Modal delete button ──────────────────────────────────────────────────── */
+.pl-btn-delete {
+    background: none; border: 1px solid var(--red); color: var(--red);
+    font-size: var(--ui-font-xs); font-weight: 600; cursor: pointer;
+    padding: 0.3rem 0.7rem; border-radius: 6px;
+    transition: background 0.12s, color 0.12s;
 }
-.pl-del-btn:hover { color: var(--red); background: rgba(248,113,113,0.12); }
+.pl-btn-delete:hover { background: var(--red); color: #fff; }
 
 /* ── Add strip ────────────────────────────────────────────────────────────── */
 .pl-add-strip {
