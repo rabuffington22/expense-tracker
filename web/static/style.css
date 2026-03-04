@@ -3928,6 +3928,28 @@ tr.is-selected > td:first-child {
     padding: 0.5rem 0;
 }
 
+.sub-tips-fetch-btn {
+    display: inline-block;
+    font-size: var(--ui-font-xs);
+    color: var(--blue);
+    background: none;
+    border: 1px solid var(--blue);
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    margin-top: 0.25rem;
+}
+.sub-tips-fetch-btn:hover {
+    background: rgba(10,132,255,0.1);
+}
+.sub-tips-fetch-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+.sub-tips-fetch-btn[hidden] {
+    display: none !important;
+}
+
 /* ── Timeline section ── */
 .sub-detail-timeline-section {
     margin-top: 1rem;

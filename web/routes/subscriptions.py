@@ -509,6 +509,33 @@ def dismiss():
     return redirect(url_for("subscriptions.index"))
 
 
+@bp.route("/generate-tips/<int:sub_id>", methods=["POST"])
+def generate_tips(sub_id):
+    """Generate cancellation tips on demand for an existing watchlist item."""
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT id, merchant, cancellation_tips "
+            "FROM subscription_watchlist WHERE id = ?",
+            (sub_id,),
+        ).fetchone()
+        if not row:
+            return jsonify({"error": "not found"}), 404
+
+        _generate_and_store_tips(conn, row["id"], row["merchant"])
+        conn.commit()
+
+        # Re-fetch to get the stored tips
+        updated = conn.execute(
+            "SELECT cancellation_tips FROM subscription_watchlist WHERE id = ?",
+            (sub_id,),
+        ).fetchone()
+        tips = updated["cancellation_tips"] if updated else None
+        return jsonify({"tips": tips})
+    finally:
+        conn.close()
+
+
 @bp.route("/update/<int:sub_id>", methods=["POST"])
 def update(sub_id):
     """Update subscription status and/or notes."""

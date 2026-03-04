@@ -175,6 +175,8 @@
             <div class="sub-detail-tips-section" id="sub-detail-tips-section" hidden>
                 <div class="sub-detail-charges-label">How to Cancel</div>
                 <div class="sub-detail-tips" id="sub-detail-tips"></div>
+                <button type="button" class="sub-tips-fetch-btn" id="sub-tips-fetch-btn"
+                        hidden onclick="subFetchTips()">Get cancellation tips</button>
             </div>
 
             {# ── Timeline section (watchlist only) ── #}
@@ -241,6 +243,7 @@ function _escapeHtml(text) {
 }
 
 var _subMode = 'suggestion'; // 'suggestion' or 'watchlist'
+var _currentSubId = null;
 
 function _populateCharges(data) {
     // Stats
@@ -360,11 +363,16 @@ function subOpenWatchlistDetail(subId) {
             // Cancellation tips
             var tipsSection = document.getElementById('sub-detail-tips-section');
             var tipsEl = document.getElementById('sub-detail-tips');
+            var tipsFetchBtn = document.getElementById('sub-tips-fetch-btn');
+            _currentSubId = data.id;
             if (data.cancellation_tips) {
                 tipsEl.textContent = data.cancellation_tips;
+                tipsFetchBtn.hidden = true;
                 tipsSection.hidden = false;
             } else {
-                tipsSection.hidden = true;
+                tipsEl.textContent = '';
+                tipsFetchBtn.hidden = false;
+                tipsSection.hidden = false;
             }
 
             // Timeline
@@ -422,6 +430,27 @@ function subOpenWatchlistDetail(subId) {
         })
         .catch(function() {
             subCloseDetail();
+        });
+}
+
+function subFetchTips() {
+    if (!_currentSubId) return;
+    var btn = document.getElementById('sub-tips-fetch-btn');
+    btn.textContent = 'Loading\u2026';
+    btn.disabled = true;
+    fetch('/subscriptions/generate-tips/' + _currentSubId, { method: 'POST' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var tipsEl = document.getElementById('sub-detail-tips');
+            if (data.tips) {
+                tipsEl.textContent = data.tips;
+                btn.hidden = true;
+            } else {
+                btn.textContent = 'Tips unavailable';
+            }
+        })
+        .catch(function() {
+            btn.textContent = 'Tips unavailable';
         });
 }
 
