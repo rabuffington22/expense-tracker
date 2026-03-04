@@ -784,14 +784,15 @@ def main() -> None:
         body = resp.get_data(as_text=True)
         _check("Large transactions" in body, "todo queues: Large transactions row should appear")
         _check("New merchants" in body, "todo queues: New merchants row should appear")
-        _check("Uncategorized" in body, "todo queues: Uncategorized row should appear")
+        _check("Transactions" in body, "todo queues: Transactions row should appear")
 
         # 10c. Entity isolation — BFM should not see Personal's queues
         client.set_cookie("entity", "BFM")
         resp = client.get("/todo/")
         _check(resp.status_code == 200, "todo BFM: expected 200")
         body = resp.get_data(as_text=True)
-        _check("All caught up" in body, "todo isolation: BFM should show empty state")
+        _check("Transactions" in body, "todo isolation: BFM page renders rows")
+        _check("badge-red" not in body, "todo isolation: BFM should have no red badges")
 
         # 10d. Cleanup fixture txns
         client.set_cookie("entity", "Personal")

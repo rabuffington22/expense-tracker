@@ -7,76 +7,55 @@
 <h1 class="page-title todo-title">To Do</h1>
 
 {# ── Categorize ──────────────────────────────────────────────────────────── #}
-{% set has_categorize = counts.uncategorized > 0 or counts.vendor_breakdown > 0
-       or counts.possible_transfer > 0 or counts.orders_unmatched > 0
-       or counts.orders_uncategorized > 0 %}
-
 <div class="todo-section-label">Categorize</div>
 <div class="outline-panel">
     <div class="todo-list">
-        {% if counts.uncategorized > 0 %}
         <a href="{{ url_for('transactions.index', uncategorized=1) }}" class="todo-row todo-row--link">
-            <span class="todo-name">Uncategorized transactions</span>
+            <span class="todo-name">Transactions</span>
             <span class="todo-row-right">
+                {% if counts.uncategorized > 0 %}
                 <span class="badge badge-red">{{ counts.uncategorized }}</span>
+                {% endif %}
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </a>
-        {% endif %}
 
-        {% if counts.vendor_breakdown > 0 %}
-        <a href="{{ url_for('transactions.index', vendor_breakdown=1) }}" class="todo-row todo-row--link">
-            <span class="todo-name">Vendor breakdown needed</span>
+        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Vendor orders</span>
             <span class="todo-row-right">
-                <span class="badge badge-red">{{ counts.vendor_breakdown }}</span>
+                {% if counts.orders_uncategorized > 0 %}
+                <span class="badge badge-blue">{{ counts.orders_uncategorized }}</span>
+                {% endif %}
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </a>
-        {% endif %}
 
-        {% if counts.possible_transfer > 0 %}
+        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Unmatched vendor charges</span>
+            <span class="todo-row-right">
+                {% if counts.vendor_breakdown > 0 %}
+                <span class="badge badge-red">{{ counts.vendor_breakdown }}</span>
+                {% endif %}
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+
         <a href="{{ url_for('transactions.index', possible_transfer=1) }}" class="todo-row todo-row--link">
             <span class="todo-name">Possible transfers</span>
             <span class="todo-row-right">
+                {% if counts.possible_transfer > 0 %}
                 <span class="badge badge-muted">{{ counts.possible_transfer }}</span>
+                {% endif %}
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </a>
-        {% endif %}
-
-        {% if counts.orders_unmatched > 0 %}
-        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Orders to match</span>
-            <span class="todo-row-right">
-                <span class="badge badge-blue">{{ counts.orders_unmatched }}</span>
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-        {% endif %}
-
-        {% if counts.orders_uncategorized > 0 %}
-        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Orders to categorize</span>
-            <span class="todo-row-right">
-                <span class="badge badge-blue">{{ counts.orders_uncategorized }}</span>
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-        {% endif %}
-
-        {% if not has_categorize %}
-        <div class="todo-empty">All caught up.</div>
-        {% endif %}
     </div>
 </div>
 
 {# ── Review ──────────────────────────────────────────────────────────────── #}
-{% set has_review = counts.large_txns > 0 or counts.new_merchants > 0 %}
-
 <div class="todo-section-label">Review</div>
 <div class="outline-panel">
     <div class="todo-list">
-        {% if counts.large_txns > 0 %}
         <div class="todo-row todo-row--link" tabindex="0" role="button"
              hx-get="{{ url_for('todo.queue_large_txns') }}"
              hx-target="#tq-modal-body" hx-swap="innerHTML"
@@ -84,13 +63,13 @@
             <span class="todo-name">Large transactions</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
+                {% if counts.large_txns > 0 %}
                 <span class="badge badge-muted">{{ counts.large_txns }}</span>
+                {% endif %}
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </div>
-        {% endif %}
 
-        {% if counts.new_merchants > 0 %}
         <div class="todo-row todo-row--link" tabindex="0" role="button"
              hx-get="{{ url_for('todo.queue_new_merchants') }}"
              hx-target="#tq-modal-body" hx-swap="innerHTML"
@@ -98,15 +77,12 @@
             <span class="todo-name">New merchants</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
+                {% if counts.new_merchants > 0 %}
                 <span class="badge badge-muted">{{ counts.new_merchants }}</span>
+                {% endif %}
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </div>
-        {% endif %}
-
-        {% if not has_review %}
-        <div class="todo-empty">Nothing to review.</div>
-        {% endif %}
     </div>
 </div>
 
@@ -126,8 +102,8 @@
     </div>
 </div>
 
-{# ── Workflows ───────────────────────────────────────────────────────────── #}
-<div class="todo-section-label">Workflows</div>
+{# ── Import ─────────────────────────────────────────────────────────────── #}
+<div class="todo-section-label">Import</div>
 <div class="outline-panel">
     <div class="todo-list">
         <a href="{{ url_for('upload.index') }}" class="todo-row todo-row--link">
@@ -136,26 +112,9 @@
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </a>
+
         <a href="{{ url_for('vendors.index') }}" class="todo-row todo-row--link">
             <span class="todo-name">Upload from Vendors</span>
-            <span class="todo-row-right">
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Match Orders</span>
-            <span class="todo-row-right">
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-        <a href="{{ url_for('categorize_vendors.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Categorize Vendor Orders</span>
-            <span class="todo-row-right">
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-        <a href="{{ url_for('categorize.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Categorize Remaining</span>
             <span class="todo-row-right">
                 <span class="todo-chevron">&#x203A;</span>
             </span>

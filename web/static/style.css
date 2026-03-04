@@ -3523,6 +3523,33 @@ tr.is-selected > td:first-child {
 .todo-page .outline-panel {
     max-width: 420px;
 }
+.todo-page .outline-panel.todo-panel--wide {
+    max-width: 680px;
+}
+
+/* ── Two-column layout (queue | tools) ──────── */
+.todo-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1.2rem;
+}
+.todo-col-tools {
+    border-left: 1px solid rgba(255,255,255,0.06);
+    padding-left: 1rem;
+}
+:root[data-theme="light"] .todo-col-tools {
+    border-left-color: rgba(0,0,0,0.06);
+}
+.todo-col-tools-label {
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    opacity: 0.6;
+    padding: 0.28rem 0.35rem 0.1rem;
+}
+
 .todo-chevron {
     font-size: 1.1rem;
     color: var(--text-muted);
@@ -3547,6 +3574,8 @@ tr.is-selected > td:first-child {
     font-size: var(--ui-font-xs);
 }
 
+/* (divider styles removed — now using two-column layout) */
+
 /* ── Amber badge (subscription status) ───────── */
 .badge-amber {
     background: rgba(255,159,10,0.18);
@@ -3558,6 +3587,21 @@ tr.is-selected > td:first-child {
 }
 
 /* ── Mobile ───────────────────────────────────── */
+@media (max-width: 600px) {
+    .todo-cols {
+        grid-template-columns: 1fr;
+    }
+    .todo-col-tools {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        padding-top: 0.3rem;
+        margin-top: 0.2rem;
+    }
+    :root[data-theme="light"] .todo-col-tools {
+        border-top-color: rgba(0,0,0,0.06);
+    }
+}
 @media (max-width: 480px) {
     .todo-row { flex-wrap: wrap; }
 }
