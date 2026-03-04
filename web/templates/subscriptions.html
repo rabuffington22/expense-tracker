@@ -6,6 +6,57 @@
 
 <h1 class="page-title">Subscription Tracker</h1>
 
+{# ── Suggestions (auto-detected recurring charges) ─────────────────── #}
+{% if suggestions %}
+<div class="sub-suggestions-section">
+    <div class="sub-section-label">We found these recurring charges</div>
+    <div class="outline-panel sub-panel">
+        {% for s in suggestions %}
+        <div class="sub-row sub-suggestion-row">
+            <div class="sub-row-main">
+                <div class="sub-info">
+                    <span class="sub-merchant">{{ s.merchant_canonical }}</span>
+                    <span class="sub-amount">
+                        ${{ "%.0f"|format(s.amount_cents / 100) }}{% if s.frequency == 'weekly' %}/wk{% elif s.frequency == 'biweekly' %}/2wk{% elif s.frequency == 'monthly' %}/mo{% elif s.frequency == 'quarterly' %}/qtr{% elif s.frequency == 'annual' %}/yr{% endif %}
+                    </span>
+                </div>
+                <div class="sub-row-right">
+                    <span class="badge badge-blue">{{ s.cadence_label|lower }}</span>
+                    <form method="post"
+                          action="{{ url_for('subscriptions.accept') }}"
+                          class="sub-suggest-form">
+                        <input type="hidden" name="merchant"
+                               value="{{ s.merchant_canonical }}">
+                        <input type="hidden" name="merchant_canonical"
+                               value="{{ s.merchant_canonical }}">
+                        <input type="hidden" name="amount"
+                               value="{{ "%.2f"|format(s.amount_cents / 100) }}">
+                        <input type="hidden" name="frequency"
+                               value="{{ s.frequency }}">
+                        <button type="submit" class="sub-suggest-btn sub-suggest-btn--accept"
+                                title="Add to watchlist">&#x2713;</button>
+                    </form>
+                    <form method="post"
+                          action="{{ url_for('subscriptions.dismiss') }}"
+                          class="sub-suggest-form">
+                        <input type="hidden" name="merchant_canonical"
+                               value="{{ s.merchant_canonical }}">
+                        <button type="submit" class="sub-suggest-btn sub-suggest-btn--dismiss"
+                                title="Dismiss">&times;</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{# ── Watchlist ─────────────────────────────────────────────────────── #}
+{% if suggestions %}
+<div class="sub-section-label">Watchlist</div>
+{% endif %}
+
 <div class="outline-panel sub-panel">
     {% for sub in watchlist %}
     <div class="sub-row" data-sub-id="{{ sub.id }}">
@@ -14,7 +65,7 @@
                 <span class="sub-merchant">{{ sub.merchant }}</span>
                 {% if sub.amount_cents %}
                 <span class="sub-amount">
-                    ${{ "%.0f"|format(sub.amount_cents / 100) }}{% if sub.frequency == 'monthly' %}/mo{% elif sub.frequency == 'quarterly' %}/qtr{% elif sub.frequency == 'annual' %}/yr{% endif %}
+                    ${{ "%.0f"|format(sub.amount_cents / 100) }}{% if sub.frequency == 'weekly' %}/wk{% elif sub.frequency == 'biweekly' %}/2wk{% elif sub.frequency == 'monthly' %}/mo{% elif sub.frequency == 'quarterly' %}/qtr{% elif sub.frequency == 'annual' %}/yr{% endif %}
                 </span>
                 {% endif %}
             </div>
@@ -93,7 +144,9 @@
                 <input type="text" name="amount" placeholder="0"
                        class="sub-input sub-input--amount" inputmode="decimal">
                 <select name="frequency" class="sub-select sub-select--freq">
-                    <option value="monthly">Monthly</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Biweekly</option>
+                    <option value="monthly" selected>Monthly</option>
                     <option value="quarterly">Quarterly</option>
                     <option value="annual">Annual</option>
                 </select>

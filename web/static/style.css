@@ -3523,33 +3523,6 @@ tr.is-selected > td:first-child {
 .todo-page .outline-panel {
     max-width: 420px;
 }
-.todo-page .outline-panel.todo-panel--wide {
-    max-width: 680px;
-}
-
-/* ── Two-column layout (queue | tools) ──────── */
-.todo-cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 1.2rem;
-}
-.todo-col-tools {
-    border-left: 1px solid rgba(255,255,255,0.06);
-    padding-left: 1rem;
-}
-:root[data-theme="light"] .todo-col-tools {
-    border-left-color: rgba(0,0,0,0.06);
-}
-.todo-col-tools-label {
-    font-size: 0.58rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: var(--label-tracking);
-    color: var(--text-muted);
-    opacity: 0.6;
-    padding: 0.28rem 0.35rem 0.1rem;
-}
-
 .todo-chevron {
     font-size: 1.1rem;
     color: var(--text-muted);
@@ -3587,21 +3560,6 @@ tr.is-selected > td:first-child {
 }
 
 /* ── Mobile ───────────────────────────────────── */
-@media (max-width: 600px) {
-    .todo-cols {
-        grid-template-columns: 1fr;
-    }
-    .todo-col-tools {
-        border-left: none;
-        padding-left: 0;
-        border-top: 1px solid rgba(255,255,255,0.06);
-        padding-top: 0.3rem;
-        margin-top: 0.2rem;
-    }
-    :root[data-theme="light"] .todo-col-tools {
-        border-top-color: rgba(0,0,0,0.06);
-    }
-}
 @media (max-width: 480px) {
     .todo-row { flex-wrap: wrap; }
 }
@@ -3805,6 +3763,43 @@ tr.is-selected > td:first-child {
     text-align: center;
     color: var(--text-muted);
     font-size: var(--ui-font-sm);
+}
+
+/* ── Subscription suggestions ──────────────────── */
+.sub-suggestions-section {
+    margin-bottom: 0.75rem;
+}
+.sub-section-label {
+    font-size: var(--ui-font-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+}
+.sub-suggest-form {
+    display: inline;
+}
+.sub-suggest-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0.15rem 0.3rem;
+    border-radius: 4px;
+    transition: opacity 0.15s, background 0.15s;
+    opacity: 0.6;
+}
+.sub-suggest-btn:hover {
+    opacity: 1;
+    background: var(--hover-bg);
+}
+.sub-suggest-btn--accept {
+    color: var(--green);
+}
+.sub-suggest-btn--dismiss {
+    color: var(--text-muted);
 }
 
 @media (max-width: 480px) {
