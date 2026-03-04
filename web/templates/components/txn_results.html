@@ -21,9 +21,13 @@
           Amount
           {% if params.sort == 'amount' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:150px;cursor:pointer;" onclick="sortBy('category')">
+        <th style="width:130px;cursor:pointer;" onclick="sortBy('category')">
           Category
           {% if params.sort == 'category' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
+        </th>
+        <th style="width:130px;cursor:pointer;" onclick="sortBy('subcategory')">
+          Subcategory
+          {% if params.sort == 'subcategory' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
       </tr>
     </thead>
@@ -32,7 +36,7 @@
         {% include "components/txn_row.html" %}
       {% endfor %}
       {% if not txns %}
-      <tr><td colspan="4" class="text-sm text-muted" style="text-align:center;padding:2rem;">No transactions match your filters.</td></tr>
+      <tr><td colspan="5" class="text-sm text-muted" style="text-align:center;padding:2rem;">No transactions match your filters.</td></tr>
       {% endif %}
     </tbody>
   </table>

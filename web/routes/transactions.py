@@ -30,6 +30,7 @@ _SORT_MAP = {
     "amount": "ABS(t.amount_cents)",
     "merchant": "t.merchant_canonical",
     "category": "t.category",
+    "subcategory": "t.subcategory",
 }
 
 # ── Vendor patterns for heuristic fallback (D1) ─────────────────────────────

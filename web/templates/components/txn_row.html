@@ -15,10 +15,6 @@
   <td class="text-sm text-right" style="{% if txn.amount_cents and txn.amount_cents > 0 %}color:var(--green);{% endif %}">
     {{ fmt_cents(txn.amount_cents) }}
   </td>
-  <td class="text-sm">
-    {{ txn.category or '—' }}
-    {% if txn.subcategory and txn.subcategory != 'Unknown' %}
-      <div class="text-xs text-muted">{{ txn.subcategory }}</div>
-    {% endif %}
-  </td>
+  <td class="text-sm">{{ txn.category or '—' }}</td>
+  <td class="text-sm text-muted">{{ txn.subcategory if txn.subcategory and txn.subcategory != 'Unknown' else '' }}</td>
 </tr>
