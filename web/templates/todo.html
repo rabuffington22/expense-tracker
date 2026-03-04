@@ -6,6 +6,42 @@
 
 <h1 class="page-title todo-title">To Do</h1>
 
+{# ── Import ─────────────────────────────────────────────────────────────── #}
+<div class="todo-section-label">Import</div>
+<div class="outline-panel">
+    <div class="todo-list">
+        <a href="{{ url_for('upload.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Upload from bank or credit card</span>
+            <span class="todo-row-right">
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+
+        <a href="{{ url_for('vendors.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Upload from Vendors</span>
+            <span class="todo-row-right">
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+    </div>
+</div>
+
+{# ── Match ──────────────────────────────────────────────────────────────── #}
+<div class="todo-section-label">Match</div>
+<div class="outline-panel">
+    <div class="todo-list">
+        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Unmatched vendor charges</span>
+            <span class="todo-row-right">
+                {% if counts.vendor_breakdown > 0 %}
+                <span class="badge badge-red">{{ counts.vendor_breakdown }}</span>
+                {% endif %}
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+    </div>
+</div>
+
 {# ── Categorize ──────────────────────────────────────────────────────────── #}
 <div class="todo-section-label">Categorize</div>
 <div class="outline-panel">
@@ -29,17 +65,13 @@
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </a>
+    </div>
+</div>
 
-        <a href="{{ url_for('match.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Unmatched vendor charges</span>
-            <span class="todo-row-right">
-                {% if counts.vendor_breakdown > 0 %}
-                <span class="badge badge-red">{{ counts.vendor_breakdown }}</span>
-                {% endif %}
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-
+{# ── Review ──────────────────────────────────────────────────────────────── #}
+<div class="todo-section-label">Review</div>
+<div class="outline-panel">
+    <div class="todo-list">
         <a href="{{ url_for('transactions.index', possible_transfer=1) }}" class="todo-row todo-row--link">
             <span class="todo-name">Possible transfers</span>
             <span class="todo-row-right">
@@ -49,13 +81,7 @@
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </a>
-    </div>
-</div>
 
-{# ── Review ──────────────────────────────────────────────────────────────── #}
-<div class="todo-section-label">Review</div>
-<div class="outline-panel">
-    <div class="todo-list">
         <div class="todo-row todo-row--link" tabindex="0" role="button"
              hx-get="{{ url_for('todo.queue_large_txns') }}"
              hx-target="#tq-modal-body" hx-swap="innerHTML"
@@ -96,26 +122,6 @@
                 {% if watchlist_count > 0 %}
                 <span class="badge badge-amber">{{ watchlist_count }}</span>
                 {% endif %}
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-    </div>
-</div>
-
-{# ── Import ─────────────────────────────────────────────────────────────── #}
-<div class="todo-section-label">Import</div>
-<div class="outline-panel">
-    <div class="todo-list">
-        <a href="{{ url_for('upload.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Upload from bank or credit card</span>
-            <span class="todo-row-right">
-                <span class="todo-chevron">&#x203A;</span>
-            </span>
-        </a>
-
-        <a href="{{ url_for('vendors.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Upload from Vendors</span>
-            <span class="todo-row-right">
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </a>
