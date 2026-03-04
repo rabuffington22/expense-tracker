@@ -3801,6 +3801,104 @@ tr.is-selected > td:first-child {
 .sub-suggest-btn--dismiss {
     color: var(--text-muted);
 }
+.sub-suggestion-row {
+    cursor: pointer;
+}
+.sub-suggestion-row:hover {
+    background: var(--hover-bg);
+}
+
+/* ── Suggestion detail modal ───────────────────── */
+.sub-detail-card {
+    width: 480px;
+}
+.sub-detail-body {
+    padding: 0.5rem 1.5rem 1rem;
+    overflow-y: auto;
+    flex: 1;
+}
+.sub-detail-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+.sub-detail-meta {
+    font-size: var(--ui-font-sm);
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+}
+.sub-detail-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-bottom: 1.4rem;
+}
+.sub-detail-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .sub-detail-stat {
+    border-bottom-color: rgba(0,0,0,0.06);
+}
+.sub-detail-stat-label {
+    font-size: var(--ui-font-sm);
+    color: var(--text-muted);
+}
+.sub-detail-stat-value {
+    font-size: var(--ui-font-base);
+    font-weight: 600;
+}
+.sub-detail-charges-section {
+    margin-bottom: 0.5rem;
+}
+.sub-detail-charges-label {
+    font-size: var(--ui-font-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.sub-detail-charges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+.sub-detail-charge {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: var(--ui-font-sm);
+}
+:root[data-theme="light"] .sub-detail-charge {
+    border-bottom-color: rgba(0,0,0,0.04);
+}
+.sub-detail-charge:last-child {
+    border-bottom: none;
+}
+.sub-detail-charge-date {
+    color: var(--text-muted);
+}
+.sub-detail-charge-amount {
+    font-weight: 600;
+}
+.sub-detail-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .sub-detail-footer {
+    border-top-color: rgba(0,0,0,0.06);
+}
+.sub-detail-form {
+    display: inline;
+}
 
 @media (max-width: 480px) {
     .sub-add-row { flex-wrap: wrap; }

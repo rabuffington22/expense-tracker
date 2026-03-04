@@ -12,7 +12,7 @@
     <div class="sub-section-label">We found these recurring charges</div>
     <div class="outline-panel sub-panel">
         {% for s in suggestions %}
-        <div class="sub-row sub-suggestion-row">
+        <div class="sub-row sub-suggestion-row" onclick="subOpenDetail({{ loop.index0 }})" role="button" tabindex="0">
             <div class="sub-row-main">
                 <div class="sub-info">
                     <span class="sub-merchant">{{ s.merchant_canonical }}</span>
@@ -24,7 +24,7 @@
                     <span class="badge badge-blue">{{ s.cadence_label|lower }}</span>
                     <form method="post"
                           action="{{ url_for('subscriptions.accept') }}"
-                          class="sub-suggest-form">
+                          class="sub-suggest-form" onclick="event.stopPropagation()">
                         <input type="hidden" name="merchant"
                                value="{{ s.merchant_canonical }}">
                         <input type="hidden" name="merchant_canonical"
@@ -38,7 +38,7 @@
                     </form>
                     <form method="post"
                           action="{{ url_for('subscriptions.dismiss') }}"
-                          class="sub-suggest-form">
+                          class="sub-suggest-form" onclick="event.stopPropagation()">
                         <input type="hidden" name="merchant_canonical"
                                value="{{ s.merchant_canonical }}">
                         <button type="submit" class="sub-suggest-btn sub-suggest-btn--dismiss"
@@ -50,6 +50,11 @@
         {% endfor %}
     </div>
 </div>
+
+{# ── Suggestion data for modal ── #}
+<script type="application/json" id="sub-suggestions-data">
+{{ suggestions|tojson }}
+</script>
 {% endif %}
 
 {# ── Watchlist ─────────────────────────────────────────────────────── #}
@@ -167,6 +172,42 @@
 
 </div>{# .sub-page #}
 
+{# ── Suggestion Detail Modal ──────────────────────────────────── #}
+<div class="tq-modal-scrim" id="sub-detail-scrim" hidden>
+    <div class="outline-panel tq-modal-card sub-detail-card" role="dialog" aria-modal="true">
+        <div class="tq-modal-top">
+            <button type="button" class="cf-edit-btn tq-modal-close"
+                    onclick="subCloseDetail()" title="Close">&times;</button>
+        </div>
+        <div class="sub-detail-body">
+            <div class="sub-detail-title" id="sub-detail-title"></div>
+            <div class="sub-detail-meta" id="sub-detail-meta"></div>
+
+            <div class="sub-detail-stats">
+                <div class="sub-detail-stat">
+                    <span class="sub-detail-stat-label">Charges detected</span>
+                    <span class="sub-detail-stat-value" id="sub-detail-count"></span>
+                </div>
+                <div class="sub-detail-stat">
+                    <span class="sub-detail-stat-label">Period</span>
+                    <span class="sub-detail-stat-value" id="sub-detail-period"></span>
+                </div>
+                <div class="sub-detail-stat">
+                    <span class="sub-detail-stat-label">Amount</span>
+                    <span class="sub-detail-stat-value" id="sub-detail-amount-range"></span>
+                </div>
+            </div>
+
+            <div class="sub-detail-charges-section">
+                <div class="sub-detail-charges-label">Recent Charges</div>
+                <div class="sub-detail-charges" id="sub-detail-charges"></div>
+            </div>
+        </div>
+
+        <div class="sub-detail-footer" id="sub-detail-footer"></div>
+    </div>
+</div>
+
 <script>
 function subToggle(id) {
     var el = document.getElementById('sub-expand-' + id);
@@ -185,5 +226,87 @@ function subHideAdd() {
     document.getElementById('sub-add-panel').hidden = true;
     document.querySelector('#sub-add-panel form').reset();
 }
+
+/* ── Suggestion detail modal ── */
+var _subSuggestions = [];
+(function() {
+    var el = document.getElementById('sub-suggestions-data');
+    if (el) {
+        try { _subSuggestions = JSON.parse(el.textContent); } catch(e) {}
+    }
+})();
+
+function _fmtDollars(cents) {
+    return '$' + (cents / 100).toFixed(2).replace(/\.00$/, '');
+}
+
+function _freqSuffix(freq) {
+    var m = {weekly:'/wk', biweekly:'/2wk', monthly:'/mo', quarterly:'/qtr', annual:'/yr'};
+    return m[freq] || '';
+}
+
+function subOpenDetail(idx) {
+    var s = _subSuggestions[idx];
+    if (!s) return;
+
+    document.getElementById('sub-detail-title').textContent = s.merchant_canonical;
+    document.getElementById('sub-detail-meta').textContent =
+        _fmtDollars(s.amount_cents) + _freqSuffix(s.frequency) + '  \u00b7  ' + s.cadence_label;
+    document.getElementById('sub-detail-count').textContent = s.occurrence_count;
+    document.getElementById('sub-detail-period').textContent =
+        s.first_date_display + ' \u2013 ' + s.last_date_display;
+
+    // Amount range
+    var rangeEl = document.getElementById('sub-detail-amount-range');
+    if (s.min_amount_cents === s.max_amount_cents) {
+        rangeEl.textContent = _fmtDollars(s.amount_cents) + ' (consistent)';
+    } else {
+        rangeEl.textContent = _fmtDollars(s.min_amount_cents) + ' \u2013 ' + _fmtDollars(s.max_amount_cents);
+    }
+
+    // Recent charges
+    var chargesEl = document.getElementById('sub-detail-charges');
+    chargesEl.innerHTML = '';
+    (s.recent_charges || []).forEach(function(c) {
+        var row = document.createElement('div');
+        row.className = 'sub-detail-charge';
+        row.innerHTML = '<span class="sub-detail-charge-date">' +
+            c.date + '</span><span class="sub-detail-charge-amount">' +
+            _fmtDollars(c.amount_cents) + '</span>';
+        chargesEl.appendChild(row);
+    });
+
+    // Footer buttons
+    var footer = document.getElementById('sub-detail-footer');
+    footer.innerHTML =
+        '<form method="post" action="{{ url_for("subscriptions.accept") }}" class="sub-detail-form">' +
+            '<input type="hidden" name="merchant" value="' + s.merchant_canonical + '">' +
+            '<input type="hidden" name="merchant_canonical" value="' + s.merchant_canonical + '">' +
+            '<input type="hidden" name="amount" value="' + (s.amount_cents / 100).toFixed(2) + '">' +
+            '<input type="hidden" name="frequency" value="' + s.frequency + '">' +
+            '<button type="submit" class="btn btn-sm btn-primary">Add to Watchlist</button>' +
+        '</form>' +
+        '<form method="post" action="{{ url_for("subscriptions.dismiss") }}" class="sub-detail-form">' +
+            '<input type="hidden" name="merchant_canonical" value="' + s.merchant_canonical + '">' +
+            '<button type="submit" class="btn btn-sm btn-secondary">Dismiss</button>' +
+        '</form>';
+
+    document.getElementById('sub-detail-scrim').hidden = false;
+}
+
+function subCloseDetail() {
+    document.getElementById('sub-detail-scrim').hidden = true;
+}
+
+document.getElementById('sub-detail-scrim').addEventListener('click', function(e) {
+    if (e.target === this) subCloseDetail();
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var scrim = document.getElementById('sub-detail-scrim');
+        if (scrim && !scrim.hidden) subCloseDetail();
+    }
+});
 </script>
 {% endblock %}

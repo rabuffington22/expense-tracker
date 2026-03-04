@@ -137,14 +137,34 @@ def _detect_subscriptions(conn) -> list[dict]:
         if (today - last_date).days > 2 * median_interval:
             continue
 
-        median_amount = int(statistics.median([abs(a) for a in amounts]))
+        abs_amounts = [abs(a) for a in amounts]
+        median_amount = int(statistics.median(abs_amounts))
+        min_amount = min(abs_amounts)
+        max_amount = max(abs_amounts)
+        first_date = dates[0]
+
+        # Recent charges (last 4, newest first)
+        paired = list(zip(dates, abs_amounts))
+        recent = paired[-4:]
+        recent.reverse()
+        recent_charges = [
+            {"date": d.strftime("%b %-d, %Y"), "amount_cents": a}
+            for d, a in recent
+        ]
+
         suggestions.append({
             "merchant_canonical": merchant,
             "frequency": _CADENCE_TO_FREQUENCY[cadence],
             "cadence_label": cadence,
             "amount_cents": median_amount,
+            "min_amount_cents": min_amount,
+            "max_amount_cents": max_amount,
+            "first_date": first_date.isoformat(),
+            "first_date_display": first_date.strftime("%b %Y"),
             "last_date": last_date.isoformat(),
+            "last_date_display": last_date.strftime("%b %Y"),
             "occurrence_count": len(txns),
+            "recent_charges": recent_charges,
         })
 
     # Sort by amount descending (biggest subscriptions first)
