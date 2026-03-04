@@ -17,7 +17,7 @@
           Description
           {% if params.sort == 'merchant' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:100px;cursor:pointer;" class="text-right" onclick="sortBy('amount')">
+        <th style="width:100px;padding-right:2rem;cursor:pointer;" class="text-right" onclick="sortBy('amount')">
           Amount
           {% if params.sort == 'amount' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>

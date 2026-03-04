@@ -12,7 +12,7 @@
       <span class="badge {% if cov >= 95 %}badge-green{% else %}badge-muted{% endif %}">{{ cov }}%</span>
     {% endif %}
   </td>
-  <td class="text-sm text-right" style="{% if txn.amount_cents and txn.amount_cents > 0 %}color:var(--green);{% endif %}">
+  <td class="text-sm text-right" style="padding-right:2rem;{% if txn.amount_cents and txn.amount_cents > 0 %}color:var(--green);{% endif %}">
     {{ fmt_cents(txn.amount_cents) }}
   </td>
   <td class="text-sm">{{ txn.category or '—' }}</td>
