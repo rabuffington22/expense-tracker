@@ -3833,12 +3833,12 @@ tr.is-selected > td:first-child {
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius);
     padding: 0.45rem 0.75rem;
-    margin-bottom: 1.1rem;
+    margin-bottom: 2.2rem;
     position: relative;
 }
 .sub-detail-box.has-title {
     padding-top: 0.55rem;
-    margin-top: 0.6rem;
+    margin-top: 1.2rem;
 }
 :root[data-theme="light"] .sub-detail-box {
     border-color: rgba(0,0,0,0.08);
