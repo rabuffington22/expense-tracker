@@ -1347,4 +1347,165 @@ def insights_upcoming():
                            compare_insights=compare_insights,
                            left_label=left_label,
                            right_label=right_label,
+                           left_period=left_period,
+                           right_period=right_period,
                            upcoming=upcoming)
+
+
+# ── AI Analysis ──────────────────────────────────────────────────────────────
+
+import time as _time
+
+_ai_cache: dict[tuple, tuple[float, list]] = {}
+_AI_CACHE_TTL = 3600  # 1 hour
+
+
+def _build_spending_summary(conn, left_start, left_end, right_start, right_end,
+                            entity_type):
+    """Build a compact text summary of spending data for AI analysis."""
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+
+    lines = [f"Entity type: {entity_type}"]
+
+    # Period summaries
+    for label, start, end in [("Left period", left_start, left_end),
+                               ("Right period", right_start, right_end)]:
+        spend = conn.execute(
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            (start, end),
+        ).fetchone()[0]
+        income = conn.execute(
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            (start, end),
+        ).fetchone()[0]
+        txn_count = conn.execute(
+            "SELECT COUNT(*) FROM transactions WHERE date >= ? AND date <= ?",
+            (start, end),
+        ).fetchone()[0]
+        net = income - spend
+        lines.append(
+            f"{label} ({start} to {end}): "
+            f"Spent ${spend / 100:,.0f} | Income ${income / 100:,.0f} | "
+            f"Net ${net / 100:,.0f} | {txn_count} transactions"
+        )
+
+    # Category breakdowns
+    for label, start, end in [("Left period", left_start, left_end),
+                               ("Right period", right_start, right_end)]:
+        cat_rows = conn.execute(
+            f"SELECT category, COUNT(*) AS cnt, "
+            f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total "
+            f"FROM transactions "
+            f"WHERE amount_cents < 0 AND date >= ? AND date <= ? "
+            f"  AND category IS NOT NULL AND category != '' {xfer_exclude} "
+            f"GROUP BY category ORDER BY total DESC LIMIT 10",
+            (start, end),
+        ).fetchall()
+        lines.append(f"\n{label} categories:")
+        for r in cat_rows:
+            lines.append(f"  {r['category']}: ${r['total'] / 100:,.0f} ({r['cnt']} txns)")
+
+    # Top merchants
+    for label, start, end in [("Left period", left_start, left_end),
+                               ("Right period", right_start, right_end)]:
+        merch_rows = conn.execute(
+            f"SELECT merchant_canonical, COUNT(*) AS cnt, "
+            f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total "
+            f"FROM transactions "
+            f"WHERE amount_cents < 0 AND date >= ? AND date <= ? "
+            f"  AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+            f"  {xfer_exclude} "
+            f"GROUP BY merchant_canonical ORDER BY total DESC LIMIT 10",
+            (start, end),
+        ).fetchall()
+        lines.append(f"\n{label} top merchants:")
+        for r in merch_rows:
+            lines.append(f"  {r['merchant_canonical']}: ${r['total'] / 100:,.0f} ({r['cnt']} txns)")
+
+    # 3-month spending trend
+    now = datetime.now()
+    lines.append("\n3-month spending trend:")
+    for i in range(2, -1, -1):
+        y = now.year
+        m = now.month - i
+        while m <= 0:
+            m += 12
+            y -= 1
+        import calendar as _cal
+        m_start = f"{y:04d}-{m:02d}-01"
+        m_end = f"{y:04d}-{m:02d}-{_cal.monthrange(y, m)[1]:02d}"
+        m_spend = conn.execute(
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            (m_start, m_end),
+        ).fetchone()[0]
+        lines.append(f"  {_cal.month_abbr[m]} {y}: ${m_spend / 100:,.0f}")
+
+    return "\n".join(lines)
+
+
+@bp.route("/dashboard/ai-analysis", methods=["POST"])
+def ai_analysis():
+    """Generate AI-powered spending analysis (HTMX endpoint)."""
+    from core.ai_client import generate_spending_analysis
+
+    left_period = request.form.get("left_period", "this_month")
+    right_period = request.form.get("right_period", "last_month")
+
+    cache_key = (g.entity_key, left_period, right_period)
+
+    # Check cache
+    now = _time.time()
+    if cache_key in _ai_cache:
+        cached_time, cached_results = _ai_cache[cache_key]
+        if now - cached_time < _AI_CACHE_TTL:
+            return _render_ai_results(cached_results)
+
+    # Purge stale cache entries
+    stale = [k for k, (t, _) in _ai_cache.items() if now - t >= _AI_CACHE_TTL]
+    for k in stale:
+        del _ai_cache[k]
+
+    left_start, left_end = _period_to_dates(left_period)
+    right_start, right_end = _period_to_dates(right_period)
+
+    conn = get_connection(g.entity_key)
+    try:
+        summary = _build_spending_summary(
+            conn, left_start, left_end, right_start, right_end,
+            g.entity_display.lower(),
+        )
+    finally:
+        conn.close()
+
+    results = generate_spending_analysis(summary)
+    if results:
+        # Resolve category drill links
+        conn2 = get_connection(g.entity_key)
+        try:
+            for insight in results:
+                cat = insight.get("category")
+                if cat:
+                    cat_row = conn2.execute(
+                        "SELECT id FROM categories WHERE name = ?", (cat,)
+                    ).fetchone()
+                    if cat_row:
+                        insight["url"] = url_for(
+                            "transactions.index",
+                            category_id=cat_row["id"],
+                            start=left_start, end=left_end,
+                        )
+        finally:
+            conn2.close()
+
+        _ai_cache[cache_key] = (now, results)
+        return _render_ai_results(results)
+
+    return render_template("components/ai_analysis.html", insights=None)
+
+
+def _render_ai_results(results):
+    """Render AI analysis results partial."""
+    return render_template("components/ai_analysis.html", insights=results)

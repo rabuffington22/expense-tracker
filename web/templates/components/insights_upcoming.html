@@ -49,6 +49,15 @@
           <div class="iu-empty-sm">Not enough data to compare yet</div>
         {% endif %}
       </div>
+      <div class="iu-hdiv"></div>
+      <!-- AI Analysis -->
+      <div id="ai-analysis-section">
+        <button type="button" class="iu-ai-btn"
+                hx-post="{{ url_for('dashboard.ai_analysis') }}"
+                hx-vals='{"left_period": "{{ left_period }}", "right_period": "{{ right_period }}"}'
+                hx-target="#ai-analysis-section"
+                hx-swap="innerHTML">AI Analysis</button>
+      </div>
     </div>
   </div>
 

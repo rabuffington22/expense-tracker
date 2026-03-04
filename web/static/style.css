@@ -5421,6 +5421,32 @@ select.input-sm {
     padding: 0.6rem 0.5rem;
     flex: 1;
 }
+/* AI Analysis button */
+.iu-ai-btn {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--blue);
+    background: transparent;
+    border: 1px solid var(--blue);
+    border-radius: 6px;
+    padding: 0.28rem 0.7rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    margin: 0.3rem 0.35rem;
+}
+.iu-ai-btn:hover {
+    background: var(--blue);
+    color: #fff;
+}
+.iu-ai-btn.htmx-request {
+    pointer-events: none;
+    opacity: 0.5;
+    color: var(--text-muted);
+    border-color: var(--text-muted);
+}
+
 /* Responsive: stack at ≤900px */
 @media (max-width: 900px) {
     .iu-row-grid { grid-template-columns: 1fr; }

@@ -1,0 +1,17 @@
+<div class="iu-half-label">AI Analysis</div>
+{% if insights %}
+  {% for ins in insights %}
+  {% if ins.url %}
+  <a class="iu-row" href="{{ ins.url }}">
+    <span class="iu-text">{{ ins.text }}</span>
+    <span class="iu-chevron">&#x203A;</span>
+  </a>
+  {% else %}
+  <div class="iu-row">
+    <span class="iu-text">{{ ins.text }}</span>
+  </div>
+  {% endif %}
+  {% endfor %}
+{% else %}
+  <div class="iu-empty-sm">AI analysis unavailable</div>
+{% endif %}

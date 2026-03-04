@@ -1,4 +1,4 @@
-"""AI client for OpenRouter API — cancellation tips + category suggestions."""
+"""AI client for OpenRouter API — cancellation tips, category suggestions, spending analysis."""
 from __future__ import annotations
 
 import json
@@ -137,5 +137,72 @@ def generate_category_suggestion(
             sub = "General"  # Fall back to General if subcategory invalid
 
         return {"category": cat, "subcategory": sub}
+    except Exception:
+        return None
+
+
+def generate_spending_analysis(spending_summary: str) -> list[dict] | None:
+    """Generate AI-powered spending insights from a text summary.
+
+    Args:
+        spending_summary: Pre-formatted text summary of spending data.
+
+    Returns:
+        List of {"text": str, "category": str|None} dicts, or None if unavailable.
+    """
+    key = _get_api_key()
+    if not key:
+        return None
+
+    prompt = (
+        "You are a personal finance analyst. Analyze this spending data and provide "
+        "3-5 specific, actionable observations. Focus on:\n"
+        "- Unusual spending patterns or outliers\n"
+        "- Categories with significant changes between periods\n"
+        "- Merchants that stand out (frequency or amount)\n"
+        "- Potential savings opportunities\n"
+        "- Income vs spending balance\n\n"
+        "Be specific with dollar amounts and category/merchant names from the data. "
+        "Each insight should be one concise sentence.\n\n"
+        "Return ONLY a JSON array of objects with \"text\" and optional \"category\" fields:\n"
+        '[{"text": "Food spending jumped $340 this month, driven by 12 DoorDash orders", "category": "Food"}]\n\n'
+        f"Spending Data:\n{spending_summary}"
+    )
+
+    try:
+        payload = json.dumps({
+            "model": "anthropic/claude-sonnet-4.6",
+            "max_tokens": 500,
+            "messages": [{"role": "user", "content": prompt}],
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            data = json.loads(resp.read())
+            text = data["choices"][0]["message"]["content"].strip()
+
+        # Parse JSON from response (handle markdown code fences)
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+        result = json.loads(text)
+
+        # Validate: must be a list of dicts with "text" keys
+        if not isinstance(result, list):
+            return None
+        validated = []
+        for item in result[:5]:
+            if isinstance(item, dict) and "text" in item:
+                validated.append({
+                    "text": item["text"],
+                    "category": item.get("category"),
+                })
+        return validated if validated else None
     except Exception:
         return None
