@@ -5306,7 +5306,7 @@ select.input-sm {
 .iu-section {
     display: flex;
     flex-direction: column;
-    padding: 0.2rem 0;
+    padding: 0.1rem 0;
 }
 /* Period label inside each half (e.g. "THIS MONTH", "LAST MONTH") */
 .iu-half-label {
@@ -5316,7 +5316,7 @@ select.input-sm {
     letter-spacing: var(--label-tracking);
     color: var(--text-muted);
     opacity: 0.5;
-    padding: 0.1rem 0.7rem 0.15rem;
+    padding: 0.05rem 0.7rem 0.08rem;
 }
 /* Subtle vertical divider between two top halves */
 .iu-vdiv {
@@ -5332,7 +5332,7 @@ select.input-sm {
 .iu-hdiv {
     height: 1px;
     background: rgba(255,255,255,0.06);
-    margin: 0.15rem 0.4rem;
+    margin: 0.08rem 0.4rem;
     flex-shrink: 0;
 }
 :root[data-theme="light"] .iu-hdiv {
@@ -5350,7 +5350,7 @@ select.input-sm {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.32rem 0.7rem;
+    padding: 0.2rem 0.7rem;
     text-decoration: none;
     color: var(--text);
     border-radius: 8px;
