@@ -17,15 +17,15 @@
           Description
           {% if params.sort == 'merchant' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:100px;padding-right:2rem;cursor:pointer;" class="text-right" onclick="sortBy('amount')">
+        <th style="width:120px;padding-right:2rem;cursor:pointer;" class="text-right" onclick="sortBy('amount')">
           Amount
           {% if params.sort == 'amount' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:130px;cursor:pointer;" onclick="sortBy('category')">
+        <th style="width:155px;cursor:pointer;" onclick="sortBy('category')">
           Category
           {% if params.sort == 'category' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:130px;cursor:pointer;" onclick="sortBy('subcategory')">
+        <th style="width:155px;cursor:pointer;" onclick="sortBy('subcategory')">
           Subcategory
           {% if params.sort == 'subcategory' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
