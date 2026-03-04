@@ -161,8 +161,9 @@ function txnSuggestCategory(txnId) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
         if (data.error) {
-            btn.textContent = origText;
+            btn.textContent = 'No idea';
             btn.disabled = false;
+            setTimeout(function() { btn.textContent = origText; }, 1500);
             return;
         }
         /* Set category dropdown */
@@ -187,8 +188,9 @@ function txnSuggestCategory(txnId) {
         });
     })
     .catch(function() {
-        btn.textContent = origText;
+        btn.textContent = 'Error';
         btn.disabled = false;
+        setTimeout(function() { btn.textContent = origText; }, 1500);
     });
 }
 </script>
