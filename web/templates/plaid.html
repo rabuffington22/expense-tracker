@@ -47,7 +47,7 @@
             <span class="text-sm" style="color: var(--orange); margin-left: 0.8rem;">Never synced</span>
             {% endif %}
         </div>
-        <div class="control-row">
+        <div style="display: flex; align-items: center; gap: 1rem;">
             <form method="post" action="{{ url_for('plaid.sync') }}" style="margin: 0;">
                 <input type="hidden" name="item_id" value="{{ item.item_id }}">
                 <button type="submit" class="btn btn-sm btn-secondary">Sync</button>
@@ -55,7 +55,7 @@
             <form method="post" action="{{ url_for('plaid.disconnect', item_id=item.item_id) }}"
                   style="margin: 0;"
                   onsubmit="return confirm('Disconnect ' + {{ (item.institution_name or item.item_id)|tojson }} + '? Imported transactions will be kept.');">
-                <button type="submit" class="btn btn-sm btn-danger">Disconnect</button>
+                <button type="submit" class="btn btn-sm btn-secondary" style="color: var(--red);">Disconnect</button>
             </form>
         </div>
     </div>
