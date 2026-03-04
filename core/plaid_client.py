@@ -22,7 +22,6 @@ def _get_env():
     env = os.environ.get("PLAID_ENV", "sandbox").lower()
     return {
         "sandbox": plaid.Environment.Sandbox,
-        "development": plaid.Environment.Development,
         "production": plaid.Environment.Production,
     }.get(env, plaid.Environment.Sandbox)
 
