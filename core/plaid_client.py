@@ -22,6 +22,7 @@ def _get_env():
     env = os.environ.get("PLAID_ENV", "sandbox").lower()
     return {
         "sandbox": plaid.Environment.Sandbox,
+        "development": plaid.Environment.Development,
         "production": plaid.Environment.Production,
     }.get(env, plaid.Environment.Sandbox)
 
@@ -48,6 +49,7 @@ def create_link_token(user_id: str = "expense-tracker-user") -> str:
         user=LinkTokenCreateRequestUser(client_user_id=user_id),
         client_name="Ledger Oak",
         products=[Products("transactions")],
+        optional_products=[Products("liabilities")],
         country_codes=[CountryCode("US")],
         language="en",
     )
