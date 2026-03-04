@@ -4019,10 +4019,128 @@ tr.is-selected > td:first-child {
     margin-top: 0.25rem;
 }
 
+/* ── Payment method row ── */
+.sub-detail-payment {
+    margin-bottom: 0.5rem;
+}
+
+/* ── Account info section ── */
+.sub-detail-acctinfo-section {
+    margin-top: 1rem;
+}
+.sub-detail-acctinfo-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+.sub-acctinfo-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: var(--ui-font-sm);
+}
+:root[data-theme="light"] .sub-acctinfo-field {
+    border-bottom-color: rgba(0,0,0,0.04);
+}
+.sub-acctinfo-field:last-child {
+    border-bottom: none;
+}
+.sub-acctinfo-field-type {
+    color: var(--text-muted);
+    min-width: 72px;
+    flex-shrink: 0;
+    font-size: var(--ui-font-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.sub-acctinfo-field-value {
+    flex: 1;
+    color: var(--text);
+    word-break: break-all;
+}
+.sub-acctinfo-delete-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0 0.25rem;
+    opacity: 0.4;
+    transition: opacity var(--transition);
+}
+.sub-acctinfo-delete-btn:hover {
+    opacity: 1;
+    color: var(--red);
+}
+.sub-acctinfo-add-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+}
+.sub-acctinfo-add-row .sub-acctinfo-type {
+    width: auto;
+    min-width: 90px;
+    font-size: var(--ui-font-xs);
+    padding: 0.25rem 0.3rem;
+}
+.sub-acctinfo-add-row .sub-acctinfo-value {
+    flex: 1;
+    font-size: var(--ui-font-xs);
+    padding: 0.25rem 0.35rem;
+}
+.sub-acctinfo-add-btn {
+    background: none;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background var(--transition);
+}
+.sub-acctinfo-add-btn:hover {
+    background: rgba(10,132,255,0.1);
+}
+.sub-acctinfo-add-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+/* ── Phone a Friend button ── */
+.sub-phone-btn {
+    background: none;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: var(--ui-font-xs);
+    cursor: pointer;
+    transition: background var(--transition);
+    white-space: nowrap;
+}
+.sub-phone-btn:hover {
+    background: rgba(10,132,255,0.1);
+}
+.sub-phone-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
 @media (max-width: 480px) {
     .sub-add-row { flex-wrap: wrap; }
     .sub-edit-row { flex-wrap: wrap; }
     .sub-detail-edit-row { flex-wrap: wrap; }
+    .sub-acctinfo-add-row { flex-wrap: wrap; }
+    .sub-detail-edit-actions { flex-wrap: wrap; gap: 0.35rem; }
 }
 
 /* ── Todo Queue Detail Modal ─────────────────── */

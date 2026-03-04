@@ -171,6 +171,36 @@
                 <div class="sub-detail-charges" id="sub-detail-charges"></div>
             </div>
 
+            {# ── Payment method (watchlist only) ── #}
+            <div class="sub-detail-stat sub-detail-payment" id="sub-detail-payment-row" hidden>
+                <span class="sub-detail-stat-label">Charges to</span>
+                <span class="sub-detail-stat-value" id="sub-detail-payment"></span>
+            </div>
+
+            {# ── Account info section (watchlist only) ── #}
+            <div class="sub-detail-acctinfo-section" id="sub-detail-acctinfo-section" hidden>
+                <div class="sub-detail-charges-label">Account Info</div>
+                <div class="sub-detail-acctinfo-fields" id="sub-detail-acctinfo-fields"></div>
+                <div class="sub-acctinfo-add-row" id="sub-acctinfo-add-row">
+                    <select class="sub-select sub-acctinfo-type" id="sub-acctinfo-type">
+                        <option value="Email">Email</option>
+                        <option value="Username">Username</option>
+                        <option value="Password">Password</option>
+                        <option value="Account #">Account #</option>
+                        <option value="Phone">Phone</option>
+                        <option value="PIN">PIN</option>
+                        <option value="Website">Website</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="text" class="sub-input sub-acctinfo-value"
+                           id="sub-acctinfo-value" placeholder="Enter value"
+                           onkeydown="if(event.key==='Enter'){event.preventDefault();subAddAccountInfo();}">
+                    <button type="button" class="sub-acctinfo-add-btn"
+                            id="sub-acctinfo-add-btn" onclick="subAddAccountInfo()"
+                            title="Add field">+</button>
+                </div>
+            </div>
+
             {# ── Tips section (watchlist only) ── #}
             <div class="sub-detail-tips-section" id="sub-detail-tips-section" hidden>
                 <div class="sub-detail-charges-label">How to Cancel</div>
@@ -207,6 +237,9 @@
                 </div>
                 <div class="sub-detail-edit-actions">
                     <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                    <button type="button" class="sub-phone-btn" id="sub-phone-btn"
+                            onclick="subPhoneAFriend()" title="Copy all info to clipboard">
+                        &#x1F4CB; Phone a Friend</button>
                     <button type="button" class="sub-delete-btn" id="sub-detail-delete-btn">
                         Remove from list</button>
                 </div>
@@ -333,6 +366,8 @@ function subOpenWatchlistDetail(subId) {
     document.getElementById('sub-detail-charges').innerHTML = '';
     document.getElementById('sub-detail-tips-section').hidden = true;
     document.getElementById('sub-detail-timeline-section').hidden = true;
+    document.getElementById('sub-detail-payment-row').hidden = true;
+    document.getElementById('sub-detail-acctinfo-section').hidden = true;
     document.getElementById('sub-detail-footer').hidden = true;
     document.getElementById('sub-detail-edit-footer').hidden = true;
     document.getElementById('sub-detail-scrim').hidden = false;
@@ -360,11 +395,34 @@ function subOpenWatchlistDetail(subId) {
                     '<div class="sub-detail-empty">No matching transactions found</div>';
             }
 
+            // Payment method
+            var paymentRow = document.getElementById('sub-detail-payment-row');
+            if (data.payment_method) {
+                document.getElementById('sub-detail-payment').textContent = data.payment_method;
+                paymentRow.hidden = false;
+            } else {
+                paymentRow.hidden = true;
+            }
+
+            // Account info
+            _currentSubId = data.id;
+            var acctSection = document.getElementById('sub-detail-acctinfo-section');
+            var fieldsEl = document.getElementById('sub-detail-acctinfo-fields');
+            fieldsEl.innerHTML = '';
+            if (data.account_info && data.account_info.length > 0) {
+                data.account_info.forEach(function(field) {
+                    _renderAccountInfoField(fieldsEl, field);
+                });
+            }
+            acctSection.hidden = false;
+            // Reset add row
+            document.getElementById('sub-acctinfo-value').value = '';
+            document.getElementById('sub-acctinfo-type').selectedIndex = 0;
+
             // Cancellation tips
             var tipsSection = document.getElementById('sub-detail-tips-section');
             var tipsEl = document.getElementById('sub-detail-tips');
             var tipsFetchBtn = document.getElementById('sub-tips-fetch-btn');
-            _currentSubId = data.id;
             if (data.cancellation_tips) {
                 tipsEl.textContent = data.cancellation_tips;
                 tipsFetchBtn.hidden = true;
@@ -451,6 +509,102 @@ function subFetchTips() {
         })
         .catch(function() {
             btn.textContent = 'Tips unavailable';
+        });
+}
+
+/* ── Account info field management ── */
+function _renderAccountInfoField(container, field) {
+    var row = document.createElement('div');
+    row.className = 'sub-acctinfo-field';
+    row.dataset.fieldId = field.id;
+    row.innerHTML =
+        '<span class="sub-acctinfo-field-type">' + _escapeHtml(field.field_type) + '</span>' +
+        '<span class="sub-acctinfo-field-value">' + _escapeHtml(field.field_value) + '</span>' +
+        '<button type="button" class="sub-acctinfo-delete-btn" title="Remove">&times;</button>';
+    row.querySelector('.sub-acctinfo-delete-btn').addEventListener('click', function() {
+        subDeleteAccountInfo(field.id, row);
+    });
+    container.appendChild(row);
+}
+
+function subAddAccountInfo() {
+    if (!_currentSubId) return;
+    var typeEl = document.getElementById('sub-acctinfo-type');
+    var valueEl = document.getElementById('sub-acctinfo-value');
+    var fieldType = typeEl.value;
+    var fieldValue = valueEl.value.trim();
+    if (!fieldValue) { valueEl.focus(); return; }
+
+    var btn = document.getElementById('sub-acctinfo-add-btn');
+    btn.disabled = true;
+
+    fetch('/subscriptions/account-info/add/' + _currentSubId, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({field_type: fieldType, field_value: fieldValue})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        btn.disabled = false;
+        if (data.error) return;
+        var container = document.getElementById('sub-detail-acctinfo-fields');
+        _renderAccountInfoField(container, data);
+        valueEl.value = '';
+        valueEl.focus();
+    })
+    .catch(function() { btn.disabled = false; });
+}
+
+function subDeleteAccountInfo(fieldId, rowEl) {
+    fetch('/subscriptions/account-info/delete/' + fieldId, {method: 'POST'})
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) rowEl.remove();
+        });
+}
+
+/* ── Phone a Friend (copy to clipboard) ── */
+function subPhoneAFriend() {
+    if (!_currentSubId) return;
+    var btn = document.getElementById('sub-phone-btn');
+    var origText = btn.innerHTML;
+    btn.textContent = 'Building\u2026';
+    btn.disabled = true;
+
+    fetch('/subscriptions/share-text/' + _currentSubId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.text) {
+                navigator.clipboard.writeText(data.text).then(function() {
+                    btn.textContent = '\u2705 Copied!';
+                    setTimeout(function() {
+                        btn.innerHTML = origText;
+                        btn.disabled = false;
+                    }, 2000);
+                }).catch(function() {
+                    // Fallback for older browsers
+                    var ta = document.createElement('textarea');
+                    ta.value = data.text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    btn.textContent = '\u2705 Copied!';
+                    setTimeout(function() {
+                        btn.innerHTML = origText;
+                        btn.disabled = false;
+                    }, 2000);
+                });
+            } else {
+                btn.innerHTML = origText;
+                btn.disabled = false;
+            }
+        })
+        .catch(function() {
+            btn.innerHTML = origText;
+            btn.disabled = false;
         });
 }
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import statistics
+from collections import Counter
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -11,6 +12,11 @@ from flask import Blueprint, g, jsonify, redirect, render_template, request, url
 from core.db import get_connection
 
 bp = Blueprint("subscriptions", __name__, url_prefix="/subscriptions")
+
+_ACCOUNT_INFO_FIELD_TYPES = [
+    "Email", "Username", "Password", "Account #",
+    "Phone", "PIN", "Website", "Other",
+]
 
 
 # ── Cadence detection ─────────────────────────────────────────────────────────
@@ -310,6 +316,42 @@ def _generate_and_store_tips(conn, sub_id: int, merchant: str):
         pass  # Graceful degradation — no tips is fine
 
 
+# ── Payment method detection ─────────────────────────────────────────────────
+
+def _get_payment_method(conn, merchant: str) -> str | None:
+    """Detect which account/card a subscription charges to."""
+    cutoff = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+    rows = conn.execute(
+        "SELECT account FROM transactions "
+        "WHERE merchant_canonical = ? AND amount_cents < 0 "
+        "  AND date >= ? AND account IS NOT NULL AND account != '' "
+        "ORDER BY date DESC LIMIT 10",
+        (merchant, cutoff),
+    ).fetchall()
+    if not rows:
+        return None
+    # Most common account in recent charges
+    accounts = [r["account"] for r in rows]
+    counter = Counter(accounts)
+    return counter.most_common(1)[0][0]
+
+
+# ── Account info helpers ────────────────────────────────────────────────────
+
+def _get_account_info(conn, sub_id: int) -> list[dict]:
+    """Get account info fields for a subscription."""
+    try:
+        rows = conn.execute(
+            "SELECT id, field_type, field_value, sort_order "
+            "FROM subscription_account_info "
+            "WHERE subscription_id = ? ORDER BY sort_order, id",
+            (sub_id,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+    except Exception:
+        return []
+
+
 # ── Watchlist helpers ─────────────────────────────────────────────────────────
 
 def _get_watchlist(conn) -> list[dict]:
@@ -382,6 +424,8 @@ def detail(sub_id):
         sub = dict(row)
         charges = _get_merchant_charges(conn, sub["merchant"])
         timeline = _get_timeline(conn, sub_id)
+        account_info = _get_account_info(conn, sub_id)
+        payment_method = _get_payment_method(conn, sub["merchant"])
 
         # Build cadence label from frequency
         cadence_label = _FREQUENCY_TO_CADENCE.get(sub["frequency"])
@@ -397,6 +441,8 @@ def detail(sub_id):
             "cancellation_tips": sub["cancellation_tips"],
             "charges": charges,
             "timeline": timeline,
+            "account_info": account_info,
+            "payment_method": payment_method,
         })
     finally:
         conn.close()
@@ -590,3 +636,134 @@ def delete(sub_id):
     finally:
         conn.close()
     return redirect(url_for("subscriptions.index"))
+
+
+# ── Account info CRUD ───────────────────────────────────────────────────────
+
+@bp.route("/account-info/add/<int:sub_id>", methods=["POST"])
+def add_account_info(sub_id):
+    """Add an account info field to a subscription."""
+    data = request.get_json(silent=True) or {}
+    field_type = (data.get("field_type") or "").strip()
+    field_value = (data.get("field_value") or "").strip()
+
+    if not field_type or not field_value:
+        return jsonify({"error": "field_type and field_value required"}), 400
+
+    if field_type not in _ACCOUNT_INFO_FIELD_TYPES:
+        field_type = "Other"
+
+    conn = get_connection(g.entity_key)
+    try:
+        # Get next sort order
+        row = conn.execute(
+            "SELECT COALESCE(MAX(sort_order), -1) + 1 AS next_order "
+            "FROM subscription_account_info WHERE subscription_id = ?",
+            (sub_id,),
+        ).fetchone()
+        sort_order = row["next_order"] if row else 0
+
+        cursor = conn.execute(
+            "INSERT INTO subscription_account_info "
+            "(subscription_id, field_type, field_value, sort_order) "
+            "VALUES (?, ?, ?, ?)",
+            (sub_id, field_type, field_value, sort_order),
+        )
+        field_id = cursor.lastrowid
+        conn.commit()
+        return jsonify({
+            "id": field_id,
+            "field_type": field_type,
+            "field_value": field_value,
+            "sort_order": sort_order,
+        })
+    finally:
+        conn.close()
+
+
+@bp.route("/account-info/delete/<int:field_id>", methods=["POST"])
+def delete_account_info(field_id):
+    """Delete an account info field."""
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "DELETE FROM subscription_account_info WHERE id = ?",
+            (field_id,),
+        )
+        conn.commit()
+        return jsonify({"ok": True})
+    finally:
+        conn.close()
+
+
+@bp.route("/share-text/<int:sub_id>")
+def share_text(sub_id):
+    """Build a shareable text block with all subscription info."""
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT id, merchant, amount_cents, frequency, status, notes, "
+            "       cancellation_tips "
+            "FROM subscription_watchlist WHERE id = ?",
+            (sub_id,),
+        ).fetchone()
+        if not row:
+            return jsonify({"error": "not found"}), 404
+
+        sub = dict(row)
+        lines = []
+
+        # Header
+        lines.append(sub["merchant"].upper())
+        lines.append("=" * len(sub["merchant"]))
+
+        # Amount + frequency
+        if sub["amount_cents"]:
+            freq_labels = {
+                "weekly": "/wk", "biweekly": "/2wk", "monthly": "/mo",
+                "quarterly": "/qtr", "annual": "/yr",
+            }
+            amt = f"${sub['amount_cents'] / 100:,.2f}".rstrip("0").rstrip(".")
+            lines.append(f"Amount: {amt}{freq_labels.get(sub['frequency'], '')}")
+
+        # Payment method
+        payment = _get_payment_method(conn, sub["merchant"])
+        if payment:
+            lines.append(f"Charges to: {payment}")
+
+        # Status
+        lines.append(f"Status: {sub['status'].title()}")
+        lines.append("")
+
+        # Account info
+        account_info = _get_account_info(conn, sub_id)
+        if account_info:
+            lines.append("ACCOUNT INFO")
+            for field in account_info:
+                lines.append(f"  {field['field_type']}: {field['field_value']}")
+            lines.append("")
+
+        # Cancellation tips
+        if sub["cancellation_tips"]:
+            lines.append("HOW TO CANCEL")
+            lines.append(sub["cancellation_tips"])
+            lines.append("")
+
+        # Notes
+        if sub["notes"]:
+            lines.append("NOTES")
+            lines.append(sub["notes"])
+            lines.append("")
+
+        # Recent charges
+        charges = _get_merchant_charges(conn, sub["merchant"])
+        if charges and charges.get("recent_charges"):
+            lines.append("RECENT CHARGES")
+            for c in charges["recent_charges"]:
+                amt = f"${c['amount_cents'] / 100:,.2f}".rstrip("0").rstrip(".")
+                lines.append(f"  {c['date']}  {amt}")
+            lines.append("")
+
+        return jsonify({"text": "\n".join(lines).strip()})
+    finally:
+        conn.close()
