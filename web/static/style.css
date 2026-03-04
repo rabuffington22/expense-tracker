@@ -2063,6 +2063,7 @@ td {
     border-bottom: 0.5px solid var(--border);
     vertical-align: top;
 }
+tbody tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--hover-bg-subtle); }
 
 /* ── Metrics ────────────────────────────────────────────────────────────── */
