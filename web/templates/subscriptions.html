@@ -138,6 +138,28 @@
     </div>
 </div>
 
+{# ── Dismissed suggestions ────────────────────────────────────── #}
+{% if dismissed %}
+<div class="sub-dismissed-section">
+    <button type="button" class="sub-dismissed-trigger" id="sub-dismissed-trigger"
+            onclick="subToggleDismissed()">
+        Show {{ dismissed|length }} dismissed
+        <span class="sub-dismissed-chevron" id="sub-dismissed-chevron">&#x203A;</span>
+    </button>
+    <div class="sub-dismissed-list" id="sub-dismissed-list" hidden>
+        {% for merchant in dismissed %}
+        <div class="sub-dismissed-row">
+            <span class="sub-dismissed-name">{{ merchant }}</span>
+            <form method="post" action="{{ url_for('subscriptions.undismiss') }}" class="sub-dismissed-form">
+                <input type="hidden" name="merchant_canonical" value="{{ merchant }}">
+                <button type="submit" class="sub-dismissed-undo" title="Restore">Undo</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 </div>{# .sub-page #}
 
 {# ── Detail Modal (shared by suggestions + watchlist) ──────────── #}
@@ -623,6 +645,18 @@ function subHideAdd() {
     document.getElementById('sub-add-trigger').hidden = false;
     document.getElementById('sub-add-panel').hidden = true;
     document.querySelector('#sub-add-panel form').reset();
+}
+
+function subToggleDismissed() {
+    var list = document.getElementById('sub-dismissed-list');
+    var chevron = document.getElementById('sub-dismissed-chevron');
+    if (list.hidden) {
+        list.hidden = false;
+        chevron.style.transform = 'rotate(90deg)';
+    } else {
+        list.hidden = true;
+        chevron.style.transform = '';
+    }
 }
 
 /* ── Modal close handlers ── */

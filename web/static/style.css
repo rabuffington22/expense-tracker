@@ -4135,6 +4135,71 @@ tr.is-selected > td:first-child {
     cursor: default;
 }
 
+/* ── Dismissed section ── */
+.sub-dismissed-section {
+    margin-top: 0.75rem;
+}
+.sub-dismissed-trigger {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0;
+    opacity: 0.7;
+    transition: opacity var(--transition);
+}
+.sub-dismissed-trigger:hover {
+    opacity: 1;
+}
+.sub-dismissed-chevron {
+    display: inline-block;
+    transition: transform var(--transition);
+    font-size: 0.85rem;
+}
+.sub-dismissed-list {
+    margin-top: 0.35rem;
+}
+.sub-dismissed-list[hidden] {
+    display: none;
+}
+.sub-dismissed-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: var(--ui-font-sm);
+}
+:root[data-theme="light"] .sub-dismissed-row {
+    border-bottom-color: rgba(0,0,0,0.04);
+}
+.sub-dismissed-row:last-child {
+    border-bottom: none;
+}
+.sub-dismissed-name {
+    color: var(--text-muted);
+}
+.sub-dismissed-form {
+    display: inline;
+}
+.sub-dismissed-undo {
+    background: none;
+    border: none;
+    color: var(--blue);
+    font-size: var(--ui-font-xs);
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: background var(--transition);
+}
+.sub-dismissed-undo:hover {
+    background: rgba(10,132,255,0.1);
+}
+
 @media (max-width: 480px) {
     .sub-add-row { flex-wrap: wrap; }
     .sub-edit-row { flex-wrap: wrap; }

@@ -398,10 +398,24 @@ def index():
     try:
         watchlist = _get_watchlist(conn)
         suggestions = _detect_subscriptions(conn)
+
+        # Get dismissed merchants
+        try:
+            dismissed = [
+                r["merchant_canonical"]
+                for r in conn.execute(
+                    "SELECT merchant_canonical FROM subscription_dismissals "
+                    "ORDER BY dismissed_at DESC"
+                ).fetchall()
+            ]
+        except Exception:
+            dismissed = []
+
         return render_template(
             "subscriptions.html",
             watchlist=watchlist,
             suggestions=suggestions,
+            dismissed=dismissed,
         )
     finally:
         conn.close()
@@ -547,6 +561,25 @@ def dismiss():
         conn.execute(
             "INSERT OR IGNORE INTO subscription_dismissals "
             "(merchant_canonical) VALUES (?)",
+            (merchant,),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("subscriptions.index"))
+
+
+@bp.route("/undismiss", methods=["POST"])
+def undismiss():
+    """Restore a previously dismissed suggestion."""
+    merchant = (request.form.get("merchant_canonical") or "").strip()
+    if not merchant:
+        return redirect(url_for("subscriptions.index"))
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "DELETE FROM subscription_dismissals "
+            "WHERE merchant_canonical = ?",
             (merchant,),
         )
         conn.commit()
