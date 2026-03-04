@@ -1,28 +1,22 @@
-"""AI client for generating cancellation tips via Anthropic API."""
+"""AI client for generating cancellation tips via OpenRouter API."""
 from __future__ import annotations
 
+import json
 import os
+import urllib.request
 
-_client = None
+_api_key = None
 _checked = False
 
 
-def _get_client():
-    """Return an Anthropic client, or None if API key is not configured."""
-    global _client, _checked
+def _get_api_key():
+    """Return the OpenRouter API key, or None if not configured."""
+    global _api_key, _checked
     if _checked:
-        return _client
+        return _api_key
     _checked = True
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        return None
-    try:
-        import anthropic
-
-        _client = anthropic.Anthropic(api_key=api_key)
-    except Exception:
-        _client = None
-    return _client
+    _api_key = os.environ.get("OPENROUTER_API_KEY")
+    return _api_key
 
 
 def generate_cancellation_tips(merchant_name: str) -> str | None:
@@ -30,15 +24,15 @@ def generate_cancellation_tips(merchant_name: str) -> str | None:
 
     Returns plain text with numbered steps, or None if unavailable.
     """
-    client = _get_client()
-    if client is None:
+    key = _get_api_key()
+    if not key:
         return None
 
     try:
-        message = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=300,
-            messages=[
+        payload = json.dumps({
+            "model": "anthropic/claude-haiku-4-5-20251001",
+            "max_tokens": 300,
+            "messages": [
                 {
                     "role": "user",
                     "content": (
@@ -48,7 +42,18 @@ def generate_cancellation_tips(merchant_name: str) -> str | None:
                     ),
                 }
             ],
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+            },
         )
-        return message.content[0].text.strip()
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read())
+            return data["choices"][0]["message"]["content"].strip()
     except Exception:
         return None
