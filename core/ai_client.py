@@ -30,7 +30,7 @@ def generate_cancellation_tips(merchant_name: str) -> str | None:
 
     try:
         payload = json.dumps({
-            "model": "anthropic/claude-haiku-4-5-20251001",
+            "model": "anthropic/claude-sonnet-4.6",
             "max_tokens": 300,
             "messages": [
                 {
