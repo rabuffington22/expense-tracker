@@ -18,6 +18,17 @@ _ACCOUNT_INFO_FIELD_TYPES = [
     "Phone", "PIN", "Website", "Other",
 ]
 
+# Merchants matching these patterns (case-insensitive) are never subscriptions
+_EXCLUDE_MERCHANTS = [
+    "interest",
+    "fee",
+    "late charge",
+    "finance charge",
+    "minimum charge",
+    "annual fee",
+    "foreign transaction",
+]
+
 
 # ── Cadence detection ─────────────────────────────────────────────────────────
 
@@ -116,6 +127,10 @@ def _detect_subscriptions(conn) -> list[dict]:
         if merchant.lower() in watchlist_merchants:
             continue
         if merchant in dismissed:
+            continue
+        # Skip interest charges, fees, etc.
+        merchant_lower = merchant.lower()
+        if any(pat in merchant_lower for pat in _EXCLUDE_MERCHANTS):
             continue
         if len(txns) < 2:
             continue
