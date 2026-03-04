@@ -91,12 +91,14 @@ def _sync_plaid_accounts(conn, entity_key: str):
             if acct["type"] == "investment":
                 continue
 
-            # Skip disabled accounts
+            # Skip accounts not in plaid_accounts or disabled — if the row was
+            # deleted (e.g. Quicksilver removed from BFM), treat it as disabled
+            # so it doesn't get re-created on every sync.
             pa_row = conn.execute(
                 "SELECT enabled, display_name FROM plaid_accounts WHERE account_id=?",
                 (acct["account_id"],),
             ).fetchone()
-            if pa_row and not pa_row["enabled"]:
+            if not pa_row or not pa_row["enabled"]:
                 continue
 
             synced_plaid_ids.add(acct["account_id"])
