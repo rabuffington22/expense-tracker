@@ -173,34 +173,39 @@
             <div class="sub-detail-title" id="sub-detail-title"></div>
             <div class="sub-detail-meta" id="sub-detail-meta"></div>
 
-            <div class="sub-detail-stats">
-                <div class="sub-detail-stat">
-                    <span class="sub-detail-stat-label">Charges detected</span>
-                    <span class="sub-detail-stat-value" id="sub-detail-count"></span>
-                </div>
-                <div class="sub-detail-stat">
-                    <span class="sub-detail-stat-label">Period</span>
-                    <span class="sub-detail-stat-value" id="sub-detail-period"></span>
-                </div>
-                <div class="sub-detail-stat">
-                    <span class="sub-detail-stat-label">Amount</span>
-                    <span class="sub-detail-stat-value" id="sub-detail-amount-range"></span>
+            {# ── Stats box ── #}
+            <div class="sub-detail-box">
+                <div class="sub-detail-stats">
+                    <div class="sub-detail-stat">
+                        <span class="sub-detail-stat-label">Charges detected</span>
+                        <span class="sub-detail-stat-value" id="sub-detail-count"></span>
+                    </div>
+                    <div class="sub-detail-stat">
+                        <span class="sub-detail-stat-label">Period</span>
+                        <span class="sub-detail-stat-value" id="sub-detail-period"></span>
+                    </div>
+                    <div class="sub-detail-stat">
+                        <span class="sub-detail-stat-label">Amount</span>
+                        <span class="sub-detail-stat-value" id="sub-detail-amount-range"></span>
+                    </div>
+                    {# Payment method row — shown inline with stats when available #}
+                    <div class="sub-detail-stat" id="sub-detail-payment-row" hidden>
+                        <span class="sub-detail-stat-label">Charges to</span>
+                        <span class="sub-detail-stat-value" id="sub-detail-payment"></span>
+                    </div>
                 </div>
             </div>
 
-            <div class="sub-detail-charges-section">
-                <div class="sub-detail-charges-label">Recent Charges</div>
-                <div class="sub-detail-charges" id="sub-detail-charges"></div>
+            {# ── Recent charges box ── #}
+            <div class="sub-detail-box">
+                <div class="sub-detail-charges-section">
+                    <div class="sub-detail-charges-label">Recent Charges</div>
+                    <div class="sub-detail-charges" id="sub-detail-charges"></div>
+                </div>
             </div>
 
-            {# ── Payment method (watchlist only) ── #}
-            <div class="sub-detail-stat sub-detail-payment" id="sub-detail-payment-row" hidden>
-                <span class="sub-detail-stat-label">Charges to</span>
-                <span class="sub-detail-stat-value" id="sub-detail-payment"></span>
-            </div>
-
-            {# ── Account info section (watchlist only) ── #}
-            <div class="sub-detail-acctinfo-section" id="sub-detail-acctinfo-section" hidden>
+            {# ── Account info box (watchlist only) ── #}
+            <div class="sub-detail-box" id="sub-detail-acctinfo-section" hidden>
                 <div class="sub-detail-charges-label">Account Info</div>
                 <div class="sub-detail-acctinfo-fields" id="sub-detail-acctinfo-fields"></div>
                 <div class="sub-acctinfo-add-row" id="sub-acctinfo-add-row">
@@ -223,16 +228,16 @@
                 </div>
             </div>
 
-            {# ── Tips section (watchlist only) ── #}
-            <div class="sub-detail-tips-section" id="sub-detail-tips-section" hidden>
+            {# ── Tips box (watchlist only) ── #}
+            <div class="sub-detail-box" id="sub-detail-tips-section" hidden>
                 <div class="sub-detail-charges-label">How to Cancel</div>
                 <div class="sub-detail-tips" id="sub-detail-tips"></div>
                 <button type="button" class="sub-tips-fetch-btn" id="sub-tips-fetch-btn"
                         hidden onclick="subFetchTips()">Get cancellation tips</button>
             </div>
 
-            {# ── Timeline section (watchlist only) ── #}
-            <div class="sub-detail-timeline-section" id="sub-detail-timeline-section" hidden>
+            {# ── Timeline box (watchlist only) ── #}
+            <div class="sub-detail-box" id="sub-detail-timeline-section" hidden>
                 <div class="sub-detail-charges-label">Timeline</div>
                 <div class="sub-detail-timeline" id="sub-detail-timeline"></div>
             </div>

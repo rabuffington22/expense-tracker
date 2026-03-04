@@ -3825,20 +3825,40 @@ tr.is-selected > td:first-child {
 .sub-detail-meta {
     font-size: var(--ui-font-sm);
     color: var(--text-muted);
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
 }
+
+/* ── Detail box (outline panel for each section) ── */
+.sub-detail-box {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius);
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.65rem;
+}
+:root[data-theme="light"] .sub-detail-box {
+    border-color: rgba(0,0,0,0.08);
+}
+.sub-detail-box[hidden] {
+    display: none !important;
+}
+
 .sub-detail-stats {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
-    margin-bottom: 1.4rem;
+    gap: 0;
 }
 .sub-detail-stat {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 0.4rem 0;
+    padding: 0.35rem 0;
     border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sub-detail-stat:last-child {
+    border-bottom: none;
+}
+.sub-detail-stat[hidden] {
+    display: none !important;
 }
 :root[data-theme="light"] .sub-detail-stat {
     border-bottom-color: rgba(0,0,0,0.06);
@@ -3852,7 +3872,7 @@ tr.is-selected > td:first-child {
     font-weight: 600;
 }
 .sub-detail-charges-section {
-    margin-bottom: 0.5rem;
+    /* No extra margin — box handles spacing */
 }
 .sub-detail-charges-label {
     font-size: var(--ui-font-xs);
@@ -3860,7 +3880,7 @@ tr.is-selected > td:first-child {
     letter-spacing: var(--label-tracking);
     color: var(--text-muted);
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
 .sub-detail-charges {
     display: flex;
@@ -3917,15 +3937,12 @@ tr.is-selected > td:first-child {
 }
 
 /* ── Tips section ── */
-.sub-detail-tips-section {
-    margin-top: 1rem;
-}
 .sub-detail-tips {
     font-size: var(--ui-font-sm);
     color: var(--text-secondary);
     line-height: 1.6;
     white-space: pre-wrap;
-    padding: 0.5rem 0;
+    padding: 0.25rem 0 0;
 }
 
 .sub-tips-fetch-btn {
@@ -3951,14 +3968,11 @@ tr.is-selected > td:first-child {
 }
 
 /* ── Timeline section ── */
-.sub-detail-timeline-section {
-    margin-top: 1rem;
-}
 .sub-detail-timeline {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    padding: 0.4rem 0;
+    padding: 0.25rem 0 0;
 }
 .sub-detail-timeline-entry {
     display: flex;
@@ -4019,15 +4033,7 @@ tr.is-selected > td:first-child {
     margin-top: 0.25rem;
 }
 
-/* ── Payment method row ── */
-.sub-detail-payment {
-    margin-bottom: 0.5rem;
-}
-
 /* ── Account info section ── */
-.sub-detail-acctinfo-section {
-    margin-top: 1rem;
-}
 .sub-detail-acctinfo-fields {
     display: flex;
     flex-direction: column;
