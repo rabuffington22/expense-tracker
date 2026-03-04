@@ -61,44 +61,68 @@ fly ssh console -a ledger-oak-demo -C 'python3 /app/scripts/seed_demo_data.py'
 web/                               # Flask app (replaced old app/ Streamlit code)
   __init__.py                      # Flask app factory, entity cookie, before_request hook
   routes/                          # Route blueprints (one per page)
-    dashboard.py                   # GET /
-    upload.py                      # GET/POST /upload  (bank statement import)
+    dashboard.py                   # GET / (KPI panels, categories, insights, AI analysis)
+    transactions.py                # GET/POST /transactions (filterable list, inline edit, AI suggest)
+    todo.py                        # GET/POST /todo (review queues, statement reminders)
+    subscriptions.py               # GET/POST /subscriptions (watchlist, tracking, AI tips)
+    cashflow.py                    # GET /cashflow (account balances, upcoming bills)
+    planning.py                    # GET/POST /planning (net worth projections)
+    reports.py                     # GET /reports (monthly detail + spending trend)
+    plaid.py                       # GET/POST /plaid (connect, sync, disconnect)
+    saved_views.py                 # POST /saved-views (CRUD for filter presets)
+    upload.py                      # GET/POST /upload (bank statement import)
     vendors.py                     # GET/POST /vendors (Amazon CSV, Henry Schein XLSX)
-    match.py                       # GET/POST /match   (link orders to bank txns)
+    match.py                       # GET/POST /match (link orders to bank txns)
     categorize_vendors.py          # GET/POST /categorize-vendors (label vendor orders)
     categorize.py                  # GET/POST /categorize (remaining txns + settings)
-    reports.py                     # GET /reports (monthly detail + spending trend)
-    cashflow.py                    # GET /cashflow (account balances, upcoming bills)
   templates/
-    base.html                      # Layout: sidebar + main content, mobile header/hamburger, skip-link, scrim overlay
+    base.html                      # Layout: sidebar + main content, mobile header/hamburger
     components/
-      sidebar.html                 # Entity toggle + numbered nav steps (ARIA nav landmark)
-      card.html                    # Vendor order card (HTMX swap target)
+      sidebar.html                 # Entity toggle + primary nav (ARIA nav landmark)
+      dashboard_body.html          # Dashboard main content (HTMX swap target)
+      kpi_panel.html               # KPI compare panel (left/right)
+      categories_compare.html      # Categories comparison bar chart
+      insights_upcoming.html       # Insights + Upcoming recurring side-by-side
+      ai_analysis.html             # AI analysis results partial
+      txn_results.html             # Transaction list results (HTMX swap target)
+      txn_row.html                 # Single transaction row
+      txn_row_edit.html            # Inline-edit transaction row
+      todo_queue_detail.html       # To Do queue popup detail
+      vendor_card.html             # Vendor order card (HTMX swap target)
       match_card.html              # Match review card (HTMX swap target)
       flash.html                   # Success/error flash messages
     dashboard.html
+    transactions.html
+    todo.html
+    subscriptions.html             # Subscription watchlist + detail modals
+    cashflow.html                  # Per-account balance cards + edit modals
+    planning.html                  # Net worth projections + add/edit modals
+    reports.html                   # Two-section layout: monthly detail + spending trend
+    plaid.html                     # Connected Accounts (Plaid Link)
     upload.html                    # Import tab + Settings tab
     upload_dialog.html             # File upload + preview/confirm
     vendors.html                   # Upload + date filter + save
     match.html
     categorize_vendors.html
     categorize.html                # Review tab + Settings tab
-    reports.html                   # Two-section layout: monthly detail + spending trend
   static/
     style.css                      # Apple-style dual theme (dark default + light), CSS custom properties on data-theme, SF Pro fonts
     htmx.min.js                    # HTMX library (~14KB)
-core/                              # Business logic (unchanged from Streamlit era)
-  db.py                            # Schema migrations (31 so far), DB init, connections
+core/                              # Business logic
+  db.py                            # Schema migrations (38 so far), DB init, connections
+  ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
   amazon.py                        # Amazon order CSV parsing + vendor order matching
   henryschein.py                   # Henry Schein XLSX parsing
+  plaid_client.py                  # Plaid API client (link, sync, liabilities)
   reporting.py                     # Query helpers for Reports page
+  coverage.py                      # Test coverage utilities
 scripts/
   seed_demo_data.py                # Seed fake data for demo instance (2 entities)
 run.py                             # Entry point: python run.py (dev mode)
 fly.demo.toml                      # Fly.io config for demo instance (no auth, 2 entities)
-requirements.txt                   # flask, gunicorn, pandas, plotly, pdfplumber, etc.
+requirements.txt                   # flask, gunicorn, pandas, pdfplumber, plaid-python, etc.
 ```
 
 ## HTMX Interactions
@@ -118,10 +142,12 @@ Pattern used across routes:
 - `_TEMP_DIR` created on module import
 
 ## Pages
-- **Dashboard** -- KPI compare panels, categories chart, income vs expenses chart
+- **Dashboard** -- KPI compare panels, categories chart, income vs expenses chart, insights + upcoming recurring, on-demand AI analysis
 - **To Do** -- Review queues (uncategorized, vendor breakdown, transfers, large txns, new merchants, orders) + Workflow links
-- **Transactions** -- Filterable transaction list with inline editing, saved views
+- **Transactions** -- Filterable transaction list with inline editing, saved views, AI category suggestion
+- **Subscriptions** -- Subscription watchlist with auto-detection, tracking timeline, AI cancellation tips, account info
 - **Cash Flow** -- Per-account balances, upcoming recurring charges, Plaid liabilities
+- **Planning** -- Long-term net worth projections (assets + liabilities at milestone ages, inflation-adjusted)
 - **Reports** -- Monthly detail + spending trend (pure CSS bar chart)
 - **Connected Accounts** -- Plaid Link, sync, disconnect
 
@@ -134,7 +160,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (31 Migrations)
+## Database (38 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
@@ -145,6 +171,12 @@ Key tables:
 - **`amazon_orders`** -- Vendor orders for deferred matching. `matched_transaction_id` tracks matches. Has `category`/`subcategory` (Migration 16) and `vendor` (Migration 17, default `'amazon'`). Stores both Amazon and Henry Schein orders.
 - **`account_balances`** -- Cash Flow account tracking (Migration 26+27). Fields: account_name, balance_cents, balance_source (manual/plaid), account_type (bank/credit_card), credit_limit_cents, payment_due_day, payment_due_date, payment_amount_cents, sort_order, plaid_account_id.
 - **`manual_recurring`** -- Manually-added recurring charges per account (Migration 28). Fields: account_id (FK → account_balances), merchant, amount_cents, day_of_month (1–31), created_at. Merged with auto-detected recurring on Cash Flow page.
+- **`subscriptions`** -- Subscription watchlist (Migration 32). Fields: merchant, amount_cents, cadence, status (active/cancelled/paused), category, notes, linked_account_name, first_seen, last_charged, created_at. Tracks recurring subscriptions with cost tracking and AI cancellation tips.
+- **`subscription_dismissals`** -- Dismissed subscription suggestions (Migration 33). Fields: merchant_canonical (UNIQUE), dismissed_at. Prevents re-suggesting dismissed subscriptions.
+- **`subscription_tracking`** -- Subscription timeline tracking (Migration 34). Fields: subscription_id (FK), event_type (created/price_change/cancelled/resumed/note), old_value, new_value, notes, created_at.
+- **`subscription_account_info`** -- Subscription account details (Migration 37). Fields: subscription_id (FK UNIQUE), account_email, account_phone, phone_a_friend_name, phone_a_friend_number, notes.
+- **`planning_settings`** -- Planning page settings (Migration 35). Fields: inflation_rate (bps), current_age, custom_milestone, birth_date (Migration 38). Singleton row (id=1), stored in personal.sqlite.
+- **`planning_items`** -- Planning assets/liabilities (Migration 36). Fields: item_type (asset/liability), name, current_value_cents, annual_rate_bps, monthly_contrib_cents, monthly_payment_cents, source (manual/cashflow), cashflow_account_name, sort_order.
 
 ## Vendor Workflow (Three-Phase)
 
@@ -251,7 +283,7 @@ python scripts/smoke_test.py  # No server needed
 `local_state/`, `*.sqlite`, `uploads/`, `backups/`, `.venv/`, `statements/`
 
 ## Dependencies
-flask, gunicorn, pandas, pdfplumber, python-dateutil, openpyxl, plaid-python
+flask, gunicorn, pandas, pdfplumber, python-dateutil, openpyxl, plaid-python, requests (for OpenRouter AI client)
 
 > Note: `plotly` is still in requirements.txt but no longer used on the reports page (replaced by pure CSS bars). Can be removed once confirmed not used elsewhere.
 
@@ -288,7 +320,82 @@ Each insight links to a drill-down in `/transactions`.
 
 **Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
 
+## AI Features
+Three AI-powered features using Claude via OpenRouter (`core/ai_client.py`). Requires `OPENROUTER_API_KEY` env var. All use `anthropic/claude-sonnet-4.6`, 20s timeout, graceful fallback when unavailable.
+
+- **AI Suggest** (transactions edit modal) — Sends merchant + amount, returns category/subcategory suggestion. Button labeled "AI Suggest", shows error feedback on failure.
+- **AI Cancellation Tips** (subscriptions detail modal) — Generates step-by-step cancellation instructions for a subscription. On-demand button on watchlist items.
+- **AI Analysis** (dashboard insights) — Gathers spending summary (categories, merchants, trends), returns 3-5 narrative insights. Cached in-memory 1 hour per entity+period. Button in Insights section with blue accent.
+
+## Subscriptions Page Architecture
+Subscription watchlist at `/subscriptions` for tracking recurring charges.
+
+- **Auto-detection** — Identifies recurring merchants from transaction patterns. Suggestions shown with Accept/Dismiss. Dismissed tracked in `subscription_dismissals`.
+- **Watchlist** — Active subscriptions with merchant, amount, cadence, category, status (active/cancelled/paused). Links to filtered transactions.
+- **Detail modal** — Popup with tracking timeline (price changes, notes, status changes), account info (email, phone), "Phone a Friend" share button.
+- **Tracking timeline** — `subscription_tracking` table logs events (created, price_change, cancelled, resumed, note). Displayed chronologically in modal.
+- **Account info** — `subscription_account_info` table stores per-subscription email, phone, notes, Phone a Friend contact.
+- **Interest/fee exclusion** — Subscription detection skips interest charges and bank fees.
+
+## Planning Page Architecture
+Long-term net worth projections at `/planning`. Settings stored in `personal.sqlite` (global singleton), items per entity.
+
+- **Settings** — Inflation rate (bps), birth date (auto-computes age), custom milestone age. Click age to change birthday.
+- **Assets** — Name, current value, annual appreciation rate (bps), monthly contribution. Projected forward with compound growth: `FV = V*(1+r)^n + C*((1+r)^n - 1)/r`.
+- **Liabilities** — Name, current balance, annual interest rate (bps), monthly payment. Amortized forward: `Balance = B0*(1+r)^t - P*((1+r)^t - 1)/r`. Shows "Paid off" when balance reaches 0.
+- **Milestones** — Default ages 60, 65, 70 + optional custom milestone. All projections inflation-adjusted to today's dollars.
+- **Cross-entity visibility** — Personal ↔ BFM share view (each sees other's items). LL excluded. Combined net worth row across all visible entities.
+- **Cashflow linking** — Items can pull live balance from `account_balances` (source="cashflow") instead of manual entry.
+- **Add/Edit modal** — Shared modal for both add and edit. Delete button appears in modal when editing (red outline, bottom-left). Separate `<form>` for delete to avoid nested form issues.
+- **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
+
 ## Change Log
+
+### 2026-03-04 — Planning page: auto-age from birthday + delete in modal + tighter milestones
+Planning page UX improvements for managing net worth projections.
+
+1. **Migration 38: birth_date column** — Added `birth_date TEXT` to `planning_settings`. Pre-populated with `1977-06-21`. Age auto-computed from birth date via `_compute_age()`.
+2. **Click-to-edit age** — Age displays as clickable number with dashed underline. Clicking reveals date picker for birthday. Submitting auto-saves and recomputes age. Supports different users (e.g. spouse) entering their own birthday.
+3. **Delete moved to modal** — Removed `×` delete button from table rows. Delete button now appears inside the edit modal (red outline, bottom-left). Uses separate `<form>` outside the main edit form to avoid nested form issues.
+4. **Tighter milestone columns** — `@60`, `@65`, `@70` columns squeezed with reduced padding (0.25rem). Name column gets `width: 100%` to push milestones right.
+5. **Python 3.9 compat** — Added `from __future__ import annotations` to fix `str | None` type hint syntax.
+
+### 2026-03-04 — AI features: suggest, cancellation tips, dashboard analysis
+Three AI-powered features using Claude via OpenRouter API.
+
+1. **AI client (`core/ai_client.py`)** — OpenRouter API client using `anthropic/claude-sonnet-4.6`. Shared by all AI features. Requires `OPENROUTER_API_KEY` env var. 20s timeout, graceful fallback when unavailable.
+2. **AI Suggest (transactions)** — Button in transaction edit modal sends merchant name + amount to Claude, returns suggested category/subcategory. Shows error feedback when AI cannot categorize.
+3. **AI Cancellation Tips (subscriptions)** — On-demand button on watchlist items fetches personalized cancellation instructions from Claude. Displayed in subscription detail modal.
+4. **AI Analysis (dashboard)** — "AI Analysis" button in Insights section. Gathers spending summary (category totals, top merchants, period comparisons), sends to Claude, displays 3-5 narrative insights. Results cached in-memory for 1 hour per entity+period combo. Blue accent styling matching insights aesthetic.
+
+### 2026-03-04 — Subscriptions page: watchlist + tracking + detail modals
+New `/subscriptions` page for managing recurring subscription charges.
+
+1. **Migrations 32-34, 37** — `subscriptions` table (watchlist), `subscription_dismissals` (suggestions), `subscription_tracking` (timeline), `subscription_account_info` (account details).
+2. **Auto-detection** — Suggests subscriptions from transaction patterns. Dismiss/undo for unwanted suggestions.
+3. **Detail modal** — Tracking timeline (price changes, notes), account info fields (email, phone), "Phone a Friend" share button for cancellation calls.
+4. **Cancellation tips** — AI-generated cancellation instructions via OpenRouter.
+5. **Account info** — Email, phone, notes fields per subscription. Phone a Friend name/number for calling to cancel.
+
+### 2026-03-04 — Transactions page polish + Connected Accounts cleanup
+UI improvements across transactions and Plaid pages.
+
+1. **Subcategory column** — Added as its own column on transactions page (previously combined with category).
+2. **Column spacing** — Widened Amount, Category, and Subcategory columns for readability.
+3. **Connected Accounts** — Fixed column alignment across institution tables. Connect a Bank + Sync All buttons side by side. Disconnect button styled as red text only. Last synced text shrunk.
+4. **Global table fix** — Removed bottom border on last table row.
+5. **Subscription filter** — Excluded interest charges and fees from subscription detection.
+6. **Color tuning** — Toned down green/red to match blue/purple intensity across app.
+
+### 2026-03-04 — Planning page: net worth projections (initial build)
+New `/planning` page for long-term financial planning.
+
+1. **Migrations 35-36** — `planning_settings` (inflation rate, age, custom milestone) and `planning_items` (assets + liabilities with growth rates, contributions, payments).
+2. **Projection engine** — Assets: compound growth formula `FV = V*(1+r)^n + C*((1+r)^n - 1)/r`. Liabilities: amortization with monthly payment. All inflation-adjusted to today's dollars.
+3. **Cross-entity visibility** — Personal and BFM share view (each sees other's items). LL excluded.
+4. **Cashflow linking** — Items can pull live balances from `account_balances` table instead of manual entry.
+5. **Combined net worth** — Summary row shows total across all visible entities at each milestone age.
+6. **Initial data** — Home Mortgage ($1.43M @ 4.75%), Edward Jones Retirement ($275.7k @ 7%), Home ($2M asset @ 3.5% appreciation).
 
 ### 2026-03-04 — Plaid production + liabilities + category overhaul (BFM & Personal)
 Plaid upgraded to production. Liabilities product enabled. Major category reorganization for both BFM and Personal entities via direct SQL on live Fly databases.
