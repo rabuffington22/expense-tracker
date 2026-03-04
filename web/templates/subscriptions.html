@@ -174,7 +174,8 @@
             <div class="sub-detail-meta" id="sub-detail-meta"></div>
 
             {# ── Stats box ── #}
-            <div class="sub-detail-box">
+            <div class="sub-detail-box has-title">
+                <div class="sub-detail-box-title">Summary</div>
                 <div class="sub-detail-stats">
                     <div class="sub-detail-stat">
                         <span class="sub-detail-stat-label">Charges detected</span>
@@ -197,16 +198,16 @@
             </div>
 
             {# ── Recent charges box ── #}
-            <div class="sub-detail-box">
+            <div class="sub-detail-box has-title">
+                <div class="sub-detail-box-title">Recent Charges</div>
                 <div class="sub-detail-charges-section">
-                    <div class="sub-detail-charges-label">Recent Charges</div>
                     <div class="sub-detail-charges" id="sub-detail-charges"></div>
                 </div>
             </div>
 
             {# ── Account info box (watchlist only) ── #}
-            <div class="sub-detail-box" id="sub-detail-acctinfo-section" hidden>
-                <div class="sub-detail-charges-label">Account Info</div>
+            <div class="sub-detail-box has-title" id="sub-detail-acctinfo-section" hidden>
+                <div class="sub-detail-box-title">Account Info</div>
                 <div class="sub-detail-acctinfo-fields" id="sub-detail-acctinfo-fields"></div>
                 <div class="sub-acctinfo-add-row" id="sub-acctinfo-add-row">
                     <select class="sub-select sub-acctinfo-type" id="sub-acctinfo-type">
@@ -229,16 +230,16 @@
             </div>
 
             {# ── Tips box (watchlist only) ── #}
-            <div class="sub-detail-box" id="sub-detail-tips-section" hidden>
-                <div class="sub-detail-charges-label">How to Cancel</div>
+            <div class="sub-detail-box has-title" id="sub-detail-tips-section" hidden>
+                <div class="sub-detail-box-title">How to Cancel</div>
                 <div class="sub-detail-tips" id="sub-detail-tips"></div>
                 <button type="button" class="sub-tips-fetch-btn" id="sub-tips-fetch-btn"
                         hidden onclick="subFetchTips()">Get cancellation tips</button>
             </div>
 
             {# ── Timeline box (watchlist only) ── #}
-            <div class="sub-detail-box" id="sub-detail-timeline-section" hidden>
-                <div class="sub-detail-charges-label">Timeline</div>
+            <div class="sub-detail-box has-title" id="sub-detail-timeline-section" hidden>
+                <div class="sub-detail-box-title">Timeline</div>
                 <div class="sub-detail-timeline" id="sub-detail-timeline"></div>
             </div>
         </div>
@@ -266,7 +267,7 @@
                     <button type="submit" class="btn btn-sm btn-primary">Save</button>
                     <button type="button" class="sub-phone-btn" id="sub-phone-btn"
                             onclick="subPhoneAFriend()" title="Copy all info to clipboard">
-                        &#x1F4CB; Phone a Friend</button>
+                        Phone a Friend</button>
                     <button type="button" class="sub-delete-btn" id="sub-detail-delete-btn">
                         Remove from list</button>
                 </div>
