@@ -306,6 +306,10 @@ def _compute_insights(conn, params, drill_url):
                 "icon": "\U0001F4C8",  # 📈
                 "text": f"{best_cat} up ${dollars:,} vs prior period",
                 "url": drill_url(category_id=cat_id) if cat_id else drill_url(),
+                "insight_type": "category_increase",
+                "detail_params": {"category": best_cat,
+                                  "start": params["start"], "end": params["end"],
+                                  "account": params.get("account", "")},
             })
 
     # ── Insight B: New merchants this period ──────────────────────────────
@@ -337,7 +341,10 @@ def _compute_insights(conn, params, drill_url):
             insights.append({
                 "icon": "\U0001F195",  # 🆕
                 "text": f"{new_count} new merchant{'s' if new_count != 1 else ''} this period",
-                "url": drill_url(),
+                "url": drill_url(new_merchants=1),
+                "insight_type": "new_merchants",
+                "detail_params": {"start": params["start"], "end": params["end"],
+                                  "account": params.get("account", "")},
             })
     except Exception:
         pass  # Skip this insight on any error
@@ -364,6 +371,9 @@ def _compute_insights(conn, params, drill_url):
                 "icon": "\U0001F4B0",  # 💰
                 "text": f"{large_count} transaction{'s' if large_count != 1 else ''} over $500",
                 "url": drill_url(sort="amount"),
+                "insight_type": "large_txns",
+                "detail_params": {"start": params["start"], "end": params["end"],
+                                  "account": params.get("account", "")},
             })
     except Exception:
         pass  # Skip this insight on any error
@@ -1354,6 +1364,132 @@ def insights_upcoming():
                            left_period=left_period,
                            right_period=right_period,
                            upcoming=upcoming)
+
+
+@bp.route("/dashboard/insight-detail")
+def insight_detail():
+    """Return HTML popup content for a specific insight type."""
+    from markupsafe import Markup, escape
+
+    itype = request.args.get("type", "")
+    start = request.args.get("start", "")
+    end = request.args.get("end", "")
+    account = request.args.get("account", "")
+    category = request.args.get("category", "")
+
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+    acct_clause = "AND account = ?" if account else ""
+    acct_binds = [account] if account else []
+
+    conn = get_connection(g.entity_key)
+    try:
+        if itype == "new_merchants":
+            lookback = ""
+            try:
+                start_dt = datetime.strptime(start, "%Y-%m-%d")
+                lookback = (start_dt - timedelta(days=90)).strftime("%Y-%m-%d")
+            except (ValueError, TypeError):
+                return "<p>Invalid date range.</p>"
+
+            rows = conn.execute(
+                f"SELECT merchant_canonical, COUNT(*) AS cnt, "
+                f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total_cents "
+                f"FROM transactions "
+                f"WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+                f"  AND date >= ? AND date <= ? "
+                f"  {xfer_exclude} {acct_clause} "
+                f"  AND merchant_canonical NOT IN ("
+                f"    SELECT DISTINCT merchant_canonical FROM transactions "
+                f"    WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
+                f"      AND date >= ? AND date < ? "
+                f"      {xfer_exclude} {acct_clause}"
+                f"  ) "
+                f"GROUP BY merchant_canonical ORDER BY total_cents DESC",
+                [start, end] + acct_binds + [lookback, start] + acct_binds,
+            ).fetchall()
+
+            title = "New Merchants"
+            desc = "Merchants you haven't seen in the prior 90 days."
+            items_html = ""
+            for r in rows:
+                name = escape(r["merchant_canonical"])
+                amt = f"${r['total_cents'] / 100:,.0f}"
+                cnt = r["cnt"]
+                items_html += (
+                    f'<div class="iu-detail-row">'
+                    f'<span class="iu-detail-name">{name}</span>'
+                    f'<span class="iu-detail-meta">{cnt} txn{"s" if cnt != 1 else ""} &middot; {amt}</span>'
+                    f'</div>'
+                )
+
+        elif itype == "large_txns":
+            rows = conn.execute(
+                f"SELECT date, merchant_canonical, amount_cents FROM transactions "
+                f"WHERE ABS(amount_cents) > 50000 "
+                f"  AND date >= ? AND date <= ? "
+                f"  {xfer_exclude} {acct_clause} "
+                f"ORDER BY ABS(amount_cents) DESC",
+                [start, end] + acct_binds,
+            ).fetchall()
+
+            title = "Large Transactions"
+            desc = "Transactions over $500 this period."
+            items_html = ""
+            for r in rows:
+                name = escape(r["merchant_canonical"] or "Unknown")
+                amt_cents = r["amount_cents"]
+                amt = f"${abs(amt_cents) / 100:,.0f}"
+                date_str = r["date"]
+                try:
+                    dt = datetime.strptime(date_str, "%Y-%m-%d")
+                    date_str = dt.strftime("%b %-d")
+                except (ValueError, TypeError):
+                    pass
+                items_html += (
+                    f'<div class="iu-detail-row">'
+                    f'<span class="iu-detail-name">{name}</span>'
+                    f'<span class="iu-detail-meta">{date_str} &middot; {amt}</span>'
+                    f'</div>'
+                )
+
+        elif itype == "category_increase":
+            rows = conn.execute(
+                f"SELECT date, merchant_canonical, amount_cents FROM transactions "
+                f"WHERE amount_cents < 0 AND category = ? "
+                f"  AND date >= ? AND date <= ? "
+                f"  {acct_clause} "
+                f"ORDER BY ABS(amount_cents) DESC LIMIT 10",
+                [category, start, end] + acct_binds,
+            ).fetchall()
+
+            title = escape(category)
+            desc = f"Top charges in {escape(category)} this period."
+            items_html = ""
+            for r in rows:
+                name = escape(r["merchant_canonical"] or "Unknown")
+                amt = f"${abs(r['amount_cents']) / 100:,.0f}"
+                date_str = r["date"]
+                try:
+                    dt = datetime.strptime(date_str, "%Y-%m-%d")
+                    date_str = dt.strftime("%b %-d")
+                except (ValueError, TypeError):
+                    pass
+                items_html += (
+                    f'<div class="iu-detail-row">'
+                    f'<span class="iu-detail-name">{name}</span>'
+                    f'<span class="iu-detail-meta">{date_str} &middot; {amt}</span>'
+                    f'</div>'
+                )
+        else:
+            return "<p>Unknown insight type.</p>"
+    finally:
+        conn.close()
+
+    return Markup(
+        f'<div class="iu-detail-title">{title}</div>'
+        f'<p class="iu-detail-desc">{desc}</p>'
+        f'<div class="iu-detail-list">{items_html}</div>'
+    )
 
 
 # ── AI Analysis ──────────────────────────────────────────────────────────────

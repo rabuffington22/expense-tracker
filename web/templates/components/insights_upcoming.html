@@ -10,10 +10,20 @@
         <div class="iu-half-label">{{ left_label }}</div>
         {% if left_insights %}
           {% for ins in left_insights %}
+          {% if ins.insight_type %}
+          <div class="iu-row iu-row--clickable"
+               hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, **ins.detail_params) }}"
+               hx-target="#iu-modal-body" hx-swap="innerHTML"
+               onclick="iuOpenModal()">
+            <span class="iu-text">{{ ins.text }}</span>
+            <span class="iu-chevron">&#x203A;</span>
+          </div>
+          {% else %}
           <a class="iu-row" href="{{ ins.url }}">
             <span class="iu-text">{{ ins.text }}</span>
             <span class="iu-chevron">&#x203A;</span>
           </a>
+          {% endif %}
           {% endfor %}
         {% else %}
           <div class="iu-empty-sm">No insights for this period</div>
@@ -25,10 +35,20 @@
         <div class="iu-half-label">{{ right_label }}</div>
         {% if right_insights %}
           {% for ins in right_insights %}
+          {% if ins.insight_type %}
+          <div class="iu-row iu-row--clickable"
+               hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, **ins.detail_params) }}"
+               hx-target="#iu-modal-body" hx-swap="innerHTML"
+               onclick="iuOpenModal()">
+            <span class="iu-text">{{ ins.text }}</span>
+            <span class="iu-chevron">&#x203A;</span>
+          </div>
+          {% else %}
           <a class="iu-row" href="{{ ins.url }}">
             <span class="iu-text">{{ ins.text }}</span>
             <span class="iu-chevron">&#x203A;</span>
           </a>
+          {% endif %}
           {% endfor %}
         {% else %}
           <div class="iu-empty-sm">No insights for this period</div>
@@ -85,3 +105,36 @@
   </div>
 
 </div>
+
+<!-- ── Insight detail modal ────────────────────────────────────────────── -->
+<div class="tq-modal-scrim" id="iu-modal-scrim" hidden>
+  <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
+    <div class="tq-modal-top">
+      <button type="button" class="cf-edit-btn tq-modal-close"
+              onclick="iuCloseModal()" title="Close">&times;</button>
+    </div>
+    <div id="iu-modal-body" class="tq-modal-body">
+      <p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading&hellip;</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function iuOpenModal() {
+    document.getElementById('iu-modal-scrim').hidden = false;
+    document.getElementById('iu-modal-body').innerHTML =
+        '<p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading\u2026</p>';
+}
+function iuCloseModal() {
+    document.getElementById('iu-modal-scrim').hidden = true;
+    document.getElementById('iu-modal-body').innerHTML = '';
+}
+document.getElementById('iu-modal-scrim').addEventListener('click', function(e) {
+    if (e.target === this) iuCloseModal();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !document.getElementById('iu-modal-scrim').hidden) {
+        iuCloseModal();
+    }
+});
+</script>
