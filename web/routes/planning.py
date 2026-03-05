@@ -1,16 +1,24 @@
-"""Planning page — long-term net worth projections."""
+"""Planning page — long-term net worth projections + AI planning chat."""
 from __future__ import annotations
 
+import json
 import logging
-from datetime import datetime, timezone
+import os
+import tempfile
+from datetime import date, datetime, timezone
 
-from flask import Blueprint, render_template, request, g, redirect, url_for
+from flask import Blueprint, render_template, request, g, redirect, url_for, jsonify
 
 from core.db import get_connection, init_db
+from core.ai_client import chat_completion, MODEL_OPUS
 
 log = logging.getLogger(__name__)
 
 bp = Blueprint("planning", __name__, url_prefix="/planning")
+
+# Temp dir for conversation history (survives page reloads within session)
+_TEMP_DIR = os.path.join(tempfile.gettempdir(), "expense-tracker-planning")
+os.makedirs(_TEMP_DIR, exist_ok=True)
 
 # Cross-entity visibility: Personal ↔ BFM share view, LL excluded.
 _CROSS_ENTITY = {
@@ -388,3 +396,325 @@ def cashflow_accounts(entity_key):
     for name in accounts:
         html += f'<option value="{name}">{name}</option>'
     return html
+
+
+# ── AI Planning Chat ──────────────────────────────────────────────────────────
+
+
+def _gather_planning_context(entity_key: str) -> str:
+    """Build a comprehensive context string for the AI with all planning data."""
+    settings = _get_settings()
+    milestones = _get_milestones(settings)
+
+    # Load all visible entity sections
+    primary = _load_entity_section(entity_key, settings)
+    cross_keys = _CROSS_ENTITY.get(entity_key, [])
+    cross_sections = [_load_entity_section(k, settings) for k in cross_keys]
+    all_sections = [primary] + cross_sections
+
+    lines = []
+    lines.append("=== PLANNING DATA ===")
+    lines.append(
+        "Settings: Age %d (born %s), Inflation %.1f%%, Milestones: %s"
+        % (
+            settings["current_age"],
+            settings.get("birth_date", "unknown"),
+            settings["inflation_rate"] / 100,
+            ", ".join(str(m) for m in milestones),
+        )
+    )
+    lines.append("")
+
+    for sec in all_sections:
+        lines.append("--- %s ---" % sec["entity_display"])
+        if sec["assets"]:
+            lines.append("Assets:")
+            for a in sec["assets"]:
+                proj_parts = [
+                    "@%d: $%s" % (m, _fmt_k_plain(a["projections"].get(m, 0)))
+                    for m in milestones
+                ]
+                lines.append(
+                    "  %s: $%s value, %.1f%% appr, $%s/mo contrib → %s"
+                    % (
+                        a["name"],
+                        _fmt_k_plain(a["current_value_cents"]),
+                        a["annual_rate_bps"] / 100,
+                        "{:,.0f}".format(a["monthly_contrib_cents"] / 100)
+                        if a["monthly_contrib_cents"]
+                        else "0",
+                        ", ".join(proj_parts),
+                    )
+                )
+        if sec["liabilities"]:
+            lines.append("Liabilities:")
+            for l in sec["liabilities"]:
+                proj_parts = []
+                for m in milestones:
+                    val = l["projections"].get(m, 0)
+                    proj_parts.append(
+                        "@%d: %s" % (m, "Paid" if val == 0 else "$%s" % _fmt_k_plain(val))
+                    )
+                lines.append(
+                    "  %s: $%s balance, %.2f%% rate, $%s/mo payment → %s"
+                    % (
+                        l["name"],
+                        _fmt_k_plain(l["current_value_cents"]),
+                        l["annual_rate_bps"] / 100,
+                        "{:,.0f}".format(l["monthly_payment_cents"] / 100)
+                        if l["monthly_payment_cents"]
+                        else "0",
+                        ", ".join(proj_parts),
+                    )
+                )
+        nw = sec["summary"]
+        lines.append(
+            "Net Worth: Today $%s → %s"
+            % (
+                _fmt_k_plain(nw["today"]["net_worth_cents"]),
+                ", ".join(
+                    "@%d: $%s" % (m, _fmt_k_plain(nw[m]["net_worth_cents"]))
+                    for m in milestones
+                ),
+            )
+        )
+        lines.append("")
+
+    # Combined
+    combined_today = sum(s["summary"]["today"]["net_worth_cents"] for s in all_sections)
+    combined_parts = []
+    for m in milestones:
+        combined_parts.append(
+            "@%d: $%s"
+            % (m, _fmt_k_plain(sum(s["summary"][m]["net_worth_cents"] for s in all_sections)))
+        )
+    lines.append(
+        "COMBINED NET WORTH: Today $%s → %s"
+        % (_fmt_k_plain(combined_today), ", ".join(combined_parts))
+    )
+    lines.append("")
+
+    # Spending context from transaction data (last 3 months)
+    lines.append("=== RECENT SPENDING (last 3 months) ===")
+    today = date.today()
+    for ek in [entity_key] + cross_keys:
+        try:
+            conn = get_connection(ek)
+            # Monthly spending totals
+            rows = conn.execute(
+                "SELECT strftime('%%Y-%%m', date) as month, "
+                "ABS(SUM(CASE WHEN amount < 0 AND COALESCE(category,'') "
+                "NOT IN ('Internal Transfer','Credit Card Payment','Income') "
+                "THEN amount ELSE 0 END)) as spend, "
+                "SUM(CASE WHEN amount > 0 AND COALESCE(category,'') "
+                "NOT IN ('Internal Transfer','Credit Card Payment') "
+                "THEN amount ELSE 0 END) as income "
+                "FROM transactions "
+                "WHERE date >= date('now', '-3 months') "
+                "GROUP BY month ORDER BY month"
+            ).fetchall()
+            if rows:
+                display = _ENTITY_DISPLAY.get(ek, ek)
+                lines.append("%s monthly:" % display)
+                for r in rows:
+                    lines.append(
+                        "  %s: $%s spent, $%s income"
+                        % (r["month"], "{:,.0f}".format(r["spend"]), "{:,.0f}".format(r["income"]))
+                    )
+            # Top categories this month
+            cat_rows = conn.execute(
+                "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
+                "ABS(SUM(amount)) as total "
+                "FROM transactions "
+                "WHERE strftime('%%Y-%%m', date) = strftime('%%Y-%%m', 'now') "
+                "AND amount < 0 "
+                "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Income') "
+                "GROUP BY cat ORDER BY total DESC LIMIT 8"
+            ).fetchall()
+            if cat_rows:
+                lines.append("  Top categories this month: %s" % ", ".join(
+                    "%s $%s" % (r["cat"], "{:,.0f}".format(r["total"])) for r in cat_rows
+                ))
+            conn.close()
+        except Exception:
+            pass
+    lines.append("")
+
+    # Account balances
+    lines.append("=== ACCOUNT BALANCES ===")
+    for ek in [entity_key] + cross_keys:
+        try:
+            conn = get_connection(ek)
+            accts = conn.execute(
+                "SELECT account_name, balance_cents, account_type, credit_limit_cents "
+                "FROM account_balances ORDER BY sort_order"
+            ).fetchall()
+            if accts:
+                display = _ENTITY_DISPLAY.get(ek, ek)
+                for a in accts:
+                    bal = "{:,.0f}".format(abs(a["balance_cents"]) / 100)
+                    extra = ""
+                    if a["account_type"] == "credit_card" and a["credit_limit_cents"]:
+                        extra = " (limit $%s)" % "{:,.0f}".format(a["credit_limit_cents"] / 100)
+                    lines.append("  %s [%s]: $%s%s" % (a["account_name"], display, bal, extra))
+            conn.close()
+        except Exception:
+            pass
+
+    return "\n".join(lines)
+
+
+def _fmt_k_plain(cents: int) -> str:
+    """Format cents to a readable dollar string: $964k, $2.3M, etc."""
+    dollars = cents / 100
+    if abs(dollars) >= 1_000_000:
+        return "%.1fM" % (dollars / 1_000_000)
+    if abs(dollars) >= 1000:
+        return "%dk" % round(dollars / 1000)
+    return "%d" % round(dollars)
+
+
+def _get_conversation_path(entity_key: str) -> str:
+    """Return the temp file path for the planning conversation history."""
+    return os.path.join(_TEMP_DIR, "chat_%s.json" % entity_key)
+
+
+def _load_conversation(entity_key: str) -> list[dict]:
+    """Load conversation history from temp file."""
+    path = _get_conversation_path(entity_key)
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+
+def _save_conversation(entity_key: str, messages: list[dict]):
+    """Save conversation history to temp file. Keep last 20 exchanges."""
+    path = _get_conversation_path(entity_key)
+    # Trim to last 20 user+assistant message pairs (40 messages)
+    if len(messages) > 40:
+        messages = messages[-40:]
+    with open(path, "w") as f:
+        json.dump(messages, f)
+
+
+_PLANNING_SYSTEM = """You are a knowledgeable financial planning advisor embedded in a personal \
+expense tracking app called Ledger Oak. You have full access to the user's financial data \
+including assets, liabilities, projected net worth, monthly spending, income, and account balances.
+
+Your role:
+- Answer financial planning questions using the specific data provided
+- Run scenarios when asked ("what if I pay extra $500/mo on the mortgage?")
+- Be specific with dollar amounts and timeframes from their actual data
+- Give clear, actionable advice grounded in their real numbers
+- When doing projections, show the math briefly so they can verify
+- Be conversational but concise — no filler, no disclaimers about not being a financial advisor
+- Use plain language, not jargon
+
+The projections in the data are already inflation-adjusted to today's dollars.
+When doing your own calculations, adjust for inflation unless told otherwise.
+"""
+
+
+@bp.route("/ask", methods=["POST"])
+def ask():
+    """Handle AI planning chat question via HTMX."""
+    question = request.form.get("question", "").strip()
+    if not question:
+        return '<div class="pl-chat-error">Please enter a question.</div>'
+
+    entity_key = g.entity_key
+
+    # Gather fresh context
+    context = _gather_planning_context(entity_key)
+
+    # Load conversation history
+    history = _load_conversation(entity_key)
+
+    # Build messages: first message includes context, rest are conversation
+    messages = []
+    if not history:
+        # First question — include full context
+        messages.append({
+            "role": "user",
+            "content": "Here is my current financial data:\n\n%s\n\nQuestion: %s" % (context, question),
+        })
+    else:
+        # Subsequent questions — refresh context in latest question
+        messages = list(history)
+        messages.append({
+            "role": "user",
+            "content": "Updated financial data:\n\n%s\n\nQuestion: %s" % (context, question),
+        })
+
+    # Call Opus
+    response = chat_completion(
+        messages=messages,
+        model=MODEL_OPUS,
+        max_tokens=1500,
+        system=_PLANNING_SYSTEM,
+        timeout=60,
+    )
+
+    if not response:
+        return '<div class="pl-chat-error">AI is unavailable right now. Check that OPENROUTER_API_KEY is set.</div>'
+
+    # Save to conversation history (store clean question, not context-stuffed)
+    history.append({"role": "user", "content": question})
+    history.append({"role": "assistant", "content": response})
+    _save_conversation(entity_key, history)
+
+    # Return HTML for the new Q&A pair
+    from markupsafe import escape
+    escaped_q = escape(question)
+    # Convert markdown-ish response to simple HTML
+    escaped_r = _format_ai_response(response)
+
+    html = (
+        '<div class="pl-chat-pair">'
+        '<div class="pl-chat-q">%s</div>'
+        '<div class="pl-chat-a">%s</div>'
+        '</div>' % (escaped_q, escaped_r)
+    )
+    return html
+
+
+@bp.route("/chat/clear", methods=["POST"])
+def clear_chat():
+    """Clear conversation history."""
+    path = _get_conversation_path(g.entity_key)
+    try:
+        os.remove(path)
+    except FileNotFoundError:
+        pass
+    return ""
+
+
+def _format_ai_response(text: str) -> str:
+    """Convert AI response text to simple HTML."""
+    from markupsafe import escape
+    text = str(escape(text))
+    # Bold: **text** → <strong>text</strong>
+    import re
+    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+    # Bullet lists: lines starting with - or •
+    lines = text.split('\n')
+    html_lines = []
+    in_list = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith('- ') or stripped.startswith('• '):
+            if not in_list:
+                html_lines.append('<ul>')
+                in_list = True
+            html_lines.append('<li>%s</li>' % stripped[2:])
+        else:
+            if in_list:
+                html_lines.append('</ul>')
+                in_list = False
+            if stripped:
+                html_lines.append('<p>%s</p>' % stripped)
+    if in_list:
+        html_lines.append('</ul>')
+    return '\n'.join(html_lines)

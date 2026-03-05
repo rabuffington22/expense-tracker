@@ -1,4 +1,4 @@
-"""AI client for OpenRouter API — cancellation tips, category suggestions, spending analysis."""
+"""AI client for OpenRouter API — cancellation tips, category suggestions, spending analysis, planning chat."""
 from __future__ import annotations
 
 import json
@@ -7,6 +7,9 @@ import urllib.request
 
 _api_key = None
 _checked = False
+
+MODEL_SONNET = "anthropic/claude-sonnet-4.6"
+MODEL_OPUS = "anthropic/claude-opus-4.6"
 
 
 def _get_api_key():
@@ -17,6 +20,54 @@ def _get_api_key():
     _checked = True
     _api_key = os.environ.get("OPENROUTER_API_KEY")
     return _api_key
+
+
+def chat_completion(
+    messages: list[dict],
+    model: str = MODEL_SONNET,
+    max_tokens: int = 1000,
+    system: str | None = None,
+    timeout: int = 45,
+) -> str | None:
+    """Send a chat completion request to OpenRouter.
+
+    Args:
+        messages: List of {"role": "user"|"assistant", "content": str} dicts.
+        model: OpenRouter model identifier.
+        max_tokens: Max response tokens.
+        system: Optional system prompt.
+        timeout: Request timeout in seconds.
+
+    Returns:
+        Response text string, or None on failure.
+    """
+    key = _get_api_key()
+    if not key:
+        return None
+
+    try:
+        body = {
+            "model": model,
+            "max_tokens": max_tokens,
+            "messages": messages,
+        }
+        if system:
+            body["messages"] = [{"role": "system", "content": system}] + body["messages"]
+
+        payload = json.dumps(body).encode("utf-8")
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            data = json.loads(resp.read())
+            return data["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
 
 
 def generate_cancellation_tips(merchant_name: str) -> str | None:

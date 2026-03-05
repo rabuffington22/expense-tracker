@@ -201,6 +201,30 @@
 </div>
 {% endif %}
 
+{# ── AI Planning Chat ────────────────────────────────────────────────────── #}
+<div class="pl-chat-section">
+    <div class="pl-chat-header">
+        <span class="pl-chat-title">Ask Opus</span>
+        <button type="button" class="pl-chat-clear" hx-post="{{ url_for('planning.clear_chat') }}" hx-target="#pl-chat-thread" hx-swap="innerHTML" title="Clear conversation">Clear</button>
+    </div>
+    <div class="pl-chat-thread" id="pl-chat-thread">
+        {# Conversation pairs appended here via HTMX #}
+    </div>
+    <div class="pl-chat-thinking" id="pl-chat-thinking" hidden>
+        <span class="pl-chat-thinking-dot"></span>
+        <span class="pl-chat-thinking-dot"></span>
+        <span class="pl-chat-thinking-dot"></span>
+    </div>
+    <form class="pl-chat-form" hx-post="{{ url_for('planning.ask') }}" hx-target="#pl-chat-thread" hx-swap="beforeend"
+          hx-on::before-request="document.getElementById('pl-chat-thinking').hidden=false; document.getElementById('pl-chat-thread').style.display='flex';"
+          hx-on::after-request="document.getElementById('pl-chat-thinking').hidden=true; if(event.detail.successful) { this.reset(); var t=document.getElementById('pl-chat-thread'); t.scrollTop=t.scrollHeight; }">
+        <input type="text" name="question" class="pl-chat-input" placeholder="Ask about your finances..." autocomplete="off" required>
+        <button type="submit" class="pl-chat-send">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+    </form>
+</div>
+
 {# ── Add Modal ───────────────────────────────────────────────────────────── #}
 <div class="pl-modal-scrim" id="pl-modal-scrim" hidden onclick="plCloseModal(event)">
     <div class="outline-panel pl-modal-card" onclick="event.stopPropagation()">
