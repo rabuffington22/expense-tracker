@@ -416,18 +416,31 @@ def mark_transfer(txn_id):
 
 @bp.route("/create-rule/<txn_id>", methods=["POST"])
 def create_rule(txn_id):
-    """Create merchant alias from this transaction's description, return <tr>."""
+    """Create merchant alias from this transaction's current category, return <tr>.
+
+    Reads category/subcategory from form data (the current dropdown selections)
+    so the rule matches what the user sees, not what was last saved.  Also saves
+    the transaction with those values before creating the rule.
+    """
     conn = get_connection(g.entity_key)
     try:
         row = conn.execute(
-            "SELECT description_raw, category FROM transactions WHERE transaction_id=?",
+            "SELECT description_raw, category, subcategory FROM transactions WHERE transaction_id=?",
             (txn_id,),
         ).fetchone()
         if not row:
             return "Not found", 404
 
+        # Use form data (current dropdown selections) over saved DB values
+        cat = request.form.get("category") or row["category"] or ""
+        sub = request.form.get("subcategory") or row["subcategory"] or ""
         desc = row["description_raw"] or ""
-        cat = row["category"] or ""
+
+        # Save the transaction with the current dropdown values first
+        conn.execute(
+            "UPDATE transactions SET category=?, subcategory=? WHERE transaction_id=?",
+            (cat, sub, txn_id),
+        )
 
         # Strip platform prefixes (same logic as categorize.py)
         pattern = re.sub(
@@ -437,7 +450,6 @@ def create_rule(txn_id):
         # Strip trailing location info (city ST)
         pattern = re.sub(r"\s+\w{2}\s*$", "", pattern).strip()
 
-        message = ""
         if len(pattern) >= 4:
             existing = conn.execute(
                 "SELECT id FROM merchant_aliases "
@@ -453,14 +465,10 @@ def create_rule(txn_id):
                     "VALUES (?, ?, ?, ?, 1, ?)",
                     ("contains", pattern, pattern, cat, now_ts),
                 )
-                conn.commit()
-                message = f"Rule created: '{pattern}' → {cat}"
-            else:
-                message = f"Rule already exists for '{pattern}'"
-        else:
-            message = "Description too short to create rule"
 
-        # Return the read-only row (with HX-Trigger for optional toast)
+        conn.commit()
+
+        # Return the read-only row
         response = _render_read_row(conn, txn_id)
         return response
     finally:

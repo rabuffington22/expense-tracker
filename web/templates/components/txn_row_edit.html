@@ -44,6 +44,7 @@
                 onclick="txnSuggestCategory('{{ txn.transaction_id }}')">AI Suggest</button>
         <button type="button" class="btn btn-secondary btn-sm"
                 hx-post="{{ url_for('transactions.create_rule', txn_id=txn.transaction_id) }}"
+                hx-include="closest form"
                 hx-target="#txn-{{ txn.transaction_id }}"
                 hx-swap="outerHTML"
                 hx-on::after-request="document.getElementById('txn-modal').innerHTML=''">Always This Category</button>
