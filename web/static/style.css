@@ -5941,7 +5941,7 @@ input.pl-input--sm {
 .pl-table th.pl-th-name { text-align: left; width: 100%; }
 .pl-table th.pl-th-data { text-align: center; padding: 0.35rem 0.6rem; }
 .pl-table th.pl-th-milestone { padding: 0.35rem 0.25rem; }
-.pl-table th.pl-th-milestone-first { padding-left: 1.5rem; }
+.pl-table th.pl-th-milestone-first { padding-left: 2.5rem; }
 .pl-table td {
     padding: 0.38rem 0.5rem; text-align: right;
     border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -5951,7 +5951,7 @@ input.pl-input--sm {
 .pl-td-name { text-align: left !important; font-weight: 500; }
 .pl-td-data { text-align: center !important; padding: 0.38rem 0.6rem !important; }
 .pl-td-milestone { padding: 0.38rem 0.25rem !important; }
-.pl-td-milestone-first { padding-left: 1.5rem !important; }
+.pl-td-milestone-first { padding-left: 2.5rem !important; }
 
 /* ── Item rows ────────────────────────────────────────────────────────────── */
 .pl-item-row { cursor: pointer; transition: background 0.12s; }
@@ -5980,7 +5980,7 @@ input.pl-input--sm {
     padding: 0.4rem 0.5rem; border-top: 1px solid var(--border);
 }
 .pl-add-btn {
-    font-size: var(--ui-font-sm); color: var(--blue); font-weight: 500;
+    font-size: var(--ui-font-sm); color: var(--text-muted); font-weight: 500;
     background: none; border: none; cursor: pointer; padding: 0.2rem 0;
 }
 .pl-add-btn:hover { opacity: 0.7; }
@@ -5992,7 +5992,7 @@ input.pl-input--sm {
 }
 
 /* ── Net Worth bar ────────────────────────────────────────────────────────── */
-.pl-nw-bar { margin-top: 0.6rem; padding: 0; }
+.pl-nw-bar { margin-top: 0.6rem; padding: 0; border-color: var(--blue); }
 .pl-nw-row { display: flex; }
 .pl-nw-cell {
     flex: 1; text-align: center; padding: 0.55rem 0.4rem;
