@@ -422,6 +422,14 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
                         "confidence=? WHERE transaction_id=?",
                         (cat, subcat, confidence, txn_id),
                     )
+                else:
+                    # No alias or keyword match — mark for manual review
+                    conn.execute(
+                        "UPDATE transactions SET category='Needs Review', "
+                        "subcategory='General', confidence=0.1 "
+                        "WHERE transaction_id=?",
+                        (txn_id,),
+                    )
             return 1
         return 0
     except Exception:
