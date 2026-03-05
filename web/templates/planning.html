@@ -40,9 +40,9 @@
         {% else %}&mdash;{% endif %}
     </td>
     {% for m in milestones %}
-    <td class="pl-td-milestone{% if loop.first %} pl-td-milestone-first{% endif %}{% if item.projections[m] == 0 and item.item_type == 'liability' %} pl-paid-off{% endif %}">
+    <td class="pl-td-milestone{% if loop.first %} pl-td-milestone-first{% endif %}">
         {% if item.projections[m] == 0 and item.item_type == 'liability' %}
-            Paid off
+            Paid
         {% else %}
             {{ fmt_k(item.projections[m]) }}
         {% endif %}

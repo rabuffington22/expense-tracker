@@ -5939,8 +5939,8 @@ input.pl-input--sm {
     white-space: nowrap;
 }
 .pl-table th.pl-th-name { text-align: left; width: 100%; }
-.pl-table th.pl-th-data { text-align: center; padding: 0.35rem 0.6rem; }
-.pl-table th.pl-th-milestone { padding: 0.35rem 0.25rem; }
+.pl-table th.pl-th-data { text-align: center; padding: 0.35rem 0.6rem; width: 4.5rem; min-width: 4.5rem; }
+.pl-table th.pl-th-milestone { padding: 0.35rem 0.25rem; width: 3.5rem; min-width: 3.5rem; }
 .pl-table th.pl-th-milestone-first { padding-left: 2.5rem; }
 .pl-table td {
     padding: 0.38rem 0.5rem; text-align: right;
@@ -6005,7 +6005,7 @@ input.pl-input--sm {
     color: var(--text-muted); margin-bottom: 0.15rem;
 }
 .pl-nw-value { font-size: 1.05rem; font-weight: 700; }
-.pl-nw-combined { margin-top: 1rem; }
+.pl-nw-combined { margin-top: 1rem; border-color: var(--green); }
 .pl-nw-combined-label {
     font-size: var(--ui-font-xs); font-weight: 700; text-transform: uppercase;
     letter-spacing: var(--label-tracking); color: var(--text-muted);
