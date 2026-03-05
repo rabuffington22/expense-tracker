@@ -46,7 +46,7 @@
                 hx-post="{{ url_for('transactions.create_rule', txn_id=txn.transaction_id) }}"
                 hx-target="#txn-{{ txn.transaction_id }}"
                 hx-swap="outerHTML"
-                hx-on::after-request="document.getElementById('txn-modal').innerHTML=''">Always</button>
+                hx-on::after-request="document.getElementById('txn-modal').innerHTML=''">Always This Category</button>
       </div>
     </form>
   </div>
