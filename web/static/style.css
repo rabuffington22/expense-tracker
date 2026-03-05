@@ -6069,7 +6069,7 @@ input.pl-input--sm {
     display: flex; align-items: center; gap: 0.3rem;
 }
 .pl-box-name {
-    font-size: 0.72rem; font-weight: 600;
+    font-size: 0.78rem; font-weight: 600;
     min-width: 0; white-space: nowrap;
     overflow: hidden; text-overflow: ellipsis;
 }
