@@ -6033,7 +6033,7 @@ input.pl-input--sm {
 }
 .pl-chat-clear:hover { opacity: 1; }
 .pl-chat-thread {
-    max-height: 400px; overflow-y: auto; padding: 0.5rem 0.75rem;
+    max-height: 500px; overflow-y: auto; padding: 0.5rem 0.75rem;
     display: flex; flex-direction: column; gap: 0.6rem;
 }
 .pl-chat-thread:empty { display: none; }
@@ -6048,11 +6048,40 @@ input.pl-input--sm {
     padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.04);
     border-radius: 10px; line-height: 1.5;
 }
-.pl-chat-a p { margin: 0 0 0.3rem; }
+.pl-chat-a p { margin: 0 0 0.4rem; }
 .pl-chat-a p:last-child { margin-bottom: 0; }
-.pl-chat-a ul { margin: 0.2rem 0 0.3rem 1.2rem; padding: 0; }
-.pl-chat-a li { margin-bottom: 0.15rem; }
+.pl-chat-a ul, .pl-chat-a ol { margin: 0.25rem 0 0.4rem 1.2rem; padding: 0; }
+.pl-chat-a li { margin-bottom: 0.2rem; }
 .pl-chat-a strong { color: var(--text); }
+.pl-chat-a em { font-style: italic; }
+.pl-chat-a code {
+    font-family: 'SF Mono', ui-monospace, monospace; font-size: 0.88em;
+    background: rgba(255,255,255,0.08); padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+}
+.pl-chat-a h3, .pl-chat-a h4, .pl-chat-a h5 {
+    font-weight: 700; color: var(--text); margin: 0.5rem 0 0.2rem;
+}
+.pl-chat-a h3 { font-size: 0.88rem; }
+.pl-chat-a h4 { font-size: var(--ui-font-sm); }
+.pl-chat-a h5 { font-size: var(--ui-font-xs); text-transform: uppercase; letter-spacing: 0.03em; }
+.pl-chat-a h3:first-child, .pl-chat-a h4:first-child, .pl-chat-a h5:first-child { margin-top: 0; }
+.pl-chat-table {
+    width: 100%; border-collapse: collapse; font-size: var(--ui-font-xs);
+    margin: 0.3rem 0 0.4rem;
+}
+.pl-chat-table th, .pl-chat-table td {
+    padding: 0.25rem 0.5rem; text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.pl-chat-table th {
+    font-weight: 700; color: var(--text); font-size: var(--ui-font-xs);
+    text-transform: uppercase; letter-spacing: 0.03em;
+}
+.pl-chat-table td { color: var(--text-secondary); }
+.pl-chat-table tr:last-child td { border-bottom: none; }
+:root[data-theme="light"] .pl-chat-table th,
+:root[data-theme="light"] .pl-chat-table td { border-color: rgba(0,0,0,0.06); }
 .pl-chat-error {
     font-size: var(--ui-font-sm); color: var(--red); padding: 0.4rem 0.6rem;
 }

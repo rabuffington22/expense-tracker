@@ -692,29 +692,135 @@ def clear_chat():
 
 
 def _format_ai_response(text: str) -> str:
-    """Convert AI response text to simple HTML."""
-    from markupsafe import escape
-    text = str(escape(text))
-    # Bold: **text** → <strong>text</strong>
+    """Convert markdown AI response text to HTML.
+
+    Handles: **bold**, *italic*, `inline code`, headers (#/##/###),
+    bullet lists (- or •), numbered lists (1.), markdown tables, paragraphs.
+    """
     import re
+    from markupsafe import escape
+
+    text = str(escape(text))
+
+    # Inline formatting (order matters — bold before italic)
     text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
-    # Bullet lists: lines starting with - or •
+    text = re.sub(r'(?<!\*)\*([^*]+?)\*(?!\*)', r'<em>\1</em>', text)
+    text = re.sub(r'`(.+?)`', r'<code>\1</code>', text)
+
     lines = text.split('\n')
     html_lines = []
-    in_list = False
-    for line in lines:
-        stripped = line.strip()
+    list_type = None  # 'ul' or 'ol'
+    table_rows = []   # accumulate table rows
+
+    i = 0
+    while i < len(lines):
+        stripped = lines[i].strip()
+
+        # Markdown table: detect | col | col | pattern
+        if '|' in stripped and stripped.startswith('|') and stripped.endswith('|'):
+            _close_list(html_lines, list_type)
+            list_type = None
+            # Accumulate all table lines
+            table_rows = []
+            while i < len(lines) and '|' in lines[i].strip() and lines[i].strip().startswith('|'):
+                table_rows.append(lines[i].strip())
+                i += 1
+            html_lines.append(_render_table(table_rows))
+            continue
+
+        # Headers: # → h3, ## → h4, ### → h5 (keep proportional in chat)
+        if stripped.startswith('### '):
+            _close_list(html_lines, list_type)
+            list_type = None
+            html_lines.append('<h5>%s</h5>' % stripped[4:])
+            i += 1
+            continue
+        if stripped.startswith('## '):
+            _close_list(html_lines, list_type)
+            list_type = None
+            html_lines.append('<h4>%s</h4>' % stripped[3:])
+            i += 1
+            continue
+        if stripped.startswith('# '):
+            _close_list(html_lines, list_type)
+            list_type = None
+            html_lines.append('<h3>%s</h3>' % stripped[2:])
+            i += 1
+            continue
+
+        # Bullet list
         if stripped.startswith('- ') or stripped.startswith('• '):
-            if not in_list:
+            if list_type != 'ul':
+                _close_list(html_lines, list_type)
                 html_lines.append('<ul>')
-                in_list = True
+                list_type = 'ul'
             html_lines.append('<li>%s</li>' % stripped[2:])
-        else:
-            if in_list:
-                html_lines.append('</ul>')
-                in_list = False
-            if stripped:
-                html_lines.append('<p>%s</p>' % stripped)
-    if in_list:
-        html_lines.append('</ul>')
+            i += 1
+            continue
+
+        # Numbered list (1. 2. etc.)
+        m = re.match(r'^(\d+)\.\s+(.+)', stripped)
+        if m:
+            if list_type != 'ol':
+                _close_list(html_lines, list_type)
+                html_lines.append('<ol>')
+                list_type = 'ol'
+            html_lines.append('<li>%s</li>' % m.group(2))
+            i += 1
+            continue
+
+        # Regular text or blank line
+        _close_list(html_lines, list_type)
+        list_type = None
+        if stripped:
+            html_lines.append('<p>%s</p>' % stripped)
+        i += 1
+
+    _close_list(html_lines, list_type)
     return '\n'.join(html_lines)
+
+
+def _render_table(rows: list[str]) -> str:
+    """Convert markdown table rows to an HTML table."""
+    if not rows:
+        return ''
+
+    def _parse_row(row: str) -> list[str]:
+        cells = row.strip('|').split('|')
+        return [c.strip() for c in cells]
+
+    # Check if second row is a separator (|---|---|)
+    has_header = len(rows) > 1 and all(
+        c.strip().replace('-', '').replace(':', '') == ''
+        for c in rows[1].strip('|').split('|')
+    )
+
+    html = '<table class="pl-chat-table">'
+    if has_header:
+        cells = _parse_row(rows[0])
+        html += '<thead><tr>'
+        for c in cells:
+            html += '<th>%s</th>' % c
+        html += '</tr></thead><tbody>'
+        data_rows = rows[2:]  # skip header + separator
+    else:
+        html += '<tbody>'
+        data_rows = rows
+
+    for row in data_rows:
+        cells = _parse_row(row)
+        html += '<tr>'
+        for c in cells:
+            html += '<td>%s</td>' % c
+        html += '</tr>'
+
+    html += '</tbody></table>'
+    return html
+
+
+def _close_list(html_lines: list, list_type: str | None):
+    """Close an open list tag if one is active."""
+    if list_type == 'ul':
+        html_lines.append('</ul>')
+    elif list_type == 'ol':
+        html_lines.append('</ol>')
