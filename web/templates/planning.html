@@ -157,9 +157,7 @@
             {{ item_card(item, milestones, section.entity_key, cf_accounts, is_cross) }}
             {% endfor %}
             {% if not is_cross %}
-            <div class="pl-box pl-box--asset pl-box--add" onclick="plOpenAdd('{{ section.entity_key }}', 'asset')">
-                <div class="pl-card-add-prompt">+</div>
-            </div>
+            <button class="pl-add-btn" onclick="plOpenAdd('{{ section.entity_key }}', 'asset')" title="Add asset">+</button>
             {% endif %}
         </div>
         {% if not section.assets and is_cross %}
@@ -175,9 +173,7 @@
             {{ item_card(item, milestones, section.entity_key, cf_accounts, is_cross) }}
             {% endfor %}
             {% if not is_cross %}
-            <div class="pl-box pl-box--liability pl-box--add" onclick="plOpenAdd('{{ section.entity_key }}', 'liability')">
-                <div class="pl-card-add-prompt">+</div>
-            </div>
+            <button class="pl-add-btn" onclick="plOpenAdd('{{ section.entity_key }}', 'liability')" title="Add liability">+</button>
             {% endif %}
         </div>
         {% if not section.liabilities and is_cross %}

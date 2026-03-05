@@ -6113,16 +6113,20 @@ input.pl-input--sm {
 .pl-paid-off { color: var(--green); }
 :root[data-theme="light"] .pl-box-projections { border-top-color: rgba(0,0,0,0.06); }
 
-/* ── Add card prompt ─────────────────────────────────────────────────────── */
-.pl-box--add { cursor: pointer; }
-.pl-card-add-prompt {
+/* ── Add button (inline next to last card) ───────────────────────────────── */
+.pl-add-btn {
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted);
-    font-size: 1.4rem; font-weight: 300;
-    opacity: 0.4; padding: 0.3rem;
-    transition: opacity var(--transition), color var(--transition);
+    align-self: stretch;
+    background: none; border: 1px dashed rgba(255,255,255,0.15);
+    border-radius: var(--radius);
+    color: var(--text-muted); cursor: pointer;
+    font-size: 1.2rem; font-weight: 300;
+    min-width: 42px; opacity: 0.5;
+    transition: opacity var(--transition), border-color var(--transition);
 }
-.pl-box--add:hover .pl-card-add-prompt { opacity: 0.7; color: var(--text); }
+.pl-add-btn:hover { opacity: 0.8; border-color: rgba(255,255,255,0.3); }
+:root[data-theme="light"] .pl-add-btn { border-color: rgba(0,0,0,0.12); }
+:root[data-theme="light"] .pl-add-btn:hover { border-color: rgba(0,0,0,0.25); }
 
 /* ── Modal popup ─────────────────────────────────────────────────────────── */
 .pl-modal-scrim {
