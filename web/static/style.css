@@ -701,8 +701,8 @@ h2 {
     padding: 0;
 }
 .toggle-btn.active {
-    background: var(--green);
-    color: #000;
+    background: transparent;
+    color: var(--green);
     border-color: var(--green);
 }
 .toggle-btn:hover {
