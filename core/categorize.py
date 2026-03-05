@@ -139,10 +139,10 @@ _KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
     # ── Internal transfers (excluded from reports) ────
     (["online banking transfer", "wire type:wire", "wire transfer fee",
       "confirmation#"],
-     "Internal Transfer", None, 0.5),
+     "Internal Transfer", None, 0.7),
     # ── Zelle/Venmo → Needs Review for manual review ────
     (["zelle", "venmo"],
-     "Needs Review", None, 0.5),
+     "Needs Review", None, 0.6),
 ]
 
 
