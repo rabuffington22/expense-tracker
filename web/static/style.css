@@ -2010,6 +2010,24 @@ select {
     transition: border-color var(--transition), box-shadow var(--transition);
     -webkit-appearance: none;
 }
+input[type="file"] {
+    padding: 0;
+}
+input[type="file"]::file-selector-button {
+    background: var(--control-bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--ui-radius) 0 0 var(--ui-radius);
+    color: var(--text);
+    padding: 0.38rem 0.7rem;
+    font-size: var(--ui-font-base);
+    font-family: inherit;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    transition: background var(--transition);
+}
+input[type="file"]::file-selector-button:hover {
+    background: var(--hover-bg);
+}
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--blue);
