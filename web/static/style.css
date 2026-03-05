@@ -5476,6 +5476,7 @@ select.input-sm {
 
 /* Entity section */
 .cf-entity-section {
+    margin-top: 0.5rem;
     margin-bottom: 1.5rem;
 }
 .cf-cross {
@@ -6025,8 +6026,16 @@ input.pl-input--sm {
     border-color: rgba(0,0,0,0.10);
 }
 :root[data-theme="light"] .pl-btn-update:hover { background: rgba(0,0,0,0.10); }
+.page-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+}
+.page-title-row h1 { margin-bottom: 0; }
 .pl-btn-ask {
     margin-left: auto;
+    flex-shrink: 0;
     background: #003eb6;
     color: #fff;
     border: 1.5px solid #14a9f8;
