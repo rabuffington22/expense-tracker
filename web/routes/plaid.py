@@ -45,6 +45,17 @@ def _get_accounts_for_item(entity_key: str, item_id: str) -> list[dict]:
         conn.close()
 
 
+def _fmt_date(date_str) -> str:
+    """Format YYYY-MM-DD as 'Jan 15, 2025'."""
+    if not date_str:
+        return ""
+    try:
+        d = datetime.strptime(date_str[:10], "%Y-%m-%d")
+        return d.strftime("%b %-d, %Y")
+    except (ValueError, TypeError):
+        return date_str
+
+
 # ── Routes ───────────────────────────────────────────────────────────────────
 
 @bp.route("/")
@@ -61,9 +72,10 @@ def index():
                 "FROM transactions WHERE plaid_item_id=?",
                 (item["item_id"],),
             ).fetchone()
-            item["earliest_date"] = row["earliest"]
-            item["latest_date"] = row["latest"]
             item["txn_count"] = row["txn_count"]
+            # Format dates as "Jan 15, 2025"
+            item["earliest_date"] = _fmt_date(row["earliest"])
+            item["latest_date"] = _fmt_date(row["latest"])
     finally:
         conn.close()
     return render_template(
