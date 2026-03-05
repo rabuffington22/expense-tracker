@@ -6140,6 +6140,14 @@ input.pl-input--sm {
 /* ── Projections summary table ────────────────────────────────────────────── */
 .pl-summary {
     margin-top: 0.8rem; padding: 0.5rem 0.6rem;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg);
+}
+:root[data-theme="light"] .pl-summary {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.06);
 }
 .pl-summary-row {
     display: flex; align-items: center;
@@ -6170,7 +6178,17 @@ input.pl-input--sm {
 }
 
 /* ── Combined net worth (cross-entity) ───────────────────────────────────── */
-.pl-nw-combined { margin-top: 1rem; border-color: var(--green); }
+.pl-nw-combined {
+    margin-top: 1rem;
+    background: rgba(48,209,88,0.06);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(48,209,88,0.18);
+    border-radius: var(--radius-lg);
+}
+:root[data-theme="light"] .pl-nw-combined {
+    background: rgba(48,209,88,0.04);
+    border-color: rgba(48,209,88,0.14);
+}
 .pl-nw-combined-label {
     font-size: var(--ui-font-xs); font-weight: 700; text-transform: uppercase;
     letter-spacing: var(--label-tracking); color: var(--green);
