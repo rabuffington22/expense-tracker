@@ -6477,6 +6477,8 @@ input.pl-input--sm {
 }
 .pl-modal-input:focus {
     outline: none;
+    border: none;
+    box-shadow: none;
 }
 .pl-modal-input--money { padding-left: 0.3rem; }
 .pl-modal-input--pct { padding-right: 0.3rem; }
