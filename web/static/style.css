@@ -4773,6 +4773,7 @@ select.input-sm {
     font-size: var(--ui-font-xs);
     color: var(--text);
     background: rgba(20,169,248,0.08);
+    border: 1px solid rgba(20,169,248,0.25);
     border-radius: var(--ui-radius);
     padding: 0.35rem 0.5rem;
     margin-top: 0.4rem;
