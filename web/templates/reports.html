@@ -2,7 +2,10 @@
 {% block title %}Reports — Ledger Oak{% endblock %}
 
 {% block content %}
-<h1 class="rpt-title">Reports</h1>
+<div style="display:flex;align-items:center;gap:0.5rem;">
+  <h1 class="rpt-title" style="margin-bottom:0;">Reports</h1>
+  <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('reports')">Ask Opus</button>
+</div>
 
 {% if not has_data %}
 <div class="alert alert-info">No transactions imported yet. Import bank data on the <a href="{{ url_for('upload.index') }}"><strong>Upload</strong></a> page to get started.</div>

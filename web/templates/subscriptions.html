@@ -4,7 +4,10 @@
 {% block content %}
 <div class="sub-page">
 
-<h1 class="page-title">Subscription Tracker</h1>
+<div style="display:flex;align-items:center;gap:0.5rem;">
+  <h1 class="page-title" style="margin-bottom:0;">Subscription Tracker</h1>
+  <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('subscriptions')">Ask Opus</button>
+</div>
 
 {# ── Suggestions (auto-detected recurring charges) ─────────────────── #}
 {% if suggestions %}

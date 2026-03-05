@@ -352,6 +352,100 @@
     });
     </script>
 
+    {# ── Global AI Chat Modal ───────────────────────────────────────── #}
+    <div class="ai-chat-scrim" id="ai-chat-scrim" hidden onclick="aiChatClose(event)">
+        <div class="ai-chat-modal" onclick="event.stopPropagation()">
+            <div class="ai-chat-header">
+                <span class="ai-chat-title">Ask Opus</span>
+                <div class="ai-chat-header-actions">
+                    <button type="button" class="ai-chat-clear" id="ai-chat-clear-btn"
+                            hx-post="/ai/clear" hx-target="#ai-chat-thread" hx-swap="innerHTML"
+                            title="Clear conversation">Clear</button>
+                    <button type="button" class="ai-chat-close" onclick="aiChatClose()" title="Close">&times;</button>
+                </div>
+            </div>
+            <div class="ai-chat-body">
+                <div class="ai-chat-thread" id="ai-chat-thread"></div>
+                <div class="ai-chat-empty" id="ai-chat-empty">
+                    <div class="ai-chat-empty-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-2h2v2h-2zm2-4h-2c0-3.25 3-3 3-5 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z" fill="currentColor" opacity="0.2"/></svg>
+                    </div>
+                    <div class="ai-chat-empty-text">Ask about your financial plan, run what-if scenarios, or get insights from your data.</div>
+                </div>
+                <div class="ai-chat-thinking" id="ai-chat-thinking" hidden>
+                    <span class="ai-chat-thinking-dot"></span>
+                    <span class="ai-chat-thinking-dot"></span>
+                    <span class="ai-chat-thinking-dot"></span>
+                </div>
+            </div>
+            <form class="ai-chat-form" id="ai-chat-form" hx-post="/ai/ask" hx-target="#ai-chat-thread" hx-swap="beforeend"
+                  hx-on::before-request="aiChatBeforeReq()"
+                  hx-on::after-request="aiChatAfterReq(event)">
+                <input type="hidden" name="page" id="ai-chat-page" value="general">
+                <input type="text" name="question" class="ai-chat-input" id="ai-chat-input" placeholder="Ask about your finances..." autocomplete="off" required>
+                <button type="submit" class="ai-chat-send">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    /* ── AI Chat Modal (global) ─────────────────────────────────── */
+    var _aiCurrentPage = 'general';
+    function aiChatOpen(page) {
+        page = page || 'general';
+        /* If switching pages, clear the thread UI */
+        if (page !== _aiCurrentPage) {
+            document.getElementById('ai-chat-thread').innerHTML = '';
+            document.getElementById('ai-chat-empty').hidden = false;
+            _aiCurrentPage = page;
+        }
+        document.getElementById('ai-chat-page').value = page;
+        /* Also set page on clear button */
+        var clearBtn = document.getElementById('ai-chat-clear-btn');
+        if (clearBtn) clearBtn.setAttribute('hx-vals', JSON.stringify({page: page}));
+        htmx.process(clearBtn);
+        document.getElementById('ai-chat-scrim').hidden = false;
+        document.body.style.overflow = 'hidden';
+        document.getElementById('ai-chat-input').focus();
+        _aiScrollThread();
+    }
+    function aiChatClose(evt) {
+        if (evt && evt.target !== document.getElementById('ai-chat-scrim')) return;
+        document.getElementById('ai-chat-scrim').hidden = true;
+        document.body.style.overflow = '';
+    }
+    function aiChatBeforeReq() {
+        document.getElementById('ai-chat-thinking').hidden = false;
+        document.getElementById('ai-chat-empty').hidden = true;
+        _aiScrollThread();
+    }
+    function aiChatAfterReq(evt) {
+        document.getElementById('ai-chat-thinking').hidden = true;
+        if (evt.detail.successful) {
+            document.getElementById('ai-chat-form').reset();
+            /* Restore hidden page field after form reset */
+            document.getElementById('ai-chat-page').value = _aiCurrentPage;
+            _aiScrollThread();
+            document.getElementById('ai-chat-input').focus();
+        }
+    }
+    function _aiScrollThread() {
+        requestAnimationFrame(function() {
+            var body = document.querySelector('.ai-chat-body');
+            if (body) body.scrollTop = body.scrollHeight;
+        });
+    }
+    /* Escape closes AI chat modal */
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !document.getElementById('ai-chat-scrim').hidden) {
+            aiChatClose();
+            e.stopImmediatePropagation();
+        }
+    });
+    </script>
+
     <script>
     /* ── Keyboard shortcuts ────────────────────────────────────── */
     (function() {

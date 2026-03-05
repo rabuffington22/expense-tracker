@@ -141,7 +141,10 @@
 
 
 {% block content %}
-<h1 class="cf-title">Cash Flow</h1>
+<div style="display:flex;align-items:center;gap:0.5rem;">
+  <h1 class="cf-title" style="margin-bottom:0;">Cash Flow</h1>
+  <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('cashflow')">Ask Opus</button>
+</div>
 
 {# ── Primary entity ───────────────────────────────────────────────────── #}
 {% if primary_banks or primary_cards %}

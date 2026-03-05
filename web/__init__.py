@@ -258,6 +258,7 @@ def create_app():
     from web.routes.cashflow import bp as cashflow_bp
     from web.routes.planning import bp as planning_bp
     from web.routes.subscriptions import bp as subscriptions_bp
+    from web.routes.ai import bp as ai_bp
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(upload_bp)
@@ -273,5 +274,6 @@ def create_app():
     app.register_blueprint(cashflow_bp)
     app.register_blueprint(planning_bp)
     app.register_blueprint(subscriptions_bp)
+    app.register_blueprint(ai_bp)
 
     return app
