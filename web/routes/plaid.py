@@ -51,9 +51,21 @@ def _get_accounts_for_item(entity_key: str, item_id: str) -> list[dict]:
 def index():
     """Connected accounts page."""
     items = _get_items(g.entity_key)
-    # Attach accounts to each item
-    for item in items:
-        item["accounts"] = _get_accounts_for_item(g.entity_key, item["item_id"])
+    conn = get_connection(g.entity_key)
+    try:
+        for item in items:
+            item["accounts"] = _get_accounts_for_item(g.entity_key, item["item_id"])
+            # Date range of synced transactions
+            row = conn.execute(
+                "SELECT MIN(date) AS earliest, MAX(date) AS latest, COUNT(*) AS txn_count "
+                "FROM transactions WHERE plaid_item_id=?",
+                (item["item_id"],),
+            ).fetchone()
+            item["earliest_date"] = row["earliest"]
+            item["latest_date"] = row["latest"]
+            item["txn_count"] = row["txn_count"]
+    finally:
+        conn.close()
     return render_template(
         "plaid.html",
         items=items,
