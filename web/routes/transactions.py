@@ -461,9 +461,9 @@ def create_rule(txn_id):
                 conn.execute(
                     "INSERT INTO merchant_aliases "
                     "(pattern_type, pattern, merchant_canonical, "
-                    " default_category, active, created_at) "
-                    "VALUES (?, ?, ?, ?, 1, ?)",
-                    ("contains", pattern, pattern, cat, now_ts),
+                    " default_category, default_subcategory, active, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, 1, ?)",
+                    ("contains", pattern, pattern, cat, sub, now_ts),
                 )
 
         conn.commit()

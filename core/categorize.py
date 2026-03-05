@@ -174,8 +174,8 @@ def _get_active_aliases(entity: str) -> list[dict]:
     conn = get_connection(entity)
     try:
         rows = conn.execute(
-            "SELECT pattern_type, pattern, merchant_canonical, default_category "
-            "FROM merchant_aliases WHERE active=1"
+            "SELECT pattern_type, pattern, merchant_canonical, default_category, "
+            "default_subcategory FROM merchant_aliases WHERE active=1"
         ).fetchall()
         return [dict(r) for r in rows]
     finally:
@@ -221,6 +221,8 @@ def suggest_categories(df: pd.DataFrame, entity: str) -> pd.DataFrame:
             if alias.get("default_category"):
                 result.at[idx, "category"]   = alias["default_category"]
                 result.at[idx, "confidence"] = 0.95
+                if alias.get("default_subcategory"):
+                    result.at[idx, "subcategory"] = alias["default_subcategory"]
                 continue
 
         category, subcategory, confidence = _keyword_suggest(combined)
@@ -256,6 +258,7 @@ def apply_aliases_to_db(entity: str) -> int:
                 updates.append((
                     alias["merchant_canonical"],
                     alias.get("default_category"),
+                    alias.get("default_subcategory"),
                     0.95,
                     row["transaction_id"],
                 ))
@@ -264,6 +267,7 @@ def apply_aliases_to_db(entity: str) -> int:
                 "UPDATE transactions "
                 "SET merchant_canonical=?, "
                 "    category=COALESCE(?, category), "
+                "    subcategory=COALESCE(?, subcategory), "
                 "    confidence=? "
                 "WHERE transaction_id=?",
                 updates,
