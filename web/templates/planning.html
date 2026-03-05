@@ -10,40 +10,162 @@
   {%- endif -%}
 {%- endmacro %}
 
-{# ── Item card ───────────────────────────────────────────────────────────── #}
-{% macro item_card(item, milestones, entity_key) %}
-<div class="pl-box pl-box--{{ item.item_type }}"
-    onclick="plOpenEdit(this)"
-    data-id="{{ item.id }}"
-    data-entity="{{ entity_key }}"
-    data-type="{{ item.item_type }}"
-    data-name="{{ item.name }}"
-    data-value="{{ '{:.2f}'.format(item.current_value_cents / 100) }}"
-    data-rate="{{ '{:.2f}'.format(item.annual_rate_bps / 100) }}"
-    data-contrib="{{ '{:.2f}'.format(item.monthly_contrib_cents / 100) }}"
-    data-payment="{{ '{:.2f}'.format(item.monthly_payment_cents / 100) }}"
-    data-source="{{ item.source }}"
-    data-cf-account="{{ item.cashflow_account_name or '' }}">
+{# ── Inline edit form (shared between edit + add) ────────────────────────── #}
+{% macro edit_form(item, entity_key, item_type, milestones, cf_accounts, is_add=false) %}
+{% set is_asset = (item_type == 'asset') %}
+<div class="pl-card-edit" id="{{ 'pl-add-form-' ~ entity_key ~ '-' ~ item_type if is_add else 'pl-edit-' ~ item.id }}" hidden>
+    <form method="post" action="{{ url_for('planning.add_item') if is_add else url_for('planning.update_item', item_id=item.id) }}">
+        <input type="hidden" name="entity_key" value="{{ entity_key }}">
+        <input type="hidden" name="item_type" value="{{ item_type }}">
 
-    <div class="pl-box-header">
-        <span class="pl-box-name">
-            {{ item.name.split(' — ')[0] }}
-            {% if item.source == 'cashflow' %}
-            <span class="pl-badge-auto">Auto</span>
+        <div class="pl-form-group">
+            <label class="pl-form-label">Name</label>
+            <input type="text" name="name" class="pl-modal-input" required
+                   value="{{ '' if is_add else item.name }}"
+                   placeholder="e.g. Home, 401(k), Mortgage">
+        </div>
+
+        <div class="pl-form-row">
+            <div class="pl-form-group pl-form-group--half">
+                <label class="pl-form-label">{{ 'Current Value' if is_asset else 'Current Balance' }}</label>
+                <div class="pl-input-wrap">
+                    <span class="pl-input-prefix">$</span>
+                    <input type="text" name="current_value" class="pl-modal-input pl-modal-input--money" inputmode="decimal"
+                           value="{{ '' if is_add else '{:.2f}'.format(item.current_value_cents / 100) }}"
+                           placeholder="0.00">
+                </div>
+            </div>
+            <div class="pl-form-group pl-form-group--half">
+                <label class="pl-form-label">{{ 'Annual Appreciation' if is_asset else 'Interest Rate' }}</label>
+                <div class="pl-input-wrap">
+                    <input type="text" name="annual_rate" class="pl-modal-input pl-modal-input--pct" inputmode="decimal"
+                           value="{{ '' if is_add else '{:.2f}'.format(item.annual_rate_bps / 100) }}"
+                           placeholder="0.0">
+                    <span class="pl-input-suffix">%</span>
+                </div>
+            </div>
+        </div>
+
+        {% if is_asset %}
+        <div class="pl-form-group">
+            <label class="pl-form-label">Monthly Contribution</label>
+            <div class="pl-input-wrap">
+                <span class="pl-input-prefix">$</span>
+                <input type="text" name="monthly_contrib" class="pl-modal-input pl-modal-input--money" inputmode="decimal"
+                       value="{{ '' if is_add else '{:.2f}'.format(item.monthly_contrib_cents / 100) }}"
+                       placeholder="0.00">
+            </div>
+        </div>
+        {% else %}
+        <div class="pl-form-group">
+            <label class="pl-form-label">Monthly Payment</label>
+            <div class="pl-input-wrap">
+                <span class="pl-input-prefix">$</span>
+                <input type="text" name="monthly_payment" class="pl-modal-input pl-modal-input--money" inputmode="decimal"
+                       value="{{ '' if is_add else '{:.2f}'.format(item.monthly_payment_cents / 100) }}"
+                       placeholder="0.00">
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="pl-form-row">
+            <div class="pl-form-group pl-form-group--half">
+                <label class="pl-form-label">Source</label>
+                <select name="source" class="pl-modal-input" onchange="plToggleSource(this.closest('.pl-card-edit'))">
+                    <option value="manual" {{ '' if not is_add and item.source == 'cashflow' else 'selected' }}>Manual</option>
+                    <option value="cashflow" {{ 'selected' if not is_add and item.source == 'cashflow' else '' }}>Cash Flow</option>
+                </select>
+            </div>
+            <div class="pl-form-group pl-form-group--half pl-g-cfaccount" {{ '' if not is_add and item.source == 'cashflow' else 'hidden' }}>
+                <label class="pl-form-label">Account</label>
+                <select name="cashflow_account_name" class="pl-modal-input">
+                    <option value="">Select account...</option>
+                    {% for acct in (cf_accounts.get(entity_key) or []) %}
+                    <option value="{{ acct }}" {{ 'selected' if not is_add and item.cashflow_account_name == acct else '' }}>{{ acct }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        {# Projections (read-only context while editing) #}
+        {% if not is_add and item.projections %}
+        <div class="pl-box-projections">
+            {% for m in milestones %}
+            <span class="pl-box-proj">
+                <span class="pl-box-proj-label">{{ m }} yrs</span>
+                <span class="pl-box-proj-value {% if item.projections[m] == 0 and item_type == 'liability' %}pl-paid-off{% endif %}">
+                    {% if item.projections[m] == 0 and item_type == 'liability' %}Paid{% else %}{{ fmt_k(item.projections[m]) }}{% endif %}
+                </span>
+            </span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="pl-card-footer">
+            {% if not is_add %}
+            <button type="button" class="pl-btn-inline-delete" onclick="if(confirm('Delete this item?'))this.closest('.pl-card-edit').querySelector('.pl-del-form').submit()">Delete</button>
             {% endif %}
-        </span>
-        <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
-    </div>
+            <div style="flex:1"></div>
+            {% if is_add %}
+            <button type="button" class="btn btn-secondary btn-sm" onclick="plCancelAdd('{{ entity_key }}', '{{ item_type }}')">Cancel</button>
+            {% else %}
+            <button type="button" class="btn btn-secondary btn-sm" onclick="plCancelEdit({{ item.id }})">Cancel</button>
+            {% endif %}
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+        </div>
+    </form>
+    {% if not is_add %}
+    <form method="post" action="{{ url_for('planning.delete_item', item_id=item.id) }}" class="pl-del-form" hidden>
+        <input type="hidden" name="entity_key" value="{{ entity_key }}">
+    </form>
+    {% endif %}
+</div>
+{% endmacro %}
 
-    <div class="pl-box-subline">
-        {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
-        {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
-        {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
-            &middot; {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
-        {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
-            &middot; {{ fmt_dollars(item.monthly_payment_cents) }}/mo pymt
+{# ── Item card (view + inline edit) ──────────────────────────────────────── #}
+{% macro item_card(item, milestones, entity_key, cf_accounts, is_cross=false) %}
+<div class="pl-box pl-box--{{ item.item_type }}" id="pl-card-{{ item.id }}"
+    {% if not is_cross %}onclick="plEditCard({{ item.id }}, event)"{% endif %}>
+
+    {# ── View state ── #}
+    <div class="pl-card-view" id="pl-view-{{ item.id }}">
+        <div class="pl-box-header">
+            <span class="pl-box-name">
+                {{ item.name.split(' — ')[0] }}
+                {% if item.source == 'cashflow' %}
+                <span class="pl-badge-auto">Auto</span>
+                {% endif %}
+            </span>
+            <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
+        </div>
+        <div class="pl-box-subline">
+            {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
+            {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
+            {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
+                &middot; {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
+            {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
+                &middot; {{ fmt_dollars(item.monthly_payment_cents) }}/mo pymt
+            {% endif %}
+        </div>
+        {# ── Per-item projections ── #}
+        {% if item.projections %}
+        <div class="pl-box-projections">
+            {% for m in milestones %}
+            <span class="pl-box-proj">
+                <span class="pl-box-proj-label">{{ m }} yrs</span>
+                <span class="pl-box-proj-value {% if item.projections[m] == 0 and item.item_type == 'liability' %}pl-paid-off{% endif %}">
+                    {% if item.projections[m] == 0 and item.item_type == 'liability' %}Paid{% else %}{{ fmt_k(item.projections[m]) }}{% endif %}
+                </span>
+            </span>
+            {% endfor %}
+        </div>
         {% endif %}
     </div>
+
+    {# ── Edit state (hidden, toggled via JS) ── #}
+    {% if not is_cross %}
+    {{ edit_form(item, entity_key, item.item_type, milestones, cf_accounts) }}
+    {% endif %}
 </div>
 {% endmacro %}
 
@@ -57,10 +179,13 @@
         <div class="pl-panel-label">Assets</div>
         <div class="pl-grid">
             {% for item in section.assets %}
-            {{ item_card(item, milestones, section.entity_key) }}
+            {{ item_card(item, milestones, section.entity_key, cf_accounts, is_cross) }}
             {% endfor %}
             {% if not is_cross %}
-            <div class="pl-add-card" onclick="plOpenAdd('{{ section.entity_key }}', 'asset')">+</div>
+            <div class="pl-box pl-box--asset pl-box--add" id="pl-add-{{ section.entity_key }}-asset">
+                <div class="pl-card-add-prompt" onclick="plShowAdd('{{ section.entity_key }}', 'asset')">+</div>
+                {{ edit_form(none, section.entity_key, 'asset', milestones, cf_accounts, is_add=true) }}
+            </div>
             {% endif %}
         </div>
         {% if not section.assets and is_cross %}
@@ -73,10 +198,13 @@
         <div class="pl-panel-label">Liabilities</div>
         <div class="pl-grid">
             {% for item in section.liabilities %}
-            {{ item_card(item, milestones, section.entity_key) }}
+            {{ item_card(item, milestones, section.entity_key, cf_accounts, is_cross) }}
             {% endfor %}
             {% if not is_cross %}
-            <div class="pl-add-card" onclick="plOpenAdd('{{ section.entity_key }}', 'liability')">+</div>
+            <div class="pl-box pl-box--liability pl-box--add" id="pl-add-{{ section.entity_key }}-liability">
+                <div class="pl-card-add-prompt" onclick="plShowAdd('{{ section.entity_key }}', 'liability')">+</div>
+                {{ edit_form(none, section.entity_key, 'liability', milestones, cf_accounts, is_add=true) }}
+            </div>
             {% endif %}
         </div>
         {% if not section.liabilities and is_cross %}
@@ -86,7 +214,6 @@
 
     {# Projections summary #}
     <div class="pl-summary">
-        {# Header row: milestone labels #}
         <div class="pl-summary-row pl-summary-header">
             <div class="pl-summary-label"></div>
             <div class="pl-summary-cell">Today</div>
@@ -94,7 +221,6 @@
             <div class="pl-summary-cell">{{ m }} yrs</div>
             {% endfor %}
         </div>
-        {# Assets row #}
         <div class="pl-summary-row pl-summary-row--asset">
             <div class="pl-summary-label">Assets</div>
             <div class="pl-summary-cell">{{ fmt_k(section.summary.today.assets_cents) }}</div>
@@ -102,7 +228,6 @@
             <div class="pl-summary-cell">{{ fmt_k(section.summary[m].assets_cents) }}</div>
             {% endfor %}
         </div>
-        {# Liabilities row #}
         <div class="pl-summary-row pl-summary-row--liability">
             <div class="pl-summary-label">Liabilities</div>
             <div class="pl-summary-cell">{{ fmt_k(section.summary.today.liabilities_cents) }}</div>
@@ -110,7 +235,6 @@
             <div class="pl-summary-cell">{{ fmt_k(section.summary[m].liabilities_cents) }}</div>
             {% endfor %}
         </div>
-        {# Net Worth row #}
         <div class="pl-summary-row pl-summary-row--net">
             <div class="pl-summary-label">Net Worth</div>
             <div class="pl-summary-cell pl-summary-cell--bold">{{ fmt_k(section.summary.today.net_worth_cents) }}</div>
@@ -180,190 +304,61 @@
 </div>
 {% endif %}
 
-
-{# ── Add Modal ───────────────────────────────────────────────────────────── #}
-<div class="pl-modal-scrim" id="pl-modal-scrim" hidden onclick="plCloseModal(event)">
-    <div class="outline-panel pl-modal-card" onclick="event.stopPropagation()">
-        <div class="pl-modal-header">
-            <span class="pl-modal-title" id="pl-modal-title">Add Asset</span>
-        </div>
-        <form id="pl-modal-form" method="post" action="{{ url_for('planning.add_item') }}">
-            <input type="hidden" name="entity_key" id="pl-f-entity">
-            <input type="hidden" name="item_type" id="pl-f-type">
-
-            <div class="pl-modal-body">
-                <div class="pl-form-group">
-                    <label class="pl-form-label">Name</label>
-                    <input type="text" name="name" id="pl-f-name" class="pl-modal-input" required placeholder="e.g. Home, 401(k), Mortgage">
-                </div>
-
-                <div class="pl-form-row">
-                    <div class="pl-form-group pl-form-group--half">
-                        <label class="pl-form-label" id="pl-lbl-value">Current Value</label>
-                        <div class="pl-input-wrap">
-                            <span class="pl-input-prefix">$</span>
-                            <input type="text" name="current_value" id="pl-f-value" class="pl-modal-input pl-modal-input--money" inputmode="decimal" placeholder="0.00">
-                        </div>
-                    </div>
-                    <div class="pl-form-group pl-form-group--half">
-                        <label class="pl-form-label" id="pl-lbl-rate">Annual Appreciation</label>
-                        <div class="pl-input-wrap">
-                            <input type="text" name="annual_rate" id="pl-f-rate" class="pl-modal-input pl-modal-input--pct" inputmode="decimal" placeholder="0.0">
-                            <span class="pl-input-suffix">%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pl-form-group" id="pl-g-contrib">
-                    <label class="pl-form-label">Monthly Contribution</label>
-                    <div class="pl-input-wrap">
-                        <span class="pl-input-prefix">$</span>
-                        <input type="text" name="monthly_contrib" id="pl-f-contrib" class="pl-modal-input pl-modal-input--money" inputmode="decimal" placeholder="0.00">
-                    </div>
-                </div>
-
-                <div class="pl-form-group" id="pl-g-payment" hidden>
-                    <label class="pl-form-label">Monthly Payment</label>
-                    <div class="pl-input-wrap">
-                        <span class="pl-input-prefix">$</span>
-                        <input type="text" name="monthly_payment" id="pl-f-payment" class="pl-modal-input pl-modal-input--money" inputmode="decimal" placeholder="0.00">
-                    </div>
-                </div>
-
-                <div class="pl-form-row">
-                    <div class="pl-form-group pl-form-group--half">
-                        <label class="pl-form-label">Source</label>
-                        <select name="source" id="pl-f-source" class="pl-modal-input" onchange="plToggleSource()">
-                            <option value="manual">Manual</option>
-                            <option value="cashflow">Cash Flow</option>
-                        </select>
-                    </div>
-                    <div class="pl-form-group pl-form-group--half" id="pl-g-cfaccount" hidden>
-                        <label class="pl-form-label">Account</label>
-                        <select name="cashflow_account_name" id="pl-f-cfaccount" class="pl-modal-input">
-                            <option value="">Select account...</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pl-modal-footer">
-                <button type="button" class="btn pl-btn-delete" id="pl-delete-btn" hidden onclick="plDelete()">Delete</button>
-                <div style="flex:1"></div>
-                <button type="button" class="btn btn-secondary" onclick="plClose()">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </div>
-        </form>
-        <form id="pl-delete-form" method="post" action="" hidden>
-            <input type="hidden" name="entity_key" id="pl-del-entity">
-        </form>
-    </div>
-</div>
-
 {# ── JavaScript ──────────────────────────────────────────────────────────── #}
 <script>
-/* Cashflow accounts data (passed from backend) */
-var cfAccounts = {{ cf_accounts|tojson }};
+var activeEditId = null;
 
-function plOpenAdd(entityKey, itemType) {
-    var form = document.getElementById('pl-modal-form');
-    form.action = '{{ url_for("planning.add_item") }}';
-    document.getElementById('pl-f-entity').value = entityKey;
-    document.getElementById('pl-f-type').value = itemType;
-    document.getElementById('pl-f-name').value = '';
-    document.getElementById('pl-f-value').value = '';
-    document.getElementById('pl-f-rate').value = '';
-    document.getElementById('pl-f-contrib').value = '';
-    document.getElementById('pl-f-payment').value = '';
-    document.getElementById('pl-f-source').value = 'manual';
-    document.getElementById('pl-f-cfaccount').value = '';
+function plEditCard(itemId, event) {
+    if (event && (event.target.closest('button') || event.target.closest('form') ||
+        event.target.closest('select') || event.target.closest('input'))) return;
+    var viewEl = document.getElementById('pl-view-' + itemId);
+    var editEl = document.getElementById('pl-edit-' + itemId);
+    if (!editEl || !viewEl.offsetParent) return; /* already editing */
 
-    var isAsset = itemType === 'asset';
-    document.getElementById('pl-modal-title').textContent = isAsset ? 'Add Asset' : 'Add Liability';
-    document.getElementById('pl-lbl-value').textContent = isAsset ? 'Current Value' : 'Current Balance';
-    document.getElementById('pl-lbl-rate').textContent = isAsset ? 'Annual Appreciation' : 'Interest Rate';
-    document.getElementById('pl-g-contrib').hidden = !isAsset;
-    document.getElementById('pl-g-payment').hidden = isAsset;
+    /* Close any open edit */
+    if (activeEditId !== null && activeEditId !== itemId) plCancelEdit(activeEditId);
 
-    /* Hide delete button when adding */
-    document.getElementById('pl-delete-btn').hidden = true;
-
-    _plPopulateCfDropdown(entityKey);
-    plToggleSource();
-    document.getElementById('pl-modal-scrim').hidden = false;
-    document.getElementById('pl-f-name').focus();
+    viewEl.hidden = true;
+    editEl.hidden = false;
+    activeEditId = itemId;
+    var inp = editEl.querySelector('input[name="name"]');
+    if (inp) inp.focus();
 }
 
-function plOpenEdit(row) {
-    if (event && (event.target.closest('button') || event.target.closest('form'))) return;
-
-    var d = row.dataset;
-    var form = document.getElementById('pl-modal-form');
-    form.action = '/planning/items/update/' + d.id;
-    document.getElementById('pl-f-entity').value = d.entity;
-    document.getElementById('pl-f-type').value = d.type;
-    document.getElementById('pl-f-name').value = d.name;
-    document.getElementById('pl-f-value').value = d.value;
-    document.getElementById('pl-f-rate').value = d.rate;
-    document.getElementById('pl-f-contrib').value = d.contrib;
-    document.getElementById('pl-f-payment').value = d.payment;
-    document.getElementById('pl-f-source').value = d.source;
-
-    var isAsset = d.type === 'asset';
-    document.getElementById('pl-modal-title').textContent = 'Edit ' + d.name;
-    document.getElementById('pl-lbl-value').textContent = isAsset ? 'Current Value' : 'Current Balance';
-    document.getElementById('pl-lbl-rate').textContent = isAsset ? 'Annual Appreciation' : 'Interest Rate';
-    document.getElementById('pl-g-contrib').hidden = !isAsset;
-    document.getElementById('pl-g-payment').hidden = isAsset;
-
-    /* Show delete button when editing */
-    document.getElementById('pl-delete-btn').hidden = false;
-    var delForm = document.getElementById('pl-delete-form');
-    delForm.action = '/planning/items/delete/' + d.id;
-    document.getElementById('pl-del-entity').value = d.entity;
-
-    _plPopulateCfDropdown(d.entity);
-    document.getElementById('pl-f-cfaccount').value = d.cfAccount || '';
-    plToggleSource();
-    document.getElementById('pl-modal-scrim').hidden = false;
-    document.getElementById('pl-f-name').focus();
+function plCancelEdit(itemId) {
+    var viewEl = document.getElementById('pl-view-' + itemId);
+    var editEl = document.getElementById('pl-edit-' + itemId);
+    if (viewEl) viewEl.hidden = false;
+    if (editEl) editEl.hidden = true;
+    if (activeEditId === itemId) activeEditId = null;
 }
 
-function plToggleSource() {
-    var isCf = document.getElementById('pl-f-source').value === 'cashflow';
-    document.getElementById('pl-g-cfaccount').hidden = !isCf;
-    /* When cashflow is selected, value is auto-pulled so dim the input */
-    var valInput = document.getElementById('pl-f-value');
+function plShowAdd(entityKey, itemType) {
+    var box = document.getElementById('pl-add-' + entityKey + '-' + itemType);
+    var prompt = box.querySelector('.pl-card-add-prompt');
+    var form = document.getElementById('pl-add-form-' + entityKey + '-' + itemType);
+    prompt.hidden = true;
+    form.hidden = false;
+    var inp = form.querySelector('input[name="name"]');
+    if (inp) inp.focus();
+}
+
+function plCancelAdd(entityKey, itemType) {
+    var box = document.getElementById('pl-add-' + entityKey + '-' + itemType);
+    var prompt = box.querySelector('.pl-card-add-prompt');
+    var form = document.getElementById('pl-add-form-' + entityKey + '-' + itemType);
+    prompt.hidden = false;
+    form.hidden = true;
+}
+
+function plToggleSource(editEl) {
+    var sel = editEl.querySelector('select[name="source"]');
+    var cfGroup = editEl.querySelector('.pl-g-cfaccount');
+    var valInput = editEl.querySelector('input[name="current_value"]');
+    var isCf = sel.value === 'cashflow';
+    cfGroup.hidden = !isCf;
     valInput.disabled = isCf;
     valInput.style.opacity = isCf ? '0.5' : '1';
-}
-
-function _plPopulateCfDropdown(entityKey) {
-    var sel = document.getElementById('pl-f-cfaccount');
-    sel.innerHTML = '<option value="">Select account...</option>';
-    var accts = cfAccounts[entityKey] || [];
-    accts.forEach(function(name) {
-        var opt = document.createElement('option');
-        opt.value = name;
-        opt.textContent = name;
-        sel.appendChild(opt);
-    });
-}
-
-function plCloseModal(evt) {
-    if (evt && evt.target !== document.getElementById('pl-modal-scrim')) return;
-    plClose();
-}
-
-function plClose() {
-    document.getElementById('pl-modal-scrim').hidden = true;
-}
-
-/* Delete via modal */
-function plDelete() {
-    if (confirm('Delete this item?')) {
-        document.getElementById('pl-delete-form').submit();
-    }
 }
 
 /* Age click-to-edit birthday */
@@ -379,13 +374,14 @@ function plAgeSaved(inp) {
         inp.previousElementSibling.hidden = false;
         return;
     }
-    /* Auto-submit the settings form to save the birthday */
     inp.closest('form').requestSubmit();
 }
 
 /* Escape key */
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') plClose();
+    if (e.key === 'Escape') {
+        if (activeEditId !== null) plCancelEdit(activeEditId);
+    }
 });
 </script>
 {% endblock %}
