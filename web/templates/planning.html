@@ -31,13 +31,13 @@
                 <div class="pl-input-wrap">
                     <span class="pl-input-prefix">$</span>
                     <input type="text" name="current_value" class="pl-modal-input pl-modal-input--money" inputmode="decimal"
-                           value="{{ '' if is_add else '{:.2f}'.format(item.current_value_cents / 100) }}"
-                           placeholder="0.00">
+                           value="{{ '' if is_add else '{:,.0f}'.format(item.current_value_cents / 100) }}"
+                           placeholder="0">
                 </div>
             </div>
-            <div class="pl-form-group pl-form-group--half">
+            <div class="pl-form-group pl-form-group--half pl-form-group--fit">
                 <label class="pl-form-label">{{ 'Annual Appreciation' if is_asset else 'Interest Rate' }}</label>
-                <div class="pl-input-wrap">
+                <div class="pl-input-wrap pl-input-wrap--tight">
                     <input type="text" name="annual_rate" class="pl-modal-input pl-modal-input--pct" inputmode="decimal"
                            value="{{ '' if is_add else '{:.2f}'.format(item.annual_rate_bps / 100) }}"
                            placeholder="0.0">
@@ -52,8 +52,8 @@
             <div class="pl-input-wrap">
                 <span class="pl-input-prefix">$</span>
                 <input type="text" name="monthly_contrib" class="pl-modal-input pl-modal-input--money" inputmode="decimal"
-                       value="{{ '' if is_add else '{:.2f}'.format(item.monthly_contrib_cents / 100) }}"
-                       placeholder="0.00">
+                       value="{{ '' if is_add else '{:,.0f}'.format(item.monthly_contrib_cents / 100) }}"
+                       placeholder="0">
             </div>
         </div>
         {% else %}
@@ -62,8 +62,8 @@
             <div class="pl-input-wrap">
                 <span class="pl-input-prefix">$</span>
                 <input type="text" name="monthly_payment" class="pl-modal-input pl-modal-input--money" inputmode="decimal"
-                       value="{{ '' if is_add else '{:.2f}'.format(item.monthly_payment_cents / 100) }}"
-                       placeholder="0.00">
+                       value="{{ '' if is_add else '{:,.0f}'.format(item.monthly_payment_cents / 100) }}"
+                       placeholder="0">
             </div>
         </div>
         {% endif %}
@@ -346,6 +346,15 @@ function plAgeSaved(inp) {
     }
     inp.closest('form').requestSubmit();
 }
+
+/* Strip commas from money fields before submit */
+document.querySelectorAll('.pl-modal-form form').forEach(function(f) {
+    f.addEventListener('submit', function() {
+        f.querySelectorAll('input[name="current_value"], input[name="monthly_contrib"], input[name="monthly_payment"]').forEach(function(inp) {
+            inp.value = inp.value.replace(/,/g, '');
+        });
+    });
+});
 
 /* Escape key closes modal */
 document.addEventListener('keydown', function(e) {
