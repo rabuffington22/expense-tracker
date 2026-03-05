@@ -147,19 +147,7 @@
                 &middot; {{ fmt_dollars(item.monthly_payment_cents) }}/mo pymt
             {% endif %}
         </div>
-        {# ── Per-item projections ── #}
-        {% if item.projections %}
-        <div class="pl-box-projections">
-            {% for m in milestones %}
-            <span class="pl-box-proj">
-                <span class="pl-box-proj-label">{{ m }} yrs</span>
-                <span class="pl-box-proj-value {% if item.projections[m] == 0 and item.item_type == 'liability' %}pl-paid-off{% endif %}">
-                    {% if item.projections[m] == 0 and item.item_type == 'liability' %}Paid{% else %}{{ fmt_k(item.projections[m]) }}{% endif %}
-                </span>
-            </span>
-            {% endfor %}
-        </div>
-        {% endif %}
+        {# Projections shown only in inline edit form #}
     </div>
 
     {# ── Edit state (hidden, toggled via JS) ── #}
