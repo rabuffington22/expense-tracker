@@ -4,7 +4,7 @@ import re
 import math
 from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, request, g, jsonify, redirect
+from flask import Blueprint, render_template, request, g, jsonify, redirect, make_response
 from markupsafe import escape
 
 from core.db import get_connection
@@ -387,13 +387,23 @@ def update(txn_id):
 
     conn = get_connection(g.entity_key)
     try:
+        # Auto-create subcategory if it's new
+        if category and subcategory and subcategory not in ("General", "Unknown"):
+            conn.execute(
+                "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
+                "VALUES (?,?,?)",
+                (category, subcategory, datetime.now(timezone.utc).isoformat()),
+            )
         conn.execute(
             "UPDATE transactions SET category=?, subcategory=?, notes=?, confidence=1.0 "
             "WHERE transaction_id=?",
             (category, subcategory, notes, txn_id),
         )
         conn.commit()
-        return _render_read_row(conn, txn_id)
+        resp = make_response(_render_read_row(conn, txn_id))
+        # Invalidate JS subcategory cache so new subcategories appear
+        resp.headers["HX-Trigger"] = "subcatCacheInvalidate"
+        return resp
     finally:
         conn.close()
 
@@ -436,6 +446,14 @@ def create_rule(txn_id):
         sub = request.form.get("subcategory") or row["subcategory"] or ""
         desc = row["description_raw"] or ""
 
+        # Auto-create subcategory if it's new
+        if cat and sub and sub not in ("General", "Unknown"):
+            conn.execute(
+                "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
+                "VALUES (?,?,?)",
+                (cat, sub, datetime.now(timezone.utc).isoformat()),
+            )
+
         # Save the transaction with the current dropdown values first
         conn.execute(
             "UPDATE transactions SET category=?, subcategory=? WHERE transaction_id=?",
@@ -469,8 +487,9 @@ def create_rule(txn_id):
         conn.commit()
 
         # Return the read-only row
-        response = _render_read_row(conn, txn_id)
-        return response
+        resp = make_response(_render_read_row(conn, txn_id))
+        resp.headers["HX-Trigger"] = "subcatCacheInvalidate"
+        return resp
     finally:
         conn.close()
 

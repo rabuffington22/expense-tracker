@@ -93,6 +93,11 @@ function sortBy(col) {
 /* ── Subcategory cascade (shared cache) ────────────────────────────────── */
 var _txnSubcatCache = null;
 
+/* Invalidate cache when a new subcategory is created */
+document.body.addEventListener('subcatCacheInvalidate', function() {
+    _txnSubcatCache = null;
+});
+
 function _txnEscapeHtml(str) {
     var div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
@@ -103,7 +108,7 @@ function _txnBuildOptions(subs) {
     return subs.map(function(s) {
         var e = _txnEscapeHtml(s);
         return '<option value="' + e + '">' + e + '</option>';
-    }).join('');
+    }).join('') + '<option value="__new__">+ New\u2026</option>';
 }
 
 function _ensureCache(cb) {
@@ -141,13 +146,41 @@ function txnLoadSubcats(catSelect, txnId) {
     var subSelect = document.getElementById('txn-subcat-' + txnId);
     if (!subSelect) return;
     subSelect.setAttribute('data-current', '');
+    /* Reset new-subcategory input if it was open */
+    txnSubcatCancel(txnId);
     _ensureCache(function() {
         if (!cat || !_txnSubcatCache[cat]) {
-            subSelect.innerHTML = '<option value="Unknown">Unknown</option>';
+            subSelect.innerHTML = '<option value="Unknown">Unknown</option><option value="__new__">+ New\u2026</option>';
             return;
         }
         subSelect.innerHTML = _txnBuildOptions(_txnSubcatCache[cat]);
     });
+}
+
+/* Subcategory: switch to inline text input for new subcategory */
+function txnSubcatChange(sel, txnId) {
+    if (sel.value !== '__new__') return;
+    sel.hidden = true;
+    sel.removeAttribute('name');
+    var newDiv = document.getElementById('txn-subcat-new-' + txnId);
+    newDiv.hidden = false;
+    var input = document.getElementById('txn-subcat-input-' + txnId);
+    input.setAttribute('name', 'subcategory');
+    input.focus();
+}
+
+/* Subcategory: cancel new input, revert to dropdown */
+function txnSubcatCancel(txnId) {
+    var sel = document.getElementById('txn-subcat-' + txnId);
+    if (!sel) return;
+    sel.hidden = false;
+    sel.setAttribute('name', 'subcategory');
+    var current = sel.getAttribute('data-current');
+    sel.value = current || 'General';
+    var newDiv = document.getElementById('txn-subcat-new-' + txnId);
+    if (newDiv) newDiv.hidden = true;
+    var input = document.getElementById('txn-subcat-input-' + txnId);
+    if (input) { input.removeAttribute('name'); input.value = ''; }
 }
 
 /* AI category suggestion */
@@ -176,6 +209,8 @@ function txnSuggestCategory(txnId) {
         if (catSelect && data.category) {
             catSelect.value = data.category;
         }
+        /* Reset new-subcategory input if it was open */
+        txnSubcatCancel(txnId);
         /* Cascade subcategories, then set the suggested one */
         var subSelect = document.getElementById('txn-subcat-' + txnId);
         _ensureCache(function() {

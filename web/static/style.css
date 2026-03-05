@@ -4782,6 +4782,18 @@ select.input-sm {
 :root[data-theme="light"] .txn-ai-reason {
     background: rgba(10,132,255,0.08);
 }
+.txn-subcat-new {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+}
+.txn-subcat-new .input-sm { flex: 1; }
+.btn-icon-xs {
+    width: 24px;
+    height: 24px;
+    font-size: 0.6rem;
+    flex-shrink: 0;
+}
 .txn-modal-actions {
     display: flex;
     gap: 0.35rem;
