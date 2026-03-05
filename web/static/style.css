@@ -5315,7 +5315,7 @@ select.input-sm {
 /* ── Insights + Upcoming: side-by-side half-width layout ────────────────── */
 .iu-row-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     gap: 1.2rem;
     align-items: stretch;
 }
