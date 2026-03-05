@@ -6139,7 +6139,7 @@ input.pl-input--sm {
 
 /* ── Projections summary table ────────────────────────────────────────────── */
 .pl-summary {
-    margin: 0.8rem -2.2rem 0;
+    margin: 1.6rem -2.2rem 0;
     padding: 0.5rem 2.2rem 0.6rem;
     background: rgba(255,255,255,0.04);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
