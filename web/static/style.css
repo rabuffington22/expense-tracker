@@ -4771,7 +4771,7 @@ select.input-sm {
 }
 .txn-ai-reason {
     font-size: var(--ui-font-xs);
-    color: var(--blue);
+    color: var(--text);
     background: rgba(20,169,248,0.08);
     border-radius: var(--ui-radius);
     padding: 0.35rem 0.5rem;
