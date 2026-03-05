@@ -84,7 +84,7 @@ _KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
     (["madison reed"],
      "Health & Beauty", "Haircare", 0.7),
     (["poshmark"],
-     "Kristine Business", None, 0.7),
+     "LL Expense", None, 0.7),
     (["amazon", "walmart", "target", "ebay", "etsy", "shopify", "clothing",
       "apparel", "bestbuy", "best buy", "apple store", "gap", "zara", "h&m",
       "kohl", "tj maxx", "tjmaxx", "madewell"],
@@ -140,9 +140,9 @@ _KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
     (["online banking transfer", "wire type:wire", "wire transfer fee",
       "confirmation#"],
      "Internal Transfer", None, 0.5),
-    # ── Zelle/Venmo → Ask Kristine for manual review ────
+    # ── Zelle/Venmo → Needs Review for manual review ────
     (["zelle", "venmo"],
-     "Ask Kristine", None, 0.5),
+     "Needs Review", None, 0.5),
 ]
 
 
