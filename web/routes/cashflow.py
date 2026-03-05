@@ -29,7 +29,7 @@ _ENTITY_DISPLAY = None  # lazy-init
 
 # ── Plaid account sync ────────────────────────────────────────────────────────
 
-_BALANCE_CACHE_SECONDS = 300  # Re-fetch Plaid balances every 5 minutes
+_BALANCE_CACHE_SECONDS = 3600  # Re-fetch Plaid balances every hour
 
 
 def _parse_dollar_to_cents(dollar_str: str) -> int:
@@ -353,12 +353,26 @@ def _fetch_plaid_liabilities(conn) -> dict:
     """Fetch Plaid liabilities for all connected credit card accounts.
 
     Returns dict keyed by plaid_account_id with credit card details.
+    Skips API call if liabilities were refreshed within _BALANCE_CACHE_SECONDS.
     Silently returns empty dict if Plaid is not configured or fails.
     """
     import os
     # Skip entirely if Plaid env vars aren't set — avoids hanging on API calls
     if not os.environ.get("PLAID_CLIENT_ID") or not os.environ.get("PLAID_SECRET"):
         return {}
+
+    # Check staleness — skip if recently refreshed (uses same cache window as accounts)
+    latest = conn.execute(
+        "SELECT MAX(updated_at) FROM account_balances "
+        "WHERE balance_source='plaid' AND account_type='credit_card'"
+    ).fetchone()[0]
+    if latest:
+        try:
+            last = datetime.datetime.fromisoformat(latest)
+            if (datetime.datetime.now() - last).total_seconds() < _BALANCE_CACHE_SECONDS:
+                return {}
+        except (ValueError, TypeError):
+            pass
 
     try:
         from core.plaid_client import get_liabilities
