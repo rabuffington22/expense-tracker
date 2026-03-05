@@ -6470,13 +6470,12 @@ input.pl-input--sm {
     color: var(--text-secondary); margin-bottom: 0.2rem;
 }
 .pl-modal-input {
-    width: 100%; padding: 0.35rem 0.5rem; font-size: var(--ui-font-sm);
-    background: var(--input-sm-bg); border: 1px solid var(--input-sm-border);
-    border-radius: 8px; color: var(--text);
+    width: 100%; padding: 0.35rem 0; font-size: var(--ui-font-sm);
+    background: none; border: none;
+    border-radius: 0; color: var(--text);
 }
 .pl-modal-input:focus {
-    outline: none; border-color: var(--blue);
-    box-shadow: 0 0 0 2px rgba(10,132,255,0.25);
+    outline: none;
 }
 .pl-modal-input--money { padding-left: 0.3rem; }
 .pl-modal-input--pct { padding-right: 0.3rem; }
