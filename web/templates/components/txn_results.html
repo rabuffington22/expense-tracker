@@ -3,6 +3,8 @@
     {{ "{:,}".format(total_count) }} transaction{{ 's' if total_count != 1 }}
     {% if category_name %} in <strong>{{ category_name }}</strong>{% endif %}
   </span>
+  <button type="button" class="btn btn-secondary btn-sm"
+          onclick="txnCopyList(this)" title="Copy list to clipboard">Copy List</button>
 </div>
 
 <div class="table-wrap">

@@ -77,6 +77,26 @@
 </div>
 
 <script>
+/* Copy visible transaction list to clipboard */
+function txnCopyList(btn) {
+    var rows = document.querySelectorAll('#txn-results tbody tr.txn-clickable');
+    if (!rows.length) return;
+    var lines = [];
+    rows.forEach(function(row, i) {
+        var cells = row.querySelectorAll('td');
+        var date = cells[0].textContent.trim();
+        var desc = cells[1].textContent.trim();
+        var amt = cells[2].textContent.trim();
+        lines.push((i + 1) + '. ' + date + ' \u2014 ' + desc + ' \u2014 ' + amt);
+    });
+    var header = 'Hey, can you help me with these? I\u2019m trying to categorize them. Just reply with what you remember \u2014 even a word or two is great. Thank you!\n\n';
+    navigator.clipboard.writeText(header + lines.join('\n')).then(function() {
+        var orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = orig; }, 1500);
+    });
+}
+
 /* Column header sort */
 function sortBy(col) {
     var sortField = document.getElementById('sort-field');
