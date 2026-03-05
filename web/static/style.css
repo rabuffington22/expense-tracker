@@ -6042,6 +6042,7 @@ input.pl-input--sm {
 .pl-grid {
     display: grid; gap: 0.5rem; margin-bottom: 0.8rem;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    align-items: start;
 }
 
 /* ── Glass cards ─────────────────────────────────────────────────────────── */
@@ -6094,7 +6095,7 @@ input.pl-input--sm {
 /* ── Add card (ghost) ────────────────────────────────────────────────────── */
 .pl-add-card {
     display: flex; align-items: center; justify-content: center;
-    min-height: 80px;
+    min-height: 50px;
     border: 1.5px dashed rgba(255,255,255,0.15);
     border-radius: var(--radius-lg);
     cursor: pointer; color: var(--text-muted);
