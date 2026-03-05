@@ -157,6 +157,7 @@ function txnSuggestCategory(txnId) {
     var origText = btn.textContent;
     btn.textContent = 'Thinking\u2026';
     btn.disabled = true;
+    var reasonEl = document.getElementById('txn-ai-reason-' + txnId);
 
     fetch('{{ url_for("transactions.suggest", txn_id="__TXN__") }}'.replace('__TXN__', txnId), {
         method: 'POST'
@@ -185,6 +186,11 @@ function txnSuggestCategory(txnId) {
                         subSelect.value = data.subcategory;
                     }
                 }
+            }
+            /* Show AI reasoning */
+            if (reasonEl && data.reason) {
+                reasonEl.textContent = data.reason;
+                reasonEl.hidden = false;
             }
             btn.textContent = origText;
             btn.disabled = false;

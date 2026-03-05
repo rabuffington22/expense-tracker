@@ -4769,6 +4769,18 @@ select.input-sm {
 .txn-modal-form .input-sm {
     width: 100%;
 }
+.txn-ai-reason {
+    font-size: var(--ui-font-xs);
+    color: var(--blue);
+    background: rgba(20,169,248,0.08);
+    border-radius: var(--ui-radius);
+    padding: 0.35rem 0.5rem;
+    margin-top: 0.4rem;
+    line-height: 1.4;
+}
+:root[data-theme="light"] .txn-ai-reason {
+    background: rgba(10,132,255,0.08);
+}
 .txn-modal-actions {
     display: flex;
     gap: 0.35rem;

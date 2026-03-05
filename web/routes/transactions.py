@@ -487,11 +487,14 @@ def suggest(txn_id):
             categories_with_subs[cat] = get_subcategories(g.entity_key, cat)
 
         from core.ai_client import generate_category_suggestion
+        # Determine entity type for AI context
+        entity_type = "business" if g.entity_key in ("company", "luxelegacy") else "personal"
         result = generate_category_suggestion(
             merchant=row["merchant_canonical"] or "",
             description=row["description_raw"] or "",
             amount_cents=row["amount_cents"] or 0,
             categories_with_subs=categories_with_subs,
+            entity_type=entity_type,
         )
         if result:
             return jsonify(result)

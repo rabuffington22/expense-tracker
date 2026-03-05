@@ -115,6 +115,7 @@ def generate_category_suggestion(
     description: str,
     amount_cents: int,
     categories_with_subs: dict[str, list[str]],
+    entity_type: str = "personal",
 ) -> dict | None:
     """Suggest a category and subcategory for a transaction.
 
@@ -123,9 +124,10 @@ def generate_category_suggestion(
         description: Raw bank description.
         amount_cents: Transaction amount in cents (negative = debit).
         categories_with_subs: Dict mapping category name to list of subcategory names.
+        entity_type: "personal" or "business" — helps AI understand context.
 
     Returns:
-        {"category": str, "subcategory": str} or None if unavailable.
+        {"category": str, "subcategory": str, "reason": str} or None if unavailable.
     """
     key = _get_api_key()
     if not key:
@@ -141,23 +143,38 @@ def generate_category_suggestion(
     amount_str = f"${abs(amount_cents) / 100:.2f}"
     direction = "expense" if amount_cents < 0 else "income"
 
+    system = (
+        "You are a transaction categorizer for a %s expense tracking app. "
+        "Your job is to pick the single best category and subcategory for each "
+        "bank transaction based on the merchant name and description.\n\n"
+        "Rules:\n"
+        "- You MUST pick from the provided category/subcategory list — never invent new ones\n"
+        "- Use your knowledge of merchants, businesses, and common charges to identify what this is\n"
+        "- If the description contains abbreviations or codes, decode them (e.g. TXT = Texas, "
+        "DMV/MVD/registry = vehicle registration, POS = point of sale)\n"
+        "- When uncertain between categories, pick the most specific match over General\n"
+        "- Only use 'Needs Review' as an absolute last resort when you truly have no idea\n"
+        "- Always include a brief reason explaining WHY you chose this category"
+    ) % entity_type
+
     prompt = (
-        f"Categorize this bank transaction. Pick exactly one category and one "
-        f"subcategory from the list below.\n\n"
-        f"Transaction:\n"
-        f"  Merchant: {merchant or 'unknown'}\n"
-        f"  Description: {description or 'N/A'}\n"
-        f"  Amount: {amount_str} ({direction})\n\n"
-        f"Available categories and subcategories:\n{cat_list}\n\n"
-        f"Respond with ONLY a JSON object, no other text:\n"
-        f'{{"category": "...", "subcategory": "..."}}'
-    )
+        "Categorize this transaction:\n\n"
+        "  Merchant: %s\n"
+        "  Bank description: %s\n"
+        "  Amount: %s (%s)\n\n"
+        "Categories:\n%s\n\n"
+        "Respond with ONLY a JSON object:\n"
+        '{"category": "...", "subcategory": "...", "reason": "..."}'
+    ) % (merchant or "unknown", description or "N/A", amount_str, direction, cat_list)
 
     try:
         payload = json.dumps({
             "model": "anthropic/claude-sonnet-4.6",
-            "max_tokens": 100,
-            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 200,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt},
+            ],
         }).encode("utf-8")
 
         req = urllib.request.Request(
@@ -168,7 +185,7 @@ def generate_category_suggestion(
                 "Content-Type": "application/json",
             },
         )
-        with urllib.request.urlopen(req, timeout=15) as resp:
+        with urllib.request.urlopen(req, timeout=20) as resp:
             data = json.loads(resp.read())
             text = data["choices"][0]["message"]["content"].strip()
 
@@ -179,6 +196,7 @@ def generate_category_suggestion(
 
         cat = result.get("category", "")
         sub = result.get("subcategory", "")
+        reason = result.get("reason", "")
 
         # Validate against the provided category list
         if cat not in categories_with_subs:
@@ -187,7 +205,7 @@ def generate_category_suggestion(
         if sub not in valid_subs:
             sub = "General"  # Fall back to General if subcategory invalid
 
-        return {"category": cat, "subcategory": sub}
+        return {"category": cat, "subcategory": sub, "reason": reason}
     except Exception:
         return None
 
