@@ -6469,16 +6469,15 @@ input.pl-input--sm {
     display: block; font-size: var(--ui-font-xs); font-weight: 600;
     color: var(--text-secondary); margin-bottom: 0.2rem;
 }
-.pl-modal-input {
+.pl-modal-input,
+.pl-modal-input:focus,
+.pl-modal-input:active {
     width: 100%; padding: 0.35rem 0; font-size: var(--ui-font-sm);
-    background: transparent !important; border: none;
-    border-radius: 0; color: var(--text);
+    background: transparent !important;
+    border: none !important; border-radius: 0;
+    outline: none !important; box-shadow: none !important;
+    color: var(--text);
     -webkit-appearance: none; appearance: none;
-}
-.pl-modal-input:focus {
-    outline: none;
-    border: none;
-    box-shadow: none;
 }
 .pl-modal-input--money { padding-left: 0.3rem; }
 .pl-modal-input--pct { padding-right: 0.3rem; }
