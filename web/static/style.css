@@ -2012,11 +2012,13 @@ select {
 }
 input[type="file"] {
     padding: 0;
+    background: transparent;
+    border: none;
 }
 input[type="file"]::file-selector-button {
     background: var(--control-bg);
     border: 0.5px solid var(--border);
-    border-radius: var(--ui-radius) 0 0 var(--ui-radius);
+    border-radius: var(--ui-radius);
     color: var(--text);
     padding: 0.38rem 0.7rem;
     font-size: var(--ui-font-base);
