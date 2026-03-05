@@ -10,9 +10,9 @@
   {%- endif -%}
 {%- endmacro %}
 
-{# ── Item row ────────────────────────────────────────────────────────────── #}
-{% macro item_row(item, milestones, entity_key) %}
-<tr class="pl-item-row"
+{# ── Item card ───────────────────────────────────────────────────────────── #}
+{% macro item_card(item, milestones, entity_key) %}
+<div class="pl-box pl-box--{{ item.item_type }}"
     onclick="plOpenEdit(this)"
     data-id="{{ item.id }}"
     data-entity="{{ entity_key }}"
@@ -24,31 +24,43 @@
     data-payment="{{ '{:.2f}'.format(item.monthly_payment_cents / 100) }}"
     data-source="{{ item.source }}"
     data-cf-account="{{ item.cashflow_account_name or '' }}">
-    <td class="pl-td-name">
-        {{ item.name }}
-        {% if item.source == 'cashflow' %}
-        <span class="pl-badge-auto">Auto</span>
-        {% endif %}
-    </td>
-    <td class="pl-td-data">{{ fmt_k(item.current_value_cents) }}</td>
-    <td class="pl-td-data">{{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%</td>
-    <td class="pl-td-data">
+
+    <div class="pl-box-header">
+        <span class="pl-box-name">
+            {{ item.name }}
+            {% if item.source == 'cashflow' %}
+            <span class="pl-badge-auto">Auto</span>
+            {% endif %}
+        </span>
+        <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
+    </div>
+
+    <div class="pl-box-subline">
+        {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
+        {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
         {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
-            {{ fmt_dollars(item.monthly_contrib_cents) }}
+            &middot; {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
         {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
-            {{ fmt_dollars(item.monthly_payment_cents) }}
-        {% else %}&mdash;{% endif %}
-    </td>
-    {% for m in milestones %}
-    <td class="pl-td-milestone{% if loop.first %} pl-td-milestone-first{% endif %}">
-        {% if item.projections[m] == 0 and item.item_type == 'liability' %}
-            Paid
-        {% else %}
-            {{ fmt_k(item.projections[m]) }}
+            &middot; {{ fmt_dollars(item.monthly_payment_cents) }}/mo pymt
         {% endif %}
-    </td>
-    {% endfor %}
-</tr>
+    </div>
+
+    <div class="pl-box-projections">
+        <span class="pl-proj-label">Projections</span>
+        {% for m in milestones %}
+        <div class="pl-proj-row">
+            <span class="pl-proj-age">@{{ m }}</span>
+            <span class="pl-proj-value {% if item.projections[m] == 0 and item.item_type == 'liability' %}pl-paid-off{% endif %}">
+                {% if item.projections[m] == 0 and item.item_type == 'liability' %}
+                    Paid
+                {% else %}
+                    {{ fmt_k(item.projections[m]) }}
+                {% endif %}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endmacro %}
 
 {# ── Entity section ──────────────────────────────────────────────────────── #}
@@ -57,63 +69,35 @@
     <h2 class="pl-section-title">{{ section.entity_display }}</h2>
 
     {# Assets #}
-    <div class="outline-panel pl-panel pl-panel--labeled">
-        <span class="pl-panel-label">Assets</span>
-        {% if section.assets %}
-        <div class="table-wrap">
-        <table class="pl-table">
-            <thead>
-                <tr>
-                    <th class="pl-th-name"></th>
-                    <th class="pl-th-data">Value</th>
-                    <th class="pl-th-data">Appr.</th>
-                    <th class="pl-th-data">+/mo</th>
-                    {% for m in milestones %}<th class="pl-th-milestone{% if loop.first %} pl-th-milestone-first{% endif %}">@{{ m }}</th>{% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in section.assets %}
-                {{ item_row(item, milestones, section.entity_key) }}
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="pl-panel--labeled">
+        <div class="pl-panel-label">Assets</div>
+        <div class="pl-grid">
+            {% for item in section.assets %}
+            {{ item_card(item, milestones, section.entity_key) }}
+            {% endfor %}
+            {% if not is_cross %}
+            <div class="pl-add-card" onclick="plOpenAdd('{{ section.entity_key }}', 'asset')">+</div>
+            {% endif %}
         </div>
-        {% else %}
-        <div class="pl-empty">No assets added yet</div>
+        {% if not section.assets and is_cross %}
+        <div class="pl-empty">No assets</div>
         {% endif %}
-        <div class="pl-add-strip">
-            <button type="button" class="pl-add-btn" onclick="plOpenAdd('{{ section.entity_key }}', 'asset')">+</button>
-        </div>
     </div>
 
     {# Liabilities #}
-    <div class="outline-panel pl-panel pl-panel--labeled">
-        <span class="pl-panel-label">Liabilities</span>
-        {% if section.liabilities %}
-        <div class="table-wrap">
-        <table class="pl-table">
-            <thead>
-                <tr>
-                    <th class="pl-th-name"></th>
-                    <th class="pl-th-data">Balance</th>
-                    <th class="pl-th-data">Rate</th>
-                    <th class="pl-th-data">Pymt</th>
-                    {% for m in milestones %}<th class="pl-th-milestone{% if loop.first %} pl-th-milestone-first{% endif %}">@{{ m }}</th>{% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in section.liabilities %}
-                {{ item_row(item, milestones, section.entity_key) }}
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="pl-panel--labeled">
+        <div class="pl-panel-label">Liabilities</div>
+        <div class="pl-grid">
+            {% for item in section.liabilities %}
+            {{ item_card(item, milestones, section.entity_key) }}
+            {% endfor %}
+            {% if not is_cross %}
+            <div class="pl-add-card" onclick="plOpenAdd('{{ section.entity_key }}', 'liability')">+</div>
+            {% endif %}
         </div>
-        {% else %}
-        <div class="pl-empty">No liabilities added yet</div>
+        {% if not section.liabilities and is_cross %}
+        <div class="pl-empty">No liabilities</div>
         {% endif %}
-        <div class="pl-add-strip">
-            <button type="button" class="pl-add-btn" onclick="plOpenAdd('{{ section.entity_key }}', 'liability')">+</button>
-        </div>
     </div>
 
     {# Net Worth #}

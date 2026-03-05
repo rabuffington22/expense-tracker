@@ -6031,43 +6031,73 @@ input.pl-input--sm {
 .pl-section-title {
     font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem;
 }
-.pl-panel { padding: 0; }
 .pl-panel--labeled { position: relative; margin-top: 1.2rem; }
 .pl-panel-label {
-    position: absolute; top: -0.55rem; left: 0.75rem;
     font-size: var(--ui-font-xs); font-weight: 700; text-transform: uppercase;
     letter-spacing: var(--label-tracking); color: var(--text-muted);
-    background: var(--bg); padding: 0 0.35rem; line-height: 1;
+    margin-bottom: 0.4rem; padding-left: 0.1rem;
 }
 
-/* ── Table ────────────────────────────────────────────────────────────────── */
-.pl-table {
-    width: 100%; border-collapse: collapse; font-size: var(--ui-font-sm);
+/* ── Card grid ───────────────────────────────────────────────────────────── */
+.pl-grid {
+    display: grid; gap: 0.5rem; margin-bottom: 0.8rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
-.pl-table th {
-    font-size: var(--ui-font-xs); font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.04em; color: var(--text-muted); text-align: right;
-    padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-}
-.pl-table th.pl-th-name { text-align: left; width: 100%; }
-.pl-table th.pl-th-data { text-align: center; padding: 0.35rem 0.6rem; width: 4.5rem; min-width: 4.5rem; }
-.pl-table th.pl-th-milestone { padding: 0.35rem 0.25rem; width: 3.5rem; min-width: 3.5rem; }
-.pl-table th.pl-th-milestone-first { padding-left: 2.5rem; }
-.pl-table td {
-    padding: 0.38rem 0.5rem; text-align: right;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    white-space: nowrap;
-}
-.pl-table tbody tr:last-child td { border-bottom: none; }
-.pl-td-name { text-align: left !important; font-weight: 500; }
-.pl-td-data { text-align: center !important; padding: 0.38rem 0.6rem !important; }
-.pl-td-milestone { padding: 0.38rem 0.25rem !important; }
-.pl-td-milestone-first { padding-left: 2.5rem !important; }
 
-/* ── Item rows ────────────────────────────────────────────────────────────── */
-.pl-item-row { cursor: pointer; transition: background 0.12s; }
-.pl-item-row:hover { background: var(--hover-bg); }
+/* ── Glass cards ─────────────────────────────────────────────────────────── */
+.pl-box {
+    display: flex; flex-direction: column; gap: 0.3rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    cursor: pointer; transition: background var(--transition);
+}
+.pl-box--asset {
+    background: rgba(20,169,248,0.10);
+    border: 1px solid rgba(20,169,248,0.18);
+}
+.pl-box--asset:hover { background: rgba(20,169,248,0.15); }
+.pl-box--liability {
+    background: rgba(191,90,242,0.10);
+    border: 1px solid rgba(191,90,242,0.18);
+}
+.pl-box--liability:hover { background: rgba(191,90,242,0.15); }
+
+.pl-box-header {
+    display: flex; align-items: center; gap: 0.3rem;
+}
+.pl-box-name {
+    font-size: 0.62rem; font-weight: 600;
+    min-width: 0; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+}
+.pl-box-value {
+    margin-left: auto; flex-shrink: 0;
+    font-size: 0.94rem; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.pl-box-subline {
+    font-size: 0.55rem; color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Projections (inside card) ───────────────────────────────────────────── */
+.pl-box-projections {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding-top: 0.25rem;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+.pl-proj-label {
+    font-size: 0.45rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+}
+.pl-proj-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.50rem;
+}
+.pl-proj-age { color: var(--text-muted); }
+.pl-proj-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+
 .pl-paid-off { color: var(--green); font-weight: 600; }
 .pl-negative { color: var(--red); }
 .pl-badge-auto {
@@ -6076,6 +6106,21 @@ input.pl-input--sm {
     color: var(--blue); background: rgba(10,132,255,0.12);
     padding: 0.08rem 0.3rem; border-radius: 4px; margin-left: 0.3rem;
     vertical-align: middle;
+}
+
+/* ── Add card (ghost) ────────────────────────────────────────────────────── */
+.pl-add-card {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 80px;
+    border: 1.5px dashed rgba(255,255,255,0.15);
+    border-radius: var(--radius-lg);
+    cursor: pointer; color: var(--text-muted);
+    font-size: 1.2rem;
+    transition: background var(--transition), border-color var(--transition);
+}
+.pl-add-card:hover {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.25);
 }
 
 /* ── Modal delete button ──────────────────────────────────────────────────── */
@@ -6087,20 +6132,29 @@ input.pl-input--sm {
 }
 .pl-btn-delete:hover { background: var(--red); color: #fff; }
 
-/* ── Add strip ────────────────────────────────────────────────────────────── */
-.pl-add-strip {
-    padding: 0.4rem 0.5rem; border-top: 1px solid var(--border);
-}
-.pl-add-btn {
-    font-size: var(--ui-font-sm); color: var(--text-muted); font-weight: 500;
-    background: none; border: none; cursor: pointer; padding: 0.2rem 0;
-}
-.pl-add-btn:hover { opacity: 0.7; }
-
 /* ── Empty state ──────────────────────────────────────────────────────────── */
 .pl-empty {
     padding: 1rem 0.75rem; text-align: center;
     font-size: var(--ui-font-sm); color: var(--text-muted);
+}
+
+/* ── Light mode overrides ────────────────────────────────────────────────── */
+:root[data-theme="light"] .pl-box--asset {
+    background: rgba(20,169,248,0.07); border-color: rgba(20,169,248,0.14);
+}
+:root[data-theme="light"] .pl-box--asset:hover { background: rgba(20,169,248,0.12); }
+:root[data-theme="light"] .pl-box--liability {
+    background: rgba(191,90,242,0.07); border-color: rgba(191,90,242,0.14);
+}
+:root[data-theme="light"] .pl-box--liability:hover { background: rgba(191,90,242,0.12); }
+:root[data-theme="light"] .pl-box-projections {
+    border-top-color: rgba(0,0,0,0.06);
+}
+:root[data-theme="light"] .pl-add-card {
+    border-color: rgba(0,0,0,0.12);
+}
+:root[data-theme="light"] .pl-add-card:hover {
+    background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.20);
 }
 
 /* ── Net Worth bar ────────────────────────────────────────────────────────── */
@@ -6407,12 +6461,12 @@ input.pl-input--sm {
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .pl-table { font-size: 0.72rem; }
-    .pl-table th, .pl-table td { padding: 0.3rem 0.35rem; }
+    .pl-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     .pl-nw-value { font-size: 0.9rem; }
     .pl-settings-form { gap: 0.6rem; }
 }
 @media (max-width: 480px) {
+    .pl-grid { grid-template-columns: 1fr; }
     .pl-nw-row { flex-wrap: wrap; }
     .pl-nw-cell { min-width: 45%; border-bottom: 1px solid var(--border); }
     .pl-modal-card { width: 100%; max-width: 100vw; border-radius: 12px 12px 0 0; }
