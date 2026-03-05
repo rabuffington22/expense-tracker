@@ -6114,40 +6114,49 @@ input.pl-input--sm {
 :root[data-theme="light"] .pl-box-projections { border-top-color: rgba(0,0,0,0.06); }
 
 /* ── Add card prompt ─────────────────────────────────────────────────────── */
-.pl-box--add { cursor: default; }
+.pl-box--add { cursor: pointer; }
 .pl-card-add-prompt {
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: var(--text-muted);
+    color: var(--text-muted);
     font-size: 1.4rem; font-weight: 300;
     opacity: 0.4; padding: 0.3rem;
     transition: opacity var(--transition), color var(--transition);
 }
-.pl-card-add-prompt:hover { opacity: 0.7; color: var(--text); }
+.pl-box--add:hover .pl-card-add-prompt { opacity: 0.7; color: var(--text); }
 
-/* ── Inline edit state ───────────────────────────────────────────────────── */
-.pl-card-edit { display: flex; flex-direction: column; gap: 0.3rem; }
-.pl-card-edit[hidden] { display: none; }
-.pl-card-edit .pl-form-group { margin-bottom: 0.3rem; }
-.pl-card-edit .pl-form-label {
-    font-size: 0.48rem; font-weight: 600; color: var(--text-muted);
-    margin-bottom: 0.1rem; display: block;
+/* ── Modal popup ─────────────────────────────────────────────────────────── */
+.pl-modal-scrim {
+    position: fixed; inset: 0; z-index: 900;
+    background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
 }
-.pl-card-edit .pl-modal-input { font-size: 0.7rem; padding: 0.25rem 0.4rem; }
-.pl-card-edit .pl-input-prefix,
-.pl-card-edit .pl-input-suffix { font-size: 0.65rem; }
-.pl-card-footer {
-    display: flex; align-items: center; gap: 0.4rem;
-    margin-top: 0.2rem; padding-top: 0.25rem;
+.pl-modal-scrim[hidden] { display: none; }
+.pl-modal-popup {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem;
+    width: 380px; max-width: 92vw;
+    max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.pl-modal-form { display: flex; flex-direction: column; gap: 0.5rem; }
+.pl-modal-form[hidden] { display: none; }
+.pl-modal-footer {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-top: 0.4rem; padding-top: 0.5rem;
     border-top: 1px solid rgba(255,255,255,0.06);
 }
-.pl-card-footer .btn-sm { font-size: 0.6rem; padding: 0.2rem 0.5rem; }
-:root[data-theme="light"] .pl-card-footer { border-top-color: rgba(0,0,0,0.06); }
-.pl-btn-inline-delete {
+:root[data-theme="light"] .pl-modal-footer { border-top-color: rgba(0,0,0,0.06); }
+.pl-btn-modal-delete {
     background: none; border: none; color: var(--red);
-    font-size: 0.55rem; font-weight: 600; cursor: pointer;
+    font-size: 0.7rem; font-weight: 600; cursor: pointer;
     padding: 0.2rem 0; opacity: 0.7;
 }
-.pl-btn-inline-delete:hover { opacity: 1; }
+.pl-btn-modal-delete:hover { opacity: 1; }
+:root[data-theme="light"] .pl-modal-scrim { background: rgba(0,0,0,0.35); }
+:root[data-theme="light"] .pl-modal-popup { box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
 
 /* ── Empty state ──────────────────────────────────────────────────────────── */
 .pl-empty {

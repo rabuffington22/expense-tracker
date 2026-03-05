@@ -10,10 +10,10 @@
   {%- endif -%}
 {%- endmacro %}
 
-{# ── Inline edit form (shared between edit + add) ────────────────────────── #}
-{% macro edit_form(item, entity_key, item_type, milestones, cf_accounts, is_add=false) %}
+{# ── Modal edit form (rendered once per item inside the popup) ───────────── #}
+{% macro modal_form(item, entity_key, item_type, milestones, cf_accounts, is_add=false) %}
 {% set is_asset = (item_type == 'asset') %}
-<div class="pl-card-edit" id="{{ 'pl-add-form-' ~ entity_key ~ '-' ~ item_type if is_add else 'pl-edit-' ~ item.id }}" hidden>
+<div class="pl-modal-form" id="{{ 'pl-add-form-' ~ entity_key ~ '-' ~ item_type if is_add else 'pl-edit-' ~ item.id }}" hidden>
     <form method="post" action="{{ url_for('planning.add_item') if is_add else url_for('planning.update_item', item_id=item.id) }}">
         <input type="hidden" name="entity_key" value="{{ entity_key }}">
         <input type="hidden" name="item_type" value="{{ item_type }}">
@@ -71,7 +71,7 @@
         <div class="pl-form-row">
             <div class="pl-form-group pl-form-group--half">
                 <label class="pl-form-label">Source</label>
-                <select name="source" class="pl-modal-input" onchange="plToggleSource(this.closest('.pl-card-edit'))">
+                <select name="source" class="pl-modal-input" onchange="plToggleSource(this.closest('.pl-modal-form'))">
                     <option value="manual" {{ '' if not is_add and item.source == 'cashflow' else 'selected' }}>Manual</option>
                     <option value="cashflow" {{ 'selected' if not is_add and item.source == 'cashflow' else '' }}>Cash Flow</option>
                 </select>
@@ -87,7 +87,7 @@
             </div>
         </div>
 
-        {# Projections (read-only context while editing) #}
+        {# Projections (shown in popup while editing) #}
         {% if not is_add and item.projections %}
         <div class="pl-box-projections">
             {% for m in milestones %}
@@ -101,16 +101,12 @@
         </div>
         {% endif %}
 
-        <div class="pl-card-footer">
+        <div class="pl-modal-footer">
             {% if not is_add %}
-            <button type="button" class="pl-btn-inline-delete" onclick="if(confirm('Delete this item?'))this.closest('.pl-card-edit').querySelector('.pl-del-form').submit()">Delete</button>
+            <button type="button" class="pl-btn-modal-delete" onclick="if(confirm('Delete this item?'))this.closest('.pl-modal-form').querySelector('.pl-del-form').submit()">Delete</button>
             {% endif %}
             <div style="flex:1"></div>
-            {% if is_add %}
-            <button type="button" class="btn btn-secondary btn-sm" onclick="plCancelAdd('{{ entity_key }}', '{{ item_type }}')">Cancel</button>
-            {% else %}
-            <button type="button" class="btn btn-secondary btn-sm" onclick="plCancelEdit({{ item.id }})">Cancel</button>
-            {% endif %}
+            <button type="button" class="btn btn-secondary btn-sm" onclick="plCloseModal()">Cancel</button>
             <button type="submit" class="btn btn-primary btn-sm">Save</button>
         </div>
     </form>
@@ -122,38 +118,29 @@
 </div>
 {% endmacro %}
 
-{# ── Item card (view + inline edit) ──────────────────────────────────────── #}
+{# ── Item card (view only) ───────────────────────────────────────────────── #}
 {% macro item_card(item, milestones, entity_key, cf_accounts, is_cross=false) %}
 <div class="pl-box pl-box--{{ item.item_type }}" id="pl-card-{{ item.id }}"
-    {% if not is_cross %}onclick="plEditCard({{ item.id }}, event)"{% endif %}>
-
-    {# ── View state ── #}
-    <div class="pl-card-view" id="pl-view-{{ item.id }}">
-        <div class="pl-box-header">
-            <span class="pl-box-name">
-                {{ item.name.split(' — ')[0] }}
-                {% if item.source == 'cashflow' %}
-                <span class="pl-badge-auto">Auto</span>
-                {% endif %}
-            </span>
-            <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
-        </div>
-        <div class="pl-box-subline">
-            {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
-            {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
-            {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
-                &middot; {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
-            {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
-                &middot; {{ fmt_dollars(item.monthly_payment_cents) }}/mo pymt
+    {% if not is_cross %}onclick="plOpenEdit({{ item.id }})"{% endif %}
+    {% if not is_cross %}style="cursor:pointer"{% endif %}>
+    <div class="pl-box-header">
+        <span class="pl-box-name">
+            {{ item.name.split(' — ')[0] }}
+            {% if item.source == 'cashflow' %}
+            <span class="pl-badge-auto">Auto</span>
             {% endif %}
-        </div>
-        {# Projections shown only in inline edit form #}
+        </span>
+        <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
     </div>
-
-    {# ── Edit state (hidden, toggled via JS) ── #}
-    {% if not is_cross %}
-    {{ edit_form(item, entity_key, item.item_type, milestones, cf_accounts) }}
-    {% endif %}
+    <div class="pl-box-subline">
+        {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
+        {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
+        {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
+            &middot; {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
+        {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
+            &middot; {{ fmt_dollars(item.monthly_payment_cents) }}/mo pymt
+        {% endif %}
+    </div>
 </div>
 {% endmacro %}
 
@@ -170,9 +157,8 @@
             {{ item_card(item, milestones, section.entity_key, cf_accounts, is_cross) }}
             {% endfor %}
             {% if not is_cross %}
-            <div class="pl-box pl-box--asset pl-box--add" id="pl-add-{{ section.entity_key }}-asset">
-                <div class="pl-card-add-prompt" onclick="plShowAdd('{{ section.entity_key }}', 'asset')">+</div>
-                {{ edit_form(none, section.entity_key, 'asset', milestones, cf_accounts, is_add=true) }}
+            <div class="pl-box pl-box--asset pl-box--add" onclick="plOpenAdd('{{ section.entity_key }}', 'asset')">
+                <div class="pl-card-add-prompt">+</div>
             </div>
             {% endif %}
         </div>
@@ -189,9 +175,8 @@
             {{ item_card(item, milestones, section.entity_key, cf_accounts, is_cross) }}
             {% endfor %}
             {% if not is_cross %}
-            <div class="pl-box pl-box--liability pl-box--add" id="pl-add-{{ section.entity_key }}-liability">
-                <div class="pl-card-add-prompt" onclick="plShowAdd('{{ section.entity_key }}', 'liability')">+</div>
-                {{ edit_form(none, section.entity_key, 'liability', milestones, cf_accounts, is_add=true) }}
+            <div class="pl-box pl-box--liability pl-box--add" onclick="plOpenAdd('{{ section.entity_key }}', 'liability')">
+                <div class="pl-card-add-prompt">+</div>
             </div>
             {% endif %}
         </div>
@@ -292,57 +277,59 @@
 </div>
 {% endif %}
 
+{# ── Edit/Add Modal ──────────────────────────────────────────────────────── #}
+<div class="pl-modal-scrim" id="pl-modal-scrim" hidden onclick="if(event.target===this)plCloseModal()">
+    <div class="pl-modal-popup">
+        {# Edit forms for primary entity items #}
+        {% for item in primary.assets %}
+        {{ modal_form(item, primary.entity_key, 'asset', milestones, cf_accounts) }}
+        {% endfor %}
+        {% for item in primary.liabilities %}
+        {{ modal_form(item, primary.entity_key, 'liability', milestones, cf_accounts) }}
+        {% endfor %}
+        {# Add forms #}
+        {{ modal_form(none, primary.entity_key, 'asset', milestones, cf_accounts, is_add=true) }}
+        {{ modal_form(none, primary.entity_key, 'liability', milestones, cf_accounts, is_add=true) }}
+    </div>
+</div>
+
 {# ── JavaScript ──────────────────────────────────────────────────────────── #}
 <script>
-var activeEditId = null;
-
-function plEditCard(itemId, event) {
-    if (event && (event.target.closest('button') || event.target.closest('form') ||
-        event.target.closest('select') || event.target.closest('input'))) return;
-    var viewEl = document.getElementById('pl-view-' + itemId);
-    var editEl = document.getElementById('pl-edit-' + itemId);
-    if (!editEl || !viewEl.offsetParent) return; /* already editing */
-
-    /* Close any open edit */
-    if (activeEditId !== null && activeEditId !== itemId) plCancelEdit(activeEditId);
-
-    viewEl.hidden = true;
-    editEl.hidden = false;
-    activeEditId = itemId;
-    var inp = editEl.querySelector('input[name="name"]');
-    if (inp) inp.focus();
-}
-
-function plCancelEdit(itemId) {
-    var viewEl = document.getElementById('pl-view-' + itemId);
-    var editEl = document.getElementById('pl-edit-' + itemId);
-    if (viewEl) viewEl.hidden = false;
-    if (editEl) editEl.hidden = true;
-    if (activeEditId === itemId) activeEditId = null;
-}
-
-function plShowAdd(entityKey, itemType) {
-    var box = document.getElementById('pl-add-' + entityKey + '-' + itemType);
-    var prompt = box.querySelector('.pl-card-add-prompt');
-    var form = document.getElementById('pl-add-form-' + entityKey + '-' + itemType);
-    prompt.hidden = true;
+function plOpenEdit(itemId) {
+    _plHideAllForms();
+    var form = document.getElementById('pl-edit-' + itemId);
+    if (!form) return;
     form.hidden = false;
+    document.getElementById('pl-modal-scrim').hidden = false;
     var inp = form.querySelector('input[name="name"]');
     if (inp) inp.focus();
 }
 
-function plCancelAdd(entityKey, itemType) {
-    var box = document.getElementById('pl-add-' + entityKey + '-' + itemType);
-    var prompt = box.querySelector('.pl-card-add-prompt');
+function plOpenAdd(entityKey, itemType) {
+    _plHideAllForms();
     var form = document.getElementById('pl-add-form-' + entityKey + '-' + itemType);
-    prompt.hidden = false;
-    form.hidden = true;
+    if (!form) return;
+    form.hidden = false;
+    document.getElementById('pl-modal-scrim').hidden = false;
+    var inp = form.querySelector('input[name="name"]');
+    if (inp) inp.focus();
 }
 
-function plToggleSource(editEl) {
-    var sel = editEl.querySelector('select[name="source"]');
-    var cfGroup = editEl.querySelector('.pl-g-cfaccount');
-    var valInput = editEl.querySelector('input[name="current_value"]');
+function plCloseModal() {
+    document.getElementById('pl-modal-scrim').hidden = true;
+    _plHideAllForms();
+}
+
+function _plHideAllForms() {
+    document.querySelectorAll('.pl-modal-form').forEach(function(el) {
+        el.hidden = true;
+    });
+}
+
+function plToggleSource(formEl) {
+    var sel = formEl.querySelector('select[name="source"]');
+    var cfGroup = formEl.querySelector('.pl-g-cfaccount');
+    var valInput = formEl.querySelector('input[name="current_value"]');
     var isCf = sel.value === 'cashflow';
     cfGroup.hidden = !isCf;
     valInput.disabled = isCf;
@@ -365,11 +352,9 @@ function plAgeSaved(inp) {
     inp.closest('form').requestSubmit();
 }
 
-/* Escape key */
+/* Escape key closes modal */
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        if (activeEditId !== null) plCancelEdit(activeEditId);
-    }
+    if (e.key === 'Escape') plCloseModal();
 });
 </script>
 {% endblock %}
