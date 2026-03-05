@@ -95,8 +95,13 @@ function txnCopyList(btn) {
         var direction = isNeg ? 'paid' : 'received';
         lines.push((i + 1) + '.  ' + date + '  -  ' + desc + '  -  ' + amt + ' ' + direction);
     });
-    var header = "Hey, can you help me with these? I'm trying to categorize them. Just reply with what you remember - even a word or two is great. Thank you!\n\n";
-    navigator.clipboard.writeText(header + lines.join('\n')).then(function() {
+    var text = lines.join('\n');
+    /* Add friendly header only when filtered to Ask Kristine */
+    var subFilter = document.getElementById('subcategory');
+    if (subFilter && subFilter.value === 'Ask Kristine') {
+        text = "Hey, can you help me with these? I'm trying to categorize them. Just reply with what you remember - even a word or two is great. Thank you!\n\n" + text;
+    }
+    navigator.clipboard.writeText(text).then(function() {
         var orig = btn.textContent;
         btn.textContent = 'Copied!';
         setTimeout(function() { btn.textContent = orig; }, 1500);
