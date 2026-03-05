@@ -201,28 +201,49 @@
 </div>
 {% endif %}
 
-{# ── AI Planning Chat ────────────────────────────────────────────────────── #}
-<div class="pl-chat-section">
-    <div class="pl-chat-header">
-        <span class="pl-chat-title">Ask Opus</span>
-        <button type="button" class="pl-chat-clear" hx-post="{{ url_for('planning.clear_chat') }}" hx-target="#pl-chat-thread" hx-swap="innerHTML" title="Clear conversation">Clear</button>
+{# ── AI Planning Chat Button ─────────────────────────────────────────────── #}
+<div class="pl-ask-bar">
+    <button type="button" class="pl-ask-btn" onclick="plChatOpen()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Ask Opus
+    </button>
+</div>
+
+{# ── AI Chat Modal ──────────────────────────────────────────────────────── #}
+<div class="pl-chat-scrim" id="pl-chat-scrim" hidden onclick="plChatClose(event)">
+    <div class="pl-chat-modal" onclick="event.stopPropagation()">
+        <div class="pl-chat-header">
+            <span class="pl-chat-title">Ask Opus</span>
+            <div class="pl-chat-header-actions">
+                <button type="button" class="pl-chat-clear" hx-post="{{ url_for('planning.clear_chat') }}" hx-target="#pl-chat-thread" hx-swap="innerHTML" title="Clear conversation">Clear</button>
+                <button type="button" class="pl-chat-close" onclick="plChatClose()" title="Close">&times;</button>
+            </div>
+        </div>
+        <div class="pl-chat-body">
+            <div class="pl-chat-thread" id="pl-chat-thread">
+                {# Conversation pairs appended here via HTMX #}
+            </div>
+            <div class="pl-chat-empty" id="pl-chat-empty">
+                <div class="pl-chat-empty-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-2h2v2h-2zm2-4h-2c0-3.25 3-3 3-5 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z" fill="currentColor" opacity="0.2"/></svg>
+                </div>
+                <div class="pl-chat-empty-text">Ask about your financial plan, run what-if scenarios, or get retirement projections.</div>
+            </div>
+            <div class="pl-chat-thinking" id="pl-chat-thinking" hidden>
+                <span class="pl-chat-thinking-dot"></span>
+                <span class="pl-chat-thinking-dot"></span>
+                <span class="pl-chat-thinking-dot"></span>
+            </div>
+        </div>
+        <form class="pl-chat-form" id="pl-chat-form" hx-post="{{ url_for('planning.ask') }}" hx-target="#pl-chat-thread" hx-swap="beforeend"
+              hx-on::before-request="plChatBeforeReq()"
+              hx-on::after-request="plChatAfterReq(event)">
+            <input type="text" name="question" class="pl-chat-input" id="pl-chat-input" placeholder="Ask about your finances..." autocomplete="off" required>
+            <button type="submit" class="pl-chat-send">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+        </form>
     </div>
-    <div class="pl-chat-thread" id="pl-chat-thread">
-        {# Conversation pairs appended here via HTMX #}
-    </div>
-    <div class="pl-chat-thinking" id="pl-chat-thinking" hidden>
-        <span class="pl-chat-thinking-dot"></span>
-        <span class="pl-chat-thinking-dot"></span>
-        <span class="pl-chat-thinking-dot"></span>
-    </div>
-    <form class="pl-chat-form" hx-post="{{ url_for('planning.ask') }}" hx-target="#pl-chat-thread" hx-swap="beforeend"
-          hx-on::before-request="document.getElementById('pl-chat-thinking').hidden=false; document.getElementById('pl-chat-thread').style.display='flex';"
-          hx-on::after-request="document.getElementById('pl-chat-thinking').hidden=true; if(event.detail.successful) { this.reset(); var t=document.getElementById('pl-chat-thread'); t.scrollTop=t.scrollHeight; }">
-        <input type="text" name="question" class="pl-chat-input" placeholder="Ask about your finances..." autocomplete="off" required>
-        <button type="submit" class="pl-chat-send">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-    </form>
 </div>
 
 {# ── Add Modal ───────────────────────────────────────────────────────────── #}
@@ -429,7 +450,42 @@ function plAgeSaved(inp) {
 
 /* Escape key */
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') plClose();
+    if (e.key === 'Escape') {
+        if (!document.getElementById('pl-chat-scrim').hidden) plChatClose();
+        else plClose();
+    }
 });
+
+/* ── AI Chat Modal ─────────────────────────────────────────── */
+function plChatOpen() {
+    document.getElementById('pl-chat-scrim').hidden = false;
+    document.body.style.overflow = 'hidden';
+    document.getElementById('pl-chat-input').focus();
+    _plScrollThread();
+}
+function plChatClose(evt) {
+    if (evt && evt.target !== document.getElementById('pl-chat-scrim')) return;
+    document.getElementById('pl-chat-scrim').hidden = true;
+    document.body.style.overflow = '';
+}
+function plChatBeforeReq() {
+    document.getElementById('pl-chat-thinking').hidden = false;
+    document.getElementById('pl-chat-empty').hidden = true;
+    _plScrollThread();
+}
+function plChatAfterReq(evt) {
+    document.getElementById('pl-chat-thinking').hidden = true;
+    if (evt.detail.successful) {
+        document.getElementById('pl-chat-form').reset();
+        _plScrollThread();
+        document.getElementById('pl-chat-input').focus();
+    }
+}
+function _plScrollThread() {
+    requestAnimationFrame(function() {
+        var body = document.querySelector('.pl-chat-body');
+        if (body) body.scrollTop = body.scrollHeight;
+    });
+}
 </script>
 {% endblock %}
