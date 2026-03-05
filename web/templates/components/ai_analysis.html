@@ -1,17 +1,26 @@
 <div class="iu-half-label iu-ai-label">AI Analysis</div>
 {% if insights %}
   {% for ins in insights %}
-  {% if ins.url %}
-  <a class="iu-row iu-ai-row" href="{{ ins.url }}">
-    <span class="iu-text">{{ ins.text }}</span>
+  <div class="iu-row iu-ai-row iu-ai-row--expandable" onclick="iuToggleAi(this)">
+    <span class="iu-text iu-ai-summary">{{ ins.text | truncate(60, True, '...') }}</span>
     <span class="iu-chevron">&#x203A;</span>
-  </a>
-  {% else %}
-  <div class="iu-row iu-ai-row">
-    <span class="iu-text">{{ ins.text }}</span>
   </div>
-  {% endif %}
+  <div class="iu-ai-detail" hidden>
+    <span class="iu-text">{{ ins.text }}</span>
+    {% if ins.url %}
+    <a href="{{ ins.url }}" class="iu-ai-drill">View transactions &#x203A;</a>
+    {% endif %}
+  </div>
   {% endfor %}
 {% else %}
   <div class="iu-empty-sm">AI analysis unavailable</div>
 {% endif %}
+<script>
+function iuToggleAi(row) {
+    var detail = row.nextElementSibling;
+    if (!detail) return;
+    var show = detail.hidden;
+    detail.hidden = !show;
+    row.querySelector('.iu-chevron').style.transform = show ? 'rotate(90deg)' : '';
+}
+</script>

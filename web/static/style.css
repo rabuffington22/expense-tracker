@@ -5495,6 +5495,31 @@ select.input-sm {
     background: rgba(10,132,255,0.06);
 }
 
+/* AI Analysis expandable rows */
+.iu-ai-row--expandable { cursor: pointer; }
+.iu-ai-row--expandable .iu-chevron {
+    transition: transform 0.15s ease;
+}
+.iu-ai-summary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.iu-ai-detail {
+    padding: 0.3rem 0.5rem 0.5rem 0.5rem;
+    font-size: var(--ui-font-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+.iu-ai-drill {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: var(--ui-font-xs);
+    color: var(--blue);
+    text-decoration: none;
+}
+.iu-ai-drill:hover { text-decoration: underline; }
+
 /* Insight detail popup */
 .iu-row--clickable { cursor: pointer; }
 .iu-detail-title {
