@@ -6036,26 +6036,28 @@ input.pl-input--sm {
 .pl-btn-ask {
     margin-left: auto;
     flex-shrink: 0;
-    background: #003eb6;
+    background: #001a3a;
     color: #fff;
     border: 1.5px solid #14a9f8;
-    box-shadow: 0 0 0 0.5px rgba(20,169,248,0.25);
+    box-shadow: none;
 }
 .pl-btn-ask:hover {
-    background: #0050d0;
+    background: #002550;
     border-color: #3bbcff;
-    box-shadow: 0 0 6px rgba(20,169,248,0.30);
+    box-shadow: none;
+    filter: brightness(1);
 }
 :root[data-theme="light"] .pl-btn-ask {
-    background: #003eb6;
+    background: #001a3a;
     color: #fff;
     border-color: #0a84ff;
-    box-shadow: 0 0 0 0.5px rgba(10,132,255,0.25);
+    box-shadow: none;
 }
 :root[data-theme="light"] .pl-btn-ask:hover {
-    background: #0050d0;
+    background: #002550;
     border-color: #3ba1ff;
-    box-shadow: 0 0 6px rgba(10,132,255,0.30);
+    box-shadow: none;
+    filter: brightness(1);
 }
 
 /* ── AI Chat Modal ─────────────────────────────────────────────────────── */
