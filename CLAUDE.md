@@ -68,6 +68,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     cashflow.py                    # GET /cashflow (account balances, upcoming bills)
     planning.py                    # GET/POST /planning (net worth projections)
     reports.py                     # GET /reports (monthly detail + spending trend)
+    ai.py                          # POST /ai/ask, /ai/clear (global Ask Opus chat, per-page context)
     plaid.py                       # GET/POST /plaid (connect, sync, disconnect)
     saved_views.py                 # POST /saved-views (CRUD for filter presets)
     upload.py                      # GET/POST /upload (bank statement import)
@@ -321,11 +322,12 @@ Each insight links to a drill-down in `/transactions`.
 **Saved Views:** Dashboard and transactions pages support saved filter presets via the saved views system. Row shows select + Save As + Update visible; Rename, Make Default, Clear Default, Delete in a "⋯" overflow menu (keyboard accessible, closes on outside click/Escape).
 
 ## AI Features
-Three AI-powered features using Claude via OpenRouter (`core/ai_client.py`). Requires `OPENROUTER_API_KEY` env var. All use `anthropic/claude-sonnet-4.6`, 20s timeout, graceful fallback when unavailable.
+Four AI-powered features using Claude via OpenRouter (`core/ai_client.py`). Requires `OPENROUTER_API_KEY` env var.
 
-- **AI Suggest** (transactions edit modal) — Sends merchant + amount, returns category/subcategory suggestion. Button labeled "AI Suggest", shows error feedback on failure.
-- **AI Cancellation Tips** (subscriptions detail modal) — Generates step-by-step cancellation instructions for a subscription. On-demand button on watchlist items.
-- **AI Analysis** (dashboard insights) — Gathers spending summary (categories, merchants, trends), returns 3-5 narrative insights. Cached in-memory 1 hour per entity+period. Button in Insights section with blue accent.
+- **Ask Opus** (global chat modal) — Available on every page via "Ask Opus" button. Uses `anthropic/claude-opus-4.6` via `web/routes/ai.py`. Each page sends page-specific financial context (planning data, spending trends, transaction patterns, subscription costs, account balances, etc.). Conversation persists per entity+page in `/tmp/expense-tracker-ai/`. System prompt adapts per page (financial advisor on Planning, spending analyst on Dashboard, etc.). Modal lives in `base.html`, JS function `aiChatOpen('pagename')` sets context. Button styled as deep navy (`#001a3a`) with light blue (`#14a9f8`) ring.
+- **AI Suggest** (transactions edit modal) — Uses `anthropic/claude-sonnet-4.6`. Sends merchant + amount, returns category/subcategory suggestion. Button labeled "AI Suggest", shows error feedback on failure.
+- **AI Cancellation Tips** (subscriptions detail modal) — Uses `anthropic/claude-sonnet-4.6`. Generates step-by-step cancellation instructions for a subscription. On-demand button on watchlist items.
+- **AI Analysis** (dashboard insights) — Uses `anthropic/claude-sonnet-4.6`. Gathers spending summary (categories, merchants, trends), returns 3-5 narrative insights. Cached in-memory 1 hour per entity+period. Button in Insights section with blue accent.
 
 ## Subscriptions Page Architecture
 Subscription watchlist at `/subscriptions` for tracking recurring charges.
@@ -350,6 +352,16 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-05 — Global Ask Opus: AI chat on every page
+Moved AI chat from Planning-only to a global modal available on Dashboard, Transactions, Subscriptions, Cash Flow, Planning, and Reports.
+
+1. **New `web/routes/ai.py` blueprint** — Global AI chat with `POST /ai/ask` and `POST /ai/clear` endpoints. Page-specific context builders gather relevant financial data per page (planning projections, spending trends, transaction patterns, subscription costs, account balances). System prompt adapts per page role. Conversation persistence per entity+page in `/tmp/expense-tracker-ai/`.
+2. **Global modal in `base.html`** — Single chat modal shared across all pages. JS function `aiChatOpen('pagename')` sets page context and opens modal. Page switching clears thread. Escape/click-outside closes. HTMX form posts to `/ai/ask`.
+3. **Ask Opus button on 6 pages** — `.page-title-row` flex container with `h1` title + button. Button styled as deep navy fill (`#001a3a`) with light blue ring (`#14a9f8`), no glow. Hover brightens fill slightly.
+4. **Planning cleanup** — Removed ~420 lines of AI chat code from `planning.py` (context gatherer, conversation persistence, system prompt, endpoints, markdown formatter). All moved to `ai.py`. Planning page button changed from `plChatOpen()` to `aiChatOpen('planning')`.
+5. **CSS rename** — All `.pl-chat-*` classes renamed to `.ai-chat-*` for global scope. `.pl-btn-ask` button class with `margin-left: auto` pushes button right. `.pl-btn-update` gray style for Planning's Update button.
+6. **Context builders per page** — Planning: assets, liabilities, projections, spending, account balances. Dashboard: KPIs, top categories, top merchants, 6-month trends. Transactions: 90-day patterns, category distribution, large txns. Subscriptions: watchlist items, costs, statuses. Cash Flow: account balances, credit utilization, manual recurring. Reports: 12-month trends, month comparisons. General: fallback with spending totals + accounts.
 
 ### 2026-03-04 — Planning page: auto-age from birthday + delete in modal + tighter milestones
 Planning page UX improvements for managing net worth projections.
