@@ -27,7 +27,7 @@ def get_monthly_totals(entity: str, start_month: str, end_month: str) -> pd.Data
         FROM transactions
         WHERE strftime('%Y-%m', date) BETWEEN ? AND ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
         GROUP BY month, category
         ORDER BY month, category
     """
@@ -54,7 +54,7 @@ def get_category_totals(entity: str, month: str) -> pd.DataFrame:
         FROM transactions
         WHERE strftime('%Y-%m', date) = ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
         GROUP BY category
         ORDER BY total_amount DESC
     """
@@ -136,7 +136,7 @@ def get_monthly_income(entity: str, start_month: str, end_month: str) -> pd.Data
         FROM transactions
         WHERE strftime('%Y-%m', date) BETWEEN ? AND ?
           AND amount > 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout')
         GROUP BY month
         ORDER BY month
     """
@@ -154,7 +154,7 @@ def get_income_total(entity: str, month: str) -> float:
         FROM transactions
         WHERE strftime('%Y-%m', date) = ?
           AND amount > 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout')
     """
     conn = get_connection(entity)
     try:
@@ -176,7 +176,7 @@ def get_merchant_totals(entity: str, month: str) -> pd.DataFrame:
         FROM transactions
         WHERE strftime('%Y-%m', date) = ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
         GROUP BY merchant
         ORDER BY total_amount DESC
     """
@@ -226,7 +226,7 @@ def get_category_totals_daterange(entity: str, start_date: str, end_date: str) -
         FROM transactions
         WHERE date BETWEEN ? AND ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
         GROUP BY category
         ORDER BY total_amount DESC
     """
@@ -247,7 +247,7 @@ def get_merchant_totals_daterange(entity: str, start_date: str, end_date: str) -
         FROM transactions
         WHERE date BETWEEN ? AND ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
         GROUP BY merchant
         ORDER BY total_amount DESC
     """
@@ -268,7 +268,7 @@ def get_month_over_month(entity: str, start_date: str, end_date: str) -> pd.Data
         FROM transactions
         WHERE date BETWEEN ? AND ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
         GROUP BY month, category
         ORDER BY month, total_amount DESC
     """
@@ -285,10 +285,10 @@ def get_income_vs_expenses_daterange(entity: str, start_date: str, end_date: str
         SELECT
             strftime('%Y-%m', date) AS month,
             ABS(SUM(CASE WHEN amount < 0
-                         AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Income')
+                         AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout')
                          THEN amount ELSE 0 END)) AS expenses,
             SUM(CASE WHEN amount > 0
-                     AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')
+                     AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')
                      THEN amount ELSE 0 END) AS income
         FROM transactions
         WHERE date BETWEEN ? AND ?
@@ -317,7 +317,7 @@ def get_recurring_charges(entity: str, start_date: str, end_date: str) -> pd.Dat
         FROM transactions
         WHERE date BETWEEN ? AND ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
         GROUP BY merchant
         HAVING COUNT(*) >= 2
         ORDER BY count DESC, avg_amount DESC
@@ -340,7 +340,7 @@ def get_tax_summary(entity: str, start_date: str, end_date: str) -> pd.DataFrame
         FROM transactions
         WHERE date BETWEEN ? AND ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
         GROUP BY category, subcategory
         ORDER BY category, total_amount DESC
     """
@@ -362,7 +362,7 @@ def get_account_summary(entity: str, start_date: str, end_date: str) -> pd.DataF
             SUM(amount) AS net
         FROM transactions
         WHERE date BETWEEN ? AND ?
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')
+          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout')
         GROUP BY account
         ORDER BY total_spending DESC
     """

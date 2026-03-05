@@ -57,7 +57,7 @@ def _make_drill_url(params):
 
 # ── SQL helpers ───────────────────────────────────────────────────────────────
 
-_TRANSFER_CATS = ("Internal Transfer", "Credit Card Payment")
+_TRANSFER_CATS = ("Internal Transfer", "Credit Card Payment", "Owner Contribution", "Partner Buyout")
 
 
 def _date_account_clause(params, prefix=""):
@@ -76,7 +76,7 @@ def _exclude_transfers_clause(params, prefix=""):
     if params.get("include_transfers") == "1":
         return "", []
     p = prefix + "." if prefix else ""
-    return f"AND COALESCE({p}category,'') NOT IN ('Internal Transfer','Credit Card Payment')", []
+    return f"AND COALESCE({p}category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')", []
 
 
 # ── Core query function ──────────────────────────────────────────────────────
@@ -171,7 +171,7 @@ def _query_dashboard(conn, params):
     data["transfer_count"] = conn.execute(
         f"SELECT COUNT(*) FROM transactions "
         f"WHERE {da_where} "
-        f"  AND (category IN ('Internal Transfer','Credit Card Payment') "
+        f"  AND (category IN ('Internal Transfer','Credit Card Payment','Owner Contribution') "
         f"       OR (COALESCE(category,'') = '' AND ("
         f"           LOWER(description_raw) LIKE '%transfer%' "
         f"           OR LOWER(description_raw) LIKE '%payment%' "
@@ -405,7 +405,7 @@ def _compute_compare_insights(conn, left_start, left_end, right_start, right_end
     Compares left period vs right period.
     """
     insights = []
-    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')"
 
     # ── Compare A: Total spending change ────────────────────────────────────
     try:
@@ -531,7 +531,7 @@ def _build_cash_flow_bars(conn, end_date_str):
         f"FROM transactions "
         f"WHERE amount_cents < 0 "
         f"  AND strftime('%Y-%m', date) IN ({placeholders}) "
-        f"  AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment') "
+        f"  AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
         f"GROUP BY ym",
         months,
     ).fetchall()
@@ -929,7 +929,7 @@ def _query_kpi(conn, start, end):
     """Run KPI queries for a date range. Returns dict with spend/income/net + txn count."""
     da_where = "date >= ? AND date <= ?"
     binds = [start, end]
-    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')"
 
     spend_cents = conn.execute(
         f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
@@ -1045,7 +1045,7 @@ def _query_income_vs_expenses(conn):
             "  COALESCE(SUM(CASE WHEN amount_cents > 0 THEN amount_cents ELSE 0 END), 0) AS inc "
             "FROM transactions "
             "WHERE date >= ? AND date <= ? "
-            "  AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')",
+            "  AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout')",
             [start, end],
         ).fetchone()
 
@@ -1075,7 +1075,7 @@ def _query_category_totals(conn, start, end):
         "WHERE t.amount_cents < 0 "
         "  AND t.date >= ? AND t.date <= ? "
         "  AND t.category IS NOT NULL AND t.category != '' "
-        "  AND t.category NOT IN ('Internal Transfer', 'Credit Card Payment') "
+        "  AND t.category NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout') "
         "GROUP BY t.category ORDER BY total_cents DESC",
         [start, end],
     ).fetchall()
@@ -1393,7 +1393,7 @@ def insight_detail():
     account = request.args.get("account", "")
     category = request.args.get("category", "")
 
-    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')"
     acct_clause = "AND account = ?" if account else ""
     acct_binds = [account] if account else []
 
@@ -1554,7 +1554,7 @@ _AI_CACHE_TTL = 3600  # 1 hour
 def _build_spending_summary(conn, left_start, left_end, right_start, right_end,
                             entity_type):
     """Build a compact text summary of spending data for AI analysis."""
-    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment')"
+    xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')"
 
     lines = [f"Entity type: {entity_type}"]
 
