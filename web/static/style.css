@@ -6132,6 +6132,33 @@ input.pl-input--sm {
 :root[data-theme="light"] .pl-add-card { color: var(--text-muted); }
 :root[data-theme="light"] .pl-add-card:hover { color: var(--text); }
 
+/* ── Combined net worth card ──────────────────────────────────────────────── */
+.pl-combined {
+    display: flex; align-items: center; gap: 1.4rem;
+    margin-top: 2rem; padding: 0.55rem 0.85rem;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg);
+}
+.pl-combined-label {
+    font-size: 0.62rem; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: var(--label-tracking);
+    margin-right: auto;
+}
+.pl-combined-item {
+    font-size: 0.6rem; color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+.pl-combined-item strong {
+    font-size: 0.78rem; font-weight: 700; color: var(--text);
+    margin-left: 0.2rem;
+}
+:root[data-theme="light"] .pl-combined {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.06);
+}
+
 /* ── Projections summary table ────────────────────────────────────────────── */
 .pl-summary {
     margin: 2.4rem -2.2rem 0;

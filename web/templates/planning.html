@@ -4,7 +4,7 @@
 {# ── Format helpers ──────────────────────────────────────────────────────── #}
 {% macro fmt_k(cents) -%}
   {%- if cents is none or cents == 0 -%}$0
-  {%- elif cents|abs >= 100000000 -%}{{ "\u2212" if cents < 0 }}${{ "{:,.1f}".format(cents|abs / 100 / 1000000) }}M
+  {%- elif cents|abs >= 100000000 -%}{{ "\u2212" if cents < 0 }}${{ "{:,.1f}".format(cents|abs / 100 / 1000000) }}m
   {%- elif cents|abs >= 100000 -%}{{ "\u2212" if cents < 0 }}${{ "{:,.0f}".format(cents|abs / 100 / 1000) }}k
   {%- else -%}{{ fmt_dollars(cents) }}
   {%- endif -%}
@@ -168,6 +168,17 @@
 {% for section in cross_sections %}
 {{ entity_section(section, milestones, cf_accounts, is_cross=true) }}
 {% endfor %}
+
+{# ── Combined Net Worth ─────────────────────────────────────────────────── #}
+{% if cross_sections %}
+<div class="pl-combined">
+    <span class="pl-combined-label">Combined Net Worth</span>
+    <span class="pl-combined-item">Today <strong>{{ fmt_k(combined.today.net_worth_cents) }}</strong></span>
+    {% for m in milestones %}
+    <span class="pl-combined-item">@{{ m }} <strong>{{ fmt_k(combined[m].net_worth_cents) }}</strong></span>
+    {% endfor %}
+</div>
+{% endif %}
 
 
 {# ── Add Modal ───────────────────────────────────────────────────────────── #}
