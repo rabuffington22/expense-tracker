@@ -5536,6 +5536,12 @@ select.input-sm {
     white-space: nowrap;
     margin-left: 1rem;
 }
+.iu-detail-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+}
 
 /* Responsive: stack at ≤900px */
 @media (max-width: 900px) {

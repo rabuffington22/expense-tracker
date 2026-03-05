@@ -11,8 +11,8 @@
         {% if left_insights %}
           {% for ins in left_insights %}
           {% if ins.insight_type %}
-          <div class="iu-row iu-row--clickable"
-               hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, **ins.detail_params) }}"
+          <div class="iu-row iu-row--clickable" data-insight-key="{{ ins.insight_key }}"
+               hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, insight_key=ins.insight_key, **ins.detail_params) }}"
                hx-target="#iu-modal-body" hx-swap="innerHTML"
                onclick="iuOpenModal()">
             <span class="iu-text">{{ ins.text }}</span>
@@ -36,8 +36,8 @@
         {% if right_insights %}
           {% for ins in right_insights %}
           {% if ins.insight_type %}
-          <div class="iu-row iu-row--clickable"
-               hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, **ins.detail_params) }}"
+          <div class="iu-row iu-row--clickable" data-insight-key="{{ ins.insight_key }}"
+               hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, insight_key=ins.insight_key, **ins.detail_params) }}"
                hx-target="#iu-modal-body" hx-swap="innerHTML"
                onclick="iuOpenModal()">
             <span class="iu-text">{{ ins.text }}</span>
@@ -128,6 +128,12 @@ function iuOpenModal() {
 function iuCloseModal() {
     document.getElementById('iu-modal-scrim').hidden = true;
     document.getElementById('iu-modal-body').innerHTML = '';
+}
+function iuDismissAndClose(key) {
+    /* Hide the insight row that matches this key, then close modal */
+    var row = document.querySelector('[data-insight-key="' + key + '"]');
+    if (row) row.style.display = 'none';
+    iuCloseModal();
 }
 document.getElementById('iu-modal-scrim').addEventListener('click', function(e) {
     if (e.target === this) iuCloseModal();

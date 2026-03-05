@@ -554,6 +554,13 @@ _MIGRATION_39 = """
 ALTER TABLE merchant_aliases ADD COLUMN default_subcategory TEXT;
 """
 
+_MIGRATION_40 = """
+CREATE TABLE IF NOT EXISTS insight_dismissals (
+    insight_key TEXT NOT NULL UNIQUE,
+    dismissed_at TEXT NOT NULL
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -594,6 +601,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (37, _MIGRATION_37),
     (38, _MIGRATION_38),
     (39, _MIGRATION_39),
+    (40, _MIGRATION_40),
 ]
 
 _DEFAULT_CATEGORIES = [

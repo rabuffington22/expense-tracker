@@ -230,8 +230,8 @@ def _query_dashboard(conn, params):
 def _compute_insights(conn, params, drill_url):
     """Return up to 3 actionable insight dicts for the current dashboard range.
 
-    Each insight: {"icon": str, "text": str, "url": str}.
-    Returns [] when no insights qualify.
+    Each insight: {"icon": str, "text": str, "url": str, "insight_key": str}.
+    Returns [] when no insights qualify. Dismissed insights are filtered out.
     """
     insights = []
 
@@ -240,6 +240,14 @@ def _compute_insights(conn, params, drill_url):
         end_dt = datetime.strptime(params["end"], "%Y-%m-%d")
     except (ValueError, TypeError, KeyError):
         return insights
+
+    # Load dismissed insight keys for this entity
+    dismissed = set()
+    try:
+        rows = conn.execute("SELECT insight_key FROM insight_dismissals").fetchall()
+        dismissed = {r[0] for r in rows}
+    except Exception:
+        pass  # Table may not exist yet
 
     # ── Insight A: Largest category spend increase vs prior period ────────
     span_days = (end_dt - start_dt).days
@@ -296,21 +304,23 @@ def _compute_insights(conn, params, drill_url):
                 best_cat = r["category"]
 
         if best_cat and best_increase > 5000:  # > $50
-            # Look up category ID for drill link
-            cat_id_row = conn.execute(
-                "SELECT id FROM categories WHERE name = ?", (best_cat,)
-            ).fetchone()
-            cat_id = cat_id_row["id"] if cat_id_row else None
-            dollars = best_increase // 100
-            insights.append({
-                "icon": "\U0001F4C8",  # 📈
-                "text": f"{best_cat} up ${dollars:,} vs prior period",
-                "url": drill_url(category_id=cat_id) if cat_id else drill_url(),
-                "insight_type": "category_increase",
-                "detail_params": {"category": best_cat,
-                                  "start": params["start"], "end": params["end"],
-                                  "account": params.get("account", "")},
-            })
+            ikey = f"category_increase:{best_cat}:{params['start']}:{params['end']}"
+            if ikey not in dismissed:
+                cat_id_row = conn.execute(
+                    "SELECT id FROM categories WHERE name = ?", (best_cat,)
+                ).fetchone()
+                cat_id = cat_id_row["id"] if cat_id_row else None
+                dollars = best_increase // 100
+                insights.append({
+                    "icon": "\U0001F4C8",  # 📈
+                    "text": f"{best_cat} up ${dollars:,} vs prior period",
+                    "url": drill_url(category_id=cat_id) if cat_id else drill_url(),
+                    "insight_type": "category_increase",
+                    "insight_key": ikey,
+                    "detail_params": {"category": best_cat,
+                                      "start": params["start"], "end": params["end"],
+                                      "account": params.get("account", "")},
+                })
 
     # ── Insight B: New merchants this period ──────────────────────────────
     try:
@@ -338,14 +348,17 @@ def _compute_insights(conn, params, drill_url):
         ).fetchone()[0]
 
         if new_count > 0:
-            insights.append({
-                "icon": "\U0001F195",  # 🆕
-                "text": f"{new_count} new merchant{'s' if new_count != 1 else ''} this period",
-                "url": drill_url(new_merchants=1),
-                "insight_type": "new_merchants",
-                "detail_params": {"start": params["start"], "end": params["end"],
-                                  "account": params.get("account", "")},
-            })
+            ikey = f"new_merchants:{params['start']}:{params['end']}"
+            if ikey not in dismissed:
+                insights.append({
+                    "icon": "\U0001F195",  # 🆕
+                    "text": f"{new_count} new merchant{'s' if new_count != 1 else ''} this period",
+                    "url": drill_url(new_merchants=1),
+                    "insight_type": "new_merchants",
+                    "insight_key": ikey,
+                    "detail_params": {"start": params["start"], "end": params["end"],
+                                      "account": params.get("account", "")},
+                })
     except Exception:
         pass  # Skip this insight on any error
 
@@ -367,14 +380,17 @@ def _compute_insights(conn, params, drill_url):
         ).fetchone()[0]
 
         if large_count > 0:
-            insights.append({
-                "icon": "\U0001F4B0",  # 💰
-                "text": f"{large_count} transaction{'s' if large_count != 1 else ''} over $500",
-                "url": drill_url(sort="amount"),
-                "insight_type": "large_txns",
-                "detail_params": {"start": params["start"], "end": params["end"],
-                                  "account": params.get("account", "")},
-            })
+            ikey = f"large_txns:{params['start']}:{params['end']}"
+            if ikey not in dismissed:
+                insights.append({
+                    "icon": "\U0001F4B0",  # 💰
+                    "text": f"{large_count} transaction{'s' if large_count != 1 else ''} over $500",
+                    "url": drill_url(sort="amount"),
+                    "insight_type": "large_txns",
+                    "insight_key": ikey,
+                    "detail_params": {"start": params["start"], "end": params["end"],
+                                      "account": params.get("account", "")},
+                })
     except Exception:
         pass  # Skip this insight on any error
 
@@ -1485,11 +1501,46 @@ def insight_detail():
     finally:
         conn.close()
 
+    insight_key = escape(request.args.get("insight_key", ""))
+    got_it_btn = ""
+    if insight_key:
+        dismiss_url = url_for("dashboard.insight_dismiss")
+        got_it_btn = (
+            f'<div class="iu-detail-footer">'
+            f'<button type="button" class="btn btn-secondary btn-sm"'
+            f' hx-post="{dismiss_url}" hx-vals=\'{{"insight_key": "{insight_key}"}}\''
+            f' hx-swap="none"'
+            f' onclick="iuDismissAndClose(\'{insight_key}\')">Got it</button>'
+            f'</div>'
+        )
+
     return Markup(
         f'<div class="iu-detail-title">{title}</div>'
         f'<p class="iu-detail-desc">{desc}</p>'
         f'<div class="iu-detail-list">{items_html}</div>'
+        f'{got_it_btn}'
     )
+
+
+@bp.route("/dashboard/insight-dismiss", methods=["POST"])
+def insight_dismiss():
+    """Dismiss an insight so it doesn't show again for this period."""
+    insight_key = request.form.get("insight_key", "").strip()
+    if not insight_key:
+        return "", 400
+
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "INSERT OR IGNORE INTO insight_dismissals (insight_key, dismissed_at) "
+            "VALUES (?, ?)",
+            (insight_key, datetime.now(timezone.utc).isoformat()),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    return "", 204
 
 
 # ── AI Analysis ──────────────────────────────────────────────────────────────
