@@ -85,11 +85,13 @@ function txnCopyList(btn) {
     rows.forEach(function(row, i) {
         var cells = row.querySelectorAll('td');
         var date = cells[0].textContent.trim();
-        var desc = cells[1].textContent.trim();
+        /* Clean description: collapse whitespace, remove badge text like NEW */
+        var desc = cells[1].textContent.replace(/\s+/g, ' ').trim()
+            .replace(/ NEW$/, '').replace(/ \d+%$/, '').trim();
         var amt = cells[2].textContent.trim();
-        lines.push((i + 1) + '. ' + date + ' \u2014 ' + desc + ' \u2014 ' + amt);
+        lines.push((i + 1) + '. ' + date + ' - ' + desc + ' - ' + amt);
     });
-    var header = 'Hey, can you help me with these? I\u2019m trying to categorize them. Just reply with what you remember \u2014 even a word or two is great. Thank you!\n\n';
+    var header = "Hey, can you help me with these? I'm trying to categorize them. Just reply with what you remember - even a word or two is great. Thank you!\n\n";
     navigator.clipboard.writeText(header + lines.join('\n')).then(function() {
         var orig = btn.textContent;
         btn.textContent = 'Copied!';
