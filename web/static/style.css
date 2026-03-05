@@ -6471,8 +6471,9 @@ input.pl-input--sm {
 }
 .pl-modal-input {
     width: 100%; padding: 0.35rem 0; font-size: var(--ui-font-sm);
-    background: none; border: none;
+    background: transparent !important; border: none;
     border-radius: 0; color: var(--text);
+    -webkit-appearance: none; appearance: none;
 }
 .pl-modal-input:focus {
     outline: none;
