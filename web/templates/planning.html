@@ -169,26 +169,6 @@
 {{ entity_section(section, milestones, cf_accounts, is_cross=true) }}
 {% endfor %}
 
-{# ── Combined Net Worth ──────────────────────────────────────────────────── #}
-{% if cross_sections %}
-<div class="pl-nw-combined">
-    <div class="pl-nw-combined-label">Combined Net Worth</div>
-    <div class="pl-nw-row">
-        <div class="pl-nw-cell">
-            <span class="pl-nw-label">Today</span>
-            <span class="pl-nw-value">{{ fmt_k(combined.today.net_worth_cents) }}</span>
-        </div>
-        {% for m in milestones %}
-        <div class="pl-nw-cell">
-            <span class="pl-nw-label">@{{ m }}</span>
-            <span class="pl-nw-value {% if combined[m].net_worth_cents < 0 %}pl-negative{% endif %}">
-                {{ fmt_k(combined[m].net_worth_cents) }}
-            </span>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
 
 {# ── Add Modal ───────────────────────────────────────────────────────────── #}
 <div class="pl-modal-scrim" id="pl-modal-scrim" hidden onclick="plCloseModal(event)">
