@@ -6,7 +6,7 @@
     <div class="band-label">Insights</div>
     <div class="iu-insights-inner">
       <!-- This Month -->
-      <div class="iu-section">
+      <div class="iu-section" id="iu-section-left">
         <div class="iu-half-label">{{ left_label }}</div>
         {% if left_insights %}
           {% for ins in left_insights %}
@@ -25,13 +25,14 @@
           </a>
           {% endif %}
           {% endfor %}
+          <div class="iu-empty-sm iu-caught-up" hidden>All caught up</div>
         {% else %}
           <div class="iu-empty-sm">No insights for this period</div>
         {% endif %}
       </div>
       <div class="iu-hdiv"></div>
       <!-- Last Month -->
-      <div class="iu-section">
+      <div class="iu-section" id="iu-section-right">
         <div class="iu-half-label">{{ right_label }}</div>
         {% if right_insights %}
           {% for ins in right_insights %}
@@ -50,6 +51,7 @@
           </a>
           {% endif %}
           {% endfor %}
+          <div class="iu-empty-sm iu-caught-up" hidden>All caught up</div>
         {% else %}
           <div class="iu-empty-sm">No insights for this period</div>
         {% endif %}
@@ -130,9 +132,19 @@ function iuCloseModal() {
     document.getElementById('iu-modal-body').innerHTML = '';
 }
 function iuDismissAndClose(key) {
-    /* Hide the insight row that matches this key, then close modal */
+    /* Hide the insight row, show "All caught up" if section is empty */
     var row = document.querySelector('[data-insight-key="' + key + '"]');
-    if (row) row.style.display = 'none';
+    if (row) {
+        row.style.display = 'none';
+        var section = row.closest('.iu-section');
+        if (section) {
+            var visible = section.querySelectorAll('.iu-row:not([style*="display: none"])');
+            if (visible.length === 0) {
+                var msg = section.querySelector('.iu-caught-up');
+                if (msg) msg.hidden = false;
+            }
+        }
+    }
     iuCloseModal();
 }
 document.getElementById('iu-modal-scrim').addEventListener('click', function(e) {
