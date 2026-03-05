@@ -76,6 +76,9 @@ def index():
             # Format dates as "Jan 15, 2025"
             item["earliest_date"] = _fmt_date(row["earliest"])
             item["latest_date"] = _fmt_date(row["latest"])
+            # Format last_synced ISO timestamp
+            if item.get("last_synced"):
+                item["last_synced_display"] = _fmt_date(item["last_synced"][:10])
     finally:
         conn.close()
     return render_template(

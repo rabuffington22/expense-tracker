@@ -40,9 +40,9 @@
         <div>
             <div>
                 <span class="text-bold">{{ item.institution_name or item.item_id }}</span>
-                {% if item.last_synced %}
+                {% if item.last_synced_display %}
                 <span class="text-xs text-muted" style="margin-left: 0.8rem;">
-                    Last synced: {{ item.last_synced[:16] | replace('T', ' ') }}
+                    Last synced: {{ item.last_synced_display }}
                 </span>
                 {% else %}
                 <span class="text-xs" style="color: var(--orange); margin-left: 0.8rem;">Never synced</span>
