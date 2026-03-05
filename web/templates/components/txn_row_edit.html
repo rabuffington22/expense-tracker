@@ -23,23 +23,18 @@
       </select>
 
       <label class="text-xs text-muted">Subcategory</label>
-      <div class="txn-subcat-wrap" id="txn-subcat-wrap-{{ txn.transaction_id }}">
-        <select name="subcategory" class="input-sm"
-                id="txn-subcat-{{ txn.transaction_id }}"
-                data-current="{{ txn.subcategory or '' }}"
-                onchange="txnSubcatChange(this, '{{ txn.transaction_id }}')">
-          {% for sub in subcategories %}
-          <option value="{{ sub }}" {% if sub == (txn.subcategory or 'Unknown') %}selected{% endif %}>{{ sub }}</option>
-          {% endfor %}
-          <option value="__new__">+ New…</option>
-        </select>
-        <div class="txn-subcat-new" id="txn-subcat-new-{{ txn.transaction_id }}" hidden>
-          <input type="text" class="input-sm" placeholder="New subcategory…"
-                 id="txn-subcat-input-{{ txn.transaction_id }}">
-          <button type="button" class="btn-icon btn-icon-xs" title="Cancel"
-                  onclick="txnSubcatCancel('{{ txn.transaction_id }}')">&#10005;</button>
-        </div>
-      </div>
+      <select name="subcategory" class="input-sm"
+              id="txn-subcat-{{ txn.transaction_id }}"
+              data-current="{{ txn.subcategory or '' }}"
+              onchange="txnSubcatChange(this, '{{ txn.transaction_id }}')">
+        {% for sub in subcategories %}
+        <option value="{{ sub }}" {% if sub == (txn.subcategory or 'Unknown') %}selected{% endif %}>{{ sub }}</option>
+        {% endfor %}
+        <option value="__new__">+ Add New…</option>
+      </select>
+      <input type="text" class="input-sm txn-subcat-add" placeholder="Type name, press Enter…"
+             id="txn-subcat-input-{{ txn.transaction_id }}" hidden
+             onkeydown="if(event.key==='Enter'){event.preventDefault();txnSubcatAdd('{{ txn.transaction_id }}');}">
 
       <label class="text-xs text-muted">Notes</label>
       <input type="text" name="notes" class="input-sm" placeholder="Notes..."
