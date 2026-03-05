@@ -5904,8 +5904,8 @@ input.cf-modal-input--due-date {
 }
 .pl-age-display:hover { color: var(--blue); border-color: var(--blue); }
 .pl-age-input { width: 10ch !important; }
-.pl-input--sm {
-    width: 4.5ch; text-align: center; padding: 0.22rem 0.3rem;
+input.pl-input--sm {
+    width: 3.5ch; text-align: center; padding: 0.22rem 0.25rem;
     font-size: var(--ui-font-sm); background: var(--input-sm-bg);
     border: 1px solid var(--input-sm-border); border-radius: 6px;
     color: var(--text);
@@ -5939,7 +5939,9 @@ input.cf-modal-input--due-date {
     white-space: nowrap;
 }
 .pl-table th.pl-th-name { text-align: left; width: 100%; }
+.pl-table th.pl-th-data { text-align: center; padding: 0.35rem 0.6rem; }
 .pl-table th.pl-th-milestone { padding: 0.35rem 0.25rem; }
+.pl-table th.pl-th-milestone-first { padding-left: 1.5rem; }
 .pl-table td {
     padding: 0.38rem 0.5rem; text-align: right;
     border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -5947,7 +5949,9 @@ input.cf-modal-input--due-date {
 }
 .pl-table tbody tr:last-child td { border-bottom: none; }
 .pl-td-name { text-align: left !important; font-weight: 500; }
+.pl-td-data { text-align: center !important; padding: 0.38rem 0.6rem !important; }
 .pl-td-milestone { padding: 0.38rem 0.25rem !important; }
+.pl-td-milestone-first { padding-left: 1.5rem !important; }
 
 /* ── Item rows ────────────────────────────────────────────────────────────── */
 .pl-item-row { cursor: pointer; transition: background 0.12s; }

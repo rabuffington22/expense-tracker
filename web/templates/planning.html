@@ -30,9 +30,9 @@
         <span class="pl-badge-auto">Auto</span>
         {% endif %}
     </td>
-    <td>{{ fmt_k(item.current_value_cents) }}</td>
-    <td>{{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%</td>
-    <td>
+    <td class="pl-td-data">{{ fmt_k(item.current_value_cents) }}</td>
+    <td class="pl-td-data">{{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%</td>
+    <td class="pl-td-data">
         {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
             {{ fmt_dollars(item.monthly_contrib_cents) }}
         {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
@@ -40,7 +40,7 @@
         {% else %}&mdash;{% endif %}
     </td>
     {% for m in milestones %}
-    <td class="pl-td-milestone{% if item.projections[m] == 0 and item.item_type == 'liability' %} pl-paid-off{% endif %}">
+    <td class="pl-td-milestone{% if loop.first %} pl-td-milestone-first{% endif %}{% if item.projections[m] == 0 and item.item_type == 'liability' %} pl-paid-off{% endif %}">
         {% if item.projections[m] == 0 and item.item_type == 'liability' %}
             Paid off
         {% else %}
@@ -65,10 +65,10 @@
             <thead>
                 <tr>
                     <th class="pl-th-name">Name</th>
-                    <th>Value</th>
-                    <th>Appr.</th>
-                    <th>+/mo</th>
-                    {% for m in milestones %}<th class="pl-th-milestone">@{{ m }}</th>{% endfor %}
+                    <th class="pl-th-data">Value</th>
+                    <th class="pl-th-data">Appr.</th>
+                    <th class="pl-th-data">+/mo</th>
+                    {% for m in milestones %}<th class="pl-th-milestone{% if loop.first %} pl-th-milestone-first{% endif %}">@{{ m }}</th>{% endfor %}
                 </tr>
             </thead>
             <tbody>
@@ -95,10 +95,10 @@
             <thead>
                 <tr>
                     <th class="pl-th-name">Name</th>
-                    <th>Balance</th>
-                    <th>Rate</th>
-                    <th>Pymt</th>
-                    {% for m in milestones %}<th class="pl-th-milestone">@{{ m }}</th>{% endfor %}
+                    <th class="pl-th-data">Balance</th>
+                    <th class="pl-th-data">Rate</th>
+                    <th class="pl-th-data">Pymt</th>
+                    {% for m in milestones %}<th class="pl-th-milestone{% if loop.first %} pl-th-milestone-first{% endif %}">@{{ m }}</th>{% endfor %}
                 </tr>
             </thead>
             <tbody>
@@ -163,7 +163,7 @@
             Custom Milestone
             <input type="text" name="custom_milestone"
                    value="{{ settings.custom_milestone or '' }}"
-                   class="pl-input pl-input--sm" placeholder="e.g. 55" inputmode="numeric">
+                   class="pl-input pl-input--sm" placeholder="55" inputmode="numeric">
         </label>
         <button type="submit" class="btn btn-primary btn-sm">Update</button>
     </form>
