@@ -6165,7 +6165,7 @@ input.pl-input--sm {
     display: flex; align-items: center;
 }
 .pl-summary-header {
-    border-bottom: 1px solid var(--border); padding-bottom: 0.3rem;
+    padding-bottom: 0.3rem;
     margin-bottom: 0.15rem;
 }
 .pl-summary-header .pl-summary-cell {
@@ -6183,10 +6183,8 @@ input.pl-input--sm {
     padding: 0.3rem 0.2rem;
 }
 .pl-summary-cell--bold { font-weight: 700; font-size: 0.88rem; }
-.pl-summary-row--asset .pl-summary-cell { color: var(--blue); }
-.pl-summary-row--liability .pl-summary-cell { color: rgba(191,90,242,0.85); }
 .pl-summary-row--net {
-    border-top: 1px solid var(--border); margin-top: 0.15rem; padding-top: 0.15rem;
+    margin-top: 0.15rem; padding-top: 0.15rem;
 }
 
 
