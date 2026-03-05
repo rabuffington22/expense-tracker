@@ -6177,27 +6177,40 @@ input.pl-input--sm {
     border-top: 1px solid var(--border); margin-top: 0.15rem; padding-top: 0.15rem;
 }
 
-/* ── Combined net worth (cross-entity) ───────────────────────────────────── */
+/* ── Combined net worth (cross-entity) — edge-to-edge band ───────────────── */
 .pl-nw-combined {
-    margin-top: 1rem;
-    background: rgba(48,209,88,0.06);
+    margin: 1.5rem -2.2rem 0;
+    padding: 0.6rem 2.2rem 0.7rem;
+    background: rgba(255,214,10,0.05);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(48,209,88,0.18);
-    border-radius: var(--radius-lg);
+    border-top: 1px solid rgba(255,214,10,0.15);
+    border-bottom: 1px solid rgba(255,214,10,0.15);
+    border-radius: 0;
 }
 :root[data-theme="light"] .pl-nw-combined {
-    background: rgba(48,209,88,0.04);
-    border-color: rgba(48,209,88,0.14);
+    background: rgba(255,179,0,0.06);
+    border-top-color: rgba(255,179,0,0.12);
+    border-bottom-color: rgba(255,179,0,0.12);
+}
+@media (max-width: 1024px) {
+    .pl-nw-combined { margin-left: -1.2rem; margin-right: -1.2rem; padding-left: 1.2rem; padding-right: 1.2rem; }
+}
+@media (max-width: 768px) {
+    .pl-nw-combined { margin-left: -0.85rem; margin-right: -0.85rem; padding-left: 0.85rem; padding-right: 0.85rem; }
+}
+@media (max-width: 480px) {
+    .pl-nw-combined { margin-left: -0.65rem; margin-right: -0.65rem; padding-left: 0.65rem; padding-right: 0.65rem; }
 }
 .pl-nw-combined-label {
     font-size: var(--ui-font-xs); font-weight: 700; text-transform: uppercase;
-    letter-spacing: var(--label-tracking); color: var(--green);
-    padding: 0.4rem 0.75rem 0; text-align: center;
+    letter-spacing: var(--label-tracking); color: rgba(255,214,10,0.85);
+    padding-bottom: 0.3rem; text-align: center;
 }
+:root[data-theme="light"] .pl-nw-combined-label { color: rgba(180,130,0,0.85); }
 .pl-nw-row { display: flex; }
 .pl-nw-cell {
     flex: 1; text-align: center; padding: 0.55rem 0.4rem;
-    border-right: 1px solid var(--border);
+    border-right: 1px solid rgba(255,255,255,0.06);
 }
 .pl-nw-cell:last-child { border-right: none; }
 .pl-nw-label {
