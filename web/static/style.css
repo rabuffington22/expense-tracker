@@ -6134,17 +6134,18 @@ input.pl-input--sm {
 
 /* ── Combined net worth card ──────────────────────────────────────────────── */
 .pl-combined {
-    display: flex; align-items: center; gap: 1.4rem;
-    margin-top: 2rem; padding: 0.55rem 0.85rem;
+    display: flex; align-items: center; justify-content: center; gap: 1.2rem;
+    flex-wrap: wrap;
+    max-width: 520px; margin: 2rem auto 0; padding: 0.45rem 1rem;
     background: rgba(255,255,255,0.04);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius-lg);
 }
 .pl-combined-label {
-    font-size: 0.62rem; font-weight: 700; color: var(--text-muted);
+    font-size: 0.58rem; font-weight: 700; color: var(--text-muted);
     text-transform: uppercase; letter-spacing: var(--label-tracking);
-    margin-right: auto;
+    width: 100%; text-align: center; margin-bottom: -0.2rem;
 }
 .pl-combined-item {
     font-size: 0.6rem; color: var(--text-muted);

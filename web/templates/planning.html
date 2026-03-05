@@ -175,7 +175,7 @@
     <span class="pl-combined-label">Combined Net Worth</span>
     <span class="pl-combined-item">Today <strong>{{ fmt_k(combined.today.net_worth_cents) }}</strong></span>
     {% for m in milestones %}
-    <span class="pl-combined-item">@{{ m }} <strong>{{ fmt_k(combined[m].net_worth_cents) }}</strong></span>
+    <span class="pl-combined-item">{{ m }} yrs old <strong>{{ fmt_k(combined[m].net_worth_cents) }}</strong></span>
     {% endfor %}
 </div>
 {% endif %}
