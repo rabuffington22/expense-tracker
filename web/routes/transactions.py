@@ -85,14 +85,13 @@ def _build_base_cte(conn, params):
             "(t.category IS NULL OR t.category = '' OR t.confidence < 0.6)"
         )
 
-    # Possible transfer (D6 — explicit first, heuristic fallback)
+    # Possible transfer — uncategorized txns with transfer/payment keywords
     if params.get("possible_transfer") == "1":
         conditions.append(
-            "(t.category IN ('Internal Transfer', 'Credit Card Payment') "
-            "OR (COALESCE(t.category, '') = '' AND ("
-            "  LOWER(t.description_raw) LIKE '%transfer%' "
+            "(t.category IS NULL OR t.category = '' OR t.category = 'Unknown') "
+            "AND (LOWER(t.description_raw) LIKE '%transfer%' "
             "  OR LOWER(t.description_raw) LIKE '%payment%' "
-            "  OR LOWER(t.description_raw) LIKE '%autopay%')))"
+            "  OR LOWER(t.description_raw) LIKE '%autopay%')"
         )
 
     # Merchant LIKE
