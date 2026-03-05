@@ -6481,12 +6481,13 @@ input.pl-input--sm {
     -webkit-appearance: none; appearance: none;
 }
 .pl-modal-input--money { padding-left: 0.3rem; }
-.pl-modal-input--pct { padding-right: 0; }
+.pl-modal-input--pct { padding-right: 0; text-align: right; }
 .pl-input-wrap {
     display: flex; align-items: center; gap: 0.2rem;
 }
 .pl-input-wrap--tight { gap: 0; }
-.pl-input-wrap--tight .pl-modal-input { flex: none; width: 3rem; }
+.pl-input-wrap--tight .pl-modal-input { flex: none; width: auto; min-width: 0; padding-right: 0; }
+.pl-input-wrap--tight .pl-input-suffix { margin-left: -0.15rem; }
 .pl-input-wrap .pl-modal-input { flex: 1; min-width: 0; }
 .pl-input-prefix, .pl-input-suffix {
     font-size: var(--ui-font-sm); color: var(--text-muted); font-weight: 500;

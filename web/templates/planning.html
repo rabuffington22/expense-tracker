@@ -38,7 +38,7 @@
             <div class="pl-form-group pl-form-group--half pl-form-group--fit">
                 <label class="pl-form-label">{{ 'Annual Appreciation' if is_asset else 'Interest Rate' }}</label>
                 <div class="pl-input-wrap pl-input-wrap--tight">
-                    <input type="text" name="annual_rate" class="pl-modal-input pl-modal-input--pct" inputmode="decimal"
+                    <input type="text" name="annual_rate" class="pl-modal-input pl-modal-input--pct" inputmode="decimal" size="4"
                            value="{{ '' if is_add else '{:.2f}'.format(item.annual_rate_bps / 100) }}"
                            placeholder="0.0">
                     <span class="pl-input-suffix">%</span>
