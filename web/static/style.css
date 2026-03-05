@@ -5921,12 +5921,14 @@ input.pl-input--sm {
 .pl-section-title {
     font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem;
 }
-.pl-row-label {
+.pl-panel { padding: 0; }
+.pl-panel--labeled { position: relative; margin-top: 1.2rem; }
+.pl-panel-label {
+    position: absolute; top: -0.55rem; left: 0.75rem;
     font-size: var(--ui-font-xs); font-weight: 700; text-transform: uppercase;
     letter-spacing: var(--label-tracking); color: var(--text-muted);
-    margin: 0.6rem 0 0.25rem; padding-left: 0.1rem;
+    background: var(--bg); padding: 0 0.35rem; line-height: 1;
 }
-.pl-panel { padding: 0; }
 
 /* ── Table ────────────────────────────────────────────────────────────────── */
 .pl-table {
@@ -6008,7 +6010,7 @@ input.pl-input--sm {
 .pl-nw-combined { margin-top: 1rem; border-color: var(--green); }
 .pl-nw-combined-label {
     font-size: var(--ui-font-xs); font-weight: 700; text-transform: uppercase;
-    letter-spacing: var(--label-tracking); color: var(--text-muted);
+    letter-spacing: var(--label-tracking); color: var(--green);
     padding: 0.4rem 0.75rem 0; text-align: center;
 }
 
