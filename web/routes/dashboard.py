@@ -752,7 +752,7 @@ def _process_merchant_groups(rows, patterns, is_income):
         })
 
 
-def _build_upcoming(patterns, horizon_days=30):
+def _build_upcoming(patterns, horizon_days=5):
     """Filter recurring patterns to those expected within the next horizon_days.
 
     Returns sorted list of up to 6 upcoming items for the template.
@@ -770,6 +770,10 @@ def _build_upcoming(patterns, horizon_days=30):
 
         # Include if next expected date is between today and cutoff
         if next_date < today or next_date > cutoff:
+            continue
+
+        # Skip small charges (< $100)
+        if abs(p.get("median_amount_cents", 0)) < 10000:
             continue
 
         # Format display date (e.g., "Mar 5")
