@@ -27,7 +27,7 @@
 
     <div class="pl-box-header">
         <span class="pl-box-name">
-            {{ item.name }}
+            {{ item.name.split(' — ')[0] }}
             {% if item.source == 'cashflow' %}
             <span class="pl-badge-auto">Auto</span>
             {% endif %}

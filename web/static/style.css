@@ -6139,8 +6139,8 @@ input.pl-input--sm {
 
 /* ── Projections summary table ────────────────────────────────────────────── */
 .pl-summary {
-    margin: 1.6rem -2.2rem 0;
-    padding: 0.5rem 2.2rem 0.6rem;
+    margin: 2.4rem -2.2rem 0;
+    padding: 0.25rem 2.2rem 0.35rem;
     background: rgba(255,255,255,0.04);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid rgba(255,255,255,0.08);
@@ -6165,8 +6165,8 @@ input.pl-input--sm {
     display: flex; align-items: center;
 }
 .pl-summary-header {
-    padding-bottom: 0.3rem;
-    margin-bottom: 0.15rem;
+    padding-bottom: 0.15rem;
+    margin-bottom: 0.05rem;
 }
 .pl-summary-header .pl-summary-cell {
     font-size: var(--ui-font-xs); font-weight: 700;
@@ -6180,7 +6180,7 @@ input.pl-input--sm {
 .pl-summary-cell {
     flex: 1; text-align: center;
     font-size: 0.78rem; font-variant-numeric: tabular-nums;
-    padding: 0.3rem 0.2rem;
+    padding: 0.15rem 0.2rem;
 }
 .pl-summary-cell--bold { font-weight: 700; font-size: 0.88rem; }
 .pl-summary-row--net {
