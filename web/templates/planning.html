@@ -44,22 +44,6 @@
             &middot; {{ fmt_dollars(item.monthly_payment_cents) }}/mo pymt
         {% endif %}
     </div>
-
-    <div class="pl-box-projections">
-        <span class="pl-proj-label">Projections</span>
-        {% for m in milestones %}
-        <div class="pl-proj-row">
-            <span class="pl-proj-age">@{{ m }}</span>
-            <span class="pl-proj-value {% if item.projections[m] == 0 and item.item_type == 'liability' %}pl-paid-off{% endif %}">
-                {% if item.projections[m] == 0 and item.item_type == 'liability' %}
-                    Paid
-                {% else %}
-                    {{ fmt_k(item.projections[m]) }}
-                {% endif %}
-            </span>
-        </div>
-        {% endfor %}
-    </div>
 </div>
 {% endmacro %}
 
@@ -100,19 +84,39 @@
         {% endif %}
     </div>
 
-    {# Net Worth #}
-    <div class="outline-panel pl-nw-bar">
-        <div class="pl-nw-row">
-            <div class="pl-nw-cell">
-                <span class="pl-nw-label">Today</span>
-                <span class="pl-nw-value">{{ fmt_k(section.summary.today.net_worth_cents) }}</span>
-            </div>
+    {# Projections summary #}
+    <div class="outline-panel pl-summary">
+        {# Header row: milestone labels #}
+        <div class="pl-summary-row pl-summary-header">
+            <div class="pl-summary-label"></div>
+            <div class="pl-summary-cell">Today</div>
             {% for m in milestones %}
-            <div class="pl-nw-cell">
-                <span class="pl-nw-label">@{{ m }}</span>
-                <span class="pl-nw-value {% if section.summary[m].net_worth_cents < 0 %}pl-negative{% endif %}">
-                    {{ fmt_k(section.summary[m].net_worth_cents) }}
-                </span>
+            <div class="pl-summary-cell">@{{ m }}</div>
+            {% endfor %}
+        </div>
+        {# Assets row #}
+        <div class="pl-summary-row pl-summary-row--asset">
+            <div class="pl-summary-label">Assets</div>
+            <div class="pl-summary-cell">{{ fmt_k(section.summary.today.assets_cents) }}</div>
+            {% for m in milestones %}
+            <div class="pl-summary-cell">{{ fmt_k(section.summary[m].assets_cents) }}</div>
+            {% endfor %}
+        </div>
+        {# Liabilities row #}
+        <div class="pl-summary-row pl-summary-row--liability">
+            <div class="pl-summary-label">Liabilities</div>
+            <div class="pl-summary-cell">{{ fmt_k(section.summary.today.liabilities_cents) }}</div>
+            {% for m in milestones %}
+            <div class="pl-summary-cell">{{ fmt_k(section.summary[m].liabilities_cents) }}</div>
+            {% endfor %}
+        </div>
+        {# Net Worth row #}
+        <div class="pl-summary-row pl-summary-row--net">
+            <div class="pl-summary-label">Net Worth</div>
+            <div class="pl-summary-cell pl-summary-cell--bold">{{ fmt_k(section.summary.today.net_worth_cents) }}</div>
+            {% for m in milestones %}
+            <div class="pl-summary-cell pl-summary-cell--bold {% if section.summary[m].net_worth_cents < 0 %}pl-negative{% endif %}">
+                {{ fmt_k(section.summary[m].net_worth_cents) }}
             </div>
             {% endfor %}
         </div>

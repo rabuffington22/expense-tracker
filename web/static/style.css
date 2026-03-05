@@ -6081,23 +6081,6 @@ input.pl-input--sm {
     font-variant-numeric: tabular-nums;
 }
 
-/* ── Projections (inside card) ───────────────────────────────────────────── */
-.pl-box-projections {
-    display: flex; flex-direction: column; gap: 0.15rem;
-    padding-top: 0.25rem;
-    border-top: 0.5px solid rgba(255,255,255,0.06);
-}
-.pl-proj-label {
-    font-size: 0.45rem; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.05em;
-}
-.pl-proj-row {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 0.50rem;
-}
-.pl-proj-age { color: var(--text-muted); }
-.pl-proj-value { font-weight: 600; font-variant-numeric: tabular-nums; }
-
 .pl-paid-off { color: var(--green); font-weight: 600; }
 .pl-negative { color: var(--red); }
 .pl-badge-auto {
@@ -6147,9 +6130,6 @@ input.pl-input--sm {
     background: rgba(191,90,242,0.07); border-color: rgba(191,90,242,0.14);
 }
 :root[data-theme="light"] .pl-box--liability:hover { background: rgba(191,90,242,0.12); }
-:root[data-theme="light"] .pl-box-projections {
-    border-top-color: rgba(0,0,0,0.06);
-}
 :root[data-theme="light"] .pl-add-card {
     border-color: rgba(0,0,0,0.12);
 }
@@ -6157,8 +6137,45 @@ input.pl-input--sm {
     background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.20);
 }
 
-/* ── Net Worth bar ────────────────────────────────────────────────────────── */
-.pl-nw-bar { margin-top: 0.6rem; padding: 0; border-color: var(--blue); }
+/* ── Projections summary table ────────────────────────────────────────────── */
+.pl-summary {
+    margin-top: 0.8rem; padding: 0.5rem 0.6rem;
+}
+.pl-summary-row {
+    display: flex; align-items: center;
+}
+.pl-summary-header {
+    border-bottom: 1px solid var(--border); padding-bottom: 0.3rem;
+    margin-bottom: 0.15rem;
+}
+.pl-summary-header .pl-summary-cell {
+    font-size: var(--ui-font-xs); font-weight: 700;
+    text-transform: uppercase; letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+}
+.pl-summary-label {
+    width: 5.5rem; flex-shrink: 0;
+    font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+}
+.pl-summary-cell {
+    flex: 1; text-align: center;
+    font-size: 0.78rem; font-variant-numeric: tabular-nums;
+    padding: 0.3rem 0.2rem;
+}
+.pl-summary-cell--bold { font-weight: 700; font-size: 0.88rem; }
+.pl-summary-row--asset .pl-summary-cell { color: var(--blue); }
+.pl-summary-row--liability .pl-summary-cell { color: rgba(191,90,242,0.85); }
+.pl-summary-row--net {
+    border-top: 1px solid var(--border); margin-top: 0.15rem; padding-top: 0.15rem;
+}
+
+/* ── Combined net worth (cross-entity) ───────────────────────────────────── */
+.pl-nw-combined { margin-top: 1rem; border-color: var(--green); }
+.pl-nw-combined-label {
+    font-size: var(--ui-font-xs); font-weight: 700; text-transform: uppercase;
+    letter-spacing: var(--label-tracking); color: var(--green);
+    padding: 0.4rem 0.75rem 0; text-align: center;
+}
 .pl-nw-row { display: flex; }
 .pl-nw-cell {
     flex: 1; text-align: center; padding: 0.55rem 0.4rem;
@@ -6171,12 +6188,6 @@ input.pl-input--sm {
     color: var(--text-muted); margin-bottom: 0.15rem;
 }
 .pl-nw-value { font-size: 1.05rem; font-weight: 700; }
-.pl-nw-combined { margin-top: 1rem; border-color: var(--green); }
-.pl-nw-combined-label {
-    font-size: var(--ui-font-xs); font-weight: 700; text-transform: uppercase;
-    letter-spacing: var(--label-tracking); color: var(--green);
-    padding: 0.4rem 0.75rem 0; text-align: center;
-}
 
 /* ── Planning settings bar buttons ──────────────────────────────────────── */
 .pl-btn-update {
@@ -6462,11 +6473,16 @@ input.pl-input--sm {
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .pl-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
-    .pl-nw-value { font-size: 0.9rem; }
+    .pl-summary-cell { font-size: 0.7rem; padding: 0.25rem 0.1rem; }
+    .pl-summary-cell--bold { font-size: 0.78rem; }
+    .pl-summary-label { width: 4.5rem; font-size: 0.62rem; }
     .pl-settings-form { gap: 0.6rem; }
 }
 @media (max-width: 480px) {
     .pl-grid { grid-template-columns: 1fr; }
+    .pl-summary-cell { font-size: 0.62rem; }
+    .pl-summary-cell--bold { font-size: 0.70rem; }
+    .pl-summary-label { width: 4rem; font-size: 0.58rem; }
     .pl-nw-row { flex-wrap: wrap; }
     .pl-nw-cell { min-width: 45%; border-bottom: 1px solid var(--border); }
     .pl-modal-card { width: 100%; max-width: 100vw; border-radius: 12px 12px 0 0; }
