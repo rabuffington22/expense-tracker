@@ -5458,6 +5458,7 @@ select.input-sm {
     padding: 0.6rem 0.5rem;
     flex: 1;
 }
+.iu-empty-sm[hidden] { display: none; }
 /* AI Analysis button */
 .iu-ai-btn {
     font-size: 0.68rem;
@@ -6182,23 +6183,23 @@ input.pl-input--sm {
 .pl-combined {
     display: flex; align-items: center; justify-content: center; gap: 1.2rem;
     flex-wrap: wrap;
-    max-width: 520px; margin: 2rem auto 0; padding: 0.45rem 1rem;
+    max-width: 480px; margin: 2rem auto 0; padding: 0.45rem 1rem;
     background: rgba(255,255,255,0.04);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius-lg);
 }
 .pl-combined-label {
-    font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+    font-size: 0.82rem; font-weight: 700; color: var(--text-muted);
     text-transform: uppercase; letter-spacing: var(--label-tracking);
     width: 100%; text-align: center; margin-bottom: -0.2rem;
 }
 .pl-combined-item {
-    font-size: 0.6rem; color: var(--text-muted);
+    font-size: 0.72rem; color: var(--text-muted);
     font-variant-numeric: tabular-nums;
 }
 .pl-combined-item strong {
-    font-size: 0.78rem; font-weight: 700; color: var(--text);
+    font-size: 0.88rem; font-weight: 700; color: var(--text);
     margin-left: 0.2rem;
 }
 :root[data-theme="light"] .pl-combined {
@@ -6221,6 +6222,10 @@ input.pl-input--sm {
     border-top-color: rgba(0,0,0,0.06);
     border-bottom-color: rgba(0,0,0,0.06);
 }
+:root[data-theme="light"] .pl-summary-header,
+:root[data-theme="light"] .pl-summary-row--liability {
+    border-bottom-color: rgba(0,0,0,0.06);
+}
 @media (max-width: 1024px) {
     .pl-summary { margin-left: -1.2rem; margin-right: -1.2rem; padding-left: 1.2rem; padding-right: 1.2rem; }
 }
@@ -6236,6 +6241,11 @@ input.pl-input--sm {
 .pl-summary-header {
     padding-bottom: 0.15rem;
     margin-bottom: 0.05rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.pl-summary-row--liability {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding-bottom: 0.15rem;
 }
 .pl-summary-header .pl-summary-cell {
     font-size: 0.88rem; font-weight: 700;

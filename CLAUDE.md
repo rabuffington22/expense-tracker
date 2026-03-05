@@ -348,10 +348,35 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **Milestones** — Default ages 60, 65, 70 + optional custom milestone. All projections inflation-adjusted to today's dollars.
 - **Cross-entity visibility** — Personal ↔ BFM share view (each sees other's items). LL excluded. Combined net worth row across all visible entities.
 - **Cashflow linking** — Items can pull live balance from `account_balances` (source="cashflow") instead of manual entry.
-- **Add/Edit modal** — Shared modal for both add and edit. Delete button appears in modal when editing (red outline, bottom-left). Separate `<form>` for delete to avoid nested form issues.
+- **Add/Edit modal** — Shared modal for both add and edit. Borderless input fields (transparent bg, no border/outline/shadow/focus ring — editable text feel). Delete button appears in modal when editing (red outline, bottom-left). Separate `<form>` for delete to avoid nested form issues.
+- **Input formatting** — Current value and monthly contribution/payment display with commas, no cents (`1,429,303`). Rate shows `%` suffix tight to value (`4.75 %`). JS strips commas from money fields on form submit before POST.
+- **Summary band** — Header row (TODAY, @60, etc.) at 0.88rem matching net worth values. Assets/liabilities rows slightly smaller at 0.78rem. Faint divider lines (`rgba(255,255,255,0.06)`) below header row and below liabilities row to visually separate Net Worth.
+- **Combined Net Worth** — Centered card (`max-width: 480px`), glass bg. Label at 0.82rem, item text at 0.72rem, values at 0.88rem.
+- **Settings bar** — No Update button; inflation rate and custom milestone submit via Enter key.
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-05 — Planning page: ranch equipment assets + Kubota loan
+Added ranch equipment to Planning page net worth projections.
+
+1. **Ranch value updated** — Ranch asset changed from $608k to $650k (purchase price as of 2025).
+2. **Skid Steer & Implements** — New asset: $48,000 (50% of ~$96k). JD 333G compact track loader (2021, ~1000 hrs) + 6 attachments (AB32 auger, AT321181, DB96 blade, GR84B grapple, RC78B rotary cutter, TR48B trencher). JD equipment paid off. Depreciation rate: -5%/yr.
+3. **Tractor & Implements** — New asset: $175,000 (100% ownership). Kubota M6-141DTC-F-1 (2025, 30 hrs) + LA2255 loader + BB2596 box blade + PFL4648 pallet forks + RC5715 rotary cutter. Depreciation rate: -5%/yr.
+4. **Kubota Loan** — New liability: $167,707 @ 0% interest, $3,164/mo, 60-month term maturing 07/2030.
+5. **Sort order** — Assets sorted highest-to-lowest value. Liabilities sorted biggest-to-smallest balance.
+
+### 2026-03-05 — Planning page: modal UX polish + borderless inputs + formatting
+Planning page modal and summary band refinements.
+
+1. **Removed Update button** — Settings bar (inflation rate, custom milestone) now submits via Enter key only. Removed `.pl-btn-update` button and CSS.
+2. **Borderless modal inputs** — `.pl-modal-input` changed to `background: transparent !important; border: none !important; outline: none !important; box-shadow: none !important; -webkit-appearance: none`. Uses `!important` to override global `input:focus` rule that adds blue border + box-shadow. Inputs look like plain editable text.
+3. **Comma formatting** — Current value, monthly contribution, and monthly payment display with commas and no cents (`'{:,.0f}'.format()`). Rate keeps decimal (`'{:.2f}'.format()`). JS `submit` event listener strips commas from money fields before POST.
+4. **Tight % suffix** — Rate input uses `size="4"`, `width: auto`, `text-align: right` via `.pl-modal-input--pct`. Wrapper `.pl-input-wrap--tight` with `gap: 0`. Suffix `.pl-input-suffix` with `margin-left: 0.1rem` for minimal breathing room.
+5. **Summary band font hierarchy** — Header row (TODAY, @60, @65, @70) bumped to `0.88rem` (matching net worth values). Assets/liabilities rows at `0.78rem` (slightly smaller).
+6. **Combined Net Worth label** — `.pl-combined-label` increased from `0.58rem` to `0.82rem`. Item text bumped to `0.72rem`, values to `0.88rem`.
+7. **Summary band dividers** — Faint `1px solid rgba(255,255,255,0.06)` border below header row (`.pl-summary-header`) and below liabilities row (`.pl-summary-row--liability`). Light-mode uses `rgba(0,0,0,0.06)`.
+8. **Combined Net Worth box** — `max-width: 480px` (down from 520px), centered via `margin: auto`.
 
 ### 2026-03-05 — Global Ask Opus: AI chat on every page
 Moved AI chat from Planning-only to a global modal available on Dashboard, Transactions, Subscriptions, Cash Flow, Planning, and Reports.
