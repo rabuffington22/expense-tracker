@@ -142,7 +142,7 @@ _KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
      "Internal Transfer", None, 0.7),
     # ── Zelle/Venmo → Needs Review for manual review ────
     (["zelle", "venmo"],
-     "Needs Review", None, 0.6),
+     "Needs Review", "General", 0.6),
 ]
 
 
