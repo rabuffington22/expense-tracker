@@ -3,7 +3,7 @@
     hx-target="#txn-modal"
     hx-swap="innerHTML"
     style="cursor:pointer;">
-  <td class="text-sm">{{ fmt_date(txn.date) }}</td>
+  <td class="text-sm" style="white-space:nowrap;">{{ fmt_date(txn.date) }}</td>
   <td class="text-sm">
     {{ txn.merchant_canonical or (txn.description_raw[:55] if txn.description_raw else '—') }}
     {% if not txn.category %}<span class="badge badge-muted">NEW</span>{% endif %}
