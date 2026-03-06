@@ -14,7 +14,7 @@
 <!-- ================================================================= -->
 <!-- Report Builder                                                     -->
 <!-- ================================================================= -->
-<form class="rpt-builder-form" id="rpt-form" action="{{ url_for('reports.export') }}" method="get">
+<form class="rpt-builder-form" id="rpt-form">
     <div class="form-row">
         <div class="form-group" style="flex:0 0 200px;">
             <label class="text-xs text-muted" for="report_type">Report</label>
@@ -45,17 +45,14 @@
                     hx-target="#rpt-results"
                     hx-swap="innerHTML">View</button>
         </div>
-        <div class="form-group" style="flex:0 0 90px;">
-            <label class="text-xs text-muted" for="rpt-format">Format</label>
-            <select id="rpt-format" name="format" class="input-sm" style="width:100%;">
-                <option value="csv">CSV</option>
-                <option value="pdf">PDF</option>
-                <option value="qbo">QBO</option>
-            </select>
-        </div>
-        <div class="form-group" style="flex:0 0 auto;">
+        <div class="form-group rpt-export-wrap" style="flex:0 0 auto;">
             <label class="text-xs text-muted">&nbsp;</label>
-            <button type="submit" class="btn btn-secondary btn-sm">Export</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="rptToggleExport(this)">Export ▾</button>
+            <div class="rpt-export-menu" hidden>
+                <button type="button" class="rpt-export-opt" onclick="rptExport('csv')">CSV</button>
+                <button type="button" class="rpt-export-opt" onclick="rptExport('pdf')">PDF</button>
+                <button type="button" class="rpt-export-opt rpt-export-qbo" onclick="rptExport('qbo')">QBO</button>
+            </div>
         </div>
     </div>
 </form>
@@ -75,31 +72,47 @@
 <div id="rpt-results" class="rpt-results"></div>
 
 <script>
-/* Show description for selected report type + toggle QBO availability */
+/* Show description for selected report type */
 (function() {
     var sel = document.getElementById('report_type');
-    var fmt = document.getElementById('rpt-format');
     var descs = document.querySelectorAll('.rpt-desc');
-    var qboOpt = fmt.querySelector('option[value="qbo"]');
-
     function update() {
-        /* Toggle report description */
         descs.forEach(function(d) {
             d.style.display = d.getAttribute('data-report') === sel.value ? 'block' : 'none';
         });
-        /* QBO only available for Transactions */
-        if (sel.value === 'transactions') {
-            qboOpt.disabled = false;
-            qboOpt.style.display = '';
-        } else {
-            qboOpt.disabled = true;
-            qboOpt.style.display = 'none';
-            if (fmt.value === 'qbo') fmt.value = 'csv';
-        }
+        /* QBO only available for Transactions — hide/show option */
+        var qboBtn = document.querySelector('.rpt-export-qbo');
+        if (qboBtn) qboBtn.style.display = sel.value === 'transactions' ? '' : 'none';
     }
     sel.addEventListener('change', update);
     update();
 })();
+
+/* Export popover */
+function rptToggleExport(btn) {
+    var menu = btn.parentElement.querySelector('.rpt-export-menu');
+    menu.hidden = !menu.hidden;
+}
+function rptExport(fmt) {
+    var form = document.getElementById('rpt-form');
+    var params = new URLSearchParams(new FormData(form));
+    params.set('format', fmt);
+    window.location.href = '{{ url_for("reports.export") }}?' + params.toString();
+    /* Close the menu */
+    document.querySelector('.rpt-export-menu').hidden = true;
+}
+/* Close export menu on outside click / Escape */
+document.addEventListener('click', function(e) {
+    var wrap = document.querySelector('.rpt-export-wrap');
+    var menu = document.querySelector('.rpt-export-menu');
+    if (menu && !menu.hidden && wrap && !wrap.contains(e.target)) menu.hidden = true;
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var menu = document.querySelector('.rpt-export-menu');
+        if (menu) menu.hidden = true;
+    }
+});
 
 /* Loading state for HTMX results */
 document.body.addEventListener('htmx:beforeRequest', function(e) {

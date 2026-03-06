@@ -1966,14 +1966,38 @@ input[type="checkbox"] {
     font-size: var(--ui-font-sm);
 }
 
-/* Export separator */
-.rpt-export-sep {
-    width: 1px;
-    height: 28px;
-    background: var(--border);
-    margin: 0 0.25rem;
-    align-self: flex-end;
-    margin-bottom: 0.3rem;
+/* Export popover menu */
+.rpt-export-wrap {
+    position: relative;
+}
+.rpt-export-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--ui-radius);
+    padding: 0.25rem;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    min-width: 80px;
+    box-shadow: var(--shadow-card);
+}
+.rpt-export-menu[hidden] { display: none; }
+.rpt-export-opt {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: var(--ui-font-base);
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+}
+.rpt-export-opt:hover {
+    background: var(--hover-bg);
 }
 
 /* Summary line above results */
@@ -2215,9 +2239,6 @@ input[type="checkbox"] {
     }
     .rpt-stat-row {
         grid-template-columns: 1fr;
-    }
-    .rpt-export-sep {
-        display: none;
     }
 }
 
