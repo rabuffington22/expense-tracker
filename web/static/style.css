@@ -1946,6 +1946,282 @@ input[type="checkbox"] {
 }
 
 
+/* ── Report Results (in-page view) ─────────────────────────────────────── */
+
+.rpt-results {
+    margin-top: 1.2rem;
+}
+.rpt-results.rpt-loading-state {
+    opacity: 0.4;
+    pointer-events: none;
+    transition: opacity 0.15s;
+}
+.rpt-section {
+    margin-bottom: 1.5rem;
+}
+.rpt-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+    font-size: var(--ui-font-sm);
+}
+
+/* Export separator */
+.rpt-export-sep {
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+    margin: 0 0.25rem;
+    align-self: flex-end;
+    margin-bottom: 0.3rem;
+}
+
+/* Summary line above results */
+.rpt-summary-line {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.rpt-cap-notice {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+/* Report tables */
+.rpt-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.rpt-table th {
+    font-size: var(--ui-font-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    white-space: nowrap;
+}
+.rpt-table td {
+    font-size: var(--ui-font-base);
+    padding: 0.3rem 0.5rem;
+    border-bottom: 0.5px solid var(--border);
+    vertical-align: top;
+}
+.rpt-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.rpt-table tfoot .rpt-total-row td {
+    font-weight: 700;
+    border-top: 1px solid var(--border);
+    border-bottom: none;
+    padding-top: 0.45rem;
+}
+.rpt-cell-date {
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+}
+.rpt-cell-muted {
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+}
+.rpt-drill-link {
+    color: var(--text);
+    text-decoration: none;
+}
+.rpt-drill-link:hover {
+    color: var(--blue);
+}
+
+/* Amount coloring */
+.amt-neg { color: var(--red); }
+.amt-pos { color: var(--green); }
+
+/* Horizontal bar chart */
+.rpt-hbar-panel {
+    padding: 0.5rem 0.75rem;
+}
+.rpt-hbar-row {
+    display: flex;
+    align-items: center;
+    padding: 0.3rem 0;
+    border-bottom: 0.5px solid var(--border);
+    gap: 0.5rem;
+}
+.rpt-hbar-row:last-child { border-bottom: none; }
+.rpt-hbar-row.rpt-total-row {
+    border-top: 1px solid var(--border);
+    border-bottom: none;
+    padding-top: 0.45rem;
+    margin-top: 0.15rem;
+}
+.rpt-hbar-name {
+    flex: 0 0 160px;
+    font-size: var(--ui-font-base);
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.rpt-hbar-name:hover { color: var(--blue); }
+.rpt-hbar-name--total {
+    font-weight: 700;
+}
+.rpt-hbar-track {
+    flex: 1;
+    height: 14px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 40px;
+}
+.rpt-hbar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(10,132,255,0.85), rgba(10,132,255,0.55));
+    transition: width 0.3s ease;
+    min-width: 2px;
+}
+.rpt-hbar-value {
+    flex: 0 0 80px;
+    text-align: right;
+    font-size: var(--ui-font-base);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.rpt-hbar-count {
+    flex: 0 0 30px;
+    text-align: right;
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+}
+
+/* Pivot table */
+.rpt-table--pivot th,
+.rpt-table--pivot td {
+    font-size: var(--ui-font-xs);
+    padding: 0.25rem 0.4rem;
+}
+.rpt-pivot-hdr {
+    white-space: nowrap;
+}
+.rpt-pivot-cell {
+    font-variant-numeric: tabular-nums;
+}
+.rpt-pivot-total {
+    font-weight: 700;
+}
+
+/* Stat cards row */
+.rpt-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+.rpt-stat-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 0.75rem 0.9rem;
+    border: 0.5px solid var(--border);
+}
+.rpt-stat-label {
+    font-size: var(--ui-font-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+.rpt-stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Tax summary groups */
+.rpt-tax-group-hdr {
+    cursor: pointer;
+    user-select: none;
+}
+.rpt-tax-group-hdr:hover td {
+    background: var(--hover-bg);
+}
+.rpt-tax-group-hdr td {
+    font-weight: 700;
+    padding-top: 0.45rem;
+}
+.rpt-tax-chevron {
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+    color: var(--text-muted);
+    margin-right: 0.25rem;
+    transition: transform 0.15s;
+}
+.rpt-tax-subcats[hidden] { display: none; }
+.rpt-tax-subname {
+    padding-left: 1.5rem;
+}
+.rpt-tax-subrow td {
+    font-size: var(--ui-font-xs);
+    color: var(--text-secondary);
+}
+
+/* More toggle */
+.rpt-more-toggle {
+    font-size: var(--ui-font-xs);
+    color: var(--blue);
+    cursor: pointer;
+    padding: 0.4rem 0;
+    text-align: center;
+}
+.rpt-more-toggle:hover {
+    text-decoration: underline;
+}
+
+/* ── Light-mode report overrides ─────────── */
+:root[data-theme="light"] .rpt-hbar-track {
+    background: rgba(0,0,0,0.04);
+}
+:root[data-theme="light"] .rpt-hbar-fill {
+    background: linear-gradient(90deg, rgba(0,122,255,0.75), rgba(0,122,255,0.45));
+}
+:root[data-theme="light"] .rpt-stat-card {
+    border-color: rgba(0,0,0,0.08);
+}
+:root[data-theme="light"] .rpt-tax-group-hdr:hover td {
+    background: rgba(0,0,0,0.03);
+}
+
+/* ── Responsive report results ─────────── */
+@media (max-width: 768px) {
+    .rpt-hbar-name {
+        flex: 0 0 120px;
+    }
+}
+@media (max-width: 480px) {
+    .rpt-hbar-name {
+        flex: 0 0 100px;
+    }
+    .rpt-stat-row {
+        grid-template-columns: 1fr;
+    }
+    .rpt-export-sep {
+        display: none;
+    }
+}
+
+
 /* ── Keyboard navigation — selected row ─────────────────────────────────── */
 tr.is-selected > td {
     background: var(--glass-hover);

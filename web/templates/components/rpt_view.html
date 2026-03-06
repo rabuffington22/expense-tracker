@@ -1,0 +1,369 @@
+{# Partial returned by /reports/view — swapped into #rpt-results #}
+
+{% if report_type == "transactions" %}
+{# ── Transactions ────────────────────────────────────────────────────────── #}
+<div class="rpt-section">
+    <div class="rpt-summary-line">
+        <span>{{ "{:,}".format(total_count) }} transaction{{ 's' if total_count != 1 else '' }} &middot; {{ fmt_dollars(total_amount) }} spending</span>
+        {% if capped %}
+        <span class="rpt-cap-notice">Showing first 200 — export for full data</span>
+        {% endif %}
+    </div>
+    <div class="table-wrap">
+        <table class="rpt-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Merchant</th>
+                    <th class="text-right">Amount</th>
+                    <th>Category</th>
+                    <th>Subcategory</th>
+                    <th>Account</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td class="rpt-cell-date">{{ fmt_date(r.date) }}</td>
+                    <td>{{ r.merchant_canonical or (r.description_raw[:35] if r.description_raw else '') }}</td>
+                    <td class="text-right {{ 'amt-neg' if r.amount < 0 else 'amt-pos' }}">{{ fmt_dollars(r.amount) }}</td>
+                    <td>
+                        {% if r.category %}
+                        <a class="rpt-drill-link" href="/transactions?category={{ r.category|urlencode }}&start={{ start }}&end={{ end }}">{{ r.category }}</a>
+                        {% endif %}
+                    </td>
+                    <td>{{ r.subcategory or '' }}</td>
+                    <td class="rpt-cell-muted">{{ r.account or '' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% elif report_type == "categories" %}
+{# ── Category Summary ────────────────────────────────────────────────────── #}
+<div class="rpt-section">
+    <div class="rpt-summary-line">
+        <span>{{ "{:,}".format(total_txns) }} transactions &middot; {{ fmt_dollars(total_amount) }} total spending</span>
+    </div>
+    <div class="outline-panel rpt-hbar-panel">
+        {% for r in rows %}
+        <div class="rpt-hbar-row">
+            <a class="rpt-hbar-name" href="/transactions?category={{ r.category|urlencode }}&start={{ start }}&end={{ end }}">{{ r.category }}</a>
+            <div class="rpt-hbar-track">
+                <div class="rpt-hbar-fill" style="width: {{ r.pct }}%;"></div>
+            </div>
+            <span class="rpt-hbar-value">{{ fmt_dollars(r.total_amount) }}</span>
+            <span class="rpt-hbar-count">{{ r.count|int }}</span>
+        </div>
+        {% endfor %}
+        <div class="rpt-hbar-row rpt-total-row">
+            <span class="rpt-hbar-name rpt-hbar-name--total">Total</span>
+            <div class="rpt-hbar-track"></div>
+            <span class="rpt-hbar-value">{{ fmt_dollars(total_amount) }}</span>
+            <span class="rpt-hbar-count">{{ total_txns }}</span>
+        </div>
+    </div>
+</div>
+
+{% elif report_type == "merchants" %}
+{# ── Merchant Summary ────────────────────────────────────────────────────── #}
+<div class="rpt-section">
+    <div class="rpt-summary-line">
+        <span>{{ total_merchants }} merchant{{ 's' if total_merchants != 1 else '' }} &middot; {{ fmt_dollars(total_amount) }} total spending</span>
+    </div>
+    <div class="outline-panel rpt-hbar-panel">
+        {% for r in rows %}
+        <div class="rpt-hbar-row">
+            <a class="rpt-hbar-name" href="/transactions?q={{ r.merchant|urlencode }}&start={{ start }}&end={{ end }}">{{ r.merchant }}</a>
+            <div class="rpt-hbar-track">
+                <div class="rpt-hbar-fill" style="width: {{ r.pct }}%;"></div>
+            </div>
+            <span class="rpt-hbar-value">{{ fmt_dollars(r.total_amount) }}</span>
+            <span class="rpt-hbar-count">{{ r.count|int }}</span>
+        </div>
+        {% endfor %}
+        {% if extra_rows %}
+        <div id="rpt-more-merchants" hidden>
+            {% for r in extra_rows %}
+            <div class="rpt-hbar-row">
+                <a class="rpt-hbar-name" href="/transactions?q={{ r.merchant|urlencode }}&start={{ start }}&end={{ end }}">{{ r.merchant }}</a>
+                <div class="rpt-hbar-track">
+                    <div class="rpt-hbar-fill" style="width: {{ r.pct }}%;"></div>
+                </div>
+                <span class="rpt-hbar-value">{{ fmt_dollars(r.total_amount) }}</span>
+                <span class="rpt-hbar-count">{{ r.count|int }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="rpt-more-toggle" onclick="rptShowMore(this)">Show {{ extra_rows|length }} more &rsaquo;</div>
+        {% endif %}
+        <div class="rpt-hbar-row rpt-total-row">
+            <span class="rpt-hbar-name rpt-hbar-name--total">Total</span>
+            <div class="rpt-hbar-track"></div>
+            <span class="rpt-hbar-value">{{ fmt_dollars(total_amount) }}</span>
+            <span class="rpt-hbar-count">{{ total_txns }}</span>
+        </div>
+    </div>
+</div>
+
+{% elif report_type == "month_over_month" %}
+{# ── Month-over-Month ────────────────────────────────────────────────────── #}
+<div class="rpt-section">
+    <div class="rpt-summary-line">
+        <span>{{ pivot_rows|length }} categor{{ 'ies' if pivot_rows|length != 1 else 'y' }} &middot; {{ months|length }} month{{ 's' if months|length != 1 else '' }}</span>
+    </div>
+    <div class="outline-panel">
+        <div class="table-wrap">
+            <table class="rpt-table rpt-table--pivot">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        {% for m in months %}
+                        <th class="text-right rpt-pivot-hdr">{{ fmt_month_short(m) }}</th>
+                        {% endfor %}
+                        <th class="text-right rpt-pivot-hdr rpt-pivot-total">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in pivot_rows %}
+                    <tr>
+                        <td>
+                            <a class="rpt-drill-link" href="/transactions?category={{ row.category|urlencode }}&start={{ start }}&end={{ end }}">{{ row.category }}</a>
+                        </td>
+                        {% for m in months %}
+                        <td class="text-right rpt-pivot-cell">{{ fmt_dollars(row.months[m]) if row.months[m] else '' }}</td>
+                        {% endfor %}
+                        <td class="text-right rpt-pivot-cell rpt-pivot-total">{{ fmt_dollars(row.total) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="rpt-total-row">
+                        <td>Total</td>
+                        {% for m in months %}
+                        <td class="text-right rpt-pivot-cell">{{ fmt_dollars(col_totals[m]) }}</td>
+                        {% endfor %}
+                        <td class="text-right rpt-pivot-cell rpt-pivot-total">{{ fmt_dollars(col_totals['Total']) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% elif report_type == "income_expenses" %}
+{# ── Income vs Expenses ──────────────────────────────────────────────────── #}
+<div class="rpt-section">
+    <div class="rpt-stat-row">
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Total Expenses</div>
+            <div class="rpt-stat-value amt-neg">{{ fmt_dollars(total_expenses) }}</div>
+        </div>
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Total Income</div>
+            <div class="rpt-stat-value amt-pos">{{ fmt_dollars(total_income) }}</div>
+        </div>
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Net</div>
+            <div class="rpt-stat-value {{ 'amt-pos' if total_net >= 0 else 'amt-neg' }}">{{ fmt_dollars(total_net) }}</div>
+        </div>
+    </div>
+    <div class="outline-panel">
+        <div class="table-wrap">
+            <table class="rpt-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th class="text-right">Expenses</th>
+                        <th class="text-right">Income</th>
+                        <th class="text-right">Net</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in rows %}
+                    <tr>
+                        <td>{{ fmt_month_short(r.month) }}</td>
+                        <td class="text-right amt-neg">{{ fmt_dollars(r.expenses) }}</td>
+                        <td class="text-right amt-pos">{{ fmt_dollars(r.income) }}</td>
+                        <td class="text-right {{ 'amt-pos' if r.net >= 0 else 'amt-neg' }}">{{ fmt_dollars(r.net) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="rpt-total-row">
+                        <td>Total</td>
+                        <td class="text-right amt-neg">{{ fmt_dollars(total_expenses) }}</td>
+                        <td class="text-right amt-pos">{{ fmt_dollars(total_income) }}</td>
+                        <td class="text-right {{ 'amt-pos' if total_net >= 0 else 'amt-neg' }}">{{ fmt_dollars(total_net) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% elif report_type == "recurring" %}
+{# ── Recurring Charges ───────────────────────────────────────────────────── #}
+<div class="rpt-section">
+    <div class="rpt-summary-line">
+        <span>{{ rows|length }} recurring merchant{{ 's' if rows|length != 1 else '' }}</span>
+    </div>
+    <div class="outline-panel">
+        <div class="table-wrap">
+            <table class="rpt-table">
+                <thead>
+                    <tr>
+                        <th>Merchant</th>
+                        <th class="text-right">Charges</th>
+                        <th class="text-right">Avg</th>
+                        <th class="text-right">Min</th>
+                        <th class="text-right">Max</th>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in rows %}
+                    <tr>
+                        <td>
+                            <a class="rpt-drill-link" href="/transactions?q={{ r.merchant|urlencode }}&start={{ start }}&end={{ end }}">{{ r.merchant }}</a>
+                        </td>
+                        <td class="text-right">{{ r.count|int }}</td>
+                        <td class="text-right">{{ fmt_dollars(r.avg_amount) }}</td>
+                        <td class="text-right">{{ fmt_dollars(r.min_amount) }}</td>
+                        <td class="text-right">{{ fmt_dollars(r.max_amount) }}</td>
+                        <td class="rpt-cell-date">{{ fmt_date(r.first_date) }}</td>
+                        <td class="rpt-cell-date">{{ fmt_date(r.last_date) }}</td>
+                        <td class="rpt-cell-muted">{{ r.category or '' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% elif report_type == "tax_summary" %}
+{# ── Tax Summary ─────────────────────────────────────────────────────────── #}
+<div class="rpt-section">
+    <div class="rpt-summary-line">
+        <span>{{ groups|length }} categor{{ 'ies' if groups|length != 1 else 'y' }} &middot; {{ "{:,}".format(grand_total_txns) }} transactions &middot; {{ fmt_dollars(grand_total_amount) }} total</span>
+    </div>
+    <div class="outline-panel">
+        <div class="table-wrap">
+            <table class="rpt-table">
+                <thead>
+                    <tr>
+                        <th>Category / Subcategory</th>
+                        <th class="text-right">Txns</th>
+                        <th class="text-right">Total</th>
+                    </tr>
+                </thead>
+                {% for cat_name, grp in groups.items() %}
+                <tbody>
+                    <tr class="rpt-tax-group-hdr" onclick="rptToggleTaxGroup(this)" data-target="rpt-tax-{{ loop.index }}">
+                        <td>
+                            <span class="rpt-tax-chevron">&#x2304;</span>
+                            {{ cat_name }}
+                        </td>
+                        <td class="text-right">{{ grp.total_count }}</td>
+                        <td class="text-right">{{ fmt_dollars(grp.total_amount) }}</td>
+                    </tr>
+                </tbody>
+                <tbody id="rpt-tax-{{ loop.index }}" class="rpt-tax-subcats">
+                    {% for sub in grp.subcategories %}
+                    <tr class="rpt-tax-subrow">
+                        <td class="rpt-tax-subname">{{ sub.name }}</td>
+                        <td class="text-right">{{ sub.count }}</td>
+                        <td class="text-right">{{ fmt_dollars(sub.total) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% endfor %}
+                <tfoot>
+                    <tr class="rpt-total-row">
+                        <td>Grand Total</td>
+                        <td class="text-right">{{ grand_total_txns }}</td>
+                        <td class="text-right">{{ fmt_dollars(grand_total_amount) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% elif report_type == "accounts" %}
+{# ── Account Summary ─────────────────────────────────────────────────────── #}
+<div class="rpt-section">
+    <div class="rpt-stat-row">
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Total Spending</div>
+            <div class="rpt-stat-value amt-neg">{{ fmt_dollars(total_spending) }}</div>
+        </div>
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Total Income</div>
+            <div class="rpt-stat-value amt-pos">{{ fmt_dollars(total_income) }}</div>
+        </div>
+        <div class="rpt-stat-card">
+            <div class="rpt-stat-label">Net</div>
+            <div class="rpt-stat-value {{ 'amt-pos' if total_net >= 0 else 'amt-neg' }}">{{ fmt_dollars(total_net) }}</div>
+        </div>
+    </div>
+    <div class="outline-panel">
+        <div class="table-wrap">
+            <table class="rpt-table">
+                <thead>
+                    <tr>
+                        <th>Account</th>
+                        <th class="text-right">Txns</th>
+                        <th class="text-right">Spending</th>
+                        <th class="text-right">Income</th>
+                        <th class="text-right">Net</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in rows %}
+                    <tr>
+                        <td>{{ r.account }}</td>
+                        <td class="text-right">{{ r.transactions|int }}</td>
+                        <td class="text-right amt-neg">{{ fmt_dollars(r.total_spending) }}</td>
+                        <td class="text-right amt-pos">{{ fmt_dollars(r.total_income) }}</td>
+                        <td class="text-right {{ 'amt-pos' if r.net >= 0 else 'amt-neg' }}">{{ fmt_dollars(r.net) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="rpt-total-row">
+                        <td>Total</td>
+                        <td></td>
+                        <td class="text-right amt-neg">{{ fmt_dollars(total_spending) }}</td>
+                        <td class="text-right amt-pos">{{ fmt_dollars(total_income) }}</td>
+                        <td class="text-right {{ 'amt-pos' if total_net >= 0 else 'amt-neg' }}">{{ fmt_dollars(total_net) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+/* Tax summary expand/collapse */
+function rptToggleTaxGroup(el) {
+    var target = document.getElementById(el.getAttribute('data-target'));
+    if (!target) return;
+    target.hidden = !target.hidden;
+    var chevron = el.querySelector('.rpt-tax-chevron');
+    if (chevron) chevron.textContent = target.hidden ? '\u203A' : '\u2304';
+}
+
+/* Merchant "show more" */
+function rptShowMore(btn) {
+    var hidden = document.getElementById('rpt-more-merchants');
+    if (hidden) hidden.hidden = false;
+    btn.remove();
+}
+</script>
