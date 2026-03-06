@@ -1,6 +1,7 @@
 """Plaid integration routes — connect banks, sync transactions."""
 
 import hashlib
+import threading
 from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for, g, jsonify
@@ -10,6 +11,8 @@ from core.imports import compute_transaction_id, commit_transactions
 from core.categorize import _get_active_aliases, _match_alias, _keyword_suggest, _strip_platform_prefix
 
 bp = Blueprint("plaid", __name__, url_prefix="/plaid")
+
+_sync_lock = threading.Lock()
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -156,6 +159,18 @@ def sync():
         flash("Plaid credentials not configured.", "danger")
         return redirect(url_for("plaid.index"))
 
+    if not _sync_lock.acquire(blocking=False):
+        flash("A sync is already in progress. Please wait.", "info")
+        return redirect(url_for("plaid.index"))
+
+    try:
+        return _do_sync()
+    finally:
+        _sync_lock.release()
+
+
+def _do_sync():
+    """Sync logic extracted for lock wrapping."""
     target_item_id = request.form.get("item_id")
     conn = get_connection(g.entity_key)
     try:

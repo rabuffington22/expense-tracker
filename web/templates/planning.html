@@ -157,7 +157,7 @@
             {{ item_card(item, milestones, section.entity_key, cf_accounts, is_cross) }}
             {% endfor %}
             {% if not is_cross %}
-            <button class="pl-add-btn" onclick="plOpenAdd('{{ section.entity_key }}', 'asset')" title="Add asset">+</button>
+            <button class="pl-add-btn" onclick="plOpenAdd('{{ section.entity_key }}', 'asset')" title="Add asset" aria-label="Add asset">+</button>
             {% endif %}
         </div>
         {% if not section.assets and is_cross %}
@@ -173,7 +173,7 @@
             {{ item_card(item, milestones, section.entity_key, cf_accounts, is_cross) }}
             {% endfor %}
             {% if not is_cross %}
-            <button class="pl-add-btn" onclick="plOpenAdd('{{ section.entity_key }}', 'liability')" title="Add liability">+</button>
+            <button class="pl-add-btn" onclick="plOpenAdd('{{ section.entity_key }}', 'liability')" title="Add liability" aria-label="Add liability">+</button>
             {% endif %}
         </div>
         {% if not section.liabilities and is_cross %}
@@ -274,7 +274,7 @@
 
 {# ── Edit/Add Modal ──────────────────────────────────────────────────────── #}
 <div class="pl-modal-scrim" id="pl-modal-scrim" hidden onclick="if(event.target===this)plCloseModal()">
-    <div class="pl-modal-popup">
+    <div class="pl-modal-popup" role="dialog" aria-modal="true">
         {# Edit forms for primary entity items #}
         {% for item in primary.assets %}
         {{ modal_form(item, primary.entity_key, 'asset', milestones, cf_accounts) }}

@@ -85,7 +85,8 @@
         <div class="todo-row todo-row--link" tabindex="0" role="button"
              hx-get="{{ url_for('todo.queue_large_txns') }}"
              hx-target="#tq-modal-body" hx-swap="innerHTML"
-             onclick="tqOpenModal()">
+             onclick="tqOpenModal()"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <span class="todo-name">Large transactions</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
@@ -99,7 +100,8 @@
         <div class="todo-row todo-row--link" tabindex="0" role="button"
              hx-get="{{ url_for('todo.queue_new_merchants') }}"
              hx-target="#tq-modal-body" hx-swap="innerHTML"
-             onclick="tqOpenModal()">
+             onclick="tqOpenModal()"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <span class="todo-name">New merchants</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
@@ -135,7 +137,7 @@
     <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
         <div class="tq-modal-top">
             <button type="button" class="cf-edit-btn tq-modal-close"
-                    onclick="tqCloseModal()" title="Close">&times;</button>
+                    onclick="tqCloseModal()" title="Close" aria-label="Close">&times;</button>
         </div>
         <div id="tq-modal-body" class="tq-modal-body">
             <div class="tq-loading">Loading&hellip;</div>

@@ -2,8 +2,11 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import urllib.request
+
+log = logging.getLogger(__name__)
 
 _api_key = None
 _checked = False
@@ -67,6 +70,7 @@ def chat_completion(
             data = json.loads(resp.read())
             return data["choices"][0]["message"]["content"].strip()
     except Exception:
+        log.exception("OpenRouter chat_completion failed (model=%s)", model)
         return None
 
 
@@ -107,6 +111,7 @@ def generate_cancellation_tips(merchant_name: str) -> str | None:
             data = json.loads(resp.read())
             return data["choices"][0]["message"]["content"].strip()
     except Exception:
+        log.exception("OpenRouter cancellation_tips failed (merchant=%s)", merchant_name)
         return None
 
 
@@ -207,6 +212,7 @@ def generate_category_suggestion(
 
         return {"category": cat, "subcategory": sub, "reason": reason}
     except Exception:
+        log.exception("OpenRouter category_suggestion failed (merchant=%s)", merchant)
         return None
 
 
@@ -274,4 +280,5 @@ def generate_spending_analysis(spending_summary: str) -> list[dict] | None:
                 })
         return validated if validated else None
     except Exception:
+        log.exception("OpenRouter spending_analysis failed")
         return None

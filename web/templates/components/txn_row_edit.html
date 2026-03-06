@@ -5,7 +5,7 @@
         <div class="txn-modal-merchant">{{ txn.merchant_canonical or (txn.description_raw[:60] if txn.description_raw else '—') }}</div>
         <div class="txn-modal-meta">{{ fmt_date(txn.date) }} · {{ fmt_cents(txn.amount_cents) }}</div>
       </div>
-      <button type="button" class="btn-icon" onclick="document.getElementById('txn-modal').innerHTML=''" title="Close">&#10005;</button>
+      <button type="button" class="btn-icon" onclick="document.getElementById('txn-modal').innerHTML=''" title="Close" aria-label="Close">&#10005;</button>
     </div>
 
     <form class="txn-modal-form"

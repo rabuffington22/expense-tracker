@@ -378,6 +378,21 @@ def add_alias():
     now = datetime.now(timezone.utc).isoformat()
     conn = get_connection(g.entity_key)
     try:
+        # Check for duplicate pattern to avoid silent overwrites
+        existing = conn.execute(
+            "SELECT id, merchant_canonical FROM merchant_aliases "
+            "WHERE pattern_type=? AND LOWER(pattern)=LOWER(?)",
+            (ptype, pattern),
+        ).fetchone()
+        if existing:
+            flash(
+                f"Alias pattern '{pattern}' already exists "
+                f"(maps to '{existing['merchant_canonical']}'). "
+                f"Delete or edit the existing alias first.",
+                "warning",
+            )
+            return redirect(url_for("categorize.index", tab="settings"))
+
         conn.execute(
             "INSERT INTO merchant_aliases "
             "(pattern_type, pattern, merchant_canonical, default_category, active, created_at) "

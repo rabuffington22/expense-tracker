@@ -237,6 +237,7 @@ def confirm(item_id):
     temp_key = session.pop("upload_temp_key", None)
     upload_dfs = {}
     if temp_key:
+        temp_key = os.path.basename(temp_key)  # prevent path traversal
         temp_path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
         if os.path.exists(temp_path):
             with open(temp_path) as f:

@@ -31,7 +31,7 @@
                             hx-post="{{ url_for('todo.queue_dismiss_item') }}"
                             hx-vals='{"queue_type": "large_txns", "item_key": {{ txn.transaction_id|tojson }}}'
                             hx-target="closest tr" hx-swap="outerHTML"
-                            title="Dismiss">&times;</button>
+                            title="Dismiss" aria-label="Dismiss">&times;</button>
                 </td>
             </tr>
             {% endfor %}

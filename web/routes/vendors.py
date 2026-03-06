@@ -1,4 +1,5 @@
 """Vendors route — upload Amazon CSV / Henry Schein XLSX."""
+from __future__ import annotations
 
 import json
 import os
@@ -18,6 +19,17 @@ _TEMP_DIR = os.path.join(tempfile.gettempdir(), "expense-tracker-uploads")
 os.makedirs(_TEMP_DIR, exist_ok=True)
 
 
+def _sanitize_temp_key(key: str) -> str | None:
+    """Sanitize a temp key to prevent path traversal."""
+    if not key:
+        return None
+    # Strip any path components — only allow the basename
+    key = os.path.basename(key)
+    if not key or ".." in key or "/" in key or "\\" in key:
+        return None
+    return key
+
+
 def _save_temp(key, data):
     """Save data to a temp file, return the filename."""
     path = os.path.join(_TEMP_DIR, f"{key}.json")
@@ -28,6 +40,9 @@ def _save_temp(key, data):
 
 def _load_temp(key):
     """Load data from a temp file and delete it."""
+    key = _sanitize_temp_key(key)
+    if not key:
+        return None
     path = os.path.join(_TEMP_DIR, f"{key}.json")
     if not os.path.exists(path):
         return None

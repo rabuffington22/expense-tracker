@@ -15,7 +15,8 @@
     <div class="sub-section-label">We found these recurring charges</div>
     <div class="outline-panel sub-panel">
         {% for s in suggestions %}
-        <div class="sub-row sub-suggestion-row" onclick="subOpenDetail({{ loop.index0 }})" role="button" tabindex="0">
+        <div class="sub-row sub-suggestion-row" onclick="subOpenDetail({{ loop.index0 }})" role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
             <div class="sub-row-main">
                 <div class="sub-info">
                     <span class="sub-merchant">{{ s.merchant_canonical }}</span>
@@ -37,7 +38,7 @@
                         <input type="hidden" name="frequency"
                                value="{{ s.frequency }}">
                         <button type="submit" class="sub-suggest-btn sub-suggest-btn--accept"
-                                title="Add to watchlist">&#x2713;</button>
+                                title="Add to watchlist" aria-label="Add to watchlist">&#x2713;</button>
                     </form>
                     <form method="post"
                           action="{{ url_for('subscriptions.dismiss') }}"
@@ -45,7 +46,7 @@
                         <input type="hidden" name="merchant_canonical"
                                value="{{ s.merchant_canonical }}">
                         <button type="submit" class="sub-suggest-btn sub-suggest-btn--dismiss"
-                                title="Dismiss">&times;</button>
+                                title="Dismiss" aria-label="Dismiss suggestion">&times;</button>
                     </form>
                 </div>
             </div>
@@ -68,7 +69,8 @@
 <div class="outline-panel sub-panel">
     {% for sub in watchlist %}
     <div class="sub-row sub-watchlist-row" data-sub-id="{{ sub.id }}"
-         onclick="subOpenWatchlistDetail({{ sub.id }})" role="button" tabindex="0">
+         onclick="subOpenWatchlistDetail({{ sub.id }})" role="button" tabindex="0"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
         <div class="sub-row-main">
             <div class="sub-info">
                 <span class="sub-merchant">{{ sub.merchant }}</span>
@@ -170,7 +172,7 @@
     <div class="outline-panel tq-modal-card sub-detail-card" role="dialog" aria-modal="true">
         <div class="tq-modal-top">
             <button type="button" class="cf-edit-btn tq-modal-close"
-                    onclick="subCloseDetail()" title="Close">&times;</button>
+                    onclick="subCloseDetail()" title="Close" aria-label="Close">&times;</button>
         </div>
         <div class="sub-detail-body">
             <div class="sub-detail-title" id="sub-detail-title"></div>
@@ -228,7 +230,7 @@
                            onkeydown="if(event.key==='Enter'){event.preventDefault();subAddAccountInfo();}">
                     <button type="button" class="sub-acctinfo-add-btn"
                             id="sub-acctinfo-add-btn" onclick="subAddAccountInfo()"
-                            title="Add field">+</button>
+                            title="Add field" aria-label="Add account info field">+</button>
                 </div>
             </div>
 
@@ -551,7 +553,7 @@ function _renderAccountInfoField(container, field) {
     row.innerHTML =
         '<span class="sub-acctinfo-field-type">' + _escapeHtml(field.field_type) + '</span>' +
         '<span class="sub-acctinfo-field-value">' + _escapeHtml(field.field_value) + '</span>' +
-        '<button type="button" class="sub-acctinfo-delete-btn" title="Remove">&times;</button>';
+        '<button type="button" class="sub-acctinfo-delete-btn" title="Remove" aria-label="Remove field">&times;</button>';
     row.querySelector('.sub-acctinfo-delete-btn').addEventListener('click', function() {
         subDeleteAccountInfo(field.id, row);
     });

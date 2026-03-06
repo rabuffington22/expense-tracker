@@ -4,7 +4,7 @@
 {# ── Macros ────────────────────────────────────────────────────────────── #}
 
 {% macro edit_icon(acct, ek) %}
-<button type="button" class="cf-edit-btn" title="Edit"
+<button type="button" class="cf-edit-btn" title="Edit" aria-label="Edit account"
     data-acct-id="{{ acct.id }}"
     data-acct-name="{{ acct.account_name }}"
     data-acct-type="{{ acct.account_type }}"
@@ -32,7 +32,7 @@
         {% if item.manual %}
         <form method="post" action="/cashflow/recurring/delete/{{ item.manual_id }}" class="cf-del-form">
             <input type="hidden" name="entity_key" value="{{ entity_key }}">
-            <button type="submit" class="cf-del-btn" title="Remove">&times;</button>
+            <button type="submit" class="cf-del-btn" title="Remove" aria-label="Remove recurring charge">&times;</button>
         </form>
         {% endif %}
     </span>
@@ -163,7 +163,7 @@
 
 {# ── Edit Modal (card clone with editable fields) ────────────────────── #}
 <div class="cf-modal-scrim" id="cf-modal-scrim" hidden>
-    <div class="outline-panel cf-box cf-modal-card">
+    <div class="outline-panel cf-box cf-modal-card" role="dialog" aria-modal="true">
         <form method="post" id="cf-modal-form">
             <input type="hidden" name="entity_key" id="cf-modal-entity">
 
@@ -208,7 +208,7 @@
                     <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="amount" placeholder="0" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" style="width:25px">
                     <span class="cf-pymt-label">on</span>
                     <input type="text" name="day_of_month" placeholder="Day" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" style="width:25px">
-                    <button type="submit" class="cf-add-btn" title="Add">+</button>
+                    <button type="submit" class="cf-add-btn" title="Add" aria-label="Add recurring charge">+</button>
                 </span>
             </form>
         </div>
