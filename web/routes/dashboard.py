@@ -171,7 +171,7 @@ def _query_dashboard(conn, params):
     data["transfer_count"] = conn.execute(
         f"SELECT COUNT(*) FROM transactions "
         f"WHERE {da_where} "
-        f"  AND (category IN ('Internal Transfer','Credit Card Payment','Owner Contribution') "
+        f"  AND (category IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
         f"       OR (COALESCE(category,'') = '' AND ("
         f"           LOWER(description_raw) LIKE '%transfer%' "
         f"           OR LOWER(description_raw) LIKE '%payment%' "

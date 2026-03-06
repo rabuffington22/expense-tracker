@@ -129,7 +129,7 @@ def _build_base_cte(conn, params):
     if params.get("large_txns") == "1":
         conditions.append("ABS(t.amount_cents) >= 50000")
         conditions.append(
-            "COALESCE(t.category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')"
+            "COALESCE(t.category, '') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout')"
         )
 
     # New merchants (seen in date range but not in prior 90 days)
@@ -137,7 +137,7 @@ def _build_base_cte(conn, params):
         conditions.append("t.merchant_canonical IS NOT NULL")
         conditions.append("t.merchant_canonical != ''")
         conditions.append(
-            "COALESCE(t.category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')"
+            "COALESCE(t.category, '') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout')"
         )
         # Use 90 days before start date as the lookback cutoff
         nm_start = params.get("start", "")

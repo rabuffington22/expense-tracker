@@ -149,7 +149,7 @@ def _get_queue_counts(conn) -> dict:
     counts["uncategorized"] = conn.execute(
         "SELECT COUNT(*) FROM transactions "
         "WHERE (category IS NULL OR category = '' OR confidence < 0.6) "
-        "AND (category IS NULL OR category NOT IN ('Internal Transfer', 'Credit Card Payment'))"
+        "AND (category IS NULL OR category NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout'))"
     ).fetchone()[0]
 
     # Vendor breakdown needed
@@ -215,7 +215,7 @@ def _get_queue_counts(conn) -> dict:
         "SELECT transaction_id FROM transactions "
         "WHERE ABS(amount_cents) >= 50000 "
         "AND date > ? AND date <= ? "
-        "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment')",
+        "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout')",
         (lt_start, today_iso),
     ).fetchall()
     counts["large_txns"] = sum(
@@ -229,7 +229,7 @@ def _get_queue_counts(conn) -> dict:
         "SELECT DISTINCT merchant_canonical FROM transactions "
         "WHERE date > ? AND date <= ? "
         "AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
-        "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment') "
+        "AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout') "
         "AND merchant_canonical NOT IN ("
         "  SELECT DISTINCT merchant_canonical FROM transactions "
         "  WHERE date >= ? AND date < ? "

@@ -85,7 +85,7 @@ def _detect_subscriptions(conn) -> list[dict]:
         "WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
         "  AND amount_cents < 0 "
         "  AND date >= ? AND date <= ? "
-        "  AND category NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income') "
+        "  AND category NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout') "
         "ORDER BY merchant_canonical, date",
         (cutoff, today_str),
     ).fetchall()
@@ -213,7 +213,7 @@ def _get_merchant_charges(conn, merchant: str) -> dict | None:
         "WHERE merchant_canonical = ? "
         "  AND amount_cents < 0 "
         "  AND date >= ? AND date <= ? "
-        "  AND category NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income') "
+        "  AND category NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout') "
         "ORDER BY date",
         (merchant, cutoff, today_str),
     ).fetchall()

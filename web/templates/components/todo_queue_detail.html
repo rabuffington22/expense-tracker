@@ -29,7 +29,7 @@
                 <td class="tq-cell-dismiss">
                     <button type="button" class="tq-item-dismiss"
                             hx-post="{{ url_for('todo.queue_dismiss_item') }}"
-                            hx-vals='{"queue_type": "large_txns", "item_key": "{{ txn.transaction_id }}"}'
+                            hx-vals='{"queue_type": "large_txns", "item_key": {{ txn.transaction_id|tojson }}}'
                             hx-target="closest tr" hx-swap="outerHTML"
                             title="Dismiss">&times;</button>
                 </td>
@@ -58,7 +58,7 @@
         </div>
         <button type="button" class="tq-item-dismiss"
                 hx-post="{{ url_for('todo.queue_dismiss_item') }}"
-                hx-vals='{"queue_type": "new_merchants", "item_key": "{{ m.merchant_canonical }}"}'
+                hx-vals='{"queue_type": "new_merchants", "item_key": {{ m.merchant_canonical|tojson }}}'
                 hx-target="closest .tq-merchant-row" hx-swap="outerHTML"
                 title="Dismiss">&times;</button>
     </div>

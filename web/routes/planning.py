@@ -383,10 +383,12 @@ def delete_item(item_id):
 @bp.route("/cashflow-accounts/<entity_key>")
 def cashflow_accounts(entity_key):
     """HTMX helper: return <option> tags for cashflow account dropdown."""
+    from markupsafe import escape
     accounts = _get_cashflow_accounts(entity_key)
     html = '<option value="">Select account...</option>'
     for name in accounts:
-        html += f'<option value="{name}">{name}</option>'
+        safe_name = escape(name)
+        html += f'<option value="{safe_name}">{safe_name}</option>'
     return html
 
 

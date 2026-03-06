@@ -233,6 +233,7 @@ def _gather_general_context(entity_key: str) -> str:
 
     cross_keys = _CROSS_ENTITY.get(entity_key, [])
     for ek in [entity_key] + cross_keys:
+        conn = None
         try:
             conn = get_connection(ek)
             display = _ENTITY_DISPLAY.get(ek, ek)
@@ -241,10 +242,10 @@ def _gather_general_context(entity_key: str) -> str:
             rows = conn.execute(
                 "SELECT strftime('%%Y-%%m', date) as month, "
                 "ABS(SUM(CASE WHEN amount < 0 AND COALESCE(category,'') "
-                "NOT IN ('Internal Transfer','Credit Card Payment','Income') "
+                "NOT IN ('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
                 "THEN amount ELSE 0 END)) as spend, "
                 "SUM(CASE WHEN amount > 0 AND COALESCE(category,'') "
-                "NOT IN ('Internal Transfer','Credit Card Payment') "
+                "NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
                 "THEN amount ELSE 0 END) as income "
                 "FROM transactions "
                 "WHERE date >= date('now', '-3 months') "
@@ -267,7 +268,7 @@ def _gather_general_context(entity_key: str) -> str:
                 "WHERE strftime('%%Y-%%m', date) = strftime('%%Y-%%m', 'now') "
                 "AND amount < 0 "
                 "AND COALESCE(category,'') NOT IN "
-                "('Internal Transfer','Credit Card Payment','Income') "
+                "('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
                 "GROUP BY cat ORDER BY total DESC LIMIT 10"
             ).fetchall()
             if cat_rows:
@@ -292,10 +293,11 @@ def _gather_general_context(entity_key: str) -> str:
                         extra = " (limit $%s)" % "{:,.0f}".format(
                             a["credit_limit_cents"] / 100)
                     lines.append("    %s: $%s%s" % (a["account_name"], bal, extra))
-
-            conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     return "\n".join(lines)
 
@@ -415,6 +417,7 @@ def _gather_dashboard_context(entity_key: str) -> str:
     this_month = today.strftime("%Y-%m")
     lines.append("Current month: %s" % today.strftime("%B %Y"))
 
+    conn = None
     try:
         conn = get_connection(entity_key)
         display = _ENTITY_DISPLAY.get(entity_key, entity_key)
@@ -423,10 +426,10 @@ def _gather_dashboard_context(entity_key: str) -> str:
         row = conn.execute(
             "SELECT "
             "ABS(SUM(CASE WHEN amount < 0 AND COALESCE(category,'') "
-            "NOT IN ('Internal Transfer','Credit Card Payment','Income') "
+            "NOT IN ('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
             "THEN amount ELSE 0 END)) as spend, "
             "SUM(CASE WHEN amount > 0 AND COALESCE(category,'') "
-            "NOT IN ('Internal Transfer','Credit Card Payment') "
+            "NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
             "THEN amount ELSE 0 END) as income, "
             "COUNT(*) as cnt "
             "FROM transactions "
@@ -448,7 +451,7 @@ def _gather_dashboard_context(entity_key: str) -> str:
             "WHERE strftime('%%Y-%%m', date) = ? "
             "AND amount < 0 "
             "AND COALESCE(category,'') NOT IN "
-            "('Internal Transfer','Credit Card Payment','Income') "
+            "('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
             "GROUP BY cat ORDER BY total DESC LIMIT 10"
             , (this_month,)
         ).fetchall()
@@ -462,13 +465,13 @@ def _gather_dashboard_context(entity_key: str) -> str:
 
         # Top 10 merchants this month
         merch_rows = conn.execute(
-            "SELECT COALESCE(NULLIF(merchant_name,''), description) as merch, "
+            "SELECT COALESCE(NULLIF(merchant_canonical,''), description_raw) as merch, "
             "ABS(SUM(amount)) as total, COUNT(*) as cnt "
             "FROM transactions "
             "WHERE strftime('%%Y-%%m', date) = ? "
             "AND amount < 0 "
             "AND COALESCE(category,'') NOT IN "
-            "('Internal Transfer','Credit Card Payment','Income') "
+            "('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
             "GROUP BY merch ORDER BY total DESC LIMIT 10"
             , (this_month,)
         ).fetchall()
@@ -484,10 +487,10 @@ def _gather_dashboard_context(entity_key: str) -> str:
         rows = conn.execute(
             "SELECT strftime('%%Y-%%m', date) as month, "
             "ABS(SUM(CASE WHEN amount < 0 AND COALESCE(category,'') "
-            "NOT IN ('Internal Transfer','Credit Card Payment','Income') "
+            "NOT IN ('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
             "THEN amount ELSE 0 END)) as spend, "
             "SUM(CASE WHEN amount > 0 AND COALESCE(category,'') "
-            "NOT IN ('Internal Transfer','Credit Card Payment') "
+            "NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
             "THEN amount ELSE 0 END) as income "
             "FROM transactions "
             "WHERE date >= date('now', '-6 months') "
@@ -511,9 +514,11 @@ def _gather_dashboard_context(entity_key: str) -> str:
         if unc and unc["cnt"]:
             lines.append("\nNeeds review: %d uncategorized transactions" % unc["cnt"])
 
-        conn.close()
     except Exception:
         pass
+    finally:
+        if conn is not None:
+            conn.close()
 
     # Append account balances
     lines.append("")
@@ -527,6 +532,7 @@ def _gather_transactions_context(entity_key: str) -> str:
     lines = []
     lines.append("=== TRANSACTION DATA ===")
 
+    conn = None
     try:
         conn = get_connection(entity_key)
 
@@ -551,7 +557,7 @@ def _gather_transactions_context(entity_key: str) -> str:
             "FROM transactions "
             "WHERE date >= date('now', '-90 days') AND amount < 0 "
             "AND COALESCE(category,'') NOT IN "
-            "('Internal Transfer','Credit Card Payment','Income') "
+            "('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
             "GROUP BY cat ORDER BY total DESC LIMIT 15"
         ).fetchall()
         if cat_rows:
@@ -564,12 +570,12 @@ def _gather_transactions_context(entity_key: str) -> str:
 
         # Top merchants (last 90 days)
         merch_rows = conn.execute(
-            "SELECT COALESCE(NULLIF(merchant_name,''), description) as merch, "
+            "SELECT COALESCE(NULLIF(merchant_canonical,''), description_raw) as merch, "
             "ABS(SUM(amount)) as total, COUNT(*) as cnt "
             "FROM transactions "
             "WHERE date >= date('now', '-90 days') AND amount < 0 "
             "AND COALESCE(category,'') NOT IN "
-            "('Internal Transfer','Credit Card Payment','Income') "
+            "('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
             "GROUP BY merch ORDER BY cnt DESC LIMIT 15"
         ).fetchall()
         if merch_rows:
@@ -582,12 +588,12 @@ def _gather_transactions_context(entity_key: str) -> str:
 
         # Recent large transactions
         large = conn.execute(
-            "SELECT date, COALESCE(NULLIF(merchant_name,''), description) as merch, "
+            "SELECT date, COALESCE(NULLIF(merchant_canonical,''), description_raw) as merch, "
             "ABS(amount) as amt, COALESCE(category,'') as cat "
             "FROM transactions "
             "WHERE date >= date('now', '-30 days') AND amount < -50000 "
             "AND COALESCE(category,'') NOT IN "
-            "('Internal Transfer','Credit Card Payment') "
+            "('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
             "ORDER BY amount ASC LIMIT 10"
         ).fetchall()
         if large:
@@ -599,9 +605,11 @@ def _gather_transactions_context(entity_key: str) -> str:
                        "{:,.0f}".format(r["amt"]), r["cat"] or "uncategorized")
                 )
 
-        conn.close()
     except Exception:
         pass
+    finally:
+        if conn is not None:
+            conn.close()
 
     return "\n".join(lines)
 
@@ -611,14 +619,14 @@ def _gather_subscriptions_context(entity_key: str) -> str:
     lines = []
     lines.append("=== SUBSCRIPTION DATA ===")
 
+    conn = None
     try:
         conn = get_connection(entity_key)
 
         # Active subscriptions
         subs = conn.execute(
-            "SELECT merchant, amount_cents, cadence, status, category, notes, "
-            "last_charged, first_seen "
-            "FROM subscriptions ORDER BY amount_cents DESC"
+            "SELECT merchant, amount_cents, frequency, status, notes "
+            "FROM subscription_watchlist ORDER BY amount_cents DESC"
         ).fetchall()
 
         if subs:
@@ -626,14 +634,13 @@ def _gather_subscriptions_context(entity_key: str) -> str:
             lines.append("\nWatchlist (%d subscriptions):" % len(subs))
             for s in subs:
                 amt = "$%.2f" % (abs(s["amount_cents"]) / 100)
-                status = s["status"] or "active"
-                cadence = s["cadence"] or "monthly"
+                status = s["status"] or "watching"
+                freq = s["frequency"] or "monthly"
                 lines.append(
-                    "  %s: %s/%s [%s] — %s"
-                    % (s["merchant"], amt, cadence, status,
-                       s["category"] or "uncategorized")
+                    "  %s: %s/%s [%s]"
+                    % (s["merchant"], amt, freq, status)
                 )
-                if status == "active" and cadence == "Monthly":
+                if status == "watching" and freq == "monthly":
                     monthly_total += abs(s["amount_cents"])
 
             if monthly_total:
@@ -644,9 +651,11 @@ def _gather_subscriptions_context(entity_key: str) -> str:
         else:
             lines.append("\nNo subscriptions tracked yet.")
 
-        conn.close()
     except Exception:
         pass
+    finally:
+        if conn is not None:
+            conn.close()
 
     # Also include general financial context
     lines.append("")
@@ -662,6 +671,7 @@ def _gather_cashflow_context(entity_key: str) -> str:
 
     cross_keys = _CROSS_ENTITY.get(entity_key, [])
     for ek in [entity_key] + cross_keys:
+        conn = None
         try:
             conn = get_connection(ek)
             display = _ENTITY_DISPLAY.get(ek, ek)
@@ -733,9 +743,11 @@ def _gather_cashflow_context(entity_key: str) -> str:
                            r["day_of_month"], r["account_name"])
                     )
 
-            conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     return "\n".join(lines)
 
@@ -745,6 +757,7 @@ def _gather_reports_context(entity_key: str) -> str:
     lines = []
     lines.append("=== REPORTS DATA ===")
 
+    conn = None
     try:
         conn = get_connection(entity_key)
 
@@ -752,10 +765,10 @@ def _gather_reports_context(entity_key: str) -> str:
         rows = conn.execute(
             "SELECT strftime('%%Y-%%m', date) as month, "
             "ABS(SUM(CASE WHEN amount < 0 AND COALESCE(category,'') "
-            "NOT IN ('Internal Transfer','Credit Card Payment','Income') "
+            "NOT IN ('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
             "THEN amount ELSE 0 END)) as spend, "
             "SUM(CASE WHEN amount > 0 AND COALESCE(category,'') "
-            "NOT IN ('Internal Transfer','Credit Card Payment') "
+            "NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
             "THEN amount ELSE 0 END) as income "
             "FROM transactions "
             "WHERE date >= date('now', '-12 months') "
@@ -788,7 +801,7 @@ def _gather_reports_context(entity_key: str) -> str:
                 "FROM transactions "
                 "WHERE strftime('%%Y-%%m', date) = ? AND amount < 0 "
                 "AND COALESCE(category,'') NOT IN "
-                "('Internal Transfer','Credit Card Payment','Income') "
+                "('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
                 "GROUP BY cat ORDER BY total DESC LIMIT 10"
                 , (period,)
             ).fetchall()
@@ -799,9 +812,11 @@ def _gather_reports_context(entity_key: str) -> str:
                         "  %s: $%s" % (r["cat"], "{:,.0f}".format(r["total"]))
                     )
 
-        conn.close()
     except Exception:
         pass
+    finally:
+        if conn is not None:
+            conn.close()
 
     return "\n".join(lines)
 
