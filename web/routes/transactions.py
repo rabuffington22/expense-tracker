@@ -382,6 +382,9 @@ def update(txn_id):
     """Save category + subcategory + notes, return read-only <tr>."""
     category = request.form.get("category", "").strip()
     subcategory = request.form.get("subcategory", "").strip() or "Unknown"
+    # Guard against literal __new__ value if user clicked Save without confirming
+    if subcategory == "__new__":
+        subcategory = "General"
     notes = request.form.get("notes", "").strip()
 
     conn = get_connection(g.entity_key)

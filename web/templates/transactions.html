@@ -216,6 +216,29 @@ function txnSubcatAdd(txnId) {
     input.value = '';
 }
 
+/* Auto-promote add-new input on form submit (so Save works without Enter) */
+document.body.addEventListener('htmx:configRequest', function(e) {
+    var form = e.detail.elt.closest && e.detail.elt.closest('form');
+    if (!form) return;
+    var subSel = form.querySelector('select[name="subcategory"]');
+    if (!subSel || subSel.value !== '__new__') return;
+    var input = form.querySelector('.txn-subcat-add');
+    if (input && input.value.trim()) {
+        /* Create the option and select it before HTMX serializes the form */
+        var opt = document.createElement('option');
+        opt.value = input.value.trim();
+        opt.textContent = input.value.trim();
+        var addOpt = subSel.querySelector('option[value="__new__"]');
+        subSel.insertBefore(opt, addOpt);
+        subSel.value = input.value.trim();
+        input.hidden = true;
+        input.value = '';
+    } else {
+        /* No name typed — fall back to General */
+        subSel.value = 'General';
+    }
+});
+
 /* AI category suggestion */
 function txnSuggestCategory(txnId) {
     var btn = document.getElementById('txn-suggest-' + txnId);
