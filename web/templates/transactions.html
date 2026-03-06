@@ -96,11 +96,6 @@ function txnCopyList(btn) {
         lines.push((i + 1) + '.  ' + date + '  -  ' + desc + '  -  ' + amt + ' ' + direction);
     });
     var text = lines.join('\n');
-    /* Add friendly header only when filtered to Ask Kristine */
-    var subFilter = document.getElementById('subcategory');
-    if (subFilter && subFilter.value === 'Ask Kristine') {
-        text = "Hey, can you help me with these? I'm trying to categorize them. Just reply with what you remember - even a word or two is great. Thank you!\n\n" + text;
-    }
     navigator.clipboard.writeText(text).then(function() {
         var orig = btn.textContent;
         btn.textContent = 'Copied!';
