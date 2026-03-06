@@ -357,6 +357,17 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 
 ## Change Log
 
+### 2026-03-05 — BFM transaction categorization + Planning card polish + dashboard fix
+Production database updates and UI fixes.
+
+1. **Partner Buyout category (BFM)** — New category for Allison Flesher buyout transactions (4% practice ownership, $350/mo checks). 16 transactions recategorized (9 debits, 7 credits). Added to all NOT IN exclusion lists in `core/reporting.py` and `web/routes/dashboard.py` (`_TRANSFER_CATS`, `_exclude_transfers_clause()`, and 8+ hardcoded strings). Fixed `get_income_vs_expenses_daterange()` which was also missing `Owner Contribution` from its CASE WHEN exclusions.
+2. **Insurance Incentive subcategory (BFM)** — New subcategory under Income for 3 large quarterly deposits ($29.9k, $31.3k, $32.4k) that just said "Deposit".
+3. **Athena Health subcategory (BFM)** — New subcategory under Income for 310 daily ACH deposits ($2.3M total) from Athena Health medical billing service. All "BUFFINGTON ACH ITEMS" deposits recategorized from Income/NULL or Income/Patient Payments to Income/Athena Health.
+4. **Planning card title font** — `.pl-box-name` font bumped from 0.62rem to 0.78rem for better readability.
+5. **Planning item renames** — "Edward Jones Retirement" → "Edward Jones", "Tractor & Implements" → "Tractor", "Skid Steer & Implements" → "Skid Steer".
+6. **Insights "All caught up" fix** — `.iu-empty-sm` had `display: flex` which overrode the HTML `hidden` attribute, causing "All caught up" to show even when insights were visible. Added `.iu-empty-sm[hidden] { display: none; }`.
+7. **Summary band dividers committed** — Faint divider lines below header and below liabilities row were in local CSS but had never been committed to production.
+
 ### 2026-03-05 — Planning page: ranch equipment assets + Kubota loan
 Added ranch equipment to Planning page net worth projections.
 
