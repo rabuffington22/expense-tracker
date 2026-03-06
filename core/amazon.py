@@ -59,20 +59,14 @@ _AMAZON_COL_MAP = {
 # ── Category inference from product names ────────────────────────────────────
 
 _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
-    # Kids
-    (["diaper", "huggies", "pampers", "baby wipe", "formula", "enfamil",
-      "similac", "stroller", "car seat", "pacifier", "sippy cup", "bib",
-      "onesie", "toddler", "infant", "nursery", "baby monitor", "teething",
-      "baby gate", "highchair", "kids ", "children", "child ", "kid "],
-     "Kids"),
-
-    # Household
+    # Household (cleaning, basics)
     (["paper towel", "bounty", "toilet paper", "charmin", "trash bag",
       "glad ", "ziploc", "sponge", "cleaning", "clorox", "lysol", "windex",
       "detergent", "tide ", "downy", "dryer sheet", "laundry", "dish soap",
       "dawn ", "air freshener", "candle", "light bulb", "batteries",
       "garbage bag", "aluminum foil", "plastic wrap", "napkin",
-      "scotch tape", "packing tape"],
+      "scotch tape", "packing tape", "diaper", "huggies", "pampers",
+      "baby wipe", "formula", "enfamil", "similac"],
      "Household"),
 
     # Health & Beauty
@@ -94,11 +88,11 @@ _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
       "smart plug", "echo ", "alexa"],
      "Electronics"),
 
-    # Pet Supplies
+    # Pets
     (["dog ", "cat ", "pet ", "treats", "leash", "litter", "kibble",
       "bird food", "bird seed", "aquarium", "fish tank", "collar",
       "chew toy", "puppy", "kitten", "flea", "tick"],
-     "Pet Supplies"),
+     "Pets"),
 
     # Clothing
     (["shirt", "pants", "shoes", "socks", "jacket", "clothing", "dress",
@@ -107,14 +101,14 @@ _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
       "pajama", "costume", "t-shirt", "jeans", "belt"],
      "Clothing"),
 
-    # Home Improvement
+    # Home (tools, hardware, improvement)
     (["tool", "drill", "screw", "nail", "paint", "sandpaper",
       "wrench", "pliers", "saw", "level", "hammer", "bolt", "nut ",
       "washer", "bracket", "hinge", "clamp", "beam clamp", "lag ",
       "caulk", "putty", "drywall", "stud finder", "wire nut",
       "outlet", "switch plate", "wall plate", "electrical",
       "flood light", "handrail", "fence"],
-     "Home Improvement"),
+     "Home"),
 
     # Household (home goods / kitchen / furniture)
     (["pan", "pot", "kitchen", "utensil", "plate", "cup", "mug", "spatula",
@@ -132,18 +126,18 @@ _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
       "sprinkles", "princess"],
      "Entertainment"),
 
-    # Office
+    # Supplies (office supplies)
     (["office", "printer", "ink ", "toner", "paper ", "envelope",
       "label", "binder", "folder", "stapler", "pen ", "pencil",
       "marker", "sticky note", "desk", "chair"],
-     "Office"),
+     "Supplies"),
 
-    # Groceries
+    # Food (snacks, groceries)
     (["snack", "food", "coffee", "tea ", "protein", "granola", "cereal",
       "candy", "chocolate", "nuts", "pretzel", "cracker", "cookie",
       "chip", "popcorn", "jerky", "fruit", "vegetable", "organic",
       "gluten", "kind bar", "cliff bar"],
-     "Groceries"),
+     "Food"),
 ]
 
 
@@ -151,26 +145,26 @@ _AMAZON_CATEGORY_HINTS: list[tuple[list[str], str]] = [
 # Maps Amazon's internal product categories to our expense categories.
 
 _AMAZON_BIZ_CATEGORY_MAP = {
-    "grocery": "Groceries",
+    "grocery": "Food",
     "health and beauty": "Health & Beauty",
     "beauty": "Health & Beauty",
-    "office product": "Office",
-    "home improvement": "Home Improvement",
+    "office product": "Supplies",
+    "home improvement": "Home",
     "home": "Household",
     "kitchen": "Household",
-    "lighting": "Home Improvement",
+    "lighting": "Home",
     "ce": "Electronics",
     "personal computer": "Electronics",
     "speakers": "Electronics",
     "wireless": "Electronics",
     "video games": "Entertainment",
-    "business, industrial, & scientific supplies basic": "Office",
-    "baby product": "Kids",
+    "business, industrial, & scientific supplies basic": "Supplies",
+    "baby product": "Household",
     "toys": "Entertainment",
     "apparel": "Clothing",
     "shoes": "Clothing",
-    "pet supplies": "Pet Supplies",
-    "lawn & garden": "Home Improvement",
+    "pet supplies": "Pets",
+    "lawn & garden": "Home",
     "automotive": "Transportation",
     "sports": "Entertainment",
     "books": "Entertainment",
@@ -182,20 +176,20 @@ def infer_category(product_name: str, amazon_category: str = "") -> tuple[str, s
 
     Uses Amazon's built-in category if available,
     otherwise falls back to keyword matching on the product name.
-    Subcategory defaults to 'Unknown' when not inferable.
+    Subcategory defaults to 'General' when not inferable.
     """
     # Try Amazon's own category first (Business CSV)
     if amazon_category:
         key = amazon_category.strip().lower()
         if key in _AMAZON_BIZ_CATEGORY_MAP:
-            return (_AMAZON_BIZ_CATEGORY_MAP[key], "Unknown")
+            return (_AMAZON_BIZ_CATEGORY_MAP[key], "General")
 
     # Fall back to keyword matching on product name
     lower = product_name.lower()
     for keywords, category in _AMAZON_CATEGORY_HINTS:
         if any(kw in lower for kw in keywords):
-            return (category, "Unknown")
-    return ("Shopping", "Unknown")
+            return (category, "General")
+    return ("Household", "General")
 
 
 # ── CSV parsing ──────────────────────────────────────────────────────────────

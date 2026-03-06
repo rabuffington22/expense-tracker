@@ -605,33 +605,41 @@ _MIGRATIONS: list[tuple[int, str]] = [
 ]
 
 _DEFAULT_CATEGORIES = [
-    "Groceries", "Dining", "Transportation", "Utilities", "Healthcare",
-    "Entertainment", "Shopping", "Travel", "Housing", "Income",
-    "Fees", "Subscriptions", "Other",
-    "Kids", "Household", "Health & Beauty", "Clothing",
-    "Pet Supplies", "Office", "Kristine Business",
-    "Home Improvement", "Personal Care", "Unknown",
-    "Student Loans", "Retirement", "Storage", "Ranch",
-    "Credit Card Payment", "Education", "Ask Kristine",
-    "Internal Transfer", "Electronics",
+    # Shared across entities
+    "Credit Card Payment", "Entertainment", "Fees", "Food",
+    "Healthcare", "Home", "Household", "Housing", "Income",
+    "Insurance", "Internal Transfer", "Needs Review",
+    "Owner Contribution", "Storage", "Transportation", "Utilities",
+    # Personal-leaning
+    "Clothing", "Fitness", "Health & Beauty", "LL Expense",
+    "Pets", "Ranch", "Retirement", "Student Loans",
+    # Business-leaning
+    "Collections", "Electronics", "Facilities", "HR",
+    "IT Services", "Marketing", "Medical Supplies",
+    "Office Environment", "Office Maintenance", "Partner Buyout",
+    "Patient Services", "Professional Development", "Shipping",
+    "Software", "Staff Gifts", "Supplies", "Training",
+    "Transfers", "Travel",
 ]
 
 
 _DEFAULT_SUBCATEGORIES = {
-    "Entertainment": ["Audible", "Streaming", "Movies", "Books", "Games"],
-"Dining": ["Fast Food", "Restaurant", "Coffee", "Delivery"],
-    "Shopping": ["Online", "In-Store"],
-    "Kids": ["Diapers & Wipes", "Toys", "Gear", "Clothing"],
+    "Entertainment": ["Streaming Video", "Streaming Music", "Movies", "Books", "Games"],
+    "Food": ["Groceries", "Fast Food", "Restaurant", "Coffee", "Delivery"],
     "Clothing": ["Women", "Men", "Kids"],
     "Household": ["Cleaning", "Kitchen", "Storage"],
     "Health & Beauty": ["Vitamins", "Skincare", "Haircare"],
-    "Subscriptions": ["Streaming", "Software", "Membership"],
     "Transportation": ["Gas", "Parking", "Rideshare", "Maintenance", "Tolls"],
-    "Home Improvement": ["Tools", "Hardware", "Decor"],
-    "Pet Supplies": ["Food", "Toys", "Health"],
+    "Home": ["Landscaping", "Security", "Pest Control", "Plumbing", "Laundry"],
+    "Pets": ["Food", "Toys", "Health"],
     "Electronics": ["Accessories", "Devices"],
     "Student Loans": ["Ryan", "Kristine"],
-    "Ranch": ["Equipment", "Utilities", "Insurance"],
+    "Ranch": ["Equipment", "Mortgage", "Supplies", "Utilities"],
+    "Utilities": ["Electric", "Gas", "Internet", "Phone", "Water", "Trash"],
+    "Fees": ["Interest", "Wire Fees", "Bank Fees"],
+    "Facilities": ["Janitorial", "Pest Control", "Plumbing"],
+    "Software": ["AI", "Productivity", "Accounting"],
+    "Income": ["Patient Payments"],
 }
 
 
