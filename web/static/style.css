@@ -5338,9 +5338,42 @@ input.pl-input--sm {
     text-transform: uppercase;
     color: var(--text-muted);
 }
+.stp-month-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 .stp-month-display {
     font-size: var(--ui-font-sm);
     color: var(--text-secondary);
+    min-width: 7rem;
+    text-align: center;
+}
+.stp-month-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+    user-select: none;
+}
+.stp-month-arrow:hover {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+}
+:root[data-theme="light"] .stp-month-arrow:hover {
+    background: rgba(0,0,0,0.06);
+}
+.stp-month-arrow--disabled {
+    opacity: 0.25;
+    pointer-events: none;
+    cursor: default;
 }
 
 /* ── Goal cards ────────────────────────────────────────────────────────────── */
@@ -5834,6 +5867,13 @@ input.pl-input--sm {
 .stp-drill-table td:last-child {
     text-align: right;
     font-variant-numeric: tabular-nums;
+}
+.stp-avg {
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+}
+.stp-avg--over {
+    color: var(--orange, #ff9f0a);
 }
 .stp-drill-empty {
     color: var(--text-muted);

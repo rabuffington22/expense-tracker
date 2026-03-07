@@ -200,18 +200,43 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
     ).fetchall()
     actuals = {r["cat"]: int(round(r["total"] * 100)) for r in rows}
 
+    # Compute 3-month average for trend context
+    try:
+        bm = datetime.strptime(month, "%Y-%m").date()
+    except ValueError:
+        bm = date.today().replace(day=1)
+    avg_months = []
+    d = bm
+    for _ in range(3):
+        d = (d.replace(day=1) - timedelta(days=1)).replace(day=1)
+        avg_months.append(d.strftime("%Y-%m"))
+    month_placeholders = ",".join("?" for _ in avg_months)
+    avg_rows = conn.execute(
+        "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
+        "ABS(SUM(amount)) as total "
+        "FROM transactions "
+        "WHERE strftime('%%Y-%%m', date) IN (%s) "
+        "AND amount < 0 "
+        "AND COALESCE(category,'') NOT IN (%s) "
+        "GROUP BY cat" % (month_placeholders, exclude_clause),
+        (*avg_months, *_EXCLUDE_CATS),
+    ).fetchall()
+    avg_actuals = {r["cat"]: int(round(r["total"] * 100 / len(avg_months))) for r in avg_rows}
+
     result = []
     for bi in budget_items:
         spent = actuals.get(bi["category"], 0)
         budget = bi["monthly_budget_cents"]
         remaining = budget - spent
         pct = int(round(spent / budget * 100)) if budget > 0 else 0
+        avg_3mo = avg_actuals.get(bi["category"], 0)
         result.append({
             "category": bi["category"],
             "budget_cents": budget,
             "spent_cents": spent,
             "remaining_cents": remaining,
             "pct": min(pct, 999),  # cap at 999% for display
+            "avg_3mo_cents": avg_3mo,
         })
 
     # Sort by pct descending (most over-budget first)
@@ -466,9 +491,26 @@ def index():
                 goal["progress_pct"] = 0
             goal["progress_pct"] = max(0, min(100, goal["progress_pct"]))
 
-        # Budget data
+        # Budget data — month from query param or current month
         today = date.today()
-        current_month = today.strftime("%Y-%m")
+        budget_month = request.args.get("month", today.strftime("%Y-%m"))
+        # Validate format
+        try:
+            bm_date = datetime.strptime(budget_month, "%Y-%m").date()
+        except ValueError:
+            bm_date = today.replace(day=1)
+            budget_month = bm_date.strftime("%Y-%m")
+
+        current_month = budget_month
+
+        # Prev/next month for navigation
+        prev_month_date = (bm_date.replace(day=1) - timedelta(days=1)).replace(day=1)
+        next_month_date = (bm_date.replace(day=28) + timedelta(days=4)).replace(day=1)
+        prev_month = prev_month_date.strftime("%Y-%m")
+        # Don't allow navigating past current month
+        is_current_month = (budget_month == today.strftime("%Y-%m"))
+        next_month = None if is_current_month else next_month_date.strftime("%Y-%m")
+
         budget_status = _get_budget_status(conn, g.entity_key, current_month)
         budgeted_cats = {b["category"] for b in budget_status}
         unbudgeted = _get_unbudgeted_spending(conn, current_month, budgeted_cats)
@@ -503,7 +545,9 @@ def index():
             total_budgeted=total_budgeted,
             total_spent=total_spent,
             current_month=current_month,
-            current_month_display=today.strftime("%B %Y"),
+            current_month_display=bm_date.strftime("%B %Y"),
+            prev_month=prev_month,
+            next_month=next_month,
             cc_accounts=cc_accounts,
             bank_accounts=bank_accounts,
             categories=categories,
@@ -938,7 +982,7 @@ def budget_subcategories():
         lines = []
         if not rows:
             lines.append(
-                '<tr class="stp-subcat-row"><td colspan="5" '
+                '<tr class="stp-subcat-row"><td colspan="6" '
                 'style="padding-left:2rem;color:var(--text-muted)">No spending</td></tr>'
             )
         else:
@@ -949,6 +993,7 @@ def budget_subcategories():
                     f'<td style="padding-left:2rem;color:var(--text-muted)">{escape(r["sub"])}</td>'
                     f'<td></td>'
                     f'<td>${amt:,.0f}</td>'
+                    f'<td></td>'
                     f'<td></td>'
                     f'<td></td>'
                     f'</tr>'

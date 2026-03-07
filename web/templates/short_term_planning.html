@@ -238,7 +238,15 @@
 <div class="stp-section">
     <div class="stp-section-header">
         <span class="stp-section-label">MONTHLY BUDGET</span>
-        <span class="stp-month-display">{{ current_month_display }}</span>
+        <div class="stp-month-nav" id="budget">
+            <a href="{{ url_for('short_term_planning.index', month=prev_month) }}#budget" class="stp-month-arrow" title="Previous month">‹</a>
+            <span class="stp-month-display">{{ current_month_display }}</span>
+            {% if next_month %}
+            <a href="{{ url_for('short_term_planning.index', month=next_month) }}#budget" class="stp-month-arrow" title="Next month">›</a>
+            {% else %}
+            <span class="stp-month-arrow stp-month-arrow--disabled">›</span>
+            {% endif %}
+        </div>
     </div>
 
     {% if budget_status %}
@@ -266,6 +274,7 @@
                     <th>Category</th>
                     <th>Budget</th>
                     <th>Spent</th>
+                    <th>3-Mo Avg</th>
                     <th>Remaining</th>
                     <th>Progress</th>
                 </tr>
@@ -288,6 +297,9 @@
                         <span class="stp-spent-link" onclick="stpShowTxns('{{ item.category }}')">
                             {{ fmt_dollars(item.spent_cents) }}
                         </span>
+                    </td>
+                    <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents %}stp-avg--over{% endif %}">
+                        {{ fmt_dollars(item.avg_3mo_cents) }}
                     </td>
                     <td class="{% if item.remaining_cents >= 0 %}stp-green{% else %}stp-red{% endif %}">
                         {{ fmt_dollars(item.remaining_cents) }}
