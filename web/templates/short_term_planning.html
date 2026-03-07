@@ -306,7 +306,7 @@
                     </td>
                     <td>
                         <div class="stp-budget-bar">
-                            <div class="stp-budget-fill {% if item.pct <= 75 %}stp-bar-green{% elif item.pct <= 100 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"
+                            <div class="stp-budget-fill {% if item.pct <= 100 %}stp-bar-green{% elif item.pct <= 115 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"
                                  style="width: {{ [item.pct, 100]|min }}%"></div>
                         </div>
                     </td>
