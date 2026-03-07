@@ -82,6 +82,7 @@
     data-due-day="{{ acct.payment_due_day or '' }}"
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
+    data-apr="{{ '{:.2f}'.format(acct.apr_bps / 100) if acct.apr_bps else '' }}"
     onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
         <span class="cf-box-name">{{ acct.account_name }}</span>
@@ -92,7 +93,7 @@
 
     {% if acct.credit_limit_cents %}
     <div class="cf-card-subline">
-        <span class="cf-credit-line">${{ "{:,.0f}".format(acct.credit_limit_cents / 100) }}</span>
+        <span class="cf-credit-line">${{ "{:,.0f}".format(acct.credit_limit_cents / 100) }}{% if acct.apr_bps %} · {{ "{:.2f}".format(acct.apr_bps / 100) }}%{% endif %}</span>
     </div>
     {% endif %}
 
@@ -176,6 +177,11 @@
             {# Credit limit — only shown for credit cards #}
             <div class="cf-card-subline" id="cf-modal-limit-wrap" hidden>
                 <span class="cf-credit-line cf-modal-editable cf-modal-limit-line"><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
+            </div>
+
+            {# APR — shown for credit cards #}
+            <div class="cf-card-subline" id="cf-modal-apr-wrap" hidden>
+                <span class="cf-credit-line cf-modal-editable cf-modal-limit-line"><input type="text" name="apr" id="cf-modal-apr" class="cf-modal-input cf-modal-input--small" onfocus="this.select()" oninput="cfSizeInput(this)"><span class="cf-dollar cf-dollar--sm">%</span></span>
             </div>
 
             {# Credit card fields — shown/hidden by JS #}
@@ -270,12 +276,18 @@ function cfOpenModal(btn, evt) {
     /* Credit card fields */
     var cardFields = document.getElementById('cf-modal-card-fields');
     var limitWrap = document.getElementById('cf-modal-limit-wrap');
+    var aprWrap = document.getElementById('cf-modal-apr-wrap');
     if (isCard) {
         cardFields.hidden = false;
         limitWrap.hidden = false;
         var limitInput = document.getElementById('cf-modal-limit');
         limitInput.value = d.limit;
         cfSizeInput(limitInput);
+        /* APR */
+        aprWrap.hidden = false;
+        var aprInput = document.getElementById('cf-modal-apr');
+        aprInput.value = d.apr || '';
+        cfSizeInput(aprInput);
         /* Due date — show formatted date, store day in hidden field */
         document.getElementById('cf-modal-due-day-hidden').value = d.dueDay;
         var dueDisplay = document.getElementById('cf-modal-due-display');
@@ -287,6 +299,7 @@ function cfOpenModal(btn, evt) {
     } else {
         cardFields.hidden = true;
         limitWrap.hidden = true;
+        aprWrap.hidden = true;
     }
 
     /* Copy upcoming charges from the card */

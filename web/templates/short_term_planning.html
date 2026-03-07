@@ -1,0 +1,601 @@
+{% extends "base.html" %}
+{% block title %}Short-Term Planning — Ledger AI{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+    <h1 class="section-title">Short-Term Planning</h1>
+    <button class="pl-btn-ask" onclick="aiChatOpen('short-term-planning')">Ask Opus</button>
+</div>
+
+{# ════════════════════════════════════════════════════════════════════════════
+   SECTION 0: ACTION ITEMS
+   ════════════════════════════════════════════════════════════════════════════ #}
+
+<div class="stp-section">
+    <div class="stp-section-header">
+        <span class="stp-section-label">ACTION ITEMS</span>
+    </div>
+
+    <div class="stp-actions-list">
+        {# Auto-generated CC due dates #}
+        {% for item in cc_due_items %}
+        <div class="stp-action-row stp-action--auto {% if item.days_until <= 3 %}stp-action--urgent{% endif %}">
+            <span class="stp-action-icon stp-action-icon--auto">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
+            <span class="stp-action-title">{{ item.title }}</span>
+            <span class="stp-action-due {% if item.days_until <= 3 %}stp-action-due--soon{% endif %}">
+                {{ item.due_display }}
+                {% if item.days_until == 0 %}<span class="stp-due-tag">Today</span>
+                {% elif item.days_until == 1 %}<span class="stp-due-tag">Tomorrow</span>
+                {% elif item.days_until <= 7 %}<span class="stp-due-tag">{{ item.days_until }}d</span>
+                {% endif %}
+            </span>
+        </div>
+        {% endfor %}
+
+        {# Manual action items — pending #}
+        {% for item in action_items if item.status == 'pending' %}
+        <div class="stp-action-row">
+            <form method="post" action="{{ url_for('short_term_planning.toggle_action', item_id=item.id) }}" class="stp-action-check-form">
+                <button type="submit" class="stp-action-check" title="Mark complete">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/></svg>
+                </button>
+            </form>
+            <span class="stp-action-title">{{ item.title }}</span>
+            {% if item.due_date %}
+            <span class="stp-action-due">{{ item.due_date }}</span>
+            {% endif %}
+            <form method="post" action="{{ url_for('short_term_planning.delete_action', item_id=item.id) }}" class="stp-action-del-form">
+                <button type="submit" class="stp-action-del" title="Remove">&times;</button>
+            </form>
+        </div>
+        {% endfor %}
+
+        {# Completed items #}
+        {% for item in action_items if item.status == 'completed' %}
+        <div class="stp-action-row stp-action--done">
+            <form method="post" action="{{ url_for('short_term_planning.toggle_action', item_id=item.id) }}" class="stp-action-check-form">
+                <button type="submit" class="stp-action-check stp-action-check--done" title="Undo">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                </button>
+            </form>
+            <span class="stp-action-title">{{ item.title }}</span>
+            <form method="post" action="{{ url_for('short_term_planning.delete_action', item_id=item.id) }}" class="stp-action-del-form">
+                <button type="submit" class="stp-action-del" title="Remove">&times;</button>
+            </form>
+        </div>
+        {% endfor %}
+
+        {% if not cc_due_items and not action_items %}
+        <div class="stp-empty-state">
+            <p>No action items yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Inline add form #}
+    <form method="post" action="{{ url_for('short_term_planning.create_action') }}" class="stp-action-add">
+        <input type="text" name="title" placeholder="Add an action item..." class="stp-action-add-input" required>
+        <button type="submit" class="stp-action-add-btn" title="Add">+</button>
+    </form>
+</div>
+
+{# ════════════════════════════════════════════════════════════════════════════
+   SECTION 1: GOALS
+   ════════════════════════════════════════════════════════════════════════════ #}
+
+<div class="stp-section">
+    <div class="stp-section-header">
+        <span class="stp-section-label">GOALS</span>
+        <button class="btn btn-sm" onclick="document.getElementById('stp-add-modal').showModal()">+ Add Goal</button>
+    </div>
+
+    {% if active_goals %}
+    <div class="stp-goals-grid">
+        {% for goal in active_goals %}
+        <div class="stp-goal-card">
+            <div class="stp-goal-header">
+                <div class="stp-goal-name">{{ goal.name }}</div>
+                <span class="stp-goal-badge stp-badge--{{ goal.goal_type }}">
+                    {% if goal.goal_type == 'debt_payoff' %}Debt Payoff
+                    {% elif goal.goal_type == 'savings' %}Savings
+                    {% else %}Spending Reduction{% endif %}
+                </span>
+            </div>
+
+            {# Current balance #}
+            <div class="stp-goal-balance">
+                {{ fmt_dollars(goal.current_balance_cents) }}
+                {% if goal.goal_type == 'savings' and goal.target_amount_cents %}
+                <span class="stp-goal-target">of {{ fmt_dollars(goal.target_amount_cents) }}</span>
+                {% endif %}
+            </div>
+
+            {# Progress bar #}
+            <div class="stp-progress-wrap">
+                <div class="stp-progress-bar">
+                    <div class="stp-progress-fill" style="width: {{ goal.progress_pct }}%"></div>
+                </div>
+                <span class="stp-progress-label">{{ goal.progress_pct }}%</span>
+            </div>
+
+            {# Strategy + monthly amount (if locked in) #}
+            {% if goal.monthly_amount_cents and goal.monthly_amount_cents > 0 %}
+            <div class="stp-goal-plan-info">
+                {% if goal.strategy %}
+                <span class="stp-plan-tag">{{ goal.strategy|capitalize }}</span>
+                {% endif %}
+                <span class="stp-plan-amount">{{ fmt_dollars(goal.monthly_amount_cents) }}/mo</span>
+                {% if goal.target_date %}
+                <span class="stp-plan-date">Target: {{ goal.target_date }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {# Monthly review banner #}
+            {% if goal.needs_review %}
+            <div class="stp-review-banner">
+                Monthly check-in: Review your progress
+                <button class="btn btn-sm" onclick="document.getElementById('stp-review-{{ goal.id }}').showModal()">Review</button>
+            </div>
+            {% endif %}
+
+            {# Sparkline (last 6 snapshots) #}
+            {% if goal.snapshots|length >= 2 %}
+            <div class="stp-sparkline-wrap"
+                 hx-get="{{ url_for('short_term_planning.goal_progress', goal_id=goal.id) }}"
+                 hx-trigger="load"
+                 hx-swap="innerHTML">
+            </div>
+            {% endif %}
+
+            {# Locked plan (collapsible) #}
+            {% if goal.ai_plan %}
+            <details class="stp-plan-details">
+                <summary class="stp-plan-summary">View Plan</summary>
+                <div class="stp-plan-content">{{ goal.ai_plan }}</div>
+            </details>
+            {% endif %}
+
+            {# Actions #}
+            <div class="stp-goal-actions">
+                <button class="btn btn-sm btn-secondary" onclick="stpEditGoal({{ goal|tojson|e }})">Edit</button>
+                {% if not goal.ai_plan %}
+                <button class="btn btn-sm" onclick="stpLockPlan({{ goal|tojson|e }})">Lock In Plan</button>
+                {% else %}
+                <button class="btn btn-sm btn-secondary" onclick="stpLockPlan({{ goal|tojson|e }})">Update Plan</button>
+                {% endif %}
+            </div>
+
+            {# Review modal #}
+            {% if goal.needs_review %}
+            <dialog id="stp-review-{{ goal.id }}" class="stp-modal">
+                <div class="stp-modal-content">
+                    <div class="stp-modal-header">
+                        <h3>Monthly Review: {{ goal.name }}</h3>
+                        <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+                    </div>
+                    <div class="stp-review-body">
+                        <div class="stp-review-stat">
+                            <span class="stp-review-label">Current Balance</span>
+                            <span class="stp-review-value">{{ fmt_dollars(goal.current_balance_cents) }}</span>
+                        </div>
+                        {% if goal.snapshots|length >= 2 %}
+                        {% set last = goal.snapshots[-1] %}
+                        {% set prev = goal.snapshots[-2] %}
+                        {% set change = last.balance_cents - prev.balance_cents %}
+                        <div class="stp-review-stat">
+                            <span class="stp-review-label">Change Since Last</span>
+                            <span class="stp-review-value {% if change < 0 %}stp-green{% else %}stp-red{% endif %}">
+                                {{ fmt_dollars(change) }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <form method="post" action="{{ url_for('short_term_planning.record_snapshot', goal_id=goal.id) }}">
+                        <textarea name="note" class="stp-modal-textarea" placeholder="Notes on this month's progress..."></textarea>
+                        <div class="stp-modal-footer">
+                            <button type="submit" class="btn">Save Review</button>
+                            <button type="button" class="btn btn-secondary" onclick="aiChatOpen('short-term-planning')">Discuss with AI</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="stp-empty-state">
+        <p>No goals yet. Create a debt payoff or savings goal to get started.</p>
+    </div>
+    {% endif %}
+
+    {# Completed goals #}
+    {% if completed_goals %}
+    <details class="stp-completed-section">
+        <summary class="stp-section-label">COMPLETED ({{ completed_goals|length }})</summary>
+        <div class="stp-goals-grid">
+            {% for goal in completed_goals %}
+            <div class="stp-goal-card stp-goal--completed">
+                <div class="stp-goal-header">
+                    <div class="stp-goal-name">{{ goal.name }}</div>
+                    <span class="stp-goal-badge stp-badge--completed">Done</span>
+                </div>
+                <div class="stp-goal-balance">{{ fmt_dollars(goal.current_balance_cents) }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </details>
+    {% endif %}
+</div>
+
+{# ════════════════════════════════════════════════════════════════════════════
+   SECTION 2: MONTHLY BUDGET
+   ════════════════════════════════════════════════════════════════════════════ #}
+
+<div class="stp-section">
+    <div class="stp-section-header">
+        <span class="stp-section-label">MONTHLY BUDGET</span>
+        <span class="stp-month-display">{{ current_month_display }}</span>
+    </div>
+
+    {% if budget_status %}
+    <div class="stp-budget-summary">
+        <div class="stp-budget-stat">
+            <span class="stp-budget-stat-label">Budgeted</span>
+            <span class="stp-budget-stat-value">{{ fmt_dollars(total_budgeted) }}</span>
+        </div>
+        <div class="stp-budget-stat">
+            <span class="stp-budget-stat-label">Spent</span>
+            <span class="stp-budget-stat-value">{{ fmt_dollars(total_spent) }}</span>
+        </div>
+        <div class="stp-budget-stat">
+            <span class="stp-budget-stat-label">Remaining</span>
+            <span class="stp-budget-stat-value {% if total_budgeted - total_spent >= 0 %}stp-green{% else %}stp-red{% endif %}">
+                {{ fmt_dollars(total_budgeted - total_spent) }}
+            </span>
+        </div>
+    </div>
+
+    <form method="post" action="{{ url_for('short_term_planning.save_budget') }}">
+        <table class="stp-budget-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Budget</th>
+                    <th>Spent</th>
+                    <th>Remaining</th>
+                    <th>Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in budget_status %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('transactions.index', category=item.category, start=current_month + '-01') }}">
+                            {{ item.category }}
+                        </a>
+                    </td>
+                    <td>
+                        <input type="text" name="budget_{{ item.category }}"
+                               value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
+                               class="stp-budget-input">
+                    </td>
+                    <td>{{ fmt_dollars(item.spent_cents) }}</td>
+                    <td class="{% if item.remaining_cents >= 0 %}stp-green{% else %}stp-red{% endif %}">
+                        {{ fmt_dollars(item.remaining_cents) }}
+                    </td>
+                    <td>
+                        <div class="stp-budget-bar">
+                            <div class="stp-budget-fill {% if item.pct <= 75 %}stp-bar-green{% elif item.pct <= 100 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"
+                                 style="width: {{ [item.pct, 100]|min }}%"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="stp-budget-actions">
+            <button type="submit" class="btn btn-sm">Update Budgets</button>
+        </div>
+    </form>
+    {% else %}
+    <div class="stp-empty-state">
+        <p>No budgets set yet. Add budget amounts to track spending by category.</p>
+    </div>
+    {% endif %}
+
+    {# Unbudgeted categories #}
+    {% if unbudgeted %}
+    <details class="stp-unbudgeted-section">
+        <summary class="stp-section-label">UNBUDGETED SPENDING ({{ unbudgeted|length }} categories)</summary>
+        <form method="post" action="{{ url_for('short_term_planning.save_budget') }}">
+            <table class="stp-budget-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Spent This Month</th>
+                        <th>Set Budget</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in unbudgeted %}
+                    <tr>
+                        <td>{{ item.category }}</td>
+                        <td>{{ fmt_dollars(item.spent_cents) }} ({{ item.txn_count }} txns)</td>
+                        <td>
+                            <input type="text" name="budget_{{ item.category }}"
+                                   placeholder="$0"
+                                   class="stp-budget-input">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="stp-budget-actions">
+                <button type="submit" class="btn btn-sm">Save Budgets</button>
+            </div>
+        </form>
+    </details>
+    {% endif %}
+</div>
+
+{# ════════════════════════════════════════════════════════════════════════════
+   ADD GOAL MODAL
+   ════════════════════════════════════════════════════════════════════════════ #}
+
+<dialog id="stp-add-modal" class="stp-modal">
+    <div class="stp-modal-content">
+        <div class="stp-modal-header">
+            <h3>Add Goal</h3>
+            <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+        </div>
+        <form method="post" action="{{ url_for('short_term_planning.create_goal') }}">
+            <div class="stp-form-group">
+                <label>Goal Name</label>
+                <input type="text" name="name" required class="stp-modal-input" placeholder="Pay off credit cards">
+            </div>
+
+            <div class="stp-form-group">
+                <label>Type</label>
+                <div class="stp-segmented" id="stp-type-seg">
+                    <label class="stp-seg-option">
+                        <input type="radio" name="goal_type" value="debt_payoff" checked onchange="stpTypeChange(this.value)">
+                        <span>Debt Payoff</span>
+                    </label>
+                    <label class="stp-seg-option">
+                        <input type="radio" name="goal_type" value="savings" onchange="stpTypeChange(this.value)">
+                        <span>Savings</span>
+                    </label>
+                    <label class="stp-seg-option">
+                        <input type="radio" name="goal_type" value="spending_reduction" onchange="stpTypeChange(this.value)">
+                        <span>Spending Cut</span>
+                    </label>
+                </div>
+            </div>
+
+            {# Debt payoff fields #}
+            <div id="stp-debt-fields">
+                <div class="stp-form-group">
+                    <label>Link Credit Cards</label>
+                    {% for acct in cc_accounts %}
+                    <label class="stp-checkbox-row">
+                        <input type="checkbox" name="linked_accounts" value="{{ acct.account_name }}">
+                        <span>{{ acct.account_name }} — {{ fmt_dollars(acct.balance_cents) }}</span>
+                    </label>
+                    {% endfor %}
+                    {% if not cc_accounts %}
+                    <p class="stp-muted">No credit card accounts found. Connect accounts via Plaid first.</p>
+                    {% endif %}
+                </div>
+                <div class="stp-form-group">
+                    <label>Strategy</label>
+                    <select name="strategy" class="stp-modal-input">
+                        <option value="avalanche">Avalanche (highest interest first)</option>
+                        <option value="snowball">Snowball (smallest balance first)</option>
+                    </select>
+                </div>
+            </div>
+
+            {# Savings fields #}
+            <div id="stp-savings-fields" hidden>
+                <div class="stp-form-group">
+                    <label>Target Amount</label>
+                    <input type="text" name="target_amount" class="stp-modal-input" placeholder="$10,000">
+                </div>
+                <div class="stp-form-group">
+                    <label>Link Bank Account (optional)</label>
+                    <select name="linked_accounts" class="stp-modal-input">
+                        <option value="">None</option>
+                        {% for acct in bank_accounts %}
+                        <option value="{{ acct.account_name }}">{{ acct.account_name }} — {{ fmt_dollars(acct.balance_cents) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            {# Spending reduction fields #}
+            <div id="stp-spending-fields" hidden>
+                <div class="stp-form-group">
+                    <label>Category</label>
+                    <select name="target_category" class="stp-modal-input">
+                        {% for cat in categories %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="stp-form-group">
+                    <label>Target Monthly Amount</label>
+                    <input type="text" name="target_amount" class="stp-modal-input" placeholder="$500">
+                </div>
+            </div>
+
+            {# Common fields #}
+            <div class="stp-form-group">
+                <label>Monthly Extra Payment / Contribution</label>
+                <input type="text" name="monthly_amount" class="stp-modal-input"
+                       placeholder="{{ '{:,.0f}'.format(suggested_extra / 100) }}"
+                       title="Suggested: ${{ '{:,.0f}'.format(suggested_extra / 100) }}/mo based on your spending">
+            </div>
+            <div class="stp-form-group">
+                <label>Target Date</label>
+                <input type="date" name="target_date" class="stp-modal-input">
+            </div>
+            <div class="stp-form-group">
+                <label>Notes</label>
+                <textarea name="notes" class="stp-modal-textarea" placeholder="Optional notes..."></textarea>
+            </div>
+
+            <div class="stp-modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="this.closest('dialog').close()">Cancel</button>
+                <button type="submit" class="btn">Create Goal</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+{# ════════════════════════════════════════════════════════════════════════════
+   EDIT GOAL MODAL
+   ════════════════════════════════════════════════════════════════════════════ #}
+
+<dialog id="stp-edit-modal" class="stp-modal">
+    <div class="stp-modal-content">
+        <div class="stp-modal-header">
+            <h3>Edit Goal</h3>
+            <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+        </div>
+        <form id="stp-edit-form" method="post">
+            <div class="stp-form-group">
+                <label>Goal Name</label>
+                <input type="text" name="name" id="stp-edit-name" required class="stp-modal-input">
+            </div>
+            <input type="hidden" name="goal_type" id="stp-edit-type">
+
+            <div class="stp-form-group">
+                <label>Monthly Amount</label>
+                <input type="text" name="monthly_amount" id="stp-edit-monthly" class="stp-modal-input">
+            </div>
+            <div class="stp-form-group">
+                <label>Target Date</label>
+                <input type="date" name="target_date" id="stp-edit-target-date" class="stp-modal-input">
+            </div>
+            <div class="stp-form-group">
+                <label>Status</label>
+                <select name="status" id="stp-edit-status" class="stp-modal-input">
+                    <option value="active">Active</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="stp-form-group">
+                <label>Notes</label>
+                <textarea name="notes" id="stp-edit-notes" class="stp-modal-textarea"></textarea>
+            </div>
+
+            <div class="stp-modal-footer">
+                <button type="button" class="btn btn-danger" id="stp-edit-delete">Delete</button>
+                <div style="flex: 1"></div>
+                <button type="button" class="btn btn-secondary" onclick="this.closest('dialog').close()">Cancel</button>
+                <button type="submit" class="btn">Save</button>
+            </div>
+        </form>
+        <form id="stp-delete-form" method="post" style="display:none"></form>
+    </div>
+</dialog>
+
+{# ════════════════════════════════════════════════════════════════════════════
+   LOCK IN PLAN MODAL
+   ════════════════════════════════════════════════════════════════════════════ #}
+
+<dialog id="stp-lock-modal" class="stp-modal">
+    <div class="stp-modal-content">
+        <div class="stp-modal-header">
+            <h3>Lock In Plan</h3>
+            <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+        </div>
+        <form id="stp-lock-form" method="post">
+            <div class="stp-form-group" id="stp-lock-strategy-group">
+                <label>Strategy</label>
+                <select name="strategy" id="stp-lock-strategy" class="stp-modal-input">
+                    <option value="avalanche">Avalanche (highest interest first)</option>
+                    <option value="snowball">Snowball (smallest balance first)</option>
+                </select>
+            </div>
+            <div class="stp-form-group">
+                <label>Monthly Extra Payment</label>
+                <input type="text" name="monthly_amount" id="stp-lock-monthly" class="stp-modal-input">
+            </div>
+            <div class="stp-form-group">
+                <label>Target Date</label>
+                <input type="date" name="target_date" id="stp-lock-date" class="stp-modal-input">
+            </div>
+            <div class="stp-form-group">
+                <label>Plan Summary</label>
+                <textarea name="narrative" id="stp-lock-narrative" class="stp-modal-textarea" rows="6"
+                          placeholder="Describe your plan strategy and key decisions..."></textarea>
+            </div>
+            <div class="stp-modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="this.closest('dialog').close()">Cancel</button>
+                <button type="submit" class="btn">Lock In</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<script>
+function stpTypeChange(type) {
+    document.getElementById('stp-debt-fields').hidden = (type !== 'debt_payoff');
+    document.getElementById('stp-savings-fields').hidden = (type !== 'savings');
+    document.getElementById('stp-spending-fields').hidden = (type !== 'spending_reduction');
+}
+
+function stpEditGoal(goal) {
+    var form = document.getElementById('stp-edit-form');
+    form.action = '/planning/short-term/goals/' + goal.id + '/update';
+    document.getElementById('stp-edit-name').value = goal.name;
+    document.getElementById('stp-edit-type').value = goal.goal_type;
+    document.getElementById('stp-edit-monthly').value = goal.monthly_amount_cents ? (goal.monthly_amount_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) : '';
+    document.getElementById('stp-edit-target-date').value = goal.target_date || '';
+    document.getElementById('stp-edit-status').value = goal.status;
+    document.getElementById('stp-edit-notes').value = goal.notes || '';
+
+    var delForm = document.getElementById('stp-delete-form');
+    delForm.action = '/planning/short-term/goals/' + goal.id + '/delete';
+    document.getElementById('stp-edit-delete').onclick = function() {
+        if (confirm('Delete this goal and all its progress data?')) {
+            delForm.submit();
+        }
+    };
+
+    document.getElementById('stp-edit-modal').showModal();
+}
+
+function stpLockPlan(goal) {
+    var form = document.getElementById('stp-lock-form');
+    form.action = '/planning/short-term/goals/' + goal.id + '/lock-plan';
+    document.getElementById('stp-lock-strategy').value = goal.strategy || 'avalanche';
+    document.getElementById('stp-lock-monthly').value = goal.monthly_amount_cents ? (goal.monthly_amount_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) : '';
+    document.getElementById('stp-lock-date').value = goal.target_date || '';
+    document.getElementById('stp-lock-narrative').value = goal.ai_plan || '';
+
+    var stratGroup = document.getElementById('stp-lock-strategy-group');
+    stratGroup.hidden = (goal.goal_type !== 'debt_payoff');
+
+    document.getElementById('stp-lock-modal').showModal();
+}
+
+// Strip commas from money inputs on submit
+document.addEventListener('submit', function(e) {
+    var form = e.target;
+    form.querySelectorAll('input[name="monthly_amount"], input[name="target_amount"]').forEach(function(inp) {
+        inp.value = inp.value.replace(/,/g, '');
+    });
+    form.querySelectorAll('.stp-budget-input').forEach(function(inp) {
+        inp.value = inp.value.replace(/,/g, '').replace(/\$/g, '');
+    });
+});
+</script>
+
+{% endblock %}

@@ -1987,3 +1987,114 @@ def ai_analysis():
 def _render_ai_results(results):
     """Render AI analysis results partial."""
     return render_template("components/ai_analysis.html", insights=results)
+
+
+# ── Income vs Expenses AI Analysis ──────────────────────────────────────────
+
+_ie_ai_cache: dict[tuple, tuple[float, list]] = {}
+
+
+def _build_ie_summary(conn, entity_type):
+    """Build a text summary of 12-month income vs expenses for AI analysis."""
+    xfer_exclude = (
+        "AND COALESCE(category,'') NOT IN "
+        "('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')"
+    )
+    now = datetime.now()
+    import calendar as _cal
+
+    lines = [f"Entity type: {entity_type}", "", "Monthly income vs expenses (last 12 months):"]
+
+    total_income = 0
+    total_expense = 0
+    for i in range(11, -1, -1):
+        y = now.year
+        m = now.month - i
+        while m <= 0:
+            m += 12
+            y -= 1
+        m_start = f"{y:04d}-{m:02d}-01"
+        m_end = f"{y:04d}-{m:02d}-{_cal.monthrange(y, m)[1]:02d}"
+
+        income = conn.execute(
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            (m_start, m_end),
+        ).fetchone()[0]
+        expense = conn.execute(
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            (m_start, m_end),
+        ).fetchone()[0]
+        net = income - expense
+        total_income += income
+        total_expense += expense
+        lines.append(
+            f"  {_cal.month_abbr[m]} {y}: Income ${income / 100:,.0f} | "
+            f"Expenses ${expense / 100:,.0f} | Net ${net / 100:,.0f}"
+        )
+
+    lines.append("")
+    lines.append(
+        f"12-month totals: Income ${total_income / 100:,.0f} | "
+        f"Expenses ${total_expense / 100:,.0f} | "
+        f"Net ${(total_income - total_expense) / 100:,.0f}"
+    )
+    if total_income > 0:
+        savings_rate = (total_income - total_expense) / total_income * 100
+        lines.append(f"12-month savings rate: {savings_rate:.1f}%")
+
+    # Income sources breakdown (last 6 months)
+    six_ago_y = now.year
+    six_ago_m = now.month - 5
+    while six_ago_m <= 0:
+        six_ago_m += 12
+        six_ago_y -= 1
+    six_start = f"{six_ago_y:04d}-{six_ago_m:02d}-01"
+    six_end = f"{now.year:04d}-{now.month:02d}-{_cal.monthrange(now.year, now.month)[1]:02d}"
+
+    inc_cats = conn.execute(
+        f"SELECT COALESCE(subcategory, category, 'Unknown') AS src, "
+        f"  COALESCE(SUM(amount_cents), 0) AS total "
+        f"FROM transactions "
+        f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude} "
+        f"GROUP BY src ORDER BY total DESC LIMIT 8",
+        (six_start, six_end),
+    ).fetchall()
+    if inc_cats:
+        lines.append("\nIncome sources (last 6 months):")
+        for r in inc_cats:
+            lines.append(f"  {r['src']}: ${r['total'] / 100:,.0f}")
+
+    return "\n".join(lines)
+
+
+@bp.route("/dashboard/ie-ai-analysis", methods=["POST"])
+def ie_ai_analysis():
+    """Generate AI-powered income vs expenses analysis (HTMX endpoint)."""
+    from core.ai_client import generate_ie_analysis
+
+    cache_key = (g.entity_key, "ie_analysis")
+
+    now = _time.time()
+    if cache_key in _ie_ai_cache:
+        cached_time, cached_results = _ie_ai_cache[cache_key]
+        if now - cached_time < _AI_CACHE_TTL:
+            return render_template("components/ie_ai_analysis.html", insights=cached_results)
+
+    stale = [k for k, (t, _) in _ie_ai_cache.items() if now - t >= _AI_CACHE_TTL]
+    for k in stale:
+        del _ie_ai_cache[k]
+
+    conn = get_connection(g.entity_key)
+    try:
+        summary = _build_ie_summary(conn, g.entity_display.lower())
+    finally:
+        conn.close()
+
+    results = generate_ie_analysis(summary)
+    if results:
+        _ie_ai_cache[cache_key] = (now, results)
+        return render_template("components/ie_ai_analysis.html", insights=results)
+
+    return render_template("components/ie_ai_analysis.html", insights=None)

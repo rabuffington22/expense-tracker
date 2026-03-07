@@ -36,7 +36,7 @@ _ENTITY_DISPLAY = {
 
 # Valid page names for context dispatch
 _VALID_PAGES = {
-    "planning", "dashboard", "transactions",
+    "planning", "short-term-planning", "dashboard", "transactions",
     "subscriptions", "cashflow", "reports", "general",
 }
 
@@ -50,7 +50,7 @@ Be conversational but concise — no filler, no disclaimers about not being a fi
 Use plain language, not jargon."""
 
 _PAGE_PROMPTS = {
-    "planning": """You specialize in long-term financial planning and projections.
+    "planning": """You specialize in long-term financial planning and net worth projections.
 Your role: answer financial planning questions using the specific data provided.
 Run scenarios when asked ("what if I pay extra $500/mo on the mortgage?").
 When doing projections, show the math briefly so they can verify.
@@ -71,6 +71,12 @@ Reference specific transaction details from the data.""",
 Your role: help the user evaluate their subscriptions, identify cancellation candidates,
 spot price changes, and estimate savings from cutting services.
 Reference specific subscription names, amounts, and frequencies from the data.""",
+
+    "short-term-planning": """You are a debt payoff and budgeting coach. You have access to \
+the user's real financial data — balances, income, spending by category, recurring charges, \
+and goals. Help them build and refine practical plans. Be specific with numbers: use their \
+actual balances, income, and spending. When suggesting cuts, reference their real spending \
+categories and amounts. Always show the impact on payoff timelines when making changes.""",
 
     "cashflow": """You specialize in cash flow management and account health.
 Your role: help the user understand their account balances, credit utilization,
@@ -197,6 +203,7 @@ def _gather_context(entity_key: str, page: str) -> str:
     """Dispatch to the right context builder based on page."""
     builders = {
         "planning": _gather_planning_context,
+        "short-term-planning": _gather_short_term_planning_context,
         "dashboard": _gather_dashboard_context,
         "transactions": _gather_transactions_context,
         "subscriptions": _gather_subscriptions_context,
@@ -403,6 +410,107 @@ def _gather_planning_context(entity_key: str) -> str:
     lines.append("")
 
     # Append general spending + accounts
+    lines.append(_gather_general_context(entity_key))
+
+    return "\n".join(lines)
+
+
+def _gather_short_term_planning_context(entity_key: str) -> str:
+    """Short-term planning context: goals, budgets, progress, spending patterns."""
+    import json as _json
+    lines = []
+    lines.append("=== SHORT-TERM PLANNING DATA ===")
+
+    conn = None
+    try:
+        conn = get_connection(entity_key)
+
+        # Active goals
+        goals = conn.execute(
+            "SELECT * FROM short_term_goals WHERE status = 'active' ORDER BY created_at"
+        ).fetchall()
+        if goals:
+            lines.append("\nActive goals:")
+            for g in goals:
+                linked = _json.loads(g["linked_accounts"] or "[]")
+                total_bal = 0
+                for acct_name in linked:
+                    bal_row = conn.execute(
+                        "SELECT balance_cents FROM account_balances WHERE account_name = ?",
+                        (acct_name,),
+                    ).fetchone()
+                    if bal_row:
+                        total_bal += abs(bal_row["balance_cents"])
+                lines.append(
+                    "  %s [%s]: balance $%s, target %s, monthly $%s, strategy: %s"
+                    % (g["name"], g["goal_type"],
+                       "{:,.0f}".format(total_bal / 100),
+                       g["target_date"] or "not set",
+                       "{:,.0f}".format((g["monthly_amount_cents"] or 0) / 100),
+                       g["strategy"] or "n/a")
+                )
+                # Recent snapshots
+                snaps = conn.execute(
+                    "SELECT snapshot_date, balance_cents FROM goal_snapshots "
+                    "WHERE goal_id = ? ORDER BY snapshot_date DESC LIMIT 6",
+                    (g["id"],),
+                ).fetchall()
+                if snaps:
+                    lines.append("    Progress: " + ", ".join(
+                        "%s: $%s" % (s["snapshot_date"], "{:,.0f}".format(s["balance_cents"] / 100))
+                        for s in reversed(snaps)
+                    ))
+        else:
+            lines.append("\nNo active goals.")
+
+        # Credit card accounts with details
+        cc_accts = conn.execute(
+            "SELECT account_name, balance_cents, credit_limit_cents, "
+            "payment_due_day, payment_amount_cents "
+            "FROM account_balances WHERE account_type = 'credit_card' "
+            "ORDER BY sort_order"
+        ).fetchall()
+        if cc_accts:
+            lines.append("\nCredit cards:")
+            for a in cc_accts:
+                bal = abs(a["balance_cents"]) / 100
+                limit_str = ""
+                if a["credit_limit_cents"]:
+                    util = abs(a["balance_cents"]) / a["credit_limit_cents"] * 100
+                    limit_str = " / $%s limit (%.0f%% used)" % (
+                        "{:,.0f}".format(a["credit_limit_cents"] / 100), util)
+                lines.append("  %s: $%s%s" % (a["account_name"], "{:,.0f}".format(bal), limit_str))
+
+        # Budget vs actuals
+        from datetime import date as _date
+        this_month = _date.today().strftime("%Y-%m")
+        budget_rows = conn.execute("SELECT * FROM budget_items ORDER BY category").fetchall()
+        if budget_rows:
+            lines.append("\nBudget vs actuals (%s):" % this_month)
+            for bi in budget_rows:
+                spent_row = conn.execute(
+                    "SELECT ABS(SUM(amount)) as total FROM transactions "
+                    "WHERE strftime('%%Y-%%m', date) = ? AND amount < 0 "
+                    "AND COALESCE(category,'') = ?",
+                    (this_month, bi["category"]),
+                ).fetchone()
+                spent = int(round((spent_row["total"] or 0) * 100))
+                budget = bi["monthly_budget_cents"]
+                pct = int(round(spent / budget * 100)) if budget > 0 else 0
+                lines.append(
+                    "  %s: $%s budgeted, $%s spent (%d%%)"
+                    % (bi["category"], "{:,.0f}".format(budget / 100),
+                       "{:,.0f}".format(spent / 100), pct)
+                )
+
+    except Exception:
+        log.exception("Error gathering short-term planning context")
+    finally:
+        if conn is not None:
+            conn.close()
+
+    # Also include general financial context
+    lines.append("")
     lines.append(_gather_general_context(entity_key))
 
     return "\n".join(lines)

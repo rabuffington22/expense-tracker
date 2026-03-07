@@ -257,6 +257,7 @@ def create_app():
     from web.routes.todo import bp as todo_bp
     from web.routes.cashflow import bp as cashflow_bp
     from web.routes.planning import bp as planning_bp
+    from web.routes.short_term_planning import bp as short_term_planning_bp
     from web.routes.subscriptions import bp as subscriptions_bp
     from web.routes.ai import bp as ai_bp
 
@@ -273,6 +274,7 @@ def create_app():
     app.register_blueprint(todo_bp)
     app.register_blueprint(cashflow_bp)
     app.register_blueprint(planning_bp)
+    app.register_blueprint(short_term_planning_bp)
     app.register_blueprint(subscriptions_bp)
     app.register_blueprint(ai_bp)
 

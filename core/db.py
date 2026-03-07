@@ -561,6 +561,63 @@ CREATE TABLE IF NOT EXISTS insight_dismissals (
 );
 """
 
+_MIGRATION_41 = """
+CREATE TABLE IF NOT EXISTS short_term_goals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    goal_type TEXT NOT NULL,
+    target_amount_cents INTEGER,
+    target_date TEXT,
+    strategy TEXT,
+    monthly_amount_cents INTEGER,
+    linked_accounts TEXT,
+    status TEXT DEFAULT 'active',
+    notes TEXT,
+    ai_plan TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    completed_at TEXT
+);
+"""
+
+_MIGRATION_42 = """
+CREATE TABLE IF NOT EXISTS goal_snapshots (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    goal_id INTEGER NOT NULL REFERENCES short_term_goals(id) ON DELETE CASCADE,
+    snapshot_date TEXT NOT NULL,
+    balance_cents INTEGER NOT NULL,
+    note TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    UNIQUE(goal_id, snapshot_date)
+);
+"""
+
+_MIGRATION_43 = """
+CREATE TABLE IF NOT EXISTS budget_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT NOT NULL,
+    monthly_budget_cents INTEGER NOT NULL,
+    created_at TEXT DEFAULT (datetime('now')),
+    UNIQUE(category)
+);
+"""
+
+_MIGRATION_44 = """
+ALTER TABLE account_balances ADD COLUMN apr_bps INTEGER;
+"""
+
+_MIGRATION_45 = """
+CREATE TABLE IF NOT EXISTS action_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    status TEXT DEFAULT 'pending',
+    due_date TEXT,
+    notes TEXT,
+    sort_order INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT (datetime('now')),
+    completed_at TEXT
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -602,6 +659,11 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (38, _MIGRATION_38),
     (39, _MIGRATION_39),
     (40, _MIGRATION_40),
+    (41, _MIGRATION_41),
+    (42, _MIGRATION_42),
+    (43, _MIGRATION_43),
+    (44, _MIGRATION_44),
+    (45, _MIGRATION_45),
 ]
 
 _DEFAULT_CATEGORIES = [

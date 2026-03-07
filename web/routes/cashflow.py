@@ -580,13 +580,22 @@ def update_card(acct_id):
         except ValueError:
             pass
 
+    # APR — parse percentage string to basis points
+    apr_str = request.form.get("apr", "").strip()
+    apr_bps = None
+    if apr_str:
+        try:
+            apr_bps = int(round(float(apr_str.replace(",", "")) * 100))
+        except ValueError:
+            pass
+
     conn = get_connection(entity_key)
     try:
         conn.execute(
             "UPDATE account_balances SET balance_cents=?, credit_limit_cents=?, "
-            "payment_due_day=?, payment_amount_cents=?, updated_at=?, "
+            "payment_due_day=?, payment_amount_cents=?, apr_bps=?, updated_at=?, "
             "balance_source='manual' WHERE id=?",
-            (balance_cents, limit_cents, due_day_int, payment_cents, now, acct_id),
+            (balance_cents, limit_cents, due_day_int, payment_cents, apr_bps, now, acct_id),
         )
         conn.commit()
     finally:

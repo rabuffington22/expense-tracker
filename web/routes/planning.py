@@ -1,4 +1,4 @@
-"""Planning page — long-term net worth projections."""
+"""Planning page — Long-Term net worth projections."""
 from __future__ import annotations
 
 import logging

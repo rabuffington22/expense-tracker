@@ -1,16 +1,26 @@
-<!-- ── Income Insights (below IE chart) ───────────────────────────────────── -->
+<!-- ── Income vs Expenses Insights (below IE chart) ────────────────────────── -->
 <div class="outline-band" style="margin-top: 1.5rem;">
   <div class="band-label">Income vs Expenses Insights</div>
-  <div class="iu-list">
-    {% if insights %}
-      {% for ins in insights %}
-      <a class="iu-row" href="{{ ins.url }}">
-        <span class="iu-text">{{ ins.text }}</span>
-        <span class="iu-chevron">&#x203A;</span>
-      </a>
-      {% endfor %}
-    {% else %}
-      <div class="iu-empty-sm">No income insights for this period</div>
-    {% endif %}
+  <div class="iu-insights-inner">
+    <div class="iu-section">
+      {% if insights %}
+        {% for ins in insights %}
+        <a class="iu-row" href="{{ ins.url }}">
+          <span class="iu-text">{{ ins.text }}</span>
+          <span class="iu-chevron">&#x203A;</span>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="iu-empty-sm">No income insights for this period</div>
+      {% endif %}
+    </div>
+    <div class="iu-hdiv"></div>
+    <!-- AI Analysis -->
+    <div id="ie-ai-analysis-section">
+      <button type="button" class="iu-ai-btn"
+              hx-post="{{ url_for('dashboard.ie_ai_analysis') }}"
+              hx-target="#ie-ai-analysis-section"
+              hx-swap="innerHTML">AI Analysis</button>
+    </div>
   </div>
 </div>
