@@ -5700,7 +5700,7 @@ input.pl-input--sm {
     border: 2px solid var(--series-left, #0a84ff);
     border-radius: 12px;
     padding: 1.1rem 1rem 0.7rem;
-    margin-bottom: 1rem;
+    margin: 0 auto 1rem;
     max-width: 420px;
 }
 .stp-budget-kpi-grid {
