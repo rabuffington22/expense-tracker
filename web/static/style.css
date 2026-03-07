@@ -5696,27 +5696,37 @@ input.pl-input--sm {
 
 /* ── Budget table ──────────────────────────────────────────────────────────── */
 
-.stp-budget-summary {
-    display: flex;
-    gap: 1.5rem;
+.stp-budget-kpi {
+    border: 2px solid var(--series-left, #0a84ff);
+    border-radius: 12px;
+    padding: 1.1rem 1rem 0.7rem;
     margin-bottom: 1rem;
-    flex-wrap: wrap;
 }
-.stp-budget-stat {
+.stp-budget-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+.stp-budget-kpi-cell {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem 0.4rem;
 }
-.stp-budget-stat-label {
-    font-size: var(--ui-font-xs);
+.stp-budget-kpi-label {
+    font-size: 0.62rem;
     font-weight: 700;
-    letter-spacing: var(--label-tracking);
-    text-transform: uppercase;
+    letter-spacing: 0.14em;
     color: var(--text-muted);
+    margin-bottom: 0.35rem;
 }
-.stp-budget-stat-value {
-    font-size: 1.2rem;
-    font-weight: 700;
+.stp-budget-kpi-value {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.stp-budget-kpi-cell:first-child .stp-budget-kpi-value {
+    color: var(--series-left, #0a84ff);
 }
 
 .stp-budget-table {
@@ -6076,15 +6086,12 @@ select.stp-modal-input {
     .stp-goals-grid {
         grid-template-columns: 1fr;
     }
-    .stp-budget-summary {
-        gap: 1rem;
-    }
 }
 @media (max-width: 480px) {
     .stp-goal-balance {
         font-size: 1.1rem;
     }
-    .stp-budget-stat-value {
-        font-size: 1rem;
+    .stp-budget-kpi-value {
+        font-size: 1.1rem;
     }
 }

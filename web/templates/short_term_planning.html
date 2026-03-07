@@ -250,20 +250,22 @@
     </div>
 
     {% if budget_status %}
-    <div class="stp-budget-summary">
-        <div class="stp-budget-stat">
-            <span class="stp-budget-stat-label">Budgeted</span>
-            <span class="stp-budget-stat-value">{{ fmt_dollars(total_budgeted) }}</span>
-        </div>
-        <div class="stp-budget-stat">
-            <span class="stp-budget-stat-label">Spent</span>
-            <span class="stp-budget-stat-value">{{ fmt_dollars(total_spent) }}</span>
-        </div>
-        <div class="stp-budget-stat">
-            <span class="stp-budget-stat-label">Remaining</span>
-            <span class="stp-budget-stat-value {% if total_budgeted - total_spent >= 0 %}stp-green{% else %}stp-red{% endif %}">
-                {{ fmt_dollars(total_budgeted - total_spent) }}
-            </span>
+    <div class="stp-budget-kpi">
+        <div class="stp-budget-kpi-grid">
+            <div class="stp-budget-kpi-cell">
+                <div class="stp-budget-kpi-label">BUDGETED</div>
+                <div class="stp-budget-kpi-value">{{ fmt_dollars(total_budgeted) }}</div>
+            </div>
+            <div class="stp-budget-kpi-cell">
+                <div class="stp-budget-kpi-label">SPENT</div>
+                <div class="stp-budget-kpi-value">{{ fmt_dollars(total_spent) }}</div>
+            </div>
+            <div class="stp-budget-kpi-cell">
+                <div class="stp-budget-kpi-label">REMAINING</div>
+                <div class="stp-budget-kpi-value {% if total_budgeted - total_spent >= 0 %}stp-green{% else %}stp-red{% endif %}">
+                    {{ fmt_dollars(total_budgeted - total_spent) }}
+                </div>
+            </div>
         </div>
     </div>
 
