@@ -110,58 +110,64 @@ All three tables are per-entity (stored in the entity's own SQLite database).
 
 ---
 
-## Step 4: Per-goal AI chat (conversational plan building)
+## Step 4: Page-level AI chat (conversational plan building)
 
-Each goal gets its own persistent AI conversation — not a one-shot generation. The flow:
+One persistent AI conversation for the entire Short-Term Planning page — same pattern as Ask Opus on other pages, using the global modal in `base.html`. The chat knows about all goals, budgets, and progress simultaneously so you can discuss trade-offs across goals.
 
 ### Initial plan creation
 1. User creates a goal (e.g., "Pay off credit cards") and links accounts
-2. A chat panel opens for that goal — AI already has full financial context loaded
+2. User opens Ask Opus — AI already has full financial context loaded
 3. AI proposes an initial plan: strategy, monthly amounts, timeline, spending cuts
 4. User pushes back, asks questions, adjusts ("What if I do $2k/month instead?", "I can't cut dining that much")
 5. They go back and forth until the plan feels right
-6. User clicks "Lock In Plan" — the agreed plan is saved as the goal's active plan
+6. User fills in the agreed numbers on the goal card and clicks "Lock In Plan"
 
 ### Ongoing adjustments
-- User can reopen the goal's chat anytime
+- User reopens Ask Opus anytime — conversation persists per entity
 - Monthly review prompts naturally lead to chat ("I'm behind this month, how should I adjust?")
 - Life events: "I got a $5k bonus, where should it go?", "I had an unexpected $3k expense"
-- AI remembers the full conversation history for that goal
+- Cross-goal discussion: "Should I pause the savings goal to accelerate debt payoff?"
+- Budget integration: "I'm over budget on Food — is that hurting my payoff timeline?"
 
 ### Implementation
 
-**Per-goal conversation persistence:**
-- Conversation stored in `/tmp/expense-tracker-ai/short-term/{entity}/{goal_id}.json`
-- Same pattern as existing Ask Opus (`web/routes/ai.py`) but scoped per goal
-- Chat panel embedded in the goal card (expandable), not in the global modal
+**Conversation persistence:**
+- Stored in `/tmp/expense-tracker-ai/short-term-planning/{entity}.json`
+- Same pattern as existing Ask Opus — one thread per entity per page
+- Uses the global Ask Opus modal in `base.html` (no separate chat UI)
 
 **Context auto-loaded for every message:**
 - All credit card balances, rates, limits, minimum payments (from `account_balances`)
 - Monthly income and spending by category (3-month average from `transactions`)
 - Recurring charges and subscriptions total
-- Current goal settings (strategy, monthly amount, target date)
-- Progress snapshots (actual vs projected)
-- Budget status (if budget items exist)
-- Other active goals and their allocations (to avoid double-counting cash)
+- All active goals: settings, strategy, monthly amount, target date, linked accounts
+- Progress snapshots for each goal (actual vs projected)
+- Budget vs actuals for current month (all categories)
+- Discretionary income estimate (income - essential spending - recurring)
 
 **System prompt:**
-"You are a debt payoff and budgeting coach. You have access to the user's real financial data. Help them build and refine a practical plan. Be specific with numbers — use their actual balances, income, and spending. When suggesting cuts, reference their real spending categories. Always show the impact on their payoff timeline when making changes."
+"You are a debt payoff and budgeting coach. You have access to the user's real financial data — balances, income, spending by category, recurring charges, and goals. Help them build and refine practical plans. Be specific with numbers: use their actual balances, income, and spending. When suggesting cuts, reference their real spending categories and amounts. Always show the impact on payoff timelines when making changes."
 
-**Endpoints:**
+**No separate chat endpoints needed** — uses existing `POST /ai/ask` + `POST /ai/clear` from `ai.py`. Just add a `short-term-planning` context builder to `ai.py`.
+
+### "Lock In Plan" action (on goal card)
+
 | Method | Path | Purpose |
 |--------|------|---------|
-| POST | `/planning/short-term/goals/<id>/chat` | Send message, get AI response |
-| POST | `/planning/short-term/goals/<id>/chat/clear` | Reset conversation |
-| POST | `/planning/short-term/goals/<id>/lock-plan` | Save current AI recommendation as active plan |
+| POST | `/planning/short-term/goals/<id>/lock-plan` | Save plan details to goal |
 
-**"Lock In Plan" behavior:**
-- Extracts key numbers from conversation: strategy, monthly amount, target date, per-account allocation
-- Saves to `short_term_goals` columns (strategy, monthly_amount_cents, target_date)
-- Saves full AI plan summary as markdown in `ai_plan` column
+- A "Lock In" modal on the goal card captures: strategy, monthly amount, target date
+- User also pastes or writes a narrative summary (informed by AI conversation)
+- `_compute_payoff_timeline()` generates the month-by-month schedule automatically
+- Both narrative + schedule stored as markdown in `ai_plan` column
 - Plan can be re-locked after future conversations (updates the fields)
 
-### Ask Opus integration
-The global Ask Opus button on this page also works — it gets the broader short-term planning context (all goals, budgets, progress) for general questions not tied to a specific goal.
+### Locked plan format (narrative + structured schedule)
+When a plan is locked in, `ai_plan` stores two parts:
+1. **Narrative** — Strategy explanation, reasoning, key suggestions (e.g., "Using avalanche strategy because Capital One has 24.99% APR vs Chase at 18.99%. Cutting Food by $200/month frees up extra for payments.")
+2. **Month-by-month schedule** — Markdown table showing each month's payment allocation per account, running balances, cumulative interest saved, and payoff milestones. Auto-generated by `_compute_payoff_timeline()`.
+
+Displayed on the goal card as a collapsible section — narrative on top, schedule table below.
 
 ---
 
@@ -179,16 +185,12 @@ The global Ask Opus button on this page also works — it gets the broader short
   - Progress bar (balance reduction % from start → target)
   - Mini sparkline or trend indicator (last 6 snapshots)
   - Strategy label + monthly allocation (once locked in)
-  - Locked-in plan summary (collapsible markdown from `ai_plan`)
+  - Locked-in plan summary (collapsible — narrative + schedule table from `ai_plan`)
   - "Edit" button → opens settings modal
-  - "Chat" button → expands inline chat panel for this goal
-- Chat panel (expandable below goal card):
-  - Persistent conversation with AI about this specific goal
-  - Full financial context pre-loaded
-  - "Lock In Plan" button appears when AI has made a concrete recommendation
-  - "Clear Chat" to start over
+  - "Lock In Plan" / "Update Plan" button → opens lock-in modal
 - "+ Add Goal" button → opens add modal
 - Completed goals: collapsed section at bottom
+- Ask Opus button in page header for AI-assisted plan building (page-level chat)
 
 **Section 2: Monthly Budget**
 - Current month header with prev/next navigation
@@ -234,8 +236,8 @@ The global Ask Opus button on this page also works — it gets the broader short
   - On track / behind / ahead indicator (compared to projected payoff line)
   - Optional note field
   - "Save Review" confirms the snapshot with note
-  - "Discuss with AI" button → opens goal chat with progress context pre-loaded ("You're $X behind plan this month. Here's what happened...")
-- The monthly review naturally flows into the per-goal chat for adjustments
+  - "Discuss with AI" button → opens Ask Opus with progress context pre-loaded ("You're $X behind plan this month. Here's what happened...")
+- The monthly review naturally flows into Ask Opus for adjustments
 
 ---
 
