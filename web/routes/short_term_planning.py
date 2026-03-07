@@ -248,8 +248,8 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
             "avg_month_count": avg_mc,
         })
 
-    # Sort by pct descending (most over-budget first)
-    result.sort(key=lambda x: x["pct"], reverse=True)
+    # Sort by 3-mo avg as % of budget descending (categories that typically use most budget first)
+    result.sort(key=lambda x: x["avg_3mo_cents"] / x["budget_cents"] if x["budget_cents"] > 0 else 0, reverse=True)
     return result
 
 
