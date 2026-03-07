@@ -369,8 +369,9 @@ App renamed from "Ledger Oak" to "Ledger AI" across all source files and templat
 1. **App name** — All references updated: page titles (12 templates), `base.html` default title + mobile header, sidebar wordmark, AI system prompt (`ai.py`), Plaid client name, PDF export footer, auth realm, docstrings (`run.py`, `__init__.py`), smoke test header.
 2. **Sidebar icon** — New `ledger-ai-icon.png` (from "Ledger AI icon v2.png"). Displayed at 176×176px in vertical stacked layout. `object-fit: contain`, no border-radius. Negative margins (`margin-top: -1.8rem` on `.sb-brand`, `margin-bottom: -2rem` on icon, `margin-top: -1rem` on `.sb-brand-text`) compensate for PNG whitespace.
 3. **Subtitle removed** — "EXPENSE TRACKER" subtitle below wordmark removed. Sidebar now shows just icon + "LEDGER AI".
-4. **Personal accent unified** — Personal entity color changed from `#14a9f8` (light blue) to `#003eb6` (matching BFM blue). LL purple (`#a78bfa`) unchanged.
-5. **Fly infrastructure unchanged** — Fly app names (`ledger-oak`, `ledger-oak-demo`), volume names, and URLs kept as-is (infrastructure references).
+4. **All entity accents unified** — Personal changed from `#14a9f8` to `#003eb6`, LL changed from `#a78bfa` (purple) to `#003eb6`. All three entities now use the same blue accent.
+5. **Wordmark color** — "LEDGER AI" text changed from entity accent to `var(--blue)` (`#0a84ff`) so it's consistent regardless of entity.
+6. **Fly infrastructure unchanged** — Fly app names (`ledger-oak`, `ledger-oak-demo`), volume names, and URLs kept as-is (infrastructure references).
 
 ### 2026-03-07 — Dashboard redesign: Details/Compare tabs, split insights, KPI sizing
 Major dashboard restructuring with two view modes and separated insight sections.

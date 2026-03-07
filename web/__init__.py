@@ -43,7 +43,7 @@ else:
 _ENTITY_COLORS = {
     "Personal": "#003eb6",
     "BFM": "#003eb6",
-    "LL": "#a78bfa",
+    "LL": "#003eb6",
     "Business": "#003eb6",
 }
 _ENTITY_LABELS = {
