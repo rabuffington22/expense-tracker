@@ -272,18 +272,23 @@
             </thead>
             <tbody>
                 {% for item in budget_status %}
-                <tr>
+                <tr class="stp-budget-cat-row" data-category="{{ item.category }}">
                     <td>
-                        <a href="{{ url_for('transactions.index', category=item.category, start=current_month + '-01') }}">
+                        <span class="stp-cat-toggle" onclick="stpToggleSub(this, '{{ item.category }}')">
+                            <span class="stp-cat-chevron">›</span>
                             {{ item.category }}
-                        </a>
+                        </span>
                     </td>
                     <td>
                         <input type="text" name="budget_{{ item.category }}"
                                value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
                                class="stp-budget-input">
                     </td>
-                    <td>{{ fmt_dollars(item.spent_cents) }}</td>
+                    <td>
+                        <span class="stp-spent-link" onclick="stpShowTxns('{{ item.category }}')">
+                            {{ fmt_dollars(item.spent_cents) }}
+                        </span>
+                    </td>
                     <td class="{% if item.remaining_cents >= 0 %}stp-green{% else %}stp-red{% endif %}">
                         {{ fmt_dollars(item.remaining_cents) }}
                     </td>
@@ -544,6 +549,22 @@
     </div>
 </dialog>
 
+{# ════════════════════════════════════════════════════════════════════════════
+   TRANSACTIONS DRILL-DOWN POPUP
+   ════════════════════════════════════════════════════════════════════════════ #}
+
+<dialog id="stp-txn-modal" class="stp-modal" style="max-width: 560px">
+    <div class="stp-modal-content">
+        <div class="stp-modal-header">
+            <h3 id="stp-txn-modal-title">Transactions</h3>
+            <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+        </div>
+        <div id="stp-txn-modal-body" style="max-height: 60vh; overflow-y: auto;">
+            <div class="stp-drill-empty">Loading…</div>
+        </div>
+    </div>
+</dialog>
+
 <script>
 function stpTypeChange(type) {
     document.getElementById('stp-debt-fields').hidden = (type !== 'debt_payoff');
@@ -584,6 +605,60 @@ function stpLockPlan(goal) {
     stratGroup.hidden = (goal.goal_type !== 'debt_payoff');
 
     document.getElementById('stp-lock-modal').showModal();
+}
+
+// ── Budget drill-down: subcategory toggle ──────────────────────────────
+function stpToggleSub(el, category) {
+    var chevron = el.querySelector('.stp-cat-chevron');
+    var row = el.closest('tr');
+    var isOpen = chevron.classList.contains('open');
+
+    // Remove any existing subcat rows for this category
+    var existing = row.parentElement.querySelectorAll('tr.stp-subcat-row[data-parent="' + category + '"]');
+    existing.forEach(function(r) { r.remove(); });
+
+    if (isOpen) {
+        chevron.classList.remove('open');
+        return;
+    }
+
+    chevron.classList.add('open');
+    var month = '{{ current_month }}';
+    fetch('{{ url_for("short_term_planning.budget_subcategories") }}?category=' + encodeURIComponent(category) + '&month=' + month)
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+            if (!html.trim()) return;
+            // Insert subcat rows after the category row
+            var temp = document.createElement('tbody');
+            temp.innerHTML = html;
+            var rows = temp.querySelectorAll('tr');
+            var after = row;
+            rows.forEach(function(r) {
+                r.setAttribute('data-parent', category);
+                after.parentElement.insertBefore(r, after.nextSibling);
+                after = r;
+            });
+        });
+}
+
+// ── Budget drill-down: transaction popup ───────────────────────────────
+function stpShowTxns(category) {
+    var modal = document.getElementById('stp-txn-modal');
+    var body = document.getElementById('stp-txn-modal-body');
+    var title = document.getElementById('stp-txn-modal-title');
+    title.textContent = category;
+    body.innerHTML = '<div class="stp-drill-empty">Loading…</div>';
+    modal.showModal();
+
+    var month = '{{ current_month }}';
+    fetch('{{ url_for("short_term_planning.budget_transactions") }}?category=' + encodeURIComponent(category) + '&month=' + month)
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+            body.innerHTML = html;
+        })
+        .catch(function() {
+            body.innerHTML = '<div class="stp-drill-empty">Error loading transactions</div>';
+        });
 }
 
 // Strip commas from money inputs on submit

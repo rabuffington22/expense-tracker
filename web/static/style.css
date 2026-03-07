@@ -5760,6 +5760,88 @@ input.pl-input--sm {
 .stp-red { color: var(--red); }
 .stp-muted { color: var(--text-muted); font-size: var(--ui-font-sm); }
 
+/* ── Budget Drill-Down ────────────────────────────────────────────────────── */
+
+.stp-cat-toggle {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    user-select: none;
+}
+.stp-cat-toggle:hover {
+    color: var(--blue);
+}
+.stp-cat-chevron {
+    display: inline-block;
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+    color: var(--text-muted);
+    width: 0.6rem;
+}
+.stp-cat-chevron.open {
+    transform: rotate(90deg);
+}
+.stp-subcat-row td {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    border-bottom: none !important;
+    padding-top: 0.15rem !important;
+    padding-bottom: 0.15rem !important;
+}
+.stp-spent-link {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--text-muted);
+}
+.stp-spent-link:hover {
+    color: var(--blue);
+    text-decoration-color: var(--blue);
+}
+.stp-drill-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+}
+.stp-drill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--ui-font-sm);
+}
+.stp-drill-table th {
+    text-align: left;
+    font-size: var(--ui-font-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    padding: 0.3rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+.stp-drill-table th:last-child {
+    text-align: right;
+}
+.stp-drill-table td {
+    padding: 0.3rem 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+:root[data-theme="light"] .stp-drill-table td {
+    border-bottom-color: rgba(0,0,0,0.04);
+}
+.stp-drill-table td:last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.stp-drill-empty {
+    color: var(--text-muted);
+    font-size: var(--ui-font-sm);
+    text-align: center;
+    padding: 1rem;
+}
+
 /* ── Unbudgeted section ────────────────────────────────────────────────────── */
 
 .stp-unbudgeted-section {

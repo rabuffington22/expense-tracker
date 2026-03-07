@@ -860,3 +860,100 @@ def delete_action(item_id):
         conn.close()
 
     return redirect(url_for("short_term_planning.index"))
+
+
+# ── Budget Drill-Down ────────────────────────────────────────────────────────
+
+
+@bp.route("/budget/transactions")
+def budget_transactions():
+    """Return HTML partial of transactions for a category in the current month."""
+    category = request.args.get("category", "")
+    month = request.args.get("month", date.today().strftime("%Y-%m"))
+
+    conn = get_connection(g.entity_key)
+    try:
+        rows = conn.execute(
+            "SELECT date, description_raw, merchant_canonical, amount, subcategory "
+            "FROM transactions "
+            "WHERE category = ? "
+            "AND strftime('%Y-%m', date) = ? "
+            "AND amount < 0 "
+            "ORDER BY date DESC",
+            (category, month),
+        ).fetchall()
+
+        from markupsafe import escape
+
+        lines = []
+        if not rows:
+            lines.append('<div class="stp-drill-empty">No transactions</div>')
+        else:
+            lines.append('<table class="stp-drill-table">')
+            lines.append(
+                "<thead><tr><th>Date</th><th>Description</th>"
+                "<th>Sub</th><th>Amount</th></tr></thead><tbody>"
+            )
+            for r in rows:
+                desc = r["merchant_canonical"] or r["description_raw"] or ""
+                if len(desc) > 45:
+                    desc = desc[:42] + "\u2026"
+                amt = abs(r["amount"])
+                sub = escape(r["subcategory"] or "General")
+                lines.append(
+                    f"<tr><td>{r['date'][5:]}</td>"
+                    f"<td>{escape(desc)}</td>"
+                    f"<td>{sub}</td>"
+                    f"<td>${amt:,.2f}</td></tr>"
+                )
+            lines.append("</tbody></table>")
+
+        return "\n".join(lines)
+    finally:
+        conn.close()
+
+
+@bp.route("/budget/subcategories")
+def budget_subcategories():
+    """Return HTML partial of subcategory breakdown for a category."""
+    category = request.args.get("category", "")
+    month = request.args.get("month", date.today().strftime("%Y-%m"))
+
+    conn = get_connection(g.entity_key)
+    try:
+        rows = conn.execute(
+            "SELECT COALESCE(NULLIF(subcategory,''), 'General') as sub, "
+            "COUNT(*) as cnt, ABS(SUM(amount)) as total "
+            "FROM transactions "
+            "WHERE category = ? "
+            "AND strftime('%Y-%m', date) = ? "
+            "AND amount < 0 "
+            "GROUP BY sub "
+            "ORDER BY total DESC",
+            (category, month),
+        ).fetchall()
+
+        from markupsafe import escape
+
+        lines = []
+        if not rows:
+            lines.append(
+                '<tr class="stp-subcat-row"><td colspan="5" '
+                'style="padding-left:2rem;color:var(--text-muted)">No spending</td></tr>'
+            )
+        else:
+            for r in rows:
+                amt = r["total"]
+                lines.append(
+                    f'<tr class="stp-subcat-row">'
+                    f'<td style="padding-left:2rem;color:var(--text-muted)">{escape(r["sub"])}</td>'
+                    f'<td></td>'
+                    f'<td>${amt:,.0f}</td>'
+                    f'<td></td>'
+                    f'<td></td>'
+                    f'</tr>'
+                )
+
+        return "\n".join(lines)
+    finally:
+        conn.close()
