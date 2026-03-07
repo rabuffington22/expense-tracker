@@ -1,4 +1,4 @@
-"""Flask app factory for Expense Tracker."""
+"""Flask app factory for Ledger AI."""
 
 import os
 import sys
@@ -41,7 +41,7 @@ else:
     _ENTITY_MAP = _DEFAULT_ENTITY_MAP
 
 _ENTITY_COLORS = {
-    "Personal": "#14a9f8",
+    "Personal": "#003eb6",
     "BFM": "#003eb6",
     "LL": "#a78bfa",
     "Business": "#003eb6",
@@ -170,7 +170,7 @@ def create_app():
         return Response(
             "Unauthorized",
             401,
-            {"WWW-Authenticate": 'Basic realm="Ledger Oak"'},
+            {"WWW-Authenticate": 'Basic realm="Ledger AI"'},
         )
 
     # ── Before-request: init DB, set entity context ──────────────────────────

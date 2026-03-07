@@ -282,3 +282,68 @@ def generate_spending_analysis(spending_summary: str) -> list[dict] | None:
     except Exception:
         log.exception("OpenRouter spending_analysis failed")
         return None
+
+
+def generate_ie_analysis(ie_summary: str) -> list[dict] | None:
+    """Generate AI-powered income vs expenses insights.
+
+    Args:
+        ie_summary: Pre-formatted text summary of income/expense trends.
+
+    Returns:
+        List of {"text": str} dicts, or None if unavailable.
+    """
+    key = _get_api_key()
+    if not key:
+        return None
+
+    prompt = (
+        "You are a personal finance analyst. Analyze this income vs expenses data "
+        "and provide 3-5 high-level observations. Focus on:\n"
+        "- Overall income vs spending balance and trajectory\n"
+        "- Months where expenses exceeded income (and by how much)\n"
+        "- Income stability or volatility across months\n"
+        "- Savings rate trends (what percentage of income is being saved)\n"
+        "- Seasonal patterns in income or expenses\n\n"
+        "Do NOT focus on individual transactions or merchants. Keep it high-level: "
+        "monthly totals, trends over time, and the relationship between income and expenses.\n"
+        "Be specific with dollar amounts and percentages from the data. "
+        "Each insight should be one concise sentence.\n\n"
+        "Return ONLY a JSON array of objects with a \"text\" field:\n"
+        '[{"text": "Net savings averaged $2,400/mo over the last 6 months, up from $1,800 previously"}]\n\n'
+        f"Income vs Expenses Data:\n{ie_summary}"
+    )
+
+    try:
+        payload = json.dumps({
+            "model": "anthropic/claude-sonnet-4.6",
+            "max_tokens": 500,
+            "messages": [{"role": "user", "content": prompt}],
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            data = json.loads(resp.read())
+            text = data["choices"][0]["message"]["content"].strip()
+
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+        result = json.loads(text)
+
+        if not isinstance(result, list):
+            return None
+        validated = []
+        for item in result[:5]:
+            if isinstance(item, dict) and "text" in item:
+                validated.append({"text": item["text"]})
+        return validated if validated else None
+    except Exception:
+        log.exception("OpenRouter ie_analysis failed")
+        return None

@@ -1,4 +1,4 @@
-# Expense Tracker
+# Ledger AI
 
 ## What This Is
 Flask + HTMX + SQLite personal/business expense tracker. Hosted on Fly.io. Bank and credit card transactions sync automatically via Plaid API (connected accounts). CSV/PDF bank statement import retained as fallback. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
@@ -112,6 +112,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
   static/
     style.css                      # Apple-style dual theme (dark default + light), CSS custom properties on data-theme, SF Pro fonts
     htmx.min.js                    # HTMX library (~14KB)
+    ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
 core/                              # Business logic
   db.py                            # Schema migrations (38 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
@@ -361,6 +362,15 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-07 — Rebrand: Ledger Oak → Ledger AI + icon update + unified accent color
+App renamed from "Ledger Oak" to "Ledger AI" across all source files and templates.
+
+1. **App name** — All references updated: page titles (12 templates), `base.html` default title + mobile header, sidebar wordmark, AI system prompt (`ai.py`), Plaid client name, PDF export footer, auth realm, docstrings (`run.py`, `__init__.py`), smoke test header.
+2. **Sidebar icon** — New `ledger-ai-icon.png` (from "Ledger AI icon v2.png"). Displayed at 176×176px in vertical stacked layout. `object-fit: contain`, no border-radius. Negative margins (`margin-top: -1.8rem` on `.sb-brand`, `margin-bottom: -2rem` on icon, `margin-top: -1rem` on `.sb-brand-text`) compensate for PNG whitespace.
+3. **Subtitle removed** — "EXPENSE TRACKER" subtitle below wordmark removed. Sidebar now shows just icon + "LEDGER AI".
+4. **Personal accent unified** — Personal entity color changed from `#14a9f8` (light blue) to `#003eb6` (matching BFM blue). LL purple (`#a78bfa`) unchanged.
+5. **Fly infrastructure unchanged** — Fly app names (`ledger-oak`, `ledger-oak-demo`), volume names, and URLs kept as-is (infrastructure references).
 
 ### 2026-03-07 — Dashboard redesign: Details/Compare tabs, split insights, KPI sizing
 Major dashboard restructuring with two view modes and separated insight sections.
