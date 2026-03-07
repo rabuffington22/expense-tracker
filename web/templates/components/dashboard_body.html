@@ -1,14 +1,30 @@
-<!-- ── Compare Group: KPI Panels + Expense Categories ─────────────────── -->
-<div class="compare-group">
-  <div class="compare-group-label">Expenses</div>
-  <div class="kpi-compare-row">
-    <div hx-get="{{ url_for('dashboard.kpi_panel', panel='left', period='this_month') }}"
+<!-- ── Details View (default) ───────────────────────────────────────── -->
+<div id="dash-details">
+  <div class="detail-group">
+    <div class="compare-group-label">Expenses</div>
+    <div id="detail-kpi"
+         hx-get="{{ url_for('dashboard.kpi_panel', panel='detail', period='this_month') }}"
          hx-trigger="load" hx-swap="innerHTML"></div>
-    <div hx-get="{{ url_for('dashboard.kpi_panel', panel='right', period='last_month') }}"
-         hx-trigger="load" hx-swap="innerHTML"></div>
+    <div id="detail-categories"></div>
   </div>
-  <!-- ── Categories Comparison (populated by KPI panel scripts) ────── -->
-  <div id="categories-compare"></div>
+  <div id="detail-insights" style="margin-top: 1.5rem;"></div>
+</div>
+
+<!-- ── Compare View ────────────────────────────────────────────────────── -->
+<div id="dash-compare" hidden>
+  <div class="compare-group">
+    <div class="compare-group-label">Expenses</div>
+    <div class="kpi-compare-row">
+      <div hx-get="{{ url_for('dashboard.kpi_panel', panel='left', period='this_month') }}"
+           hx-trigger="compare-load" hx-swap="innerHTML"></div>
+      <div hx-get="{{ url_for('dashboard.kpi_panel', panel='right', period='last_month') }}"
+           hx-trigger="compare-load" hx-swap="innerHTML"></div>
+    </div>
+    <!-- ── Categories Comparison (populated by KPI panel scripts) ────── -->
+    <div id="categories-compare"></div>
+  </div>
+  <!-- ── Insights + Upcoming (populated by KPI panel scripts) ────────── -->
+  <div id="insights-upcoming" style="margin-top: 1.5rem;"></div>
 </div>
 
 <!-- ── Income vs Expenses (12 months) ────────────────────────────────── -->
@@ -226,8 +242,8 @@
   </div>
 </div>
 
-<!-- ── Insights + Upcoming (populated by KPI panel scripts) ────────────── -->
-<div id="insights-upcoming" style="margin-top: 1.5rem;"></div>
+<!-- ── Income Insights (populated by KPI panel scripts) ──────────────────── -->
+<div id="ie-insights"></div>
 
 <div class="dash-grid">
 

@@ -1,0 +1,52 @@
+{# Partial returned by /dashboard/subcategory-txns — swapped into #dcat-popup-body #}
+
+<div class="tq-detail-header">
+    <span class="tq-detail-title">{{ cat_name }} › {{ subcat_name }}</span>
+    {% if not compare_mode %}
+    <span class="text-muted tq-detail-hint">{{ txns|length }} transaction{{ 's' if txns|length != 1 else '' }}</span>
+    {% endif %}
+</div>
+
+{% macro txn_table(rows) %}
+<div class="table-wrap">
+    <table class="tq-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Merchant</th>
+                <th class="text-right">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for txn in rows %}
+            <tr>
+                <td>{{ txn.date }}</td>
+                <td>{{ txn.merchant_canonical or (txn.description_raw[:40] if txn.description_raw else '') }}</td>
+                <td class="text-right">${{ "{:,.0f}".format(txn.amount_cents|abs / 100) }}</td>
+            </tr>
+            {% endfor %}
+            {% if not rows %}
+            <tr><td colspan="3" class="tq-empty">No transactions found.</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endmacro %}
+
+{% if compare_mode %}
+<div class="scp-period-section">
+    <div class="scp-period-label scp-period-label--left">{{ label1 }} <span class="text-muted">({{ txns_left|length }})</span></div>
+    {{ txn_table(txns_left) }}
+</div>
+<div class="scp-period-section">
+    <div class="scp-period-label scp-period-label--right">{{ label2 }} <span class="text-muted">({{ txns_right|length }})</span></div>
+    {{ txn_table(txns_right) }}
+</div>
+{% else %}
+{{ txn_table(txns) }}
+{% endif %}
+
+<div class="tq-detail-footer">
+    <a href="{{ fallback_url }}" class="tq-view-all">View all in Transactions &#x203A;</a>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="dcatClosePopup()">Close</button>
+</div>

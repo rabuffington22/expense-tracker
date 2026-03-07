@@ -1,0 +1,104 @@
+<!-- ── Detail Insights + Upcoming (single period, no Compare) ────────────── -->
+<div class="iu-row-grid">
+
+  <!-- ── INSIGHTS box ──────────────────────────────────────────────────── -->
+  <div class="outline-band iu-insights-box">
+    <div class="band-label">Expense Insights</div>
+    <div class="iu-insights-inner">
+      <!-- Single period insights -->
+      <div class="iu-section" id="detail-iu-section">
+        <div class="iu-half-label">{{ period_label }}</div>
+        {% if insights %}
+          {% for ins in insights %}
+          {% if ins.insight_type %}
+          <div class="iu-row iu-row--clickable" data-insight-key="{{ ins.insight_key }}"
+               hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, insight_key=ins.insight_key, **ins.detail_params) }}"
+               hx-target="#detail-iu-modal-body" hx-swap="innerHTML"
+               onclick="detailIuOpenModal()">
+            <span class="iu-text">{{ ins.text }}</span>
+            <span class="iu-chevron">&#x203A;</span>
+          </div>
+          {% else %}
+          <a class="iu-row" href="{{ ins.url }}">
+            <span class="iu-text">{{ ins.text }}</span>
+            <span class="iu-chevron">&#x203A;</span>
+          </a>
+          {% endif %}
+          {% endfor %}
+          <div class="iu-empty-sm iu-caught-up" hidden>All caught up</div>
+        {% else %}
+          <div class="iu-empty-sm">No insights for this period</div>
+        {% endif %}
+      </div>
+      <div class="iu-hdiv"></div>
+      <!-- AI Analysis -->
+      <div id="detail-ai-analysis-section">
+        <button type="button" class="iu-ai-btn"
+                hx-post="{{ url_for('dashboard.ai_analysis') }}"
+                hx-vals='{"left_period": "{{ period }}", "right_period": "{{ period }}"}'
+                hx-target="#detail-ai-analysis-section"
+                hx-swap="innerHTML">AI Analysis</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── UPCOMING box ──────────────────────────────────────────────────── -->
+  <div class="outline-band iu-upcoming-box">
+    <div class="band-label">Upcoming</div>
+    <div class="iu-list">
+      {% if upcoming %}
+        {% for item in upcoming %}
+        <a class="iu-row" href="{{ item.url }}">
+          <span class="iu-merchant">{{ item.merchant_canonical }}</span>
+          <span class="iu-meta">
+            <span class="iu-date">{{ item.expected_date_display }}</span>
+            {% if item.expected_amount_cents %}
+            <span class="iu-amount">${{ "{:,.0f}".format(item.expected_amount_cents / 100) }}</span>
+            {% endif %}
+          </span>
+          <span class="iu-chevron">&#x203A;</span>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="iu-empty">Nothing big due soon.</div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Insight detail modal (Detail view) ────────────────────────────────── -->
+<div class="tq-modal-scrim" id="detail-iu-modal-scrim" hidden>
+  <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
+    <div class="tq-modal-top">
+      <button type="button" class="cf-edit-btn tq-modal-close"
+              onclick="detailIuCloseModal()" title="Close">&times;</button>
+    </div>
+    <div id="detail-iu-modal-body" class="tq-modal-body">
+      <p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading&hellip;</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function detailIuOpenModal() {
+    document.getElementById('detail-iu-modal-scrim').hidden = false;
+    document.getElementById('detail-iu-modal-body').innerHTML =
+        '<p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading\u2026</p>';
+}
+function detailIuCloseModal() {
+    document.getElementById('detail-iu-modal-scrim').hidden = true;
+    document.getElementById('detail-iu-modal-body').innerHTML = '';
+}
+document.getElementById('detail-iu-modal-scrim').addEventListener('click', function(e) {
+    if (e.target === this) detailIuCloseModal();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var scrim = document.getElementById('detail-iu-modal-scrim');
+        if (scrim && !scrim.hidden) {
+            detailIuCloseModal();
+        }
+    }
+});
+</script>

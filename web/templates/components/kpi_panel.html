@@ -37,27 +37,59 @@
   </div>
 </div>
 <script>
-/* After HTMX swaps in a KPI panel, refresh the categories comparison section
-   if both panels are in the DOM. First panel load: other panel won't exist yet
-   (skip). Second panel load: both exist, trigger the categories fetch. Any
-   subsequent dropdown change also fires this. */
+/* After HTMX swaps in a KPI panel, refresh dependent sections.
+   Each panel type only handles its own logic (scoped by template var). */
 (function() {
+{% if panel == 'detail' %}
+  /* ── Detail panel: fetch single-period categories + insights ─────────── */
+  /* Stagger requests to avoid HTMX dropping simultaneous ajax calls
+     that fire from within a post-swap script context. */
+  setTimeout(function() {
+    var detailSel = document.querySelector('#kpi-detail .kpi-period-select');
+    if (!detailSel) return;
+    var period = encodeURIComponent(detailSel.value);
+    var catUrl = '{{ url_for("dashboard.detail_categories") }}' + '?period=' + period;
+    var insUrl = '{{ url_for("dashboard.detail_insights") }}' + '?period=' + period;
+
+    htmx.ajax('GET', catUrl, {target: '#detail-categories', swap: 'innerHTML'});
+    setTimeout(function() {
+      htmx.ajax('GET', insUrl, {target: '#detail-insights', swap: 'innerHTML'});
+    }, 50);
+    setTimeout(function() {
+      var ieUrl = '{{ url_for("dashboard.ie_insights") }}' + '?period=' + period;
+      htmx.ajax('GET', ieUrl, {target: '#ie-insights', swap: 'innerHTML'});
+    }, 100);
+  }, 0);
+{% else %}
+  /* ── Compare panels: wait for both left+right, then fetch compare data ─ */
   var leftSel  = document.querySelector('#kpi-left .kpi-period-select');
   var rightSel = document.querySelector('#kpi-right .kpi-period-select');
   if (!leftSel || !rightSel) return;
-  /* Categories comparison */
+
+  var lp = encodeURIComponent(leftSel.value);
+  var rp = encodeURIComponent(rightSel.value);
+
   var catUrl = '{{ url_for("dashboard.categories_compare") }}'
-             + '?left_period=' + encodeURIComponent(leftSel.value)
-             + '&right_period=' + encodeURIComponent(rightSel.value);
+             + '?left_period=' + lp + '&right_period=' + rp;
   htmx.ajax('GET', catUrl, {target: '#categories-compare', swap: 'innerHTML'});
 
-  /* Insights + Upcoming (uses both periods for left/right/compare) */
-  var iuTarget = document.getElementById('insights-upcoming');
-  if (iuTarget) {
-    var iuUrl = '{{ url_for("dashboard.insights_upcoming") }}'
-              + '?left_period=' + encodeURIComponent(leftSel.value)
-              + '&right_period=' + encodeURIComponent(rightSel.value);
-    htmx.ajax('GET', iuUrl, {target: '#insights-upcoming', swap: 'innerHTML'});
-  }
+  setTimeout(function() {
+    var iuTarget = document.getElementById('insights-upcoming');
+    if (iuTarget) {
+      var iuUrl = '{{ url_for("dashboard.insights_upcoming") }}'
+                + '?left_period=' + lp + '&right_period=' + rp;
+      htmx.ajax('GET', iuUrl, {target: '#insights-upcoming', swap: 'innerHTML'});
+    }
+  }, 50);
+
+  setTimeout(function() {
+    var ieTarget = document.getElementById('ie-insights');
+    if (ieTarget) {
+      var ieUrl = '{{ url_for("dashboard.ie_insights") }}'
+                + '?left_period=' + lp + '&right_period=' + rp;
+      htmx.ajax('GET', ieUrl, {target: '#ie-insights', swap: 'innerHTML'});
+    }
+  }, 100);
+{% endif %}
 })();
 </script>

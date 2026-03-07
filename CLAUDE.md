@@ -83,7 +83,10 @@ web/                               # Flask app (replaced old app/ Streamlit code
       dashboard_body.html          # Dashboard main content (HTMX swap target)
       kpi_panel.html               # KPI compare panel (left/right)
       categories_compare.html      # Categories comparison bar chart
-      insights_upcoming.html       # Insights + Upcoming recurring side-by-side
+      insights_upcoming.html       # Expense Insights + Upcoming recurring side-by-side (Compare view)
+      dashboard_detail_insights.html # Expense Insights + Upcoming (Details view)
+      dashboard_detail_cats.html   # Detail categories bar chart (Details view)
+      dashboard_ie_insights.html   # Income vs Expenses Insights (below IE chart)
       ai_analysis.html             # AI analysis results partial
       txn_results.html             # Transaction list results (HTMX swap target)
       txn_row.html                 # Single transaction row
@@ -294,11 +297,13 @@ flask, gunicorn, pandas, pdfplumber, python-dateutil, openpyxl, plaid-python, re
 
 **Sync Health:** Plaid connection status per institution (only shown when Plaid items exist).
 
-**Insights Card:** Up to 3 auto-generated insights computed by `_compute_insights()`:
+**Expense Insights Card:** Up to 3 auto-generated expense insights computed by `_compute_insights()`:
 - Category spend increase vs prior period (>$50, ≥2 txns)
 - New merchants this period (not seen in prior 90 days)
 - Large transactions over $500
-Each insight links to a drill-down in `/transactions`.
+Each insight links to a drill-down in `/transactions`. Compare view adds cross-period insights via `_compute_compare_insights()` (spending change, category shifts). Income insights separated out (see below).
+
+**Income vs Expenses Insights:** Below the IE line chart. Computed by `_compute_income_insights()` via HTMX endpoint `GET /dashboard/ie-insights`. Shows income change between periods, top income source, and expense-to-income ratio (90–200% range only). Triggered by KPI panel scripts after load.
 
 **Upcoming Recurring:** Detects recurring merchants via `_detect_recurring()` + `_build_upcoming()`:
 - 90-day lookback, ≥2 occurrences per merchant
@@ -356,6 +361,19 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-07 — Dashboard redesign: Details/Compare tabs, split insights, KPI sizing
+Major dashboard restructuring with two view modes and separated insight sections.
+
+1. **Details/Compare tabs** — New segmented control toggles between Details (single-period) and Compare (two-period side-by-side) views. Details tab shows single KPI panel + categories + insights. Compare tab shows left/right KPI panels + categories comparison + insights.
+2. **KPI box sizing** — KPI panels increased to 40% width (up from 30%) on both tabs for better readability.
+3. **Expense Insights split** — Insights box renamed to "Expense Insights" and now shows only expense-related insights (category increases, new merchants, large transactions). Income insight removed from `_compute_compare_insights()`.
+4. **Income vs Expenses Insights** — New "Income vs Expenses Insights" section below the IE line chart. New `_compute_income_insights()` function generates income change, top income source, and expense-to-income ratio insights. New HTMX endpoint `GET /dashboard/ie-insights`. Spending ratio capped to 90–200% range to avoid absurd values.
+5. **Subcategory bar width** — Subcategory bars 20% narrower than category bars (`flex: 0.8`) for visual hierarchy.
+6. **Insights box height** — Removed `min-height: 200px` from `.iu-insights-box` and `.iu-upcoming-box`. Upcoming box matches insights box height via `align-items: stretch`.
+7. **HTMX race condition fix** — Compare tab staggered HTMX calls with `setTimeout` (0ms categories, 50ms insights-upcoming, 100ms ie-insights) to prevent simultaneous requests to same target.
+8. **Insights readability** — `.iu-text`/`.iu-merchant` bumped from 0.74rem/500 to 0.82rem/600. Section labels (`.iu-half-label`) from 0.58rem to 0.64rem. Date/amount from 0.68rem to 0.74rem. Row padding increased.
+9. **New templates** — `dashboard_detail_insights.html` (Details view insights + upcoming), `dashboard_detail_cats.html` (Details view categories), `dashboard_ie_insights.html` (income vs expenses insights below IE chart).
 
 ### 2026-03-05 — BFM transaction categorization + Planning card polish + dashboard fix
 Production database updates and UI fixes.

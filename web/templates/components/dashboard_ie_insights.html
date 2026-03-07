@@ -1,0 +1,16 @@
+<!-- ── Income Insights (below IE chart) ───────────────────────────────────── -->
+<div class="outline-band" style="margin-top: 1.5rem;">
+  <div class="band-label">Income vs Expenses Insights</div>
+  <div class="iu-list">
+    {% if insights %}
+      {% for ins in insights %}
+      <a class="iu-row" href="{{ ins.url }}">
+        <span class="iu-text">{{ ins.text }}</span>
+        <span class="iu-chevron">&#x203A;</span>
+      </a>
+      {% endfor %}
+    {% else %}
+      <div class="iu-empty-sm">No income insights for this period</div>
+    {% endif %}
+  </div>
+</div>

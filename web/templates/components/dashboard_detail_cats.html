@@ -1,0 +1,81 @@
+{% if categories %}
+{% set half = (categories|length + 1) // 2 %}
+{% set col_left = categories[:half] %}
+{% set col_right = categories[half:] %}
+<div class="outline-band">
+  <div class="band-label">Categories</div>
+  <div class="band-body dcat-grid">
+
+    {# ── Macro for a single category + subcategories ───── #}
+    {% macro cat_block(cat) %}
+    {% set subs = subcats.get(cat.name, []) %}
+    {% set has_subs = subs|length > 1 or (subs|length == 1 and subs[0].name != 'General') %}
+    <div class="dcat-row{% if has_subs %} dcat-row--expandable{% endif %}"
+         {% if has_subs %}onclick="dcatToggle(this)"{% endif %}>
+      <a class="dcat-name" href="{{ drill(category_id=cat.cat_id) }}"
+         onclick="event.stopPropagation()">{{ cat.name }}</a>
+      <div class="dcat-track">
+        <div class="dcat-fill" style="width: {{ cat.pct }}%;"></div>
+      </div>
+      <span class="dcat-value">${{ "{:,.0f}".format(cat.total_cents / 100) }}</span>
+      {% if has_subs %}
+      <span class="dcat-chevron">›</span>
+      {% else %}
+      <span class="dcat-chevron dcat-chevron--empty"></span>
+      {% endif %}
+    </div>
+    {% if has_subs %}
+    <div class="dcat-subs" hidden>
+      {% set sub_max = subs|map(attribute='cents')|max %}
+      {% for s in subs %}
+      <div class="dcat-sub-row" role="button" tabindex="0"
+           hx-get="{{ url_for('dashboard.subcategory_txns', category_id=cat.cat_id, subcategory=s.name, start=start, end=end) }}"
+           hx-target="#dcat-popup-body" hx-swap="innerHTML"
+           onclick="dcatOpenPopup()">
+        <span class="dcat-sub-name">{{ s.name }}</span>
+        <div class="dcat-track dcat-track--sub">
+          <div class="dcat-fill dcat-fill--sub"
+               style="width: {{ (s.cents / sub_max * 100)|int if sub_max else 0 }}%;"></div>
+        </div>
+        <span class="dcat-sub-value">${{ "{:,.0f}".format(s.cents / 100) }}</span>
+        <span class="dcat-chevron dcat-chevron--empty"></span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endmacro %}
+
+    {# ── Left column ───────────────────────────────────── #}
+    <div class="dcat-col">
+      {% for cat in col_left %}
+      {{ cat_block(cat) }}
+      {% endfor %}
+    </div>
+
+    {# ── Right column ──────────────────────────────────── #}
+    <div class="dcat-col">
+      {% for cat in col_right %}
+      {{ cat_block(cat) }}
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+function dcatToggle(row) {
+  var subs = row.nextElementSibling;
+  if (!subs || !subs.classList.contains('dcat-subs')) return;
+  var open = !subs.hidden;
+  subs.hidden = open;
+  row.classList.toggle('dcat-row--open', !open);
+}
+</script>
+{% else %}
+<div class="outline-band">
+  <div class="band-label">Categories</div>
+  <div class="band-body">
+    <div class="iu-empty">No category data for this period</div>
+  </div>
+</div>
+{% endif %}

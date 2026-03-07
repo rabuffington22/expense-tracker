@@ -4,6 +4,10 @@
 {% block content %}
 <div class="page-title-row">
   <h1 class="page-title">{{ entity_display }} Dashboard</h1>
+  <div class="dash-view-toggle">
+    <button class="seg-item active" data-view="details" onclick="dashToggleView('details')">Details</button>
+    <button class="seg-item" data-view="compare" onclick="dashToggleView('compare')">Compare</button>
+  </div>
   <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('dashboard')">Ask Opus</button>
 </div>
 
@@ -11,4 +15,74 @@
 <div id="dashboard-body" class="dash-body">
   {% include "components/dashboard_body.html" %}
 </div>
+
+<script>
+function dashToggleView(view) {
+  var compare = document.getElementById('dash-compare');
+  var details = document.getElementById('dash-details');
+  if (!compare || !details) return;
+  compare.hidden = (view !== 'compare');
+  details.hidden = (view !== 'details');
+
+  document.querySelectorAll('.dash-view-toggle .seg-item').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+
+  localStorage.setItem('dash_view', view);
+
+  /* Lazy-load compare view on first switch to compare */
+  if (view === 'compare' && !document.getElementById('kpi-left')) {
+    _dashLoadCompare();
+  }
+}
+
+function _dashLoadCompare() {
+  /* Fire the compare-load trigger on both KPI panel divs.
+     Their post-load scripts (kpi_panel.html compare branch)
+     handle categories + insights. */
+  var panels = document.querySelectorAll('#dash-compare [hx-trigger="compare-load"]');
+  panels.forEach(function(el) {
+    htmx.trigger(el, 'compare-load');
+  });
+}
+
+/* Restore saved view on page load */
+document.addEventListener('DOMContentLoaded', function() {
+  var saved = localStorage.getItem('dash_view');
+  if (saved === 'compare') dashToggleView('compare');
+});
+</script>
+
+{# ── Subcategory Transactions Popup ───────────────────────────────── #}
+<div class="tq-modal-scrim" id="dcat-popup-scrim" hidden>
+    <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
+        <div class="tq-modal-top">
+            <button type="button" class="cf-edit-btn tq-modal-close"
+                    onclick="dcatClosePopup()" title="Close" aria-label="Close">&times;</button>
+        </div>
+        <div id="dcat-popup-body" class="tq-modal-body">
+            <div class="tq-loading">Loading&hellip;</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function dcatOpenPopup() {
+    document.getElementById('dcat-popup-scrim').hidden = false;
+    document.getElementById('dcat-popup-body').innerHTML =
+        '<div class="tq-loading">Loading\u2026</div>';
+}
+function dcatClosePopup() {
+    document.getElementById('dcat-popup-scrim').hidden = true;
+    document.getElementById('dcat-popup-body').innerHTML = '';
+}
+document.getElementById('dcat-popup-scrim').addEventListener('click', function(e) {
+    if (e.target === this) dcatClosePopup();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !document.getElementById('dcat-popup-scrim').hidden) {
+        dcatClosePopup();
+    }
+});
+</script>
 {% endblock %}

@@ -476,7 +476,20 @@ def _compute_compare_insights(conn, left_start, left_end, right_start, right_end
     except Exception:
         pass
 
-    # ── Compare C: Income change ────────────────────────────────────────────
+    return insights[:3]
+
+
+def _compute_income_insights(conn, left_start, left_end, right_start, right_end,
+                              drill_url_left, drill_url_right):
+    """Return up to 3 income-related insights for the IE chart section.
+
+    Each insight: {"text": str, "url": str}.
+    """
+    insights = []
+    xfer_exclude = ("AND COALESCE(category,'') NOT IN "
+                    "('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')")
+
+    # ── Income A: Income change between periods ───────────────────────────
     try:
         left_inc = conn.execute(
             f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
@@ -489,14 +502,61 @@ def _compute_compare_insights(conn, left_start, left_end, right_start, right_end
             [right_start, right_end],
         ).fetchone()[0]
 
-        diff = left_inc - right_inc
-        diff_dollars = abs(diff) // 100
-        if diff_dollars >= 100:
-            direction = "up" if diff > 0 else "down"
+        if right_inc > 0:
+            diff = left_inc - right_inc
+            diff_dollars = abs(diff) // 100
+            pct = abs(diff) * 100 // right_inc if right_inc else 0
+            if diff_dollars >= 100:
+                direction = "up" if diff > 0 else "down"
+                insights.append({
+                    "text": f"Income {direction} ${diff_dollars:,} ({pct}%) vs prior period",
+                    "url": drill_url_left(type="income"),
+                })
+    except Exception:
+        pass
+
+    # ── Income B: Top income source this period ───────────────────────────
+    try:
+        top_row = conn.execute(
+            f"SELECT subcategory, COALESCE(SUM(amount_cents), 0) AS total "
+            f"FROM transactions "
+            f"WHERE amount_cents > 0 AND date >= ? AND date <= ? "
+            f"  AND category = 'Income' AND subcategory IS NOT NULL AND subcategory != '' "
+            f"  AND subcategory != 'General' "
+            f"  {xfer_exclude} "
+            f"GROUP BY subcategory ORDER BY total DESC LIMIT 1",
+            [left_start, left_end],
+        ).fetchone()
+
+        if top_row and top_row["total"] > 0:
+            dollars = top_row["total"] // 100
             insights.append({
-                "text": f"Income {direction} ${diff_dollars:,} vs prior period",
+                "text": f"Top income source: {top_row['subcategory']} (${dollars:,})",
                 "url": drill_url_left(type="income"),
             })
+    except Exception:
+        pass
+
+    # ── Income C: Expense-to-income ratio ─────────────────────────────────
+    try:
+        left_inc = conn.execute(
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            [left_start, left_end],
+        ).fetchone()[0]
+        left_exp = conn.execute(
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
+            [left_start, left_end],
+        ).fetchone()[0]
+
+        if left_inc > 0:
+            ratio = left_exp * 100 // left_inc
+            if 90 < ratio <= 200:
+                insights.append({
+                    "text": f"Spending at {ratio}% of income this period",
+                    "url": drill_url_left(),
+                })
     except Exception:
         pass
 
@@ -1134,16 +1194,12 @@ def _query_subcategory_rollups(conn, start, end, category_names):
         else:
             skeleton[cat][sub] = skeleton[cat].get(sub, 0) + cents
 
-    # 3. Build result sorted by spend descending, General always first
+    # 3. Build result sorted by spend descending
     result = {}
     for cat in category_names:
         subs = skeleton[cat]
-        items = []
-        general_cents = subs.pop("General", 0)
-        items.append({"name": "General", "cents": general_cents})
-        # Remaining subs sorted by spend descending
-        for name, cents in sorted(subs.items(), key=lambda x: -x[1]):
-            items.append({"name": name, "cents": cents})
+        items = [{"name": name, "cents": cents}
+                 for name, cents in sorted(subs.items(), key=lambda x: -x[1])]
         result[cat] = items
     return result
 
@@ -1248,9 +1304,9 @@ def categories_compare():
                 "combined": left_cents + right_cents,
             })
 
-        # Sort by combined total desc, take top 12
+        # Sort by combined total desc, take top 28
         merged.sort(key=lambda x: x["combined"], reverse=True)
-        top = merged[:12]
+        top = merged[:28]
 
         # Query subcategory rollups for displayed categories only
         displayed_names = [c["name"] for c in top]
@@ -1259,17 +1315,36 @@ def categories_compare():
     finally:
         conn.close()
 
-    # Compute bar height percentages with common scale (from displayed categories only)
-    raw_max = max((c["left_cents"] for c in top), default=0)
-    raw_max = max(raw_max, max((c["right_cents"] for c in top), default=0))
-
-    # Nice-number Y-axis ticks: pick step from {1,2,5}×10^n to get ~4-5 ticks
-    y_ticks, axis_max_cents = _nice_y_ticks(raw_max)
-
-    # Bar heights are percentage of axis_max (tick ceiling), not raw max
+    # Compute bar percentages — use outlier-aware scale so one giant
+    # category doesn't squash all the others into invisible slivers.
+    all_vals = sorted(
+        [c["left_cents"] for c in top] + [c["right_cents"] for c in top],
+        reverse=True,
+    )
+    raw_max = all_vals[0] if all_vals else 0
+    second = next((v for v in all_vals if v < raw_max), raw_max)
+    # If top value is >3× the runner-up, scale to the runner-up instead
+    scale_max = second if (second and raw_max > second * 3) else raw_max
+    max_cents = raw_max  # keep true max for subcategory scaling
     for c in top:
-        c["left_pct"] = int(c["left_cents"] / axis_max_cents * 100) if axis_max_cents and c["left_cents"] else 0
-        c["right_pct"] = int(c["right_cents"] / axis_max_cents * 100) if axis_max_cents and c["right_cents"] else 0
+        c["left_pct"] = min(100, int(c["left_cents"] / scale_max * 100)) if scale_max else 0
+        c["right_pct"] = min(100, int(c["right_cents"] / scale_max * 100)) if scale_max else 0
+        c["combined_cents"] = c["combined"]
+
+    # Merge subcategories from both periods into a single dict
+    subcats_merged = {}
+    for cat_name in displayed_names:
+        l_map = {s["name"]: s["cents"] for s in subcats_left.get(cat_name, [])}
+        r_map = {s["name"]: s["cents"] for s in subcats_right.get(cat_name, [])}
+        all_names = list(dict.fromkeys(list(l_map.keys()) + list(r_map.keys())))
+        m = []
+        for sname in all_names:
+            lc = l_map.get(sname, 0)
+            rc = r_map.get(sname, 0)
+            m.append({"name": sname, "left_cents": lc, "right_cents": rc,
+                       "combined": lc + rc})
+        m.sort(key=lambda x: x["combined"], reverse=True)
+        subcats_merged[cat_name] = m
 
     # Drill URL helpers
     def left_drill(**overrides):
@@ -1284,25 +1359,113 @@ def categories_compare():
 
     period_labels = _build_period_labels()
 
-    # Build subcats JSON keyed by category name for tooltip JS
-    subcats_left_json = {cat: subs for cat, subs in subcats_left.items()}
-    subcats_right_json = {cat: subs for cat, subs in subcats_right.items()}
-
     return render_template("components/categories_compare.html",
                            categories=top,
-                           y_ticks=y_ticks,
+                           max_cents=max_cents,
                            left_period=left_period,
                            right_period=right_period,
                            left_label=period_labels.get(left_period, left_period),
                            right_label=period_labels.get(right_period, right_period),
-                           left_start=left_start,
-                           left_end=left_end,
-                           right_start=right_start,
-                           right_end=right_end,
                            left_drill=left_drill,
                            right_drill=right_drill,
-                           subcats_left=subcats_left_json,
-                           subcats_right=subcats_right_json)
+                           left_start=left_start, left_end=left_end,
+                           right_start=right_start, right_end=right_end,
+                           subcats_merged=subcats_merged)
+
+
+@bp.route("/dashboard/detail-categories")
+def detail_categories():
+    """Render single-period category chart for Details view (HTMX endpoint)."""
+    period = request.args.get("period", "this_month")
+    start, end = _period_to_dates(period)
+
+    conn = get_connection(g.entity_key)
+    try:
+        rows = _query_category_totals(conn, start, end)
+
+        cats = []
+        for r in rows:
+            cats.append({
+                "name": r["category"],
+                "cat_id": r["cat_id"],
+                "total_cents": r["total_cents"],
+            })
+
+        # Sort by total desc, take top 28
+        cats.sort(key=lambda x: x["total_cents"], reverse=True)
+        top = cats[:28]
+
+        # Subcategory rollups for tooltip
+        displayed_names = [c["name"] for c in top]
+        subcats = _query_subcategory_rollups(conn, start, end, displayed_names)
+    finally:
+        conn.close()
+
+    # Compute bar percentages — outlier-aware scale
+    raw_max = top[0]["total_cents"] if top else 0
+    second = top[1]["total_cents"] if len(top) > 1 else raw_max
+    scale_max = second if (second and raw_max > second * 3) else raw_max
+    for c in top:
+        c["pct"] = min(100, int(c["total_cents"] / scale_max * 100)) if scale_max else 0
+
+    # Drill URL helper
+    def drill(**overrides):
+        qp = {"start": start, "end": end}
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    period_labels = _build_period_labels()
+
+    return render_template("components/dashboard_detail_cats.html",
+                           categories=top,
+                           period=period,
+                           period_label=period_labels.get(period, period),
+                           start=start, end=end,
+                           drill=drill,
+                           subcats=subcats)
+
+
+@bp.route("/dashboard/detail-insights")
+def detail_insights():
+    """Render single-period insights + upcoming for Details view (HTMX endpoint)."""
+    period = request.args.get("period", "this_month")
+    account = request.args.get("account", "")
+
+    start, end = _period_to_dates(period)
+    params = {"start": start, "end": end, "account": account}
+
+    def drill(**overrides):
+        qp = {"start": start, "end": end}
+        if account:
+            qp["account"] = account
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    conn = get_connection(g.entity_key)
+    try:
+        insights = _compute_insights(conn, params, drill)
+        recurring = _detect_recurring(conn, params)
+        upcoming_raw = _build_upcoming(recurring)
+    finally:
+        conn.close()
+
+    # Add drill URLs to upcoming items
+    upcoming = []
+    for item in upcoming_raw:
+        item["url"] = url_for("transactions.index",
+                              merchant=item["merchant_canonical"],
+                              start=item["drill_start"],
+                              end=item["drill_end"])
+        upcoming.append(item)
+
+    period_labels = _build_period_labels()
+
+    return render_template("components/dashboard_detail_insights.html",
+                           insights=insights,
+                           upcoming=upcoming,
+                           period=period,
+                           period_label=period_labels.get(period, period),
+                           start=start, end=end)
 
 
 @bp.route("/dashboard/insights-upcoming")
@@ -1380,6 +1543,53 @@ def insights_upcoming():
                            left_period=left_period,
                            right_period=right_period,
                            upcoming=upcoming)
+
+
+@bp.route("/dashboard/ie-insights")
+def ie_insights():
+    """Render income-related insights below the IE chart (HTMX endpoint)."""
+    left_period = request.args.get("left_period", "")
+    right_period = request.args.get("right_period", "")
+    period = request.args.get("period", "")
+    account = request.args.get("account", "")
+
+    # Detail mode uses single period; compare mode uses left/right
+    if period and not left_period:
+        left_period = period
+        right_period = period
+    if not left_period:
+        left_period = "this_month"
+    if not right_period:
+        right_period = "last_month"
+
+    left_start, left_end = _period_to_dates(left_period)
+    right_start, right_end = _period_to_dates(right_period)
+
+    def left_drill(**overrides):
+        qp = {"start": left_start, "end": left_end}
+        if account:
+            qp["account"] = account
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    def right_drill(**overrides):
+        qp = {"start": right_start, "end": right_end}
+        if account:
+            qp["account"] = account
+        qp.update({k: v for k, v in overrides.items() if v})
+        return url_for("transactions.index", **qp)
+
+    conn = get_connection(g.entity_key)
+    try:
+        insights = _compute_income_insights(
+            conn, left_start, left_end, right_start, right_end,
+            left_drill, right_drill,
+        )
+    finally:
+        conn.close()
+
+    return render_template("components/dashboard_ie_insights.html",
+                           insights=insights)
 
 
 @bp.route("/dashboard/insight-detail")
@@ -1520,6 +1730,83 @@ def insight_detail():
         f'<div class="iu-detail-list">{items_html}</div>'
         f'{got_it_btn}'
     )
+
+
+@bp.route("/dashboard/subcategory-txns")
+def subcategory_txns():
+    """Return a transaction list popup for a given category + subcategory."""
+    cat_id = request.args.get("category_id", type=int)
+    subcat = request.args.get("subcategory", "")
+    start = request.args.get("start", "")
+    end = request.args.get("end", "")
+    start2 = request.args.get("start2", "")
+    end2 = request.args.get("end2", "")
+    label1 = request.args.get("label1", "")
+    label2 = request.args.get("label2", "")
+    account = request.args.get("account", "")
+
+    compare_mode = bool(start2 and end2)
+
+    conn = get_connection(g.entity_key)
+    try:
+        # Resolve category_id to name
+        cat_row = conn.execute(
+            "SELECT name FROM categories WHERE id = ?", (cat_id,)
+        ).fetchone() if cat_id else None
+        cat_name = cat_row["name"] if cat_row else ""
+
+        def _query_period(p_start, p_end):
+            conditions = ["t.category = ?", "t.subcategory = ?"]
+            params = [cat_name, subcat]
+            if p_start:
+                conditions.append("t.date >= ?")
+                params.append(p_start)
+            if p_end:
+                conditions.append("t.date <= ?")
+                params.append(p_end)
+            if account:
+                conditions.append("t.account = ?")
+                params.append(account)
+            where = " AND ".join(conditions)
+            return conn.execute(f"""
+                SELECT date, merchant_canonical, description_raw, amount_cents
+                FROM transactions t
+                WHERE {where}
+                ORDER BY date DESC
+                LIMIT 50
+            """, params).fetchall()
+
+        if compare_mode:
+            txns_left = _query_period(start, end)
+            txns_right = _query_period(start2, end2)
+            txns = None  # not used in compare mode
+        else:
+            txns = _query_period(start, end)
+            txns_left = None
+            txns_right = None
+    finally:
+        conn.close()
+
+    # Build fallback URL for "View all in Transactions"
+    fallback_qp = {"category_id": cat_id, "subcategory": subcat}
+    if start:
+        fallback_qp["start"] = start
+    if end:
+        fallback_qp["end"] = end
+    if account:
+        fallback_qp["account"] = account
+    fallback_url = url_for("transactions.index", **fallback_qp)
+
+    return render_template("components/subcat_txns_popup.html",
+                           txns=txns,
+                           txns_left=txns_left,
+                           txns_right=txns_right,
+                           label1=label1,
+                           label2=label2,
+                           compare_mode=compare_mode,
+                           cat_name=cat_name,
+                           subcat_name=subcat,
+                           fallback_url=fallback_url)
 
 
 @bp.route("/dashboard/insight-dismiss", methods=["POST"])
