@@ -54,7 +54,7 @@ fly ssh console -a ledger-oak-demo -C 'python3 /app/scripts/seed_demo_data.py'
 - **Config:** `fly.demo.toml` — separate volume (`ledger_oak_demo_data`), `ENTITIES=Personal:personal,Business:company`
 - **Auth:** Disabled (no `APP_USERNAME`/`APP_PASSWORD` env vars)
 - **Entity override:** `ENTITIES` env var in `web/__init__.py` — format `"Display:key,Display:key"`
-- **Seed script:** `scripts/seed_demo_data.py` — ~800 personal + ~570 business transactions, accounts, recurring, categories
+- **Seed script:** `scripts/seed_demo_data.py` — ~1010 personal (26 categories) + ~688 business (22 categories) transactions, accounts, recurring. Wipes and re-seeds on each run.
 
 ## Directory Structure
 ```
@@ -488,7 +488,7 @@ Public demo at `ledger-oak-demo.fly.dev` with fake seed data, no auth, 2 entitie
 
 1. **`ENTITIES` env var** — `web/__init__.py` parses `ENTITIES=Personal:personal,Business:company` to override the default 3-entity map. Colors and labels fall back gracefully for unknown display names (e.g. "Business" gets blue accent + business labels).
 2. **`fly.demo.toml`** — Separate Fly config: `app=ledger-oak-demo`, own volume (`ledger_oak_demo_data`), `ENTITIES` override, no `APP_USERNAME`/`APP_PASSWORD` (auth disabled).
-3. **`scripts/seed_demo_data.py`** — Generates realistic fake data for 2 entities. Personal: ~800 transactions, 5 accounts (2 bank + 3 credit), 2 manual recurring, 19 categories with 125 subcategories. Business: ~570 transactions, 4 accounts (3 bank + 1 credit), 2 manual recurring, 14 categories with 76 subcategories. Business merchants: Staples, Adobe, Zoom, Delta, ADP, Google Ads, etc.
+3. **`scripts/seed_demo_data.py`** — Generates realistic fake data for 2 entities. Wipes and re-seeds on each run. Personal: ~1010 transactions, 5 accounts (2 bank + 3 credit), 2 manual recurring, 26 categories with 154 subcategories. Business: ~688 transactions, 4 accounts (3 bank + 1 credit), 2 manual recurring, 22 categories with 108 subcategories. Business merchants: Staples, Adobe, Zoom, Delta, ADP, Google Ads, McKinsey, UnitedHealthcare, etc.
 4. **Dynamic `_ENTITY_DISPLAY`** — `cashflow.py` replaced hardcoded entity display map with `_build_entity_display()` that derives from `_ENTITY_MAP` at runtime. Cross-entity sections show correct names for both prod and demo.
 5. **Upcoming charges capped at 3** — `cashflow.py` `_load_entity_section()` slices `combined[:3]` to limit upcoming charges per account card.
 6. **Credit card balances positive** — Seed data uses positive balances (amount owed) matching Plaid convention.
