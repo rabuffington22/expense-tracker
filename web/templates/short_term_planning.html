@@ -274,7 +274,7 @@
                     <th>Category</th>
                     <th>Budget</th>
                     <th>Spent</th>
-                    <th>{{ avg_month_count }}-Mo Avg</th>
+                    <th>3-Mo Avg</th>
                     <th>Remaining</th>
                     <th>Progress</th>
                 </tr>
@@ -299,7 +299,7 @@
                         </span>
                     </td>
                     <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents %}stp-avg--over{% endif %}">
-                        {{ fmt_dollars(item.avg_3mo_cents) }}
+                        {{ fmt_dollars(item.avg_3mo_cents) }}{% if item.avg_month_count < 3 %}<span class="stp-avg-note">{{ item.avg_month_count }}mo</span>{% endif %}
                     </td>
                     <td class="{% if item.remaining_cents >= 0 %}stp-green{% else %}stp-red{% endif %}">
                         {{ fmt_dollars(item.remaining_cents) }}
