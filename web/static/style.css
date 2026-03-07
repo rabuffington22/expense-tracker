@@ -5716,18 +5716,22 @@ input.pl-input--sm {
     color: var(--blue);
 }
 .stp-budget-input {
-    width: 80px;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.2rem 0.4rem;
+    width: 70px;
+    max-width: 70px;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    padding: 0.2rem 0;
     color: var(--text);
     font-size: var(--ui-font-sm);
     text-align: right;
 }
 .stp-budget-input:focus {
-    outline: none;
-    border-color: var(--blue);
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .stp-budget-bar {
