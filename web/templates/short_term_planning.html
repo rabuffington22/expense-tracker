@@ -298,7 +298,7 @@
                             {{ fmt_dollars(item.spent_cents) }}
                         </span>
                     </td>
-                    <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents %}stp-avg--over{% endif %}">
+                    <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
                         {{ fmt_dollars(item.avg_3mo_cents) }}{% if item.avg_month_count < 3 %}<span class="stp-avg-note">{{ item.avg_month_count }}mo</span>{% endif %}
                     </td>
                     <td class="{% if item.remaining_cents >= 0 %}stp-green{% else %}stp-red{% endif %}">
