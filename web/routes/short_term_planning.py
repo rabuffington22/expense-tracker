@@ -177,14 +177,15 @@ def _get_budget_items(conn) -> list[dict]:
     return [dict(r) for r in rows]
 
 
-def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
+def _get_budget_status(conn, entity_key: str, month: str) -> tuple[list[dict], int]:
     """Compute budget vs actuals for a given month (YYYY-MM).
 
-    Returns list of {category, budget_cents, spent_cents, remaining_cents, pct}.
+    Returns (list of dicts, avg_month_count) where avg_month_count is
+    the number of prior months with data used for the average.
     """
     budget_items = _get_budget_items(conn)
     if not budget_items:
-        return []
+        return [], 0
 
     # Get actual spending by category for the month
     exclude_clause = ",".join("?" for _ in _EXCLUDE_CATS)
@@ -211,6 +212,18 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
         d = (d.replace(day=1) - timedelta(days=1)).replace(day=1)
         avg_months.append(d.strftime("%Y-%m"))
     month_placeholders = ",".join("?" for _ in avg_months)
+    # Count how many of those months actually have spending data
+    months_with_data = conn.execute(
+        "SELECT COUNT(DISTINCT strftime('%%Y-%%m', date)) "
+        "FROM transactions "
+        "WHERE strftime('%%Y-%%m', date) IN (%s) "
+        "AND amount < 0 "
+        "AND COALESCE(category,'') NOT IN (%s)"
+        % (month_placeholders, exclude_clause),
+        (*avg_months, *_EXCLUDE_CATS),
+    ).fetchone()[0]
+    avg_divisor = max(months_with_data, 1)
+
     avg_rows = conn.execute(
         "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
         "ABS(SUM(amount)) as total "
@@ -221,7 +234,7 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
         "GROUP BY cat" % (month_placeholders, exclude_clause),
         (*avg_months, *_EXCLUDE_CATS),
     ).fetchall()
-    avg_actuals = {r["cat"]: int(round(r["total"] * 100 / len(avg_months))) for r in avg_rows}
+    avg_actuals = {r["cat"]: int(round(r["total"] * 100 / avg_divisor)) for r in avg_rows}
 
     result = []
     for bi in budget_items:
@@ -241,7 +254,7 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
 
     # Sort by pct descending (most over-budget first)
     result.sort(key=lambda x: x["pct"], reverse=True)
-    return result
+    return result, avg_divisor
 
 
 def _get_unbudgeted_spending(conn, month: str, budgeted_cats: set) -> list[dict]:
@@ -511,7 +524,7 @@ def index():
         is_current_month = (budget_month == today.strftime("%Y-%m"))
         next_month = None if is_current_month else next_month_date.strftime("%Y-%m")
 
-        budget_status = _get_budget_status(conn, g.entity_key, current_month)
+        budget_status, avg_month_count = _get_budget_status(conn, g.entity_key, current_month)
         budgeted_cats = {b["category"] for b in budget_status}
         unbudgeted = _get_unbudgeted_spending(conn, current_month, budgeted_cats)
 
@@ -548,6 +561,7 @@ def index():
             current_month_display=bm_date.strftime("%B %Y"),
             prev_month=prev_month,
             next_month=next_month,
+            avg_month_count=avg_month_count,
             cc_accounts=cc_accounts,
             bank_accounts=bank_accounts,
             categories=categories,
@@ -819,7 +833,7 @@ def budget_status():
     month = request.args.get("month", date.today().strftime("%Y-%m"))
     conn = get_connection(g.entity_key)
     try:
-        status = _get_budget_status(conn, g.entity_key, month)
+        status, _ = _get_budget_status(conn, g.entity_key, month)
         # Return as HTML table rows
         html_parts = []
         for item in status:
