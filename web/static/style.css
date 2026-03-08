@@ -5864,9 +5864,17 @@ input.pl-input--sm {
 .stp-budget-table a:hover {
     color: var(--blue);
 }
+.stp-budget-input-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
 .stp-budget-input {
-    width: 70px;
-    max-width: 70px;
+    width: 76px;
+    max-width: 76px;
     background: transparent !important;
     border: none !important;
     outline: none !important;

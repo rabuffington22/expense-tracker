@@ -296,9 +296,9 @@
                         </span>
                     </td>
                     <td>
-                        <input type="text" name="budget_{{ item.category }}"
+                        <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
                                value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
-                               class="stp-budget-input">
+                               class="stp-budget-input"></span>
                     </td>
                     <td>
                         <span class="stp-spent-link" onclick="stpShowTxns('{{ item.category }}')">

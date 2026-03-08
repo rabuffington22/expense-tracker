@@ -222,8 +222,9 @@ def create_app():
         if cents is None:
             return "$0"
         cents = int(cents)
-        sign = "\u2212" if cents < 0 else ""
-        return f"{sign}${abs(cents) / 100:,.0f}"
+        rounded = round(cents / 100)
+        sign = "\u2212" if rounded < 0 else ""
+        return f"{sign}${abs(rounded):,.0f}"
 
     def fmt_due_date(date_str):
         """Format YYYY-MM-DD as 'Apr 15' or 'Apr 15, 2025' if not current year."""
