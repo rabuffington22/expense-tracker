@@ -114,7 +114,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     htmx.min.js                    # HTMX library (~14KB)
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
 core/                              # Business logic
-  db.py                            # Schema migrations (38 so far), DB init, connections
+  db.py                            # Schema migrations (47 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
@@ -165,7 +165,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (38 Migrations)
+## Database (47 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
@@ -362,6 +362,16 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-07 — Short-Term Planning: recurring action items + subcategory fixes + duplicate cleanup
+Recurring monthly action items, subcategory drill-down fixes, and comprehensive duplicate transaction scan.
+
+1. **Recurring action items** — Migration 46-47: added `is_recurring INTEGER DEFAULT 0` and `completed_month TEXT` columns to `action_items`. Three manual-pay items (house mortgage 1st, Kubota tractor 3rd, ranch mortgage 19th) marked `is_recurring = 1`. When a recurring item is completed, `completed_month` stores `YYYY-MM`. At page load, `_get_action_items()` auto-resets recurring items completed in a prior month back to pending. Delete button hidden for recurring items. Small ↻ icon shown next to recurring item titles.
+2. **Subcategory column alignment** — `budget_subcategories()` endpoint had subcategory dollar amounts appearing under the Budget column instead of Spent. Fixed by moving `${amt:,.0f}` from the 3rd `<td>` to the 2nd.
+3. **Subcategory readability** — `.stp-subcat-row td` bumped from `var(--ui-font-xs)` (0.68rem) to 0.92rem/weight 600 with increased padding.
+4. **Section spacing** — `.stp-section` margin-bottom increased to 2.5rem. `.stp-section--border-label` margin-top increased to 2.5rem. Section labels ("ACTION ITEMS", "GOALS", "MONTHLY BUDGET") bumped from `var(--ui-font-xs)` to 0.88rem.
+5. **Manual Pay indent** — Added `padding-left: 0.5rem` to `.stp-actions-grid` so "MANUAL PAY" starts to the right of "ACTION ITEMS".
+6. **Duplicate transaction cleanup** — Comprehensive scan found and removed 7 duplicates total: Student Loan THECB ($416.73), Folds of Grace ($114.17), Denton County ($76.25), Whatnot ($107.40), Living Spaces ($745.84) on both local and production; Amazon Oct 6 ($29.22) and Amazon Jul 10 ($113.65) local only.
 
 ### 2026-03-07 — Short-Term Planning: action items polish + budget table readability
 UX improvements to the Short-Term Planning page across action items and monthly budget sections.
