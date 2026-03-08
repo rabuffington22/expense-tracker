@@ -16,43 +16,63 @@
         <span class="stp-section-label stp-section-label--border">ACTION ITEMS</span>
     </div>
 
-    <div class="stp-actions-list">
-        {# Auto-generated CC due dates #}
-        {% for item in cc_due_items %}
-        <div class="stp-action-row stp-action--auto {% if item.days_until <= 3 %}stp-action--urgent{% endif %}">
-            <span class="stp-action-icon stp-action-icon--auto">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </span>
-            <span class="stp-action-title">{{ item.title }}</span>
-            <span class="stp-action-due {% if item.days_until <= 3 %}stp-action-due--soon{% endif %}">
-                {{ item.due_display }}
-                {% if item.days_until == 0 %}<span class="stp-due-tag">Today</span>
-                {% elif item.days_until == 1 %}<span class="stp-due-tag">Tomorrow</span>
-                {% elif item.days_until <= 7 %}<span class="stp-due-tag">{{ item.days_until }}d</span>
+    <div class="stp-actions-grid">
+        {# ── Left column: Manual Pay ── #}
+        <div class="stp-actions-col">
+            <div class="stp-actions-col-label">MANUAL PAY</div>
+            <div class="stp-actions-list">
+                {% for item in action_items if item.status == 'pending' %}
+                <div class="stp-action-row">
+                    <form method="post" action="{{ url_for('short_term_planning.toggle_action', item_id=item.id) }}" class="stp-action-check-form">
+                        <button type="submit" class="stp-action-check" title="Mark complete">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/></svg>
+                        </button>
+                    </form>
+                    <span class="stp-action-title">{{ item.title }}</span>
+                    {% if item.due_date %}
+                    <span class="stp-action-due">{{ item.due_date }}</span>
+                    {% endif %}
+                    <form method="post" action="{{ url_for('short_term_planning.delete_action', item_id=item.id) }}" class="stp-action-del-form">
+                        <button type="submit" class="stp-action-del" title="Remove">&times;</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            <form method="post" action="{{ url_for('short_term_planning.create_action') }}" class="stp-action-add">
+                <input type="text" name="title" placeholder="Add item..." class="stp-action-add-input" required>
+                <button type="submit" class="stp-action-add-btn" title="Add">+</button>
+            </form>
+        </div>
+
+        {# ── Right column: Autopay ── #}
+        <div class="stp-actions-col">
+            <div class="stp-actions-col-label">AUTOPAY</div>
+            <div class="stp-actions-list">
+                {% for item in cc_due_items %}
+                <div class="stp-action-row stp-action--auto {% if item.days_until <= 3 %}stp-action--urgent{% endif %}">
+                    <span class="stp-action-icon stp-action-icon--auto">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </span>
+                    <span class="stp-action-title">{{ item.title }}</span>
+                    <span class="stp-action-due {% if item.days_until <= 3 %}stp-action-due--soon{% endif %}">
+                        {{ item.due_display }}
+                        {% if item.days_until == 0 %}<span class="stp-due-tag">Today</span>
+                        {% elif item.days_until == 1 %}<span class="stp-due-tag">Tomorrow</span>
+                        {% elif item.days_until <= 7 %}<span class="stp-due-tag">{{ item.days_until }}d</span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+                {% if not cc_due_items %}
+                <div class="stp-empty-state"><p>No upcoming payments</p></div>
                 {% endif %}
-            </span>
+            </div>
         </div>
-        {% endfor %}
+    </div>
 
-        {# Manual action items — pending #}
-        {% for item in action_items if item.status == 'pending' %}
-        <div class="stp-action-row">
-            <form method="post" action="{{ url_for('short_term_planning.toggle_action', item_id=item.id) }}" class="stp-action-check-form">
-                <button type="submit" class="stp-action-check" title="Mark complete">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/></svg>
-                </button>
-            </form>
-            <span class="stp-action-title">{{ item.title }}</span>
-            {% if item.due_date %}
-            <span class="stp-action-due">{{ item.due_date }}</span>
-            {% endif %}
-            <form method="post" action="{{ url_for('short_term_planning.delete_action', item_id=item.id) }}" class="stp-action-del-form">
-                <button type="submit" class="stp-action-del" title="Remove">&times;</button>
-            </form>
-        </div>
-        {% endfor %}
-
-        {# Completed items #}
+    {# ── Completed items (full width below) ── #}
+    {% if action_items|selectattr('status', 'equalto', 'completed')|list %}
+    <div class="stp-actions-completed">
         {% for item in action_items if item.status == 'completed' %}
         <div class="stp-action-row stp-action--done">
             <form method="post" action="{{ url_for('short_term_planning.toggle_action', item_id=item.id) }}" class="stp-action-check-form">
@@ -66,19 +86,8 @@
             </form>
         </div>
         {% endfor %}
-
-        {% if not cc_due_items and not action_items %}
-        <div class="stp-empty-state">
-            <p>No action items yet.</p>
-        </div>
-        {% endif %}
     </div>
-
-    {# Inline add form #}
-    <form method="post" action="{{ url_for('short_term_planning.create_action') }}" class="stp-action-add">
-        <input type="text" name="title" placeholder="Add an action item..." class="stp-action-add-input" required>
-        <button type="submit" class="stp-action-add-btn" title="Add">+</button>
-    </form>
+    {% endif %}
 </div>
 
 {# ════════════════════════════════════════════════════════════════════════════

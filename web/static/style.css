@@ -5625,6 +5625,28 @@ input.pl-input--sm {
 
 /* ── Action Items ─────────────────────────────────────────────────────────── */
 
+.stp-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1.5rem;
+}
+.stp-actions-col-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+.stp-actions-completed {
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 0.3rem;
+}
+@media (max-width: 768px) {
+    .stp-actions-grid { grid-template-columns: 1fr; }
+}
+
 .stp-actions-list {
     display: flex;
     flex-direction: column;
