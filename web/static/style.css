@@ -5751,8 +5751,8 @@ input.pl-input--sm {
 .stp-month-select--kpi {
     position: absolute;
     top: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: 0.6rem;
+    transform: translateY(-50%);
     z-index: 1;
 }
 .stp-budget-kpi-grid {
