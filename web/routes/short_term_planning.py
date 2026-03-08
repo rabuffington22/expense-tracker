@@ -860,19 +860,44 @@ def save_budget():
     """Save/update budget amounts from the budget table."""
     conn = get_connection(g.entity_key)
     try:
-        # Process form data — category_XXX fields
         for key, value in request.form.items():
-            if key.startswith("budget_"):
-                category = key[7:]  # strip 'budget_' prefix
+            if key.startswith("subbudget_"):
+                # Subcategory budget: subbudget_{category}__{subcategory}
+                rest = key[10:]  # strip 'subbudget_' prefix
+                parts = rest.split("__", 1)
+                if len(parts) != 2:
+                    continue
+                category, subcategory = parts
                 cents = _parse_dollar_to_cents(value)
                 if cents > 0:
                     conn.execute(
-                        "INSERT OR REPLACE INTO budget_items (category, monthly_budget_cents) "
-                        "VALUES (?, ?)",
-                        (category, cents),
+                        "INSERT OR REPLACE INTO budget_subcategories "
+                        "(category, subcategory, monthly_budget_cents) VALUES (?, ?, ?)",
+                        (category, subcategory, cents),
                     )
                 else:
-                    # Remove budget if set to 0
+                    conn.execute(
+                        "DELETE FROM budget_subcategories "
+                        "WHERE category = ? AND subcategory = ?",
+                        (category, subcategory),
+                    )
+            elif key.startswith("budget_"):
+                category = key[7:]  # strip 'budget_' prefix
+                cents = _parse_dollar_to_cents(value)
+                if cents > 0:
+                    # Update existing or insert new (preserve budget_section)
+                    cur = conn.execute(
+                        "UPDATE budget_items SET monthly_budget_cents = ? "
+                        "WHERE category = ?",
+                        (cents, category),
+                    )
+                    if cur.rowcount == 0:
+                        conn.execute(
+                            "INSERT INTO budget_items (category, monthly_budget_cents) "
+                            "VALUES (?, ?)",
+                            (category, cents),
+                        )
+                else:
                     conn.execute(
                         "DELETE FROM budget_items WHERE category = ?",
                         (category,),
@@ -1062,6 +1087,14 @@ def budget_subcategories():
             (category, month),
         ).fetchall()
 
+        # Look up existing subcategory budgets
+        budget_rows = conn.execute(
+            "SELECT subcategory, monthly_budget_cents FROM budget_subcategories "
+            "WHERE category = ?",
+            (category,),
+        ).fetchall()
+        sub_budgets = {r["subcategory"]: r["monthly_budget_cents"] for r in budget_rows}
+
         import json
         from markupsafe import escape
 
@@ -1074,20 +1107,60 @@ def budget_subcategories():
         else:
             for r in rows:
                 amt = r["total"]
+                spent_cents = int(round(amt * 100))
                 sub_esc = escape(r["sub"])
-                # JSON-encode then HTML-escape so quotes are safe inside onclick=""
                 cat_js = escape(json.dumps(category))
                 sub_js = escape(json.dumps(r["sub"]))
-                lines.append(
-                    f'<tr class="stp-subcat-row">'
-                    f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
-                    f'<td><span class="stp-spent-link" onclick="stpShowTxns({cat_js}, {sub_js})">${amt:,.0f}</span></td>'
-                    f'<td></td>'
-                    f'<td></td>'
-                    f'<td></td>'
-                    f'<td></td>'
-                    f'</tr>'
+                field_name = escape(f"subbudget_{category}__{r['sub']}")
+                budget_cents = sub_budgets.get(r["sub"])
+
+                # Spent cell (always clickable)
+                spent_td = (
+                    f'<td><span class="stp-spent-link" '
+                    f'onclick="stpShowTxns({cat_js}, {sub_js})">${amt:,.0f}</span></td>'
                 )
+
+                if budget_cents and budget_cents > 0:
+                    # Has subcategory budget — show input, remaining, progress
+                    remaining = budget_cents - spent_cents
+                    pct = int(round(spent_cents / budget_cents * 100))
+                    budget_val = f"{budget_cents / 100:,.0f}"
+                    rem_class = "stp-green" if remaining >= 0 else "stp-red"
+                    bar_class = (
+                        "stp-bar-green" if pct <= 100
+                        else "stp-bar-yellow" if pct <= 115
+                        else "stp-bar-red"
+                    )
+                    lines.append(
+                        f'<tr class="stp-subcat-row">'
+                        f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
+                        f'{spent_td}'
+                        f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
+                        f'<input type="text" name="{field_name}" value="{budget_val}" '
+                        f'size="{len(budget_val)}" class="stp-budget-input stp-budget-input--sub"></span></td>'
+                        f'<td></td>'
+                        f'<td class="{rem_class}">${remaining / 100:,.0f}</td>'
+                        f'<td><div class="stp-budget-progress-wrap">'
+                        f'<div class="stp-budget-bar stp-budget-bar--sub">'
+                        f'<div class="stp-budget-fill {bar_class}" style="width:{min(pct, 100)}%"></div></div>'
+                        f'<span class="stp-budget-pct">{min(pct, 999)}%</span></div></td>'
+                        f'</tr>'
+                    )
+                else:
+                    # No budget — empty input with dash placeholder
+                    lines.append(
+                        f'<tr class="stp-subcat-row">'
+                        f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
+                        f'{spent_td}'
+                        f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
+                        f'<input type="text" name="{field_name}" value="" '
+                        f'placeholder="\u2014" size="3" '
+                        f'class="stp-budget-input stp-budget-input--sub"></span></td>'
+                        f'<td></td>'
+                        f'<td></td>'
+                        f'<td></td>'
+                        f'</tr>'
+                    )
 
         return "\n".join(lines)
     finally:

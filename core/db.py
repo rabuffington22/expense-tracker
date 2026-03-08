@@ -633,6 +633,17 @@ UPDATE budget_items SET budget_section = 'fixed' WHERE category IN ('Housing', '
 UPDATE budget_items SET budget_section = 'focus' WHERE category IN ('Food', 'Shopping', 'Entertainment', 'Clothing', 'Health & Beauty', 'Electronics');
 """
 
+_MIGRATION_49 = """
+CREATE TABLE IF NOT EXISTS budget_subcategories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT NOT NULL,
+    subcategory TEXT NOT NULL,
+    monthly_budget_cents INTEGER NOT NULL,
+    created_at TEXT DEFAULT (datetime('now')),
+    UNIQUE(category, subcategory)
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -682,6 +693,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (46, _MIGRATION_46),
     (47, _MIGRATION_47),
     (48, _MIGRATION_48),
+    (49, _MIGRATION_49),
 ]
 
 _DEFAULT_CATEGORIES = [

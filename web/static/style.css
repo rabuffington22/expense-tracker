@@ -5965,6 +5965,23 @@ input.pl-input--sm {
     padding-top: 0.25rem !important;
     padding-bottom: 0.25rem !important;
 }
+/* Subcategory budget inputs — smaller/lighter than category-level */
+.stp-budget-input-wrap--sub {
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.75;
+}
+.stp-budget-input--sub {
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+.stp-budget-input--sub::placeholder {
+    color: var(--text-muted);
+    opacity: 0.4;
+}
+.stp-budget-bar--sub {
+    width: 70px;
+}
 .stp-spent-link {
     cursor: pointer;
     text-decoration: underline;
