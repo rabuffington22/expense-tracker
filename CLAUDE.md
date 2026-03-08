@@ -365,6 +365,24 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 
 ## Change Log
 
+### 2026-03-08 — Amazon Business upload + BFM category overhaul + budget polish
+Amazon Business CSV import with order matching, major BFM category restructuring, subcategory budgets, and Personal transaction recategorization.
+
+1. **Amazon Business CSV upload** — Uploaded 1 year of Amazon Business order history (327 line items, 211 payment groups, $18.4k total). 69 of 71 Amazon bank transactions matched to product details via `parse_amazon_csv()` + `group_orders()` + matching algorithm. Auto-applied 64 exact matches, 5 likely/date-only matches.
+2. **New BFM categories** — Kitchen (Disposables/Paper Products/Paper Towels), Bathroom (Toilet Paper), Rent, Compliance (Document Shredding/Credentialing), Accounting, Retirement (Simple IRA).
+3. **New BFM subcategories** — IT/Hardware, IT/Services, Supplies/Printer Paper, Supplies/Printer, Electronics/Tools, Medical Supplies/Liquid Nitrogen, Patient Services/Communication, Utilities/Landlord Pass-Through.
+4. **IT Services renamed to IT** — Category renamed, On Site PC Services → IT/Services, Apple computer + peripherals → IT/Hardware, Amazon IT purchases (cables, mounts, adapters, PC parts) → IT/Hardware.
+5. **Rent category** — 40 Providential/Provcom charges moved from Facilities. 10 utility pass-throughs (BuffUtil/Buff111) separated to Utilities/Landlord Pass-Through. 30 actual rent charges remain (~$10,625/month).
+6. **Compliance category** — Iron Mountain document shredding (3 txns) + Texas Health Resources credentialing (1 txn) moved from Facilities and Fees.
+7. **Accounting category** — Bryan L. Parker CPA charges (13 txns, $700/month) moved from Facilities.
+8. **Patient Services/Communication** — Modernizing Medicine/Klara (15 txns, $1,343/month) moved from Subscriptions/Software.
+9. **Retirement/Simple IRA** — Edward Jones checks (#10070, #10065, #10058) moved from Needs Review.
+10. **Utilities/Internet** — 21 Frontier Communications charges moved from Utilities/General.
+11. **Adobe → Software/Productivity** — 13 Adobe charges fixed (12 were already correct, 1 had null subcategory).
+12. **Food/Coffee** — Amazon coffee pods and creamer moved from Food/General.
+13. **Amazon Supplies recategorization** — Purell → Bathroom, Brother toner/labels → Supplies/Printer, PC fans/cables/adapters → IT/Hardware, screws/WD-40/workbench mat → Office Maintenance.
+14. **Deposit Item Returns** — Two $9,900 bounced transfers moved from Fees to Internal Transfer.
+
 ### 2026-03-08 — Subcategory budgets + budget layout polish + transaction recategorization
 Optional subcategory-level budgets, budget KPI layout improvements, and bulk transaction recategorization across November–December.
 
