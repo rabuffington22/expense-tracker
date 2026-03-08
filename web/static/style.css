@@ -5759,6 +5759,12 @@ input.pl-input--sm {
     z-index: 1;
     box-shadow: 0 0 0 3px var(--bg);
 }
+.stp-month-select--kpi:hover,
+.stp-month-select--kpi:focus,
+.stp-month-select--kpi:active {
+    box-shadow: 0 0 0 3px var(--bg);
+    background-color: var(--bg);
+}
 .stp-budget-kpi-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
