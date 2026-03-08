@@ -114,7 +114,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     htmx.min.js                    # HTMX library (~14KB)
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
 core/                              # Business logic
-  db.py                            # Schema migrations (47 so far), DB init, connections
+  db.py                            # Schema migrations (49 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
@@ -165,7 +165,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (47 Migrations)
+## Database (49 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
@@ -182,6 +182,8 @@ Key tables:
 - **`subscription_account_info`** -- Subscription account details (Migration 37). Fields: subscription_id (FK UNIQUE), account_email, account_phone, phone_a_friend_name, phone_a_friend_number, notes.
 - **`planning_settings`** -- Planning page settings (Migration 35). Fields: inflation_rate (bps), current_age, custom_milestone, birth_date (Migration 38). Singleton row (id=1), stored in personal.sqlite.
 - **`planning_items`** -- Planning assets/liabilities (Migration 36). Fields: item_type (asset/liability), name, current_value_cents, annual_rate_bps, monthly_contrib_cents, monthly_payment_cents, source (manual/cashflow), cashflow_account_name, sort_order.
+- **`budget_items`** -- Monthly budget targets per category (Migration 48). Fields: category (UNIQUE), monthly_budget_cents, budget_section (fixed/focus/other). Section groups categories into Fixed (housing, ranch, insurance, retirement, student loans), Focus (discretionary to optimize), and Everything Else.
+- **`budget_subcategories`** -- Optional subcategory-level budget targets (Migration 49). Fields: category, subcategory, monthly_budget_cents, created_at. UNIQUE(category, subcategory). Separate from budget_items. When set, subcategory rows show remaining amount and progress bar.
 
 ## Vendor Workflow (Three-Phase)
 
@@ -362,6 +364,17 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-08 — Subcategory budgets + budget layout polish + transaction recategorization
+Optional subcategory-level budgets, budget KPI layout improvements, and bulk transaction recategorization across November–December.
+
+1. **Subcategory budgets (Migration 49)** — New `budget_subcategories` table enables per-subcategory budget targets. Subcategory rows show `$` input field; when budget is set, remaining amount and progress bar appear. Empty inputs show `$—` placeholder. `save_budget()` handles `subbudget_{category}__{subcategory}` form fields. Category-level save changed from `INSERT OR REPLACE` to `UPDATE + INSERT` to preserve `budget_section`.
+2. **Budget KPI layout** — Month dropdown pulled out of KPI box, placed left-aligned on same row. KPI box (Budgeted/Spent/Remaining) centered via `position: absolute` on dropdown so it doesn't affect centering. Dropdown enlarged (1.05rem font).
+3. **Section order** — Focus section moved above Fixed in budget table (`_BUDGET_SECTIONS` order swapped).
+4. **Green threshold** — Remaining amounts within $1 of zero show green instead of flipping to red (applies to category rows, subcategory rows, and KPI summary).
+5. **Subcategory budgets set** — Home/Landscaping ($1,321), Home/Security ($122), Home/Cleaning ($275), Home/Laundry ($500), Ranch/Mortgage ($3,945), Health & Beauty/Fitness ($64), Storage/General ($266). Applied to both local and production.
+6. **December recategorization** — 14 Amazon purchases recategorized from Home/General: diapers/baby gate/trampoline → Childcare, LED lights/beam clamps → Home/Improvement, ceiling mount → Home/Security, leather cleaner → LL Expense, snacks → Food/Groceries, grab bar → Abuelitos. 9 Entertainment/General Amazon items → Shopping/Gifts (Christmas gifts). DashPass → Food/Delivery. Clothing/General kids clothes → Clothing/Kids. TJ Maxx → Shopping/Kids (all locations). Shopping/Amazon December items → Shopping/Gifts.
+7. **November recategorization** — Kids clothes → Clothing/Kids (Disney, Children's Place, Crocs). Mickey Mouse hoodie moved from Electronics → Clothing/Kids. Party supplies (balloon stands, tablecloths, plates) → Shopping/Gifts. JBL kids headphones → Shopping/Gifts. Sea shell painting kits → Shopping/Kids. Baby wipes → Childcare. Cradle cap treatment → Childcare. Beam clamps/LED lights → Home/Improvement. Sonic drink mix moved from Pets → Food/Groceries.
 
 ### 2026-03-07 — Short-Term Planning: recurring action items + subcategory fixes + duplicate cleanup
 Recurring monthly action items, subcategory drill-down fixes, and comprehensive duplicate transaction scan.
