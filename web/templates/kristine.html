@@ -152,27 +152,25 @@
       <div class="kd-section-label">LUXE LEGACY</div>
       <div class="kd-panel">
 
-        {# KPI summary #}
-        <div class="kd-kpi-row">
+        {# KPI summary: Revenue + Owner's Draw + Expenses + Total #}
+        <div class="kd-kpi-row kd-kpi-row--4">
           <div class="kd-kpi">
             <div class="kd-kpi-label">Revenue</div>
             <div class="kd-kpi-value {% if ll.income_cents > 0 %}kd-green{% endif %}">{{ fmt_dollars(ll.income_cents) }}</div>
+          </div>
+          <div class="kd-kpi">
+            <div class="kd-kpi-label">Owner's Draw</div>
+            <div class="kd-kpi-value {% if ll.owner_draw_cents > 0 %}kd-green{% endif %}">{{ fmt_dollars(ll.owner_draw_cents) }}</div>
           </div>
           <div class="kd-kpi">
             <div class="kd-kpi-label">Expenses</div>
             <div class="kd-kpi-value">{{ fmt_dollars(ll.expense_cents) }}</div>
           </div>
           <div class="kd-kpi">
-            <div class="kd-kpi-label">Profit</div>
-            <div class="kd-kpi-value {% if ll.profit_cents > 0 %}kd-green{% elif ll.profit_cents < 0 %}kd-red{% endif %}">{{ fmt_dollars(ll.profit_cents) }}</div>
+            <div class="kd-kpi-label">Total</div>
+            <div class="kd-kpi-value {% if ll.total_cents > 0 %}kd-green{% elif ll.total_cents < 0 %}kd-red{% endif %}">{{ fmt_dollars(ll.total_cents) }}</div>
           </div>
         </div>
-        {% if ll.owner_draw_cents > 0 %}
-        <div class="kd-owner-draw">
-          <span class="kd-owner-draw-label">Owner Draw</span>
-          <span class="kd-owner-draw-value">{{ fmt_dollars(ll.owner_draw_cents) }}</span>
-        </div>
-        {% endif %}
 
         {% if ll.has_data %}
           {# Category spending #}

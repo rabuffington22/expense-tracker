@@ -280,11 +280,11 @@ def _get_ll_summary(conn, month: str) -> dict:
     return {
         "income_cents": income_cents,
         "expense_cents": expense_cents,
-        "profit_cents": income_cents - expense_cents,
         "owner_draw_cents": owner_draw_cents,
+        "total_cents": income_cents + owner_draw_cents - expense_cents,
         "categories": categories,
         "transactions": transactions,
-        "has_data": income_cents > 0 or expense_cents > 0 or len(transactions) > 0,
+        "has_data": income_cents > 0 or expense_cents > 0 or owner_draw_cents > 0 or len(transactions) > 0,
     }
 
 
