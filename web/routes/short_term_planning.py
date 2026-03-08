@@ -256,8 +256,8 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
 
 # Section order and display labels for budget grouping
 _BUDGET_SECTIONS = [
-    ("fixed", "FIXED"),
     ("focus", "FOCUS"),
+    ("fixed", "FIXED"),
     ("other", "EVERYTHING ELSE"),
 ]
 
