@@ -67,6 +67,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     subscriptions.py               # GET/POST /subscriptions (watchlist, tracking, AI tips)
     cashflow.py                    # GET /cashflow (account balances, upcoming bills)
     planning.py                    # GET/POST /planning (net worth projections)
+    payroll.py                     # GET/POST /payroll (employee roster, Phoenix import, role spending)
     reports.py                     # GET /reports (monthly detail + spending trend)
     ai.py                          # POST /ai/ask, /ai/clear (global Ask Opus chat, per-page context)
     plaid.py                       # GET/POST /plaid (connect, sync, disconnect)
@@ -76,6 +77,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     match.py                       # GET/POST /match (link orders to bank txns)
     categorize_vendors.py          # GET/POST /categorize-vendors (label vendor orders)
     categorize.py                  # GET/POST /categorize (remaining txns + settings)
+    kristine.py                    # GET /k/ (Kristine's public dashboard, no auth)
   templates/
     base.html                      # Layout: sidebar + main content, mobile header/hamburger
     components/
@@ -101,6 +103,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     subscriptions.html             # Subscription watchlist + detail modals
     cashflow.html                  # Per-account balance cards + edit modals
     planning.html                  # Net worth projections + add/edit modals
+    payroll.html                   # Employee roster, role spending, Phoenix import
     reports.html                   # Two-section layout: monthly detail + spending trend
     plaid.html                     # Connected Accounts (Plaid Link)
     upload.html                    # Import tab + Settings tab
@@ -109,17 +112,19 @@ web/                               # Flask app (replaced old app/ Streamlit code
     match.html
     categorize_vendors.html
     categorize.html                # Review tab + Settings tab
+    kristine.html                  # Kristine's dashboard (standalone, no base.html)
   static/
     style.css                      # Apple-style dual theme (dark default + light), CSS custom properties on data-theme, SF Pro fonts
     htmx.min.js                    # HTMX library (~14KB)
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
 core/                              # Business logic
-  db.py                            # Schema migrations (49 so far), DB init, connections
+  db.py                            # Schema migrations (51 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
   amazon.py                        # Amazon order CSV parsing + vendor order matching
   henryschein.py                   # Henry Schein XLSX parsing
+  payroll_parser.py                # Phoenix/Greenpage CyberPayroll report parser
   plaid_client.py                  # Plaid API client (link, sync, liabilities)
   reporting.py                     # Query helpers for Reports page
   coverage.py                      # Test coverage utilities
@@ -153,8 +158,10 @@ Pattern used across routes:
 - **Subscriptions** -- Subscription watchlist with auto-detection, tracking timeline, AI cancellation tips, account info
 - **Cash Flow** -- Per-account balances, upcoming recurring charges, Plaid liabilities
 - **Planning** -- Long-term net worth projections (assets + liabilities at milestone ages, inflation-adjusted)
+- **Payroll** -- Employee roster, Phoenix/CyberPayroll import, role-based spending (BFM only)
 - **Reports** -- Monthly detail + spending trend (pure CSS bar chart)
 - **Connected Accounts** -- Plaid Link, sync, disconnect
+- **Kristine's Dashboard** (`/k/`) -- Public (no auth), mobile-first page for Kristine. Shows Personal Focus budget status (categories, subcategories, transaction drill-down), Luxe Legacy business summary, account balances (BOA Primary, LL, Apple Card), and praise/gamification. Light blue and pink theme. Standalone template (no sidebar/base.html).
 
 ### 5-Step Workflow (linked from To Do page)
 1. **Upload from Bank/CC** -- Import CSV/PDF bank statements
@@ -165,7 +172,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (50 Migrations)
+## Database (51 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
@@ -183,6 +190,9 @@ Key tables:
 - **`planning_settings`** -- Planning page settings (Migration 35). Fields: inflation_rate (bps), current_age, custom_milestone, birth_date (Migration 38). Singleton row (id=1), stored in personal.sqlite.
 - **`planning_items`** -- Planning assets/liabilities (Migration 36). Fields: item_type (asset/liability), name, current_value_cents, annual_rate_bps, monthly_contrib_cents, monthly_payment_cents, source (manual/cashflow), cashflow_account_name, sort_order.
 - **`budget_items`** -- Monthly budget targets per category (Migration 48). Fields: category (UNIQUE), monthly_budget_cents, budget_section (fixed/focus/other), is_per_payroll (Migration 50), per_payroll_cents (Migration 50). Section groups categories into Fixed (housing, ranch, insurance, retirement, student loans), Focus (discretionary to optimize), and Everything Else. Per-payroll categories (Payroll, Taxes) store per-payroll amount and dynamically multiply by pay periods per month.
+- **`employees`** -- Employee roster (Migration 51). Fields: name, role (free-text), phoenix_job_code, pay_type (hourly/salary), pay_rate_cents, hire_date, status (active/inactive/terminated), notes. BFM only.
+- **`employee_pay_changes`** -- Pay rate change history (Migration 51). Fields: employee_id (FK CASCADE), effective_date, old_rate_cents, new_rate_cents, change_type, notes.
+- **`payroll_entries`** -- Per-employee paycheck data from Phoenix import (Migration 51). Fields: employee_id (FK CASCADE), paycheck_date, amount_cents (total employer cost = Gross + ER Tax + Benefits), source_filename. UNIQUE(employee_id, paycheck_date).
 - **`budget_subcategories`** -- Optional subcategory-level budget targets (Migration 49). Fields: category, subcategory, monthly_budget_cents, created_at. UNIQUE(category, subcategory). Separate from budget_items. When set, subcategory rows show remaining amount and progress bar.
 - **`payroll_schedule`** -- Biweekly payroll cadence (Migration 50). Singleton table (CHECK id=1). Fields: anchor_date (known payday YYYY-MM-DD), cadence_days (14), pay_dow (day-of-week payment hits bank, 0=Mon, 2=Wed). Used by `_count_pay_periods()` to compute how many paydays fall in a given month (typically 2, sometimes 3). Only BFM uses this; Personal/LL have no row.
 
@@ -365,6 +375,31 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-08 — Kristine's Dashboard: mobile-first public page with praise engine
+New `/k/` page for Kristine — a password-free, mobile-optimized dashboard showing Personal Focus budget and Luxe Legacy business data.
+
+1. **Route (`web/routes/kristine.py`)** — Blueprint at `/k` with auth bypass. Queries both `personal.sqlite` (Focus budget categories from `budget_items WHERE budget_section = 'focus'`) and `luxelegacy.sqlite` (LL income, expenses, transactions). Standalone template (no `base.html`).
+2. **Auth bypass (`web/__init__.py`)** — `_basic_auth()`, `_setup_entity()`, and `_inject_globals()` all skip for `/k` paths. Kristine's page manages its own DB connections directly.
+3. **Focus budget section** — Per-category rows with budget vs spent, progress bars, subcategory breakdown (shown when >1 subcategory). Tappable categories expand to show individual transactions with JS toggle (`kdToggle()`). Categories sorted by spending descending.
+4. **Account balances** — Three-card grid showing BOA Primary (checking), Luxe Legacy (LL business checking), and Apple Card (credit card with utilization bar). Queries `account_balances` from both personal and LL databases.
+5. **Praise engine (`_compute_praise()`)** — Dynamic motivational messages based on budget performance. Analyzes: zero-spend categories, under-30% categories, month-over-month improvement, overall budget percentage. Generates headline + up to 3 "wins" with star bullets. Always finds something positive even when budget is tight.
+6. **Month navigation** — Prev/next arrows with `?m=YYYY-MM` query parameter. Right arrow disabled for current month. `_month_offset()` handles year rollover.
+7. **Luxe Legacy section** — Revenue/Expenses/Profit KPIs, category spending breakdown, recent 15 transactions. Shows "No transactions yet" empty state when LL has no data.
+8. **Light blue and pink theme** — Custom `.kd-*` CSS classes (not using app's dark theme). Background: blue-to-pink gradient (`#e8f4fd` → `#fce4ec`). Progress bars: blue gradient. Section labels/chevrons: pink (`#ec407a`). Praise banner: blue→lavender→pink gradient with purple headline and pink stars. All text in harmonized blue-gray tones. Credit card utilization bar in bright pink (not red).
+9. **Mobile-first** — `max-width: 480px`, touch-friendly tap targets, `apple-mobile-web-app-capable` meta tag, `viewport-fit=cover`. No JavaScript dependencies (vanilla JS only).
+
+### 2026-03-08 — Payroll page: employee roster, Phoenix import, role-based spending
+New `/payroll` page for BFM with employee roster management, Phoenix/CyberPayroll report import, and role-based spending analysis.
+
+1. **Migration 51** — Three new tables: `employees` (roster with role, pay rate, hire date, status), `employee_pay_changes` (raise history), `payroll_entries` (per-employee paycheck data from Phoenix). Payroll subcategories seeded: Providers, Nurses, Scribes, Front Office, Office Manager, HR, Owner.
+2. **Phoenix parser (`core/payroll_parser.py`)** — Parses "Per Payroll Costs" pivoted Excel export. Finds year-section headers ("Paycheck Dates"), extracts employee rows with amounts per date column. Amounts = Gross + ER Tax + Benefits (total employer cost). `PHOENIX_JOB_CODE_MAP` maps job codes to roles. `match_to_employees()` matches parsed entries to DB employees by name.
+3. **Payroll route (`web/routes/payroll.py`)** — Blueprint at `/payroll` with CRUD for employees, Phoenix import (parse → preview → save), and role-based spending analysis. Detail modal shows compensation stats (days since raise, peer comparison), pay history timeline, recent paychecks, and edit form. Role badges with per-role colors.
+4. **Payroll template (`web/templates/payroll.html`)** — Three sections: Team Roster (table with role badges, status, raise flags), Spending by Role (colored horizontal bars with month selector), Import Payroll (file upload with preview and role assignment for unmatched employees).
+5. **Short-Term Planning integration** — `budget_subcategories()` special-cases Payroll category to query `payroll_entries JOIN employees GROUP BY role` instead of transactions. Falls back to standard query if no payroll data exists.
+6. **Sidebar link** — "Payroll" appears in sidebar only for BFM entity (`entity_key == 'company'`).
+7. **Initial data import** — Parsed Phoenix PerPayrollCosts.xlsx: 24 employees, 457 payroll entries across 2025-2026 ($1.14M in 2025, $184k YTD 2026). All employees matched and roles assigned.
+8. **Employee roster** — 15 active, 9 terminated. Roles: Providers (Joseph Talley, Michelle Guilbeault), Nurses (Amber, Melissa, Heidi Maldonado), Scribes (Andrea Rodriguez Favela, Allison Ballard), Front Office (Kimberly, Desiree, Darlene, Cressie, Alexandria Aparicio), Office Manager (Sarah Gaiser), HR (Kristine Buffington), Owner (Ryan Buffington).
 
 ### 2026-03-08 — Pay-period-aware budgets + Henry Schein upload + Medical Supplies subcategories
 Biweekly payroll budget multiplier, Henry Schein XLSX import with matching, and Medical Supplies subcategory breakdown for BFM.

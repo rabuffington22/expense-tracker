@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#e8f4fd">
+  <title>Dashboard — {{ month_display }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
+</head>
+<body>
+  <div class="kd-wrap">
+
+    {# ── Header ─────────────────────────────────────────── #}
+    <div class="kd-header">
+      <div class="kd-month-nav">
+        <a href="?m={{ prev_month }}" class="kd-nav-arrow">&lsaquo;</a>
+        <div class="kd-month-center">
+          <div class="kd-title">{{ month_display }}</div>
+          <div class="kd-subtitle">Budget & Business</div>
+        </div>
+        {% if is_current %}
+          <span class="kd-nav-arrow kd-nav-arrow--disabled">&rsaquo;</span>
+        {% else %}
+          <a href="?m={{ next_month }}" class="kd-nav-arrow">&rsaquo;</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {# ── Praise Banner ─────────────────────────────────── #}
+    {% if praise and praise.headline %}
+    <div class="kd-praise">
+      <div class="kd-praise-headline">{{ praise.headline }}</div>
+      {% if praise.wins %}
+      <div class="kd-praise-wins">
+        {% for win in praise.wins %}
+        <div class="kd-praise-win">{{ win }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ── Account Balances ──────────────────────────────── #}
+    {% if accounts %}
+    <div class="kd-section">
+      <div class="kd-section-label">ACCOUNTS</div>
+      <div class="kd-accounts">
+        {% for acct in accounts %}
+        <div class="kd-account-card {% if acct.account_type == 'credit_card' %}kd-account-card--cc{% endif %}">
+          <div class="kd-account-name">{{ acct.account_name }}</div>
+          {% if acct.account_type == 'credit_card' %}
+            <div class="kd-account-balance">{{ fmt_dollars(acct.balance_cents) }}</div>
+            {% if acct.credit_limit_cents > 0 %}
+              <div class="kd-account-limit">of {{ fmt_dollars(acct.credit_limit_cents) }} limit</div>
+              {% set used_pct = (acct.balance_cents / acct.credit_limit_cents * 100)|round|int %}
+              <div class="kd-bar kd-bar--sm kd-account-bar">
+                <div class="kd-fill {% if used_pct > 90 %}kd-fill--over{% elif used_pct > 70 %}kd-fill--warn{% endif %}" style="width: {{ [used_pct, 100]|min }}%"></div>
+              </div>
+            {% endif %}
+          {% else %}
+            <div class="kd-account-balance">{{ fmt_dollars(acct.balance_cents) }}</div>
+            <div class="kd-account-limit">Available</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# ── Personal Focus Budget ─────────────────────────── #}
+    {% if focus_items %}
+    <div class="kd-section">
+      <div class="kd-section-label">FOCUS SPENDING</div>
+      <div class="kd-panel">
+
+        {# Overall KPI row #}
+        <div class="kd-kpi-row">
+          <div class="kd-kpi">
+            <div class="kd-kpi-label">Budget</div>
+            <div class="kd-kpi-value">{{ fmt_dollars(focus_budgeted) }}</div>
+          </div>
+          <div class="kd-kpi">
+            <div class="kd-kpi-label">Spent</div>
+            <div class="kd-kpi-value">{{ fmt_dollars(focus_spent) }}</div>
+          </div>
+          <div class="kd-kpi">
+            <div class="kd-kpi-label">Left</div>
+            <div class="kd-kpi-value {% if focus_remaining > 0 %}kd-green{% elif focus_remaining < 0 %}kd-red{% endif %}">{{ fmt_dollars(focus_remaining) }}</div>
+          </div>
+        </div>
+
+        {# Overall progress bar #}
+        <div class="kd-bar">
+          <div class="kd-fill {% if focus_pct > 100 %}kd-fill--over{% elif focus_pct > 80 %}kd-fill--warn{% endif %}" style="width: {{ [focus_pct, 100]|min }}%"></div>
+        </div>
+        <div class="kd-bar-label">{{ focus_pct }}% of budget</div>
+
+        {# Per-category rows #}
+        <div class="kd-cats">
+          {% for item in focus_items %}
+          <div class="kd-cat-row {% if item.transactions %}kd-cat-row--tap{% endif %}" {% if item.transactions %}onclick="kdToggle(this)"{% endif %}>
+            <div class="kd-cat-head">
+              <span class="kd-cat-name">{{ item.category }}</span>
+              <span class="kd-cat-spent">
+                {{ fmt_dollars(item.spent_cents) }}
+                {% if item.transactions %}<span class="kd-chevron">&#x203A;</span>{% endif %}
+              </span>
+            </div>
+            <div class="kd-cat-sub">
+              <span>{{ fmt_dollars(item.remaining_cents) }} left of {{ fmt_dollars(item.budget_cents) }}</span>
+              <span>{{ item.pct }}%</span>
+            </div>
+            <div class="kd-bar kd-bar--sm">
+              <div class="kd-fill {% if item.pct > 100 %}kd-fill--over{% elif item.pct > 80 %}kd-fill--warn{% endif %}" style="width: {{ [item.pct, 100]|min }}%"></div>
+            </div>
+            {% if item.subcategories %}
+            <div class="kd-subcats">
+              {% for sub in item.subcategories %}
+              <div class="kd-subcat-row">
+                <span class="kd-subcat-name">{{ sub.subcategory }}</span>
+                <span class="kd-subcat-spent">{{ fmt_dollars(sub.spent_cents) }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            {% if item.transactions %}
+            <div class="kd-drill" hidden>
+              <div class="kd-drill-label">TRANSACTIONS ({{ item.transactions|length }})</div>
+              {% for txn in item.transactions %}
+              <div class="kd-drill-row">
+                <div class="kd-drill-left">
+                  <span class="kd-drill-name">{{ txn.name }}</span>
+                  <span class="kd-drill-meta">{{ fmt_date(txn.date) }}{% if txn.subcategory %} · {{ txn.subcategory }}{% endif %}</span>
+                </div>
+                <span class="kd-drill-amt">{{ fmt_dollars(txn.amount_cents) }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+    {% endif %}
+
+    {# ── Luxe Legacy Section ────────────────────────────── #}
+    <div class="kd-section">
+      <div class="kd-section-label">LUXE LEGACY</div>
+      <div class="kd-panel">
+
+        {# KPI summary #}
+        <div class="kd-kpi-row">
+          <div class="kd-kpi">
+            <div class="kd-kpi-label">Revenue</div>
+            <div class="kd-kpi-value {% if ll.income_cents > 0 %}kd-green{% endif %}">{{ fmt_dollars(ll.income_cents) }}</div>
+          </div>
+          <div class="kd-kpi">
+            <div class="kd-kpi-label">Expenses</div>
+            <div class="kd-kpi-value">{{ fmt_dollars(ll.expense_cents) }}</div>
+          </div>
+          <div class="kd-kpi">
+            <div class="kd-kpi-label">Profit</div>
+            <div class="kd-kpi-value {% if ll.profit_cents > 0 %}kd-green{% elif ll.profit_cents < 0 %}kd-red{% endif %}">{{ fmt_dollars(ll.profit_cents) }}</div>
+          </div>
+        </div>
+
+        {% if ll.has_data %}
+          {# Category spending #}
+          {% if ll.categories %}
+          <div class="kd-ll-cats">
+            {% for cat in ll.categories %}
+            <div class="kd-ll-cat-row">
+              <span class="kd-cat-name">{{ cat.category }}</span>
+              <span class="kd-cat-spent">{{ fmt_dollars(cat.spent_cents) }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {# Recent transactions #}
+          {% if ll.transactions %}
+          <div class="kd-ll-txns-label">RECENT</div>
+          <div class="kd-ll-txns">
+            {% for txn in ll.transactions %}
+            <div class="kd-txn-row">
+              <div class="kd-txn-left">
+                <span class="kd-txn-name">{{ txn.name }}</span>
+                <span class="kd-txn-date">{{ fmt_date(txn.date) }}</span>
+              </div>
+              <span class="kd-txn-amount {% if txn.is_income %}kd-green{% endif %}">
+                {% if txn.is_income %}+{% endif %}{{ fmt_dollars(txn.amount_cents|abs) }}
+              </span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+        {% else %}
+          <div class="kd-empty">No transactions yet</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kd-footer">
+      Updated {{ now }}
+    </div>
+  </div>
+
+  <script>
+    function kdToggle(row) {
+      var drill = row.querySelector('.kd-drill');
+      if (!drill) return;
+      var open = !drill.hidden;
+      drill.hidden = open;
+      row.classList.toggle('kd-cat-row--open', !open);
+    }
+  </script>
+</body>
+</html>

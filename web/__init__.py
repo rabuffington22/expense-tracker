@@ -156,6 +156,8 @@ def create_app():
 
     @app.before_request
     def _basic_auth():
+        if request.path.startswith("/k"):
+            return  # Public page — no auth required
         if not _AUTH_USER or not _AUTH_PASS:
             return  # Auth not configured — skip (local dev)
         auth = request.headers.get("Authorization", "")
@@ -176,6 +178,8 @@ def create_app():
     # ── Before-request: init DB, set entity context ──────────────────────────
     @app.before_request
     def _setup_entity():
+        if request.path.startswith("/k"):
+            return  # Kristine's page manages its own DB connections
         g.entity_display, g.entity_key = get_entity()
         g.accent = get_accent()
         init_db(g.entity_key)
@@ -184,6 +188,8 @@ def create_app():
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor
     def _inject_globals():
+        if request.path.startswith("/k"):
+            return {}  # Kristine's page doesn't use entity context
         labels = _ENTITY_LABELS.get(g.entity_display, _DEFAULT_LABELS)
         return {
             "entity_display": g.entity_display,
@@ -207,7 +213,7 @@ def create_app():
         return resp
 
     # ── Jinja globals ────────────────────────────────────────────────────────
-    from web.routes.reports import fmt_date, fmt_month_short
+    from web.routes.reports import fmt_date, fmt_month_short, fmt_month_full
 
     def fmt_cents(cents):
         """Format integer cents as dollar string. -8943 → '−$89.43'"""
@@ -239,6 +245,7 @@ def create_app():
 
     app.jinja_env.globals["fmt_date"] = fmt_date
     app.jinja_env.globals["fmt_month_short"] = fmt_month_short
+    app.jinja_env.globals["fmt_month_full"] = fmt_month_full
     app.jinja_env.globals["fmt_cents"] = fmt_cents
     app.jinja_env.globals["fmt_dollars"] = fmt_dollars
     app.jinja_env.globals["fmt_due_date"] = fmt_due_date
@@ -261,6 +268,8 @@ def create_app():
     from web.routes.short_term_planning import bp as short_term_planning_bp
     from web.routes.subscriptions import bp as subscriptions_bp
     from web.routes.ai import bp as ai_bp
+    from web.routes.payroll import bp as payroll_bp
+    from web.routes.kristine import bp as kristine_bp
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(upload_bp)
@@ -278,5 +287,7 @@ def create_app():
     app.register_blueprint(short_term_planning_bp)
     app.register_blueprint(subscriptions_bp)
     app.register_blueprint(ai_bp)
+    app.register_blueprint(payroll_bp)
+    app.register_blueprint(kristine_bp)
 
     return app
