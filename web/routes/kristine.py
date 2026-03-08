@@ -124,7 +124,7 @@ def _get_focus_budget(conn, month: str) -> list[dict]:
         "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
         "ABS(SUM(amount)) as total "
         "FROM transactions "
-        "WHERE strftime('%Y-%m', date) = ? "
+        "WHERE strftime('%%Y-%%m', date) = ? "
         "AND amount < 0 "
         "AND COALESCE(category,'') NOT IN (%s) "
         "GROUP BY cat" % exclude_clause,
@@ -138,7 +138,7 @@ def _get_focus_budget(conn, month: str) -> list[dict]:
         "COALESCE(NULLIF(subcategory,''),'General') as subcat, "
         "ABS(SUM(amount)) as total "
         "FROM transactions "
-        "WHERE strftime('%Y-%m', date) = ? "
+        "WHERE strftime('%%Y-%%m', date) = ? "
         "AND amount < 0 "
         "AND COALESCE(category,'') NOT IN (%s) "
         "GROUP BY cat, subcat ORDER BY total DESC" % exclude_clause,
@@ -162,7 +162,7 @@ def _get_focus_budget(conn, month: str) -> list[dict]:
         "SELECT date, merchant_canonical, description_raw, "
         "ABS(amount) as amt, category, subcategory "
         "FROM transactions "
-        "WHERE strftime('%Y-%m', date) = ? "
+        "WHERE strftime('%%Y-%%m', date) = ? "
         "AND amount < 0 "
         "AND category IN (%s) "
         "ORDER BY date DESC, rowid DESC" % cat_placeholders,
