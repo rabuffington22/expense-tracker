@@ -82,7 +82,7 @@ def _build_base_cte(conn, params):
     # Uncategorized
     if params.get("uncategorized") == "1":
         conditions.append(
-            "(t.category IS NULL OR t.category = '' OR t.confidence < 0.6)"
+            "(t.category IS NULL OR t.category = '' OR t.category = 'Needs Review')"
         )
 
     # Possible transfer — uncategorized txns with transfer/payment keywords
