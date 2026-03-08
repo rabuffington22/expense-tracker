@@ -618,6 +618,15 @@ CREATE TABLE IF NOT EXISTS action_items (
 );
 """
 
+_MIGRATION_46 = """
+ALTER TABLE action_items ADD COLUMN is_recurring INTEGER DEFAULT 0;
+"""
+
+_MIGRATION_47 = """
+ALTER TABLE action_items ADD COLUMN completed_month TEXT;
+UPDATE action_items SET is_recurring = 1 WHERE due_date IS NOT NULL;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -664,6 +673,8 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (43, _MIGRATION_43),
     (44, _MIGRATION_44),
     (45, _MIGRATION_45),
+    (46, _MIGRATION_46),
+    (47, _MIGRATION_47),
 ]
 
 _DEFAULT_CATEGORIES = [

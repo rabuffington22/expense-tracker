@@ -387,7 +387,21 @@ def _ordinal(n):
 
 
 def _get_action_items(conn) -> list[dict]:
-    """Return all action items ordered: pending first (by sort_order), then completed."""
+    """Return all action items ordered: pending first (by sort_order), then completed.
+
+    Recurring items auto-reset to pending at the start of each new month.
+    """
+    current_month = date.today().strftime("%Y-%m")
+
+    # Auto-reset recurring items completed in a prior month
+    conn.execute(
+        "UPDATE action_items SET status = 'pending', completed_at = NULL "
+        "WHERE is_recurring = 1 AND status = 'completed' "
+        "AND (completed_month IS NULL OR completed_month != ?)",
+        (current_month,),
+    )
+    conn.commit()
+
     rows = conn.execute(
         "SELECT * FROM action_items ORDER BY "
         "CASE status WHEN 'pending' THEN 0 ELSE 1 END, "
@@ -905,14 +919,15 @@ def toggle_action(item_id):
     conn = get_connection(g.entity_key)
     try:
         row = conn.execute(
-            "SELECT status FROM action_items WHERE id = ?", (item_id,)
+            "SELECT status, is_recurring FROM action_items WHERE id = ?", (item_id,)
         ).fetchone()
         if row:
             new_status = "completed" if row["status"] == "pending" else "pending"
             completed_at = datetime.now(timezone.utc).isoformat() if new_status == "completed" else None
+            completed_month = date.today().strftime("%Y-%m") if new_status == "completed" and row["is_recurring"] else None
             conn.execute(
-                "UPDATE action_items SET status = ?, completed_at = ? WHERE id = ?",
-                (new_status, completed_at, item_id),
+                "UPDATE action_items SET status = ?, completed_at = ?, completed_month = ? WHERE id = ?",
+                (new_status, completed_at, completed_month, item_id),
             )
             conn.commit()
     finally:

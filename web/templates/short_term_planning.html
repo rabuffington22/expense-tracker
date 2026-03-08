@@ -29,12 +29,19 @@
                         </button>
                     </form>
                     <span class="stp-action-title">{{ item.title }}</span>
+                    {% if item.is_recurring %}
+                    <span class="stp-action-recurring" title="Recurring monthly">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                    </span>
+                    {% endif %}
                     {% if item.due_display %}
                     <span class="stp-action-due">{{ item.due_display }}</span>
                     {% endif %}
+                    {% if not item.is_recurring %}
                     <form method="post" action="{{ url_for('short_term_planning.delete_action', item_id=item.id) }}" class="stp-action-del-form">
                         <button type="submit" class="stp-action-del" title="Remove">&times;</button>
                     </form>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
