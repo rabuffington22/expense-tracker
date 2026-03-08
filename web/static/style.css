@@ -5822,30 +5822,31 @@ input.pl-input--sm {
 .stp-budget-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.88rem;
+    font-size: 1.0rem;
     font-weight: 600;
 }
 .stp-budget-table th {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: var(--label-tracking);
     text-transform: uppercase;
     color: var(--text-muted);
-    padding: 0.5rem 0.4rem;
+    padding: 0.6rem 0.4rem;
     text-align: left;
     border-bottom: 1px solid var(--border);
 }
 .stp-budget-table td {
-    padding: 0.6rem 0.4rem;
+    padding: 0.75rem 0.4rem;
     border-bottom: 0.5px solid var(--border);
 }
 .stp-budget-table tr:last-child td {
     border-bottom: none;
 }
-/* Column spacing: pair Budget+Spent tight, gap, 3-Mo Avg, gap, Remaining+Progress tight */
-.stp-budget-table th:nth-child(2), .stp-budget-table td:nth-child(2),
-.stp-budget-table th:nth-child(3), .stp-budget-table td:nth-child(3) {
+/* Column spacing: pair Spent+Budget tight, gap, 3-Mo Avg, gap, Remaining+Progress tight */
+.stp-budget-table th:nth-child(2), .stp-budget-table td:nth-child(2) {
     padding-right: 0.15rem;
+}
+.stp-budget-table th:nth-child(3), .stp-budget-table td:nth-child(3) {
     padding-left: 0.15rem;
 }
 .stp-budget-table th:nth-child(4), .stp-budget-table td:nth-child(4) {
@@ -5869,12 +5870,11 @@ input.pl-input--sm {
     align-items: center;
     gap: 0;
     color: var(--text);
-    font-size: 0.88rem;
+    font-size: 1.0rem;
     font-weight: 600;
 }
 .stp-budget-input {
-    width: 76px;
-    max-width: 76px;
+    width: 6.5em;
     background: transparent !important;
     border: none !important;
     outline: none !important;
@@ -5882,9 +5882,9 @@ input.pl-input--sm {
     -webkit-appearance: none;
     padding: 0.2rem 0;
     color: var(--text);
-    font-size: 0.88rem;
+    font-size: 1.0rem;
     font-weight: 600;
-    text-align: right;
+    text-align: left;
 }
 .stp-budget-input:focus {
     outline: none !important;
