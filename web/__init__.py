@@ -156,8 +156,8 @@ def create_app():
 
     @app.before_request
     def _basic_auth():
-        if request.path.startswith("/k"):
-            return  # Public page — no auth required
+        if request.path.startswith("/k") or request.path.startswith("/static/"):
+            return  # Public pages + static assets — no auth required
         if not _AUTH_USER or not _AUTH_PASS:
             return  # Auth not configured — skip (local dev)
         auth = request.headers.get("Authorization", "")
