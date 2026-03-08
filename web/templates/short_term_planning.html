@@ -169,11 +169,11 @@
 
             {# Actions #}
             <div class="stp-goal-actions">
-                <button class="btn btn-sm btn-secondary" onclick="stpEditGoal({{ goal|tojson|e }})">Edit</button>
+                <button class="btn btn-sm btn-secondary" onclick="stpEditGoal({{ goal.id }})">Edit</button>
                 {% if not goal.ai_plan %}
-                <button class="btn btn-sm" onclick="stpLockPlan({{ goal|tojson|e }})">Lock In Plan</button>
+                <button class="btn btn-sm" onclick="stpLockPlan({{ goal.id }})">Lock In Plan</button>
                 {% else %}
-                <button class="btn btn-sm btn-secondary" onclick="stpLockPlan({{ goal|tojson|e }})">Update Plan</button>
+                <button class="btn btn-sm btn-secondary" onclick="stpLockPlan({{ goal.id }})">Update Plan</button>
                 {% endif %}
             </div>
 
@@ -584,14 +584,29 @@
     </div>
 </dialog>
 
+{# Goal data passed safely via JSON block (avoids broken onclick attributes) #}
+<script type="application/json" id="stp-goals-data">
+{{ (active_goals + completed_goals)|tojson }}
+</script>
+
 <script>
+var _stpGoals = {};
+(function() {
+    try {
+        var raw = JSON.parse(document.getElementById('stp-goals-data').textContent);
+        raw.forEach(function(g) { _stpGoals[g.id] = g; });
+    } catch(e) { console.error('Failed to parse goals data:', e); }
+})();
+
 function stpTypeChange(type) {
     document.getElementById('stp-debt-fields').hidden = (type !== 'debt_payoff');
     document.getElementById('stp-savings-fields').hidden = (type !== 'savings');
     document.getElementById('stp-spending-fields').hidden = (type !== 'spending_reduction');
 }
 
-function stpEditGoal(goal) {
+function stpEditGoal(goalId) {
+    var goal = _stpGoals[goalId];
+    if (!goal) return;
     var form = document.getElementById('stp-edit-form');
     form.action = '/planning/short-term/goals/' + goal.id + '/update';
     document.getElementById('stp-edit-name').value = goal.name;
@@ -612,7 +627,9 @@ function stpEditGoal(goal) {
     document.getElementById('stp-edit-modal').showModal();
 }
 
-function stpLockPlan(goal) {
+function stpLockPlan(goalId) {
+    var goal = _stpGoals[goalId];
+    if (!goal) return;
     var form = document.getElementById('stp-lock-form');
     form.action = '/planning/short-term/goals/' + goal.id + '/lock-plan';
     document.getElementById('stp-lock-strategy').value = goal.strategy || 'avalanche';
