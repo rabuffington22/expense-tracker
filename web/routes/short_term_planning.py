@@ -376,6 +376,16 @@ def _get_bank_accounts(conn) -> list[dict]:
 # ── Action Items helpers ─────────────────────────────────────────────────────
 
 
+def _ordinal(n):
+    """Convert day number to ordinal: 1→'1st', 2→'2nd', 3→'3rd', 4→'4th', etc."""
+    try:
+        n = int(n)
+    except (ValueError, TypeError):
+        return str(n) if n else ""
+    suffix = "th" if 11 <= n % 100 <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suffix}"
+
+
 def _get_action_items(conn) -> list[dict]:
     """Return all action items ordered: pending first (by sort_order), then completed."""
     rows = conn.execute(
@@ -383,7 +393,13 @@ def _get_action_items(conn) -> list[dict]:
         "CASE status WHEN 'pending' THEN 0 ELSE 1 END, "
         "sort_order, created_at"
     ).fetchall()
-    return [dict(r) for r in rows]
+    items = [dict(r) for r in rows]
+    for item in items:
+        if item.get("due_date"):
+            item["due_display"] = _ordinal(item["due_date"])
+        else:
+            item["due_display"] = ""
+    return items
 
 
 def _get_cc_due_items(conn) -> list[dict]:

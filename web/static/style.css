@@ -5341,6 +5341,7 @@ input.pl-input--sm {
 .stp-section--border-label {
     position: relative;
     padding-top: 1.2rem;
+    margin-top: 1.5rem;
 }
 .stp-section--border-label .stp-section-header {
     position: absolute;
@@ -5632,7 +5633,7 @@ input.pl-input--sm {
     gap: 0 3rem;
 }
 .stp-actions-col-label {
-    font-size: 0.62rem;
+    font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -5656,9 +5657,10 @@ input.pl-input--sm {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.45rem 0.25rem;
+    padding: 0.6rem 0.25rem;
     border-bottom: 1px solid rgba(255,255,255,0.06);
-    font-size: var(--ui-font-base);
+    font-size: 1.0rem;
+    font-weight: 600;
 }
 :root[data-theme="light"] .stp-action-row {
     border-bottom-color: rgba(0,0,0,0.06);
@@ -5700,7 +5702,8 @@ input.pl-input--sm {
 }
 .stp-action-due {
     flex-shrink: 0;
-    font-size: var(--ui-font-xs);
+    font-size: 0.92rem;
+    font-weight: 600;
     color: var(--text-muted);
     display: flex;
     align-items: center;
@@ -5708,11 +5711,11 @@ input.pl-input--sm {
 }
 .stp-action-due--soon { color: var(--red); font-weight: 600; }
 .stp-due-tag {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    padding: 0.1rem 0.3rem;
+    padding: 0.15rem 0.35rem;
     border-radius: 4px;
     background: rgba(248,113,113,0.15);
     color: var(--red);
@@ -5747,7 +5750,8 @@ input.pl-input--sm {
     border-bottom: 1px solid rgba(255,255,255,0.1);
     outline: none;
     color: var(--text);
-    font-size: var(--ui-font-base);
+    font-size: 1.0rem;
+    font-weight: 600;
     padding: 0.3rem 0.1rem;
 }
 :root[data-theme="light"] .stp-action-add-input {
@@ -5842,22 +5846,6 @@ input.pl-input--sm {
 .stp-budget-table tr:last-child td {
     border-bottom: none;
 }
-/* Column spacing: pair Spent+Budget tight, gap, 3-Mo Avg, gap, Remaining+Progress tight */
-.stp-budget-table th:nth-child(2), .stp-budget-table td:nth-child(2) {
-    padding-right: 0.15rem;
-}
-.stp-budget-table th:nth-child(3), .stp-budget-table td:nth-child(3) {
-    padding-left: 0.15rem;
-}
-.stp-budget-table th:nth-child(4), .stp-budget-table td:nth-child(4) {
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-}
-.stp-budget-table th:nth-child(5), .stp-budget-table td:nth-child(5),
-.stp-budget-table th:nth-child(6), .stp-budget-table td:nth-child(6) {
-    padding-right: 0.15rem;
-    padding-left: 0.15rem;
-}
 .stp-budget-table a {
     color: var(--text);
     text-decoration: none;
@@ -5872,9 +5860,9 @@ input.pl-input--sm {
     color: var(--text);
     font-size: 1.0rem;
     font-weight: 600;
+    white-space: nowrap;
 }
 .stp-budget-input {
-    width: 6.5em;
     background: transparent !important;
     border: none !important;
     outline: none !important;
@@ -5892,12 +5880,23 @@ input.pl-input--sm {
     box-shadow: none !important;
 }
 
+.stp-budget-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 .stp-budget-bar {
-    width: 80px;
+    width: 100px;
     height: 6px;
     background: var(--bg-tertiary);
     border-radius: 3px;
     overflow: hidden;
+}
+.stp-budget-pct {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
 }
 .stp-budget-fill {
     height: 100%;
@@ -5995,7 +5994,7 @@ input.pl-input--sm {
 }
 .stp-avg {
     color: var(--text-muted);
-    font-size: var(--ui-font-xs);
+    font-size: 1.0rem;
 }
 .stp-avg--over {
     color: var(--orange, #ff9f0a);

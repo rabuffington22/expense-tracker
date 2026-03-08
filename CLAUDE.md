@@ -363,6 +363,24 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 
 ## Change Log
 
+### 2026-03-07 — Short-Term Planning: action items polish + budget table readability
+UX improvements to the Short-Term Planning page across action items and monthly budget sections.
+
+1. **Action items readability** — Bumped action item text from `var(--ui-font-base)` (0.82rem) to `1.0rem` / weight 600, matching the budget table. Column headers ("MANUAL PAY", "AUTOPAY") bumped from 0.62rem to 0.78rem. Add-item input also 1.0rem/600.
+2. **Due date ordinals** — Action item `due_date` values (day-of-month integers like "3") now display with ordinal suffixes: 1st, 3rd, 19th. New `_ordinal()` helper in `short_term_planning.py`. `_get_action_items()` computes `due_display` field.
+3. **Ask Opus button fix** — Short-Term Planning page button was missing `btn btn-primary btn-sm` classes (had only `pl-btn-ask`). Now matches Dashboard and Cash Flow button styling.
+4. **Budget table: 3-Mo Avg readability** — `.stp-avg` font bumped from `var(--ui-font-xs)` (0.68rem) to `1.0rem` to match table body.
+5. **Budget table: uniform column spacing** — Removed all custom `nth-child` padding overrides that created uneven gaps. Budget input uses HTML `size` attribute (sized to value length) instead of fixed CSS `width`, preventing the Budget column from inflating with empty space.
+6. **Budget table: progress bar + percentage** — Bar widened from 80px to 100px. Percentage label shown permanently next to bar (e.g., "40%", "180%") via `.stp-budget-pct` span. Wrapped in `.stp-budget-progress-wrap` flex container.
+7. **Title spacing** — Added `margin-top: 1.5rem` to `.stp-section--border-label` for more breathing room between page title and Action Items box.
+8. **Review banner text** — Goal card review banner shortened from "Monthly check-in: Review your progress" to just "Monthly check-in".
+9. **Goal card alignment** — Added `min-height: 2.6rem` to `.stp-goal-header` and `align-items: flex-start` so dollar amounts and progress bars align vertically across all 3 goal cards even when titles wrap.
+10. **Lock In Plan button fix** — `{{ goal|tojson|e }}` in onclick attributes produced broken HTML for complex nested goal objects. Fixed by storing goal data in `<script type="application/json" id="stp-goals-data">` block and looking up by ID.
+11. **fmt_dollars() rounding fix** — `fmt_dollars()` in `web/__init__.py` now rounds before checking sign, preventing `-50 cents` from displaying as `−$0` in red.
+12. **Budget column order** — Swapped Spent and Budget columns (Spent now first).
+13. **Budget $ prefix** — Budget input wrapped in `<span class="stp-budget-input-wrap">$<input ...></span>` for dollar sign prefix.
+14. **Duplicate transaction cleanup** — Removed duplicate Cesar Mauro ($275) and Complete Landsculpture ($1,321.24) transactions caused by same payment visible from two Plaid-connected accounts. Cleaned on both local and production.
+
 ### 2026-03-07 — Rebrand: Ledger Oak → Ledger AI + icon update + unified accent color
 App renamed from "Ledger Oak" to "Ledger AI" across all source files and templates.
 

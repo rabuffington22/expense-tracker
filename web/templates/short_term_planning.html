@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-title-row">
     <h1 class="section-title">Short-Term Planning</h1>
-    <button class="pl-btn-ask" onclick="aiChatOpen('short-term-planning')">Ask Opus</button>
+    <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('short-term-planning')">Ask Opus</button>
 </div>
 
 {# ════════════════════════════════════════════════════════════════════════════
@@ -29,8 +29,8 @@
                         </button>
                     </form>
                     <span class="stp-action-title">{{ item.title }}</span>
-                    {% if item.due_date %}
-                    <span class="stp-action-due">{{ item.due_date }}</span>
+                    {% if item.due_display %}
+                    <span class="stp-action-due">{{ item.due_display }}</span>
                     {% endif %}
                     <form method="post" action="{{ url_for('short_term_planning.delete_action', item_id=item.id) }}" class="stp-action-del-form">
                         <button type="submit" class="stp-action-del" title="Remove">&times;</button>
@@ -303,6 +303,7 @@
                     <td>
                         <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
                                value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
+                               size="{{ '{:,.0f}'.format(item.budget_cents / 100)|length }}"
                                class="stp-budget-input"></span>
                     </td>
                     <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
@@ -312,9 +313,12 @@
                         {{ fmt_dollars(item.remaining_cents) }}
                     </td>
                     <td>
-                        <div class="stp-budget-bar">
-                            <div class="stp-budget-fill {% if item.pct <= 100 %}stp-bar-green{% elif item.pct <= 115 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"
-                                 style="width: {{ [item.pct, 100]|min }}%"></div>
+                        <div class="stp-budget-progress-wrap">
+                            <div class="stp-budget-bar">
+                                <div class="stp-budget-fill {% if item.pct <= 100 %}stp-bar-green{% elif item.pct <= 115 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"
+                                     style="width: {{ [item.pct, 100]|min }}%"></div>
+                            </div>
+                            <span class="stp-budget-pct">{{ item.pct }}%</span>
                         </div>
                     </td>
                 </tr>
