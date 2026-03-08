@@ -5842,22 +5842,20 @@ input.pl-input--sm {
 .stp-budget-table tr:last-child td {
     border-bottom: none;
 }
-/* Faint vertical dividers: pair Budget+Spent, pair Remaining+Progress */
-.stp-budget-table th:nth-child(4),
-.stp-budget-table td:nth-child(4) {
-    border-left: 1px solid rgba(255,255,255,0.06);
-    padding-left: 0.6rem;
+/* Column spacing: pair Budget+Spent tight, gap, 3-Mo Avg, gap, Remaining+Progress tight */
+.stp-budget-table th:nth-child(2), .stp-budget-table td:nth-child(2),
+.stp-budget-table th:nth-child(3), .stp-budget-table td:nth-child(3) {
+    padding-right: 0.15rem;
+    padding-left: 0.15rem;
 }
-.stp-budget-table th:nth-child(5),
-.stp-budget-table td:nth-child(5) {
-    border-left: 1px solid rgba(255,255,255,0.06);
-    padding-left: 0.6rem;
+.stp-budget-table th:nth-child(4), .stp-budget-table td:nth-child(4) {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
 }
-:root[data-theme="light"] .stp-budget-table th:nth-child(4),
-:root[data-theme="light"] .stp-budget-table td:nth-child(4),
-:root[data-theme="light"] .stp-budget-table th:nth-child(5),
-:root[data-theme="light"] .stp-budget-table td:nth-child(5) {
-    border-left-color: rgba(0,0,0,0.06);
+.stp-budget-table th:nth-child(5), .stp-budget-table td:nth-child(5),
+.stp-budget-table th:nth-child(6), .stp-budget-table td:nth-child(6) {
+    padding-right: 0.15rem;
+    padding-left: 0.15rem;
 }
 .stp-budget-table a {
     color: var(--text);
