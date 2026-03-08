@@ -171,7 +171,7 @@
 }
 
 html {
-    font-size: 18.75px;
+    font-size: 16.875px;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
 }
@@ -258,6 +258,8 @@ a:hover { text-decoration: underline; }
     margin-left: var(--sidebar-w);
     padding: 1.5rem 2.2rem 2.5rem;
     max-width: 1100px;
+    min-width: 0;
+    overflow-x: hidden;
     min-height: 100vh;
     font-size: var(--ui-font-base);
 }
@@ -1417,7 +1419,7 @@ a.kpi-panel-cell:hover {
 }
 .ie-ytick {
     fill: var(--text-muted);
-    font-size: 11.25px;
+    font-size: 10px;
     font-family: var(--font);
     font-variant-numeric: tabular-nums;
     text-anchor: end;
@@ -1425,7 +1427,7 @@ a.kpi-panel-cell:hover {
 }
 .ie-xtick {
     fill: var(--text-muted);
-    font-size: 10.5px;
+    font-size: 9.5px;
     font-family: var(--font);
     text-anchor: middle;
     opacity: 0.6;
@@ -1531,8 +1533,8 @@ a.kpi-panel-cell:hover {
 
 /* Responsive */
 @media (max-width: 480px) {
-    .ie-xtick { font-size: 8.75px; }
-    .ie-ytick { font-size: 9.375px; }
+    .ie-xtick { font-size: 7.9px; }
+    .ie-ytick { font-size: 8.4px; }
 }
 
 /* ── Segmented Control (Provider-style) ────────────────────────────────── */
@@ -5430,7 +5432,7 @@ input.pl-input--sm {
 
 .stp-goals-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
 }
 .stp-goal-card {
@@ -5441,6 +5443,7 @@ input.pl-input--sm {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
+    overflow: hidden;
 }
 .stp-goal-card:hover {
     box-shadow: var(--shadow-hover);
@@ -5700,6 +5703,9 @@ input.pl-input--sm {
 .stp-action-title {
     flex: 1;
     min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .stp-action-recurring {
     flex-shrink: 0;
