@@ -5357,6 +5357,9 @@ input.pl-input--sm {
 .stp-month-select {
     appearance: none;
     -webkit-appearance: none;
+    width: fit-content;
+    min-width: 90px;
+    max-width: 150px;
     background-color: var(--bg);
     border: 1.5px solid var(--series-left, #0a84ff);
     border-radius: 999px;
