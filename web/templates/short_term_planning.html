@@ -712,9 +712,12 @@ function stpShowTxns(category, subcategory) {
     title.textContent = subcategory ? category + ' › ' + subcategory : category;
     body.innerHTML = '<div class="stp-drill-empty">Loading…</div>';
     modal.showModal();
+    /* Store context for save operations */
+    modal._origCat = category;
+    modal._origSub = subcategory || '';
+    modal._month = '{{ current_month }}';
 
-    var month = '{{ current_month }}';
-    var url = '{{ url_for("short_term_planning.budget_transactions") }}?category=' + encodeURIComponent(category) + '&month=' + month;
+    var url = '{{ url_for("short_term_planning.budget_transactions") }}?category=' + encodeURIComponent(category) + '&month=' + modal._month;
     if (subcategory) url += '&subcategory=' + encodeURIComponent(subcategory);
     fetch(url)
         .then(function(r) { return r.text(); })
@@ -725,6 +728,131 @@ function stpShowTxns(category, subcategory) {
             body.innerHTML = '<div class="stp-drill-empty">Error loading transactions</div>';
         });
 }
+
+/* ── Inline category editing in drill-down ─────────────────────── */
+var _stpSubcatCache = null;
+
+function _stpEnsureCache(cb) {
+    if (_stpSubcatCache) { cb(); return; }
+    fetch('/transactions/all-subcategories')
+        .then(function(r) { return r.json(); })
+        .then(function(data) { _stpSubcatCache = data; cb(); })
+        .catch(function() { alert('Could not load categories'); });
+}
+
+function _stpBuildOptions(items, selected) {
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+        var s = items[i];
+        var esc = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+        html += '<option value="' + esc + '"' + (s === selected ? ' selected' : '') + '>' + esc + '</option>';
+    }
+    return html;
+}
+
+function stpEditTxn(row, txnId, currentCat, currentSub) {
+    /* Don't re-edit if already in edit mode */
+    if (row.classList.contains('stp-drill-edit-row')) return;
+    _stpEnsureCache(function() {
+        row._origHTML = row.innerHTML;
+        row.classList.add('stp-drill-edit-row');
+        row.classList.remove('stp-drill-row');
+        row.removeAttribute('onclick');
+
+        var cats = Object.keys(_stpSubcatCache).sort();
+        if (currentCat && cats.indexOf(currentCat) < 0) cats.push(currentCat);
+        cats.sort();
+        var subs = (_stpSubcatCache[currentCat] || ['General']).slice();
+        if (currentSub && subs.indexOf(currentSub) < 0) subs.push(currentSub);
+        subs.sort();
+
+        var cells = row.querySelectorAll('td');
+        var dateCell = cells[0].textContent;
+        var descCell = cells[1].textContent;
+        var amtCell = cells[3].textContent;
+
+        row.innerHTML =
+            '<td>' + dateCell + '</td>' +
+            '<td>' + descCell + '</td>' +
+            '<td colspan="2">' +
+                '<div class="stp-drill-edit-wrap">' +
+                    '<select id="stp-cat-' + txnId + '" onchange="stpCatChange(\'' + txnId + '\')">' +
+                        _stpBuildOptions(cats, currentCat) +
+                    '</select>' +
+                    '<select id="stp-sub-' + txnId + '">' +
+                        _stpBuildOptions(subs, currentSub) +
+                    '</select>' +
+                '</div>' +
+                '<div class="stp-drill-edit-actions">' +
+                    '<button class="btn btn-primary btn-sm" onclick="stpSaveTxn(\'' + txnId + '\')">Save</button>' +
+                    '<button class="btn btn-secondary btn-sm" onclick="stpCancelEdit(\'' + txnId + '\')">' + amtCell + '</button>' +
+                '</div>' +
+            '</td>';
+    });
+}
+
+function stpCatChange(txnId) {
+    var catSel = document.getElementById('stp-cat-' + txnId);
+    var subSel = document.getElementById('stp-sub-' + txnId);
+    var subs = (_stpSubcatCache[catSel.value] || ['General']);
+    subSel.innerHTML = _stpBuildOptions(subs, 'General');
+}
+
+function stpSaveTxn(txnId) {
+    var catSel = document.getElementById('stp-cat-' + txnId);
+    var subSel = document.getElementById('stp-sub-' + txnId);
+    var modal = document.getElementById('stp-txn-modal');
+
+    var fd = new FormData();
+    fd.append('category', catSel.value);
+    fd.append('subcategory', subSel.value);
+    fd.append('orig_category', modal._origCat);
+    fd.append('orig_subcategory', modal._origSub);
+    fd.append('month', modal._month);
+
+    fetch('/planning/short-term/budget/update-txn/' + encodeURIComponent(txnId), {
+        method: 'POST',
+        body: fd
+    })
+    .then(function(r) {
+        if (!r.ok) throw new Error('Save failed');
+        /* Check for budget refresh trigger */
+        var trigger = r.headers.get('HX-Trigger');
+        if (trigger && trigger.indexOf('stpBudgetChanged') >= 0) {
+            window._stpNeedsRefresh = true;
+        }
+        return r.text();
+    })
+    .then(function(html) {
+        document.getElementById('stp-txn-modal-body').innerHTML = html;
+    })
+    .catch(function() {
+        alert('Error saving — try again');
+    });
+}
+
+function stpCancelEdit(txnId) {
+    var row = document.getElementById('stp-txnr-' + txnId);
+    if (row && row._origHTML) {
+        row.innerHTML = row._origHTML;
+        row.classList.remove('stp-drill-edit-row');
+        row.classList.add('stp-drill-row');
+        var cat = row.querySelector('td:nth-child(3)').textContent;
+        row.setAttribute('onclick',
+            "stpEditTxn(this,'" + txnId + "'," +
+            JSON.stringify(document.getElementById('stp-txn-modal')._origCat) + "," +
+            JSON.stringify(cat) + ")"
+        );
+    }
+}
+
+/* Refresh budget when modal closes after edits */
+document.getElementById('stp-txn-modal').addEventListener('close', function() {
+    if (window._stpNeedsRefresh) {
+        window._stpNeedsRefresh = false;
+        window.location.reload();
+    }
+});
 
 // Strip commas from money inputs on submit
 document.addEventListener('submit', function(e) {

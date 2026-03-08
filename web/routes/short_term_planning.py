@@ -6,7 +6,7 @@ import json
 import logging
 from datetime import date, datetime, timedelta, timezone
 
-from flask import Blueprint, render_template, request, g, redirect, url_for
+from flask import Blueprint, render_template, request, g, redirect, url_for, make_response, jsonify
 
 from core.db import get_connection, init_db
 
@@ -1072,6 +1072,72 @@ def delete_action(item_id):
 # ── Budget Drill-Down ────────────────────────────────────────────────────────
 
 
+def _render_budget_transactions(conn, category, subcategory, month):
+    """Build HTML table of transactions for a category drill-down (reusable)."""
+    from markupsafe import escape
+    import json as _json
+
+    if subcategory:
+        rows = conn.execute(
+            "SELECT transaction_id, date, description_raw, merchant_canonical, "
+            "amount, category, subcategory "
+            "FROM transactions "
+            "WHERE category = ? "
+            "AND COALESCE(NULLIF(subcategory,''), 'General') = ? "
+            "AND strftime('%Y-%m', date) = ? "
+            "AND amount < 0 "
+            "ORDER BY date DESC",
+            (category, subcategory, month),
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT transaction_id, date, description_raw, merchant_canonical, "
+            "amount, category, subcategory "
+            "FROM transactions "
+            "WHERE category = ? "
+            "AND strftime('%Y-%m', date) = ? "
+            "AND amount < 0 "
+            "ORDER BY date DESC",
+            (category, month),
+        ).fetchall()
+
+    lines = []
+    if not rows:
+        lines.append('<div class="stp-drill-empty">No transactions</div>')
+    else:
+        lines.append('<table class="stp-drill-table">')
+        lines.append(
+            "<thead><tr><th>Date</th><th>Description</th>"
+            "<th>Sub</th><th>Amount</th></tr></thead><tbody>"
+        )
+        for r in rows:
+            txn_id = r["transaction_id"]
+            desc = r["merchant_canonical"] or r["description_raw"] or ""
+            if len(desc) > 45:
+                desc = desc[:42] + "\u2026"
+            amt = abs(r["amount"])
+            cat_val = r["category"] or ""
+            sub_val = r["subcategory"] or "General"
+            # Use &quot; for quotes inside onclick HTML attribute
+            cat_attr = escape(cat_val).replace("'", "&#39;")
+            sub_attr = escape(sub_val).replace("'", "&#39;")
+            txn_attr = escape(txn_id).replace("'", "&#39;")
+            lines.append(
+                f'<tr id="stp-txnr-{escape(txn_id)}" class="stp-drill-row" '
+                f"onclick=\"stpEditTxn(this,'{txn_attr}','{cat_attr}','{sub_attr}')\">"
+                f"<td>{r['date'][5:]}</td>"
+                f"<td>{escape(desc)}</td>"
+                f"<td>{escape(sub_val)}</td>"
+                f"<td>${amt:,.2f}</td></tr>"
+            )
+        lines.append("</tbody></table>")
+        lines.append(
+            '<div class="stp-drill-hint">Tap a row to change its category</div>'
+        )
+
+    return "\n".join(lines)
+
+
 @bp.route("/budget/transactions")
 def budget_transactions():
     """Return HTML partial of transactions for a category in the current month."""
@@ -1081,54 +1147,44 @@ def budget_transactions():
 
     conn = get_connection(g.entity_key)
     try:
-        if subcategory:
-            rows = conn.execute(
-                "SELECT date, description_raw, merchant_canonical, amount, subcategory "
-                "FROM transactions "
-                "WHERE category = ? "
-                "AND COALESCE(NULLIF(subcategory,''), 'General') = ? "
-                "AND strftime('%Y-%m', date) = ? "
-                "AND amount < 0 "
-                "ORDER BY date DESC",
-                (category, subcategory, month),
-            ).fetchall()
-        else:
-            rows = conn.execute(
-                "SELECT date, description_raw, merchant_canonical, amount, subcategory "
-                "FROM transactions "
-                "WHERE category = ? "
-                "AND strftime('%Y-%m', date) = ? "
-                "AND amount < 0 "
-                "ORDER BY date DESC",
-                (category, month),
-            ).fetchall()
+        return _render_budget_transactions(conn, category, subcategory, month)
+    finally:
+        conn.close()
 
-        from markupsafe import escape
 
-        lines = []
-        if not rows:
-            lines.append('<div class="stp-drill-empty">No transactions</div>')
-        else:
-            lines.append('<table class="stp-drill-table">')
-            lines.append(
-                "<thead><tr><th>Date</th><th>Description</th>"
-                "<th>Sub</th><th>Amount</th></tr></thead><tbody>"
+@bp.route("/budget/update-txn/<txn_id>", methods=["POST"])
+def budget_update_txn(txn_id):
+    """Update a transaction's category/subcategory from the budget drill-down."""
+    new_category = request.form.get("category", "").strip()
+    new_subcategory = request.form.get("subcategory", "").strip() or "General"
+    orig_category = request.form.get("orig_category", "")
+    orig_subcategory = request.form.get("orig_subcategory", "")
+    month = request.form.get("month", date.today().strftime("%Y-%m"))
+
+    if not new_category:
+        return "Missing category", 400
+
+    conn = get_connection(g.entity_key)
+    try:
+        # Auto-create subcategory if new
+        if new_subcategory and new_subcategory not in ("General", "Unknown"):
+            conn.execute(
+                "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
+                "VALUES (?,?,?)",
+                (new_category, new_subcategory, datetime.now(timezone.utc).isoformat()),
             )
-            for r in rows:
-                desc = r["merchant_canonical"] or r["description_raw"] or ""
-                if len(desc) > 45:
-                    desc = desc[:42] + "\u2026"
-                amt = abs(r["amount"])
-                sub = escape(r["subcategory"] or "General")
-                lines.append(
-                    f"<tr><td>{r['date'][5:]}</td>"
-                    f"<td>{escape(desc)}</td>"
-                    f"<td>{sub}</td>"
-                    f"<td>${amt:,.2f}</td></tr>"
-                )
-            lines.append("</tbody></table>")
+        conn.execute(
+            "UPDATE transactions SET category=?, subcategory=?, confidence=1.0 "
+            "WHERE transaction_id=?",
+            (new_category, new_subcategory, txn_id),
+        )
+        conn.commit()
 
-        return "\n".join(lines)
+        # Return refreshed drill-down for the ORIGINAL category
+        html = _render_budget_transactions(conn, orig_category, orig_subcategory, month)
+        resp = make_response(html)
+        resp.headers["HX-Trigger"] = "stpBudgetChanged"
+        return resp
     finally:
         conn.close()
 

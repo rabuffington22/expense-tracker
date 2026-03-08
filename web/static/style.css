@@ -6062,6 +6062,46 @@ input.pl-input--sm {
     text-align: center;
     padding: 1rem;
 }
+.stp-drill-hint {
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+    text-align: center;
+    padding: 0.5rem 0 0;
+    opacity: 0.6;
+}
+.stp-drill-row {
+    cursor: pointer;
+}
+.stp-drill-row:hover {
+    background: var(--hover-bg);
+}
+.stp-drill-edit-row td {
+    vertical-align: middle;
+}
+.stp-drill-edit-wrap {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+.stp-drill-edit-wrap select {
+    font-size: var(--ui-font-xs);
+    padding: 0.2rem 0.3rem;
+    background: var(--control-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    max-width: 150px;
+    flex: 1;
+}
+.stp-drill-edit-actions {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+.stp-drill-edit-actions .btn {
+    font-size: var(--ui-font-xs);
+    padding: 0.15rem 0.5rem;
+}
 
 /* ── Unbudgeted section ────────────────────────────────────────────────────── */
 
