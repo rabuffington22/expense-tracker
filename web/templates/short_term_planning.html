@@ -257,14 +257,13 @@
     </div>
 
     {% if budget_status %}
-    <div class="stp-budget-month-row">
+    <div class="stp-budget-kpi-row">
         <select class="stp-month-select stp-month-select--standalone" id="budget" onchange="window.location.href='{{ url_for('short_term_planning.index') }}?month=' + this.value + '#budget'">
             {% for m in budget_months %}
             <option value="{{ m.value }}" {% if m.value == current_month %}selected{% endif %}>{{ m.label }}</option>
             {% endfor %}
         </select>
-    </div>
-    <div class="stp-budget-kpi">
+        <div class="stp-budget-kpi">
         <div class="stp-budget-kpi-grid">
             <div class="stp-budget-kpi-cell">
                 <div class="stp-budget-kpi-label">BUDGETED</div>
@@ -279,6 +278,7 @@
                 <div class="stp-budget-kpi-value {% if total_budgeted - total_spent >= 0 %}stp-green{% else %}stp-red{% endif %}">
                     {{ fmt_dollars(total_budgeted - total_spent) }}
                 </div>
+            </div>
             </div>
         </div>
     </div>
