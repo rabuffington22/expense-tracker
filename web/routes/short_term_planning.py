@@ -1125,7 +1125,7 @@ def budget_subcategories():
                     remaining = budget_cents - spent_cents
                     pct = int(round(spent_cents / budget_cents * 100))
                     budget_val = f"{budget_cents / 100:,.0f}"
-                    rem_class = "stp-green" if remaining >= 0 else "stp-red"
+                    rem_class = "stp-green" if remaining >= -100 else "stp-red"
                     bar_class = (
                         "stp-bar-green" if pct <= 100
                         else "stp-bar-yellow" if pct <= 115

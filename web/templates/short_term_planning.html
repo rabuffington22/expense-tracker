@@ -275,7 +275,7 @@
             </div>
             <div class="stp-budget-kpi-cell">
                 <div class="stp-budget-kpi-label">REMAINING</div>
-                <div class="stp-budget-kpi-value {% if total_budgeted - total_spent >= 0 %}stp-green{% else %}stp-red{% endif %}">
+                <div class="stp-budget-kpi-value {% if total_budgeted - total_spent >= -100 %}stp-green{% else %}stp-red{% endif %}">
                     {{ fmt_dollars(total_budgeted - total_spent) }}
                 </div>
             </div>
@@ -323,7 +323,7 @@
                         <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
                             {{ fmt_dollars(item.avg_3mo_cents) }}{% if item.avg_month_count < 3 %}<span class="stp-avg-note">{{ item.avg_month_count }}mo</span>{% endif %}
                         </td>
-                        <td class="{% if item.remaining_cents >= 0 %}stp-green{% else %}stp-red{% endif %}">
+                        <td class="{% if item.remaining_cents >= -100 %}stp-green{% else %}stp-red{% endif %}">
                             {{ fmt_dollars(item.remaining_cents) }}
                         </td>
                         <td>
