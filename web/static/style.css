@@ -5803,15 +5803,16 @@ input.pl-input--sm {
     padding: 0.5rem 0.4rem;
 }
 .stp-budget-kpi-label {
-    font-size: 0.62rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     color: var(--text-muted);
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.2rem;
 }
 .stp-budget-kpi-value {
-    font-size: 1.4rem;
-    font-weight: 500;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
     color: var(--text-secondary);
 }
 .stp-budget-kpi-cell:first-child .stp-budget-kpi-value {
@@ -6181,6 +6182,6 @@ select.stp-modal-input {
         font-size: 1.1rem;
     }
     .stp-budget-kpi-value {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 }
