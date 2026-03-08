@@ -6,13 +6,96 @@ No authentication required (bypassed in __init__.py).
 from __future__ import annotations
 
 import logging
-from datetime import date, datetime
+import os
+import threading
+from datetime import date, datetime, timezone
 
 from flask import Blueprint, render_template, request
 
 from core.db import get_connection, init_db
 
 log = logging.getLogger(__name__)
+
+# ── Background Plaid sync ────────────────────────────────────────────────────
+
+_sync_lock = threading.Lock()
+
+
+def _background_sync():
+    """Sync Plaid transactions for personal + LL in a background thread."""
+    if not os.environ.get("PLAID_CLIENT_ID") or not os.environ.get("PLAID_SECRET"):
+        return
+
+    if not _sync_lock.acquire(blocking=False):
+        log.info("Kristine sync: skipped (already running)")
+        return
+
+    try:
+        from core.plaid_client import get_transactions as plaid_get_transactions
+        from web.routes.plaid import _upsert_plaid_transaction
+
+        for entity_key in ("personal", "luxelegacy"):
+            init_db(entity_key)
+            conn = get_connection(entity_key)
+            try:
+                items = [dict(r) for r in conn.execute("SELECT * FROM plaid_items").fetchall()]
+            finally:
+                conn.close()
+
+            if not items:
+                continue
+
+            for item in items:
+                try:
+                    conn = get_connection(entity_key)
+                    try:
+                        acct_rows = conn.execute(
+                            "SELECT account_id FROM plaid_accounts WHERE item_id=? AND enabled=1",
+                            (item["item_id"],),
+                        ).fetchall()
+                        enabled = {r["account_id"] for r in acct_rows}
+                    finally:
+                        conn.close()
+
+                    result = plaid_get_transactions(item["access_token"], cursor=item.get("cursor"))
+
+                    conn = get_connection(entity_key)
+                    try:
+                        for t in result["added"]:
+                            if t["account_id"] not in enabled:
+                                continue
+                            _upsert_plaid_transaction(conn, entity_key, item["item_id"], t)
+
+                        for t in result["modified"]:
+                            if t["account_id"] not in enabled:
+                                continue
+                            description = t.get("merchant_name") or t.get("name") or ""
+                            amount = -t["amount"]
+                            conn.execute(
+                                "UPDATE transactions SET description_raw=?, merchant_raw=?, "
+                                "amount=?, amount_cents=? WHERE plaid_transaction_id=?",
+                                (description, description, amount, round(amount * 100),
+                                 t["plaid_transaction_id"]),
+                            )
+
+                        now = datetime.now(timezone.utc).isoformat()
+                        conn.execute(
+                            "UPDATE plaid_items SET cursor=?, last_synced=? WHERE item_id=?",
+                            (result["next_cursor"], now, item["item_id"]),
+                        )
+                        conn.commit()
+                    finally:
+                        conn.close()
+
+                except Exception as exc:
+                    log.warning("Kristine sync error (%s/%s): %s",
+                                entity_key, item.get("institution_name"), exc)
+
+        log.info("Kristine background sync complete")
+    except Exception as exc:
+        log.warning("Kristine background sync failed: %s", exc)
+    finally:
+        _sync_lock.release()
 
 bp = Blueprint("kristine", __name__, url_prefix="/k")
 
@@ -342,6 +425,9 @@ def index():
     # Ensure DBs are initialized
     init_db("personal")
     init_db("luxelegacy")
+
+    # Kick off background Plaid sync (non-blocking)
+    threading.Thread(target=_background_sync, daemon=True).start()
 
     # Personal Focus budget + account balances
     personal_conn = get_connection("personal")
