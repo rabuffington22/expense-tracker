@@ -315,10 +315,17 @@
                             </span>
                         </td>
                         <td>
+                            {% if item.is_per_payroll %}
+                            <span class="stp-budget-input-wrap stp-budget-input-wrap--pp">$<input type="text" name="budget_{{ item.category }}"
+                                   value="{{ '{:,.0f}'.format(item.per_payroll_cents / 100) }}"
+                                   size="{{ '{:,.0f}'.format(item.per_payroll_cents / 100)|length }}"
+                                   class="stp-budget-input"><span class="stp-pp-annotation">&times;{{ item.pay_periods }} = ${{ '{:,.0f}'.format(item.budget_cents / 100) }}</span></span>
+                            {% else %}
                             <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
                                    value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
                                    size="{{ '{:,.0f}'.format(item.budget_cents / 100)|length }}"
                                    class="stp-budget-input"></span>
+                            {% endif %}
                         </td>
                         <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
                             {{ fmt_dollars(item.avg_3mo_cents) }}{% if item.avg_month_count < 3 %}<span class="stp-avg-note">{{ item.avg_month_count }}mo</span>{% endif %}

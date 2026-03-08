@@ -644,6 +644,17 @@ CREATE TABLE IF NOT EXISTS budget_subcategories (
 );
 """
 
+_MIGRATION_50 = """
+CREATE TABLE IF NOT EXISTS payroll_schedule (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    anchor_date TEXT NOT NULL,
+    cadence_days INTEGER NOT NULL DEFAULT 14,
+    pay_dow INTEGER NOT NULL DEFAULT 2
+);
+ALTER TABLE budget_items ADD COLUMN is_per_payroll INTEGER DEFAULT 0;
+ALTER TABLE budget_items ADD COLUMN per_payroll_cents INTEGER;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -694,6 +705,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (47, _MIGRATION_47),
     (48, _MIGRATION_48),
     (49, _MIGRATION_49),
+    (50, _MIGRATION_50),
 ]
 
 _DEFAULT_CATEGORIES = [

@@ -5897,6 +5897,17 @@ input.pl-input--sm {
     border: none !important;
     box-shadow: none !important;
 }
+/* Per-payroll annotation (×2 = $51,547) */
+.stp-budget-input-wrap--pp {
+    gap: 0.3rem;
+}
+.stp-pp-annotation {
+    font-size: 0.78rem;
+    font-weight: 500;
+    opacity: 0.5;
+    white-space: nowrap;
+    margin-left: 0.15rem;
+}
 
 .stp-budget-progress-wrap {
     display: flex;

@@ -165,7 +165,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (49 Migrations)
+## Database (50 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
@@ -182,8 +182,9 @@ Key tables:
 - **`subscription_account_info`** -- Subscription account details (Migration 37). Fields: subscription_id (FK UNIQUE), account_email, account_phone, phone_a_friend_name, phone_a_friend_number, notes.
 - **`planning_settings`** -- Planning page settings (Migration 35). Fields: inflation_rate (bps), current_age, custom_milestone, birth_date (Migration 38). Singleton row (id=1), stored in personal.sqlite.
 - **`planning_items`** -- Planning assets/liabilities (Migration 36). Fields: item_type (asset/liability), name, current_value_cents, annual_rate_bps, monthly_contrib_cents, monthly_payment_cents, source (manual/cashflow), cashflow_account_name, sort_order.
-- **`budget_items`** -- Monthly budget targets per category (Migration 48). Fields: category (UNIQUE), monthly_budget_cents, budget_section (fixed/focus/other). Section groups categories into Fixed (housing, ranch, insurance, retirement, student loans), Focus (discretionary to optimize), and Everything Else.
+- **`budget_items`** -- Monthly budget targets per category (Migration 48). Fields: category (UNIQUE), monthly_budget_cents, budget_section (fixed/focus/other), is_per_payroll (Migration 50), per_payroll_cents (Migration 50). Section groups categories into Fixed (housing, ranch, insurance, retirement, student loans), Focus (discretionary to optimize), and Everything Else. Per-payroll categories (Payroll, Taxes) store per-payroll amount and dynamically multiply by pay periods per month.
 - **`budget_subcategories`** -- Optional subcategory-level budget targets (Migration 49). Fields: category, subcategory, monthly_budget_cents, created_at. UNIQUE(category, subcategory). Separate from budget_items. When set, subcategory rows show remaining amount and progress bar.
+- **`payroll_schedule`** -- Biweekly payroll cadence (Migration 50). Singleton table (CHECK id=1). Fields: anchor_date (known payday YYYY-MM-DD), cadence_days (14), pay_dow (day-of-week payment hits bank, 0=Mon, 2=Wed). Used by `_count_pay_periods()` to compute how many paydays fall in a given month (typically 2, sometimes 3). Only BFM uses this; Personal/LL have no row.
 
 ## Vendor Workflow (Three-Phase)
 
@@ -364,6 +365,18 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-08 — Pay-period-aware budgets + Henry Schein upload + Medical Supplies subcategories
+Biweekly payroll budget multiplier, Henry Schein XLSX import with matching, and Medical Supplies subcategory breakdown for BFM.
+
+1. **Pay-period-aware budgets (Migration 50)** — New `payroll_schedule` singleton table stores biweekly cadence (anchor date 2026-02-25, every 14 days, Wednesday). New `is_per_payroll` and `per_payroll_cents` columns on `budget_items`. `_get_budget_status()` dynamically computes effective monthly budget as `per_payroll_cents × pay_periods`. Budget input shows per-payroll amount with `×2 = $51,546` or `×3 = $77,319` annotation. `save_budget()` updates `per_payroll_cents` and syncs `monthly_budget_cents = per_payroll * 2` for backward compatibility. Payroll ($25,773/payroll) and Taxes ($9,750/payroll) marked as per-payroll categories.
+2. **Henry Schein XLSX upload** — Imported 6 invoices (58 line items, $9,516 total, Oct 2025–Feb 2026) from Items Purchased export. 3 invoices matched to bank transactions (Dec $2,253, Jan $2,136, Feb $2,037) — all exact matches with $0 amount diff.
+3. **Henry Schein parser fix** — Amount column in XLSX shows invoice total on every row (not per-item). Parser was summing these, inflating totals (e.g., $2,037 × 11 rows = $22,408). Fixed `inv_total` to take Amount once per invoice: `_parse_amount(group.iloc[0].get(amount_col))`. Item amounts now use `unit_price * qty`.
+4. **Python 3.9 compat** — Added `from __future__ import annotations` to `core/henryschein.py` to fix `str | None` type hint error.
+5. **Henry Schein merchant alias** — Created `henry schein` (contains) → Medical Supplies alias for auto-categorization of future transactions.
+6. **Henry Schein transactions recategorized** — 3 matched bank transactions moved from Household/Supplies → Medical Supplies / General. Merchant canonical set to "Henry Schein".
+7. **Medical Supplies subcategories** — Created 8 subcategories: Diagnostics (76% of HS spend — Cepheid COVID/Flu/RSV test kits $680/ea, Strep A, HemoCue glucose, EKG electrodes), Rx (8% — injectable meds), Exam Supplies (8% — table paper, thermometer covers, pulse ox, ear curettes), PPE (4% — gloves, Sani-Cloth wipes, sharps containers, masks), Needles & Syringes (4% — safety needles, luer lock syringes), Wound Care (<1% — adhesive bandages), Liquid Nitrogen (Air Supply deliveries), General (mixed Henry Schein orders).
+8. **Medical Supplies moved to FOCUS** — Budget section changed from "other" to "focus" ($2,300/mo budget).
 
 ### 2026-03-08 — Amazon Business upload + BFM category overhaul + budget polish
 Amazon Business CSV import with order matching, major BFM category restructuring, subcategory budgets, and Personal transaction recategorization.

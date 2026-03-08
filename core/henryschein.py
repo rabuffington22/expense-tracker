@@ -5,6 +5,7 @@ by Invoice No so each group corresponds to one bank charge.
 
 Output format matches Amazon's order dicts for reuse with save_orders_to_db().
 """
+from __future__ import annotations
 
 from datetime import datetime
 
@@ -120,19 +121,21 @@ def parse_henryschein_xlsx(file_or_path) -> tuple[list[dict], list[str]]:
 
         items = []
         for _, row in group.iterrows():
+            item_amount = _parse_amount(row.get(unit_price_col)) if unit_price_col else 0
+            item_qty = int(row.get(qty_col, 1)) if qty_col and pd.notna(row.get(qty_col)) else 1
             items.append({
                 "description": str(row.get(desc_col, "Unknown")),
-                "amount": _parse_amount(row.get(amount_col)),
-                "qty": int(row.get(qty_col, 1)) if qty_col and pd.notna(row.get(qty_col)) else 1,
-                "unit_price": _parse_amount(row.get(unit_price_col)) if unit_price_col else 0,
+                "amount": round(item_amount * item_qty, 2),
+                "qty": item_qty,
+                "unit_price": item_amount,
                 "item_code": str(row.get(item_code_col, "")) if item_code_col else "",
                 "manufacturer": str(row.get(manufacturer_col, "")) if manufacturer_col and pd.notna(row.get(manufacturer_col)) else "",
                 "hs_category": str(row.get(category_col, "")) if category_col and pd.notna(row.get(category_col)) else "",
                 "hs_subcat": str(row.get(subcat1_col, "")) if subcat1_col and pd.notna(row.get(subcat1_col)) else "",
             })
 
-        # Invoice total = sum of Amount column for this invoice
-        inv_total = round(sum(i["amount"] for i in items), 2)
+        # Invoice total from Amount column (same value on every row = invoice total)
+        inv_total = _parse_amount(group.iloc[0].get(amount_col))
 
         # Invoice date — use first row's date
         inv_date = _parse_date(group.iloc[0].get(invoice_date_col))

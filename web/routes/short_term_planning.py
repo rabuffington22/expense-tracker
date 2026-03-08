@@ -33,6 +33,42 @@ def _parse_dollar_to_cents(dollar_str: str) -> int:
         return 0
 
 
+def _get_payroll_schedule(conn) -> dict | None:
+    """Return the payroll schedule singleton or None if not configured."""
+    row = conn.execute("SELECT * FROM payroll_schedule WHERE id = 1").fetchone()
+    return dict(row) if row else None
+
+
+def _count_pay_periods(anchor_date_str: str, cadence_days: int, month_str: str) -> int:
+    """Count how many pay periods fall within a given month.
+
+    Args:
+        anchor_date_str: A known payday in YYYY-MM-DD format.
+        cadence_days: Days between paydays (14 for biweekly).
+        month_str: Target month in YYYY-MM format.
+
+    Returns:
+        Number of paydays in the month (typically 2 or 3).
+    """
+    anchor = datetime.strptime(anchor_date_str, "%Y-%m-%d").date()
+    target = datetime.strptime(month_str, "%Y-%m").date()
+    first_day = target.replace(day=1)
+    last_day = target.replace(day=calendar.monthrange(target.year, target.month)[1])
+
+    # Step backward from anchor to before the target month
+    d = anchor
+    while d >= first_day:
+        d -= timedelta(days=cadence_days)
+    # Now d is before the month — step forward and count
+    count = 0
+    d += timedelta(days=cadence_days)
+    while d <= last_day:
+        if d >= first_day:
+            count += 1
+        d += timedelta(days=cadence_days)
+    return count
+
+
 def _get_goals(conn) -> list[dict]:
     """Return all goals for the current entity."""
     rows = conn.execute(
@@ -230,15 +266,27 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
         avg_actuals[r["cat"]] = int(round(r["total"] * 100 / max(mc, 1)))
         avg_month_counts[r["cat"]] = mc
 
+    # Fetch payroll schedule for per-payroll budget computation
+    schedule = _get_payroll_schedule(conn)
+    pay_periods = None
+    if schedule:
+        pay_periods = _count_pay_periods(
+            schedule["anchor_date"], schedule["cadence_days"], month
+        )
+
     result = []
     for bi in budget_items:
         spent = actuals.get(bi["category"], 0)
-        budget = bi["monthly_budget_cents"]
+        is_pp = bi.get("is_per_payroll", 0) and bi.get("per_payroll_cents")
+        if is_pp and schedule and pay_periods:
+            budget = bi["per_payroll_cents"] * pay_periods
+        else:
+            budget = bi["monthly_budget_cents"]
         remaining = budget - spent
         pct = int(round(spent / budget * 100)) if budget > 0 else 0
         avg_3mo = avg_actuals.get(bi["category"], 0)
         avg_mc = avg_month_counts.get(bi["category"], 0)
-        result.append({
+        item = {
             "category": bi["category"],
             "budget_cents": budget,
             "spent_cents": spent,
@@ -247,7 +295,11 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
             "avg_3mo_cents": avg_3mo,
             "avg_month_count": avg_mc,
             "budget_section": bi.get("budget_section", "other"),
-        })
+            "is_per_payroll": bool(is_pp),
+            "per_payroll_cents": bi.get("per_payroll_cents", 0) or 0,
+            "pay_periods": pay_periods if is_pp else None,
+        }
+        result.append(item)
 
     # Sort by 3-mo avg spending descending (most expensive categories first)
     result.sort(key=lambda x: x["avg_3mo_cents"], reverse=True)
@@ -885,18 +937,32 @@ def save_budget():
                 category = key[7:]  # strip 'budget_' prefix
                 cents = _parse_dollar_to_cents(value)
                 if cents > 0:
-                    # Update existing or insert new (preserve budget_section)
-                    cur = conn.execute(
-                        "UPDATE budget_items SET monthly_budget_cents = ? "
-                        "WHERE category = ?",
-                        (cents, category),
-                    )
-                    if cur.rowcount == 0:
+                    # Check if this is a per-payroll category
+                    existing = conn.execute(
+                        "SELECT is_per_payroll FROM budget_items WHERE category = ?",
+                        (category,),
+                    ).fetchone()
+                    if existing and existing["is_per_payroll"]:
+                        # Value is per-payroll amount; store it and
+                        # set monthly_budget_cents = per_payroll * 2 as default
                         conn.execute(
-                            "INSERT INTO budget_items (category, monthly_budget_cents) "
-                            "VALUES (?, ?)",
-                            (category, cents),
+                            "UPDATE budget_items SET per_payroll_cents = ?, "
+                            "monthly_budget_cents = ? WHERE category = ?",
+                            (cents, cents * 2, category),
                         )
+                    else:
+                        # Standard category — update existing or insert new
+                        cur = conn.execute(
+                            "UPDATE budget_items SET monthly_budget_cents = ? "
+                            "WHERE category = ?",
+                            (cents, category),
+                        )
+                        if cur.rowcount == 0:
+                            conn.execute(
+                                "INSERT INTO budget_items (category, monthly_budget_cents) "
+                                "VALUES (?, ?)",
+                                (category, cents),
+                            )
                 else:
                     conn.execute(
                         "DELETE FROM budget_items WHERE category = ?",
