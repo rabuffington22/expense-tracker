@@ -382,6 +382,10 @@ Amazon Business CSV import with order matching, major BFM category restructuring
 12. **Food/Coffee** — Amazon coffee pods and creamer moved from Food/General.
 13. **Amazon Supplies recategorization** — Purell → Bathroom, Brother toner/labels → Supplies/Printer, PC fans/cables/adapters → IT/Hardware, screws/WD-40/workbench mat → Office Maintenance.
 14. **Deposit Item Returns** — Two $9,900 bounced transfers moved from Fees to Internal Transfer.
+15. **Eliminated non-business categories** — Home (13 txns), Household (6 txns), Health & Beauty (8 txns), Entertainment (2 txns) all emptied. Items redistributed: LED lighting/mounts/cables → IT/Hardware, tools → Electronics/Tools, paper towels → Kitchen/Paper Products, toilet paper → Bathroom/Toilet Paper, Lysol/tissue → Bathroom, dish soap/trash bags/trash can → Kitchen, storage boxes/batteries → Supplies, tech wipes → IT/Hardware.
+16. **BFM budgets rebuilt** — Cleared stale budgets (IT Services, Subscriptions, Partner Buyout) and rebuilt 27 category budgets based on 3-month averages. Fixed ($114,559/mo): Payroll $61k, Taxes $19.5k, Rent $10,625, Loan $9,884, Retirement $7,500, Utilities $3,600, Patient Services $1,750, Accounting $700. Focus ($11,200/mo): IT $2,700, Facilities $2,600, Medical Supplies $2,300, Software $1,400, Food $1,300, Marketing $500, Compliance $400. Everything Else ($3,265/mo): Fees, HR, Electronics, Staff Gifts, Storage, Supplies, Office Environment, Collections, Office Maintenance, Professional Development, Shipping, Training. Grand total: $129,024/mo.
+17. **Check categorization** — Check #10070/$10065/$10058 → Retirement/Simple IRA (Edward Jones). Check #3697 → HR (provider license reimbursement). Check #3687 remains Needs Review.
+18. **SERVICE charge** — $1 bank service charge moved from Needs Review to Fees.
 
 ### 2026-03-08 — Subcategory budgets + budget layout polish + transaction recategorization
 Optional subcategory-level budgets, budget KPI layout improvements, and bulk transaction recategorization across November–December.
