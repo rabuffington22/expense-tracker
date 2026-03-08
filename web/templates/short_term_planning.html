@@ -279,8 +279,8 @@
             <thead>
                 <tr>
                     <th>Category</th>
-                    <th>Budget</th>
                     <th>Spent</th>
+                    <th>Budget</th>
                     <th>3-Mo Avg</th>
                     <th>Remaining</th>
                     <th>Progress</th>
@@ -296,14 +296,14 @@
                         </span>
                     </td>
                     <td>
-                        <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
-                               value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
-                               class="stp-budget-input"></span>
-                    </td>
-                    <td>
                         <span class="stp-spent-link" onclick="stpShowTxns('{{ item.category }}')">
                             {{ fmt_dollars(item.spent_cents) }}
                         </span>
+                    </td>
+                    <td>
+                        <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
+                               value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
+                               class="stp-budget-input"></span>
                     </td>
                     <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
                         {{ fmt_dollars(item.avg_3mo_cents) }}{% if item.avg_month_count < 3 %}<span class="stp-avg-note">{{ item.avg_month_count }}mo</span>{% endif %}
