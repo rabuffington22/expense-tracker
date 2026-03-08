@@ -985,19 +985,32 @@ def delete_action(item_id):
 def budget_transactions():
     """Return HTML partial of transactions for a category in the current month."""
     category = request.args.get("category", "")
+    subcategory = request.args.get("subcategory", "")
     month = request.args.get("month", date.today().strftime("%Y-%m"))
 
     conn = get_connection(g.entity_key)
     try:
-        rows = conn.execute(
-            "SELECT date, description_raw, merchant_canonical, amount, subcategory "
-            "FROM transactions "
-            "WHERE category = ? "
-            "AND strftime('%Y-%m', date) = ? "
-            "AND amount < 0 "
-            "ORDER BY date DESC",
-            (category, month),
-        ).fetchall()
+        if subcategory:
+            rows = conn.execute(
+                "SELECT date, description_raw, merchant_canonical, amount, subcategory "
+                "FROM transactions "
+                "WHERE category = ? "
+                "AND COALESCE(NULLIF(subcategory,''), 'General') = ? "
+                "AND strftime('%Y-%m', date) = ? "
+                "AND amount < 0 "
+                "ORDER BY date DESC",
+                (category, subcategory, month),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT date, description_raw, merchant_canonical, amount, subcategory "
+                "FROM transactions "
+                "WHERE category = ? "
+                "AND strftime('%Y-%m', date) = ? "
+                "AND amount < 0 "
+                "ORDER BY date DESC",
+                (category, month),
+            ).fetchall()
 
         from markupsafe import escape
 
@@ -1049,6 +1062,7 @@ def budget_subcategories():
             (category, month),
         ).fetchall()
 
+        import json
         from markupsafe import escape
 
         lines = []
@@ -1060,10 +1074,14 @@ def budget_subcategories():
         else:
             for r in rows:
                 amt = r["total"]
+                sub_esc = escape(r["sub"])
+                # JSON-encode then HTML-escape so quotes are safe inside onclick=""
+                cat_js = escape(json.dumps(category))
+                sub_js = escape(json.dumps(r["sub"]))
                 lines.append(
                     f'<tr class="stp-subcat-row">'
-                    f'<td style="padding-left:2rem;color:var(--text-muted)">{escape(r["sub"])}</td>'
-                    f'<td>${amt:,.0f}</td>'
+                    f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
+                    f'<td><span class="stp-spent-link" onclick="stpShowTxns({cat_js}, {sub_js})">${amt:,.0f}</span></td>'
                     f'<td></td>'
                     f'<td></td>'
                     f'<td></td>'

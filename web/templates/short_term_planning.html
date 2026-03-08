@@ -696,16 +696,18 @@ function stpToggleSub(el, category) {
 }
 
 // ── Budget drill-down: transaction popup ───────────────────────────────
-function stpShowTxns(category) {
+function stpShowTxns(category, subcategory) {
     var modal = document.getElementById('stp-txn-modal');
     var body = document.getElementById('stp-txn-modal-body');
     var title = document.getElementById('stp-txn-modal-title');
-    title.textContent = category;
+    title.textContent = subcategory ? category + ' › ' + subcategory : category;
     body.innerHTML = '<div class="stp-drill-empty">Loading…</div>';
     modal.showModal();
 
     var month = '{{ current_month }}';
-    fetch('{{ url_for("short_term_planning.budget_transactions") }}?category=' + encodeURIComponent(category) + '&month=' + month)
+    var url = '{{ url_for("short_term_planning.budget_transactions") }}?category=' + encodeURIComponent(category) + '&month=' + month;
+    if (subcategory) url += '&subcategory=' + encodeURIComponent(subcategory);
+    fetch(url)
         .then(function(r) { return r.text(); })
         .then(function(html) {
             body.innerHTML = html;
