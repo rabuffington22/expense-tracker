@@ -5782,12 +5782,15 @@ input.pl-input--sm {
 /* ── Budget table ──────────────────────────────────────────────────────────── */
 
 .stp-budget-kpi-row {
+    position: relative;
     display: flex;
-    align-items: flex-start;
+    justify-content: center;
     margin: 1.2rem 0 1.5rem;
 }
 .stp-month-select--standalone {
-    flex-shrink: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
     font-size: 1.05rem !important;
     padding: 0.45rem 2rem 0.45rem 0.9rem !important;
     min-width: 120px !important;
@@ -5799,8 +5802,6 @@ input.pl-input--sm {
     border: 2px solid var(--series-left, #0a84ff);
     border-radius: 12px;
     padding: 0.7rem 1rem;
-    margin-left: auto;
-    margin-right: auto;
 }
 .stp-budget-kpi-grid {
     display: grid;
