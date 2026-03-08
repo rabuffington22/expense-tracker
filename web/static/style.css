@@ -5784,13 +5784,17 @@ input.pl-input--sm {
 .stp-budget-kpi-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin: 1.2rem auto 1.5rem;
-    max-width: 520px;
+    gap: 1.2rem;
+    margin: 1.2rem 0 1.5rem;
 }
 .stp-month-select--standalone {
     flex-shrink: 0;
+    font-size: 1.05rem !important;
+    padding: 0.45rem 2rem 0.45rem 0.9rem !important;
+    min-width: 120px !important;
+    max-width: 180px !important;
+    background-size: 10px 6px !important;
+    background-position: right 0.6rem center !important;
 }
 .stp-budget-kpi {
     border: 2px solid var(--series-left, #0a84ff);
