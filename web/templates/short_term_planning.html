@@ -238,19 +238,15 @@
 <div class="stp-section outline-panel stp-section--border-label">
     <div class="stp-section-header">
         <span class="stp-section-label stp-section-label--border">MONTHLY BUDGET</span>
-        <div class="stp-month-nav" id="budget">
-            <a href="{{ url_for('short_term_planning.index', month=prev_month) }}#budget" class="stp-month-arrow" title="Previous month">‹</a>
-            <span class="stp-month-display">{{ current_month_display }}</span>
-            {% if next_month %}
-            <a href="{{ url_for('short_term_planning.index', month=next_month) }}#budget" class="stp-month-arrow" title="Next month">›</a>
-            {% else %}
-            <span class="stp-month-arrow stp-month-arrow--disabled">›</span>
-            {% endif %}
-        </div>
     </div>
 
     {% if budget_status %}
     <div class="stp-budget-kpi">
+        <select class="stp-month-select stp-month-select--kpi" id="budget" onchange="window.location.href='{{ url_for('short_term_planning.index') }}?month=' + this.value + '#budget'">
+            {% for m in budget_months %}
+            <option value="{{ m.value }}" {% if m.value == current_month %}selected{% endif %}>{{ m.label }}</option>
+            {% endfor %}
+        </select>
         <div class="stp-budget-kpi-grid">
             <div class="stp-budget-kpi-cell">
                 <div class="stp-budget-kpi-label">BUDGETED</div>

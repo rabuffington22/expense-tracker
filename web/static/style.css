@@ -5354,6 +5354,34 @@ input.pl-input--sm {
     background: var(--bg);
     padding: 0 0.4rem;
 }
+.stp-month-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--bg);
+    border: 1.5px solid var(--series-left, #0a84ff);
+    border-radius: 999px;
+    color: var(--text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 0.25rem 1.5rem 0.25rem 0.65rem;
+    cursor: pointer;
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%23999' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 8px 5px;
+}
+:root[data-theme="light"] .stp-month-select {
+    border-color: var(--series-left, #0a84ff);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%23666' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.stp-month-select:hover {
+    background-color: rgba(255,255,255,0.06);
+}
+:root[data-theme="light"] .stp-month-select:hover {
+    background-color: rgba(0,0,0,0.04);
+}
 .stp-month-nav {
     display: inline-flex;
     align-items: center;
@@ -5713,11 +5741,19 @@ input.pl-input--sm {
 /* ── Budget table ──────────────────────────────────────────────────────────── */
 
 .stp-budget-kpi {
+    position: relative;
     border: 2px solid var(--series-left, #0a84ff);
     border-radius: 12px;
-    padding: 1.1rem 1rem 0.7rem;
+    padding: 1.4rem 1rem 0.7rem;
     margin: 0 auto 1rem;
     max-width: 420px;
+}
+.stp-month-select--kpi {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
 }
 .stp-budget-kpi-grid {
     display: grid;

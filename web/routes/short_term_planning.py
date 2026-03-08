@@ -512,13 +512,17 @@ def index():
 
         current_month = budget_month
 
-        # Prev/next month for navigation
-        prev_month_date = (bm_date.replace(day=1) - timedelta(days=1)).replace(day=1)
-        next_month_date = (bm_date.replace(day=28) + timedelta(days=4)).replace(day=1)
-        prev_month = prev_month_date.strftime("%Y-%m")
-        # Don't allow navigating past current month
-        is_current_month = (budget_month == today.strftime("%Y-%m"))
-        next_month = None if is_current_month else next_month_date.strftime("%Y-%m")
+        # Build month options for dropdown (current month back 12 months)
+        budget_months = []
+        d = today.replace(day=1)
+        for _ in range(12):
+            val = d.strftime("%Y-%m")
+            if d.year == today.year:
+                label = d.strftime("%B")
+            else:
+                label = d.strftime("%B %Y")
+            budget_months.append({"value": val, "label": label})
+            d = (d.replace(day=1) - timedelta(days=1)).replace(day=1)
 
         budget_status = _get_budget_status(conn, g.entity_key, current_month)
         budgeted_cats = {b["category"] for b in budget_status}
@@ -555,8 +559,7 @@ def index():
             total_spent=total_spent,
             current_month=current_month,
             current_month_display=bm_date.strftime("%B %Y"),
-            prev_month=prev_month,
-            next_month=next_month,
+            budget_months=budget_months,
             cc_accounts=cc_accounts,
             bank_accounts=bank_accounts,
             categories=categories,
