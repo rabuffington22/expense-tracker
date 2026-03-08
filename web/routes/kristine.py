@@ -124,7 +124,7 @@ def _get_focus_budget(conn, month: str) -> list[dict]:
         "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
         "ABS(SUM(amount)) as total "
         "FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? "
+        "WHERE strftime('%Y-%m', date) = ? "
         "AND amount < 0 "
         "AND COALESCE(category,'') NOT IN (%s) "
         "GROUP BY cat" % exclude_clause,
@@ -138,7 +138,7 @@ def _get_focus_budget(conn, month: str) -> list[dict]:
         "COALESCE(NULLIF(subcategory,''),'General') as subcat, "
         "ABS(SUM(amount)) as total "
         "FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? "
+        "WHERE strftime('%Y-%m', date) = ? "
         "AND amount < 0 "
         "AND COALESCE(category,'') NOT IN (%s) "
         "GROUP BY cat, subcat ORDER BY total DESC" % exclude_clause,
@@ -162,7 +162,7 @@ def _get_focus_budget(conn, month: str) -> list[dict]:
         "SELECT date, merchant_canonical, description_raw, "
         "ABS(amount) as amt, category, subcategory "
         "FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? "
+        "WHERE strftime('%Y-%m', date) = ? "
         "AND amount < 0 "
         "AND category IN (%s) "
         "ORDER BY date DESC, rowid DESC" % cat_placeholders,
@@ -216,7 +216,7 @@ def _get_ll_summary(conn, month: str) -> dict:
     # Income (positive amounts)
     income_row = conn.execute(
         "SELECT COALESCE(SUM(amount), 0) as total FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? AND amount > 0 "
+        "WHERE strftime('%Y-%m', date) = ? AND amount > 0 "
         "AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')",
         (month,),
     ).fetchone()
@@ -225,7 +225,7 @@ def _get_ll_summary(conn, month: str) -> dict:
     # Expenses (negative amounts)
     expense_row = conn.execute(
         "SELECT COALESCE(SUM(ABS(amount)), 0) as total FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? AND amount < 0 "
+        "WHERE strftime('%Y-%m', date) = ? AND amount < 0 "
         "AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment')",
         (month,),
     ).fetchone()
@@ -236,7 +236,7 @@ def _get_ll_summary(conn, month: str) -> dict:
         "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
         "ABS(SUM(amount)) as total, COUNT(*) as cnt "
         "FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? AND amount < 0 "
+        "WHERE strftime('%Y-%m', date) = ? AND amount < 0 "
         "AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment') "
         "GROUP BY cat ORDER BY total DESC",
         (month,),
@@ -251,7 +251,7 @@ def _get_ll_summary(conn, month: str) -> dict:
         "SELECT date, description_raw, merchant_canonical, "
         "amount, category, subcategory "
         "FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? "
+        "WHERE strftime('%Y-%m', date) = ? "
         "AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment') "
         "ORDER BY date DESC, rowid DESC LIMIT 15",
         (month,),
