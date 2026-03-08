@@ -5628,7 +5628,7 @@ input.pl-input--sm {
 .stp-actions-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0 1.5rem;
+    gap: 0 3rem;
 }
 .stp-actions-col-label {
     font-size: 0.62rem;
