@@ -31,6 +31,9 @@
         <a href="{{ url_for('short_term_planning.index') }}" class="sb-link {% if request.path.startswith('/planning/short-term') %}active{% endif %}">Short-Term Planning</a>
         <a href="{{ url_for('planning.index') }}" class="sb-link {% if request.path == '/planning/' or request.path == '/planning' %}active{% endif %}">Long-Term Planning</a>
         {% endif %}
+        {% if entity_key == 'company' %}
+        <a href="{{ url_for('payroll.index') }}" class="sb-link {% if request.path.startswith('/payroll') %}active{% endif %}">Payroll</a>
+        {% endif %}
         <a href="{{ url_for('transactions.index') }}" class="sb-link {% if request.path.startswith('/transactions') %}active{% endif %}">Transactions</a>
         <a href="{{ url_for('reports.index') }}" class="sb-link {% if request.path.startswith('/reports') %}active{% endif %}">Reports</a>
     </div>

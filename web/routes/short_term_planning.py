@@ -1141,17 +1141,59 @@ def budget_subcategories():
 
     conn = get_connection(g.entity_key)
     try:
-        rows = conn.execute(
-            "SELECT COALESCE(NULLIF(subcategory,''), 'General') as sub, "
-            "COUNT(*) as cnt, ABS(SUM(amount)) as total "
-            "FROM transactions "
-            "WHERE category = ? "
-            "AND strftime('%Y-%m', date) = ? "
-            "AND amount < 0 "
-            "GROUP BY sub "
-            "ORDER BY total DESC",
-            (category, month),
-        ).fetchall()
+        # Special case: Payroll — use payroll_entries grouped by employee role
+        if category == "Payroll":
+            try:
+                payroll_rows = conn.execute(
+                    "SELECT e.role as sub, COUNT(DISTINCT e.id) as cnt, "
+                    "SUM(pe.amount_cents) / 100.0 as total "
+                    "FROM payroll_entries pe "
+                    "JOIN employees e ON pe.employee_id = e.id "
+                    "WHERE strftime('%Y-%m', pe.paycheck_date) = ? "
+                    "GROUP BY e.role "
+                    "ORDER BY total DESC",
+                    (month,),
+                ).fetchall()
+                if payroll_rows:
+                    rows = payroll_rows
+                else:
+                    # Fall back to standard transaction query
+                    rows = conn.execute(
+                        "SELECT COALESCE(NULLIF(subcategory,''), 'General') as sub, "
+                        "COUNT(*) as cnt, ABS(SUM(amount)) as total "
+                        "FROM transactions "
+                        "WHERE category = ? "
+                        "AND strftime('%Y-%m', date) = ? "
+                        "AND amount < 0 "
+                        "GROUP BY sub "
+                        "ORDER BY total DESC",
+                        (category, month),
+                    ).fetchall()
+            except Exception:
+                # If payroll tables don't exist yet, fall back
+                rows = conn.execute(
+                    "SELECT COALESCE(NULLIF(subcategory,''), 'General') as sub, "
+                    "COUNT(*) as cnt, ABS(SUM(amount)) as total "
+                    "FROM transactions "
+                    "WHERE category = ? "
+                    "AND strftime('%Y-%m', date) = ? "
+                    "AND amount < 0 "
+                    "GROUP BY sub "
+                    "ORDER BY total DESC",
+                    (category, month),
+                ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT COALESCE(NULLIF(subcategory,''), 'General') as sub, "
+                "COUNT(*) as cnt, ABS(SUM(amount)) as total "
+                "FROM transactions "
+                "WHERE category = ? "
+                "AND strftime('%Y-%m', date) = ? "
+                "AND amount < 0 "
+                "GROUP BY sub "
+                "ORDER BY total DESC",
+                (category, month),
+            ).fetchall()
 
         # Look up existing subcategory budgets
         budget_rows = conn.execute(

@@ -655,6 +655,56 @@ ALTER TABLE budget_items ADD COLUMN is_per_payroll INTEGER DEFAULT 0;
 ALTER TABLE budget_items ADD COLUMN per_payroll_cents INTEGER;
 """
 
+_MIGRATION_51 = """
+CREATE TABLE IF NOT EXISTS employees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL,
+    phoenix_job_code TEXT,
+    pay_type TEXT NOT NULL DEFAULT 'hourly' CHECK(pay_type IN ('hourly', 'salary')),
+    pay_rate_cents INTEGER NOT NULL DEFAULT 0,
+    hire_date TEXT,
+    status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive', 'terminated')),
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS employee_pay_changes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    effective_date TEXT NOT NULL,
+    old_rate_cents INTEGER NOT NULL,
+    new_rate_cents INTEGER NOT NULL,
+    change_type TEXT DEFAULT 'raise',
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS payroll_entries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    paycheck_date TEXT NOT NULL,
+    amount_cents INTEGER NOT NULL DEFAULT 0,
+    source_filename TEXT,
+    imported_at TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(employee_id, paycheck_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_payroll_entries_date ON payroll_entries(paycheck_date);
+CREATE INDEX IF NOT EXISTS idx_payroll_entries_employee ON payroll_entries(employee_id);
+
+INSERT OR IGNORE INTO subcategories (category_name, name, created_at)
+VALUES
+    ('Payroll', 'Providers', datetime('now')),
+    ('Payroll', 'Nurses', datetime('now')),
+    ('Payroll', 'Scribes', datetime('now')),
+    ('Payroll', 'Front Office', datetime('now')),
+    ('Payroll', 'Office Manager', datetime('now')),
+    ('Payroll', 'HR', datetime('now')),
+    ('Payroll', 'Owner', datetime('now'));
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -706,6 +756,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (48, _MIGRATION_48),
     (49, _MIGRATION_49),
     (50, _MIGRATION_50),
+    (51, _MIGRATION_51),
 ]
 
 _DEFAULT_CATEGORIES = [

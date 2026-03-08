@@ -1,0 +1,553 @@
+{% extends "base.html" %}
+{% block title %}Payroll{% endblock %}
+
+{% block content %}
+<div class="pr-page">
+
+<div class="page-title-row">
+  <h1 class="page-title">Payroll</h1>
+</div>
+
+{# ══════════════════════════════════════════════════════════════════════════ #}
+{#  SECTION 1: TEAM ROSTER                                                   #}
+{# ══════════════════════════════════════════════════════════════════════════ #}
+<div class="outline-panel">
+  <div class="panel-header">
+    <span>Team Roster</span>
+    <button type="button" class="btn btn-primary btn-sm" onclick="prShowAddForm()">+ Add Employee</button>
+  </div>
+
+  {# ── Add employee form (hidden by default) ── #}
+  <div class="pr-add-form" id="pr-add-form" hidden>
+    <form method="post" action="{{ url_for('payroll.create_employee') }}">
+      <div class="pr-add-grid">
+        <div class="pr-add-field">
+          <label>Name</label>
+          <input type="text" name="name" required placeholder="Full name" class="pr-input">
+        </div>
+        <div class="pr-add-field">
+          <label>Role</label>
+          <select name="role" required class="pr-input pr-select">
+            <option value="">Select role...</option>
+            {% for r in role_order %}
+            <option value="{{ r }}">{{ r }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="pr-add-field">
+          <label>Pay Type</label>
+          <select name="pay_type" class="pr-input pr-select">
+            <option value="hourly">Hourly</option>
+            <option value="salary">Salary</option>
+          </select>
+        </div>
+        <div class="pr-add-field">
+          <label>Pay Rate</label>
+          <input type="text" name="pay_rate" placeholder="0.00" class="pr-input">
+        </div>
+        <div class="pr-add-field">
+          <label>Hire Date</label>
+          <input type="date" name="hire_date" class="pr-input">
+        </div>
+        <div class="pr-add-field pr-add-actions">
+          <button type="submit" class="btn btn-primary btn-sm">Save</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="prHideAddForm()">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {# ── Roster table ── #}
+  {% if employees %}
+  <div class="table-wrap">
+    <table class="pr-roster-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Pay Rate</th>
+          <th>Hire Date</th>
+          <th>Last Raise</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emp in employees %}
+        <tr class="pr-roster-row {% if emp.status != 'active' %}pr-inactive{% endif %}"
+            onclick="prOpenDetail({{ emp.id }})" role="button" tabindex="0"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <td class="pr-name">{{ emp.name }}</td>
+          <td>
+            <span class="pr-role-badge" style="background:{{ role_colors.get(emp.role, '#98989d') }}">
+              {{ emp.role }}
+            </span>
+          </td>
+          <td>
+            {% if emp.pay_type == 'salary' %}
+              ${{ "{:,.0f}".format(emp.pay_rate_cents / 100) }}/yr
+            {% else %}
+              ${{ "{:,.2f}".format(emp.pay_rate_cents / 100) }}/hr
+            {% endif %}
+          </td>
+          <td>
+            {% if emp.hire_date %}
+              {{ fmt_date(emp.hire_date) }}
+            {% else %}
+              <span class="pr-muted">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if emp.days_since_raise is not none %}
+              {% if emp.days_since_raise > 365 %}
+                <span class="pr-raise-flag pr-raise-flag--stale">{{ emp.days_since_raise }}d ago</span>
+              {% else %}
+                {{ emp.days_since_raise }}d ago
+              {% endif %}
+            {% else %}
+              <span class="pr-raise-flag pr-raise-flag--none">No raises on file</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="pr-status-badge pr-status-{{ emp.status }}">{{ emp.status }}</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="pr-empty">
+    <p>No employees yet. Add your first team member or import a Phoenix payroll report below.</p>
+  </div>
+  {% endif %}
+</div>
+
+{# ══════════════════════════════════════════════════════════════════════════ #}
+{#  SECTION 2: SPENDING BY ROLE                                              #}
+{# ══════════════════════════════════════════════════════════════════════════ #}
+<div class="outline-panel">
+  <div class="panel-header">
+    <span>Spending by Role</span>
+    <div class="pr-month-select">
+      <select id="pr-spending-period"
+              onchange="prLoadSpending(this.value)"
+              class="pr-input pr-select pr-select--month">
+        {% if available_periods %}
+          {% for p in available_periods %}
+          <option value="{{ p }}" {% if p == spending_period %}selected{% endif %}>{{ fmt_date(p) }}</option>
+          {% endfor %}
+        {% else %}
+          <option value="{{ spending_period }}">{{ fmt_date(spending_period) }}</option>
+        {% endif %}
+      </select>
+    </div>
+  </div>
+
+  <div id="pr-spending-body">
+    {% if role_spending %}
+      {% for rs in role_spending %}
+      <div class="pr-spending-role">
+        <div class="pr-spending-role-header">
+          <span class="pr-role-badge" style="background:{{ role_colors.get(rs.role, '#98989d') }}">{{ rs.role }}</span>
+          <span class="pr-spending-amount">${{ "{:,.0f}".format(rs.total_cents / 100) }}</span>
+          <span class="pr-spending-pct">{{ (rs.total_cents / grand_total * 100)|round|int if grand_total else 0 }}%</span>
+        </div>
+        <div class="pr-spending-bar-track">
+          <div class="pr-spending-bar-fill" style="width:{{ (rs.total_cents / grand_total * 100)|round|int if grand_total else 0 }}%;background:{{ role_colors.get(rs.role, '#98989d') }}"></div>
+        </div>
+        {% for emp in rs.employees %}
+        <div class="pr-spending-employee">
+          <span class="pr-spending-emp-name">{{ emp.name }}</span>
+          <span class="pr-spending-emp-amount">${{ "{:,.0f}".format(emp.total_cents / 100) }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      <div class="pr-spending-total">
+        <span>Total</span>
+        <span>${{ "{:,.0f}".format(grand_total / 100) }}</span>
+      </div>
+    {% else %}
+      <div class="pr-spending-empty">No payroll data for this month</div>
+    {% endif %}
+  </div>
+</div>
+
+{# ══════════════════════════════════════════════════════════════════════════ #}
+{#  SECTION 3: IMPORT PAYROLL                                                #}
+{# ══════════════════════════════════════════════════════════════════════════ #}
+<div class="outline-panel">
+  <div class="panel-header">
+    <span>Import Payroll</span>
+  </div>
+
+  {% if import_error %}
+  <div class="pr-import-error">{{ import_error }}</div>
+  {% endif %}
+
+  {% if import_warnings %}
+  <div class="pr-import-warnings">
+    {% for w in import_warnings %}
+    <div class="pr-import-warning">{{ w }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if import_preview %}
+  {# ── Import preview ── #}
+  <div class="pr-import-preview">
+    <div class="pr-import-summary">
+      Parsed <strong>{{ import_total_entries }}</strong> payroll entries from <strong>{{ import_filename }}</strong>
+    </div>
+
+    <form method="post" action="{{ url_for('payroll.import_save') }}">
+      <input type="hidden" name="temp_key" value="{{ import_temp_key }}">
+
+      <div class="table-wrap">
+        <table class="pr-roster-table pr-import-table">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Phoenix Job Code</th>
+              <th>Matched To</th>
+              <th>Paychecks</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ue in import_unique_employees %}
+            <tr class="{% if not ue.suggested_role and ue.name.lower() not in employees|map(attribute='name')|map('lower')|list %}pr-import-unmatched{% endif %}">
+              <td>{{ ue.name }}</td>
+              <td>{{ ue.phoenix_job_code }}</td>
+              <td>
+                {% set matched_emp = none %}
+                {% for emp in employees if emp.name|lower == ue.name|lower %}
+                  {% set matched_emp = emp %}
+                {% endfor %}
+
+                {% if matched_emp %}
+                  <span class="pr-role-badge" style="background:{{ role_colors.get(matched_emp.role, '#98989d') }}">{{ matched_emp.role }}</span>
+                  {{ matched_emp.name }}
+                  <input type="hidden" name="assign_{{ ue.name }}" value="{{ matched_emp.id }}">
+                {% else %}
+                  <div class="pr-import-assign">
+                    <select name="assign_{{ ue.name }}" class="pr-input pr-select pr-select--assign"
+                            onchange="prToggleNewRole(this, '{{ ue.name|e }}')">
+                      <option value="new" selected>Create new employee</option>
+                      {% for emp in employees %}
+                      <option value="{{ emp.id }}">{{ emp.name }} ({{ emp.role }})</option>
+                      {% endfor %}
+                    </select>
+                    <select name="new_role_{{ ue.name }}" class="pr-input pr-select pr-select--role" id="pr-new-role-{{ loop.index }}">
+                      <option value="">Role...</option>
+                      {% for r in role_order %}
+                      <option value="{{ r }}" {% if r == ue.suggested_role %}selected{% endif %}>{{ r }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                {% endif %}
+              </td>
+              <td>{{ ue.entry_count }}</td>
+              <td>${{ "{:,.0f}".format(ue.total_amount) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pr-import-actions">
+        <button type="submit" class="btn btn-primary">Save {{ import_total_entries }} Entries</button>
+        <a href="{{ url_for('payroll.index') }}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  {% else %}
+  {# ── Upload form ── #}
+  <div class="pr-import-upload">
+    <p class="pr-import-desc">Upload a Phoenix "Per Payroll Costs" Excel report (.xlsx)</p>
+    <form method="post" action="{{ url_for('payroll.import_parse') }}" enctype="multipart/form-data">
+      <div class="pr-upload-row">
+        <input type="file" name="payroll_file" accept=".xlsx,.xls" required class="pr-input">
+        <button type="submit" class="btn btn-primary btn-sm">Upload &amp; Preview</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+{# ══════════════════════════════════════════════════════════════════════════ #}
+{#  EMPLOYEE DETAIL MODAL                                                    #}
+{# ══════════════════════════════════════════════════════════════════════════ #}
+<div class="tq-modal-scrim" id="pr-detail-scrim" hidden>
+  <div class="outline-panel tq-modal-card pr-detail-card" role="dialog" aria-modal="true">
+    <div class="tq-modal-top">
+      <button type="button" class="cf-edit-btn tq-modal-close"
+              onclick="prCloseDetail()" title="Close" aria-label="Close">&times;</button>
+    </div>
+    <div class="pr-detail-body">
+      <div class="pr-detail-header">
+        <span class="pr-detail-name" id="pr-detail-name"></span>
+        <span class="pr-role-badge" id="pr-detail-role-badge"></span>
+        <span class="pr-status-badge" id="pr-detail-status-badge"></span>
+      </div>
+
+      {# ── Compensation summary ── #}
+      <div class="pr-detail-box">
+        <div class="pr-detail-box-title">Compensation</div>
+        <div class="pr-detail-stats">
+          <div class="pr-detail-stat">
+            <span class="pr-detail-stat-label">Current Rate</span>
+            <span class="pr-detail-stat-value" id="pr-detail-rate"></span>
+          </div>
+          <div class="pr-detail-stat">
+            <span class="pr-detail-stat-label">Hire Date</span>
+            <span class="pr-detail-stat-value" id="pr-detail-hire"></span>
+          </div>
+          <div class="pr-detail-stat">
+            <span class="pr-detail-stat-label">Days Since Last Raise</span>
+            <span class="pr-detail-stat-value" id="pr-detail-days-raise"></span>
+          </div>
+          <div class="pr-detail-stat">
+            <span class="pr-detail-stat-label">Peer Avg (same role)</span>
+            <span class="pr-detail-stat-value" id="pr-detail-peer-avg"></span>
+          </div>
+        </div>
+      </div>
+
+      {# ── Pay history timeline ── #}
+      <div class="pr-detail-box" id="pr-detail-history-box" hidden>
+        <div class="pr-detail-box-title">Pay History</div>
+        <div class="pr-detail-timeline" id="pr-detail-timeline"></div>
+      </div>
+
+      {# ── Recent paychecks ── #}
+      <div class="pr-detail-box" id="pr-detail-paychecks-box" hidden>
+        <div class="pr-detail-box-title">Recent Paychecks</div>
+        <div class="pr-detail-paychecks" id="pr-detail-paychecks"></div>
+      </div>
+
+      {# ── Edit form ── #}
+      <div class="pr-detail-box">
+        <div class="pr-detail-box-title">Edit</div>
+        <form method="post" id="pr-edit-form">
+          <div class="pr-edit-grid">
+            <div class="pr-edit-field">
+              <label>Name</label>
+              <input type="text" name="name" id="pr-edit-name" class="pr-modal-input">
+            </div>
+            <div class="pr-edit-field">
+              <label>Role</label>
+              <select name="role" id="pr-edit-role" class="pr-modal-input pr-select">
+                {% for r in role_order %}
+                <option value="{{ r }}">{{ r }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="pr-edit-field">
+              <label>Pay Type</label>
+              <select name="pay_type" id="pr-edit-pay-type" class="pr-modal-input pr-select">
+                <option value="hourly">Hourly</option>
+                <option value="salary">Salary</option>
+              </select>
+            </div>
+            <div class="pr-edit-field">
+              <label>Pay Rate</label>
+              <input type="text" name="pay_rate" id="pr-edit-pay-rate" class="pr-modal-input">
+            </div>
+            <div class="pr-edit-field">
+              <label>Hire Date</label>
+              <input type="date" name="hire_date" id="pr-edit-hire-date" class="pr-modal-input">
+            </div>
+            <div class="pr-edit-field">
+              <label>Status</label>
+              <select name="status" id="pr-edit-status" class="pr-modal-input pr-select">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="terminated">Terminated</option>
+              </select>
+            </div>
+            <div class="pr-edit-field pr-edit-field--full">
+              <label>Notes</label>
+              <textarea name="notes" id="pr-edit-notes" class="pr-modal-input" rows="2"></textarea>
+            </div>
+          </div>
+          <div class="pr-detail-footer">
+            <form method="post" id="pr-delete-form">
+              <button type="submit" class="btn btn-danger btn-sm" id="pr-delete-btn"
+                      onclick="return confirm('Delete this employee? All pay history and payroll entries will also be deleted.')">Delete</button>
+            </form>
+            <div class="pr-detail-footer-right">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="prCloseDetail()">Cancel</button>
+              <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ── Add employee form toggle ── */
+function prShowAddForm() {
+  document.getElementById('pr-add-form').hidden = false;
+  document.querySelector('#pr-add-form input[name="name"]').focus();
+}
+function prHideAddForm() {
+  document.getElementById('pr-add-form').hidden = true;
+}
+
+/* ── Detail modal ── */
+var _prCurrentId = null;
+
+function prOpenDetail(empId) {
+  _prCurrentId = empId;
+  var scrim = document.getElementById('pr-detail-scrim');
+  scrim.hidden = false;
+
+  // Fetch employee detail
+  fetch('/payroll/employees/detail/' + empId)
+    .then(function(r) { return r.json(); })
+    .then(function(d) { prPopulateDetail(d); })
+    .catch(function(err) { console.error('Detail fetch error:', err); });
+}
+
+function prCloseDetail() {
+  document.getElementById('pr-detail-scrim').hidden = true;
+  _prCurrentId = null;
+}
+
+// Close on click outside
+document.addEventListener('click', function(e) {
+  var scrim = document.getElementById('pr-detail-scrim');
+  if (!scrim.hidden && e.target === scrim) prCloseDetail();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') prCloseDetail();
+});
+
+var _roleColors = {{ role_colors|tojson }};
+
+function prPopulateDetail(d) {
+  document.getElementById('pr-detail-name').textContent = d.name;
+
+  var badge = document.getElementById('pr-detail-role-badge');
+  badge.textContent = d.role;
+  badge.style.background = _roleColors[d.role] || '#98989d';
+
+  var statusBadge = document.getElementById('pr-detail-status-badge');
+  statusBadge.textContent = d.status;
+  statusBadge.className = 'pr-status-badge pr-status-' + d.status;
+
+  // Compensation stats
+  var rateStr = '';
+  if (d.pay_type === 'salary') {
+    rateStr = '$' + (d.pay_rate_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) + '/yr';
+  } else {
+    rateStr = '$' + (d.pay_rate_cents / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/hr';
+  }
+  document.getElementById('pr-detail-rate').textContent = rateStr;
+  document.getElementById('pr-detail-hire').textContent = d.hire_date || '—';
+
+  var daysEl = document.getElementById('pr-detail-days-raise');
+  if (d.days_since_raise !== null) {
+    daysEl.textContent = d.days_since_raise + ' days';
+    daysEl.className = 'pr-detail-stat-value' + (d.days_since_raise > 365 ? ' pr-raise-flag--stale' : '');
+  } else {
+    daysEl.textContent = 'No raises on file';
+    daysEl.className = 'pr-detail-stat-value pr-raise-flag--none';
+  }
+
+  var peerStr = '—';
+  if (d.peer_avg_cents > 0) {
+    if (d.pay_type === 'salary') {
+      peerStr = '$' + (d.peer_avg_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) + '/yr';
+    } else {
+      peerStr = '$' + (d.peer_avg_cents / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/hr';
+    }
+  }
+  document.getElementById('pr-detail-peer-avg').textContent = peerStr;
+
+  // Pay history timeline
+  var historyBox = document.getElementById('pr-detail-history-box');
+  var timeline = document.getElementById('pr-detail-timeline');
+  if (d.pay_changes && d.pay_changes.length > 0) {
+    historyBox.hidden = false;
+    var html = '';
+    d.pay_changes.forEach(function(c) {
+      var pctStr = c.pct_change !== null ? ' (' + (c.pct_change > 0 ? '+' : '') + c.pct_change + '%)' : '';
+      var oldRate = '$' + (c.old_rate_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 2});
+      var newRate = '$' + (c.new_rate_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 2});
+      html += '<div class="pr-timeline-item">'
+        + '<span class="pr-timeline-date">' + c.effective_date + '</span>'
+        + '<span class="pr-timeline-change">' + oldRate + ' → ' + newRate + pctStr + '</span>'
+        + (c.notes ? '<span class="pr-timeline-notes">' + c.notes + '</span>' : '')
+        + '</div>';
+    });
+    timeline.innerHTML = html;
+  } else {
+    historyBox.hidden = true;
+  }
+
+  // Recent paychecks
+  var paycheckBox = document.getElementById('pr-detail-paychecks-box');
+  var paychecks = document.getElementById('pr-detail-paychecks');
+  if (d.recent_paychecks && d.recent_paychecks.length > 0) {
+    paycheckBox.hidden = false;
+    var html2 = '';
+    d.recent_paychecks.forEach(function(p) {
+      html2 += '<div class="pr-paycheck-item">'
+        + '<span class="pr-paycheck-date">' + p.paycheck_date + '</span>'
+        + '<span class="pr-paycheck-amount">$' + (p.amount_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) + '</span>'
+        + '</div>';
+    });
+    paychecks.innerHTML = html2;
+  } else {
+    paycheckBox.hidden = true;
+  }
+
+  // Edit form
+  document.getElementById('pr-edit-form').action = '/payroll/employees/update/' + d.id;
+  document.getElementById('pr-edit-name').value = d.name;
+  document.getElementById('pr-edit-role').value = d.role;
+  document.getElementById('pr-edit-pay-type').value = d.pay_type;
+  document.getElementById('pr-edit-pay-rate').value = (d.pay_rate_cents / 100).toLocaleString('en-US', {
+    minimumFractionDigits: d.pay_type === 'salary' ? 0 : 2,
+    maximumFractionDigits: d.pay_type === 'salary' ? 0 : 2,
+    useGrouping: true
+  });
+  document.getElementById('pr-edit-hire-date').value = d.hire_date || '';
+  document.getElementById('pr-edit-status').value = d.status;
+  document.getElementById('pr-edit-notes').value = d.notes || '';
+
+  // Delete form
+  document.getElementById('pr-delete-form').action = '/payroll/employees/delete/' + d.id;
+
+  // Strip commas from pay rate before submit
+  document.getElementById('pr-edit-form').addEventListener('submit', function() {
+    var rateInput = document.getElementById('pr-edit-pay-rate');
+    rateInput.value = rateInput.value.replace(/,/g, '');
+  });
+}
+
+/* ── Spending pay period selector (HTMX-like fetch) ── */
+function prLoadSpending(period) {
+  fetch('/payroll/spending?spending_period=' + encodeURIComponent(period))
+    .then(function(r) { return r.text(); })
+    .then(function(html) {
+      document.getElementById('pr-spending-body').innerHTML = html;
+    });
+}
+
+/* ── Import: toggle new role dropdown ── */
+function prToggleNewRole(sel, empName) {
+  var roleSelect = sel.parentElement.querySelector('.pr-select--role');
+  if (roleSelect) {
+    roleSelect.style.display = sel.value === 'new' ? '' : 'none';
+  }
+}
+</script>
+{% endblock %}
