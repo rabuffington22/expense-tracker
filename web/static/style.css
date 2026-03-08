@@ -5803,14 +5803,14 @@ input.pl-input--sm {
     padding: 0.5rem 0.4rem;
 }
 .stp-budget-kpi-label {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.16em;
     color: var(--text-muted);
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.25rem;
 }
 .stp-budget-kpi-value {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     line-height: 1.1;
     color: var(--text-secondary);
