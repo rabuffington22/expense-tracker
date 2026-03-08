@@ -5810,7 +5810,7 @@ input.pl-input--sm {
     margin-bottom: 0.25rem;
 }
 .stp-budget-kpi-value {
-    font-size: 1.8rem;
+    font-size: 2.0rem;
     font-weight: 700;
     line-height: 1.1;
     color: var(--text-secondary);
