@@ -5449,9 +5449,10 @@ input.pl-input--sm {
 }
 .stp-goal-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 0.5rem;
+    min-height: 2.6rem;
 }
 .stp-goal-name {
     font-size: var(--ui-font-base);
