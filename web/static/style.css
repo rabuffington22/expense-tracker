@@ -344,14 +344,14 @@ a:hover { text-decoration: underline; }
     gap: 0;
 }
 .sb-brand-icon {
-    width: 150px;
+    width: 120px;
     height: auto;
     border-radius: 0;
     flex-shrink: 0;
     object-fit: contain;
 }
 .sb-brand-text {
-    margin-top: -0.2rem;
+    margin-top: -0.6rem;
     text-align: center;
 }
 .sb-brand .sidebar-title {
