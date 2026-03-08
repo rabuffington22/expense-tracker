@@ -5854,6 +5854,16 @@ input.pl-input--sm {
 .stp-budget-table tr:last-child td {
     border-bottom: none;
 }
+.stp-budget-section-box {
+    margin-bottom: 1.2rem;
+    padding: 0.75rem;
+}
+.stp-budget-section-box .stp-section-header {
+    margin-bottom: 0.3rem;
+}
+.stp-budget-section-box .stp-budget-table {
+    margin-bottom: 0;
+}
 .stp-budget-table a {
     color: var(--text);
     text-decoration: none;

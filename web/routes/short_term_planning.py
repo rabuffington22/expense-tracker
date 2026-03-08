@@ -246,10 +246,37 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
             "pct": min(pct, 999),  # cap at 999% for display
             "avg_3mo_cents": avg_3mo,
             "avg_month_count": avg_mc,
+            "budget_section": bi.get("budget_section", "other"),
         })
 
     # Sort by 3-mo avg spending descending (most expensive categories first)
     result.sort(key=lambda x: x["avg_3mo_cents"], reverse=True)
+    return result
+
+
+# Section order and display labels for budget grouping
+_BUDGET_SECTIONS = [
+    ("fixed", "FIXED"),
+    ("focus", "FOCUS"),
+    ("other", "EVERYTHING ELSE"),
+]
+
+
+def _group_budget_items(items: list) -> list:
+    """Group budget items by section, preserving sort within each group.
+
+    Returns list of (section_key, section_label, items) tuples.
+    """
+    by_section = {}
+    for item in items:
+        sec = item.get("budget_section", "other")
+        by_section.setdefault(sec, []).append(item)
+
+    result = []
+    for key, label in _BUDGET_SECTIONS:
+        group = by_section.get(key, [])
+        if group:
+            result.append((key, label, group))
     return result
 
 
@@ -555,6 +582,7 @@ def index():
             d = (d.replace(day=1) - timedelta(days=1)).replace(day=1)
 
         budget_status = _get_budget_status(conn, g.entity_key, current_month)
+        budget_sections = _group_budget_items(budget_status)
         budgeted_cats = {b["category"] for b in budget_status}
         unbudgeted = _get_unbudgeted_spending(conn, current_month, budgeted_cats)
 
@@ -584,6 +612,7 @@ def index():
             action_items=action_items,
             cc_due_items=cc_due_items,
             budget_status=budget_status,
+            budget_sections=budget_sections,
             unbudgeted=unbudgeted,
             total_budgeted=total_budgeted,
             total_spent=total_spent,

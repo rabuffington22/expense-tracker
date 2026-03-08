@@ -282,56 +282,63 @@
     </div>
 
     <form method="post" action="{{ url_for('short_term_planning.save_budget') }}">
-        <table class="stp-budget-table">
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Spent</th>
-                    <th>Budget</th>
-                    <th>3-Mo Avg</th>
-                    <th>Remaining</th>
-                    <th>Progress</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in budget_status %}
-                <tr class="stp-budget-cat-row" data-category="{{ item.category }}">
-                    <td>
-                        <span class="stp-cat-toggle" onclick="stpToggleSub(this, '{{ item.category }}')">
-                            <span class="stp-cat-chevron">›</span>
-                            {{ item.category }}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="stp-spent-link" onclick="stpShowTxns('{{ item.category }}')">
-                            {{ fmt_dollars(item.spent_cents) }}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
-                               value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
-                               size="{{ '{:,.0f}'.format(item.budget_cents / 100)|length }}"
-                               class="stp-budget-input"></span>
-                    </td>
-                    <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
-                        {{ fmt_dollars(item.avg_3mo_cents) }}{% if item.avg_month_count < 3 %}<span class="stp-avg-note">{{ item.avg_month_count }}mo</span>{% endif %}
-                    </td>
-                    <td class="{% if item.remaining_cents >= 0 %}stp-green{% else %}stp-red{% endif %}">
-                        {{ fmt_dollars(item.remaining_cents) }}
-                    </td>
-                    <td>
-                        <div class="stp-budget-progress-wrap">
-                            <div class="stp-budget-bar">
-                                <div class="stp-budget-fill {% if item.pct <= 100 %}stp-bar-green{% elif item.pct <= 115 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"
-                                     style="width: {{ [item.pct, 100]|min }}%"></div>
+        {% for sec_key, sec_label, sec_items in budget_sections %}
+        <div class="outline-panel stp-budget-section-box stp-section--border-label">
+            <div class="stp-section-header">
+                <span class="stp-section-label stp-section-label--border">{{ sec_label }}</span>
+            </div>
+            <table class="stp-budget-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Spent</th>
+                        <th>Budget</th>
+                        <th>3-Mo Avg</th>
+                        <th>Remaining</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in sec_items %}
+                    <tr class="stp-budget-cat-row" data-category="{{ item.category }}">
+                        <td>
+                            <span class="stp-cat-toggle" onclick="stpToggleSub(this, '{{ item.category }}')">
+                                <span class="stp-cat-chevron">›</span>
+                                {{ item.category }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stp-spent-link" onclick="stpShowTxns('{{ item.category }}')">
+                                {{ fmt_dollars(item.spent_cents) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
+                                   value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
+                                   size="{{ '{:,.0f}'.format(item.budget_cents / 100)|length }}"
+                                   class="stp-budget-input"></span>
+                        </td>
+                        <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
+                            {{ fmt_dollars(item.avg_3mo_cents) }}{% if item.avg_month_count < 3 %}<span class="stp-avg-note">{{ item.avg_month_count }}mo</span>{% endif %}
+                        </td>
+                        <td class="{% if item.remaining_cents >= 0 %}stp-green{% else %}stp-red{% endif %}">
+                            {{ fmt_dollars(item.remaining_cents) }}
+                        </td>
+                        <td>
+                            <div class="stp-budget-progress-wrap">
+                                <div class="stp-budget-bar">
+                                    <div class="stp-budget-fill {% if item.pct <= 100 %}stp-bar-green{% elif item.pct <= 115 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"
+                                         style="width: {{ [item.pct, 100]|min }}%"></div>
+                                </div>
+                                <span class="stp-budget-pct">{{ item.pct }}%</span>
                             </div>
-                            <span class="stp-budget-pct">{{ item.pct }}%</span>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
         <div class="stp-budget-actions">
             <button type="submit" class="btn btn-sm">Update Budgets</button>
         </div>

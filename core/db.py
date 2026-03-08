@@ -627,6 +627,12 @@ ALTER TABLE action_items ADD COLUMN completed_month TEXT;
 UPDATE action_items SET is_recurring = 1 WHERE due_date IS NOT NULL;
 """
 
+_MIGRATION_48 = """
+ALTER TABLE budget_items ADD COLUMN budget_section TEXT DEFAULT 'other';
+UPDATE budget_items SET budget_section = 'fixed' WHERE category IN ('Housing', 'Ranch', 'Insurance', 'Student Loans');
+UPDATE budget_items SET budget_section = 'focus' WHERE category IN ('Food', 'Shopping', 'Entertainment', 'Clothing', 'Health & Beauty', 'Electronics');
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -675,6 +681,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (45, _MIGRATION_45),
     (46, _MIGRATION_46),
     (47, _MIGRATION_47),
+    (48, _MIGRATION_48),
 ]
 
 _DEFAULT_CATEGORIES = [
