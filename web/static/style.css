@@ -6850,6 +6850,30 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
     white-space: nowrap;
 }
 
+/* Owner Draw callout */
+.kd-owner-draw {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, rgba(236,64,122,0.08), rgba(100,181,246,0.08));
+    border-radius: 8px;
+    border: 1px solid rgba(236,64,122,0.15);
+}
+.kd-owner-draw-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #ec407a;
+    text-transform: uppercase;
+}
+.kd-owner-draw-value {
+    font-size: 1.0rem;
+    font-weight: 700;
+    color: #26a69a;
+}
+
 /* Colors */
 .kd-green { color: #26a69a; }
 .kd-red { color: #ec407a; }

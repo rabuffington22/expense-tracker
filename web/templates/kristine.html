@@ -167,6 +167,12 @@
             <div class="kd-kpi-value {% if ll.profit_cents > 0 %}kd-green{% elif ll.profit_cents < 0 %}kd-red{% endif %}">{{ fmt_dollars(ll.profit_cents) }}</div>
           </div>
         </div>
+        {% if ll.owner_draw_cents > 0 %}
+        <div class="kd-owner-draw">
+          <span class="kd-owner-draw-label">Owner Draw</span>
+          <span class="kd-owner-draw-value">{{ fmt_dollars(ll.owner_draw_cents) }}</span>
+        </div>
+        {% endif %}
 
         {% if ll.has_data %}
           {# Category spending #}

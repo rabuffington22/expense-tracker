@@ -269,10 +269,19 @@ def _get_ll_summary(conn, month: str) -> dict:
             "is_income": r["amount"] > 0,
         })
 
+    # Owner Draw (money moved from LL to personal — positive signal!)
+    draw_row = conn.execute(
+        "SELECT COALESCE(SUM(ABS(amount)), 0) as total FROM transactions "
+        "WHERE strftime('%Y-%m', date) = ? AND category = 'Owner Draw'",
+        (month,),
+    ).fetchone()
+    owner_draw_cents = int(round((draw_row["total"] or 0) * 100))
+
     return {
         "income_cents": income_cents,
         "expense_cents": expense_cents,
         "profit_cents": income_cents - expense_cents,
+        "owner_draw_cents": owner_draw_cents,
         "categories": categories,
         "transactions": transactions,
         "has_data": income_cents > 0 or expense_cents > 0 or len(transactions) > 0,
