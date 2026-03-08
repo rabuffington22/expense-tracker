@@ -344,7 +344,7 @@ a:hover { text-decoration: underline; }
     gap: 0;
 }
 .sb-brand-icon {
-    width: 120px;
+    width: 102px;
     height: auto;
     border-radius: 0;
     flex-shrink: 0;
@@ -355,8 +355,9 @@ a:hover { text-decoration: underline; }
     text-align: center;
 }
 .sb-brand .sidebar-title {
-    font-size: 1.25rem;
+    font-size: 1.0rem;
     letter-spacing: 0.03em;
+    color: #9e9ea3;
 }
 .sb-brand .sidebar-subtitle {
     font-size: 0.52rem;
