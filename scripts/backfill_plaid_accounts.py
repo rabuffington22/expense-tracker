@@ -18,7 +18,8 @@ os.environ.setdefault("DATA_DIR", "/data")
 import sqlite3
 from datetime import datetime, timezone
 
-from core.db import get_connection, compute_transaction_id
+from core.db import get_connection
+from core.imports import compute_transaction_id
 from core.plaid_client import get_transactions as plaid_get_transactions
 
 
