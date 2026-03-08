@@ -473,6 +473,16 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
                         (txn_id,),
                     )
             return 1
-        return 0
+        else:
+            # Transaction already existed (e.g. from CSV import).
+            # Backfill Plaid fields and account name if missing.
+            conn.execute(
+                "UPDATE transactions SET plaid_item_id=COALESCE(plaid_item_id, ?), "
+                "plaid_transaction_id=COALESCE(plaid_transaction_id, ?), "
+                "account=COALESCE(NULLIF(account, ''), ?) "
+                "WHERE transaction_id=?",
+                (item_id, txn["plaid_transaction_id"], account_name, txn_id),
+            )
+            return 0
     except Exception:
         return 0
