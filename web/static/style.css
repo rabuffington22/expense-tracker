@@ -5757,6 +5757,7 @@ input.pl-input--sm {
     left: 0.6rem;
     transform: translateY(-50%);
     z-index: 1;
+    box-shadow: 0 0 0 3px var(--bg);
 }
 .stp-budget-kpi-grid {
     display: grid;
