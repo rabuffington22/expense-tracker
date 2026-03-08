@@ -1034,8 +1034,8 @@ def budget_subcategories():
                 lines.append(
                     f'<tr class="stp-subcat-row">'
                     f'<td style="padding-left:2rem;color:var(--text-muted)">{escape(r["sub"])}</td>'
-                    f'<td></td>'
                     f'<td>${amt:,.0f}</td>'
+                    f'<td></td>'
                     f'<td></td>'
                     f'<td></td>'
                     f'<td></td>'

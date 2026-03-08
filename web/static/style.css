@@ -5948,11 +5948,12 @@ input.pl-input--sm {
     transform: rotate(90deg);
 }
 .stp-subcat-row td {
-    font-size: var(--ui-font-xs);
+    font-size: 0.92rem;
+    font-weight: 600;
     color: var(--text-muted);
     border-bottom: none !important;
-    padding-top: 0.15rem !important;
-    padding-bottom: 0.15rem !important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
 }
 .stp-spent-link {
     cursor: pointer;
