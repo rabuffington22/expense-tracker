@@ -5810,7 +5810,7 @@ input.pl-input--sm {
     margin-bottom: 0.25rem;
 }
 .stp-budget-kpi-value {
-    font-size: 2.0rem;
+    font-size: 1.6rem;
     font-weight: 700;
     line-height: 1.1;
     color: var(--text-secondary);
@@ -5822,10 +5822,11 @@ input.pl-input--sm {
 .stp-budget-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: var(--ui-font-sm);
+    font-size: 0.88rem;
+    font-weight: 600;
 }
 .stp-budget-table th {
-    font-size: var(--ui-font-xs);
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: var(--label-tracking);
     text-transform: uppercase;
@@ -5858,7 +5859,8 @@ input.pl-input--sm {
     -webkit-appearance: none;
     padding: 0.2rem 0;
     color: var(--text);
-    font-size: var(--ui-font-sm);
+    font-size: 0.88rem;
+    font-weight: 600;
     text-align: right;
 }
 .stp-budget-input:focus {
