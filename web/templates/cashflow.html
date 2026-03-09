@@ -40,6 +40,20 @@
 {% endfor %}
 {% endmacro %}
 
+{% macro card_name(name) %}
+    {%- if 'Apple Card' in name -%}
+        <span class="cf-box-name">Apple Card</span>
+        {%- set rest = name | replace('Apple Card', '') | trim -%}
+        {%- if rest %}<span class="cf-box-name cf-box-name--sub">{{ rest }}</span>{% endif -%}
+    {%- elif name.split() | length >= 3 -%}
+        {%- set words = name.split() -%}
+        <span class="cf-box-name">{{ words[:-1] | join(' ') }}</span>
+        <span class="cf-box-name cf-box-name--sub">{{ words[-1] }}</span>
+    {%- else -%}
+        <span class="cf-box-name">{{ name }}</span>
+    {%- endif -%}
+{% endmacro %}
+
 {% macro bank_card(acct, entity_key) %}
 <div class="outline-panel cf-box cf-box--clickable"
     data-acct-id="{{ acct.id }}"
@@ -53,7 +67,7 @@
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
     onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
-        <span class="cf-box-name">{{ acct.account_name }}</span>
+        {{ card_name(acct.account_name) }}
         <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_dollars(acct.balance_cents) }}
         </span>
@@ -85,7 +99,7 @@
     data-apr="{{ '{:.2f}'.format(acct.apr_bps / 100) if acct.apr_bps else '' }}"
     onclick="cfOpenModal(this, event)">
     <div class="cf-box-header">
-        <span class="cf-box-name">{{ acct.account_name }}</span>
+        {{ card_name(acct.account_name) }}
         <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_dollars(acct.balance_cents) }}
         </span>
