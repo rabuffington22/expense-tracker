@@ -4497,6 +4497,8 @@ select.input-sm {
     text-align: center;
     gap: 0.1rem;
     padding-top: 0.55rem;
+    flex: 1;
+    justify-content: center;
 }
 .cf-box-value--inline {
     font-size: 0.88rem;
