@@ -636,6 +636,107 @@ def seed_categories(c, extra_categories):
     return cat_count, sub_count
 
 
+def seed_planning(c, entity_key):
+    """Seed Long-Term Planning items + Short-Term Planning budgets and action items."""
+    now = datetime.now().isoformat()
+
+    # ── Long-Term Planning settings ─────────────────────────────────────
+    if entity_key == "personal":
+        c.execute("""
+            UPDATE planning_settings
+            SET inflation_rate = 300, current_age = 40, custom_milestone = 55,
+                birth_date = '1986-03-15', updated_at = ?
+            WHERE id = 1
+        """, (now,))
+
+    c.execute("DELETE FROM planning_items")
+
+    if entity_key == "personal":
+        items = [
+            ("asset", "Home", 45000000, 350, 0, 0, "manual", None, 0),
+            ("asset", "401k", 18500000, 700, 150000, 0, "manual", None, 1),
+            ("asset", "Roth IRA", 6200000, 700, 50000, 0, "manual", None, 2),
+            ("asset", "Savings", 1250000, 100, 30000, 0, "cashflow", "Savings", 3),
+            ("asset", "529 College Fund", 3500000, 600, 25000, 0, "manual", None, 4),
+            ("liability", "Mortgage", 32000000, 475, 0, 220000, "manual", None, 10),
+            ("liability", "Student Loans", 4200000, 550, 0, 63000, "manual", None, 11),
+            ("liability", "Car Loan", 1800000, 399, 0, 42500, "manual", None, 12),
+        ]
+    else:
+        items = [
+            ("asset", "Business Checking", 1870000, 100, 0, 0, "cashflow", "Business Checking", 0),
+            ("asset", "Business Savings", 4500000, 200, 50000, 0, "cashflow", "Business Savings", 1),
+            ("asset", "Equipment", 8500000, -1500, 0, 0, "manual", None, 2),
+            ("asset", "Accounts Receivable", 3200000, 0, 0, 0, "manual", None, 3),
+            ("liability", "Business Line of Credit", 2500000, 850, 0, 75000, "manual", None, 10),
+            ("liability", "Equipment Loan", 4200000, 599, 0, 85000, "manual", None, 11),
+        ]
+
+    for item_type, name, value, rate, contrib, payment, source, cf_name, sort in items:
+        c.execute("""
+            INSERT INTO planning_items
+            (item_type, name, current_value_cents, annual_rate_bps,
+             monthly_contrib_cents, monthly_payment_cents, source,
+             cashflow_account_name, sort_order, created_at, updated_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?)
+        """, (item_type, name, value, rate, contrib, payment, source, cf_name, sort, now, now))
+
+    # ── Short-Term Planning: budgets + action items ─────────────────────
+    c.execute("DELETE FROM budget_items")
+    c.execute("DELETE FROM action_items")
+
+    if entity_key == "personal":
+        budgets = [
+            ("Housing", 237500, "fixed"), ("Student Loans", 63000, "fixed"),
+            ("Insurance", 31000, "fixed"), ("Utilities", 27500, "fixed"),
+            ("Groceries", 80000, "focus"), ("Dining", 40000, "focus"),
+            ("Entertainment", 15000, "focus"), ("Clothing", 20000, "focus"),
+            ("Gas & Auto", 30000, "focus"), ("Health & Beauty", 15000, "focus"),
+            ("Kids", 25000, "focus"), ("Fitness & Wellness", 12400, "focus"),
+            ("Household", 20000, "other"), ("Pet Supplies", 10000, "other"),
+            ("Electronics", 15000, "other"), ("Medical", 20000, "other"),
+            ("Education", 10000, "other"), ("Gifts & Donations", 15000, "other"),
+            ("Ranch", 25000, "other"), ("Charity", 27500, "other"),
+            ("Auto & Transport", 15000, "other"), ("Personal Care", 10000, "other"),
+            ("Travel", 30000, "other"),
+        ]
+        actions = [
+            ("Pay mortgage", "1", 1), ("Pay car loan", "3", 2),
+            ("Transfer to savings", "5", 3), ("Review credit card statements", "15", 4),
+            ("Pay student loans", "20", 5),
+        ]
+    else:
+        budgets = [
+            ("Payroll", 1200000, "fixed"), ("Rent & Facilities", 200000, "fixed"),
+            ("Insurance", 53000, "fixed"), ("Utilities", 40500, "fixed"),
+            ("Employee Benefits", 247000, "fixed"),
+            ("Software", 50000, "focus"), ("Marketing", 80000, "focus"),
+            ("Equipment", 40000, "focus"), ("Office Supplies", 25000, "focus"),
+            ("Meals & Entertainment", 30000, "focus"),
+            ("Travel", 60000, "other"), ("Professional Services", 50000, "other"),
+            ("Training & Development", 15000, "other"), ("Shipping & Logistics", 8000, "other"),
+            ("Taxes & Licenses", 100000, "other"), ("Legal", 25000, "other"),
+            ("Consulting", 50000, "other"), ("Banking & Fees", 10000, "other"),
+            ("Client Gifts", 10000, "other"), ("Vehicle & Fleet", 50000, "other"),
+            ("Cleaning & Maintenance", 40000, "other"),
+        ]
+        actions = [
+            ("Process payroll", "1", 1), ("Pay office rent", "1", 2),
+            ("Review P&L", "5", 3), ("Submit quarterly taxes", None, 4),
+            ("Review vendor contracts", None, 5),
+        ]
+
+    for cat, cents, section in budgets:
+        c.execute("INSERT OR IGNORE INTO budget_items (category, monthly_budget_cents, budget_section) VALUES (?,?,?)",
+                  (cat, cents, section))
+
+    for title, due, sort in actions:
+        c.execute("INSERT INTO action_items (title, status, due_date, is_recurring, sort_order) VALUES (?,?,?,?,?)",
+                  (title, "pending", due, 1 if due else 0, sort))
+
+    return len(items), len(budgets), len(actions)
+
+
 def seed_entity(entity_key, merchants, income_sources, account_map,
                 accounts_def, recurring_def, large_txns, extra_categories):
     """Seed a complete entity with transactions, accounts, and recurring."""
@@ -662,10 +763,13 @@ def seed_entity(entity_key, merchants, income_sources, account_map,
     txn_count = seed_transactions(c, merchants, income_sources, account_map, large_txns, today, start)
     acct_count = seed_accounts(c, accounts_def)
     rec_count = seed_manual_recurring(c, recurring_def, accounts_def)
+    plan_count, budget_count, action_count = seed_planning(c, entity_key)
 
     conn.commit()
     conn.close()
-    print(f"  {entity_key}: seeded {txn_count} txns, {acct_count} accounts, {rec_count} recurring, {cat_count} categories, {sub_count} subcategories")
+    print(f"  {entity_key}: seeded {txn_count} txns, {acct_count} accounts, {rec_count} recurring, "
+          f"{cat_count} categories, {sub_count} subcategories, {plan_count} planning items, "
+          f"{budget_count} budgets, {action_count} action items")
 
 
 if __name__ == "__main__":
