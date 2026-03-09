@@ -68,6 +68,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     cashflow.py                    # GET /cashflow (account balances, upcoming bills)
     planning.py                    # GET/POST /planning (net worth projections)
     payroll.py                     # GET/POST /payroll (employee roster, Phoenix import, role spending)
+    short_term_planning.py         # GET/POST /planning/short-term (budgets, action items, goals)
     reports.py                     # GET /reports (monthly detail + spending trend)
     ai.py                          # POST /ai/ask, /ai/clear (global Ask Opus chat, per-page context)
     plaid.py                       # GET/POST /plaid (connect, sync, disconnect)
@@ -91,8 +92,9 @@ web/                               # Flask app (replaced old app/ Streamlit code
       dashboard_ie_insights.html   # Income vs Expenses Insights (below IE chart)
       ai_analysis.html             # AI analysis results partial
       txn_results.html             # Transaction list results (HTMX swap target)
-      txn_row.html                 # Single transaction row
+      txn_row.html                 # Single transaction row (includes split badge)
       txn_row_edit.html            # Inline-edit transaction row
+      txn_split_editor.html        # Split transaction modal (balance validation, auto-split)
       todo_queue_detail.html       # To Do queue popup detail
       vendor_card.html             # Vendor order card (HTMX swap target)
       match_card.html              # Match review card (HTMX swap target)
@@ -119,7 +121,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
     joker-button.png               # Ask Opus button icon (66×66 display, purple ? with glow)
 core/                              # Business logic
-  db.py                            # Schema migrations (53 so far), DB init, connections
+  db.py                            # Schema migrations (54 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
@@ -173,7 +175,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (53 Migrations)
+## Database (54 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
@@ -196,6 +198,8 @@ Key tables:
 - **`payroll_entries`** -- Per-employee paycheck data from Phoenix import (Migration 51). Fields: employee_id (FK CASCADE), paycheck_date, amount_cents (total employer cost = Gross + ER Tax + Benefits), source_filename. UNIQUE(employee_id, paycheck_date).
 - **`budget_subcategories`** -- Optional subcategory-level budget targets (Migration 49). Fields: category, subcategory, monthly_budget_cents, created_at. UNIQUE(category, subcategory). Separate from budget_items. When set, subcategory rows show remaining amount and progress bar.
 - **`payroll_schedule`** -- Biweekly payroll cadence (Migration 50). Singleton table (CHECK id=1). Fields: anchor_date (known payday YYYY-MM-DD), cadence_days (14), pay_dow (day-of-week payment hits bank, 0=Mon, 2=Wed). Used by `_count_pay_periods()` to compute how many paydays fall in a given month (typically 2, sometimes 3). Only BFM uses this; Personal/LL have no row.
+- **`order_line_items`** -- Individual products within multi-item vendor orders (Migration 53). Fields: amazon_order_id (FK → amazon_orders), item_description, qty, unit_price_cents, category, subcategory, line_number. Breaks down aggregate orders into per-item categorization.
+- **`transaction_splits`** -- Split a single bank transaction across multiple budget categories (Migration 54). Fields: transaction_id (FK → transactions), description, amount_cents, category, subcategory, sort_order, source (manual/vendor_line_item), line_item_id (FK → order_line_items), created_at. When splits exist, `effective_txns_cte()` replaces parent with split pieces in all reporting queries.
 
 ## Vendor Workflow (Three-Phase)
 
@@ -376,6 +380,14 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-09 — Split transactions + LL Venmo dedup + Spend Trend chart restored
+Transaction splitting for multi-category bank charges, Luxe Legacy data import with Venmo deduplication, Plaid sync across all entities, and restored missing dashboard bar chart.
+
+1. **Split transactions (Migration 54)** — New `transaction_splits` table enables splitting a single bank transaction across multiple budget categories. `effective_txns_cte()` CTE in `core/reporting.py` transparently replaces parent transactions with split pieces in all reporting queries. Updated 16+ query functions across `reporting.py`, `dashboard.py`, `kristine.py`, `short_term_planning.py`, and `transactions.py`. New endpoints: `GET/POST/DELETE /transactions/splits/<txn_id>` for split CRUD, `POST /transactions/splits/<txn_id>/auto` to auto-generate from vendor line items. Split editor modal with balance validation, running total, and "Auto-split from Line Items" button. Split badge on transaction rows. `auto_split_from_line_items()` in `core/amazon.py` generates splits from `order_line_items`.
+2. **LL Venmo deduplication** — Imported 231 LL transactions from production. Identified that every Venmo sale creates 3 transactions (Venmo IN from customer, Venmo transfer OUT to bank, BOA deposit IN from Venmo). Recategorized 51 duplicate transfers to Internal Transfer (27 Venmo Standard/Instant Transfers + 24 BOA Venmo deposits). 11 BOA bank-to-bank transfers also recategorized. LL income corrected from $25k → $15.5k. Cesar Mauro ($275 house cleaning) moved to Owner Draw/Personal.
+3. **Plaid sync + data pull** — Synced all 3 entities via production Plaid. BFM +5 new transactions (Kroger, Adobe, Starbucks, Zapier, Uber Eats — all auto-categorized via aliases). Personal +15, LL +0. All corrections pushed to production.
+4. **Spend Trend bar chart restored** — Dashboard bar chart was accidentally removed: template section in `dashboard_body.html` deleted in commit f3450f6 (Activity band removal), CSS deleted in commit 0f31fd3 (dead CSS cleanup). Restored both template HTML and ~90 lines of chart CSS.
 
 ### 2026-03-09 — Joker button for Ask Opus + vendor order categorization
 Replaced "Ask Opus" text buttons with joker `?` image button across all pages. Bulk-categorized all vendor orders and added line item breakdown.
