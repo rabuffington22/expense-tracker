@@ -351,7 +351,7 @@ a:hover { text-decoration: underline; }
     object-fit: contain;
 }
 .sb-brand-text {
-    margin-top: 0.15rem;
+    margin-top: -0.22rem;
     text-align: center;
 }
 .sb-brand .sidebar-title {
