@@ -475,10 +475,10 @@ a:hover { text-decoration: underline; }
     border-radius: 2px;
 }
 :root[data-theme="dark"] .sb-link.active::before {
-    background: var(--sb-accent, var(--blue));
+    background: var(--sb-accent, var(--series-left));
 }
 :root[data-theme="light"] .sb-link.active::before {
-    background: var(--sb-accent, var(--blue));
+    background: var(--sb-accent, var(--series-left));
 }
 .sb-link:focus-visible {
     outline: none;
