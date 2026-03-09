@@ -245,6 +245,29 @@
 <!-- ── Income Insights (populated by KPI panel scripts) ──────────────────── -->
 <div id="ie-insights"></div>
 
+<!-- ── Spend Trend (6-month bar chart) ─────────────────────────────────── -->
+{% if chart_bars %}
+<div class="outline-band" style="margin-top: 2rem;">
+  <div class="band-label">Spend Trend</div>
+  <div class="band-body">
+    <div class="plot-area trend-chart">
+      <div class="chart-bars">
+        {% for bar in chart_bars %}
+        <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}" title="{{ bar.label }}: {{ bar.display }}">
+          <div class="chart-value">{{ bar.display }}</div>
+          <div class="chart-track">
+            <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_current %} chart-fill--selected{% endif %}"
+                 style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
+          </div>
+          <div class="chart-label">{{ bar.label }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <div class="dash-grid">
 
 
