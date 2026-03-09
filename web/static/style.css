@@ -4403,27 +4403,27 @@ select.input-sm {
 /* Account card grid */
 .cf-grid {
     display: grid;
-    gap: 0.5rem;
+    gap: 0.45rem;
     margin-bottom: 0.8rem;
 }
 .cf-grid--banks {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fill, 105px);
 }
 .cf-grid--cards {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fill, 105px);
 }
 
 /* Individual account box — playing card treatment (5:7 ratio) */
 .cf-box {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
-    padding: 0.5rem 0.5rem 0.45rem;
+    gap: 0.15rem;
+    padding: 0.35rem 0.35rem 0.3rem;
     background: rgba(46,139,87,0.08);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(46,139,87,0.18);
-    border-radius: 10px;
+    border-radius: 8px;
     position: relative;
     overflow: hidden;
     aspect-ratio: 5 / 7;
@@ -4432,9 +4432,9 @@ select.input-sm {
 .cf-box::before {
     content: "\2660"; /* ♠ spade */
     position: absolute;
-    top: 5px;
-    left: 7px;
-    font-size: 0.9rem;
+    top: 3px;
+    left: 5px;
+    font-size: 0.7rem;
     opacity: 0.12;
     color: #2e8b57;
     pointer-events: none;
@@ -4444,9 +4444,9 @@ select.input-sm {
 .cf-box::after {
     content: "\2660";
     position: absolute;
-    bottom: 5px;
-    right: 7px;
-    font-size: 0.9rem;
+    bottom: 3px;
+    right: 5px;
+    font-size: 0.7rem;
     opacity: 0.12;
     color: #2e8b57;
     pointer-events: none;
@@ -4495,11 +4495,11 @@ select.input-sm {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 0.15rem;
-    padding-top: 0.8rem;
+    gap: 0.1rem;
+    padding-top: 0.55rem;
 }
 .cf-box-value--inline {
-    font-size: 1.2rem;
+    font-size: 0.88rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
@@ -4512,10 +4512,10 @@ select.input-sm {
     display: none;
 }
 .cf-box-name {
-    font-size: 0.58rem;
+    font-size: 0.48rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     color: var(--text-secondary);
     min-width: 0;
     white-space: nowrap;
@@ -4556,7 +4556,7 @@ select.input-sm {
     background: rgba(0,0,0,0.10);
 }
 .cf-credit-line {
-    font-size: 0.52rem;
+    font-size: 0.42rem;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
     width: 100%;
@@ -4751,8 +4751,8 @@ input.cf-modal-input--due-date {
 .cf-upcoming {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    padding-top: 0.25rem;
+    gap: 0.1rem;
+    padding-top: 0.15rem;
     border-top: 0.5px solid rgba(255,255,255,0.06);
     margin-top: auto;
 }
@@ -4760,7 +4760,7 @@ input.cf-modal-input--due-date {
     border-top-color: rgba(0,0,0,0.06);
 }
 .cf-upcoming-label {
-    font-size: 0.45rem;
+    font-size: 0.38rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -4769,7 +4769,7 @@ input.cf-modal-input--due-date {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.45rem;
+    font-size: 0.38rem;
 }
 .cf-upcoming-merchant {
     white-space: nowrap;
@@ -4790,10 +4790,11 @@ input.cf-modal-input--due-date {
     font-weight: 600;
 }
 .cf-upcoming-none {
-    font-size: 0.55rem;
+    font-size: 0.42rem;
     color: var(--text-muted);
     font-style: normal;
-    padding-left: 0.8rem;
+    padding-left: 0;
+    text-align: center;
 }
 .cf-upcoming-none--centered {
     padding-left: 0;
@@ -4814,17 +4815,13 @@ input.cf-modal-input--due-date {
 }
 
 /* Responsive */
-@media (max-width: 900px) {
-    .cf-grid--banks { grid-template-columns: repeat(3, 1fr); }
-    .cf-grid--cards { grid-template-columns: repeat(3, 1fr); }
-}
 @media (max-width: 600px) {
-    .cf-grid--banks { grid-template-columns: repeat(2, 1fr); }
-    .cf-grid--cards { grid-template-columns: repeat(2, 1fr); }
+    .cf-grid--banks { grid-template-columns: repeat(auto-fill, 90px); }
+    .cf-grid--cards { grid-template-columns: repeat(auto-fill, 90px); }
 }
 @media (max-width: 400px) {
-    .cf-grid--banks { grid-template-columns: 1fr; }
-    .cf-grid--cards { grid-template-columns: 1fr; }
+    .cf-grid--banks { grid-template-columns: repeat(3, 1fr); }
+    .cf-grid--cards { grid-template-columns: repeat(3, 1fr); }
 }
 
 
