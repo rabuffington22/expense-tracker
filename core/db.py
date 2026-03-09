@@ -731,6 +731,23 @@ CREATE INDEX IF NOT EXISTS idx_vt_matched ON vendor_transactions(matched_transac
 CREATE INDEX IF NOT EXISTS idx_vt_date ON vendor_transactions(date);
 """
 
+_MIGRATION_53 = """
+CREATE TABLE IF NOT EXISTS order_line_items (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    amazon_order_id   INTEGER NOT NULL REFERENCES amazon_orders(id),
+    product_name      TEXT NOT NULL,
+    quantity          INTEGER NOT NULL DEFAULT 1,
+    unit_price_cents  INTEGER NOT NULL DEFAULT 0,
+    item_total_cents  INTEGER NOT NULL DEFAULT 0,
+    asin              TEXT,
+    amazon_category   TEXT,
+    category          TEXT,
+    subcategory       TEXT,
+    created_at        TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_oli_order ON order_line_items(amazon_order_id);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -784,6 +801,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (50, _MIGRATION_50),
     (51, _MIGRATION_51),
     (52, _MIGRATION_52),
+    (53, _MIGRATION_53),
 ]
 
 _DEFAULT_CATEGORIES = [

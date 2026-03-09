@@ -4649,6 +4649,7 @@ select.input-sm {
     width: 360px;
     max-width: 90vw;
     min-height: 480px;
+    max-height: 90vh;
     background: #1c1c1e;
     border-radius: 14px;
     padding: 2.2rem 1.6rem 1.4rem;
@@ -4657,7 +4658,6 @@ select.input-sm {
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    aspect-ratio: 5 / 7;
 }
 :root[data-theme="light"] .cfm {
     background: #f2f2f7;
@@ -5388,6 +5388,32 @@ input.pl-input--sm {
     border-color: #3ba1ff;
     box-shadow: none;
     filter: brightness(1);
+}
+
+/* ── Joker Button (Ask Opus) ───────────────────────────────────────────── */
+.joker-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    line-height: 0;
+    transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1), filter 0.2s;
+}
+.joker-btn:hover {
+    transform: scale(1.12);
+    filter: brightness(1.15);
+}
+.joker-btn:active {
+    transform: scale(0.95);
+}
+.joker-btn-img {
+    width: 66px;
+    height: 66px;
+    object-fit: contain;
+    border-radius: 50%;
+    filter: drop-shadow(0 0 12px rgba(167, 68, 242, 0.45));
 }
 
 /* ── AI Chat Modal ─────────────────────────────────────────────────────── */

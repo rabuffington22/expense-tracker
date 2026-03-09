@@ -7,7 +7,6 @@ from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, g, url_for, redirect
 
 from core.db import get_connection
-from core.amazon import get_order_counts
 from web.routes.reports import fmt_month_short, fmt_date
 
 bp = Blueprint("dashboard", __name__)
@@ -198,9 +197,6 @@ def _query_dashboard(conn, params):
         f")",
         vb_da_binds,
     ).fetchone()[0]
-
-    # ── Vendor orders (global, not date-filtered) ────────────────────────────
-    data["total_orders"], data["unmatched_orders"] = get_order_counts(g.entity_key)
 
     # ── Cash flow chart ──────────────────────────────────────────────────────
     data["chart_bars"] = _build_cash_flow_bars(conn, params["end"])

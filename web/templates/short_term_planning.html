@@ -4,7 +4,9 @@
 {% block content %}
 <div class="page-title-row">
     <h1 class="section-title">Short-Term Planning</h1>
-    <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('short-term-planning')">Ask Opus</button>
+    <button type="button" class="joker-btn" onclick="aiChatOpen('short-term-planning')" title="Ask Opus" aria-label="Ask Opus">
+      <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
+    </button>
 </div>
 
 {# ════════════════════════════════════════════════════════════════════════════

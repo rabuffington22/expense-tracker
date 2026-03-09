@@ -134,7 +134,9 @@
 {% block content %}
 <div class="page-title-row">
   <h1 class="cf-title">Cash Flow</h1>
-  <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('cashflow')">Ask Opus</button>
+  <button type="button" class="joker-btn" onclick="aiChatOpen('cashflow')" title="Ask Opus" aria-label="Ask Opus">
+    <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
+  </button>
 </div>
 
 {# ── Primary entity ───────────────────────────────────────────────────── #}

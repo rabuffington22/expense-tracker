@@ -257,7 +257,9 @@
                    value="{{ settings.custom_milestone or '' }}"
                    class="pl-input pl-input--sm" placeholder="55" inputmode="numeric">
         </label>
-        <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('planning')">Ask Opus</button>
+        <button type="button" class="joker-btn" onclick="aiChatOpen('planning')" title="Ask Opus" aria-label="Ask Opus">
+          <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
+        </button>
     </form>
 </div>
 

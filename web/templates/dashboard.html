@@ -8,7 +8,9 @@
     <button class="seg-item active" data-view="details" onclick="dashToggleView('details')">Details</button>
     <button class="seg-item" data-view="compare" onclick="dashToggleView('compare')">Compare</button>
   </div>
-  <button type="button" class="btn btn-primary btn-sm pl-btn-ask" onclick="aiChatOpen('dashboard')">Ask Opus</button>
+  <button type="button" class="joker-btn" onclick="aiChatOpen('dashboard')" title="Ask Opus" aria-label="Ask Opus">
+    <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
+  </button>
 </div>
 
 <!-- Dashboard body -->

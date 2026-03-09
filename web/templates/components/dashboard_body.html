@@ -247,21 +247,5 @@
 
 <div class="dash-grid">
 
-<!-- ── Vendor Orders (global, not date-filtered) ────────────────────────── -->
-{% if total_orders > 0 %}
-<a href="{{ url_for('match.index') }}" class="card card-link" style="display:block; padding:0.8rem 1.2rem;">
-  <div class="flex-between">
-    <span class="text-sm text-bold">Vendor Orders</span>
-    <span class="text-sm">
-      {{ "{:,}".format(total_orders) }} total &mdash;
-      {% if unmatched_orders > 0 %}
-      <span style="color:var(--orange);">{{ unmatched_orders }} unmatched</span>
-      {% else %}
-      <span style="color:var(--green);">All matched</span>
-      {% endif %}
-    </span>
-  </div>
-</a>
-{% endif %}
 
 </div>{# end dash-grid #}

@@ -117,8 +117,9 @@ web/                               # Flask app (replaced old app/ Streamlit code
     style.css                      # Apple-style dual theme (dark default + light), CSS custom properties on data-theme, SF Pro fonts
     htmx.min.js                    # HTMX library (~14KB)
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
+    joker-button.png               # Ask Opus button icon (66×66 display, purple ? with glow)
 core/                              # Business logic
-  db.py                            # Schema migrations (51 so far), DB init, connections
+  db.py                            # Schema migrations (53 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
@@ -172,7 +173,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (51 Migrations)
+## Database (53 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
@@ -343,7 +344,7 @@ Each insight links to a drill-down in `/transactions`. Compare view adds cross-p
 ## AI Features
 Four AI-powered features using Claude via OpenRouter (`core/ai_client.py`). Requires `OPENROUTER_API_KEY` env var.
 
-- **Ask Opus** (global chat modal) — Available on every page via "Ask Opus" button. Uses `anthropic/claude-opus-4.6` via `web/routes/ai.py`. Each page sends page-specific financial context (planning data, spending trends, transaction patterns, subscription costs, account balances, etc.). Conversation persists per entity+page in `/tmp/expense-tracker-ai/`. System prompt adapts per page (financial advisor on Planning, spending analyst on Dashboard, etc.). Modal lives in `base.html`, JS function `aiChatOpen('pagename')` sets context. Button styled as deep navy (`#001a3a`) with light blue (`#14a9f8`) ring.
+- **Ask Opus** (global chat modal) — Available on every page via "Ask Opus" button. Uses `anthropic/claude-opus-4.6` via `web/routes/ai.py`. Each page sends page-specific financial context (planning data, spending trends, transaction patterns, subscription costs, account balances, etc.). Conversation persists per entity+page in `/tmp/expense-tracker-ai/`. System prompt adapts per page (financial advisor on Planning, spending analyst on Dashboard, etc.). Modal lives in `base.html`, JS function `aiChatOpen('pagename')` sets context. Button is a joker `?` image (`web/static/joker-button.png`, 66×66px) with purple glow (`drop-shadow`), hover scale+brightness effect. CSS classes: `.joker-btn`, `.joker-btn-img`.
 - **AI Suggest** (transactions edit modal) — Uses `anthropic/claude-sonnet-4.6`. Sends merchant + amount, returns category/subcategory suggestion. Button labeled "AI Suggest", shows error feedback on failure.
 - **AI Cancellation Tips** (subscriptions detail modal) — Uses `anthropic/claude-sonnet-4.6`. Generates step-by-step cancellation instructions for a subscription. On-demand button on watchlist items.
 - **AI Analysis** (dashboard insights) — Uses `anthropic/claude-sonnet-4.6`. Gathers spending summary (categories, merchants, trends), returns 3-5 narrative insights. Cached in-memory 1 hour per entity+period. Button in Insights section with blue accent.
@@ -375,6 +376,14 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-09 — Joker button for Ask Opus + vendor order categorization
+Replaced "Ask Opus" text buttons with joker `?` image button across all pages. Bulk-categorized all vendor orders and added line item breakdown.
+
+1. **Joker button** — Replaced navy "Ask Opus" text button with joker `?` image button (`web/static/joker-button.png`) on all 7 pages: Dashboard, Cash Flow, Transactions, Reports, Subscriptions, Short-Term Planning, Long-Term Planning. 66×66px with subtle purple glow (`drop-shadow`), hover scale (1.12×) + brightness, active press (0.95×). CSS classes `.joker-btn` + `.joker-btn-img` in `style.css`.
+2. **Vendor order bulk categorization** — `scripts/categorize_vendor_orders.py` categorized all 745 Amazon/Henry Schein orders (529 Personal, 210 BFM Amazon, 6 BFM Henry Schein) using keyword-based rules with entity-specific category mappings. 100% categorized.
+3. **Order line items (Migration 53)** — New `order_line_items` table breaks multi-item orders into individual products with per-item categorization. 382 line items populated for BFM (324 Amazon + 58 Henry Schein) via `scripts/populate_line_items.py`.
+4. **Production sync** — All vendor order data (745 amazon_orders + 382 line items) pushed to production via SQL INSERT exports.
 
 ### 2026-03-08 — Rebrand to "The Ledger" + Joker theme + playing card UI
 Major visual overhaul with Joker/playing card motif across the app.
