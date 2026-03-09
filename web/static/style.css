@@ -4648,17 +4648,118 @@ select.input-sm {
 .cfm {
     width: 360px;
     max-width: 90vw;
-    min-height: 380px;
+    min-height: 480px;
     background: #1c1c1e;
-    border-radius: 20px;
-    padding: 1.8rem 1.6rem 1.4rem;
+    border-radius: 14px;
+    padding: 2.2rem 1.6rem 1.4rem;
     box-shadow: 0 24px 80px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 5 / 7;
 }
 :root[data-theme="light"] .cfm {
     background: #f2f2f7;
     box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+}
+/* Playing card — bank account (♦ diamond, green) */
+.cfm--bank {
+    border: 1.5px solid rgba(46,139,87,0.28);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5),
+                inset 0 0 0 4px rgba(46,139,87,0.06),
+                inset 0 0 0 5px rgba(46,139,87,0.14);
+}
+.cfm--bank::before {
+    content: "\2666";
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 1rem;
+    opacity: 0.25;
+    color: #2e8b57;
+    pointer-events: none;
+    line-height: 1;
+    z-index: 1;
+}
+.cfm--bank::after {
+    content: "\2666";
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 1rem;
+    opacity: 0.25;
+    color: #2e8b57;
+    pointer-events: none;
+    line-height: 1;
+    transform: rotate(180deg);
+    z-index: 1;
+}
+/* Playing card — credit card (♠ spade, purple) */
+.cfm--card {
+    border: 1.5px solid rgba(124,58,237,0.28);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5),
+                inset 0 0 0 4px rgba(124,58,237,0.06),
+                inset 0 0 0 5px rgba(124,58,237,0.14);
+}
+.cfm--card::before {
+    content: "\2660";
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 1rem;
+    opacity: 0.25;
+    color: #7C3AED;
+    pointer-events: none;
+    line-height: 1;
+    z-index: 1;
+}
+.cfm--card::after {
+    content: "\2660";
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 1rem;
+    opacity: 0.25;
+    color: #7C3AED;
+    pointer-events: none;
+    line-height: 1;
+    transform: rotate(180deg);
+    z-index: 1;
+}
+/* Center watermark suit — large faded pip behind modal content */
+.cfm--bank .cfm-footer::before,
+.cfm--card .cfm-footer::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14rem;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+    line-height: 1;
+}
+.cfm--bank .cfm-footer::before {
+    content: "\2666";
+    color: #2e8b57;
+}
+.cfm--card .cfm-footer::before {
+    content: "\2660";
+    color: #7C3AED;
+}
+/* Light mode overrides */
+:root[data-theme="light"] .cfm--bank {
+    border-color: rgba(46,139,87,0.22);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.18),
+                inset 0 0 0 4px rgba(46,139,87,0.04),
+                inset 0 0 0 5px rgba(46,139,87,0.12);
+}
+:root[data-theme="light"] .cfm--card {
+    border-color: rgba(124,58,237,0.22);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.18),
+                inset 0 0 0 4px rgba(124,58,237,0.04),
+                inset 0 0 0 5px rgba(124,58,237,0.12);
 }
 
 /* Hero — centered title + big balance */

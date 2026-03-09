@@ -271,6 +271,11 @@ function cfOpenModal(btn, evt) {
         ? '/cashflow/accounts/update-card/' + d.acctId
         : '/cashflow/accounts/update/' + d.acctId;
 
+    /* Toggle playing card suit class */
+    var modal = document.querySelector('.cfm');
+    modal.classList.remove('cfm--bank', 'cfm--card');
+    modal.classList.add(isCard ? 'cfm--card' : 'cfm--bank');
+
     document.getElementById('cf-modal-title').textContent = d.acctName;
     document.getElementById('cf-modal-form').action = action;
     document.getElementById('cf-modal-entity').value = d.entityKey;
