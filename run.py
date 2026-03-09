@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the Ledger AI Flask app."""
+"""Run the Ledger Flask app."""
 
 import os
 from pathlib import Path
