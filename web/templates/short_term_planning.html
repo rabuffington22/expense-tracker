@@ -110,115 +110,24 @@
     {% if active_goals %}
     <div class="stp-goals-grid">
         {% for goal in active_goals %}
-        <div class="stp-goal-card stp-goal-card--{{ goal.goal_type }}">
+        <div class="stp-goal-card stp-goal-card--{{ goal.goal_type }}"
+             onclick="stpOpenGoalPopup({{ goal.id }}, event)"
+             data-goal-id="{{ goal.id }}"
+             data-goal-type="{{ goal.goal_type }}">
             <div class="stp-goal-header">
                 <div class="stp-goal-name">{{ goal.name }}</div>
-                <span class="stp-goal-badge stp-badge--{{ goal.goal_type }}">
-                    {% if goal.goal_type == 'debt_payoff' %}Debt Payoff
-                    {% elif goal.goal_type == 'savings' %}Savings
-                    {% else %}Spending Reduction{% endif %}
-                </span>
             </div>
-
-            {# Current balance #}
-            <div class="stp-goal-balance">
-                {{ fmt_dollars(goal.current_balance_cents) }}
-                {% if goal.goal_type == 'savings' and goal.target_amount_cents %}
-                <span class="stp-goal-target">of {{ fmt_dollars(goal.target_amount_cents) }}</span>
-                {% endif %}
+            <div class="stp-goal-balance-area">
+                <span class="stp-goal-balance">{{ fmt_dollars(goal.current_balance_cents) }}</span>
             </div>
-
-            {# Progress bar #}
-            <div class="stp-progress-wrap">
-                <div class="stp-progress-bar">
-                    <div class="stp-progress-fill" style="width: {{ goal.progress_pct }}%"></div>
-                </div>
-                <span class="stp-progress-label">{{ goal.progress_pct }}%</span>
-            </div>
-
-            {# Strategy + monthly amount (if locked in) #}
-            {% if goal.monthly_amount_cents and goal.monthly_amount_cents > 0 %}
-            <div class="stp-goal-plan-info">
-                {% if goal.strategy %}
-                <span class="stp-plan-tag">{{ goal.strategy|capitalize }}</span>
-                {% endif %}
-                <span class="stp-plan-amount">{{ fmt_dollars(goal.monthly_amount_cents) }}/mo</span>
-                {% if goal.target_date %}
-                <span class="stp-plan-date">Target: {{ goal.target_date }}</span>
-                {% endif %}
-            </div>
-            {% endif %}
-
-            {# Monthly review banner #}
-            {% if goal.needs_review %}
-            <div class="stp-review-banner">
-                Monthly check-in
-                <button class="btn btn-sm" onclick="document.getElementById('stp-review-{{ goal.id }}').showModal()">Review</button>
-            </div>
-            {% endif %}
-
-            {# Sparkline (last 6 snapshots) #}
-            {% if goal.snapshots|length >= 2 %}
-            <div class="stp-sparkline-wrap"
-                 hx-get="{{ url_for('short_term_planning.goal_progress', goal_id=goal.id) }}"
-                 hx-trigger="load"
-                 hx-swap="innerHTML">
-            </div>
-            {% endif %}
-
-            {# Locked plan (collapsible) #}
-            {% if goal.ai_plan %}
-            <details class="stp-plan-details">
-                <summary class="stp-plan-summary">View Plan</summary>
-                <div class="stp-plan-content">{{ goal.ai_plan }}</div>
-            </details>
-            {% endif %}
-
-            {# Actions #}
-            <div class="stp-goal-actions">
-                <button class="btn btn-sm btn-secondary" onclick="stpEditGoal({{ goal.id }})">Edit</button>
-                {% if not goal.ai_plan %}
-                <button class="btn btn-sm" onclick="stpLockPlan({{ goal.id }})">Lock In Plan</button>
-                {% else %}
-                <button class="btn btn-sm btn-secondary" onclick="stpLockPlan({{ goal.id }})">Update Plan</button>
-                {% endif %}
-            </div>
-
-            {# Review modal #}
-            {% if goal.needs_review %}
-            <dialog id="stp-review-{{ goal.id }}" class="stp-modal">
-                <div class="stp-modal-content">
-                    <div class="stp-modal-header">
-                        <h3>Monthly Review: {{ goal.name }}</h3>
-                        <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+            <div class="stp-goal-footer">
+                <div class="stp-progress-wrap">
+                    <div class="stp-progress-bar">
+                        <div class="stp-progress-fill" style="width: {{ goal.progress_pct }}%"></div>
                     </div>
-                    <div class="stp-review-body">
-                        <div class="stp-review-stat">
-                            <span class="stp-review-label">Current Balance</span>
-                            <span class="stp-review-value">{{ fmt_dollars(goal.current_balance_cents) }}</span>
-                        </div>
-                        {% if goal.snapshots|length >= 2 %}
-                        {% set last = goal.snapshots[-1] %}
-                        {% set prev = goal.snapshots[-2] %}
-                        {% set change = last.balance_cents - prev.balance_cents %}
-                        <div class="stp-review-stat">
-                            <span class="stp-review-label">Change Since Last</span>
-                            <span class="stp-review-value {% if change < 0 %}stp-green{% else %}stp-red{% endif %}">
-                                {{ fmt_dollars(change) }}
-                            </span>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <form method="post" action="{{ url_for('short_term_planning.record_snapshot', goal_id=goal.id) }}">
-                        <textarea name="note" class="stp-modal-textarea" placeholder="Notes on this month's progress..."></textarea>
-                        <div class="stp-modal-footer">
-                            <button type="submit" class="btn">Save Review</button>
-                            <button type="button" class="btn btn-secondary" onclick="aiChatOpen('short-term-planning')">Discuss with AI</button>
-                        </div>
-                    </form>
+                    <span class="stp-progress-label">{{ goal.progress_pct }}%</span>
                 </div>
-            </dialog>
-            {% endif %}
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -234,17 +143,120 @@
         <summary class="stp-section-label">COMPLETED ({{ completed_goals|length }})</summary>
         <div class="stp-goals-grid">
             {% for goal in completed_goals %}
-            <div class="stp-goal-card stp-goal--completed">
+            <div class="stp-goal-card stp-goal--completed"
+                 data-goal-id="{{ goal.id }}"
+                 data-goal-type="{{ goal.goal_type }}">
                 <div class="stp-goal-header">
                     <div class="stp-goal-name">{{ goal.name }}</div>
-                    <span class="stp-goal-badge stp-badge--completed">Done</span>
                 </div>
-                <div class="stp-goal-balance">{{ fmt_dollars(goal.current_balance_cents) }}</div>
+                <div class="stp-goal-balance-area">
+                    <span class="stp-goal-balance">{{ fmt_dollars(goal.current_balance_cents) }}</span>
+                </div>
             </div>
             {% endfor %}
         </div>
     </details>
     {% endif %}
+
+    {# ── Goal detail popup (shared, populated by JS) ─────────────────── #}
+    <div class="stp-goal-scrim" id="stp-goal-scrim" hidden>
+        <div class="stp-goal-popup" id="stp-goal-popup">
+            <div class="cfm-hero">
+                <span class="cfm-title" id="stp-popup-name"></span>
+                <div class="cfm-balance">
+                    <span id="stp-popup-balance"></span>
+                </div>
+                <div id="stp-popup-target" class="stp-popup-target" hidden></div>
+            </div>
+
+            {# Progress #}
+            <div class="cfm-group" id="stp-popup-progress-group">
+                <div class="cfm-row">
+                    <span class="cfm-label">Progress</span>
+                    <span class="cfm-value" id="stp-popup-pct"></span>
+                </div>
+                <div class="cfm-row" id="stp-popup-strategy-row" hidden>
+                    <span class="cfm-label">Strategy</span>
+                    <span class="cfm-value" id="stp-popup-strategy"></span>
+                </div>
+                <div class="cfm-row" id="stp-popup-monthly-row" hidden>
+                    <span class="cfm-label">Monthly</span>
+                    <span class="cfm-value" id="stp-popup-monthly"></span>
+                </div>
+                <div class="cfm-row" id="stp-popup-target-date-row" hidden>
+                    <span class="cfm-label">Target Date</span>
+                    <span class="cfm-value" id="stp-popup-target-date"></span>
+                </div>
+            </div>
+
+            {# Sparkline #}
+            <div id="stp-popup-sparkline" class="cfm-group" hidden>
+                <div class="cfm-group-header">
+                    <span class="cfm-section-label">Trend</span>
+                </div>
+                <div id="stp-popup-sparkline-content" style="padding: 0.5rem 1rem;"></div>
+            </div>
+
+            {# AI Plan #}
+            <div id="stp-popup-plan-group" class="cfm-group" hidden>
+                <div class="cfm-group-header">
+                    <span class="cfm-section-label">Plan</span>
+                </div>
+                <div id="stp-popup-plan-content" style="padding: 0.5rem 1rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;"></div>
+            </div>
+
+            {# Review banner #}
+            <div id="stp-popup-review-banner" class="stp-review-banner" hidden>
+                Monthly check-in
+                <button class="btn btn-sm" id="stp-popup-review-btn">Review</button>
+            </div>
+
+            {# Footer actions #}
+            <div class="cfm-footer">
+                <button type="button" class="cfm-btn cfm-btn--cancel" onclick="stpCloseGoalPopup()">Close</button>
+                <button type="button" class="cfm-btn cfm-btn--save" id="stp-popup-edit-btn">Edit</button>
+                <button type="button" class="cfm-btn cfm-btn--save" id="stp-popup-plan-btn" style="margin-left: 0;">Lock In Plan</button>
+            </div>
+        </div>
+    </div>
+
+    {# Review modals (kept outside popup for <dialog> behavior) #}
+    {% for goal in active_goals %}
+    {% if goal.needs_review %}
+    <dialog id="stp-review-{{ goal.id }}" class="stp-modal">
+        <div class="stp-modal-content">
+            <div class="stp-modal-header">
+                <h3>Monthly Review: {{ goal.name }}</h3>
+                <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+            </div>
+            <div class="stp-review-body">
+                <div class="stp-review-stat">
+                    <span class="stp-review-label">Current Balance</span>
+                    <span class="stp-review-value">{{ fmt_dollars(goal.current_balance_cents) }}</span>
+                </div>
+                {% if goal.snapshots|length >= 2 %}
+                {% set last = goal.snapshots[-1] %}
+                {% set prev = goal.snapshots[-2] %}
+                {% set change = last.balance_cents - prev.balance_cents %}
+                <div class="stp-review-stat">
+                    <span class="stp-review-label">Change Since Last</span>
+                    <span class="stp-review-value {% if change < 0 %}stp-green{% else %}stp-red{% endif %}">
+                        {{ fmt_dollars(change) }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            <form method="post" action="{{ url_for('short_term_planning.record_snapshot', goal_id=goal.id) }}">
+                <textarea name="note" class="stp-modal-textarea" placeholder="Notes on this month's progress..."></textarea>
+                <div class="stp-modal-footer">
+                    <button type="submit" class="btn">Save Review</button>
+                    <button type="button" class="btn btn-secondary" onclick="aiChatOpen('short-term-planning')">Discuss with AI</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+    {% endif %}
+    {% endfor %}
 </div>
 
 {# ════════════════════════════════════════════════════════════════════════════
@@ -669,6 +681,104 @@ function stpLockPlan(goalId) {
 
     document.getElementById('stp-lock-modal').showModal();
 }
+
+// ── Goal detail popup ──────────────────────────────────────────────────
+var _stpCurrentGoalId = null;
+
+function stpOpenGoalPopup(goalId, evt) {
+    if (evt && (evt.target.closest('button') || evt.target.closest('a'))) return;
+    var goal = _stpGoals[goalId];
+    if (!goal) return;
+    _stpCurrentGoalId = goalId;
+
+    var popup = document.getElementById('stp-goal-popup');
+    /* Set suit class for playing card treatment */
+    popup.classList.remove('stp-goal-popup--debt_payoff', 'stp-goal-popup--savings', 'stp-goal-popup--spending_reduction');
+    popup.classList.add('stp-goal-popup--' + goal.goal_type);
+
+    document.getElementById('stp-popup-name').textContent = goal.name;
+    var balStr = (goal.current_balance_cents / 100).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
+    document.getElementById('stp-popup-balance').textContent = balStr;
+
+    /* Target */
+    var targetEl = document.getElementById('stp-popup-target');
+    if (goal.goal_type === 'savings' && goal.target_amount_cents) {
+        var tgtStr = (goal.target_amount_cents / 100).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
+        targetEl.textContent = 'of ' + tgtStr;
+        targetEl.hidden = false;
+    } else {
+        targetEl.hidden = true;
+    }
+
+    /* Progress */
+    document.getElementById('stp-popup-pct').textContent = (goal.progress_pct || 0) + '%';
+
+    /* Strategy */
+    var stratRow = document.getElementById('stp-popup-strategy-row');
+    if (goal.strategy) {
+        document.getElementById('stp-popup-strategy').textContent = goal.strategy.charAt(0).toUpperCase() + goal.strategy.slice(1);
+        stratRow.hidden = false;
+    } else { stratRow.hidden = true; }
+
+    /* Monthly */
+    var monthlyRow = document.getElementById('stp-popup-monthly-row');
+    if (goal.monthly_amount_cents && goal.monthly_amount_cents > 0) {
+        var moStr = (goal.monthly_amount_cents / 100).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
+        document.getElementById('stp-popup-monthly').textContent = moStr + '/mo';
+        monthlyRow.hidden = false;
+    } else { monthlyRow.hidden = true; }
+
+    /* Target date */
+    var tDateRow = document.getElementById('stp-popup-target-date-row');
+    if (goal.target_date) {
+        document.getElementById('stp-popup-target-date').textContent = goal.target_date;
+        tDateRow.hidden = false;
+    } else { tDateRow.hidden = true; }
+
+    /* AI Plan */
+    var planGroup = document.getElementById('stp-popup-plan-group');
+    if (goal.ai_plan) {
+        document.getElementById('stp-popup-plan-content').textContent = goal.ai_plan;
+        planGroup.hidden = false;
+    } else { planGroup.hidden = true; }
+
+    /* Review banner */
+    var reviewBanner = document.getElementById('stp-popup-review-banner');
+    if (goal.needs_review) {
+        reviewBanner.hidden = false;
+        document.getElementById('stp-popup-review-btn').onclick = function() {
+            stpCloseGoalPopup();
+            document.getElementById('stp-review-' + goalId).showModal();
+        };
+    } else { reviewBanner.hidden = true; }
+
+    /* Plan button text */
+    var planBtn = document.getElementById('stp-popup-plan-btn');
+    planBtn.textContent = goal.ai_plan ? 'Update Plan' : 'Lock In Plan';
+    planBtn.onclick = function() { stpCloseGoalPopup(); stpLockPlan(goalId); };
+
+    /* Edit button */
+    document.getElementById('stp-popup-edit-btn').onclick = function() { stpCloseGoalPopup(); stpEditGoal(goalId); };
+
+    document.getElementById('stp-goal-scrim').hidden = false;
+}
+
+function stpCloseGoalPopup() {
+    document.getElementById('stp-goal-scrim').hidden = true;
+    _stpCurrentGoalId = null;
+}
+
+/* Close on scrim click */
+document.getElementById('stp-goal-scrim').addEventListener('click', function(e) {
+    if (e.target === this) stpCloseGoalPopup();
+});
+
+/* Close on Escape */
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !document.getElementById('stp-goal-scrim').hidden) {
+        stpCloseGoalPopup();
+    }
+});
 
 // ── Budget drill-down: subcategory toggle ──────────────────────────────
 function stpToggleSub(el, category) {

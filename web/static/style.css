@@ -4849,6 +4849,7 @@ input.cfm-input--hero {
     border-bottom: 0.5px solid rgba(255,255,255,0.06);
 }
 .cfm-row:last-child { border-bottom: none; }
+.cfm-row[hidden] { display: none; }
 :root[data-theme="light"] .cfm-row {
     border-bottom-color: rgba(0,0,0,0.06);
 }
@@ -5732,19 +5733,21 @@ input.pl-input--sm {
 
 .stp-goals-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, 105px);
+    gap: 0.75rem;
 }
 .stp-goal-card {
     background: var(--bg-card);
     border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 1.4rem 1.2rem 1rem;
+    border-radius: 8px;
+    padding: 0.35rem;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
     overflow: hidden;
     position: relative;
+    aspect-ratio: 5 / 7;
+    cursor: pointer;
+    transition: background var(--transition);
     /* Playing card inner frame */
     box-shadow: inset 0 0 0 3px rgba(255,255,255,0.03), inset 0 0 0 4px rgba(255,255,255,0.06);
 }
@@ -5754,10 +5757,10 @@ input.pl-input--sm {
 /* Suit pips — top-left */
 .stp-goal-card::before {
     position: absolute;
-    top: 6px;
-    left: 8px;
-    font-size: 0.9rem;
-    opacity: 0.25;
+    top: 5px;
+    left: 6px;
+    font-size: 0.8rem;
+    opacity: 0.3;
     pointer-events: none;
     line-height: 1;
     z-index: 1;
@@ -5765,27 +5768,50 @@ input.pl-input--sm {
 /* Suit pips — bottom-right (rotated) */
 .stp-goal-card::after {
     position: absolute;
-    bottom: 6px;
-    right: 8px;
-    font-size: 0.9rem;
-    opacity: 0.25;
+    bottom: 5px;
+    right: 6px;
+    font-size: 0.8rem;
+    opacity: 0.3;
     pointer-events: none;
     line-height: 1;
     transform: rotate(180deg);
     z-index: 1;
 }
 /* Center watermark suit */
-.stp-goal-header::after {
+.stp-goal-balance-area::before {
     content: "";
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 8rem;
-    opacity: 0.03;
+    font-size: 3.5rem;
+    opacity: 0.045;
     pointer-events: none;
     z-index: 0;
     line-height: 1;
+}
+/* Card layout: name ~20% from top, balance dead center, progress at bottom */
+.stp-goal-header {
+    position: absolute;
+    top: 18%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 0 0.3rem;
+}
+.stp-goal-balance-area {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    text-align: center;
+}
+.stp-goal-footer {
+    position: absolute;
+    bottom: 10%;
+    left: 0.5rem;
+    right: 0.5rem;
 }
 
 /* Debt Payoff — ♠ spade, purple */
@@ -5799,7 +5825,7 @@ input.pl-input--sm {
 }
 .stp-goal-card--debt_payoff::before { content: "\2660"; color: #7C3AED; }
 .stp-goal-card--debt_payoff::after  { content: "\2660"; color: #7C3AED; }
-.stp-goal-card--debt_payoff .stp-goal-header::after { content: "\2660"; color: #7C3AED; }
+.stp-goal-card--debt_payoff .stp-goal-balance-area::before { content: "\2660"; color: #7C3AED; }
 
 /* Savings — ♦ diamond, green */
 .stp-goal-card--savings {
@@ -5812,7 +5838,7 @@ input.pl-input--sm {
 }
 .stp-goal-card--savings::before { content: "\2666"; color: #2e8b57; }
 .stp-goal-card--savings::after  { content: "\2666"; color: #2e8b57; }
-.stp-goal-card--savings .stp-goal-header::after { content: "\2666"; color: #2e8b57; }
+.stp-goal-card--savings .stp-goal-balance-area::before { content: "\2666"; color: #2e8b57; }
 
 /* Spending Reduction — ♣ club, blue */
 .stp-goal-card--spending_reduction {
@@ -5825,7 +5851,7 @@ input.pl-input--sm {
 }
 .stp-goal-card--spending_reduction::before { content: "\2663"; color: #0a84ff; }
 .stp-goal-card--spending_reduction::after  { content: "\2663"; color: #0a84ff; }
-.stp-goal-card--spending_reduction .stp-goal-header::after { content: "\2663"; color: #0a84ff; }
+.stp-goal-card--spending_reduction .stp-goal-balance-area::before { content: "\2663"; color: #0a84ff; }
 
 /* Completed goals — muted diamond */
 .stp-goal--completed::before { content: "\2666"; color: var(--text-muted); }
@@ -5847,16 +5873,13 @@ input.pl-input--sm {
 .stp-goal--completed {
     opacity: 0.6;
 }
-.stp-goal-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.5rem;
-    min-height: 2.6rem;
-}
 .stp-goal-name {
-    font-size: var(--ui-font-base);
+    font-size: 0.58rem;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    display: block;
 }
 .stp-goal-badge {
     font-size: 0.62rem;
@@ -5885,8 +5908,11 @@ input.pl-input--sm {
 }
 
 .stp-goal-balance {
-    font-size: 1.4rem;
+    font-size: 0.82rem;
     font-weight: 800;
+    position: relative;
+    z-index: 1;
+    display: block;
 }
 .stp-goal-target {
     font-size: var(--ui-font-sm);
@@ -5894,31 +5920,103 @@ input.pl-input--sm {
     color: var(--text-muted);
 }
 
+/* ── Goal detail popup (playing card back) ─────────────────────────────────── */
+.stp-goal-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+.stp-goal-scrim[hidden] { display: none; }
+.stp-goal-popup {
+    width: 360px;
+    max-width: 90vw;
+    min-height: 480px;
+    background: #1c1c1e;
+    border-radius: 14px;
+    padding: 2.2rem 1.6rem 1.4rem;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 5 / 7;
+}
+:root[data-theme="light"] .stp-goal-popup {
+    background: #f2f2f7;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+}
+/* Debt Payoff popup — ♠ spade, purple */
+.stp-goal-popup--debt_payoff {
+    border: 1.5px solid rgba(124,58,237,0.28);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5),
+                inset 0 0 0 4px rgba(124,58,237,0.06),
+                inset 0 0 0 5px rgba(124,58,237,0.14);
+}
+.stp-goal-popup--debt_payoff::before { content: "\2660"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.25; color: #7C3AED; pointer-events: none; line-height: 1; z-index: 1; }
+.stp-goal-popup--debt_payoff::after  { content: "\2660"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.25; color: #7C3AED; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
+.stp-goal-popup--debt_payoff .cfm-footer::before { content: "\2660"; color: #7C3AED; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14rem; opacity: 0.04; pointer-events: none; z-index: 0; line-height: 1; }
+/* Savings popup — ♦ diamond, green */
+.stp-goal-popup--savings {
+    border: 1.5px solid rgba(46,139,87,0.28);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5),
+                inset 0 0 0 4px rgba(46,139,87,0.06),
+                inset 0 0 0 5px rgba(46,139,87,0.14);
+}
+.stp-goal-popup--savings::before { content: "\2666"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.25; color: #2e8b57; pointer-events: none; line-height: 1; z-index: 1; }
+.stp-goal-popup--savings::after  { content: "\2666"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.25; color: #2e8b57; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
+.stp-goal-popup--savings .cfm-footer::before { content: "\2666"; color: #2e8b57; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14rem; opacity: 0.04; pointer-events: none; z-index: 0; line-height: 1; }
+/* Spending Reduction popup — ♣ club, blue */
+.stp-goal-popup--spending_reduction {
+    border: 1.5px solid rgba(10,132,255,0.28);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5),
+                inset 0 0 0 4px rgba(10,132,255,0.06),
+                inset 0 0 0 5px rgba(10,132,255,0.14);
+}
+.stp-goal-popup--spending_reduction::before { content: "\2663"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.25; color: #0a84ff; pointer-events: none; line-height: 1; z-index: 1; }
+.stp-goal-popup--spending_reduction::after  { content: "\2663"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.25; color: #0a84ff; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
+.stp-goal-popup--spending_reduction .cfm-footer::before { content: "\2663"; color: #0a84ff; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14rem; opacity: 0.04; pointer-events: none; z-index: 0; line-height: 1; }
+/* Light mode popup overrides */
+:root[data-theme="light"] .stp-goal-popup--debt_payoff { border-color: rgba(124,58,237,0.22); box-shadow: 0 24px 80px rgba(0,0,0,0.18), inset 0 0 0 4px rgba(124,58,237,0.04), inset 0 0 0 5px rgba(124,58,237,0.12); }
+:root[data-theme="light"] .stp-goal-popup--savings { border-color: rgba(46,139,87,0.22); box-shadow: 0 24px 80px rgba(0,0,0,0.18), inset 0 0 0 4px rgba(46,139,87,0.04), inset 0 0 0 5px rgba(46,139,87,0.12); }
+:root[data-theme="light"] .stp-goal-popup--spending_reduction { border-color: rgba(10,132,255,0.22); box-shadow: 0 24px 80px rgba(0,0,0,0.18), inset 0 0 0 4px rgba(10,132,255,0.04), inset 0 0 0 5px rgba(10,132,255,0.12); }
+
+.stp-popup-target {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
 /* ── Progress bar ──────────────────────────────────────────────────────────── */
 
 .stp-progress-wrap {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.3rem;
 }
 .stp-progress-bar {
     flex: 1;
-    height: 6px;
+    height: 4px;
     background: var(--bg-tertiary);
-    border-radius: 3px;
+    border-radius: 2px;
     overflow: hidden;
 }
 .stp-progress-fill {
     height: 100%;
     background: var(--blue);
-    border-radius: 3px;
+    border-radius: 2px;
     transition: width 0.3s ease;
 }
 .stp-progress-label {
-    font-size: 0.68rem;
+    font-size: 0.52rem;
     font-weight: 600;
     color: var(--text-muted);
-    min-width: 2.5rem;
+    min-width: 0;
     text-align: right;
 }
 
@@ -6687,12 +6785,12 @@ select.stp-modal-input {
 
 @media (max-width: 768px) {
     .stp-goals-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, 90px);
     }
 }
 @media (max-width: 480px) {
-    .stp-goal-balance {
-        font-size: 1.1rem;
+    .stp-goals-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
     .stp-budget-kpi-value {
         font-size: 1.2rem;
