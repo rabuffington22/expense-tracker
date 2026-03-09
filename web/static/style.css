@@ -4500,6 +4500,22 @@ select.input-sm {
     flex: 1;
     justify-content: center;
 }
+/* Card layout: names at ~25% from top, balance dead center */
+.cf-box-name-area {
+    position: absolute;
+    top: 20%;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+.cf-box-balance-area {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    text-align: center;
+}
 .cf-box-value--inline {
     font-size: 0.88rem;
     font-weight: 700;
@@ -4514,6 +4530,7 @@ select.input-sm {
     display: none;
 }
 .cf-box-name {
+    display: block;
     font-size: 0.6rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -4523,6 +4540,7 @@ select.input-sm {
     line-height: 1.3;
 }
 .cf-box-name--sub {
+    display: block;
     font-size: 0.52rem;
     font-weight: 500;
     color: var(--text-muted);

@@ -67,13 +67,14 @@
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
     onclick="cfOpenModal(this, event)">
-    <div class="cf-box-header">
+    <div class="cf-box-name-area">
         {{ card_name(acct.account_name) }}
+    </div>
+    <div class="cf-box-balance-area">
         <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_dollars(acct.balance_cents) }}
         </span>
     </div>
-
 </div>
 {% endmacro %}
 
@@ -91,13 +92,14 @@
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
     data-apr="{{ '{:.2f}'.format(acct.apr_bps / 100) if acct.apr_bps else '' }}"
     onclick="cfOpenModal(this, event)">
-    <div class="cf-box-header">
+    <div class="cf-box-name-area">
         {{ card_name(acct.account_name) }}
+    </div>
+    <div class="cf-box-balance-area">
         <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
             {{ fmt_dollars(acct.balance_cents) }}
         </span>
     </div>
-
 </div>
 {% endmacro %}
 
