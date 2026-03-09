@@ -4559,7 +4559,7 @@ select.input-sm {
     background: rgba(0,0,0,0.10);
 }
 .cf-credit-line {
-    font-size: 0.52rem;
+    font-size: 0.6rem;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
     width: 100%;
@@ -4763,7 +4763,7 @@ input.cf-modal-input--due-date {
     border-top-color: rgba(0,0,0,0.06);
 }
 .cf-upcoming-label {
-    font-size: 0.5rem;
+    font-size: 0.6rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -4772,7 +4772,7 @@ input.cf-modal-input--due-date {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.5rem;
+    font-size: 0.6rem;
 }
 .cf-upcoming-merchant {
     white-space: nowrap;
@@ -4793,7 +4793,7 @@ input.cf-modal-input--due-date {
     font-weight: 600;
 }
 .cf-upcoming-none {
-    font-size: 0.52rem;
+    font-size: 0.6rem;
     color: var(--text-muted);
     font-style: normal;
     padding-left: 0;
@@ -4949,7 +4949,7 @@ input.pl-input--sm {
     font-variant-numeric: tabular-nums;
 }
 .pl-box-subline {
-    font-size: 0.5rem; color: var(--text-muted);
+    font-size: 0.6rem; color: var(--text-muted);
     font-variant-numeric: tabular-nums;
     text-align: center;
     margin-top: auto;
