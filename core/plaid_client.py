@@ -1,4 +1,5 @@
 """Plaid SDK wrapper — reads credentials from environment variables."""
+from __future__ import annotations
 
 import os
 from datetime import datetime, timedelta
@@ -135,6 +136,52 @@ def get_transactions(access_token: str, cursor: str | None = None) -> dict:
         "next_cursor": cursor,
         "has_more": False,
     }
+
+
+def get_transactions_by_date(access_token: str, start_date, end_date) -> list[dict]:
+    """
+    Fetch transactions using the date-range endpoint (non-incremental).
+
+    Does NOT affect the sync cursor — safe for backfill use.
+    start_date / end_date should be datetime.date objects.
+
+    Returns list of transaction dicts with:
+    plaid_transaction_id, date, amount, name, merchant_name, account_id.
+    """
+    from plaid.model.transactions_get_request import TransactionsGetRequest
+    from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
+
+    client = _get_client()
+    all_txns = []
+    offset = 0
+    total = None
+
+    while total is None or offset < total:
+        opts = TransactionsGetRequestOptions(count=500, offset=offset)
+        req = TransactionsGetRequest(
+            access_token=access_token,
+            start_date=start_date,
+            end_date=end_date,
+            options=opts,
+        )
+        resp = client.transactions_get(req)
+        total = resp.total_transactions
+
+        for t in resp.transactions:
+            all_txns.append({
+                "plaid_transaction_id": t.transaction_id,
+                "date": str(t.date),
+                "amount": float(t.amount),
+                "name": t.name,
+                "merchant_name": t.merchant_name,
+                "account_id": t.account_id,
+            })
+
+        offset += len(resp.transactions)
+        if not resp.transactions:
+            break
+
+    return all_txns
 
 
 def get_liabilities(access_token: str) -> dict:

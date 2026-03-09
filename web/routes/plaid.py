@@ -230,12 +230,20 @@ def _do_sync():
                     description = t.get("merchant_name") or t.get("name") or ""
                     amount = -t["amount"]
                     amount_cents = round(amount * 100)
+                    # Look up account name so we always keep it current
+                    acct_row = conn.execute(
+                        "SELECT name FROM plaid_accounts WHERE account_id=?",
+                        (t["account_id"],),
+                    ).fetchone()
+                    account_name = acct_row["name"] if acct_row else None
                     conn.execute(
                         """UPDATE transactions
                            SET description_raw=?, merchant_raw=?, amount=?,
-                               amount_cents=?
+                               amount_cents=?, account=COALESCE(?, account),
+                               plaid_item_id=COALESCE(plaid_item_id, ?)
                            WHERE plaid_transaction_id=?""",
                         (description, description, amount, amount_cents,
+                         account_name, item["item_id"],
                          t["plaid_transaction_id"]),
                     )
                     total_modified += 1

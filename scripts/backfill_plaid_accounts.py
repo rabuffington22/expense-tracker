@@ -1,8 +1,11 @@
 """
 One-time script: backfill account names on Plaid transactions.
 
-Resets Plaid cursors, re-syncs all transactions, and fills in the
-account column on existing transactions that were missing it.
+Uses the date-range transactions/get endpoint (does NOT touch sync cursors).
+Matches by plaid_transaction_id to fill in account + plaid_item_id.
+
+Run locally:
+  python scripts/backfill_plaid_accounts.py
 
 Run on production:
   fly ssh console -a ledger-oak -C 'python3 /app/scripts/backfill_plaid_accounts.py'
@@ -13,86 +16,111 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-os.environ.setdefault("DATA_DIR", "/data")
 
-import sqlite3
-from datetime import datetime, timezone
+# Default to local_state for local runs, /data on Fly
+if not os.environ.get("DATA_DIR"):
+    if os.path.exists("/data"):
+        os.environ["DATA_DIR"] = "/data"
+    else:
+        os.environ["DATA_DIR"] = "./local_state"
+
+from datetime import date, timedelta
 
 from core.db import get_connection
-from core.imports import compute_transaction_id
-from core.plaid_client import get_transactions as plaid_get_transactions
+from core.plaid_client import get_transactions_by_date
+
+ENTITIES = ["personal", "company", "luxelegacy"]
+
+
+def backfill_entity(entity_key: str) -> int:
+    """Backfill account info for one entity. Returns count of updated rows."""
+    conn = get_connection(entity_key)
+    try:
+        # Find transactions with plaid_transaction_id but missing account
+        missing = conn.execute("""
+            SELECT transaction_id, plaid_transaction_id, plaid_item_id, date
+            FROM transactions
+            WHERE plaid_transaction_id IS NOT NULL
+              AND (account IS NULL OR account = '')
+        """).fetchall()
+
+        if not missing:
+            print(f"  {entity_key}: no transactions missing account info")
+            return 0
+
+        print(f"  {entity_key}: {len(missing)} transactions missing account info")
+
+        # Load all Plaid items
+        items = conn.execute("SELECT * FROM plaid_items").fetchall()
+        if not items:
+            print(f"  {entity_key}: no Plaid items configured")
+            return 0
+
+        # Build account_id -> (account_name, item_id) lookup
+        acct_lookup = {}
+        for item in items:
+            accts = conn.execute(
+                "SELECT account_id, name FROM plaid_accounts WHERE item_id=?",
+                (item["item_id"],),
+            ).fetchall()
+            for a in accts:
+                acct_lookup[a["account_id"]] = (a["name"], item["item_id"])
+
+        # Get overall date range of missing transactions
+        dates = [row["date"] for row in missing]
+        start_date = date.fromisoformat(min(dates)) - timedelta(days=5)
+        end_date = date.fromisoformat(max(dates)) + timedelta(days=5)
+
+        # For each Plaid item, fetch transactions by date range from Plaid API
+        plaid_txn_map = {}  # plaid_transaction_id -> account_id
+        for item in items:
+            inst = item["institution_name"] or item["item_id"]
+            print(f"    Fetching {inst} ({start_date} to {end_date})...")
+            try:
+                txns = get_transactions_by_date(
+                    item["access_token"], start_date, end_date
+                )
+                for t in txns:
+                    plaid_txn_map[t["plaid_transaction_id"]] = t["account_id"]
+                print(f"    Got {len(txns)} transactions from Plaid API")
+            except Exception as e:
+                print(f"    ERROR fetching {inst}: {e}")
+                continue
+
+        # Match and update
+        updated = 0
+        for row in missing:
+            ptid = row["plaid_transaction_id"]
+            if ptid in plaid_txn_map:
+                account_id = plaid_txn_map[ptid]
+                if account_id in acct_lookup:
+                    acct_name, item_id = acct_lookup[account_id]
+                    conn.execute(
+                        "UPDATE transactions SET account=?, "
+                        "plaid_item_id=COALESCE(plaid_item_id, ?) "
+                        "WHERE transaction_id=?",
+                        (acct_name, item_id, row["transaction_id"]),
+                    )
+                    updated += 1
+                else:
+                    print(f"    WARNING: account_id {account_id} not in plaid_accounts")
+            else:
+                # Transaction not found in Plaid API response
+                print(f"    MISS: {ptid} ({row['date']}) not found in Plaid API")
+
+        conn.commit()
+        print(f"  {entity_key}: updated {updated}/{len(missing)} transactions")
+        return updated
+    finally:
+        conn.close()
 
 
 def main():
-    conn = get_connection("personal")
-    conn.row_factory = sqlite3.Row
-
-    # Check before state
-    missing_before = conn.execute(
-        "SELECT COUNT(*) FROM transactions "
-        "WHERE source_filename = 'plaid-sync' AND (account IS NULL OR account = '')"
-    ).fetchone()[0]
-    total_plaid = conn.execute(
-        "SELECT COUNT(*) FROM transactions WHERE source_filename = 'plaid-sync'"
-    ).fetchone()[0]
-    print(f"Before: {missing_before}/{total_plaid} Plaid txns missing account")
-
-    items = conn.execute(
-        "SELECT item_id, access_token, institution_name, cursor FROM plaid_items"
-    ).fetchall()
-    print(f"Processing {len(items)} Plaid items...")
-
-    total_backfilled = 0
-
-    for item in items:
-        inst = item["institution_name"]
-        try:
-            result = plaid_get_transactions(item["access_token"], item["cursor"] or None)
-            added = result["added"]
-            print(f"  {inst}: {len(added)} added, {len(result['modified'])} modified")
-
-            for t in added:
-                acct_row = conn.execute(
-                    "SELECT name FROM plaid_accounts WHERE account_id=?",
-                    (t["account_id"],),
-                ).fetchone()
-                acct_name = acct_row["name"] if acct_row else None
-
-                description = t.get("merchant_name") or t.get("name") or ""
-                amount = -t["amount"]
-                txn_id = compute_transaction_id(t["date"], amount, description)
-
-                cur = conn.execute(
-                    "UPDATE transactions SET "
-                    "plaid_item_id=COALESCE(plaid_item_id, ?), "
-                    "plaid_transaction_id=COALESCE(plaid_transaction_id, ?), "
-                    "account=COALESCE(NULLIF(account, ''), ?) "
-                    "WHERE transaction_id=? AND (account IS NULL OR account = '')",
-                    (item["item_id"], t["plaid_transaction_id"], acct_name, txn_id),
-                )
-                if cur.rowcount > 0:
-                    total_backfilled += 1
-
-            # Update cursor
-            now = datetime.now(timezone.utc).isoformat()
-            conn.execute(
-                "UPDATE plaid_items SET cursor=?, last_synced=? WHERE item_id=?",
-                (result["next_cursor"], now, item["item_id"]),
-            )
-            conn.commit()
-
-        except Exception as e:
-            print(f"  ERROR {inst}: {e}")
-
-    print(f"\nBackfilled {total_backfilled} transactions")
-
-    missing_after = conn.execute(
-        "SELECT COUNT(*) FROM transactions "
-        "WHERE source_filename = 'plaid-sync' AND (account IS NULL OR account = '')"
-    ).fetchone()[0]
-    print(f"After: {missing_after}/{total_plaid} Plaid txns still missing account")
-
-    conn.close()
+    print("Backfilling Plaid account info on transactions...\n")
+    total = 0
+    for entity in ENTITIES:
+        total += backfill_entity(entity)
+    print(f"\nDone. Total updated: {total}")
 
 
 if __name__ == "__main__":
