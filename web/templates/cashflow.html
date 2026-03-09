@@ -44,13 +44,14 @@
     {%- if 'Apple Card' in name -%}
         <span class="cf-box-name">Apple Card</span>
         {%- set rest = name | replace('Apple Card', '') | trim -%}
-        {%- if rest %}<span class="cf-box-name cf-box-name--sub">{{ rest }}</span>{% endif -%}
+        <span class="cf-box-name cf-box-name--sub">{{ rest if rest else '&nbsp;'|safe }}</span>
     {%- elif name.split() | length >= 3 -%}
         {%- set words = name.split() -%}
         <span class="cf-box-name">{{ words[:-1] | join(' ') }}</span>
         <span class="cf-box-name cf-box-name--sub">{{ words[-1] }}</span>
     {%- else -%}
         <span class="cf-box-name">{{ name }}</span>
+        <span class="cf-box-name cf-box-name--sub">&nbsp;</span>
     {%- endif -%}
 {% endmacro %}
 
