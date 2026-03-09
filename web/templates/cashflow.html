@@ -74,14 +74,6 @@
         </span>
     </div>
 
-    <div class="cf-upcoming">
-        {% if acct.upcoming %}
-            <span class="cf-upcoming-label">Upcoming</span>
-            {{ upcoming_rows(acct, entity_key) }}
-        {% else %}
-            <span class="cf-upcoming-none cf-upcoming-none--centered">No upcoming charges</span>
-        {% endif %}
-    </div>
 </div>
 {% endmacro %}
 
@@ -117,14 +109,6 @@
     <span class="cf-credit-line cf-pymt-line">{{ fmt_dollars(acct.payment_amount_cents) }} due {{ fmt_due_date(acct.payment_due_date) }}</span>
     {% endif %}
 
-    <div class="cf-upcoming">
-        {% if acct.upcoming %}
-            <span class="cf-upcoming-label">Upcoming</span>
-            {{ upcoming_rows(acct, entity_key) }}
-        {% else %}
-            <span class="cf-upcoming-none cf-upcoming-none--centered">No upcoming charges</span>
-        {% endif %}
-    </div>
 </div>
 {% endmacro %}
 

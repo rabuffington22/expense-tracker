@@ -165,13 +165,10 @@ def _sync_plaid_accounts(conn, entity_key: str):
                      acct_type, limit_cents, sort, now),
                 )
 
-    # Remove accounts that shouldn't be on Cash Flow:
-    # - Old hardcoded accounts (plaid_account_id IS NULL)
-    # - Investment/disabled accounts that were synced before filters were added
+    # Remove stale Plaid-linked accounts that are no longer synced
+    # (e.g. investment/disabled accounts synced before filters were added).
+    # Preserve manually-added accounts (plaid_account_id IS NULL).
     if synced_plaid_ids:
-        conn.execute(
-            "DELETE FROM account_balances WHERE plaid_account_id IS NULL"
-        )
         placeholders = ",".join("?" for _ in synced_plaid_ids)
         conn.execute(
             f"DELETE FROM account_balances WHERE plaid_account_id IS NOT NULL "
