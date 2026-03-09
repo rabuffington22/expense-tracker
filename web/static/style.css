@@ -4407,50 +4407,88 @@ select.input-sm {
     margin-bottom: 0.8rem;
 }
 .cf-grid--banks {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 }
 .cf-grid--cards {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
 }
 
-/* Individual account box */
+/* Individual account box — playing card treatment */
 .cf-box {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
-    padding: 0.45rem 0.55rem;
-    background: rgba(20,169,248,0.10);
+    padding: 0.55rem 0.6rem;
+    background: rgba(46,139,87,0.08);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(20,169,248,0.18);
+    border: 1px solid rgba(46,139,87,0.18);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    min-height: 160px;
+}
+/* Suit pip — top-left */
+.cf-box::before {
+    content: "\2660"; /* ♠ spade */
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    font-size: 1.1rem;
+    opacity: 0.10;
+    color: #2e8b57;
+    pointer-events: none;
+    line-height: 1;
+}
+/* Suit pip — bottom-right (rotated 180°) */
+.cf-box::after {
+    content: "\2660";
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    font-size: 1.1rem;
+    opacity: 0.10;
+    color: #2e8b57;
+    pointer-events: none;
+    line-height: 1;
+    transform: rotate(180deg);
 }
 .cf-box--clickable {
     cursor: pointer;
     transition: background var(--transition);
 }
 .cf-box--clickable:hover {
-    background: rgba(20,169,248,0.15);
+    background: rgba(46,139,87,0.14);
 }
 .cf-box--clickable.cf-box--card:hover {
-    background: rgba(191,90,242,0.15);
+    background: rgba(124,58,237,0.14);
 }
 :root[data-theme="light"] .cf-box {
-    background: rgba(20,169,248,0.07);
-    border-color: rgba(20,169,248,0.14);
+    background: rgba(46,139,87,0.06);
+    border-color: rgba(46,139,87,0.14);
 }
+/* Credit cards — diamond suit, purple tint */
 .cf-box--card {
-    background: rgba(191,90,242,0.10);
-    border-color: rgba(191,90,242,0.18);
+    background: rgba(124,58,237,0.08);
+    border-color: rgba(124,58,237,0.18);
+}
+.cf-box--card::before {
+    content: "\2666"; /* ♦ diamond */
+    color: #7C3AED;
+}
+.cf-box--card::after {
+    content: "\2666";
+    color: #7C3AED;
 }
 :root[data-theme="light"] .cf-box--card {
-    background: rgba(191,90,242,0.07);
-    border-color: rgba(191,90,242,0.14);
+    background: rgba(109,40,217,0.06);
+    border-color: rgba(109,40,217,0.14);
 }
 :root[data-theme="light"] .cf-box--clickable:hover {
-    background: rgba(20,169,248,0.12);
+    background: rgba(46,139,87,0.10);
 }
 :root[data-theme="light"] .cf-box--clickable.cf-box--card:hover {
-    background: rgba(191,90,242,0.12);
+    background: rgba(109,40,217,0.10);
 }
 .cf-box-header {
     display: flex;
