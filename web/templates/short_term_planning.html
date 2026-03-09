@@ -110,7 +110,7 @@
     {% if active_goals %}
     <div class="stp-goals-grid">
         {% for goal in active_goals %}
-        <div class="stp-goal-card">
+        <div class="stp-goal-card stp-goal-card--{{ goal.goal_type }}">
             <div class="stp-goal-header">
                 <div class="stp-goal-name">{{ goal.name }}</div>
                 <span class="stp-goal-badge stp-badge--{{ goal.goal_type }}">

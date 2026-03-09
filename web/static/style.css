@@ -5737,16 +5737,112 @@ input.pl-input--sm {
 }
 .stp-goal-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem 1.2rem 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
     overflow: hidden;
+    position: relative;
+    /* Playing card inner frame */
+    box-shadow: inset 0 0 0 3px rgba(255,255,255,0.03), inset 0 0 0 4px rgba(255,255,255,0.06);
 }
 .stp-goal-card:hover {
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-hover), inset 0 0 0 3px rgba(255,255,255,0.03), inset 0 0 0 4px rgba(255,255,255,0.06);
+}
+/* Suit pips — top-left */
+.stp-goal-card::before {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 0.9rem;
+    opacity: 0.25;
+    pointer-events: none;
+    line-height: 1;
+    z-index: 1;
+}
+/* Suit pips — bottom-right (rotated) */
+.stp-goal-card::after {
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    font-size: 0.9rem;
+    opacity: 0.25;
+    pointer-events: none;
+    line-height: 1;
+    transform: rotate(180deg);
+    z-index: 1;
+}
+/* Center watermark suit */
+.stp-goal-header::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8rem;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
+    line-height: 1;
+}
+
+/* Debt Payoff — ♠ spade, purple */
+.stp-goal-card--debt_payoff {
+    border-color: rgba(124,58,237,0.22);
+    background: rgba(124,58,237,0.04);
+    box-shadow: inset 0 0 0 3px rgba(124,58,237,0.05), inset 0 0 0 4px rgba(124,58,237,0.10);
+}
+.stp-goal-card--debt_payoff:hover {
+    box-shadow: var(--shadow-hover), inset 0 0 0 3px rgba(124,58,237,0.05), inset 0 0 0 4px rgba(124,58,237,0.10);
+}
+.stp-goal-card--debt_payoff::before { content: "\2660"; color: #7C3AED; }
+.stp-goal-card--debt_payoff::after  { content: "\2660"; color: #7C3AED; }
+.stp-goal-card--debt_payoff .stp-goal-header::after { content: "\2660"; color: #7C3AED; }
+
+/* Savings — ♦ diamond, green */
+.stp-goal-card--savings {
+    border-color: rgba(46,139,87,0.22);
+    background: rgba(46,139,87,0.04);
+    box-shadow: inset 0 0 0 3px rgba(46,139,87,0.05), inset 0 0 0 4px rgba(46,139,87,0.10);
+}
+.stp-goal-card--savings:hover {
+    box-shadow: var(--shadow-hover), inset 0 0 0 3px rgba(46,139,87,0.05), inset 0 0 0 4px rgba(46,139,87,0.10);
+}
+.stp-goal-card--savings::before { content: "\2666"; color: #2e8b57; }
+.stp-goal-card--savings::after  { content: "\2666"; color: #2e8b57; }
+.stp-goal-card--savings .stp-goal-header::after { content: "\2666"; color: #2e8b57; }
+
+/* Spending Reduction — ♣ club, blue */
+.stp-goal-card--spending_reduction {
+    border-color: rgba(10,132,255,0.22);
+    background: rgba(10,132,255,0.04);
+    box-shadow: inset 0 0 0 3px rgba(10,132,255,0.05), inset 0 0 0 4px rgba(10,132,255,0.10);
+}
+.stp-goal-card--spending_reduction:hover {
+    box-shadow: var(--shadow-hover), inset 0 0 0 3px rgba(10,132,255,0.05), inset 0 0 0 4px rgba(10,132,255,0.10);
+}
+.stp-goal-card--spending_reduction::before { content: "\2663"; color: #0a84ff; }
+.stp-goal-card--spending_reduction::after  { content: "\2663"; color: #0a84ff; }
+.stp-goal-card--spending_reduction .stp-goal-header::after { content: "\2663"; color: #0a84ff; }
+
+/* Completed goals — muted diamond */
+.stp-goal--completed::before { content: "\2666"; color: var(--text-muted); }
+.stp-goal--completed::after  { content: "\2666"; color: var(--text-muted); }
+
+/* Light mode overrides */
+:root[data-theme="light"] .stp-goal-card--debt_payoff {
+    background: rgba(124,58,237,0.03);
+    box-shadow: inset 0 0 0 3px rgba(124,58,237,0.03), inset 0 0 0 4px rgba(124,58,237,0.08);
+}
+:root[data-theme="light"] .stp-goal-card--savings {
+    background: rgba(46,139,87,0.03);
+    box-shadow: inset 0 0 0 3px rgba(46,139,87,0.03), inset 0 0 0 4px rgba(46,139,87,0.08);
+}
+:root[data-theme="light"] .stp-goal-card--spending_reduction {
+    background: rgba(10,132,255,0.03);
+    box-shadow: inset 0 0 0 3px rgba(10,132,255,0.03), inset 0 0 0 4px rgba(10,132,255,0.08);
 }
 .stp-goal--completed {
     opacity: 0.6;
