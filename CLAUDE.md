@@ -1,4 +1,4 @@
-# Ledger AI
+# The Ledger
 
 ## What This Is
 Flask + HTMX + SQLite personal/business expense tracker. Hosted on Fly.io. Bank and credit card transactions sync automatically via Plaid API (connected accounts). CSV/PDF bank statement import retained as fallback. Vendor order data (Amazon CSV, Henry Schein XLSX) matched to bank transactions for real product names.
@@ -375,6 +375,17 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-08 — Rebrand to "The Ledger" + Joker theme + playing card UI
+Major visual overhaul with Joker/playing card motif across the app.
+
+1. **Rebrand** — "Ledger AI" → "The Ledger" across all page titles, sidebar wordmark, and references. New watercolor Joker icon replaces old icon.
+2. **Color overhaul** — Dashboard primary accent changed from blue to royal purple (`--series-left: #7C3AED`). Compare bars changed to sea green (`--series-right: #2e8b57`). Income accent changed to sea green. AI Analysis boxes styled purple.
+3. **Playing card Cash Flow** — Account cards use 5:7 aspect ratio with suit pips (♠ spade for bank accounts in green, ♦ diamond for credit cards in purple). Fixed 105px grid columns. Names at ~25% from top, balances dead center. Two-line names: "Apple Card" + "Ryan"/"Kristine", "First Horizon" + "Mortgage". All detail (credit limit, APR, payment due, upcoming charges) moved to popup modal only.
+4. **Playing card Planning** — Long-Term Planning items use same card treatment. Assets get green spade pips, liabilities get purple diamond pips.
+5. **Sidebar** — Active indicator changed from blue to purple (`--series-left`).
+6. **Cash Flow sync fix** — `_sync_plaid_accounts()` was deleting all manually-added accounts (`plaid_account_id IS NULL`). Fixed to preserve manual accounts like Prosperity Bank.
+7. **BFM Prosperity Bank** — Added to Cash Flow as manual bank account ($79,641). 881 transactions intact from PDF imports.
 
 ### 2026-03-08 — Kristine's Dashboard: mobile-first public page with praise engine
 New `/k/` page for Kristine — a password-free, mobile-optimized dashboard showing Personal Focus budget and Luxe Legacy business data.
