@@ -24,11 +24,11 @@ def _plaid_available() -> bool:
 
 
 def _get_items(entity_key: str) -> list[dict]:
-    """Load all Plaid items for the current entity."""
+    """Load spending Plaid items (not vendor accounts) for the current entity."""
     conn = get_connection(entity_key)
     try:
         rows = conn.execute(
-            "SELECT * FROM plaid_items ORDER BY created_at DESC"
+            "SELECT * FROM plaid_items WHERE is_vendor = 0 ORDER BY created_at DESC"
         ).fetchall()
         return [dict(r) for r in rows]
     finally:
@@ -176,10 +176,13 @@ def _do_sync():
     try:
         if target_item_id:
             rows = conn.execute(
-                "SELECT * FROM plaid_items WHERE item_id=?", (target_item_id,)
+                "SELECT * FROM plaid_items WHERE item_id=? AND is_vendor = 0",
+                (target_item_id,),
             ).fetchall()
         else:
-            rows = conn.execute("SELECT * FROM plaid_items").fetchall()
+            rows = conn.execute(
+                "SELECT * FROM plaid_items WHERE is_vendor = 0"
+            ).fetchall()
         items = [dict(r) for r in rows]
     finally:
         conn.close()

@@ -254,7 +254,7 @@ def create_app():
     # ── Register blueprints ──────────────────────────────────────────────────
     from web.routes.dashboard import bp as dashboard_bp
     from web.routes.upload import bp as upload_bp
-    from web.routes.vendors import bp as vendors_bp
+    from web.routes.data_sources import bp as data_sources_bp
     from web.routes.categorize_vendors import bp as cat_vendors_bp
     from web.routes.match import bp as match_bp
     from web.routes.categorize import bp as categorize_bp
@@ -273,7 +273,7 @@ def create_app():
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(upload_bp)
-    app.register_blueprint(vendors_bp)
+    app.register_blueprint(data_sources_bp)
     app.register_blueprint(cat_vendors_bp)
     app.register_blueprint(match_bp)
     app.register_blueprint(categorize_bp)
@@ -289,5 +289,11 @@ def create_app():
     app.register_blueprint(ai_bp)
     app.register_blueprint(payroll_bp)
     app.register_blueprint(kristine_bp)
+
+    # ── Legacy redirect: /vendors → /data-sources ──────────────────────────
+    @app.route("/vendors")
+    @app.route("/vendors/")
+    def _legacy_vendors_redirect():
+        return redirect(url_for("data_sources.index"), code=301)
 
     return app

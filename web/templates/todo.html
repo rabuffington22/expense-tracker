@@ -17,8 +17,8 @@
             </span>
         </a>
 
-        <a href="{{ url_for('vendors.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Upload from vendors</span>
+        <a href="{{ url_for('data_sources.index') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Data sources</span>
             <span class="todo-row-right">
                 <span class="todo-chevron">&#x203A;</span>
             </span>
@@ -39,6 +39,16 @@
                 <span class="todo-chevron">&#x203A;</span>
             </span>
         </a>
+
+        {% if counts.vendor_txns_unmatched > 0 %}
+        <a href="{{ url_for('match.index', source='vendor') }}" class="todo-row todo-row--link">
+            <span class="todo-name">Vendor payments to match</span>
+            <span class="todo-row-right">
+                <span class="badge badge-blue">{{ counts.vendor_txns_unmatched }}</span>
+                <span class="todo-chevron">&#x203A;</span>
+            </span>
+        </a>
+        {% endif %}
     </div>
 </div>
 

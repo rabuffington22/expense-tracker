@@ -65,7 +65,8 @@ def _sync_plaid_accounts(conn, entity_key: str):
             pass
 
     items = conn.execute(
-        "SELECT item_id, access_token, institution_name FROM plaid_items"
+        "SELECT item_id, access_token, institution_name FROM plaid_items "
+        "WHERE is_vendor = 0"
     ).fetchall()
     if not items:
         return
@@ -379,9 +380,9 @@ def _fetch_plaid_liabilities(conn) -> dict:
     except (ImportError, RuntimeError):
         return {}
 
-    # Find all Plaid items with access tokens
+    # Find all spending Plaid items (skip vendor accounts)
     items = conn.execute(
-        "SELECT item_id, access_token FROM plaid_items"
+        "SELECT item_id, access_token FROM plaid_items WHERE is_vendor = 0"
     ).fetchall()
     if not items:
         return {}

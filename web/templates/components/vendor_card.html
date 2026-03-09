@@ -4,7 +4,7 @@
 
 {% elif empty is defined and empty %}
 <div class="alert alert-info">{{ message }}</div>
-<a href="{{ url_for('vendors.index') }}" class="btn btn-primary">Go to Vendors &rarr;</a>
+<a href="{{ url_for('data_sources.index') }}" class="btn btn-primary">Go to Data Sources &rarr;</a>
 
 {% else %}
 <p class="mb-1"><strong>Order {{ completed + 1 }} of {{ initial }}</strong> — {{ total }} remaining</p>

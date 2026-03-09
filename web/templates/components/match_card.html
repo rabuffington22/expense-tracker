@@ -11,6 +11,7 @@
 {% set order_amt = m.order_total %}
 {% set amt_diff = (txn_amt - order_amt)|abs %}
 {% set amt_pct = (amt_diff / txn_amt * 100) if txn_amt else 0 %}
+{% set is_vendor = m.get('is_vendor_match', false) if m.get is defined else false %}
 
 <div class="form-row">
     <div class="card" style="flex:1;">
@@ -20,12 +21,19 @@
         <p class="text-sm text-muted">{{ m.txn_description[:60] }}</p>
     </div>
     <div class="card" style="flex:1;">
+        {% if is_vendor %}
+        <h3>Payment</h3>
+        <p>Recipient: <strong>{{ m.get('recipient', '') if m.get is defined else '' }}</strong></p>
+        <p>Date: {{ m.order_date or '?' }}</p>
+        <p>Amount: <strong>${{ "{:,.2f}".format(order_amt) }}</strong></p>
+        {% else %}
         <h3>Vendor Order</h3>
         <p>Date: {{ m.order_date or '?' }}</p>
         <p>Amount: <strong>${{ "{:,.2f}".format(order_amt) }}</strong></p>
         <p class="text-sm">{{ m.product_summary[:80] }}</p>
         {% if m.suggested_category %}
         <p class="text-sm text-muted">Category: <strong>{{ m.suggested_category }}{% if m.suggested_subcategory and m.suggested_subcategory != 'Unknown' %} &rarr; {{ m.suggested_subcategory }}{% endif %}</strong></p>
+        {% endif %}
         {% endif %}
     </div>
 </div>
@@ -37,7 +45,7 @@
 {% if date_gap is not none %}
 <p class="text-sm mb-2">
     Date gap: <strong style="color: {% if date_gap > 5 or date_gap < -2 %}var(--red){% else %}inherit{% endif %};">{{ date_gap }} day{{ 's' if date_gap != 1 else '' }}</strong>
-    <span class="text-muted">(bank charge {{ 'after' if date_gap >= 0 else 'before' }} order)</span>
+    <span class="text-muted">(bank charge {{ 'after' if date_gap >= 0 else 'before' }} {% if is_vendor %}payment{% else %}order{% endif %})</span>
 </p>
 {% endif %}
 

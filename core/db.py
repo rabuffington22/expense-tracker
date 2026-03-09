@@ -705,6 +705,32 @@ VALUES
     ('Payroll', 'Owner', datetime('now'));
 """
 
+_MIGRATION_52 = """
+-- Flag Plaid items as vendor (Venmo/PayPal) vs spending account
+ALTER TABLE plaid_items ADD COLUMN is_vendor INTEGER NOT NULL DEFAULT 0;
+
+-- Vendor transactions from payment platforms (Venmo, PayPal) via Plaid
+CREATE TABLE IF NOT EXISTS vendor_transactions (
+    id                     INTEGER PRIMARY KEY AUTOINCREMENT,
+    plaid_item_id          TEXT NOT NULL,
+    plaid_transaction_id   TEXT UNIQUE NOT NULL,
+    plaid_account_id       TEXT,
+    date                   TEXT NOT NULL,
+    amount                 REAL NOT NULL,
+    amount_cents           INTEGER NOT NULL,
+    name                   TEXT,
+    merchant_name          TEXT,
+    recipient              TEXT,
+    vendor_type            TEXT NOT NULL DEFAULT 'venmo',
+    matched_transaction_id TEXT,
+    match_confidence       REAL,
+    imported_at            TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_vt_matched ON vendor_transactions(matched_transaction_id);
+CREATE INDEX IF NOT EXISTS idx_vt_date ON vendor_transactions(date);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -757,6 +783,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (49, _MIGRATION_49),
     (50, _MIGRATION_50),
     (51, _MIGRATION_51),
+    (52, _MIGRATION_52),
 ]
 
 _DEFAULT_CATEGORIES = [

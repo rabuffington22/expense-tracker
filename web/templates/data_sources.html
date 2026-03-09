@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}Data Sources — Ledger AI{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Data Sources</h1>
+<p class="text-muted mb-2">Upload vendor order data and connect payment accounts (Venmo, PayPal) for transaction matching.</p>
+
+{# ── Vendor Orders Section ───────────────────────────────────────────────── #}
+<h2 class="section-title">Vendor Orders</h2>
+
+<form method="post" action="{{ url_for('data_sources.parse') }}" enctype="multipart/form-data" class="form-narrow">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Vendor</label>
+            <select name="vendor" id="vendorSelect"
+                    onchange="document.getElementById('fileLabel').textContent = this.value === 'Amazon' ? 'Amazon Order History CSV' : 'Henry Schein Items Purchased XLSX'">
+                <option value="Amazon">Amazon</option>
+                <option value="Henry Schein">Henry Schein</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label id="fileLabel">Amazon Order History CSV</label>
+            <input type="file" name="file" accept=".csv,.xlsx">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload &amp; Parse</button>
+</form>
+
+{% if show_preview %}
+<hr class="divider">
+
+{% for w in warnings %}
+<div class="alert alert-warning">{{ w }}</div>
+{% endfor %}
+
+<div class="outline-panel">
+    <h3>{{ order_count }} {{ 'invoices' if 'henry' in (vendor|lower) else 'orders' }} parsed</h3>
+    <p>{{ min_date }} to {{ max_date }} — totaling <strong>${{ "{:,.2f}".format(total_spent) }}</strong></p>
+</div>
+
+<form method="post" action="{{ url_for('data_sources.save') }}">
+    <input type="hidden" name="temp_key" value="{{ temp_key }}">
+    <div class="form-row mb-2" style="max-width: 400px;">
+        <div class="form-group">
+            <label>From</label>
+            <input type="date" name="filter_from" id="filterFrom" value="{{ min_date }}">
+        </div>
+        <div class="form-group">
+            <label>To</label>
+            <input type="date" name="filter_to" id="filterTo" value="{{ max_date }}">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" id="saveBtn">Save {{ order_count }} orders</button>
+</form>
+
+<script>
+(function() {
+    var dates = [{% for o in orders %}"{{ o.order_date }}"{% if not loop.last %},{% endif %}{% endfor %}];
+    var fromEl = document.getElementById('filterFrom');
+    var toEl = document.getElementById('filterTo');
+    var btn = document.getElementById('saveBtn');
+
+    function update() {
+        var from = fromEl.value;
+        var to = toEl.value;
+        var count = 0;
+        for (var i = 0; i < dates.length; i++) {
+            var d = dates[i].slice(0, 10);
+            if (d >= from && d <= to) count++;
+        }
+        btn.textContent = 'Save ' + count + ' orders';
+    }
+
+    fromEl.addEventListener('change', update);
+    toEl.addEventListener('change', update);
+})();
+</script>
+{% endif %}
+
+{% if total_orders %}
+<div class="outline-panel" style="margin-top: 1rem;">
+    <p><strong>{{ total_orders }}</strong> vendor orders on file — <strong>{{ matched_orders }}</strong> matched, <strong>{{ unmatched_orders }}</strong> unmatched</p>
+</div>
+{% else %}
+<p class="text-muted" style="margin-top: 0.5rem;">No vendor orders saved yet.</p>
+{% endif %}
+
+{# ── Payment Accounts Section ────────────────────────────────────────────── #}
+<hr class="divider">
+<h2 class="section-title">Payment Accounts</h2>
+<p class="text-muted mb-2">Connect Venmo or PayPal through Plaid to match payment details to bank charges.</p>
+
+{% if vendor_accounts %}
+<div class="outline-panel">
+    {% for acct in vendor_accounts %}
+    <div class="ds-vendor-row{% if not loop.last %} ds-vendor-row--border{% endif %}">
+        <div class="ds-vendor-info">
+            <strong>{{ acct.institution_name }}</strong>
+            <span class="text-muted text-sm">
+                {{ acct.total_transactions }} synced
+                {% if acct.matched_transactions > 0 %} · {{ acct.matched_transactions }} matched{% endif %}
+                {% if acct.unmatched_transactions > 0 %} · {{ acct.unmatched_transactions }} unmatched{% endif %}
+            </span>
+        </div>
+        <div class="ds-vendor-actions">
+            <form method="post" action="{{ url_for('data_sources.sync_vendor', item_id=acct.item_id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-secondary btn-sm">Sync</button>
+            </form>
+            <form method="post" action="{{ url_for('data_sources.disconnect_vendor', item_id=acct.item_id) }}" style="display:inline;"
+                  onsubmit="return confirm('Disconnect {{ acct.institution_name|e }}? This will remove all synced vendor transactions.');">
+                <button type="submit" class="btn btn-sm" style="color: var(--red);">Disconnect</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div style="margin-top: 0.75rem;">
+    <button type="button" class="btn btn-primary" id="ds-connect-btn" onclick="dsConnectAccount()">Connect Payment Account</button>
+</div>
+
+{# ── Plaid Link Script ──────────────────────────────────────────────────── #}
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+function dsConnectAccount() {
+    var btn = document.getElementById('ds-connect-btn');
+    btn.disabled = true;
+    btn.textContent = 'Loading\u2026';
+
+    fetch('{{ url_for("data_sources.link_token") }}', {method: 'POST'})
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                alert('Error: ' + data.error);
+                btn.disabled = false;
+                btn.textContent = 'Connect Payment Account';
+                return;
+            }
+            var handler = Plaid.create({
+                token: data.link_token,
+                onSuccess: function(public_token, metadata) {
+                    var inst = metadata.institution || {};
+                    var form = new FormData();
+                    form.append('public_token', public_token);
+                    form.append('institution_name', inst.name || '');
+                    form.append('institution_id', inst.institution_id || '');
+
+                    fetch('{{ url_for("data_sources.exchange_token") }}', {
+                        method: 'POST',
+                        body: form
+                    }).then(function(r) { return r.json(); })
+                      .then(function(result) {
+                          if (result.error) {
+                              alert('Error: ' + result.error);
+                          }
+                          window.location.reload();
+                      });
+                },
+                onExit: function() {
+                    btn.disabled = false;
+                    btn.textContent = 'Connect Payment Account';
+                }
+            });
+            handler.open();
+        })
+        .catch(function(err) {
+            alert('Failed to start Plaid Link: ' + err);
+            btn.disabled = false;
+            btn.textContent = 'Connect Payment Account';
+        });
+}
+</script>
+
+<style>
+.ds-vendor-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    gap: 0.75rem;
+}
+.ds-vendor-row--border {
+    border-bottom: 1px solid var(--border);
+}
+.ds-vendor-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.ds-vendor-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+</style>
+{% endblock %}

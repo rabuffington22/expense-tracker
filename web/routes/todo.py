@@ -188,6 +188,15 @@ def _get_queue_counts(conn) -> dict:
         "WHERE (category IS NULL OR category = '')"
     ).fetchone()[0]
 
+    # Unmatched vendor payment transactions (Venmo/PayPal)
+    try:
+        counts["vendor_txns_unmatched"] = conn.execute(
+            "SELECT COUNT(*) FROM vendor_transactions "
+            "WHERE matched_transaction_id IS NULL"
+        ).fetchone()[0]
+    except Exception:
+        counts["vendor_txns_unmatched"] = 0
+
     # ── High-signal queues ────────────────────────────────────────────────
 
     cutoff_30 = (today - timedelta(days=30)).isoformat()
