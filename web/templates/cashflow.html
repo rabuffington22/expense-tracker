@@ -98,17 +98,6 @@
         </span>
     </div>
 
-    {% if acct.credit_limit_cents %}
-    <div class="cf-card-subline">
-        <span class="cf-credit-line">${{ "{:,.0f}".format(acct.credit_limit_cents / 100) }}{% if acct.apr_bps %} · {{ "{:.2f}".format(acct.apr_bps / 100) }}%{% endif %}</span>
-    </div>
-    {% endif %}
-
-    {% if acct.payment_due_day %}
-    <div class="cf-pymt-divider"></div>
-    <span class="cf-credit-line cf-pymt-line">{{ fmt_dollars(acct.payment_amount_cents) }} due {{ fmt_due_date(acct.payment_due_date) }}</span>
-    {% endif %}
-
 </div>
 {% endmacro %}
 
