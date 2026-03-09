@@ -54,6 +54,19 @@
                 hx-swap="outerHTML"
                 hx-on::after-request="document.getElementById('txn-modal').innerHTML=''">Always This Category</button>
       </div>
+      <div style="margin-top:0.5rem; border-top: 1px solid var(--border); padding-top: 0.5rem;">
+        <button type="button" class="btn btn-sm"
+                style="width:100%; background:rgba(124,58,237,0.12); color:#a78bfa; border:1px solid rgba(124,58,237,0.25);"
+                hx-get="{{ url_for('transactions.get_splits', txn_id=txn.transaction_id) }}"
+                hx-target="#txn-modal"
+                hx-swap="innerHTML">
+          {% if txn.split_count and txn.split_count > 0 %}
+            ✂ Edit Splits ({{ txn.split_count }})
+          {% else %}
+            ✂ Split Transaction
+          {% endif %}
+        </button>
+      </div>
     </form>
   </div>
 </div>

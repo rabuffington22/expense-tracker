@@ -748,6 +748,24 @@ CREATE TABLE IF NOT EXISTS order_line_items (
 CREATE INDEX IF NOT EXISTS idx_oli_order ON order_line_items(amazon_order_id);
 """
 
+_MIGRATION_54 = """
+CREATE TABLE IF NOT EXISTS transaction_splits (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    transaction_id  TEXT NOT NULL REFERENCES transactions(transaction_id),
+    description     TEXT,
+    amount_cents    INTEGER NOT NULL,
+    category        TEXT NOT NULL,
+    subcategory     TEXT,
+    sort_order      INTEGER NOT NULL DEFAULT 0,
+    source          TEXT NOT NULL DEFAULT 'manual'
+                    CHECK(source IN ('manual', 'vendor_line_item')),
+    line_item_id    INTEGER REFERENCES order_line_items(id),
+    created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_ts_transaction_id ON transaction_splits(transaction_id);
+CREATE INDEX IF NOT EXISTS idx_ts_category ON transaction_splits(category);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -802,6 +820,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (51, _MIGRATION_51),
     (52, _MIGRATION_52),
     (53, _MIGRATION_53),
+    (54, _MIGRATION_54),
 ]
 
 _DEFAULT_CATEGORIES = [

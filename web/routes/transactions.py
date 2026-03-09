@@ -8,6 +8,7 @@ from flask import Blueprint, render_template, request, g, jsonify, redirect, mak
 from markupsafe import escape
 
 from core.db import get_connection
+from core.reporting import effective_txns_cte
 from web import get_categories, get_subcategories
 
 bp = Blueprint("transactions", __name__, url_prefix="/transactions")
@@ -159,12 +160,13 @@ def _build_base_cte(conn, params):
     where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
 
     # Vendor breakdown: linkage-first, heuristic-fallback (D1)
+    # Uses raw transactions (not effective CTE) because it compares parent amounts.
     # WHERE clause appears twice (UNION), so params must be doubled.
     if params.get("vendor_breakdown") == "1":
         cte = f"""
         WITH base AS (
             -- Primary: linked txns with < 95% coverage
-            SELECT t.transaction_id
+            SELECT t.transaction_id, CAST(NULL AS INTEGER) AS split_id
             FROM transactions t
             INNER JOIN amazon_orders ao ON ao.matched_transaction_id = t.transaction_id
             {where}
@@ -175,7 +177,7 @@ def _build_base_cte(conn, params):
             UNION
 
             -- Fallback: unlinked txns matching vendor patterns (no orders at all)
-            SELECT t.transaction_id
+            SELECT t.transaction_id, CAST(NULL AS INTEGER) AS split_id
             FROM transactions t
             LEFT JOIN amazon_orders ao ON ao.matched_transaction_id = t.transaction_id
             {where}
@@ -186,16 +188,19 @@ def _build_base_cte(conn, params):
         )
         """
         sql_params = sql_params + sql_params  # duplicate for both UNION branches
-    else:
-        cte = f"""
-        WITH base AS (
-            SELECT t.transaction_id
-            FROM transactions t
-            {where}
-        )
-        """
+        return cte, sql_params, True  # use_raw=True
 
-    return cte, sql_params
+    # Normal case: use effective CTE so split pieces appear as individual rows
+    eff = effective_txns_cte("eff")
+    cte = f"""
+    WITH {eff},
+    base AS (
+        SELECT t.transaction_id, t.split_id
+        FROM eff t
+        {where}
+    )
+    """
+    return cte, sql_params, False  # use_raw=False
 
 
 def _get_filter_params():
@@ -223,7 +228,7 @@ def _query_transactions(entity_key, params, page):
     """Execute the CTE-based query and return (txns, total_count, total_pages)."""
     conn = get_connection(entity_key)
     try:
-        cte, cte_params = _build_base_cte(conn, params)
+        cte, cte_params, use_raw = _build_base_cte(conn, params)
 
         # Count query
         count_sql = f"{cte}\nSELECT COUNT(*) FROM base"
@@ -238,20 +243,43 @@ def _query_transactions(entity_key, params, page):
         sort_col = _SORT_MAP.get(params.get("sort", ""), "t.date")
         sort_dir = "ASC" if params.get("dir") == "asc" else "DESC"
 
-        # Rows query with allocation data for badge display
-        rows_sql = f"""
-        {cte}
-        SELECT t.*,
-               COUNT(ao.id) AS alloc_count,
-               COALESCE(SUM(ABS(ao.order_total_cents)), 0) AS alloc_total_cents,
-               GROUP_CONCAT(ao.product_summary, ' || ') AS alloc_products
-        FROM transactions t
-        JOIN base b ON b.transaction_id = t.transaction_id
-        LEFT JOIN amazon_orders ao ON ao.matched_transaction_id = t.transaction_id
-        GROUP BY t.transaction_id
-        ORDER BY {sort_col} {sort_dir}
-        LIMIT ? OFFSET ?
-        """
+        if use_raw:
+            # Vendor breakdown: query raw transactions (splits don't apply)
+            rows_sql = f"""
+            {cte}
+            SELECT t.*,
+                   COUNT(ao.id) AS alloc_count,
+                   COALESCE(SUM(ABS(ao.order_total_cents)), 0) AS alloc_total_cents,
+                   GROUP_CONCAT(ao.product_summary, ' || ') AS alloc_products,
+                   0 AS is_split_piece, CAST(NULL AS INTEGER) AS split_id,
+                   (SELECT COUNT(*) FROM transaction_splits ts
+                    WHERE ts.transaction_id = t.transaction_id) AS split_count
+            FROM transactions t
+            JOIN base b ON b.transaction_id = t.transaction_id
+            LEFT JOIN amazon_orders ao ON ao.matched_transaction_id = t.transaction_id
+            GROUP BY t.transaction_id
+            ORDER BY {sort_col} {sort_dir}
+            LIMIT ? OFFSET ?
+            """
+        else:
+            # Normal: query effective transactions (split pieces as rows)
+            rows_sql = f"""
+            {cte}
+            SELECT t.*,
+                   COUNT(ao.id) AS alloc_count,
+                   COALESCE(SUM(ABS(ao.order_total_cents)), 0) AS alloc_total_cents,
+                   GROUP_CONCAT(ao.product_summary, ' || ') AS alloc_products,
+                   (SELECT COUNT(*) FROM transaction_splits ts
+                    WHERE ts.transaction_id = t.transaction_id) AS split_count
+            FROM eff t
+            JOIN base b ON b.transaction_id = t.transaction_id
+                       AND COALESCE(b.split_id, -1) = COALESCE(t.split_id, -1)
+            LEFT JOIN amazon_orders ao ON ao.matched_transaction_id = t.transaction_id
+            GROUP BY t.transaction_id, t.split_id
+            ORDER BY {sort_col} {sort_dir}
+            LIMIT ? OFFSET ?
+            """
+
         rows = conn.execute(rows_sql, cte_params + [_PAGE_SIZE, offset]).fetchall()
         txns = [dict(r) for r in rows]
 
@@ -364,6 +392,12 @@ def edit_row(txn_id):
         if not row:
             return "Not found", 404
         txn = dict(row)
+        # Add split count
+        sc = conn.execute(
+            "SELECT COUNT(*) FROM transaction_splits WHERE transaction_id = ?",
+            (txn_id,),
+        ).fetchone()
+        txn["split_count"] = sc[0] if sc else 0
         categories = get_categories(g.entity_key)
         current_cat = txn.get("category") or ""
         subcats = get_subcategories(g.entity_key, current_cat) if current_cat else ["Unknown"]
@@ -553,13 +587,204 @@ def all_subcategories():
     return jsonify(result)
 
 
+# ── Split management endpoints ───────────────────────────────────────────────
+
+@bp.route("/splits/<txn_id>")
+def get_splits(txn_id):
+    """Return split pieces for a transaction as an HTML partial (split editor)."""
+    conn = get_connection(g.entity_key)
+    try:
+        # Get parent transaction
+        parent = conn.execute(
+            "SELECT * FROM transactions WHERE transaction_id = ?", (txn_id,)
+        ).fetchone()
+        if not parent:
+            return "Not found", 404
+        parent = dict(parent)
+
+        # Get existing splits
+        splits = [
+            dict(r) for r in conn.execute(
+                "SELECT * FROM transaction_splits WHERE transaction_id = ? "
+                "ORDER BY sort_order, id",
+                (txn_id,),
+            ).fetchall()
+        ]
+
+        # Check if auto-split is available (matched vendor orders with multiple categories)
+        has_auto_split = False
+        matched_orders = conn.execute(
+            "SELECT ao.id FROM amazon_orders ao "
+            "WHERE ao.matched_transaction_id = ?",
+            (txn_id,),
+        ).fetchall()
+        if matched_orders:
+            order_ids = [r["id"] for r in matched_orders]
+            placeholders = ",".join("?" * len(order_ids))
+            cat_count = conn.execute(
+                f"SELECT COUNT(DISTINCT category) FROM order_line_items "
+                f"WHERE amazon_order_id IN ({placeholders}) AND category IS NOT NULL",
+                order_ids,
+            ).fetchone()[0]
+            has_auto_split = cat_count > 1
+
+        categories = get_categories(g.entity_key)
+        return render_template(
+            "components/txn_split_editor.html",
+            parent=parent,
+            splits=splits,
+            has_auto_split=has_auto_split,
+            categories=categories,
+        )
+    finally:
+        conn.close()
+
+
+@bp.route("/splits/<txn_id>/save", methods=["POST"])
+def save_splits(txn_id):
+    """Create or update splits for a transaction.
+
+    Expects JSON body:
+    {
+        "splits": [
+            {"description": "...", "amount_cents": -4295, "category": "Bathroom",
+             "subcategory": "General"},
+            ...
+        ]
+    }
+
+    Validates:
+    - Sum of split amount_cents == parent amount_cents
+    - Same sign as parent
+    - At least 2 splits
+    - Every split has a category
+    """
+    import json
+
+    conn = get_connection(g.entity_key)
+    try:
+        parent = conn.execute(
+            "SELECT transaction_id, amount_cents FROM transactions "
+            "WHERE transaction_id = ?",
+            (txn_id,),
+        ).fetchone()
+        if not parent:
+            return jsonify({"error": "Transaction not found"}), 404
+
+        data = request.get_json(silent=True)
+        if not data or "splits" not in data:
+            return jsonify({"error": "Missing splits data"}), 400
+
+        splits = data["splits"]
+
+        # Validate: at least 2 splits
+        if len(splits) < 2:
+            return jsonify({"error": "Need at least 2 splits"}), 400
+
+        parent_cents = parent["amount_cents"]
+        parent_sign = -1 if parent_cents < 0 else 1
+
+        total_cents = 0
+        for i, s in enumerate(splits):
+            amt = s.get("amount_cents")
+            if amt is None:
+                return jsonify({"error": f"Split {i+1}: missing amount"}), 400
+            amt = int(amt)
+            cat = (s.get("category") or "").strip()
+            if not cat:
+                return jsonify({"error": f"Split {i+1}: missing category"}), 400
+            # Same sign as parent
+            if parent_sign < 0 and amt > 0:
+                return jsonify({"error": f"Split {i+1}: must be negative (expense)"}), 400
+            if parent_sign > 0 and amt < 0:
+                return jsonify({"error": f"Split {i+1}: must be positive (income)"}), 400
+            total_cents += amt
+
+        # Validate sum
+        if total_cents != parent_cents:
+            return jsonify({
+                "error": f"Split total ({total_cents}) != transaction ({parent_cents})"
+            }), 400
+
+        # Delete old splits and insert new ones
+        conn.execute(
+            "DELETE FROM transaction_splits WHERE transaction_id = ?", (txn_id,)
+        )
+        now = datetime.now(timezone.utc).isoformat()
+        for i, s in enumerate(splits):
+            conn.execute(
+                "INSERT INTO transaction_splits "
+                "(transaction_id, description, amount_cents, category, subcategory, "
+                " sort_order, source, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    txn_id,
+                    (s.get("description") or "").strip() or None,
+                    int(s["amount_cents"]),
+                    s["category"].strip(),
+                    (s.get("subcategory") or "General").strip(),
+                    i,
+                    s.get("source", "manual"),
+                    now,
+                ),
+            )
+        conn.commit()
+
+        return jsonify({"ok": True, "count": len(splits)})
+    finally:
+        conn.close()
+
+
+@bp.route("/splits/<txn_id>/delete", methods=["POST"])
+def delete_splits(txn_id):
+    """Remove all splits for a transaction (revert to single-category)."""
+    conn = get_connection(g.entity_key)
+    try:
+        parent = conn.execute(
+            "SELECT transaction_id FROM transactions WHERE transaction_id = ?",
+            (txn_id,),
+        ).fetchone()
+        if not parent:
+            return jsonify({"error": "Transaction not found"}), 404
+
+        conn.execute(
+            "DELETE FROM transaction_splits WHERE transaction_id = ?", (txn_id,)
+        )
+        conn.commit()
+        return jsonify({"ok": True})
+    finally:
+        conn.close()
+
+
+@bp.route("/splits/<txn_id>/auto", methods=["POST"])
+def auto_split(txn_id):
+    """Auto-generate splits from matched vendor order line items.
+
+    Groups line items by (category, subcategory), sums amounts, and creates
+    split pieces. Handles remainder (shipping/tax) as an adjustment.
+    """
+    from core.amazon import auto_split_from_line_items
+
+    conn = get_connection(g.entity_key)
+    try:
+        result = auto_split_from_line_items(conn, txn_id)
+        if result.get("error"):
+            return jsonify(result), 400
+        conn.commit()
+        return jsonify(result)
+    finally:
+        conn.close()
+
+
 def _render_read_row(conn, txn_id):
     """Fetch a transaction and return its read-only <tr> HTML."""
     row = conn.execute(
         """SELECT t.*,
                   COUNT(ao.id) AS alloc_count,
                   COALESCE(SUM(ABS(ao.order_total_cents)), 0) AS alloc_total_cents,
-                  GROUP_CONCAT(ao.product_summary, ' || ') AS alloc_products
+                  GROUP_CONCAT(ao.product_summary, ' || ') AS alloc_products,
+                  (SELECT COUNT(*) FROM transaction_splits ts
+                   WHERE ts.transaction_id = t.transaction_id) AS split_count
            FROM transactions t
            LEFT JOIN amazon_orders ao ON ao.matched_transaction_id = t.transaction_id
            WHERE t.transaction_id = ?

@@ -9,6 +9,7 @@ from datetime import date, datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, g, redirect, url_for, make_response, jsonify
 
 from core.db import get_connection, init_db
+from core.reporting import effective_txns_cte
 
 log = logging.getLogger(__name__)
 
@@ -224,13 +225,15 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
 
     # Get actual spending by category for the month
     exclude_clause = ",".join("?" for _ in _EXCLUDE_CATS)
+    _cte = effective_txns_cte("t")
     rows = conn.execute(
-        "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
-        "ABS(SUM(amount)) as total "
-        "FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? "
-        "AND amount < 0 "
-        "AND COALESCE(category,'') NOT IN (%s) "
+        f"WITH {_cte} "
+        "SELECT COALESCE(NULLIF(t.category,''),'Uncategorized') as cat, "
+        "ABS(SUM(t.amount)) as total "
+        "FROM t "
+        "WHERE strftime('%%Y-%%m', t.date) = ? "
+        "AND t.amount < 0 "
+        "AND COALESCE(t.category,'') NOT IN (%s) "
         "GROUP BY cat" % exclude_clause,
         (month, *_EXCLUDE_CATS),
     ).fetchall()
@@ -249,13 +252,14 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
     month_placeholders = ",".join("?" for _ in avg_months)
     # Per-category: total spending and number of months with data in the prior 3 months
     avg_rows = conn.execute(
-        "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
-        "ABS(SUM(amount)) as total, "
-        "COUNT(DISTINCT strftime('%%Y-%%m', date)) as month_count "
-        "FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) IN (%s) "
-        "AND amount < 0 "
-        "AND COALESCE(category,'') NOT IN (%s) "
+        f"WITH {_cte} "
+        "SELECT COALESCE(NULLIF(t.category,''),'Uncategorized') as cat, "
+        "ABS(SUM(t.amount)) as total, "
+        "COUNT(DISTINCT strftime('%%Y-%%m', t.date)) as month_count "
+        "FROM t "
+        "WHERE strftime('%%Y-%%m', t.date) IN (%s) "
+        "AND t.amount < 0 "
+        "AND COALESCE(t.category,'') NOT IN (%s) "
         "GROUP BY cat" % (month_placeholders, exclude_clause),
         (*avg_months, *_EXCLUDE_CATS),
     ).fetchall()
@@ -335,13 +339,15 @@ def _group_budget_items(items: list) -> list:
 def _get_unbudgeted_spending(conn, month: str, budgeted_cats: set) -> list[dict]:
     """Return categories with spending but no budget set."""
     exclude_clause = ",".join("?" for _ in _EXCLUDE_CATS)
+    _cte = effective_txns_cte("t")
     rows = conn.execute(
-        "SELECT COALESCE(NULLIF(category,''),'Uncategorized') as cat, "
-        "ABS(SUM(amount)) as total, COUNT(*) as cnt "
-        "FROM transactions "
-        "WHERE strftime('%%Y-%%m', date) = ? "
-        "AND amount < 0 "
-        "AND COALESCE(category,'') NOT IN (%s) "
+        f"WITH {_cte} "
+        "SELECT COALESCE(NULLIF(t.category,''),'Uncategorized') as cat, "
+        "ABS(SUM(t.amount)) as total, COUNT(*) as cnt "
+        "FROM t "
+        "WHERE strftime('%%Y-%%m', t.date) = ? "
+        "AND t.amount < 0 "
+        "AND COALESCE(t.category,'') NOT IN (%s) "
         "GROUP BY cat ORDER BY total DESC" % exclude_clause,
         (month, *_EXCLUDE_CATS),
     ).fetchall()
@@ -359,16 +365,18 @@ def _get_unbudgeted_spending(conn, month: str, budgeted_cats: set) -> list[dict]
 
 def _suggest_monthly_extra(conn) -> int:
     """Estimate discretionary income available for debt payoff (cents)."""
+    _cte = effective_txns_cte("t")
     # 3-month average income
     income_row = conn.execute(
+        f"WITH {_cte} "
         "SELECT AVG(monthly_income) as avg_income FROM ("
-        "  SELECT strftime('%%Y-%%m', date) as month, "
-        "  SUM(amount) as monthly_income "
-        "  FROM transactions "
-        "  WHERE amount > 0 "
-        "  AND COALESCE(category,'') NOT IN "
+        "  SELECT strftime('%%Y-%%m', t.date) as month, "
+        "  SUM(t.amount) as monthly_income "
+        "  FROM t "
+        "  WHERE t.amount > 0 "
+        "  AND COALESCE(t.category,'') NOT IN "
         "  ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
-        "  AND date >= date('now', '-3 months') "
+        "  AND t.date >= date('now', '-3 months') "
         "  GROUP BY month"
         ")"
     ).fetchone()
@@ -376,14 +384,15 @@ def _suggest_monthly_extra(conn) -> int:
 
     # 3-month average essential spending
     spend_row = conn.execute(
+        f"WITH {_cte} "
         "SELECT AVG(monthly_spend) as avg_spend FROM ("
-        "  SELECT strftime('%%Y-%%m', date) as month, "
-        "  ABS(SUM(amount)) as monthly_spend "
-        "  FROM transactions "
-        "  WHERE amount < 0 "
-        "  AND COALESCE(category,'') NOT IN "
+        "  SELECT strftime('%%Y-%%m', t.date) as month, "
+        "  ABS(SUM(t.amount)) as monthly_spend "
+        "  FROM t "
+        "  WHERE t.amount < 0 "
+        "  AND COALESCE(t.category,'') NOT IN "
         "  ('Internal Transfer','Credit Card Payment','Income','Owner Contribution','Partner Buyout') "
-        "  AND date >= date('now', '-3 months') "
+        "  AND t.date >= date('now', '-3 months') "
         "  GROUP BY month"
         ")"
     ).fetchone()
@@ -1077,27 +1086,30 @@ def _render_budget_transactions(conn, category, subcategory, month):
     from markupsafe import escape
     import json as _json
 
+    _cte = effective_txns_cte("t")
     if subcategory:
         rows = conn.execute(
-            "SELECT transaction_id, date, description_raw, merchant_canonical, "
-            "amount, category, subcategory "
-            "FROM transactions "
-            "WHERE category = ? "
-            "AND COALESCE(NULLIF(subcategory,''), 'General') = ? "
-            "AND strftime('%Y-%m', date) = ? "
-            "AND amount < 0 "
-            "ORDER BY date DESC",
+            f"WITH {_cte} "
+            "SELECT t.transaction_id, t.date, t.description_raw, t.merchant_canonical, "
+            "t.amount, t.category, t.subcategory "
+            "FROM t "
+            "WHERE t.category = ? "
+            "AND COALESCE(NULLIF(t.subcategory,''), 'General') = ? "
+            "AND strftime('%Y-%m', t.date) = ? "
+            "AND t.amount < 0 "
+            "ORDER BY t.date DESC",
             (category, subcategory, month),
         ).fetchall()
     else:
         rows = conn.execute(
-            "SELECT transaction_id, date, description_raw, merchant_canonical, "
-            "amount, category, subcategory "
-            "FROM transactions "
-            "WHERE category = ? "
-            "AND strftime('%Y-%m', date) = ? "
-            "AND amount < 0 "
-            "ORDER BY date DESC",
+            f"WITH {_cte} "
+            "SELECT t.transaction_id, t.date, t.description_raw, t.merchant_canonical, "
+            "t.amount, t.category, t.subcategory "
+            "FROM t "
+            "WHERE t.category = ? "
+            "AND strftime('%Y-%m', t.date) = ? "
+            "AND t.amount < 0 "
+            "ORDER BY t.date DESC",
             (category, month),
         ).fetchall()
 
@@ -1196,6 +1208,18 @@ def budget_subcategories():
     month = request.args.get("month", date.today().strftime("%Y-%m"))
 
     conn = get_connection(g.entity_key)
+    _cte = effective_txns_cte("t")
+    _subcat_sql = (
+        f"WITH {_cte} "
+        "SELECT COALESCE(NULLIF(t.subcategory,''), 'General') as sub, "
+        "COUNT(*) as cnt, ABS(SUM(t.amount)) as total "
+        "FROM t "
+        "WHERE t.category = ? "
+        "AND strftime('%Y-%m', t.date) = ? "
+        "AND t.amount < 0 "
+        "GROUP BY sub "
+        "ORDER BY total DESC"
+    )
     try:
         # Special case: Payroll — use payroll_entries grouped by employee role
         if category == "Payroll":
@@ -1214,42 +1238,12 @@ def budget_subcategories():
                     rows = payroll_rows
                 else:
                     # Fall back to standard transaction query
-                    rows = conn.execute(
-                        "SELECT COALESCE(NULLIF(subcategory,''), 'General') as sub, "
-                        "COUNT(*) as cnt, ABS(SUM(amount)) as total "
-                        "FROM transactions "
-                        "WHERE category = ? "
-                        "AND strftime('%Y-%m', date) = ? "
-                        "AND amount < 0 "
-                        "GROUP BY sub "
-                        "ORDER BY total DESC",
-                        (category, month),
-                    ).fetchall()
+                    rows = conn.execute(_subcat_sql, (category, month)).fetchall()
             except Exception:
                 # If payroll tables don't exist yet, fall back
-                rows = conn.execute(
-                    "SELECT COALESCE(NULLIF(subcategory,''), 'General') as sub, "
-                    "COUNT(*) as cnt, ABS(SUM(amount)) as total "
-                    "FROM transactions "
-                    "WHERE category = ? "
-                    "AND strftime('%Y-%m', date) = ? "
-                    "AND amount < 0 "
-                    "GROUP BY sub "
-                    "ORDER BY total DESC",
-                    (category, month),
-                ).fetchall()
+                rows = conn.execute(_subcat_sql, (category, month)).fetchall()
         else:
-            rows = conn.execute(
-                "SELECT COALESCE(NULLIF(subcategory,''), 'General') as sub, "
-                "COUNT(*) as cnt, ABS(SUM(amount)) as total "
-                "FROM transactions "
-                "WHERE category = ? "
-                "AND strftime('%Y-%m', date) = ? "
-                "AND amount < 0 "
-                "GROUP BY sub "
-                "ORDER BY total DESC",
-                (category, month),
-            ).fetchall()
+            rows = conn.execute(_subcat_sql, (category, month)).fetchall()
 
         # Look up existing subcategory budgets
         budget_rows = conn.execute(

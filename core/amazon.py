@@ -832,3 +832,135 @@ def apply_matches(entity: str, matches: list[dict]) -> int:
     mark_orders_matched(entity, matches)
 
     return updated
+
+
+# ── Auto-split from vendor line items ────────────────────────────────────────
+
+def auto_split_from_line_items(conn, txn_id: str) -> dict:
+    """Auto-generate transaction splits from matched vendor order line items.
+
+    Looks up order_line_items for orders matched to this transaction, groups
+    them by (category, subcategory), sums amounts, and creates split pieces.
+    Handles remainder (shipping/tax/rounding) as an adjustment to the largest
+    split.
+
+    Parameters
+    ----------
+    conn : sqlite3.Connection
+        An open connection to the entity DB (caller manages commit/close).
+    txn_id : str
+        The parent transaction_id to auto-split.
+
+    Returns
+    -------
+    dict with 'ok' and 'count' on success, or 'error' on failure.
+    """
+    # Get parent transaction
+    parent = conn.execute(
+        "SELECT transaction_id, amount_cents FROM transactions "
+        "WHERE transaction_id = ?",
+        (txn_id,),
+    ).fetchone()
+    if not parent:
+        return {"error": "Transaction not found"}
+
+    parent_cents = parent["amount_cents"]
+
+    # Find matched amazon_orders for this transaction
+    orders = conn.execute(
+        "SELECT id FROM amazon_orders WHERE matched_transaction_id = ?",
+        (txn_id,),
+    ).fetchall()
+    if not orders:
+        return {"error": "No matched vendor orders found for this transaction"}
+
+    order_ids = [r["id"] for r in orders]
+    placeholders = ",".join("?" * len(order_ids))
+
+    # Get line items with categories
+    line_items = conn.execute(
+        f"SELECT id, product_name, item_total_cents, category, subcategory "
+        f"FROM order_line_items "
+        f"WHERE amazon_order_id IN ({placeholders}) "
+        f"AND category IS NOT NULL AND category != '' "
+        f"ORDER BY category, subcategory",
+        order_ids,
+    ).fetchall()
+
+    if not line_items:
+        return {"error": "No categorized line items found"}
+
+    # Group line items by (category, subcategory) and sum amounts
+    groups: dict[tuple[str, str], dict] = {}
+    for li in line_items:
+        key = (li["category"], li["subcategory"] or "General")
+        if key not in groups:
+            groups[key] = {
+                "category": li["category"],
+                "subcategory": li["subcategory"] or "General",
+                "amount_cents": 0,
+                "descriptions": [],
+                "line_item_ids": [],
+            }
+        groups[key]["amount_cents"] += li["item_total_cents"]
+        groups[key]["descriptions"].append(li["product_name"])
+        groups[key]["line_item_ids"].append(li["id"])
+
+    if len(groups) < 2:
+        return {"error": "All line items are in the same category — no split needed"}
+
+    # Build split pieces with amounts matching sign of parent
+    # Line item amounts are positive; parent amount_cents is negative for expenses
+    sign = -1 if parent_cents < 0 else 1
+    split_list = []
+    for g_data in groups.values():
+        split_list.append({
+            "category": g_data["category"],
+            "subcategory": g_data["subcategory"],
+            "amount_cents": sign * abs(g_data["amount_cents"]),
+            "description": " + ".join(g_data["descriptions"][:3]),
+            "line_item_ids": g_data["line_item_ids"],
+        })
+
+    # Sort splits by absolute amount descending (largest first)
+    split_list.sort(key=lambda s: abs(s["amount_cents"]), reverse=True)
+
+    # Calculate remainder (shipping/tax/rounding difference)
+    split_total = sum(s["amount_cents"] for s in split_list)
+    remainder = parent_cents - split_total
+
+    if remainder != 0:
+        # Apply remainder to the largest split to keep sum balanced
+        split_list[0]["amount_cents"] += remainder
+
+    # Delete old splits and write new ones
+    conn.execute(
+        "DELETE FROM transaction_splits WHERE transaction_id = ?", (txn_id,)
+    )
+    now = datetime.now().isoformat()
+    for i, s in enumerate(split_list):
+        # Insert the split row
+        cursor = conn.execute(
+            "INSERT INTO transaction_splits "
+            "(transaction_id, description, amount_cents, category, subcategory, "
+            " sort_order, source, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                txn_id,
+                s["description"],
+                s["amount_cents"],
+                s["category"],
+                s["subcategory"],
+                i,
+                "vendor_line_item",
+                now,
+            ),
+        )
+        # Link line_item_id for the first line item (if single item in group)
+        if len(s["line_item_ids"]) == 1:
+            conn.execute(
+                "UPDATE transaction_splits SET line_item_id = ? WHERE id = ?",
+                (s["line_item_ids"][0], cursor.lastrowid),
+            )
+
+    return {"ok": True, "count": len(split_list)}

@@ -2236,6 +2236,8 @@ details > div, details > p { padding: var(--ui-pad-md) 0.9rem; }
 .badge-blue  { background: rgba(10,132,255,0.15); color: var(--blue); }
 .badge-red   { background: rgba(255,69,58,0.15); color: var(--red); }
 .badge-muted { background: var(--control-bg); color: var(--text-muted); }
+.badge-purple { background: rgba(124,58,237,0.18); color: #a78bfa; }
+.badge-purple-muted { background: rgba(124,58,237,0.10); color: #a78bfa; font-size: 0.7em; }
 
 /* ── Checkbox ───────────────────────────────────────────────────────────── */
 input[type="checkbox"] {

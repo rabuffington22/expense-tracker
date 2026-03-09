@@ -1,0 +1,314 @@
+<div class="txn-modal-backdrop" onclick="if(event.target===this)document.getElementById('txn-modal').innerHTML=''">
+  <div class="txn-modal-card" style="width:480px;">
+    <div class="txn-modal-header">
+      <div>
+        <div class="txn-modal-merchant">✂ Split Transaction</div>
+        <div class="txn-modal-meta">
+          {{ parent.merchant_canonical or (parent.description_raw[:50] if parent.description_raw else '—') }}
+          · {{ fmt_date(parent.date) }} · {{ fmt_cents(parent.amount_cents) }}
+        </div>
+      </div>
+      <button type="button" class="btn-icon"
+              onclick="document.getElementById('txn-modal').innerHTML=''"
+              title="Close" aria-label="Close">&#10005;</button>
+    </div>
+
+    <div id="split-lines" style="display:flex; flex-direction:column; gap:0.35rem; margin-bottom:0.5rem;">
+      {% if splits %}
+        {% for s in splits %}
+        <div class="split-line" data-idx="{{ loop.index0 }}">
+          <div style="display:flex; gap:0.3rem; align-items:center;">
+            <input type="number" class="input-sm split-amount" placeholder="Amount (cents)"
+                   value="{{ s.amount_cents }}" step="1"
+                   style="width:90px; text-align:right;">
+            <select class="input-sm split-cat" onchange="splitCatChange(this)"
+                    style="flex:1;">
+              {% for cat in categories %}
+              <option value="{{ cat }}" {% if cat == s.category %}selected{% endif %}>{{ cat }}</option>
+              {% endfor %}
+            </select>
+            <button type="button" class="btn-icon" onclick="splitRemoveLine(this)"
+                    title="Remove" style="font-size:0.8rem; opacity:0.6;">&#10005;</button>
+          </div>
+          <div style="display:flex; gap:0.3rem; margin-top:0.2rem;">
+            <input type="text" class="input-sm split-desc" placeholder="Description..."
+                   value="{{ s.description or '' }}" style="flex:1;">
+            <select class="input-sm split-subcat" data-initial="{{ s.subcategory or 'General' }}"
+                    style="width:120px;">
+              <option value="{{ s.subcategory or 'General' }}" selected>{{ s.subcategory or 'General' }}</option>
+            </select>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="split-line" data-idx="0">
+          <div style="display:flex; gap:0.3rem; align-items:center;">
+            <input type="number" class="input-sm split-amount" placeholder="Amount (cents)"
+                   step="1" style="width:90px; text-align:right;">
+            <select class="input-sm split-cat" onchange="splitCatChange(this)" style="flex:1;">
+              {% for cat in categories %}
+              <option value="{{ cat }}">{{ cat }}</option>
+              {% endfor %}
+            </select>
+            <button type="button" class="btn-icon" onclick="splitRemoveLine(this)"
+                    title="Remove" style="font-size:0.8rem; opacity:0.6;">&#10005;</button>
+          </div>
+          <div style="display:flex; gap:0.3rem; margin-top:0.2rem;">
+            <input type="text" class="input-sm split-desc" placeholder="Description..."
+                   style="flex:1;">
+            <select class="input-sm split-subcat" style="width:120px;">
+              <option value="General">General</option>
+            </select>
+          </div>
+        </div>
+        <div class="split-line" data-idx="1">
+          <div style="display:flex; gap:0.3rem; align-items:center;">
+            <input type="number" class="input-sm split-amount" placeholder="Amount (cents)"
+                   step="1" style="width:90px; text-align:right;">
+            <select class="input-sm split-cat" onchange="splitCatChange(this)" style="flex:1;">
+              {% for cat in categories %}
+              <option value="{{ cat }}">{{ cat }}</option>
+              {% endfor %}
+            </select>
+            <button type="button" class="btn-icon" onclick="splitRemoveLine(this)"
+                    title="Remove" style="font-size:0.8rem; opacity:0.6;">&#10005;</button>
+          </div>
+          <div style="display:flex; gap:0.3rem; margin-top:0.2rem;">
+            <input type="text" class="input-sm split-desc" placeholder="Description..."
+                   style="flex:1;">
+            <select class="input-sm split-subcat" style="width:120px;">
+              <option value="General">General</option>
+            </select>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Running total -->
+    <div id="split-total-bar" style="display:flex; justify-content:space-between; align-items:center;
+         padding:0.3rem 0.5rem; border-radius:var(--ui-radius);
+         font-size:var(--ui-font-sm); font-weight:600;
+         background:rgba(255,69,58,0.10); color:var(--red);">
+      <span>Split total: <span id="split-total-display">$0.00</span></span>
+      <span>Parent: {{ fmt_cents(parent.amount_cents) }}</span>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex; gap:0.35rem; margin-top:0.5rem; flex-wrap:wrap;">
+      <button type="button" class="btn btn-sm btn-secondary" onclick="splitAddLine()">+ Add Line</button>
+      {% if has_auto_split %}
+      <button type="button" class="btn btn-sm"
+              id="split-auto-btn"
+              style="background:rgba(124,58,237,0.12); color:#a78bfa; border:1px solid rgba(124,58,237,0.25);"
+              onclick="splitAutoFromLineItems('{{ parent.transaction_id }}')">
+        Auto-split from Line Items
+      </button>
+      {% endif %}
+      <div style="flex:1;"></div>
+      {% if splits %}
+      <button type="button" class="btn btn-sm"
+              style="color:var(--red); border:1px solid rgba(255,69,58,0.25); background:transparent;"
+              onclick="splitDeleteAll('{{ parent.transaction_id }}')">Remove Splits</button>
+      {% endif %}
+      <button type="button" class="btn btn-primary btn-sm"
+              onclick="splitSave('{{ parent.transaction_id }}')">Save Splits</button>
+    </div>
+  </div>
+</div>
+
+<!-- Store parent amount and categories for JS -->
+<script type="application/json" id="split-parent-data">
+{{ {"amount_cents": parent.amount_cents, "transaction_id": parent.transaction_id} | tojson }}
+</script>
+<script type="application/json" id="split-categories-data">
+{{ categories | tojson }}
+</script>
+
+<script>
+(function() {
+  const parentData = JSON.parse(document.getElementById('split-parent-data').textContent);
+  const parentCents = parentData.amount_cents;
+  const allCats = JSON.parse(document.getElementById('split-categories-data').textContent);
+
+  // --- Subcategory loading (reuses global txn cache if available) ---
+  let subcatCache = {};
+  async function loadSubcats(catName) {
+    if (subcatCache[catName]) return subcatCache[catName];
+    try {
+      const r = await fetch('/transactions/all-subcategories');
+      const data = await r.json();
+      subcatCache = data;
+      return data[catName] || ['General'];
+    } catch { return ['General']; }
+  }
+
+  // --- Update running total ---
+  window.splitUpdateTotal = function() {
+    const lines = document.querySelectorAll('#split-lines .split-line');
+    let total = 0;
+    lines.forEach(line => {
+      const v = parseInt(line.querySelector('.split-amount').value) || 0;
+      total += v;
+    });
+    const display = document.getElementById('split-total-display');
+    const bar = document.getElementById('split-total-bar');
+    const absCents = Math.abs(total);
+    const sign = total < 0 ? '\u2212' : '';
+    display.textContent = sign + '$' + (absCents / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    if (total === parentCents) {
+      bar.style.background = 'rgba(48,209,88,0.12)';
+      bar.style.color = 'var(--green)';
+    } else {
+      bar.style.background = 'rgba(255,69,58,0.10)';
+      bar.style.color = 'var(--red)';
+    }
+  };
+
+  // Listen for amount changes
+  document.getElementById('split-lines').addEventListener('input', function(e) {
+    if (e.target.classList.contains('split-amount')) splitUpdateTotal();
+  });
+
+  // --- Category change → reload subcategories ---
+  window.splitCatChange = async function(sel) {
+    const line = sel.closest('.split-line');
+    const subcatSel = line.querySelector('.split-subcat');
+    const cat = sel.value;
+    const subs = await loadSubcats(cat);
+    subcatSel.innerHTML = subs.map(s => '<option value="'+s+'">'+s+'</option>').join('');
+  };
+
+  // --- Add new split line ---
+  window.splitAddLine = function() {
+    const container = document.getElementById('split-lines');
+    const idx = container.querySelectorAll('.split-line').length;
+    const opts = allCats.map(c => '<option value="'+c+'">'+c+'</option>').join('');
+    const html = `
+    <div class="split-line" data-idx="${idx}">
+      <div style="display:flex; gap:0.3rem; align-items:center;">
+        <input type="number" class="input-sm split-amount" placeholder="Amount (cents)"
+               step="1" style="width:90px; text-align:right;">
+        <select class="input-sm split-cat" onchange="splitCatChange(this)" style="flex:1;">
+          ${opts}
+        </select>
+        <button type="button" class="btn-icon" onclick="splitRemoveLine(this)"
+                title="Remove" style="font-size:0.8rem; opacity:0.6;">&#10005;</button>
+      </div>
+      <div style="display:flex; gap:0.3rem; margin-top:0.2rem;">
+        <input type="text" class="input-sm split-desc" placeholder="Description..."
+               style="flex:1;">
+        <select class="input-sm split-subcat" style="width:120px;">
+          <option value="General">General</option>
+        </select>
+      </div>
+    </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+  };
+
+  // --- Remove line ---
+  window.splitRemoveLine = function(btn) {
+    const line = btn.closest('.split-line');
+    line.remove();
+    splitUpdateTotal();
+  };
+
+  // --- Save splits ---
+  window.splitSave = async function(txnId) {
+    const lines = document.querySelectorAll('#split-lines .split-line');
+    const splits = [];
+    for (const line of lines) {
+      splits.push({
+        amount_cents: parseInt(line.querySelector('.split-amount').value) || 0,
+        category: line.querySelector('.split-cat').value,
+        subcategory: line.querySelector('.split-subcat').value || 'General',
+        description: line.querySelector('.split-desc').value || '',
+      });
+    }
+    try {
+      const r = await fetch('/transactions/splits/' + txnId + '/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ splits }),
+      });
+      const data = await r.json();
+      if (!r.ok || data.error) {
+        alert(data.error || 'Failed to save splits');
+        return;
+      }
+      // Close modal and refresh the table
+      document.getElementById('txn-modal').innerHTML = '';
+      // Trigger HTMX refresh of the results
+      const resultsEl = document.getElementById('txn-results');
+      if (resultsEl) htmx.trigger(resultsEl, 'refresh');
+      // Also re-fetch the current page via the form if available
+      const form = document.querySelector('.txn-filter-bar form');
+      if (form) form.requestSubmit();
+    } catch (e) {
+      alert('Error saving splits: ' + e.message);
+    }
+  };
+
+  // --- Delete all splits ---
+  window.splitDeleteAll = async function(txnId) {
+    if (!confirm('Remove all splits and revert to single-category?')) return;
+    try {
+      const r = await fetch('/transactions/splits/' + txnId + '/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await r.json();
+      if (!r.ok || data.error) {
+        alert(data.error || 'Failed to delete splits');
+        return;
+      }
+      document.getElementById('txn-modal').innerHTML = '';
+      const form = document.querySelector('.txn-filter-bar form');
+      if (form) form.requestSubmit();
+    } catch (e) {
+      alert('Error: ' + e.message);
+    }
+  };
+
+  // --- Auto-split from line items ---
+  window.splitAutoFromLineItems = async function(txnId) {
+    const btn = document.getElementById('split-auto-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
+    try {
+      const r = await fetch('/transactions/splits/' + txnId + '/auto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await r.json();
+      if (!r.ok || data.error) {
+        alert(data.error || 'Auto-split failed');
+        if (btn) { btn.disabled = false; btn.textContent = 'Auto-split from Line Items'; }
+        return;
+      }
+      // Reload the split editor to show the new splits
+      htmx.ajax('GET', '/transactions/splits/' + txnId, {target: '#txn-modal', swap: 'innerHTML'});
+    } catch (e) {
+      alert('Error: ' + e.message);
+      if (btn) { btn.disabled = false; btn.textContent = 'Auto-split from Line Items'; }
+    }
+  };
+
+  // --- Load subcategories for existing split lines ---
+  async function initExistingLines() {
+    const lines = document.querySelectorAll('#split-lines .split-line');
+    for (const line of lines) {
+      const cat = line.querySelector('.split-cat').value;
+      if (cat) {
+        const subs = await loadSubcats(cat);
+        const subcatSel = line.querySelector('.split-subcat');
+        const currentVal = subcatSel.dataset.initial || subcatSel.value || 'General';
+        subcatSel.innerHTML = subs.map(s =>
+          '<option value="'+s+'"' + (s === currentVal ? ' selected' : '') + '>'+s+'</option>'
+        ).join('');
+      }
+    }
+    splitUpdateTotal();
+  }
+  initExistingLines();
+})();
+</script>

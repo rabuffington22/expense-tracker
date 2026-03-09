@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, g, url_for, redirect
 
 from core.db import get_connection
+from core.reporting import effective_txns_cte
 from web.routes.reports import fmt_month_short, fmt_date
 
 bp = Blueprint("dashboard", __name__)
@@ -96,22 +97,26 @@ def _query_dashboard(conn, params):
     da_where = " AND ".join(da_clauses)
     xfer_clause, _ = _exclude_transfers_clause(params)
 
+    _cte = effective_txns_cte("t")
+
     # ── Total transaction count (for empty state) ────────────────────────────
     data["total_txn_count"] = conn.execute(
-        f"SELECT COUNT(*) FROM transactions WHERE {da_where}",
+        f"WITH {_cte} SELECT COUNT(*) FROM t WHERE {da_where}",
         da_binds,
     ).fetchone()[0]
 
     # ── Spend cents (expenses, excluding transfers by default) ───────────────
     data["spend_cents"] = conn.execute(
-        f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+        f"WITH {_cte} "
+        f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM t "
         f"WHERE amount_cents < 0 AND {da_where} {xfer_clause}",
         da_binds,
     ).fetchone()[0]
 
     # ── Income cents ─────────────────────────────────────────────────────────
     data["income_cents"] = conn.execute(
-        f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+        f"WITH {_cte} "
+        f"SELECT COALESCE(SUM(amount_cents), 0) FROM t "
         f"WHERE amount_cents > 0 AND {da_where} {xfer_clause}",
         da_binds,
     ).fetchone()[0]
@@ -121,7 +126,8 @@ def _query_dashboard(conn, params):
 
     # ── Needs Review count ───────────────────────────────────────────────────
     data["review_count"] = conn.execute(
-        f"SELECT COUNT(*) FROM transactions "
+        f"WITH {_cte} "
+        f"SELECT COUNT(*) FROM t "
         f"WHERE (category IS NULL OR category = '' OR confidence < 0.6) "
         f"AND {da_where} {xfer_clause}",
         da_binds,
@@ -129,7 +135,7 @@ def _query_dashboard(conn, params):
 
     # ── Latest transaction date ──────────────────────────────────────────────
     latest_raw = conn.execute(
-        f"SELECT MAX(date) FROM transactions WHERE {da_where}",
+        f"WITH {_cte} SELECT MAX(date) FROM t WHERE {da_where}",
         da_binds,
     ).fetchone()[0]
     if latest_raw:
@@ -144,10 +150,11 @@ def _query_dashboard(conn, params):
 
     # ── Top Merchants (8 rows) ───────────────────────────────────────────────
     top_merch_rows = conn.execute(
+        f"WITH {_cte} "
         f"SELECT t.merchant_canonical AS merchant, "
         f"  COUNT(*) AS txn_count, "
         f"  COALESCE(SUM(ABS(t.amount_cents)), 0) AS total_cents "
-        f"FROM transactions t "
+        f"FROM t "
         f"WHERE t.amount_cents < 0 AND {da_t_where} "
         f"  AND t.merchant_canonical IS NOT NULL AND t.merchant_canonical != '' "
         f"  {xfer_t_clause} "
@@ -168,7 +175,8 @@ def _query_dashboard(conn, params):
 
     # ── Possible transfer count ──────────────────────────────────────────────
     data["transfer_count"] = conn.execute(
-        f"SELECT COUNT(*) FROM transactions "
+        f"WITH {_cte} "
+        f"SELECT COUNT(*) FROM t "
         f"WHERE {da_where} "
         f"  AND (category IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
         f"       OR (COALESCE(category,'') = '' AND ("
@@ -247,6 +255,7 @@ def _compute_insights(conn, params, drill_url):
 
     # ── Insight A: Largest category spend increase vs prior period ────────
     span_days = (end_dt - start_dt).days
+    _cte = effective_txns_cte("t")
     if span_days > 0:
         prior_end = start_dt - timedelta(days=1)
         prior_start = prior_end - timedelta(days=span_days)
@@ -262,10 +271,11 @@ def _compute_insights(conn, params, drill_url):
 
         # Current period category totals
         cur_rows = conn.execute(
+            f"WITH {_cte} "
             f"SELECT category, "
             f"  COUNT(*) AS txn_count, "
             f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total_cents "
-            f"FROM transactions "
+            f"FROM t "
             f"WHERE amount_cents < 0 "
             f"  AND date >= ? AND date <= ? "
             f"  AND category IS NOT NULL AND category != '' "
@@ -276,9 +286,10 @@ def _compute_insights(conn, params, drill_url):
 
         # Prior period category totals
         prior_rows = conn.execute(
+            f"WITH {_cte} "
             f"SELECT category, "
             f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total_cents "
-            f"FROM transactions "
+            f"FROM t "
             f"WHERE amount_cents < 0 "
             f"  AND date >= ? AND date <= ? "
             f"  AND category IS NOT NULL AND category != '' "
@@ -329,12 +340,13 @@ def _compute_insights(conn, params, drill_url):
             acct_binds = [params["account"]]
 
         new_count = conn.execute(
-            f"SELECT COUNT(DISTINCT merchant_canonical) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COUNT(DISTINCT merchant_canonical) FROM t "
             f"WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
             f"  AND date >= ? AND date <= ? "
             f"  {xfer_clause} {acct_clause} "
             f"  AND merchant_canonical NOT IN ("
-            f"    SELECT DISTINCT merchant_canonical FROM transactions "
+            f"    SELECT DISTINCT merchant_canonical FROM t "
             f"    WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
             f"      AND date >= ? AND date < ? "
             f"      {xfer_clause} {acct_clause}"
@@ -368,7 +380,8 @@ def _compute_insights(conn, params, drill_url):
             acct_binds = [params["account"]]
 
         large_count = conn.execute(
-            f"SELECT COUNT(*) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COUNT(*) FROM t "
             f"WHERE ABS(amount_cents) > 50000 "
             f"  AND date >= ? AND date <= ? "
             f"  {xfer_clause} {acct_clause}",
@@ -402,16 +415,19 @@ def _compute_compare_insights(conn, left_start, left_end, right_start, right_end
     """
     insights = []
     xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')"
+    _cte = effective_txns_cte("t")
 
     # ── Compare A: Total spending change ────────────────────────────────────
     try:
         left_spend = conn.execute(
-            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM t "
             f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
             [left_start, left_end],
         ).fetchone()[0]
         right_spend = conn.execute(
-            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM t "
             f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
             [right_start, right_end],
         ).fetchone()[0]
@@ -432,16 +448,18 @@ def _compute_compare_insights(conn, left_start, left_end, right_start, right_end
     # ── Compare B: Biggest category shift ───────────────────────────────────
     try:
         left_cats = conn.execute(
+            f"WITH {_cte} "
             f"SELECT category, COALESCE(SUM(ABS(amount_cents)), 0) AS total "
-            f"FROM transactions WHERE amount_cents < 0 "
+            f"FROM t WHERE amount_cents < 0 "
             f"AND date >= ? AND date <= ? {xfer_exclude} "
             f"AND category IS NOT NULL AND category != '' "
             f"GROUP BY category",
             [left_start, left_end],
         ).fetchall()
         right_cats = conn.execute(
+            f"WITH {_cte} "
             f"SELECT category, COALESCE(SUM(ABS(amount_cents)), 0) AS total "
-            f"FROM transactions WHERE amount_cents < 0 "
+            f"FROM t WHERE amount_cents < 0 "
             f"AND date >= ? AND date <= ? {xfer_exclude} "
             f"AND category IS NOT NULL AND category != '' "
             f"GROUP BY category",
@@ -484,16 +502,19 @@ def _compute_income_insights(conn, left_start, left_end, right_start, right_end,
     insights = []
     xfer_exclude = ("AND COALESCE(category,'') NOT IN "
                     "('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')")
+    _cte = effective_txns_cte("t")
 
     # ── Income A: Income change between periods ───────────────────────────
     try:
         left_inc = conn.execute(
-            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM t "
             f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
             [left_start, left_end],
         ).fetchone()[0]
         right_inc = conn.execute(
-            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM t "
             f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
             [right_start, right_end],
         ).fetchone()[0]
@@ -514,8 +535,9 @@ def _compute_income_insights(conn, left_start, left_end, right_start, right_end,
     # ── Income B: Top income source this period ───────────────────────────
     try:
         top_row = conn.execute(
+            f"WITH {_cte} "
             f"SELECT subcategory, COALESCE(SUM(amount_cents), 0) AS total "
-            f"FROM transactions "
+            f"FROM t "
             f"WHERE amount_cents > 0 AND date >= ? AND date <= ? "
             f"  AND category = 'Income' AND subcategory IS NOT NULL AND subcategory != '' "
             f"  AND subcategory != 'General' "
@@ -536,12 +558,14 @@ def _compute_income_insights(conn, left_start, left_end, right_start, right_end,
     # ── Income C: Expense-to-income ratio ─────────────────────────────────
     try:
         left_inc = conn.execute(
-            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM t "
             f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
             [left_start, left_end],
         ).fetchone()[0]
         left_exp = conn.execute(
-            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM t "
             f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
             [left_start, left_end],
         ).fetchone()[0]
@@ -581,13 +605,15 @@ def _build_cash_flow_bars(conn, end_date_str):
 
     # Query totals per month
     placeholders = ",".join("?" * len(months))
+    _cte = effective_txns_cte("t")
     rows = conn.execute(
-        f"SELECT strftime('%Y-%m', date) AS ym, "
-        f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total_cents "
-        f"FROM transactions "
-        f"WHERE amount_cents < 0 "
-        f"  AND strftime('%Y-%m', date) IN ({placeholders}) "
-        f"  AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
+        f"WITH {_cte} "
+        f"SELECT strftime('%Y-%m', t.date) AS ym, "
+        f"  COALESCE(SUM(ABS(t.amount_cents)), 0) AS total_cents "
+        f"FROM t "
+        f"WHERE t.amount_cents < 0 "
+        f"  AND strftime('%Y-%m', t.date) IN ({placeholders}) "
+        f"  AND COALESCE(t.category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout') "
         f"GROUP BY ym",
         months,
     ).fetchall()
@@ -986,21 +1012,25 @@ def _query_kpi(conn, start, end):
     da_where = "date >= ? AND date <= ?"
     binds = [start, end]
     xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')"
+    _cte = effective_txns_cte("t")
 
     spend_cents = conn.execute(
-        f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+        f"WITH {_cte} "
+        f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM t "
         f"WHERE amount_cents < 0 AND {da_where} {xfer_exclude}",
         binds,
     ).fetchone()[0]
 
     income_cents = conn.execute(
-        f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+        f"WITH {_cte} "
+        f"SELECT COALESCE(SUM(amount_cents), 0) FROM t "
         f"WHERE amount_cents > 0 AND {da_where} {xfer_exclude}",
         binds,
     ).fetchone()[0]
 
     txn_count = conn.execute(
-        f"SELECT COUNT(*) FROM transactions WHERE {da_where}",
+        f"WITH {_cte} "
+        f"SELECT COUNT(*) FROM t WHERE {da_where}",
         binds,
     ).fetchone()[0]
 
@@ -1090,16 +1120,19 @@ def _query_income_vs_expenses(conn):
             y -= 1
     months.reverse()  # oldest first
 
+    _cte = effective_txns_cte("t")
+
     for yr, mo in months:
         start = f"{yr:04d}-{mo:02d}-01"
         last_day = calendar.monthrange(yr, mo)[1]
         end = f"{yr:04d}-{mo:02d}-{last_day:02d}"
 
         row = conn.execute(
+            f"WITH {_cte} "
             "SELECT "
             "  COALESCE(SUM(CASE WHEN amount_cents < 0 THEN ABS(amount_cents) ELSE 0 END), 0) AS exp, "
             "  COALESCE(SUM(CASE WHEN amount_cents > 0 THEN amount_cents ELSE 0 END), 0) AS inc "
-            "FROM transactions "
+            "FROM t "
             "WHERE date >= ? AND date <= ? "
             "  AND COALESCE(category, '') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Owner Contribution', 'Partner Buyout')",
             [start, end],
@@ -1123,10 +1156,12 @@ def _query_category_totals(conn, start, end):
     and 'Credit Card Payment' categories.  Credit card interest and all other
     categories remain included.
     """
+    _cte = effective_txns_cte("t")
     return conn.execute(
+        f"WITH {_cte} "
         "SELECT c.id AS cat_id, t.category, "
         "  COALESCE(SUM(ABS(t.amount_cents)), 0) AS total_cents "
-        "FROM transactions t "
+        "FROM t "
         "LEFT JOIN categories c ON c.name = t.category "
         "WHERE t.amount_cents < 0 "
         "  AND t.date >= ? AND t.date <= ? "
@@ -1170,10 +1205,12 @@ def _query_subcategory_rollups(conn, start, end, category_names):
         skeleton[r["category_name"]][r["name"]] = 0
 
     # 2. Actual spend per (category, subcategory) in the period
+    _cte = effective_txns_cte("t")
     spend_rows = conn.execute(
+        f"WITH {_cte} "
         "SELECT t.category, t.subcategory, "
         "  COALESCE(SUM(ABS(t.amount_cents)), 0) AS sub_cents "
-        "FROM transactions t "
+        "FROM t "
         "WHERE t.amount_cents < 0 "
         "  AND t.date >= ? AND t.date <= ? "
         "  AND t.category IN (" + placeholders + ") "
@@ -1603,6 +1640,7 @@ def insight_detail():
     acct_clause = "AND account = ?" if account else ""
     acct_binds = [account] if account else []
 
+    _cte = effective_txns_cte("t")
     conn = get_connection(g.entity_key)
     try:
         if itype == "new_merchants":
@@ -1614,14 +1652,15 @@ def insight_detail():
                 return "<p>Invalid date range.</p>"
 
             rows = conn.execute(
+                f"WITH {_cte} "
                 f"SELECT merchant_canonical, COUNT(*) AS cnt, "
                 f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total_cents "
-                f"FROM transactions "
+                f"FROM t "
                 f"WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
                 f"  AND date >= ? AND date <= ? "
                 f"  {xfer_exclude} {acct_clause} "
                 f"  AND merchant_canonical NOT IN ("
-                f"    SELECT DISTINCT merchant_canonical FROM transactions "
+                f"    SELECT DISTINCT merchant_canonical FROM t "
                 f"    WHERE merchant_canonical IS NOT NULL AND merchant_canonical != '' "
                 f"      AND date >= ? AND date < ? "
                 f"      {xfer_exclude} {acct_clause}"
@@ -1646,7 +1685,8 @@ def insight_detail():
 
         elif itype == "large_txns":
             rows = conn.execute(
-                f"SELECT date, merchant_canonical, amount_cents FROM transactions "
+                f"WITH {_cte} "
+                f"SELECT date, merchant_canonical, amount_cents FROM t "
                 f"WHERE ABS(amount_cents) > 50000 "
                 f"  AND date >= ? AND date <= ? "
                 f"  {xfer_exclude} {acct_clause} "
@@ -1676,7 +1716,8 @@ def insight_detail():
 
         elif itype == "category_increase":
             rows = conn.execute(
-                f"SELECT date, merchant_canonical, amount_cents FROM transactions "
+                f"WITH {_cte} "
+                f"SELECT date, merchant_canonical, amount_cents FROM t "
                 f"WHERE amount_cents < 0 AND category = ? "
                 f"  AND date >= ? AND date <= ? "
                 f"  {acct_clause} "
@@ -1743,6 +1784,7 @@ def subcategory_txns():
 
     compare_mode = bool(start2 and end2)
 
+    _cte = effective_txns_cte("t")
     conn = get_connection(g.entity_key)
     try:
         # Resolve category_id to name
@@ -1765,8 +1807,9 @@ def subcategory_txns():
                 params.append(account)
             where = " AND ".join(conditions)
             return conn.execute(f"""
+                WITH {_cte}
                 SELECT date, merchant_canonical, description_raw, amount_cents
-                FROM transactions t
+                FROM t
                 WHERE {where}
                 ORDER BY date DESC
                 LIMIT 50
@@ -1838,6 +1881,7 @@ def _build_spending_summary(conn, left_start, left_end, right_start, right_end,
                             entity_type):
     """Build a compact text summary of spending data for AI analysis."""
     xfer_exclude = "AND COALESCE(category,'') NOT IN ('Internal Transfer','Credit Card Payment','Owner Contribution','Partner Buyout')"
+    _cte = effective_txns_cte("t")
 
     lines = [f"Entity type: {entity_type}"]
 
@@ -1845,17 +1889,20 @@ def _build_spending_summary(conn, left_start, left_end, right_start, right_end,
     for label, start, end in [("Left period", left_start, left_end),
                                ("Right period", right_start, right_end)]:
         spend = conn.execute(
-            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM t "
             f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
             (start, end),
         ).fetchone()[0]
         income = conn.execute(
-            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM t "
             f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
             (start, end),
         ).fetchone()[0]
         txn_count = conn.execute(
-            "SELECT COUNT(*) FROM transactions WHERE date >= ? AND date <= ?",
+            f"WITH {_cte} "
+            f"SELECT COUNT(*) FROM t WHERE date >= ? AND date <= ?",
             (start, end),
         ).fetchone()[0]
         net = income - spend
@@ -1869,9 +1916,10 @@ def _build_spending_summary(conn, left_start, left_end, right_start, right_end,
     for label, start, end in [("Left period", left_start, left_end),
                                ("Right period", right_start, right_end)]:
         cat_rows = conn.execute(
+            f"WITH {_cte} "
             f"SELECT category, COUNT(*) AS cnt, "
             f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total "
-            f"FROM transactions "
+            f"FROM t "
             f"WHERE amount_cents < 0 AND date >= ? AND date <= ? "
             f"  AND category IS NOT NULL AND category != '' {xfer_exclude} "
             f"GROUP BY category ORDER BY total DESC LIMIT 10",
@@ -1885,9 +1933,10 @@ def _build_spending_summary(conn, left_start, left_end, right_start, right_end,
     for label, start, end in [("Left period", left_start, left_end),
                                ("Right period", right_start, right_end)]:
         merch_rows = conn.execute(
+            f"WITH {_cte} "
             f"SELECT merchant_canonical, COUNT(*) AS cnt, "
             f"  COALESCE(SUM(ABS(amount_cents)), 0) AS total "
-            f"FROM transactions "
+            f"FROM t "
             f"WHERE amount_cents < 0 AND date >= ? AND date <= ? "
             f"  AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
             f"  {xfer_exclude} "
@@ -1911,7 +1960,8 @@ def _build_spending_summary(conn, left_start, left_end, right_start, right_end,
         m_start = f"{y:04d}-{m:02d}-01"
         m_end = f"{y:04d}-{m:02d}-{_cal.monthrange(y, m)[1]:02d}"
         m_spend = conn.execute(
-            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM t "
             f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
             (m_start, m_end),
         ).fetchone()[0]
@@ -1998,6 +2048,7 @@ def _build_ie_summary(conn, entity_type):
     )
     now = datetime.now()
     import calendar as _cal
+    _cte = effective_txns_cte("t")
 
     lines = [f"Entity type: {entity_type}", "", "Monthly income vs expenses (last 12 months):"]
 
@@ -2013,12 +2064,14 @@ def _build_ie_summary(conn, entity_type):
         m_end = f"{y:04d}-{m:02d}-{_cal.monthrange(y, m)[1]:02d}"
 
         income = conn.execute(
-            f"SELECT COALESCE(SUM(amount_cents), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(amount_cents), 0) FROM t "
             f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude}",
             (m_start, m_end),
         ).fetchone()[0]
         expense = conn.execute(
-            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM transactions "
+            f"WITH {_cte} "
+            f"SELECT COALESCE(SUM(ABS(amount_cents)), 0) FROM t "
             f"WHERE amount_cents < 0 AND date >= ? AND date <= ? {xfer_exclude}",
             (m_start, m_end),
         ).fetchone()[0]
@@ -2050,9 +2103,10 @@ def _build_ie_summary(conn, entity_type):
     six_end = f"{now.year:04d}-{now.month:02d}-{_cal.monthrange(now.year, now.month)[1]:02d}"
 
     inc_cats = conn.execute(
+        f"WITH {_cte} "
         f"SELECT COALESCE(subcategory, category, 'Unknown') AS src, "
         f"  COALESCE(SUM(amount_cents), 0) AS total "
-        f"FROM transactions "
+        f"FROM t "
         f"WHERE amount_cents > 0 AND date >= ? AND date <= ? {xfer_exclude} "
         f"GROUP BY src ORDER BY total DESC LIMIT 8",
         (six_start, six_end),
