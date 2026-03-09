@@ -118,27 +118,38 @@
 </div>
 {% endmacro %}
 
+{# ── Name splitter for playing card layout ───────────────────────────────── #}
+{% macro pl_card_name(name) %}
+    {%- set clean = name.split(' — ')[0] -%}
+    {%- if clean.split() | length >= 3 -%}
+        {%- set words = clean.split() -%}
+        <span class="pl-box-name">{{ words[:-1] | join(' ') }}</span>
+        <span class="pl-box-name pl-box-name--sub">{{ words[-1] }}</span>
+    {%- else -%}
+        <span class="pl-box-name">{{ clean }}</span>
+        <span class="pl-box-name pl-box-name--sub">&nbsp;</span>
+    {%- endif -%}
+{% endmacro %}
+
 {# ── Item card (view only) ───────────────────────────────────────────────── #}
 {% macro item_card(item, milestones, entity_key, cf_accounts, is_cross=false) %}
 <div class="pl-box pl-box--{{ item.item_type }}" id="pl-card-{{ item.id }}"
     {% if not is_cross %}onclick="plOpenEdit({{ item.id }})"{% endif %}
     {% if not is_cross %}style="cursor:pointer"{% endif %}>
     <div class="pl-box-header">
-        <span class="pl-box-name">
-            {{ item.name.split(' — ')[0] }}
-            {% if item.source == 'cashflow' %}
-            <span class="pl-badge-auto">Auto</span>
-            {% endif %}
-        </span>
+        {{ pl_card_name(item.name) }}
         <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
     </div>
     <div class="pl-box-subline">
         {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
         {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
         {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
-            &middot; {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
+            · {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
         {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
-            &middot; {{ fmt_dollars(item.monthly_payment_cents) }}/mo pymt
+            · {{ fmt_dollars(item.monthly_payment_cents) }}/mo
+        {% endif %}
+        {% if item.source == 'cashflow' %}
+        <span class="pl-badge-auto">Auto</span>
         {% endif %}
     </div>
 </div>
