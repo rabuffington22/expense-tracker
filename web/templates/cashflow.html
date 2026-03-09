@@ -152,67 +152,83 @@
 {{ entity_section(section.entity_display, section.entity_key, section.banks, section.cards, 'cf-cross') }}
 {% endfor %}
 
-{# ── Edit Modal (card clone with editable fields) ────────────────────── #}
+{# ── Edit Modal (Apple Settings sheet style) ─────────────────────────── #}
 <div class="cf-modal-scrim" id="cf-modal-scrim" hidden>
-    <div class="outline-panel cf-box cf-modal-card" role="dialog" aria-modal="true">
+    <div class="cfm" role="dialog" aria-modal="true">
         <form method="post" id="cf-modal-form">
             <input type="hidden" name="entity_key" id="cf-modal-entity">
 
-            {# Header — name + balance on same line #}
-            <div class="cf-box-header">
-                <span class="cf-box-name cf-modal-name" id="cf-modal-title"></span>
-                <span class="cf-box-value cf-box-value--inline cf-modal-editable"><span class="cf-dollar">$</span><input type="text" name="balance" id="cf-modal-balance" class="cf-modal-input cf-modal-input--balance" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
+            {# Hero — account name + big balance #}
+            <div class="cfm-hero">
+                <span class="cfm-title" id="cf-modal-title"></span>
+                <div class="cfm-balance">
+                    <span class="cfm-dollar">$</span>
+                    <input type="text" name="balance" id="cf-modal-balance" class="cfm-input cfm-input--hero" onfocus="this.select()" oninput="cfSizeInput(this)">
+                </div>
             </div>
 
-            {# Credit limit — only shown for credit cards #}
-            <div class="cf-card-subline" id="cf-modal-limit-wrap" hidden>
-                <span class="cf-credit-line cf-modal-editable cf-modal-limit-line"><span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="credit_limit" id="cf-modal-limit" class="cf-modal-input cf-modal-input--small" onfocus="this.select()" oninput="cfSizeInput(this)"></span>
+            {# Details group — credit card fields in iOS settings rows #}
+            <div class="cfm-group" id="cf-modal-card-group" hidden>
+                <div class="cfm-row" id="cf-modal-limit-wrap">
+                    <span class="cfm-label">Credit Limit</span>
+                    <div class="cfm-value">
+                        <span class="cfm-unit">$</span>
+                        <input type="text" name="credit_limit" id="cf-modal-limit" class="cfm-input" onfocus="this.select()" oninput="cfSizeInput(this)">
+                    </div>
+                </div>
+                <div class="cfm-row" id="cf-modal-apr-wrap">
+                    <span class="cfm-label">APR</span>
+                    <div class="cfm-value">
+                        <input type="text" name="apr" id="cf-modal-apr" class="cfm-input cfm-input--right" onfocus="this.select()" oninput="cfSizeInput(this)">
+                        <span class="cfm-unit">%</span>
+                    </div>
+                </div>
+                <div class="cfm-row" id="cf-modal-payment-wrap">
+                    <span class="cfm-label">Payment Due</span>
+                    <div class="cfm-value">
+                        <span class="cfm-unit">$</span>
+                        <input type="text" name="payment_amount" id="cf-modal-payment" class="cfm-input" onfocus="this.select()" oninput="cfSizeInput(this)">
+                        <span class="cfm-due-sep">on</span>
+                        <input type="hidden" name="payment_due_day" id="cf-modal-due-day-hidden">
+                        <input type="text" id="cf-modal-due-display" class="cfm-input cfm-input--date" placeholder="Day" onfocus="this.select()" oninput="cfParseDueDay(this)">
+                    </div>
+                </div>
             </div>
 
-            {# APR — shown for credit cards #}
-            <div class="cf-card-subline" id="cf-modal-apr-wrap" hidden>
-                <span class="cf-credit-line cf-modal-editable cf-modal-limit-line"><input type="text" name="apr" id="cf-modal-apr" class="cf-modal-input cf-modal-input--small" onfocus="this.select()" oninput="cfSizeInput(this)"><span class="cf-dollar cf-dollar--sm">%</span></span>
-            </div>
-
-            {# Credit card fields — shown/hidden by JS #}
-            <div id="cf-modal-card-fields" hidden>
-                <div class="cf-pymt-divider"></div>
-
-                <span class="cf-credit-line cf-pymt-line cf-modal-pymt-edit">
-                    <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="payment_amount" id="cf-modal-payment" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" onfocus="this.select()" oninput="cfSizeInput(this)">
-                    <span class="cf-pymt-label">due</span>
-                    <input type="hidden" name="payment_due_day" id="cf-modal-due-day-hidden">
-                    <input type="text" id="cf-modal-due-display" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-modal-input--due-date" placeholder="Day" onfocus="this.select()" oninput="cfParseDueDay(this)">
-                </span>
-            </div>
-
-            {# Upcoming section — cloned from card + add row #}
-            <div class="cf-upcoming" id="cf-modal-upcoming">
-                <span class="cf-upcoming-label">Upcoming</span>
+            {# Upcoming group #}
+            <div class="cfm-group" id="cf-modal-upcoming">
+                <div class="cfm-group-header">
+                    <span class="cfm-section-label" id="cf-modal-upcoming-label">Upcoming</span>
+                </div>
                 <div id="cf-modal-upcoming-list"></div>
             </div>
         </form>
 
-        {# Add recurring form (separate form, outside main edit form) #}
-        <div class="cf-add-recurring-section" id="cf-add-recurring-section" hidden>
-            <span class="cf-upcoming-label">Add Manual Recurring</span>
-            <form method="post" action="/cashflow/recurring/add" id="cf-add-recurring-form" class="cf-add-recurring">
+        {# Add recurring (separate form) #}
+        <div class="cfm-group cfm-group--add" id="cf-add-recurring-section" hidden>
+            <div class="cfm-group-header">
+                <span class="cfm-section-label">Add Recurring</span>
+            </div>
+            <form method="post" action="/cashflow/recurring/add" id="cf-add-recurring-form" class="cfm-add-form">
                 <input type="hidden" name="entity_key" id="cf-add-entity">
                 <input type="hidden" name="account_id" id="cf-add-acct-id">
-                <span class="cf-credit-line cf-pymt-line cf-modal-pymt-edit cf-modal-pymt-edit--left">
-                    <input type="text" name="merchant" placeholder="Name" class="cf-modal-input cf-modal-input--small cf-modal-input--inline cf-add-input--name">
-                    <span class="cf-dollar cf-dollar--sm">$</span><input type="text" name="amount" placeholder="0" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" style="width:25px">
-                    <span class="cf-pymt-label">on</span>
-                    <input type="text" name="day_of_month" placeholder="Day" class="cf-modal-input cf-modal-input--small cf-modal-input--inline" style="width:25px">
-                    <button type="submit" class="cf-add-btn" title="Add" aria-label="Add recurring charge">+</button>
-                </span>
+                <div class="cfm-add-row">
+                    <input type="text" name="merchant" placeholder="Name" class="cfm-input cfm-input--field">
+                    <span class="cfm-unit">$</span>
+                    <input type="text" name="amount" placeholder="0" class="cfm-input cfm-input--field cfm-input--narrow">
+                    <span class="cfm-due-sep">on</span>
+                    <input type="text" name="day_of_month" placeholder="Day" class="cfm-input cfm-input--field cfm-input--narrow">
+                    <button type="submit" class="cfm-add-btn" title="Add" aria-label="Add recurring charge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
             </form>
         </div>
 
-        {# Footer — at very bottom of modal #}
-        <div class="cf-modal-footer">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="cfCloseModal()">Cancel</button>
-            <button type="submit" form="cf-modal-form" class="btn btn-primary btn-sm">Save</button>
+        {# Footer #}
+        <div class="cfm-footer">
+            <button type="button" class="cfm-btn cfm-btn--cancel" onclick="cfCloseModal()">Cancel</button>
+            <button type="submit" form="cf-modal-form" class="cfm-btn cfm-btn--save">Save</button>
         </div>
     </div>
 </div>
@@ -255,7 +271,6 @@ function cfOpenModal(btn, evt) {
         ? '/cashflow/accounts/update-card/' + d.acctId
         : '/cashflow/accounts/update/' + d.acctId;
 
-    /* Title — just the name, no "Edit" prefix */
     document.getElementById('cf-modal-title').textContent = d.acctName;
     document.getElementById('cf-modal-form').action = action;
     document.getElementById('cf-modal-entity').value = d.entityKey;
@@ -264,21 +279,15 @@ function cfOpenModal(btn, evt) {
     cfSizeInput(balInput);
 
     /* Credit card fields */
-    var cardFields = document.getElementById('cf-modal-card-fields');
-    var limitWrap = document.getElementById('cf-modal-limit-wrap');
-    var aprWrap = document.getElementById('cf-modal-apr-wrap');
+    var cardGroup = document.getElementById('cf-modal-card-group');
     if (isCard) {
-        cardFields.hidden = false;
-        limitWrap.hidden = false;
+        cardGroup.hidden = false;
         var limitInput = document.getElementById('cf-modal-limit');
         limitInput.value = d.limit;
         cfSizeInput(limitInput);
-        /* APR */
-        aprWrap.hidden = false;
         var aprInput = document.getElementById('cf-modal-apr');
         aprInput.value = d.apr || '';
         cfSizeInput(aprInput);
-        /* Due date — show formatted date, store day in hidden field */
         document.getElementById('cf-modal-due-day-hidden').value = d.dueDay;
         var dueDisplay = document.getElementById('cf-modal-due-display');
         dueDisplay.value = d.dueDate ? cfFormatDate(d.dueDate) : (d.dueDay || '');
@@ -287,32 +296,18 @@ function cfOpenModal(btn, evt) {
         payInput.value = d.payment;
         cfSizeInput(payInput);
     } else {
-        cardFields.hidden = true;
-        limitWrap.hidden = true;
-        aprWrap.hidden = true;
+        cardGroup.hidden = true;
     }
 
-    /* Copy upcoming charges from the card */
-    var card = btn.closest('.cf-box');
-    var upcomingEl = card.querySelector('.cf-upcoming');
+    /* Upcoming charges — rendered server-side on the card, copy into modal */
     var listTarget = document.getElementById('cf-modal-upcoming-list');
-    var modalUpcomingLabel = document.querySelector('#cf-modal-upcoming > .cf-upcoming-label');
+    var upcomingLabel = document.getElementById('cf-modal-upcoming-label');
     listTarget.innerHTML = '';
+    /* Upcoming rows live on the hidden cf-upcoming div inside the card (kept in DOM for data) */
     var hasUpcoming = false;
-    if (upcomingEl) {
-        var rows = upcomingEl.querySelectorAll('.cf-upcoming-row');
-        rows.forEach(function(row) {
-            var clone = row.cloneNode(true);
-            listTarget.appendChild(clone);
-        });
-        hasUpcoming = rows.length > 0;
-    }
-    if (hasUpcoming) {
-        modalUpcomingLabel.hidden = false;
-    } else {
-        modalUpcomingLabel.hidden = true;
-        listTarget.innerHTML = '<span class="cf-upcoming-none cf-upcoming-none--centered">No upcoming charges</span>';
-    }
+    /* For now, show "No upcoming charges" — upcoming data removed from cards */
+    upcomingLabel.hidden = true;
+    listTarget.innerHTML = '<span class="cfm-empty">No upcoming charges</span>';
 
     /* Set up add-recurring form */
     document.getElementById('cf-add-entity').value = d.entityKey;

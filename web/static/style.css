@@ -4605,60 +4605,69 @@ select.input-sm {
 
 /* Edit popover */
 /* Edit modal */
+/* ── Cash Flow Modal (Apple Settings sheet) ─────────────────────────── */
 .cf-modal-scrim {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.55);
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
-.cf-modal-scrim[hidden] {
-    display: none;
-}
-/* Card-clone edit modal */
-.cf-modal-card {
-    width: 340px;
-    max-width: 90vw;
-    min-height: 420px;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.45);
-    background: #111;
-    display: flex;
-    flex-direction: column;
-    aspect-ratio: auto;
-}
-:root[data-theme="light"] .cf-modal-card {
-    background: #f0f0f0;
-}
-.cf-modal-card .cf-box-header {
-    margin-bottom: 1rem;
-}
-.cf-modal-card .cf-card-subline {
-    margin: 0.3rem 0;
-}
-.cf-modal-card #cf-modal-form {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-.cf-modal-close { font-size: 1.1rem; opacity: 0.7; }
-.cf-modal-close:hover { opacity: 1; }
+.cf-modal-scrim[hidden] { display: none; }
 
-/* Modal overrides */
-.cf-modal-name {
-    font-size: 0.95rem;
+.cfm {
+    width: 360px;
+    max-width: 90vw;
+    min-height: 380px;
+    background: #1c1c1e;
+    border-radius: 20px;
+    padding: 1.8rem 1.6rem 1.4rem;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
 }
-.cf-modal-limit-line {
-    justify-content: flex-start;
+:root[data-theme="light"] .cfm {
+    background: #f2f2f7;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.18);
 }
-/* Editable values — invisible inputs, look like static card text */
-.cf-modal-editable {
+
+/* Hero — centered title + big balance */
+.cfm-hero {
+    text-align: center;
+    padding-bottom: 1.4rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.08);
+    margin-bottom: 1.2rem;
+}
+:root[data-theme="light"] .cfm-hero {
+    border-bottom-color: rgba(0,0,0,0.08);
+}
+.cfm-title {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+.cfm-balance {
     display: flex;
     align-items: baseline;
-    gap: 0.1rem;
+    justify-content: center;
+    gap: 0.15rem;
 }
-input.cf-modal-input {
+.cfm-dollar {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+/* Invisible inputs — look like editable text */
+input.cfm-input {
     background: transparent;
     border: none;
     border-radius: 0;
@@ -4671,140 +4680,98 @@ input.cf-modal-input {
     cursor: text;
     -webkit-appearance: none;
     appearance: none;
+    width: auto;
 }
-input.cf-modal-input:focus {
-    border-bottom: 1px solid var(--blue);
+input.cfm-input:focus {
+    border-bottom: 1.5px solid var(--blue);
     box-shadow: none;
 }
-/* Balance input — matches .cf-box-value exactly */
-input.cf-modal-input--balance {
-    font-size: 1.4rem;
+input.cfm-input--hero {
+    font-size: 2rem;
     font-weight: 700;
-    width: auto;
-    text-align: right;
-}
-/* Small inputs — credit limit + payment */
-input.cf-modal-input--small {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    width: auto;
-    text-align: right;
-}
-/* Inline inputs in the payment line */
-input.cf-modal-input--inline {
-    width: 35px;
     text-align: center;
-}
-input.cf-modal-input--day {
-    width: 18px;
-}
-/* Payment edit line */
-.cf-modal-pymt-edit {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    gap: 0.25rem;
-    margin: 0.5rem 0;
-}
-.cf-pymt-label {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-/* Due date display input */
-input.cf-modal-input--due-date {
-    width: auto;
-    min-width: 3ch;
-}
-/* Dollar signs */
-.cf-dollar {
-    color: var(--text-muted);
-}
-.cf-dollar--sm {
-    font-size: 0.85rem;
-}
-/* Footer */
-.cf-modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding-top: 0.8rem;
-    margin-top: auto;
-}
-/* Delete button on manual recurring items */
-.cf-del-form { display: inline; margin: 0; padding: 0; }
-.cf-del-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 0.5rem;
-    cursor: pointer;
-    padding: 0 0.1rem;
-    opacity: 0.4;
-    line-height: 1;
-}
-.cf-del-btn:hover { opacity: 1; color: var(--red); }
-/* Add recurring section */
-.cf-add-recurring-section {
-    border-top: 0.5px solid rgba(255,255,255,0.06);
-    padding-top: 0.6rem;
-    padding-bottom: 0.2rem;
-    font-size: 0.82rem;
-}
-.cf-add-recurring-section .cf-upcoming-label {
-    font-size: 0.82rem;
-    opacity: 0.5;
-}
-:root[data-theme="light"] .cf-add-recurring-section {
-    border-top-color: rgba(0,0,0,0.06);
-}
-/* Add recurring form — reuses payment line classes */
-.cf-add-recurring {
-    margin-top: 0.1rem;
-}
-.cf-add-recurring .cf-modal-input--small,
-.cf-add-recurring .cf-pymt-label,
-.cf-add-recurring .cf-dollar--sm {
-    opacity: 0.5;
-}
-.cf-modal-pymt-edit--left {
-    justify-content: flex-start;
-    margin: 0.1rem 0;
-}
-.cf-add-input--name { width: 50px; }
-.cf-add-btn {
-    background: none;
-    border: none;
-    color: var(--blue);
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
+    letter-spacing: -0.02em;
 }
 
-/* Upcoming charges */
-.cf-upcoming {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    padding-top: 0.15rem;
-    border-top: 0.5px solid rgba(255,255,255,0.06);
-    margin-top: auto;
+/* Grouped settings rows (iOS style) */
+.cfm-group {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 0.2rem 0;
+    margin-bottom: 1rem;
 }
-:root[data-theme="light"] .cf-upcoming {
-    border-top-color: rgba(0,0,0,0.06);
+:root[data-theme="light"] .cfm-group {
+    background: rgba(0,0,0,0.035);
 }
-.cf-upcoming-label {
-    font-size: 0.6rem;
-    color: var(--text-muted);
+.cfm-group[hidden] { display: none; }
+.cfm-group-header {
+    padding: 0.5rem 1rem 0.2rem;
+}
+.cfm-section-label {
+    font-size: 0.72rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
 }
-.cf-upcoming-row {
+.cfm-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 1rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+.cfm-row:last-child { border-bottom: none; }
+:root[data-theme="light"] .cfm-row {
+    border-bottom-color: rgba(0,0,0,0.06);
+}
+.cfm-label {
+    font-size: 0.88rem;
+    color: var(--text);
+}
+.cfm-value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.1rem;
+}
+.cfm-value input.cfm-input {
+    font-size: 0.88rem;
+    text-align: right;
+    color: var(--text-secondary);
+}
+.cfm-input--right { text-align: right; }
+.cfm-input--date {
+    min-width: 4ch;
+    text-align: center;
+}
+.cfm-unit {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.cfm-due-sep {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 0 0.15rem;
+}
+
+/* Upcoming group */
+.cfm-empty {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    padding: 0.6rem 1rem;
+}
+.cfm-group .cf-upcoming-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.6rem;
+    font-size: 0.85rem;
+    padding: 0.55rem 1rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+}
+.cfm-group .cf-upcoming-row:last-child { border-bottom: none; }
+:root[data-theme="light"] .cfm-group .cf-upcoming-row {
+    border-bottom-color: rgba(0,0,0,0.06);
 }
 .cf-upcoming-merchant {
     white-space: nowrap;
@@ -4814,45 +4781,108 @@ input.cf-modal-input--due-date {
 }
 .cf-upcoming-right {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.5rem;
     flex-shrink: 0;
     font-variant-numeric: tabular-nums;
 }
-.cf-upcoming-date {
-    color: var(--text-muted);
+.cf-upcoming-date { color: var(--text-muted); }
+.cf-upcoming-amt { font-weight: 600; }
+
+/* Add recurring form */
+.cfm-group--add { margin-bottom: 0; }
+.cfm-add-form { padding: 0.4rem 1rem 0.5rem; }
+.cfm-add-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
 }
-.cf-upcoming-amt {
+input.cfm-input--field {
+    font-size: 0.85rem;
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 0.4rem 0.5rem;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+}
+input.cfm-input--field:focus {
+    border-bottom: none;
+    background: rgba(255,255,255,0.10);
+}
+:root[data-theme="light"] input.cfm-input--field {
+    background: rgba(0,0,0,0.04);
+}
+:root[data-theme="light"] input.cfm-input--field:focus {
+    background: rgba(0,0,0,0.07);
+}
+input.cfm-input--narrow { max-width: 50px; flex: 0 0 50px; text-align: center; }
+.cfm-add-btn {
+    background: none;
+    border: none;
+    color: var(--blue);
+    cursor: pointer;
+    padding: 0.2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+.cfm-add-btn:hover { background: rgba(10,132,255,0.12); }
+
+/* Delete button on manual recurring items */
+.cf-del-form { display: inline; margin: 0; padding: 0; }
+.cf-del-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    cursor: pointer;
+    padding: 0 0.2rem;
+    opacity: 0.5;
+    line-height: 1;
+}
+.cf-del-btn:hover { opacity: 1; color: var(--red); }
+
+/* Footer — pinned to bottom right */
+.cfm-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: auto;
+    padding-top: 1.2rem;
+}
+.cfm-btn {
+    font-size: 0.88rem;
     font-weight: 600;
+    font-family: inherit;
+    border: none;
+    border-radius: 10px;
+    padding: 0.55rem 1.4rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
 }
-.cf-upcoming-none {
-    font-size: 0.6rem;
-    color: var(--text-muted);
-    font-style: normal;
-    padding-left: 0;
-    text-align: center;
+.cfm-btn--cancel {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-secondary);
 }
-.cf-upcoming-none--centered {
-    padding-left: 0;
-    text-align: center;
-    display: block;
+.cfm-btn--cancel:hover {
+    background: rgba(255,255,255,0.12);
 }
-/* Bigger upcoming text inside modal */
-.cf-modal-card .cf-upcoming {
-    padding-top: 0.6rem;
-    margin-top: 0.8rem;
-    gap: 0.3rem;
+:root[data-theme="light"] .cfm-btn--cancel {
+    background: rgba(0,0,0,0.06);
+    color: var(--text-secondary);
 }
-.cf-modal-card .cf-upcoming-label {
-    font-size: 0.85rem;
+:root[data-theme="light"] .cfm-btn--cancel:hover {
+    background: rgba(0,0,0,0.10);
 }
-.cf-modal-card .cf-upcoming-row {
-    font-size: 0.85rem;
-    padding: 0.15rem 0;
+.cfm-btn--save {
+    background: var(--blue);
+    color: #fff;
 }
-.cf-modal-card .cf-upcoming-none {
-    font-size: 0.85rem;
-    text-align: left;
-    padding-left: 0;
+.cfm-btn--save:hover {
+    filter: brightness(1.1);
 }
 
 /* Responsive */
