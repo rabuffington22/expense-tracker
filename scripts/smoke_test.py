@@ -31,7 +31,7 @@ def _check(condition: bool, msg: str) -> None:
 
 def main() -> None:
     print("=" * 60)
-    print("  Ledger — Smoke Test")
+    print("  The Ledger — Smoke Test")
     print("=" * 60)
 
     with tempfile.TemporaryDirectory(prefix="expense_smoke_") as tmpdir:

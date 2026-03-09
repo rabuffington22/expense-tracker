@@ -1,4 +1,4 @@
-"""Flask app factory for Ledger."""
+"""Flask app factory for The Ledger."""
 
 import os
 import sys
@@ -172,7 +172,7 @@ def create_app():
         return Response(
             "Unauthorized",
             401,
-            {"WWW-Authenticate": 'Basic realm="Ledger"'},
+            {"WWW-Authenticate": 'Basic realm="The Ledger"'},
         )
 
     # ── Before-request: init DB, set entity context ──────────────────────────
