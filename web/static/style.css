@@ -355,9 +355,11 @@ a:hover { text-decoration: underline; }
     text-align: center;
 }
 .sb-brand .sidebar-title {
-    font-size: 1.0rem;
-    letter-spacing: 0.03em;
-    color: #9cae61;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #2e8b57;
+    text-shadow: 0 0 12px rgba(46, 139, 87, 0.4), 0 0 4px rgba(46, 139, 87, 0.2);
 }
 .sb-brand .sidebar-subtitle {
     font-size: 0.52rem;
