@@ -2,7 +2,8 @@
 One-time script: backfill account names on Plaid transactions.
 
 Uses the date-range transactions/get endpoint (does NOT touch sync cursors).
-Matches by plaid_transaction_id to fill in account + plaid_item_id.
+First tries matching by plaid_transaction_id, then falls back to
+date + amount matching when IDs differ (e.g. pending → posted ID change).
 
 Run locally:
   python scripts/backfill_plaid_accounts.py
@@ -38,7 +39,8 @@ def backfill_entity(entity_key: str) -> int:
     try:
         # Find transactions with plaid_transaction_id but missing account
         missing = conn.execute("""
-            SELECT transaction_id, plaid_transaction_id, plaid_item_id, date
+            SELECT transaction_id, plaid_transaction_id, plaid_item_id,
+                   date, amount, description_raw
             FROM transactions
             WHERE plaid_transaction_id IS NOT NULL
               AND (account IS NULL OR account = '')
@@ -71,8 +73,12 @@ def backfill_entity(entity_key: str) -> int:
         start_date = date.fromisoformat(min(dates)) - timedelta(days=5)
         end_date = date.fromisoformat(max(dates)) + timedelta(days=5)
 
-        # For each Plaid item, fetch transactions by date range from Plaid API
+        # For each Plaid item, fetch transactions from Plaid API
         plaid_txn_map = {}  # plaid_transaction_id -> account_id
+        # Also build date+amount index for fuzzy matching
+        # Key: (date, amount_cents) -> list of (account_id, name)
+        date_amount_index = {}
+
         for item in items:
             inst = item["institution_name"] or item["item_id"]
             print(f"    Fetching {inst} ({start_date} to {end_date})...")
@@ -82,6 +88,15 @@ def backfill_entity(entity_key: str) -> int:
                 )
                 for t in txns:
                     plaid_txn_map[t["plaid_transaction_id"]] = t["account_id"]
+                    # Build fuzzy index: Plaid amounts are positive=debit,
+                    # our DB stores negative=debit, so negate for matching
+                    amt_cents = round(-t["amount"] * 100)
+                    key = (t["date"], amt_cents)
+                    if key not in date_amount_index:
+                        date_amount_index[key] = []
+                    date_amount_index[key].append(
+                        (t["account_id"], t.get("merchant_name") or t.get("name") or "")
+                    )
                 print(f"    Got {len(txns)} transactions from Plaid API")
             except Exception as e:
                 print(f"    ERROR fetching {inst}: {e}")
@@ -89,27 +104,56 @@ def backfill_entity(entity_key: str) -> int:
 
         # Match and update
         updated = 0
+        id_matched = 0
+        fuzzy_matched = 0
+        missed = 0
+
         for row in missing:
             ptid = row["plaid_transaction_id"]
+            account_id = None
+
+            # Pass 1: exact plaid_transaction_id match
             if ptid in plaid_txn_map:
                 account_id = plaid_txn_map[ptid]
-                if account_id in acct_lookup:
-                    acct_name, item_id = acct_lookup[account_id]
-                    conn.execute(
-                        "UPDATE transactions SET account=?, "
-                        "plaid_item_id=COALESCE(plaid_item_id, ?) "
-                        "WHERE transaction_id=?",
-                        (acct_name, item_id, row["transaction_id"]),
-                    )
-                    updated += 1
-                else:
-                    print(f"    WARNING: account_id {account_id} not in plaid_accounts")
+                id_matched += 1
+
+            # Pass 2: fuzzy match by date + amount
+            if not account_id:
+                amt_cents = round(row["amount"] * 100)
+                key = (row["date"], amt_cents)
+                candidates = date_amount_index.get(key, [])
+                if len(candidates) == 1:
+                    # Unique match
+                    account_id = candidates[0][0]
+                    fuzzy_matched += 1
+                elif len(candidates) > 1:
+                    # Multiple matches — try to disambiguate by description
+                    desc = (row["description_raw"] or "").lower()
+                    best = None
+                    for cand_acct_id, cand_name in candidates:
+                        if cand_name.lower() in desc or desc in cand_name.lower():
+                            best = cand_acct_id
+                            break
+                    if best:
+                        account_id = best
+                        fuzzy_matched += 1
+
+            # Apply match
+            if account_id and account_id in acct_lookup:
+                acct_name, item_id = acct_lookup[account_id]
+                conn.execute(
+                    "UPDATE transactions SET account=?, "
+                    "plaid_item_id=COALESCE(plaid_item_id, ?) "
+                    "WHERE transaction_id=?",
+                    (acct_name, item_id, row["transaction_id"]),
+                )
+                updated += 1
             else:
-                # Transaction not found in Plaid API response
-                print(f"    MISS: {ptid} ({row['date']}) not found in Plaid API")
+                missed += 1
 
         conn.commit()
-        print(f"  {entity_key}: updated {updated}/{len(missing)} transactions")
+        print(f"  {entity_key}: updated {updated}/{len(missing)} "
+              f"(id_match={id_matched}, fuzzy={fuzzy_matched}, missed={missed})")
         return updated
     finally:
         conn.close()
