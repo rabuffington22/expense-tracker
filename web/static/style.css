@@ -440,46 +440,33 @@ a:hover { text-decoration: underline; }
 :root[data-theme="light"] .card-flip-back--liability {
     background: linear-gradient(135deg, rgba(124,58,237,0.18) 0%, rgba(124,58,237,0.05) 100%);
 }
-/* Modal open animations — genie effect from card position */
-@keyframes modalScrimIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-@keyframes modalScrimOut {
-    from { opacity: 1; }
-    to   { opacity: 0; }
-}
+/* Modal open/close — genie effect from card position
+   Uses translate3d for GPU compositing. Scrim has no fade (backdrop-filter
+   blur is too expensive to animate). Modal stretches from card position. */
 @keyframes modalGenieIn {
-    0% {
+    from {
         opacity: 0;
-        transform: translate(var(--genie-x, 0px), var(--genie-y, 0px)) scale(0.08) scaleY(0.4);
+        transform: translate3d(var(--genie-x, 0px), var(--genie-y, 0px), 0) scale(0.05);
     }
-    40% {
+    to {
         opacity: 1;
-        transform: translate(calc(var(--genie-x, 0px) * 0.3), calc(var(--genie-y, 0px) * 0.3)) scale(0.6) scaleY(0.85);
-    }
-    100% {
-        opacity: 1;
-        transform: translate(0, 0) scale(1) scaleY(1);
+        transform: translate3d(0, 0, 0) scale(1);
     }
 }
 @keyframes modalGenieOut {
-    0% {
+    from {
         opacity: 1;
-        transform: translate(0, 0) scale(1) scaleY(1);
+        transform: translate3d(0, 0, 0) scale(1);
     }
-    60% {
-        opacity: 1;
-        transform: translate(calc(var(--genie-x, 0px) * 0.3), calc(var(--genie-y, 0px) * 0.3)) scale(0.6) scaleY(0.85);
-    }
-    100% {
+    to {
         opacity: 0;
-        transform: translate(var(--genie-x, 0px), var(--genie-y, 0px)) scale(0.08) scaleY(0.4);
+        transform: translate3d(var(--genie-x, 0px), var(--genie-y, 0px), 0) scale(0.05);
     }
 }
 /* Closing state — applied by JS before hiding */
 .cf-modal-scrim--closing {
-    animation: modalScrimOut 0.3s ease-in forwards;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
 }
 .cfm--closing,
 .pl-modal-popup--closing {
@@ -4898,7 +4885,6 @@ select.input-sm {
     justify-content: center;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    animation: modalScrimIn 0.3s ease-out;
 }
 .cf-modal-scrim[hidden] { display: none; }
 
@@ -4915,7 +4901,8 @@ select.input-sm {
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    animation: modalGenieIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
+    animation: modalGenieIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 :root[data-theme="light"] .cfm {
     background: #f2f2f7;
@@ -5480,7 +5467,6 @@ input.pl-input--sm {
     background: rgba(0,0,0,0.6);
     display: flex; align-items: center; justify-content: center;
     backdrop-filter: blur(4px);
-    animation: modalScrimIn 0.3s ease-out;
 }
 .pl-modal-scrim[hidden] { display: none; }
 .pl-modal-popup {
@@ -5491,7 +5477,8 @@ input.pl-input--sm {
     width: 380px; max-width: 92vw;
     max-height: 85vh; overflow-y: auto;
     box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-    animation: modalGenieIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
+    animation: modalGenieIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .pl-modal-form { display: flex; flex-direction: column; gap: 0.5rem; }
 .pl-modal-form[hidden] { display: none; }
