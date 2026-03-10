@@ -113,22 +113,27 @@
     <div class="stp-goals-grid">
         {% for goal in active_goals %}
         <div class="stp-goal-card stp-goal-card--{{ goal.goal_type }}"
-             onclick="stpOpenGoalPopup({{ goal.id }}, event)"
+             onclick="stpFlipAndOpen(this, {{ goal.id }}, event)"
              data-goal-id="{{ goal.id }}"
              data-goal-type="{{ goal.goal_type }}">
-            <div class="stp-goal-header">
-                <div class="stp-goal-name">{{ goal.name }}</div>
-            </div>
-            <div class="stp-goal-balance-area">
-                <span class="stp-goal-balance">{{ fmt_dollars(goal.current_balance_cents) }}</span>
-            </div>
-            <div class="stp-goal-footer">
-                <div class="stp-progress-wrap">
-                    <div class="stp-progress-bar">
-                        <div class="stp-progress-fill" style="width: {{ goal.progress_pct }}%"></div>
+            <div class="card-flip-inner">
+                <div class="card-flip-front">
+                    <div class="stp-goal-header">
+                        <div class="stp-goal-name">{{ goal.name }}</div>
                     </div>
-                    <span class="stp-progress-label">{{ goal.progress_pct }}%</span>
+                    <div class="stp-goal-balance-area">
+                        <span class="stp-goal-balance">{{ fmt_dollars(goal.current_balance_cents) }}</span>
+                    </div>
+                    <div class="stp-goal-footer">
+                        <div class="stp-progress-wrap">
+                            <div class="stp-progress-bar">
+                                <div class="stp-progress-fill" style="width: {{ goal.progress_pct }}%"></div>
+                            </div>
+                            <span class="stp-progress-label">{{ goal.progress_pct }}%</span>
+                        </div>
+                    </div>
                 </div>
+                <div class="card-flip-back card-flip-back--{{ 'card' if goal.goal_type == 'debt_payoff' else 'bank' if goal.goal_type == 'savings' else 'bank' }}"></div>
             </div>
         </div>
         {% endfor %}
@@ -664,6 +669,26 @@ function stpLockPlan(goalId) {
 
 // ── Goal detail popup ──────────────────────────────────────────────────
 var _stpCurrentGoalId = null;
+var _stpFlippedCard = null;
+
+function _stpSetGenieOrigin(cardEl) {
+    var rect = cardEl.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    var vw = window.innerWidth / 2;
+    var vh = window.innerHeight / 2;
+    var popup = document.getElementById('stp-goal-popup');
+    popup.style.setProperty('--genie-x', (cx - vw) + 'px');
+    popup.style.setProperty('--genie-y', (cy - vh) + 'px');
+}
+
+function stpFlipAndOpen(cardEl, goalId, evt) {
+    if (evt && (evt.target.closest('button') || evt.target.closest('a'))) return;
+    cardEl.classList.add('card-flipped');
+    _stpFlippedCard = cardEl;
+    _stpSetGenieOrigin(cardEl);
+    setTimeout(function() { stpOpenGoalPopup(goalId, null); }, 250);
+}
 
 function stpOpenGoalPopup(goalId, evt) {
     if (evt && (evt.target.closest('button') || evt.target.closest('a'))) return;
@@ -744,8 +769,21 @@ function stpOpenGoalPopup(goalId, evt) {
 }
 
 function stpCloseGoalPopup() {
-    document.getElementById('stp-goal-scrim').hidden = true;
-    _stpCurrentGoalId = null;
+    var scrim = document.getElementById('stp-goal-scrim');
+    var popup = document.getElementById('stp-goal-popup');
+    if (_stpFlippedCard) _stpSetGenieOrigin(_stpFlippedCard);
+    scrim.classList.add('stp-goal-scrim--closing');
+    popup.classList.add('stp-goal-popup--closing');
+    setTimeout(function() {
+        scrim.hidden = true;
+        scrim.classList.remove('stp-goal-scrim--closing');
+        popup.classList.remove('stp-goal-popup--closing');
+        if (_stpFlippedCard) {
+            _stpFlippedCard.classList.remove('card-flipped');
+            _stpFlippedCard = null;
+        }
+        _stpCurrentGoalId = null;
+    }, 300);
 }
 
 /* Close on scrim click */
