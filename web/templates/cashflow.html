@@ -66,14 +66,19 @@
     data-due-day="{{ acct.payment_due_day or '' }}"
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
-    onclick="cfOpenModal(this, event)">
-    <div class="cf-box-name-area">
-        {{ card_name(acct.account_name) }}
-    </div>
-    <div class="cf-box-balance-area">
-        <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
-            {{ fmt_dollars(acct.balance_cents) }}
-        </span>
+    onclick="cfFlipAndOpen(this, event)">
+    <div class="card-flip-inner">
+        <div class="card-flip-front">
+            <div class="cf-box-name-area">
+                {{ card_name(acct.account_name) }}
+            </div>
+            <div class="cf-box-balance-area">
+                <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
+                    {{ fmt_dollars(acct.balance_cents) }}
+                </span>
+            </div>
+        </div>
+        <div class="card-flip-back card-flip-back--bank"></div>
     </div>
 </div>
 {% endmacro %}
@@ -91,14 +96,19 @@
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
     data-apr="{{ '{:.2f}'.format(acct.apr_bps / 100) if acct.apr_bps else '' }}"
-    onclick="cfOpenModal(this, event)">
-    <div class="cf-box-name-area">
-        {{ card_name(acct.account_name) }}
-    </div>
-    <div class="cf-box-balance-area">
-        <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
-            {{ fmt_dollars(acct.balance_cents) }}
-        </span>
+    onclick="cfFlipAndOpen(this, event)">
+    <div class="card-flip-inner">
+        <div class="card-flip-front">
+            <div class="cf-box-name-area">
+                {{ card_name(acct.account_name) }}
+            </div>
+            <div class="cf-box-balance-area">
+                <span class="cf-box-value cf-box-value--inline {% if acct.balance_cents < 0 %}cf-negative{% endif %}">
+                    {{ fmt_dollars(acct.balance_cents) }}
+                </span>
+            </div>
+        </div>
+        <div class="card-flip-back card-flip-back--card"></div>
     </div>
 </div>
 {% endmacro %}
@@ -264,6 +274,15 @@ function cfSizeInput(el) {
     el.style.width = Math.max(2, el.value.length + 1) + 'ch';
 }
 
+var _cfFlippedCard = null;
+
+function cfFlipAndOpen(btn, evt) {
+    if (evt && (evt.target.closest('button') || evt.target.closest('form') || evt.target.closest('a'))) return;
+    btn.classList.add('card-flipped');
+    _cfFlippedCard = btn;
+    setTimeout(function() { cfOpenModal(btn, null); }, 350);
+}
+
 function cfOpenModal(btn, evt) {
     /* Don't open modal when clicking interactive elements inside the card */
     if (evt && (evt.target.closest('button') || evt.target.closest('form') || evt.target.closest('a'))) return;
@@ -327,6 +346,10 @@ function cfOpenModal(btn, evt) {
 function cfCloseModal() {
     document.getElementById('cf-modal-scrim').hidden = true;
     document.getElementById('cf-add-recurring-section').hidden = true;
+    if (_cfFlippedCard) {
+        _cfFlippedCard.classList.remove('card-flipped');
+        _cfFlippedCard = null;
+    }
 }
 
 /* Close on scrim click */

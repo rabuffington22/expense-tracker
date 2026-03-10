@@ -134,23 +134,28 @@
 {# ── Item card (view only) ───────────────────────────────────────────────── #}
 {% macro item_card(item, milestones, entity_key, cf_accounts, is_cross=false) %}
 <div class="pl-box pl-box--{{ item.item_type }}" id="pl-card-{{ item.id }}"
-    {% if not is_cross %}onclick="plOpenEdit({{ item.id }})"{% endif %}
+    {% if not is_cross %}onclick="plFlipAndOpen(this, {{ item.id }})"{% endif %}
     {% if not is_cross %}style="cursor:pointer"{% endif %}>
-    <div class="pl-box-header">
-        {{ pl_card_name(item.name) }}
-        <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
-    </div>
-    <div class="pl-box-subline">
-        {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
-        {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
-        {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
-            · {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
-        {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
-            · {{ fmt_dollars(item.monthly_payment_cents) }}/mo
-        {% endif %}
-        {% if item.source == 'cashflow' %}
-        <span class="pl-badge-auto">Auto</span>
-        {% endif %}
+    <div class="card-flip-inner">
+        <div class="card-flip-front">
+            <div class="pl-box-header">
+                {{ pl_card_name(item.name) }}
+                <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
+            </div>
+            <div class="pl-box-subline">
+                {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
+                {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
+                {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
+                    · {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
+                {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
+                    · {{ fmt_dollars(item.monthly_payment_cents) }}/mo
+                {% endif %}
+                {% if item.source == 'cashflow' %}
+                <span class="pl-badge-auto">Auto</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-flip-back card-flip-back--{{ item.item_type }}"></div>
     </div>
 </div>
 {% endmacro %}
@@ -303,6 +308,14 @@
 
 {# ── JavaScript ──────────────────────────────────────────────────────────── #}
 <script>
+var _plFlippedCard = null;
+
+function plFlipAndOpen(cardEl, itemId) {
+    cardEl.classList.add('card-flipped');
+    _plFlippedCard = cardEl;
+    setTimeout(function() { plOpenEdit(itemId); }, 350);
+}
+
 function plOpenEdit(itemId) {
     _plHideAllForms();
     var form = document.getElementById('pl-edit-' + itemId);
@@ -326,6 +339,10 @@ function plOpenAdd(entityKey, itemType) {
 function plCloseModal() {
     document.getElementById('pl-modal-scrim').hidden = true;
     _plHideAllForms();
+    if (_plFlippedCard) {
+        _plFlippedCard.classList.remove('card-flipped');
+        _plFlippedCard = null;
+    }
 }
 
 function _plHideAllForms() {
