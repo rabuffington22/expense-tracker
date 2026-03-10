@@ -381,6 +381,18 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 
 ## Change Log
 
+### 2026-03-10 — Dashboard/STP alignment: all categories visible + budget progress on dashboard
+Dashboard now uses STP as single source of truth. Both pages show identical category/subcategory lists. Budget progress indicators added to dashboard.
+
+1. **Dashboard uses STP as source of truth** — `detail_categories()` calls `_get_budget_status()` from `short_term_planning.py` directly instead of independently querying budget_items and transactions. Deleted `_get_budget_map()` (40 lines of duplicate logic). Dashboard is read-only scoreboard; STP is the editing cockpit.
+2. **All categories visible on both pages** — `_get_budget_status()` rewritten to return ALL categories from the `categories` table, not just budgeted ones. Unbudgeted categories get `budget_cents=0` and `budget_section=None`. New "NO BUDGET" section on STP for categories without budgets.
+3. **All subcategories visible on STP** — `budget_subcategories()` endpoint rewritten to query ALL defined subcategories from the `subcategories` table (even at $0 spending), matching the dashboard's `_query_subcategory_rollups()` approach.
+4. **Budget-colored bars on dashboard** — Category spending bars color-coded by budget health: green (≤100%), orange (100–115%), red (>115%). Categories without budgets show no bar. Thresholds aligned with STP (both use 115% for red).
+5. **Uncategorized row on dashboard** — Bottom row showing uncategorized spending total (Needs Review + null/empty category) with drill-through link to transactions.
+6. **Removed unbudgeted section from STP** — Old collapsible "UNBUDGETED SPENDING" section removed; unbudgeted categories now appear in the main budget table under "NO BUDGET" section with empty budget input placeholder.
+7. **Plaid duplicate cleanup** — Removed 4 duplicate transactions from March Plaid sync: Barco Well Service ($5,400.63), DFW Security ($122.44), Venmo ($120), Adobe ($21.64). All were same-amount/same-description charges 1 day apart with different Plaid IDs. Prior months clean.
+8. **Barco Well Service recategorized** — Moved from Ranch/General to Home/Plumbing (matching prior Barco transactions).
+
 ### 2026-03-09 — Split transactions + LL Venmo dedup + Spend Trend chart restored
 Transaction splitting for multi-category bank charges, Luxe Legacy data import with Venmo deduplication, Plaid sync across all entities, and restored missing dashboard bar chart.
 
