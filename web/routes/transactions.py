@@ -398,6 +398,29 @@ def edit_row(txn_id):
             (txn_id,),
         ).fetchone()
         txn["split_count"] = sc[0] if sc else 0
+
+        # Fetch matched vendor order line items (read-only display)
+        line_items = [dict(r) for r in conn.execute(
+            "SELECT li.product_name, li.quantity, li.item_total_cents, "
+            "li.category, li.subcategory "
+            "FROM order_line_items li "
+            "JOIN amazon_orders ao ON li.amazon_order_id = ao.id "
+            "WHERE ao.matched_transaction_id = ? "
+            "ORDER BY li.id",
+            (txn_id,),
+        ).fetchall()]
+        # Fallback: product_summary from matched orders when no line items
+        product_summary = None
+        if not line_items:
+            ps_row = conn.execute(
+                "SELECT GROUP_CONCAT(product_summary, ' || ') "
+                "FROM amazon_orders WHERE matched_transaction_id = ? "
+                "AND product_summary IS NOT NULL",
+                (txn_id,),
+            ).fetchone()
+            if ps_row and ps_row[0]:
+                product_summary = ps_row[0]
+
         categories = get_categories(g.entity_key)
         current_cat = txn.get("category") or ""
         subcats = get_subcategories(g.entity_key, current_cat) if current_cat else ["Unknown"]
@@ -406,6 +429,8 @@ def edit_row(txn_id):
             txn=txn,
             categories=categories,
             subcategories=subcats,
+            line_items=line_items,
+            product_summary=product_summary,
         )
     finally:
         conn.close()

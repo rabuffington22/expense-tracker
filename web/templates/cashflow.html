@@ -78,7 +78,21 @@
                 </span>
             </div>
         </div>
-        <div class="card-flip-back card-flip-back--bank"></div>
+        <div class="card-flip-back card-flip-back--bank cf-card-back">
+            <div class="cf-back">
+                <div class="cf-back-type">Bank Account</div>
+                {% if acct.upcoming %}
+                <div class="cf-back-upcoming">
+                    {% for item in acct.upcoming[:3] %}
+                    <div class="cf-back-row">
+                        <span class="cf-back-label">{{ item.merchant }}</span>
+                        <span class="cf-back-val">{{ fmt_dollars(item.amount_cents) }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endmacro %}
@@ -108,7 +122,28 @@
                 </span>
             </div>
         </div>
-        <div class="card-flip-back card-flip-back--card"></div>
+        <div class="card-flip-back card-flip-back--card cf-card-back">
+            <div class="cf-back">
+                {% if acct.credit_limit_cents %}
+                <div class="cf-back-row">
+                    <span class="cf-back-label">Limit</span>
+                    <span class="cf-back-val">{{ fmt_dollars(acct.credit_limit_cents) }}</span>
+                </div>
+                {% endif %}
+                {% if acct.apr_bps %}
+                <div class="cf-back-row">
+                    <span class="cf-back-label">APR</span>
+                    <span class="cf-back-val">{{ '{:.1f}'.format(acct.apr_bps / 100) }}%</span>
+                </div>
+                {% endif %}
+                {% if acct.payment_amount_cents %}
+                <div class="cf-back-row">
+                    <span class="cf-back-label">Payment</span>
+                    <span class="cf-back-val">{{ fmt_dollars(acct.payment_amount_cents) }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endmacro %}

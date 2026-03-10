@@ -4260,6 +4260,31 @@ select.input-sm {
     margin-top: 0.5rem;
     flex-wrap: wrap;
 }
+/* Order items (read-only line items in edit modal) */
+.txn-order-items {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+}
+.txn-order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: var(--ui-pad-xs) 0;
+    font-size: var(--ui-font-xs);
+    color: var(--text-secondary);
+}
+.txn-order-item-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 0.5rem;
+}
+.txn-order-item-amt {
+    white-space: nowrap;
+}
 /* Clickable rows */
 .txn-clickable:hover td {
     background: var(--hover-bg);
@@ -4858,6 +4883,42 @@ select.input-sm {
     text-align: center;
 }
 
+/* ── Cash Flow card back (Apple-style detail) ─────────────────────────────── */
+.cf-card-back::after { display: none; }
+.cf-back {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    padding: 0.4rem 0.3rem;
+    gap: 0.12rem;
+    color: var(--text);
+}
+.cf-back-type {
+    font-size: 0.42rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    opacity: 0.45; margin-bottom: 0.15rem;
+}
+.cf-back-row {
+    display: flex; justify-content: space-between;
+    align-items: baseline; width: 100%;
+    padding: 0 0.15rem;
+}
+.cf-back-label {
+    font-size: 0.46rem; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    opacity: 0.6;
+}
+.cf-back-val {
+    font-size: 0.52rem; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.cf-back-upcoming {
+    width: 100%; margin-top: 0.1rem;
+    padding-top: 0.1rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+:root[data-theme="light"] .cf-back-upcoming { border-top-color: rgba(0,0,0,0.08); }
+
 /* Edit icon button (ⓘ) */
 .cf-edit-btn {
     background: none;
@@ -5427,6 +5488,57 @@ input.pl-input--sm {
     padding: 0.08rem 0.3rem; border-radius: 4px; margin-left: 0.3rem;
     vertical-align: middle;
 }
+
+/* ── Planning card front (simplified — name + amount only) ────────────────── */
+.pl-box .card-flip-front {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pl-box .card-flip-front .pl-box-header {
+    padding-top: 0;
+}
+
+/* ── Planning card back (Apple-style detail) ──────────────────────────────── */
+.pl-card-back::after { display: none; }
+.pl-back {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    padding: 0.5rem 0.3rem;
+    gap: 0.15rem;
+    color: var(--text);
+}
+.pl-back-rate {
+    font-size: 1.1rem; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+.card-flip-back--asset .pl-back-rate { color: var(--green); }
+.card-flip-back--liability .pl-back-rate { color: #a78bfa; }
+.pl-back-rate-label {
+    font-size: 0.5rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    opacity: 0.5;
+}
+.pl-back-monthly {
+    font-size: 0.7rem; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    margin-top: 0.1rem;
+}
+.pl-back-mo {
+    font-weight: 400; opacity: 0.5;
+}
+.pl-back-badge {
+    display: inline-block;
+    font-size: 0.44rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--blue); background: rgba(10,132,255,0.12);
+    padding: 0.08rem 0.25rem; border-radius: 3px;
+    margin-top: 0.1rem;
+}
+:root[data-theme="light"] .card-flip-back--asset .pl-back-rate { color: #16a34a; }
+:root[data-theme="light"] .card-flip-back--liability .pl-back-rate { color: #7c3aed; }
 
 /* ── Per-item projections ─────────────────────────────────────────────────── */
 .pl-box-projections {
@@ -6273,6 +6385,52 @@ input.pl-input--sm {
     font-size: 0.78rem;
     color: var(--text-muted);
     margin-top: 0.2rem;
+}
+
+/* ── STP goal card front (simplified — name + amount only) ────────────────── */
+.stp-goal-card .card-flip-front {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+}
+
+/* ── STP goal card back (Apple-style detail) ──────────────────────────────── */
+.stp-card-back::after { display: none; }
+.stp-back {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    padding: 0.5rem 0.4rem;
+    gap: 0.12rem;
+    color: var(--text);
+}
+.stp-back-progress {
+    display: flex; align-items: center;
+    gap: 0.25rem; width: 100%;
+}
+.stp-back-progress .stp-progress-bar {
+    flex: 1;
+}
+.stp-back-pct {
+    font-size: 0.55rem; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    min-width: 2rem; text-align: right;
+}
+.stp-back-type {
+    font-size: 0.42rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    opacity: 0.5; margin-top: 0.1rem;
+}
+.stp-back-target {
+    font-size: 0.5rem; font-weight: 500;
+    color: var(--text-muted);
+}
+.stp-back-monthly {
+    font-size: 0.58rem; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    margin-top: 0.05rem;
+}
+.stp-back-mo {
+    font-weight: 400; opacity: 0.5;
 }
 
 /* ── Progress bar ──────────────────────────────────────────────────────────── */

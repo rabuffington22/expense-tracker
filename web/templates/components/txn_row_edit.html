@@ -40,6 +40,23 @@
       <input type="text" name="notes" class="input-sm" placeholder="Notes..."
              value="{{ txn.notes or '' }}">
 
+      {% if line_items %}
+      <div class="txn-order-items">
+        <div class="text-xs text-muted" style="text-transform:uppercase; letter-spacing:var(--label-tracking); margin-bottom:0.3rem;">Order Items</div>
+        {% for li in line_items %}
+        <div class="txn-order-item">
+          <span class="txn-order-item-name">{{ li.product_name or '—' }}{% if li.quantity and li.quantity > 1 %} <span class="text-muted">×{{ li.quantity }}</span>{% endif %}</span>
+          <span class="txn-order-item-amt">{{ fmt_cents(li.item_total_cents) if li.item_total_cents else '' }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% elif product_summary %}
+      <div class="txn-order-items">
+        <div class="text-xs text-muted" style="text-transform:uppercase; letter-spacing:var(--label-tracking); margin-bottom:0.3rem;">Order Items</div>
+        <div class="txn-order-item"><span class="txn-order-item-name text-muted">{{ product_summary }}</span></div>
+      </div>
+      {% endif %}
+
       <div id="txn-ai-reason-{{ txn.transaction_id }}" class="txn-ai-reason" hidden></div>
 
       <div class="txn-modal-actions">

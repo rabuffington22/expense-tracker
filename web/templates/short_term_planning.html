@@ -124,16 +124,30 @@
                     <div class="stp-goal-balance-area">
                         <span class="stp-goal-balance">{{ fmt_dollars(goal.current_balance_cents) }}</span>
                     </div>
-                    <div class="stp-goal-footer">
-                        <div class="stp-progress-wrap">
+                </div>
+                <div class="card-flip-back card-flip-back--{{ 'card' if goal.goal_type == 'debt_payoff' else 'bank' }} stp-card-back">
+                    <div class="stp-back">
+                        <div class="stp-back-progress">
                             <div class="stp-progress-bar">
                                 <div class="stp-progress-fill" style="width: {{ goal.progress_pct }}%"></div>
                             </div>
-                            <span class="stp-progress-label">{{ goal.progress_pct }}%</span>
+                            <span class="stp-back-pct">{{ goal.progress_pct }}%</span>
                         </div>
+                        <div class="stp-back-type">
+                            {% if goal.goal_type == 'debt_payoff' %}Debt Payoff
+                            {% elif goal.goal_type == 'savings' %}Savings
+                            {% else %}Spending Cut{% endif %}
+                        </div>
+                        {% if goal.goal_type == 'savings' and goal.target_amount_cents %}
+                        <div class="stp-back-target">of {{ fmt_dollars(goal.target_amount_cents) }}</div>
+                        {% endif %}
+                        {% if goal.monthly_amount_cents %}
+                        <div class="stp-back-monthly">
+                            {{ fmt_dollars(goal.monthly_amount_cents) }}<span class="stp-back-mo">/mo</span>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="card-flip-back card-flip-back--{{ 'card' if goal.goal_type == 'debt_payoff' else 'bank' if goal.goal_type == 'savings' else 'bank' }}"></div>
             </div>
         </div>
         {% endfor %}

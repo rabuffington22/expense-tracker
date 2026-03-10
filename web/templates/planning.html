@@ -142,20 +142,31 @@
                 {{ pl_card_name(item.name) }}
                 <span class="pl-box-value">{{ fmt_k(item.current_value_cents) }}</span>
             </div>
-            <div class="pl-box-subline">
-                {{ '{:.1f}'.format(item.annual_rate_bps / 100) }}%
-                {% if item.item_type == 'asset' %}appr.{% else %}rate{% endif %}
+        </div>
+        <div class="card-flip-back card-flip-back--{{ item.item_type }} pl-card-back">
+            <div class="pl-back">
+                <div class="pl-back-rate">
+                    {{ '{:.1f}'.format(item.annual_rate_bps|abs / 100) }}%
+                </div>
+                <div class="pl-back-rate-label">
+                    {% if item.item_type == 'asset' %}
+                        {{ 'appreciation' if item.annual_rate_bps >= 0 else 'depreciation' }}
+                    {% else %}interest{% endif %}
+                </div>
                 {% if item.item_type == 'asset' and item.monthly_contrib_cents %}
-                    · {{ fmt_dollars(item.monthly_contrib_cents) }}/mo
+                <div class="pl-back-monthly">
+                    {{ fmt_dollars(item.monthly_contrib_cents) }}<span class="pl-back-mo">/mo</span>
+                </div>
                 {% elif item.item_type == 'liability' and item.monthly_payment_cents %}
-                    · {{ fmt_dollars(item.monthly_payment_cents) }}/mo
+                <div class="pl-back-monthly">
+                    {{ fmt_dollars(item.monthly_payment_cents) }}<span class="pl-back-mo">/mo</span>
+                </div>
                 {% endif %}
                 {% if item.source == 'cashflow' %}
-                <span class="pl-badge-auto">Auto</span>
+                <span class="pl-back-badge">Auto</span>
                 {% endif %}
             </div>
         </div>
-        <div class="card-flip-back card-flip-back--{{ item.item_type }}"></div>
     </div>
 </div>
 {% endmacro %}
