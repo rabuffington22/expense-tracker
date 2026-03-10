@@ -7,7 +7,7 @@ from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, g, url_for, redirect
 
 from core.db import get_connection
-from core.reporting import effective_txns_cte
+from core.reporting import effective_txns_cte, EXCLUDE_CATS_NO_INCOME
 from web.routes.reports import fmt_month_short, fmt_date
 
 bp = Blueprint("dashboard", __name__)
@@ -57,7 +57,7 @@ def _make_drill_url(params):
 
 # ── SQL helpers ───────────────────────────────────────────────────────────────
 
-_TRANSFER_CATS = ("Internal Transfer", "Credit Card Payment", "Owner Contribution", "Partner Buyout")
+_TRANSFER_CATS = EXCLUDE_CATS_NO_INCOME
 
 
 def _date_account_clause(params, prefix=""):

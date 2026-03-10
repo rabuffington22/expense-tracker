@@ -121,7 +121,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
     joker-button.png               # Ask Opus button icon (66×66 display, purple ? with glow)
 core/                              # Business logic
-  db.py                            # Schema migrations (54 so far), DB init, connections
+  db.py                            # Schema migrations (55 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
@@ -129,7 +129,7 @@ core/                              # Business logic
   henryschein.py                   # Henry Schein XLSX parsing
   payroll_parser.py                # Phoenix/Greenpage CyberPayroll report parser
   plaid_client.py                  # Plaid API client (link, sync, liabilities)
-  reporting.py                     # Query helpers for Reports page
+  reporting.py                     # Query helpers for Reports page + centralized exclusion lists
   coverage.py                      # Test coverage utilities
 scripts/
   seed_demo_data.py                # Seed fake data for demo instance (2 entities)
@@ -175,10 +175,10 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (54 Migrations)
+## Database (55 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
-- **`categories`** -- Per-entity categories. Personal: 24 categories. BFM: 29 categories. Every category has a "General" subcategory.
+- **`categories`** -- Per-entity categories. Personal: 35 categories. BFM: 32 categories. Every category has a "General" subcategory.
 - **`subcategories`** -- Two-level categorization (Migration 15). Each subcategory belongs to a parent category. No "Unknown" subcategories — unknowns go to "Needs Review" category.
 - **`merchant_aliases`** -- Pattern-based auto-categorization (contains/regex -> merchant + category)
 - **`import_profiles`** -- Saved CSV column mappings per bank (Amex, Chase, Capital One, Citi, BofA)
@@ -234,6 +234,7 @@ Subscription charges (Audible, Kindle Unlimited, Amazon Music, etc.) excluded vi
 1. **Alias rules** (confidence 0.95) -- `merchant_aliases` table
 2. **Keyword heuristics** (confidence 0.5-0.8) -- fallback for common merchants
 3. **Subcategories** -- Two-level system. `infer_category()` returns `(category, subcategory)` tuple.
+4. **Exclusion lists** -- Centralized in `core/reporting.py`: `EXCLUDE_CATS` (Internal Transfer, Credit Card Payment, Income, Owner Contribution, Partner Buyout) and `EXCLUDE_CATS_NO_INCOME` (same minus Income). `exclude_sql()` helper generates SQL NOT IN clause. Imported by `dashboard.py`, `short_term_planning.py`, `kristine.py`.
 
 ## Important Patterns
 - `DATA_DIR` env var controls where DBs and uploads go (default: `./local_state`)
@@ -380,6 +381,18 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-10 — Category audit + centralized exclusions + Migration 55 + data fixes
+Comprehensive category audit after Personal expanded to 35 categories and BFM to 32. Centralized exclusion lists, fixed stale references, and resolved two production data issues.
+
+1. **Centralized exclusion lists** — `core/reporting.py` now exports `EXCLUDE_CATS`, `EXCLUDE_CATS_NO_INCOME`, and `exclude_sql()` helper. `dashboard.py`, `short_term_planning.py`, and `kristine.py` import from reporting instead of maintaining their own copies. Backward-compat aliases kept for internal use.
+2. **Fixed kristine.py "Owner Draw" bug** — 4 inline SQL strings referenced stale `'Owner Draw'` category (renamed to `'Owner Contribution'` months ago). Fixed all occurrences in `_get_personal_summary()`.
+3. **Updated keyword rules** — `core/categorize.py` `_KEYWORD_RULES` updated for current categories: `Household/Cleaning` → `Cleaning/Cleaning Service`, `Home` split into `Home Improvement` + `Home Services`, `Housing` → `Mortgage` + `Facilities`, `Supplies` → `Office Supplies`, `Storage` → `Self Storage`, `HR` separated from `Payroll`.
+4. **Updated default categories** — `core/db.py` `_DEFAULT_CATEGORIES` and `_DEFAULT_SUBCATEGORIES` fully rebuilt to match current 35 Personal + 32 BFM categories. Removed stale: Housing, Household, Travel, Transfers, Fitness, Office Maintenance, Supplies.
+5. **Migration 55** — Fixes stale alias/budget categories on existing databases: `Transfers` → `Credit Card Payment`, `Subscriptions` → `Entertainment`, `Dining`/`Groceries` → `Food`, `Housing` → `Mortgage` in budget_items. Also fixed M12 and M48 in-place for new databases.
+6. **BFM budget_items populated** — Production had 0 budget_items. Computed 3-month spending averages (Dec 2025–Feb 2026) and inserted 23 validated budget items: Fixed ($128k/mo total), Focus (Medical Supplies, Office Supplies, Food, Software, Marketing, IT), Other (Fees, Electronics, HR, etc.). Payroll marked per-payroll ($40,500/payroll). payroll_schedule inserted (anchor 2026-02-25, biweekly, Wednesday).
+7. **Personal amazon_orders orphans fixed** — 445 of 529 orders had `matched_transaction_id` pointing to non-existent transactions (IDs same format but no match). Cleared all orphaned matches so orders can be re-matched via Match page. 714 line items preserved (linked to orders, not transactions).
+8. **Transaction edit modal: order items** — Read-only "Order Items" section added to transaction edit modal showing matched vendor order line items (product name, quantity, amount, category/subcategory). Falls back to `product_summary` when no line items exist.
 
 ### 2026-03-10 — Dashboard/STP alignment: all categories visible + budget progress on dashboard + Heath Easter egg
 Dashboard now uses STP as single source of truth. Both pages show identical category/subcategory lists. Budget progress indicators added to dashboard. Heath Joker Easter egg on sidebar icon.

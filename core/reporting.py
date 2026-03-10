@@ -56,8 +56,10 @@ def effective_txns_cte(alias: str = "t") -> str:
 
 
 # ── Exclusion list (shared across queries) ─────────────────────────────────────
+# Single source of truth for categories excluded from reports/budgets.
+# Import these in other modules instead of redefining.
 
-_EXCLUDE_CATS = (
+EXCLUDE_CATS = (
     "Internal Transfer",
     "Credit Card Payment",
     "Income",
@@ -65,20 +67,32 @@ _EXCLUDE_CATS = (
     "Partner Buyout",
 )
 
-_EXCLUDE_CATS_NO_INCOME = (
+EXCLUDE_CATS_NO_INCOME = (
     "Internal Transfer",
     "Credit Card Payment",
     "Owner Contribution",
     "Partner Buyout",
 )
 
-_EXCLUDE_SQL = "COALESCE(t.category,'') NOT IN ({})".format(
-    ",".join(f"'{c}'" for c in _EXCLUDE_CATS)
-)
 
-_EXCLUDE_SQL_NO_INCOME = "COALESCE(t.category,'') NOT IN ({})".format(
-    ",".join(f"'{c}'" for c in _EXCLUDE_CATS_NO_INCOME)
-)
+def exclude_sql(col: str = "t.category", include_income: bool = False) -> str:
+    """Generate a SQL NOT IN clause for excluded categories.
+
+    Args:
+        col: Column reference (e.g. 't.category', 'category', 'eff.category')
+        include_income: If True, only exclude transfers (keep Income visible)
+    """
+    cats = EXCLUDE_CATS_NO_INCOME if include_income else EXCLUDE_CATS
+    placeholders = ",".join(f"'{c}'" for c in cats)
+    return f"COALESCE({col},'') NOT IN ({placeholders})"
+
+
+# Backward-compat aliases (private names used in this module)
+_EXCLUDE_CATS = EXCLUDE_CATS
+_EXCLUDE_CATS_NO_INCOME = EXCLUDE_CATS_NO_INCOME
+
+_EXCLUDE_SQL = exclude_sql("t.category", include_income=False)
+_EXCLUDE_SQL_NO_INCOME = exclude_sql("t.category", include_income=True)
 
 
 # ── Query helpers ──────────────────────────────────────────────────────────────
@@ -423,7 +437,7 @@ def get_recurring_charges(entity: str, start_date: str, end_date: str) -> pd.Dat
         FROM transactions
         WHERE date BETWEEN ? AND ?
           AND amount < 0
-          AND COALESCE(category,'') NOT IN ('Internal Transfer', 'Credit Card Payment', 'Income', 'Owner Contribution', 'Partner Buyout')
+          AND {exclude_sql('category')}
         GROUP BY merchant
         HAVING COUNT(*) >= 2
         ORDER BY count DESC, avg_amount DESC

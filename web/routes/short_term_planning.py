@@ -9,17 +9,14 @@ from datetime import date, datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, g, redirect, url_for, make_response, jsonify
 
 from core.db import get_connection, init_db
-from core.reporting import effective_txns_cte
+from core.reporting import effective_txns_cte, EXCLUDE_CATS
 
 log = logging.getLogger(__name__)
 
 bp = Blueprint("short_term_planning", __name__, url_prefix="/planning/short-term")
 
-# Transfer/income categories to exclude from budget actuals
-_EXCLUDE_CATS = (
-    "Internal Transfer", "Credit Card Payment", "Income",
-    "Owner Contribution", "Partner Buyout",
-)
+# Transfer/income categories to exclude from budget actuals (from single source of truth)
+_EXCLUDE_CATS = EXCLUDE_CATS
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────

@@ -217,11 +217,11 @@ _MIGRATION_12 = """
 INSERT INTO merchant_aliases
     (pattern_type, pattern, merchant_canonical, default_category, active, created_at)
 VALUES
-    ('contains', 'AUTOPAY PAYMENT', 'AutoPay Payment', 'Transfers', 1, datetime('now')),
-    ('contains', 'ONLINE PAYMENT THANK YOU', 'Payment', 'Transfers', 1, datetime('now')),
-    ('contains', 'MOBILE PAYMENT', 'Mobile Payment', 'Transfers', 1, datetime('now')),
-    ('contains', 'AUTOMATIC PAYMENT', 'AutoPay Payment', 'Transfers', 1, datetime('now')),
-    ('contains', 'PAYMENT RECEIVED', 'Payment Received', 'Transfers', 1, datetime('now')),
+    ('contains', 'AUTOPAY PAYMENT', 'AutoPay Payment', 'Credit Card Payment', 1, datetime('now')),
+    ('contains', 'ONLINE PAYMENT THANK YOU', 'Payment', 'Credit Card Payment', 1, datetime('now')),
+    ('contains', 'MOBILE PAYMENT', 'Mobile Payment', 'Credit Card Payment', 1, datetime('now')),
+    ('contains', 'AUTOMATIC PAYMENT', 'AutoPay Payment', 'Credit Card Payment', 1, datetime('now')),
+    ('contains', 'PAYMENT RECEIVED', 'Payment Received', 'Credit Card Payment', 1, datetime('now')),
     ('contains', 'DIRECT DEP', 'Direct Deposit', 'Income', 1, datetime('now')),
     ('contains', 'PAYROLL', 'Payroll', 'Income', 1, datetime('now')),
     ('contains', 'LATE PAYMENT FEE', 'Late Payment Fee', 'Fees', 1, datetime('now')),
@@ -230,28 +230,28 @@ VALUES
     ('contains', 'FOREIGN TRANSACTION FEE', 'Foreign Transaction Fee', 'Fees', 1, datetime('now')),
     ('contains', 'OVERDRAFT FEE', 'Overdraft Fee', 'Fees', 1, datetime('now')),
     ('contains', 'RETURNED ITEM', 'Returned Item Fee', 'Fees', 1, datetime('now')),
-    ('contains', 'NETFLIX', 'Netflix', 'Subscriptions', 1, datetime('now')),
-    ('contains', 'SPOTIFY', 'Spotify', 'Subscriptions', 1, datetime('now')),
-    ('contains', 'HULU', 'Hulu', 'Subscriptions', 1, datetime('now')),
-    ('contains', 'APPLE.COM/BILL', 'Apple Services', 'Subscriptions', 1, datetime('now')),
-    ('contains', 'AMAZON PRIME', 'Amazon Prime', 'Subscriptions', 1, datetime('now')),
-    ('contains', 'DISNEY PLUS', 'Disney+', 'Subscriptions', 1, datetime('now')),
-    ('contains', 'UBER EATS', 'Uber Eats', 'Dining', 1, datetime('now')),
-    ('contains', 'DOORDASH', 'DoorDash', 'Dining', 1, datetime('now')),
-    ('contains', 'GRUBHUB', 'Grubhub', 'Dining', 1, datetime('now')),
-    ('contains', 'STARBUCKS', 'Starbucks', 'Dining', 1, datetime('now')),
-    ('contains', 'MCDONALD', 'McDonald''s', 'Dining', 1, datetime('now')),
-    ('contains', 'CHICK-FIL', 'Chick-fil-A', 'Dining', 1, datetime('now')),
-    ('contains', 'CHIPOTLE', 'Chipotle', 'Dining', 1, datetime('now')),
-    ('contains', 'WHATABURGER', 'Whataburger', 'Dining', 1, datetime('now')),
-    ('contains', 'TACO BELL', 'Taco Bell', 'Dining', 1, datetime('now')),
-    ('contains', 'PANERA', 'Panera Bread', 'Dining', 1, datetime('now')),
-    ('contains', 'KROGER', 'Kroger', 'Groceries', 1, datetime('now')),
-    ('contains', 'WHOLE FOODS', 'Whole Foods', 'Groceries', 1, datetime('now')),
-    ('contains', 'TRADER JOE', 'Trader Joe''s', 'Groceries', 1, datetime('now')),
-    ('contains', 'H-E-B', 'H-E-B', 'Groceries', 1, datetime('now')),
-    ('contains', 'ALDI', 'Aldi', 'Groceries', 1, datetime('now')),
-    ('contains', 'COSTCO', 'Costco', 'Groceries', 1, datetime('now')),
+    ('contains', 'NETFLIX', 'Netflix', 'Entertainment', 1, datetime('now')),
+    ('contains', 'SPOTIFY', 'Spotify', 'Entertainment', 1, datetime('now')),
+    ('contains', 'HULU', 'Hulu', 'Entertainment', 1, datetime('now')),
+    ('contains', 'APPLE.COM/BILL', 'Apple Services', 'Entertainment', 1, datetime('now')),
+    ('contains', 'AMAZON PRIME', 'Amazon Prime', 'Entertainment', 1, datetime('now')),
+    ('contains', 'DISNEY PLUS', 'Disney+', 'Entertainment', 1, datetime('now')),
+    ('contains', 'UBER EATS', 'Uber Eats', 'Food', 1, datetime('now')),
+    ('contains', 'DOORDASH', 'DoorDash', 'Food', 1, datetime('now')),
+    ('contains', 'GRUBHUB', 'Grubhub', 'Food', 1, datetime('now')),
+    ('contains', 'STARBUCKS', 'Starbucks', 'Food', 1, datetime('now')),
+    ('contains', 'MCDONALD', 'McDonald''s', 'Food', 1, datetime('now')),
+    ('contains', 'CHICK-FIL', 'Chick-fil-A', 'Food', 1, datetime('now')),
+    ('contains', 'CHIPOTLE', 'Chipotle', 'Food', 1, datetime('now')),
+    ('contains', 'WHATABURGER', 'Whataburger', 'Food', 1, datetime('now')),
+    ('contains', 'TACO BELL', 'Taco Bell', 'Food', 1, datetime('now')),
+    ('contains', 'PANERA', 'Panera Bread', 'Food', 1, datetime('now')),
+    ('contains', 'KROGER', 'Kroger', 'Food', 1, datetime('now')),
+    ('contains', 'WHOLE FOODS', 'Whole Foods', 'Food', 1, datetime('now')),
+    ('contains', 'TRADER JOE', 'Trader Joe''s', 'Food', 1, datetime('now')),
+    ('contains', 'H-E-B', 'H-E-B', 'Food', 1, datetime('now')),
+    ('contains', 'ALDI', 'Aldi', 'Food', 1, datetime('now')),
+    ('contains', 'COSTCO', 'Costco', 'Food', 1, datetime('now')),
     ('contains', 'LYFT', 'Lyft', 'Transportation', 1, datetime('now')),
     ('contains', 'COMCAST', 'Comcast/Xfinity', 'Utilities', 1, datetime('now')),
     ('contains', 'XFINITY', 'Comcast/Xfinity', 'Utilities', 1, datetime('now'));
@@ -629,7 +629,7 @@ UPDATE action_items SET is_recurring = 1 WHERE due_date IS NOT NULL;
 
 _MIGRATION_48 = """
 ALTER TABLE budget_items ADD COLUMN budget_section TEXT DEFAULT 'other';
-UPDATE budget_items SET budget_section = 'fixed' WHERE category IN ('Housing', 'Ranch', 'Insurance', 'Student Loans');
+UPDATE budget_items SET budget_section = 'fixed' WHERE category IN ('Mortgage', 'Ranch', 'Insurance', 'Student Loans');
 UPDATE budget_items SET budget_section = 'focus' WHERE category IN ('Food', 'Shopping', 'Entertainment', 'Clothing', 'Health & Beauty', 'Electronics');
 """
 
@@ -766,6 +766,19 @@ CREATE INDEX IF NOT EXISTS idx_ts_transaction_id ON transaction_splits(transacti
 CREATE INDEX IF NOT EXISTS idx_ts_category ON transaction_splits(category);
 """
 
+_MIGRATION_55 = """
+-- Fix stale alias categories from Migration 12
+UPDATE merchant_aliases SET default_category = 'Credit Card Payment'
+    WHERE default_category = 'Transfers';
+UPDATE merchant_aliases SET default_category = 'Entertainment'
+    WHERE default_category = 'Subscriptions';
+UPDATE merchant_aliases SET default_category = 'Food'
+    WHERE default_category IN ('Dining', 'Groceries');
+-- Fix stale budget section category from Migration 48
+UPDATE budget_items SET category = 'Mortgage'
+    WHERE category = 'Housing';
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -821,44 +834,65 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (52, _MIGRATION_52),
     (53, _MIGRATION_53),
     (54, _MIGRATION_54),
+    (55, _MIGRATION_55),
 ]
 
 _DEFAULT_CATEGORIES = [
     # Shared across entities
     "Credit Card Payment", "Entertainment", "Fees", "Food",
-    "Healthcare", "Home", "Household", "Housing", "Income",
-    "Insurance", "Internal Transfer", "Needs Review",
-    "Owner Contribution", "Storage", "Transportation", "Utilities",
+    "Healthcare", "Home", "Income", "Insurance",
+    "Internal Transfer", "Needs Review", "Owner Contribution",
+    "Retirement", "Shipping", "Transportation", "Utilities",
     # Personal-leaning
-    "Clothing", "Fitness", "Health & Beauty", "LL Expense",
-    "Pets", "Ranch", "Retirement", "Student Loans",
+    "Abuelitos", "ATM Withdrawals", "Childcare", "Cleaning",
+    "Clothing", "Education", "Gifts", "Health & Beauty",
+    "Home Improvement", "Home Services", "Kitchen",
+    "Laundry Service", "LL Expense", "Mortgage",
+    "Pets", "Ranch", "Security", "Self Storage",
+    "Shopping", "Streaming", "Student Loans", "Toys",
     # Business-leaning
-    "Collections", "Electronics", "Facilities", "HR",
-    "IT Services", "Marketing", "Medical Supplies",
-    "Office Environment", "Office Maintenance", "Partner Buyout",
-    "Patient Services", "Professional Development", "Shipping",
-    "Software", "Staff Gifts", "Supplies", "Training",
-    "Transfers", "Travel",
+    "Collections", "EIDL Loan", "Electronics", "Facilities",
+    "HR", "IT", "IT Services", "Marketing", "Medical Supplies",
+    "Office Environment", "Office Supplies", "Partner Buyout",
+    "Patient Services", "Payroll", "Professional Development",
+    "Software", "Staff Gifts", "Storage", "Subscriptions",
+    "Training",
 ]
 
 
 _DEFAULT_SUBCATEGORIES = {
-    "Entertainment": ["Streaming Video", "Streaming Music", "Movies", "Books", "Games"],
-    "Food": ["Groceries", "Fast Food", "Restaurant", "Coffee", "Delivery"],
-    "Clothing": ["Women", "Men", "Kids"],
-    "Household": ["Cleaning", "Kitchen", "Storage"],
-    "Health & Beauty": ["Vitamins", "Skincare", "Haircare"],
-    "Transportation": ["Gas", "Parking", "Rideshare", "Maintenance", "Tolls"],
-    "Home": ["Landscaping", "Security", "Pest Control", "Plumbing", "Laundry"],
-    "Pets": ["Food", "Toys", "Health"],
-    "Electronics": ["Accessories", "Devices"],
-    "Student Loans": ["Ryan", "Kristine"],
-    "Ranch": ["Equipment", "Mortgage", "Supplies", "Utilities"],
-    "Utilities": ["Electric", "Gas", "Internet", "Phone", "Water", "Trash"],
-    "Fees": ["Interest", "Wire Fees", "Bank Fees"],
-    "Facilities": ["Janitorial", "Pest Control", "Plumbing"],
-    "Software": ["AI", "Productivity", "Accounting"],
-    "Income": ["Patient Payments"],
+    "Abuelitos": ["Stipend", "Healthcare"],
+    "Cleaning": ["Bulk Trash", "Cleaning Service"],
+    "Clothing": ["Kids", "Kristine", "Ryan"],
+    "Education": ["Online Learning"],
+    "Entertainment": ["Audible", "Books", "Fantasy Football", "Games", "Kids", "Software", "Trip"],
+    "Facilities": ["Document Shredding", "Janitorial", "Medical Waste", "Office Maintenance", "Pest Control", "Plumbing"],
+    "Fees": ["Bank Fees", "Credentialing", "Interest", "Wire Fees"],
+    "Food": ["Coffee", "Delivery", "Fast Food", "Groceries", "Restaurant", "Snacks", "Water Delivery"],
+    "Health & Beauty": ["Fitness", "Haircare", "Skincare"],
+    "Home": ["Decor", "Hardware"],
+    "Home Improvement": ["Tools"],
+    "Home Services": ["Landscaping", "Pest Control", "Plumbing"],
+    "Income": ["Athena Health", "Insurance Incentive", "Patient Payments"],
+    "Insurance": ["Life", "Health", "Home", "Auto"],
+    "IT": ["AI", "Hardware", "Web Hosting"],
+    "LL Expense": ["Supplies", "Shipping"],
+    "Medical Supplies": ["Diagnostics", "Exam Supplies", "Liquid Nitrogen", "Needles & Syringes", "PPE", "Rx", "Wound Care"],
+    "Needs Review": ["Ask Kristine"],
+    "Office Environment": ["Media"],
+    "Patient Services": ["Communication", "Telehealth", "Translation"],
+    "Payroll": ["Front Office", "Nurses", "Office Manager", "Owner", "Providers", "Scribes"],
+    "Pets": ["Food", "Health", "Toys"],
+    "Professional Development": ["Continuing Education", "Membership"],
+    "Ranch": ["Equipment", "Insurance", "Mortgage", "Supplies", "Utilities"],
+    "Retirement": ["Contribution", "Simple IRA", "Withdrawal"],
+    "Shopping": ["Target", "Walmart"],
+    "Software": ["Accounting", "Automation", "Collaboration", "Communication", "Financial Monitoring", "HR", "Marketing", "OS", "Productivity"],
+    "Streaming": ["Streaming Music", "Streaming Video"],
+    "Student Loans": ["Kristine", "Ryan"],
+    "Training": ["Safety"],
+    "Transportation": ["Car Wash", "Gas", "Maintenance", "Parking", "Registration", "Rideshare", "Tolls"],
+    "Utilities": ["Electric", "Gas", "Internet", "Phone", "Trash", "Water"],
 }
 
 
