@@ -5502,11 +5502,9 @@ input.pl-input--sm {
     transform: scale(0.95);
 }
 .joker-btn-img {
-    width: 66px;
-    height: 66px;
+    width: 42px;
+    height: 42px;
     object-fit: contain;
-    border-radius: 50%;
-    filter: drop-shadow(0 0 12px rgba(167, 68, 242, 0.45));
 }
 
 /* ── AI Chat Modal ─────────────────────────────────────────────────────── */
