@@ -385,7 +385,7 @@ a:hover { text-decoration: underline; }
 .card-flip-inner {
     position: absolute;
     inset: 0;
-    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
     transform-style: preserve-3d;
 }
 .card-flipped .card-flip-inner {
@@ -470,7 +470,7 @@ a:hover { text-decoration: underline; }
 }
 .cfm--closing,
 .pl-modal-popup--closing {
-    animation: modalGenieOut 0.35s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+    animation: modalGenieOut 0.3s cubic-bezier(0.55, 0, 1, 0.45) forwards;
 }
 
 .sb-brand-text {
@@ -4883,8 +4883,8 @@ select.input-sm {
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 .cf-modal-scrim[hidden] { display: none; }
 

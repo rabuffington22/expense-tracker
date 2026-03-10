@@ -292,7 +292,7 @@ function cfFlipAndOpen(btn, evt) {
     btn.classList.add('card-flipped');
     _cfFlippedCard = btn;
     _cfSetGenieOrigin(btn);
-    setTimeout(function() { cfOpenModal(btn, null); }, 350);
+    setTimeout(function() { cfOpenModal(btn, null); }, 250);
 }
 
 function cfOpenModal(btn, evt) {
@@ -371,7 +371,7 @@ function cfCloseModal() {
             _cfFlippedCard.classList.remove('card-flipped');
             _cfFlippedCard = null;
         }
-    }, 350);
+    }, 300);
 }
 
 /* Close on scrim click */

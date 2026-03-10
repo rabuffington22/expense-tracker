@@ -327,7 +327,7 @@ function plFlipAndOpen(cardEl, itemId) {
     cardEl.classList.add('card-flipped');
     _plFlippedCard = cardEl;
     _plSetGenieOrigin(cardEl);
-    setTimeout(function() { plOpenEdit(itemId); }, 350);
+    setTimeout(function() { plOpenEdit(itemId); }, 250);
 }
 
 function plOpenEdit(itemId) {
@@ -365,7 +365,7 @@ function plCloseModal() {
             _plFlippedCard.classList.remove('card-flipped');
             _plFlippedCard = null;
         }
-    }, 350);
+    }, 300);
 }
 
 function _plHideAllForms() {
