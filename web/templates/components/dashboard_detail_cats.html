@@ -16,8 +16,11 @@
          onclick="event.stopPropagation()">{{ cat.name }}</a>
       <div class="dcat-track">
         <div class="dcat-fill" style="width: {{ cat.pct }}%;"></div>
+        {% if cat.budget_cents is defined %}
+        <div class="dcat-budget-mark" style="left: {{ cat.budget_bar_pct }}%;"></div>
+        {% endif %}
       </div>
-      <span class="dcat-value">${{ "{:,.0f}".format(cat.total_cents / 100) }}</span>
+      <span class="dcat-value{% if cat.budget_cents is defined %} {% if cat.budget_pct <= 100 %}dcat-val--ok{% elif cat.budget_pct <= 115 %}dcat-val--warn{% else %}dcat-val--over{% endif %}{% endif %}">${{ "{:,.0f}".format(cat.total_cents / 100) }}</span>
       {% if has_subs %}
       <span class="dcat-chevron">›</span>
       {% else %}

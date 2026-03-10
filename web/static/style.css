@@ -1829,6 +1829,7 @@ a.kpi-panel-cell:hover {
     border-radius: 9px;
     overflow: hidden;
     min-width: 0;
+    position: relative;
 }
 .dcat-fill {
     height: 100%;
@@ -1836,6 +1837,16 @@ a.kpi-panel-cell:hover {
     min-width: 2px;
     background: linear-gradient(90deg, rgba(124,58,237,0.85), rgba(124,58,237,0.55));
     transition: width 0.3s ease;
+}
+.dcat-budget-mark {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    width: 2px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .dcat-value {
@@ -1845,6 +1856,9 @@ a.kpi-panel-cell:hover {
     font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
+.dcat-val--ok   { color: var(--green); }
+.dcat-val--warn { color: var(--orange, #ff9f0a); }
+.dcat-val--over { color: var(--red); }
 
 .dcat-chevron {
     flex: 0 0 16px;
@@ -1899,6 +1913,9 @@ a.kpi-panel-cell:hover {
 }
 :root[data-theme="light"] .dcat-fill--sub {
     background: linear-gradient(90deg, rgba(109,40,217,0.40), rgba(109,40,217,0.22));
+}
+:root[data-theme="light"] .dcat-budget-mark {
+    background: rgba(0,0,0,0.35);
 }
 :root[data-theme="light"] .dcat-sub-row {
     border-bottom-color: rgba(0,0,0,0.04);

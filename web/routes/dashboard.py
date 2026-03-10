@@ -1149,6 +1149,48 @@ def _query_income_vs_expenses(conn):
     return points
 
 
+def _get_budget_map(conn, entity_key, month_str):
+    """Return {category_name: effective_budget_cents} for categories with budgets.
+
+    Handles per-payroll budget multiplier (Payroll, Taxes in BFM).
+    Returns empty dict if no budgets configured.
+    """
+    try:
+        rows = conn.execute(
+            "SELECT category, monthly_budget_cents, is_per_payroll, per_payroll_cents "
+            "FROM budget_items"
+        ).fetchall()
+    except Exception:
+        return {}
+    if not rows:
+        return {}
+
+    # Check for per-payroll schedule (BFM only)
+    pay_periods = None
+    try:
+        schedule_row = conn.execute(
+            "SELECT anchor_date, cadence_days FROM payroll_schedule WHERE id = 1"
+        ).fetchone()
+        if schedule_row:
+            from web.routes.short_term_planning import _count_pay_periods
+            pay_periods = _count_pay_periods(
+                schedule_row["anchor_date"],
+                schedule_row["cadence_days"],
+                month_str,
+            )
+    except Exception:
+        pass
+
+    budget_map = {}
+    for r in rows:
+        is_pp = r["is_per_payroll"] and r["per_payroll_cents"]
+        if is_pp and pay_periods:
+            budget_map[r["category"]] = r["per_payroll_cents"] * pay_periods
+        else:
+            budget_map[r["category"]] = r["monthly_budget_cents"]
+    return budget_map
+
+
 def _query_category_totals(conn, start, end):
     """Query per-category expense totals for a date range.
 
@@ -1431,6 +1473,12 @@ def detail_categories():
         # Subcategory rollups for tooltip
         displayed_names = [c["name"] for c in top]
         subcats = _query_subcategory_rollups(conn, start, end, displayed_names)
+
+        # Budget context — only for single-month periods
+        is_single_month = (start[:7] == end[:7])
+        budget_map = {}
+        if is_single_month:
+            budget_map = _get_budget_map(conn, g.entity_key, start[:7])
     finally:
         conn.close()
 
@@ -1440,6 +1488,15 @@ def detail_categories():
     scale_max = second if (second and raw_max > second * 3) else raw_max
     for c in top:
         c["pct"] = min(100, int(c["total_cents"] / scale_max * 100)) if scale_max else 0
+
+    if budget_map:
+        for c in top:
+            budget = budget_map.get(c["name"])
+            if budget and budget > 0:
+                c["budget_cents"] = budget
+                c["budget_pct"] = min(int(round(c["total_cents"] / budget * 100)), 999)
+                # Where the budget line falls on the bar's scale
+                c["budget_bar_pct"] = min(100, int(budget / scale_max * 100)) if scale_max else 0
 
     # Drill URL helper
     def drill(**overrides):
@@ -1455,7 +1512,8 @@ def detail_categories():
                            period_label=period_labels.get(period, period),
                            start=start, end=end,
                            drill=drill,
-                           subcats=subcats)
+                           subcats=subcats,
+                           has_budgets=bool(budget_map))
 
 
 @bp.route("/dashboard/detail-insights")
