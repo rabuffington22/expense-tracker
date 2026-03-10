@@ -215,13 +215,22 @@ def _get_budget_items(conn) -> list[dict]:
 
 
 def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
-    """Compute budget vs actuals for a given month (YYYY-MM).
+    """Compute budget vs actuals for ALL categories for a given month (YYYY-MM).
 
-    Each item includes avg_month_count (0-3) for that specific category.
+    Returns every category from the categories table, whether it has a budget
+    or not.  Each item includes avg_month_count (0-3) for that specific category.
     """
     budget_items = _get_budget_items(conn)
-    if not budget_items:
-        return [], 0
+    budget_map = {bi["category"]: bi for bi in budget_items}
+
+    # All categories from the categories table (excluding system categories)
+    all_cats = [
+        r["name"] for r in conn.execute(
+            "SELECT name FROM categories WHERE name NOT IN (%s) ORDER BY name"
+            % ",".join("?" for _ in _EXCLUDE_CATS),
+            list(_EXCLUDE_CATS),
+        ).fetchall()
+    ]
 
     # Get actual spending by category for the month
     exclude_clause = ",".join("?" for _ in _EXCLUDE_CATS)
@@ -279,8 +288,12 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
         )
 
     result = []
+    seen = set()
+    # First: all categories that have budgets
     for bi in budget_items:
-        spent = actuals.get(bi["category"], 0)
+        cat_name = bi["category"]
+        seen.add(cat_name)
+        spent = actuals.get(cat_name, 0)
         is_pp = bi.get("is_per_payroll", 0) and bi.get("per_payroll_cents")
         if is_pp and schedule and pay_periods:
             budget = bi["per_payroll_cents"] * pay_periods
@@ -288,22 +301,42 @@ def _get_budget_status(conn, entity_key: str, month: str) -> list[dict]:
             budget = bi["monthly_budget_cents"]
         remaining = budget - spent
         pct = int(round(spent / budget * 100)) if budget > 0 else 0
-        avg_3mo = avg_actuals.get(bi["category"], 0)
-        avg_mc = avg_month_counts.get(bi["category"], 0)
-        item = {
-            "category": bi["category"],
+        avg_3mo = avg_actuals.get(cat_name, 0)
+        avg_mc = avg_month_counts.get(cat_name, 0)
+        result.append({
+            "category": cat_name,
             "budget_cents": budget,
             "spent_cents": spent,
             "remaining_cents": remaining,
-            "pct": min(pct, 999),  # cap at 999% for display
+            "pct": min(pct, 999),
             "avg_3mo_cents": avg_3mo,
             "avg_month_count": avg_mc,
             "budget_section": bi.get("budget_section", "other"),
             "is_per_payroll": bool(is_pp),
             "per_payroll_cents": bi.get("per_payroll_cents", 0) or 0,
             "pay_periods": pay_periods if is_pp else None,
-        }
-        result.append(item)
+        })
+
+    # Then: all remaining categories (no budget set)
+    for cat_name in all_cats:
+        if cat_name in seen:
+            continue
+        spent = actuals.get(cat_name, 0)
+        avg_3mo = avg_actuals.get(cat_name, 0)
+        avg_mc = avg_month_counts.get(cat_name, 0)
+        result.append({
+            "category": cat_name,
+            "budget_cents": 0,
+            "spent_cents": spent,
+            "remaining_cents": -spent,
+            "pct": 0,
+            "avg_3mo_cents": avg_3mo,
+            "avg_month_count": avg_mc,
+            "budget_section": None,
+            "is_per_payroll": False,
+            "per_payroll_cents": 0,
+            "pay_periods": None,
+        })
 
     # Sort by 3-mo avg spending descending (most expensive categories first)
     result.sort(key=lambda x: x["avg_3mo_cents"], reverse=True)
@@ -315,6 +348,7 @@ _BUDGET_SECTIONS = [
     ("focus", "FOCUS"),
     ("fixed", "FIXED"),
     ("other", "EVERYTHING ELSE"),
+    (None, "NO BUDGET"),
 ]
 
 
@@ -325,7 +359,7 @@ def _group_budget_items(items: list) -> list:
     """
     by_section = {}
     for item in items:
-        sec = item.get("budget_section", "other")
+        sec = item.get("budget_section") or None
         by_section.setdefault(sec, []).append(item)
 
     result = []
@@ -644,12 +678,10 @@ def index():
 
         budget_status = _get_budget_status(conn, g.entity_key, current_month)
         budget_sections = _group_budget_items(budget_status)
-        budgeted_cats = {b["category"] for b in budget_status}
-        unbudgeted = _get_unbudgeted_spending(conn, current_month, budgeted_cats)
 
-        # Budget summary
-        total_budgeted = sum(b["budget_cents"] for b in budget_status)
-        total_spent = sum(b["spent_cents"] for b in budget_status)
+        # Budget summary (only count items that have budgets set)
+        total_budgeted = sum(b["budget_cents"] for b in budget_status if b["budget_cents"] > 0)
+        total_spent = sum(b["spent_cents"] for b in budget_status if b["budget_cents"] > 0)
 
         # Action items + CC due dates
         action_items = _get_action_items(conn)
@@ -674,7 +706,6 @@ def index():
             cc_due_items=cc_due_items,
             budget_status=budget_status,
             budget_sections=budget_sections,
-            unbudgeted=unbudgeted,
             total_budgeted=total_budgeted,
             total_spent=total_spent,
             current_month=current_month,
@@ -1203,26 +1234,28 @@ def budget_update_txn(txn_id):
 
 @bp.route("/budget/subcategories")
 def budget_subcategories():
-    """Return HTML partial of subcategory breakdown for a category."""
+    """Return HTML partial of subcategory breakdown for a category.
+
+    Shows ALL defined subcategories (even at $0 spending).
+    """
     category = request.args.get("category", "")
     month = request.args.get("month", date.today().strftime("%Y-%m"))
 
     conn = get_connection(g.entity_key)
     _cte = effective_txns_cte("t")
-    _subcat_sql = (
-        f"WITH {_cte} "
-        "SELECT COALESCE(NULLIF(t.subcategory,''), 'General') as sub, "
-        "COUNT(*) as cnt, ABS(SUM(t.amount)) as total "
-        "FROM t "
-        "WHERE t.category = ? "
-        "AND strftime('%Y-%m', t.date) = ? "
-        "AND t.amount < 0 "
-        "GROUP BY sub "
-        "ORDER BY total DESC"
-    )
     try:
-        # Special case: Payroll — use payroll_entries grouped by employee role
+        # 1. All defined subcategories for this category
+        defined = conn.execute(
+            "SELECT name FROM subcategories WHERE category_name = ? ORDER BY name",
+            (category,),
+        ).fetchall()
+        all_subs = {r["name"] for r in defined}
+        all_subs.add("General")  # always include General
+
+        # 2. Actual spending by subcategory
+        spend_map = {}  # sub_name -> spent_dollars
         if category == "Payroll":
+            # Special case: Payroll — use payroll_entries grouped by employee role
             try:
                 payroll_rows = conn.execute(
                     "SELECT e.role as sub, COUNT(DISTINCT e.id) as cnt, "
@@ -1235,17 +1268,29 @@ def budget_subcategories():
                     (month,),
                 ).fetchall()
                 if payroll_rows:
-                    rows = payroll_rows
-                else:
-                    # Fall back to standard transaction query
-                    rows = conn.execute(_subcat_sql, (category, month)).fetchall()
+                    for r in payroll_rows:
+                        spend_map[r["sub"]] = r["total"]
+                        all_subs.add(r["sub"])
             except Exception:
-                # If payroll tables don't exist yet, fall back
-                rows = conn.execute(_subcat_sql, (category, month)).fetchall()
-        else:
-            rows = conn.execute(_subcat_sql, (category, month)).fetchall()
+                pass
 
-        # Look up existing subcategory budgets
+        if not spend_map:
+            txn_rows = conn.execute(
+                f"WITH {_cte} "
+                "SELECT COALESCE(NULLIF(t.subcategory,''), 'General') as sub, "
+                "ABS(SUM(t.amount)) as total "
+                "FROM t "
+                "WHERE t.category = ? "
+                "AND strftime('%Y-%m', t.date) = ? "
+                "AND t.amount < 0 "
+                "GROUP BY sub",
+                (category, month),
+            ).fetchall()
+            for r in txn_rows:
+                spend_map[r["sub"]] = r["total"]
+                all_subs.add(r["sub"])  # include even if not in subcategories table
+
+        # 3. Subcategory budgets
         budget_rows = conn.execute(
             "SELECT subcategory, monthly_budget_cents FROM budget_subcategories "
             "WHERE category = ?",
@@ -1253,72 +1298,69 @@ def budget_subcategories():
         ).fetchall()
         sub_budgets = {r["subcategory"]: r["monthly_budget_cents"] for r in budget_rows}
 
+        # 4. Build sorted list: spent desc, then alphabetical for $0 items
+        sorted_subs = sorted(all_subs, key=lambda s: (-spend_map.get(s, 0), s))
+
         import json
         from markupsafe import escape
 
         lines = []
-        if not rows:
-            lines.append(
-                '<tr class="stp-subcat-row"><td colspan="6" '
-                'style="padding-left:2rem;color:var(--text-muted)">No spending</td></tr>'
+        for sub_name in sorted_subs:
+            amt = spend_map.get(sub_name, 0)
+            spent_cents = int(round(amt * 100))
+            sub_esc = escape(sub_name)
+            cat_js = escape(json.dumps(category))
+            sub_js = escape(json.dumps(sub_name))
+            field_name = escape(f"subbudget_{category}__{sub_name}")
+            budget_cents = sub_budgets.get(sub_name)
+
+            # Spent cell (always clickable)
+            spent_td = (
+                f'<td><span class="stp-spent-link" '
+                f'onclick="stpShowTxns({cat_js}, {sub_js})">${amt:,.0f}</span></td>'
             )
-        else:
-            for r in rows:
-                amt = r["total"]
-                spent_cents = int(round(amt * 100))
-                sub_esc = escape(r["sub"])
-                cat_js = escape(json.dumps(category))
-                sub_js = escape(json.dumps(r["sub"]))
-                field_name = escape(f"subbudget_{category}__{r['sub']}")
-                budget_cents = sub_budgets.get(r["sub"])
 
-                # Spent cell (always clickable)
-                spent_td = (
-                    f'<td><span class="stp-spent-link" '
-                    f'onclick="stpShowTxns({cat_js}, {sub_js})">${amt:,.0f}</span></td>'
+            if budget_cents and budget_cents > 0:
+                # Has subcategory budget — show input, remaining, progress
+                remaining = budget_cents - spent_cents
+                pct = int(round(spent_cents / budget_cents * 100))
+                budget_val = f"{budget_cents / 100:,.0f}"
+                rem_class = "stp-green" if remaining >= -100 else "stp-red"
+                bar_class = (
+                    "stp-bar-green" if pct <= 100
+                    else "stp-bar-yellow" if pct <= 115
+                    else "stp-bar-red"
                 )
-
-                if budget_cents and budget_cents > 0:
-                    # Has subcategory budget — show input, remaining, progress
-                    remaining = budget_cents - spent_cents
-                    pct = int(round(spent_cents / budget_cents * 100))
-                    budget_val = f"{budget_cents / 100:,.0f}"
-                    rem_class = "stp-green" if remaining >= -100 else "stp-red"
-                    bar_class = (
-                        "stp-bar-green" if pct <= 100
-                        else "stp-bar-yellow" if pct <= 115
-                        else "stp-bar-red"
-                    )
-                    lines.append(
-                        f'<tr class="stp-subcat-row">'
-                        f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
-                        f'{spent_td}'
-                        f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
-                        f'<input type="text" name="{field_name}" value="{budget_val}" '
-                        f'size="{len(budget_val)}" class="stp-budget-input stp-budget-input--sub"></span></td>'
-                        f'<td></td>'
-                        f'<td class="{rem_class}">${remaining / 100:,.0f}</td>'
-                        f'<td><div class="stp-budget-progress-wrap">'
-                        f'<div class="stp-budget-bar stp-budget-bar--sub">'
-                        f'<div class="stp-budget-fill {bar_class}" style="width:{min(pct, 100)}%"></div></div>'
-                        f'<span class="stp-budget-pct">{min(pct, 999)}%</span></div></td>'
-                        f'</tr>'
-                    )
-                else:
-                    # No budget — empty input with dash placeholder
-                    lines.append(
-                        f'<tr class="stp-subcat-row">'
-                        f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
-                        f'{spent_td}'
-                        f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
-                        f'<input type="text" name="{field_name}" value="" '
-                        f'placeholder="\u2014" size="3" '
-                        f'class="stp-budget-input stp-budget-input--sub"></span></td>'
-                        f'<td></td>'
-                        f'<td></td>'
-                        f'<td></td>'
-                        f'</tr>'
-                    )
+                lines.append(
+                    f'<tr class="stp-subcat-row">'
+                    f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
+                    f'{spent_td}'
+                    f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
+                    f'<input type="text" name="{field_name}" value="{budget_val}" '
+                    f'size="{len(budget_val)}" class="stp-budget-input stp-budget-input--sub"></span></td>'
+                    f'<td></td>'
+                    f'<td class="{rem_class}">${remaining / 100:,.0f}</td>'
+                    f'<td><div class="stp-budget-progress-wrap">'
+                    f'<div class="stp-budget-bar stp-budget-bar--sub">'
+                    f'<div class="stp-budget-fill {bar_class}" style="width:{min(pct, 100)}%"></div></div>'
+                    f'<span class="stp-budget-pct">{min(pct, 999)}%</span></div></td>'
+                    f'</tr>'
+                )
+            else:
+                # No budget — empty input with dash placeholder
+                lines.append(
+                    f'<tr class="stp-subcat-row">'
+                    f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
+                    f'{spent_td}'
+                    f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
+                    f'<input type="text" name="{field_name}" value="" '
+                    f'placeholder="\u2014" size="3" '
+                    f'class="stp-budget-input stp-budget-input--sub"></span></td>'
+                    f'<td></td>'
+                    f'<td></td>'
+                    f'<td></td>'
+                    f'</tr>'
+                )
 
         return "\n".join(lines)
     finally:

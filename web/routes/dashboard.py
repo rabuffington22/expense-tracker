@@ -1428,38 +1428,38 @@ def detail_categories():
         for cr in conn.execute("SELECT id, name FROM categories").fetchall():
             cat_id_map[cr["name"]] = cr["id"]
 
-        budget_status = []
         if is_single_month:
             budget_status = _get_budget_status(conn, g.entity_key, start[:7])
-            # _get_budget_status can return ([], 0) when no budgets
-            if isinstance(budget_status, tuple):
-                budget_status = budget_status[0]
+        else:
+            budget_status = []
 
         if budget_status:
-            # Build from STP budget data — single source of truth
-            budgeted_names = {item["category"] for item in budget_status}
+            # Build from STP data — single source of truth for all categories
             top = []
             for item in budget_status:
-                pct = item["pct"]
-                if pct > 115:
-                    bar_color = "over"
-                elif pct > 100:
-                    bar_color = "warn"
-                else:
-                    bar_color = "ok"
-                top.append({
+                entry = {
                     "name": item["category"],
                     "cat_id": cat_id_map.get(item["category"]),
                     "total_cents": item["spent_cents"],
                     "budget_cents": item["budget_cents"],
-                    "budget_pct": pct,
-                    "pct": min(100, pct),
-                    "bar_color": bar_color,
-                })
-            # Sort budgeted by spending desc — only budgeted categories shown
+                }
+                if item["budget_cents"] > 0:
+                    pct = item["pct"]
+                    if pct > 115:
+                        entry["bar_color"] = "over"
+                    elif pct > 100:
+                        entry["bar_color"] = "warn"
+                    else:
+                        entry["bar_color"] = "ok"
+                    entry["budget_pct"] = pct
+                    entry["pct"] = min(100, pct)
+                else:
+                    # No budget — no bar
+                    entry["pct"] = 0
+                top.append(entry)
             top.sort(key=lambda x: x["total_cents"], reverse=True)
         else:
-            # No budgets (e.g. LL entity, or multi-month range)
+            # Multi-month range — fall back to transaction-based
             txn_rows = _query_category_totals(conn, start, end)
             top = []
             for r in txn_rows:

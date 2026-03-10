@@ -334,16 +334,23 @@
                                    value="{{ '{:,.0f}'.format(item.per_payroll_cents / 100) }}"
                                    size="{{ '{:,.0f}'.format(item.per_payroll_cents / 100)|length }}"
                                    class="stp-budget-input"><span class="stp-pp-annotation">&times;{{ item.pay_periods }} = ${{ '{:,.0f}'.format(item.budget_cents / 100) }}</span></span>
-                            {% else %}
+                            {% elif item.budget_cents > 0 %}
                             <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
                                    value="{{ '{:,.0f}'.format(item.budget_cents / 100) }}"
                                    size="{{ '{:,.0f}'.format(item.budget_cents / 100)|length }}"
                                    class="stp-budget-input"></span>
+                            {% else %}
+                            <span class="stp-budget-input-wrap">$<input type="text" name="budget_{{ item.category }}"
+                                   value=""
+                                   placeholder="—"
+                                   size="3"
+                                   class="stp-budget-input"></span>
                             {% endif %}
                         </td>
-                        <td class="stp-avg {% if item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
+                        <td class="stp-avg {% if item.budget_cents > 0 and item.avg_3mo_cents > item.budget_cents * 1.1 %}stp-avg--over{% endif %}">
                             {{ fmt_dollars(item.avg_3mo_cents) }}{% if item.avg_month_count < 3 %}<span class="stp-avg-note">{{ item.avg_month_count }}mo</span>{% endif %}
                         </td>
+                        {% if item.budget_cents > 0 %}
                         <td class="{% if item.remaining_cents >= -100 %}stp-green{% else %}stp-red{% endif %}">
                             {{ fmt_dollars(item.remaining_cents) }}
                         </td>
@@ -356,6 +363,10 @@
                                 <span class="stp-budget-pct">{{ item.pct }}%</span>
                             </div>
                         </td>
+                        {% else %}
+                        <td></td>
+                        <td></td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -372,39 +383,6 @@
     </div>
     {% endif %}
 
-    {# Unbudgeted categories #}
-    {% if unbudgeted %}
-    <details class="stp-unbudgeted-section">
-        <summary class="stp-section-label">UNBUDGETED SPENDING ({{ unbudgeted|length }} categories)</summary>
-        <form method="post" action="{{ url_for('short_term_planning.save_budget') }}">
-            <table class="stp-budget-table">
-                <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Spent This Month</th>
-                        <th>Set Budget</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in unbudgeted %}
-                    <tr>
-                        <td>{{ item.category }}</td>
-                        <td>{{ fmt_dollars(item.spent_cents) }} ({{ item.txn_count }} txns)</td>
-                        <td>
-                            <input type="text" name="budget_{{ item.category }}"
-                                   placeholder="$0"
-                                   class="stp-budget-input">
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="stp-budget-actions">
-                <button type="submit" class="btn btn-sm">Save Budgets</button>
-            </div>
-        </form>
-    </details>
-    {% endif %}
 </div>
 
 {# ════════════════════════════════════════════════════════════════════════════
