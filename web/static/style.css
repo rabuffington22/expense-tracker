@@ -368,7 +368,7 @@ a:hover { text-decoration: underline; }
 }
 .sb-heath-img {
     position: absolute;
-    top: 0;
+    top: -40px;
     left: 50%;
     transform: translateX(-50%) rotateY(180deg);
     width: 102px;
