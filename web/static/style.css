@@ -418,7 +418,7 @@ a:hover { text-decoration: underline; }
 .card-flip-back--asset::after {
     content: "\2666"; /* ♦ */
     font-size: 4rem;
-    opacity: 0.25;
+    opacity: 0.15;
 }
 /* Credit card / liability back — purple spade pattern */
 .card-flip-back--card,
@@ -430,7 +430,7 @@ a:hover { text-decoration: underline; }
 .card-flip-back--liability::after {
     content: "\2660"; /* ♠ */
     font-size: 4rem;
-    opacity: 0.25;
+    opacity: 0.15;
 }
 :root[data-theme="light"] .card-flip-back--bank,
 :root[data-theme="light"] .card-flip-back--asset {
@@ -4921,7 +4921,7 @@ select.input-sm {
     top: 8px;
     left: 10px;
     font-size: 1rem;
-    opacity: 0.25;
+    opacity: 0.12;
     color: #2e8b57;
     pointer-events: none;
     line-height: 1;
@@ -4933,7 +4933,7 @@ select.input-sm {
     bottom: 8px;
     right: 10px;
     font-size: 1rem;
-    opacity: 0.25;
+    opacity: 0.12;
     color: #2e8b57;
     pointer-events: none;
     line-height: 1;
@@ -4953,7 +4953,7 @@ select.input-sm {
     top: 8px;
     left: 10px;
     font-size: 1rem;
-    opacity: 0.25;
+    opacity: 0.12;
     color: #7C3AED;
     pointer-events: none;
     line-height: 1;
@@ -4965,7 +4965,7 @@ select.input-sm {
     bottom: 8px;
     right: 10px;
     font-size: 1rem;
-    opacity: 0.25;
+    opacity: 0.12;
     color: #7C3AED;
     pointer-events: none;
     line-height: 1;
@@ -6241,8 +6241,8 @@ input.pl-input--sm {
                 inset 0 0 0 4px rgba(124,58,237,0.06),
                 inset 0 0 0 5px rgba(124,58,237,0.14);
 }
-.stp-goal-popup--debt_payoff::before { content: "\2660"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.25; color: #7C3AED; pointer-events: none; line-height: 1; z-index: 1; }
-.stp-goal-popup--debt_payoff::after  { content: "\2660"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.25; color: #7C3AED; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
+.stp-goal-popup--debt_payoff::before { content: "\2660"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.12; color: #7C3AED; pointer-events: none; line-height: 1; z-index: 1; }
+.stp-goal-popup--debt_payoff::after  { content: "\2660"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.12; color: #7C3AED; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
 .stp-goal-popup--debt_payoff .cfm-footer::before { content: "\2660"; color: #7C3AED; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14rem; opacity: 0.04; pointer-events: none; z-index: 0; line-height: 1; }
 /* Savings popup — ♦ diamond, green */
 .stp-goal-popup--savings {
@@ -6251,8 +6251,8 @@ input.pl-input--sm {
                 inset 0 0 0 4px rgba(46,139,87,0.06),
                 inset 0 0 0 5px rgba(46,139,87,0.14);
 }
-.stp-goal-popup--savings::before { content: "\2666"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.25; color: #2e8b57; pointer-events: none; line-height: 1; z-index: 1; }
-.stp-goal-popup--savings::after  { content: "\2666"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.25; color: #2e8b57; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
+.stp-goal-popup--savings::before { content: "\2666"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.12; color: #2e8b57; pointer-events: none; line-height: 1; z-index: 1; }
+.stp-goal-popup--savings::after  { content: "\2666"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.12; color: #2e8b57; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
 .stp-goal-popup--savings .cfm-footer::before { content: "\2666"; color: #2e8b57; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14rem; opacity: 0.04; pointer-events: none; z-index: 0; line-height: 1; }
 /* Spending Reduction popup — ♣ club, blue */
 .stp-goal-popup--spending_reduction {
@@ -6261,8 +6261,8 @@ input.pl-input--sm {
                 inset 0 0 0 4px rgba(10,132,255,0.06),
                 inset 0 0 0 5px rgba(10,132,255,0.14);
 }
-.stp-goal-popup--spending_reduction::before { content: "\2663"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.25; color: #0a84ff; pointer-events: none; line-height: 1; z-index: 1; }
-.stp-goal-popup--spending_reduction::after  { content: "\2663"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.25; color: #0a84ff; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
+.stp-goal-popup--spending_reduction::before { content: "\2663"; position: absolute; top: 8px; left: 10px; font-size: 1rem; opacity: 0.12; color: #0a84ff; pointer-events: none; line-height: 1; z-index: 1; }
+.stp-goal-popup--spending_reduction::after  { content: "\2663"; position: absolute; bottom: 8px; right: 10px; font-size: 1rem; opacity: 0.12; color: #0a84ff; pointer-events: none; line-height: 1; transform: rotate(180deg); z-index: 1; }
 .stp-goal-popup--spending_reduction .cfm-footer::before { content: "\2663"; color: #0a84ff; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14rem; opacity: 0.04; pointer-events: none; z-index: 0; line-height: 1; }
 /* Light mode popup overrides */
 :root[data-theme="light"] .stp-goal-popup--debt_payoff { border-color: rgba(124,58,237,0.22); box-shadow: 0 24px 80px rgba(0,0,0,0.18), inset 0 0 0 4px rgba(124,58,237,0.04), inset 0 0 0 5px rgba(124,58,237,0.12); }
