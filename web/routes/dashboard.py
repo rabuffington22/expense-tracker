@@ -1149,48 +1149,6 @@ def _query_income_vs_expenses(conn):
     return points
 
 
-def _get_budget_map(conn, entity_key, month_str):
-    """Return {category_name: effective_budget_cents} for categories with budgets.
-
-    Handles per-payroll budget multiplier (Payroll, Taxes in BFM).
-    Returns empty dict if no budgets configured.
-    """
-    try:
-        rows = conn.execute(
-            "SELECT category, monthly_budget_cents, is_per_payroll, per_payroll_cents "
-            "FROM budget_items"
-        ).fetchall()
-    except Exception:
-        return {}
-    if not rows:
-        return {}
-
-    # Check for per-payroll schedule (BFM only)
-    pay_periods = None
-    try:
-        schedule_row = conn.execute(
-            "SELECT anchor_date, cadence_days FROM payroll_schedule WHERE id = 1"
-        ).fetchone()
-        if schedule_row:
-            from web.routes.short_term_planning import _count_pay_periods
-            pay_periods = _count_pay_periods(
-                schedule_row["anchor_date"],
-                schedule_row["cadence_days"],
-                month_str,
-            )
-    except Exception:
-        pass
-
-    budget_map = {}
-    for r in rows:
-        is_pp = r["is_per_payroll"] and r["per_payroll_cents"]
-        if is_pp and pay_periods:
-            budget_map[r["category"]] = r["per_payroll_cents"] * pay_periods
-        else:
-            budget_map[r["category"]] = r["monthly_budget_cents"]
-    return budget_map
-
-
 def _query_category_totals(conn, start, end):
     """Query per-category expense totals for a date range.
 
@@ -1450,67 +1408,95 @@ def categories_compare():
 
 @bp.route("/dashboard/detail-categories")
 def detail_categories():
-    """Render single-period category chart for Details view (HTMX endpoint)."""
+    """Render single-period category chart for Details view (HTMX endpoint).
+
+    Uses STP's _get_budget_status() as the single source of truth for
+    budget categories and spending.  The dashboard is a read-only scoreboard
+    that displays a subset of what STP computes.
+    """
+    from web.routes.short_term_planning import _get_budget_status
+
     period = request.args.get("period", "this_month")
     start, end = _period_to_dates(period)
 
+    is_single_month = (start[:7] == end[:7])
+
     conn = get_connection(g.entity_key)
     try:
-        rows = _query_category_totals(conn, start, end)
+        # Category ID lookup (for drill links)
+        cat_id_map = {}
+        for cr in conn.execute("SELECT id, name FROM categories").fetchall():
+            cat_id_map[cr["name"]] = cr["id"]
 
-        cats = []
-        for r in rows:
-            cats.append({
-                "name": r["category"],
-                "cat_id": r["cat_id"],
-                "total_cents": r["total_cents"],
-            })
+        budget_status = []
+        if is_single_month:
+            budget_status = _get_budget_status(conn, g.entity_key, start[:7])
+            # _get_budget_status can return ([], 0) when no budgets
+            if isinstance(budget_status, tuple):
+                budget_status = budget_status[0]
 
-        # Sort by total desc, take top 28
-        cats.sort(key=lambda x: x["total_cents"], reverse=True)
-        top = cats[:28]
+        if budget_status:
+            # Build from STP budget data — single source of truth
+            budgeted_names = {item["category"] for item in budget_status}
+            top = []
+            for item in budget_status:
+                pct = item["pct"]
+                if pct > 115:
+                    bar_color = "over"
+                elif pct > 100:
+                    bar_color = "warn"
+                else:
+                    bar_color = "ok"
+                top.append({
+                    "name": item["category"],
+                    "cat_id": cat_id_map.get(item["category"]),
+                    "total_cents": item["spent_cents"],
+                    "budget_cents": item["budget_cents"],
+                    "budget_pct": pct,
+                    "pct": min(100, pct),
+                    "bar_color": bar_color,
+                })
+            # Sort budgeted by spending desc — only budgeted categories shown
+            top.sort(key=lambda x: x["total_cents"], reverse=True)
+        else:
+            # No budgets (e.g. LL entity, or multi-month range)
+            txn_rows = _query_category_totals(conn, start, end)
+            top = []
+            for r in txn_rows:
+                top.append({
+                    "name": r["category"],
+                    "cat_id": r["cat_id"],
+                    "total_cents": r["total_cents"],
+                })
+            top.sort(key=lambda x: x["total_cents"], reverse=True)
+            top = top[:28]
+            raw_max = top[0]["total_cents"] if top else 0
+            second = top[1]["total_cents"] if len(top) > 1 else raw_max
+            scale_max = second if (second and raw_max > second * 3) else raw_max
+            for c in top:
+                c["pct"] = min(100, int(c["total_cents"] / scale_max * 100)) if scale_max else 0
 
-        # Subcategory rollups for tooltip
+        # Subcategory rollups
         displayed_names = [c["name"] for c in top]
         subcats = _query_subcategory_rollups(conn, start, end, displayed_names)
 
-        # Budget context — only for single-month periods
-        is_single_month = (start[:7] == end[:7])
-        budget_map = {}
-        if is_single_month:
-            budget_map = _get_budget_map(conn, g.entity_key, start[:7])
+        # Uncategorized spending total (Needs Review + null/empty category)
+        _cte = effective_txns_cte("t")
+        uncategorized_row = conn.execute(
+            f"WITH {_cte} "
+            "SELECT COALESCE(SUM(ABS(t.amount_cents)), 0) AS total_cents, "
+            "       COUNT(*) AS txn_count "
+            "FROM t "
+            "WHERE t.amount_cents < 0 "
+            "  AND t.date >= ? AND t.date <= ? "
+            "  AND (t.category IS NULL OR t.category = '' "
+            "       OR t.category = 'Needs Review' OR t.confidence < 0.6)",
+            [start, end],
+        ).fetchone()
+        uncategorized_cents = uncategorized_row["total_cents"] if uncategorized_row else 0
+        uncategorized_count = uncategorized_row["txn_count"] if uncategorized_row else 0
     finally:
         conn.close()
-
-    # Compute bar percentages
-    if budget_map:
-        # Budget-aware: bar = spending as % of budget (track = 100% of budget)
-        # Categories without budgets use relative sizing among themselves
-        no_budget = [c for c in top if not budget_map.get(c["name"])]
-        nb_max = max((c["total_cents"] for c in no_budget), default=0)
-        for c in top:
-            budget = budget_map.get(c["name"])
-            if budget and budget > 0:
-                c["budget_cents"] = budget
-                c["budget_pct"] = min(int(round(c["total_cents"] / budget * 100)), 999)
-                c["pct"] = min(100, int(c["total_cents"] / budget * 100))
-                # Bar color class
-                if c["budget_pct"] > 120:
-                    c["bar_color"] = "over"
-                elif c["budget_pct"] > 100:
-                    c["bar_color"] = "warn"
-                else:
-                    c["bar_color"] = "ok"
-            else:
-                # No budget — relative sizing with muted style
-                c["pct"] = min(100, int(c["total_cents"] / nb_max * 100)) if nb_max else 0
-    else:
-        # No budgets at all — outlier-aware relative scale
-        raw_max = top[0]["total_cents"] if top else 0
-        second = top[1]["total_cents"] if len(top) > 1 else raw_max
-        scale_max = second if (second and raw_max > second * 3) else raw_max
-        for c in top:
-            c["pct"] = min(100, int(c["total_cents"] / scale_max * 100)) if scale_max else 0
 
     # Drill URL helper
     def drill(**overrides):
@@ -1527,7 +1513,9 @@ def detail_categories():
                            start=start, end=end,
                            drill=drill,
                            subcats=subcats,
-                           has_budgets=bool(budget_map))
+                           has_budgets=bool(budget_status),
+                           uncategorized_cents=uncategorized_cents,
+                           uncategorized_count=uncategorized_count)
 
 
 @bp.route("/dashboard/detail-insights")

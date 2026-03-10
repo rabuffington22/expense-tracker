@@ -14,8 +14,8 @@
          {% if has_subs %}onclick="dcatToggle(this)"{% endif %}>
       <a class="dcat-name" href="{{ drill(category_id=cat.cat_id) }}"
          onclick="event.stopPropagation()">{{ cat.name }}</a>
-      <div class="dcat-track{% if cat.bar_color is not defined %} dcat-track--muted{% endif %}">
-        <div class="dcat-fill{% if cat.bar_color is defined %} dcat-fill--{{ cat.bar_color }}{% elif cat.budget_cents is not defined %} dcat-fill--nobudget{% endif %}" style="width: {{ cat.pct }}%;"></div>
+      <div class="dcat-track">
+        <div class="dcat-fill{% if cat.bar_color is defined %} dcat-fill--{{ cat.bar_color }}{% endif %}" style="width: {{ cat.pct }}%;"></div>
       </div>
       <span class="dcat-value{% if cat.bar_color is defined %} dcat-val--{{ cat.bar_color }}{% endif %}">${{ "{:,.0f}".format(cat.total_cents / 100) }}</span>
       {% if has_subs %}
@@ -57,6 +57,16 @@
     </div>
 
   </div>
+  {% if uncategorized_cents > 0 %}
+  <div class="dcat-uncategorized">
+    <a class="dcat-row" href="{{ drill(uncategorized='1') }}">
+      <span class="dcat-name">Uncategorized</span>
+      <span class="dcat-sub-spacer"></span>
+      <span class="dcat-value dcat-val--warn">${{ "{:,.0f}".format(uncategorized_cents / 100) }}</span>
+      <span class="dcat-chevron">›</span>
+    </a>
+  </div>
+  {% endif %}
 </div>
 
 <script>
