@@ -343,12 +343,38 @@ a:hover { text-decoration: underline; }
     align-items: center;
     gap: 0;
 }
+.sb-brand-icon-wrap {
+    position: relative;
+    cursor: pointer;
+    perspective: 600px;
+}
+.sb-brand-icon-flip {
+    position: relative;
+    width: 102px;
+    transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+    transform-style: preserve-3d;
+}
+.sb-brand-icon-wrap.sb-heath-open .sb-brand-icon-flip {
+    transform: rotateY(180deg);
+}
 .sb-brand-icon {
     width: 102px;
     height: auto;
     border-radius: 0;
     flex-shrink: 0;
     object-fit: contain;
+    backface-visibility: hidden;
+    display: block;
+}
+.sb-heath-img {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) rotateY(180deg);
+    width: 102px;
+    height: auto;
+    backface-visibility: hidden;
+    pointer-events: none;
 }
 .sb-brand-text {
     margin-top: -0.6rem;

@@ -1,7 +1,12 @@
 <nav class="sidebar" aria-label="Main navigation" style="--sb-accent: {{ accent }};">
     <!-- Brand -->
     <div class="sb-brand">
-        <img src="{{ url_for('static', filename='ledger-ai-icon.png') }}" alt="The Ledger" class="sb-brand-icon">
+        <div class="sb-brand-icon-wrap" onclick="this.classList.toggle('sb-heath-open')">
+            <div class="sb-brand-icon-flip">
+                <img src="{{ url_for('static', filename='ledger-ai-icon.png') }}" alt="The Ledger" class="sb-brand-icon">
+                <img src="{{ url_for('static', filename='heath-standing.png') }}" alt="" class="sb-heath-img">
+            </div>
+        </div>
     </div>
 
     <div class="sb-divider"></div>
