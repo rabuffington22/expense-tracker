@@ -310,9 +310,23 @@
 <script>
 var _plFlippedCard = null;
 
+function _plSetGenieOrigin(cardEl) {
+    var rect = cardEl.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    var vw = window.innerWidth / 2;
+    var vh = window.innerHeight / 2;
+    var popup = document.querySelector('.pl-modal-popup');
+    if (popup) {
+        popup.style.setProperty('--genie-x', (cx - vw) + 'px');
+        popup.style.setProperty('--genie-y', (cy - vh) + 'px');
+    }
+}
+
 function plFlipAndOpen(cardEl, itemId) {
     cardEl.classList.add('card-flipped');
     _plFlippedCard = cardEl;
+    _plSetGenieOrigin(cardEl);
     setTimeout(function() { plOpenEdit(itemId); }, 350);
 }
 
@@ -337,12 +351,21 @@ function plOpenAdd(entityKey, itemType) {
 }
 
 function plCloseModal() {
-    document.getElementById('pl-modal-scrim').hidden = true;
-    _plHideAllForms();
-    if (_plFlippedCard) {
-        _plFlippedCard.classList.remove('card-flipped');
-        _plFlippedCard = null;
-    }
+    var scrim = document.getElementById('pl-modal-scrim');
+    var popup = document.querySelector('.pl-modal-popup');
+    if (_plFlippedCard) _plSetGenieOrigin(_plFlippedCard);
+    scrim.classList.add('cf-modal-scrim--closing');
+    if (popup) popup.classList.add('pl-modal-popup--closing');
+    setTimeout(function() {
+        scrim.hidden = true;
+        scrim.classList.remove('cf-modal-scrim--closing');
+        if (popup) popup.classList.remove('pl-modal-popup--closing');
+        _plHideAllForms();
+        if (_plFlippedCard) {
+            _plFlippedCard.classList.remove('card-flipped');
+            _plFlippedCard = null;
+        }
+    }, 350);
 }
 
 function _plHideAllForms() {

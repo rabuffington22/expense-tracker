@@ -276,10 +276,22 @@ function cfSizeInput(el) {
 
 var _cfFlippedCard = null;
 
+function _cfSetGenieOrigin(cardEl) {
+    var rect = cardEl.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    var vw = window.innerWidth / 2;
+    var vh = window.innerHeight / 2;
+    var modal = document.querySelector('.cfm');
+    modal.style.setProperty('--genie-x', (cx - vw) + 'px');
+    modal.style.setProperty('--genie-y', (cy - vh) + 'px');
+}
+
 function cfFlipAndOpen(btn, evt) {
     if (evt && (evt.target.closest('button') || evt.target.closest('form') || evt.target.closest('a'))) return;
     btn.classList.add('card-flipped');
     _cfFlippedCard = btn;
+    _cfSetGenieOrigin(btn);
     setTimeout(function() { cfOpenModal(btn, null); }, 350);
 }
 
@@ -344,12 +356,22 @@ function cfOpenModal(btn, evt) {
 }
 
 function cfCloseModal() {
-    document.getElementById('cf-modal-scrim').hidden = true;
-    document.getElementById('cf-add-recurring-section').hidden = true;
-    if (_cfFlippedCard) {
-        _cfFlippedCard.classList.remove('card-flipped');
-        _cfFlippedCard = null;
-    }
+    var scrim = document.getElementById('cf-modal-scrim');
+    var modal = document.querySelector('.cfm');
+    /* Re-read card position in case of scroll/resize */
+    if (_cfFlippedCard) _cfSetGenieOrigin(_cfFlippedCard);
+    scrim.classList.add('cf-modal-scrim--closing');
+    modal.classList.add('cfm--closing');
+    setTimeout(function() {
+        scrim.hidden = true;
+        scrim.classList.remove('cf-modal-scrim--closing');
+        modal.classList.remove('cfm--closing');
+        document.getElementById('cf-add-recurring-section').hidden = true;
+        if (_cfFlippedCard) {
+            _cfFlippedCard.classList.remove('card-flipped');
+            _cfFlippedCard = null;
+        }
+    }, 350);
 }
 
 /* Close on scrim click */
