@@ -1482,21 +1482,35 @@ def detail_categories():
     finally:
         conn.close()
 
-    # Compute bar percentages — outlier-aware scale
-    raw_max = top[0]["total_cents"] if top else 0
-    second = top[1]["total_cents"] if len(top) > 1 else raw_max
-    scale_max = second if (second and raw_max > second * 3) else raw_max
-    for c in top:
-        c["pct"] = min(100, int(c["total_cents"] / scale_max * 100)) if scale_max else 0
-
+    # Compute bar percentages
     if budget_map:
+        # Budget-aware: bar = spending as % of budget (track = 100% of budget)
+        # Categories without budgets use relative sizing among themselves
+        no_budget = [c for c in top if not budget_map.get(c["name"])]
+        nb_max = max((c["total_cents"] for c in no_budget), default=0)
         for c in top:
             budget = budget_map.get(c["name"])
             if budget and budget > 0:
                 c["budget_cents"] = budget
                 c["budget_pct"] = min(int(round(c["total_cents"] / budget * 100)), 999)
-                # Where the budget line falls on the bar's scale
-                c["budget_bar_pct"] = min(100, int(budget / scale_max * 100)) if scale_max else 0
+                c["pct"] = min(100, int(c["total_cents"] / budget * 100))
+                # Bar color class
+                if c["budget_pct"] > 120:
+                    c["bar_color"] = "over"
+                elif c["budget_pct"] > 100:
+                    c["bar_color"] = "warn"
+                else:
+                    c["bar_color"] = "ok"
+            else:
+                # No budget — relative sizing with muted style
+                c["pct"] = min(100, int(c["total_cents"] / nb_max * 100)) if nb_max else 0
+    else:
+        # No budgets at all — outlier-aware relative scale
+        raw_max = top[0]["total_cents"] if top else 0
+        second = top[1]["total_cents"] if len(top) > 1 else raw_max
+        scale_max = second if (second and raw_max > second * 3) else raw_max
+        for c in top:
+            c["pct"] = min(100, int(c["total_cents"] / scale_max * 100)) if scale_max else 0
 
     # Drill URL helper
     def drill(**overrides):

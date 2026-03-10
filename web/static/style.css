@@ -1829,8 +1829,8 @@ a.kpi-panel-cell:hover {
     border-radius: 9px;
     overflow: hidden;
     min-width: 0;
-    position: relative;
 }
+.dcat-track--muted { opacity: 0.45; }
 .dcat-fill {
     height: 100%;
     border-radius: 4px;
@@ -1838,15 +1838,12 @@ a.kpi-panel-cell:hover {
     background: linear-gradient(90deg, rgba(124,58,237,0.85), rgba(124,58,237,0.55));
     transition: width 0.3s ease;
 }
-.dcat-budget-mark {
-    position: absolute;
-    top: 2px;
-    bottom: 2px;
-    width: 2px;
-    background: rgba(255,255,255,0.5);
-    border-radius: 1px;
-    pointer-events: none;
-    z-index: 1;
+/* Budget-aware bar colors */
+.dcat-fill--ok   { background: linear-gradient(90deg, rgba(74,222,128,0.85), rgba(74,222,128,0.55)); }
+.dcat-fill--warn { background: linear-gradient(90deg, rgba(255,159,10,0.85), rgba(255,159,10,0.55)); }
+.dcat-fill--over { background: linear-gradient(90deg, rgba(248,113,113,0.85), rgba(248,113,113,0.55)); }
+.dcat-fill--nobudget {
+    background: linear-gradient(90deg, rgba(124,58,237,0.50), rgba(124,58,237,0.30));
 }
 
 .dcat-value {
@@ -1884,6 +1881,7 @@ a.kpi-panel-cell:hover {
 .dcat-sub-row:last-child { border-bottom: none; }
 .dcat-sub-row:hover { background: var(--hover-bg); border-radius: 6px; }
 
+.dcat-sub-spacer { flex: 1; }
 .dcat-sub-name {
     flex: 0 0 130px;
     font-size: 0.85rem;
@@ -1914,8 +1912,17 @@ a.kpi-panel-cell:hover {
 :root[data-theme="light"] .dcat-fill--sub {
     background: linear-gradient(90deg, rgba(109,40,217,0.40), rgba(109,40,217,0.22));
 }
-:root[data-theme="light"] .dcat-budget-mark {
-    background: rgba(0,0,0,0.35);
+:root[data-theme="light"] .dcat-fill--ok {
+    background: linear-gradient(90deg, rgba(34,197,94,0.75), rgba(34,197,94,0.45));
+}
+:root[data-theme="light"] .dcat-fill--warn {
+    background: linear-gradient(90deg, rgba(234,138,0,0.75), rgba(234,138,0,0.45));
+}
+:root[data-theme="light"] .dcat-fill--over {
+    background: linear-gradient(90deg, rgba(239,68,68,0.75), rgba(239,68,68,0.45));
+}
+:root[data-theme="light"] .dcat-fill--nobudget {
+    background: linear-gradient(90deg, rgba(109,40,217,0.35), rgba(109,40,217,0.18));
 }
 :root[data-theme="light"] .dcat-sub-row {
     border-bottom-color: rgba(0,0,0,0.04);
