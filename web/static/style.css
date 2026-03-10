@@ -440,6 +440,15 @@ a:hover { text-decoration: underline; }
 :root[data-theme="light"] .card-flip-back--liability {
     background: linear-gradient(135deg, rgba(124,58,237,0.18) 0%, rgba(124,58,237,0.05) 100%);
 }
+/* Modal open animations — scales from card position */
+@keyframes modalScrimIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes modalScaleIn {
+    from { opacity: 0; transform: scale(0.4) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
 
 .sb-brand-text {
     margin-top: -0.6rem;
@@ -4853,6 +4862,7 @@ select.input-sm {
     justify-content: center;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    animation: modalScrimIn 0.3s ease-out;
 }
 .cf-modal-scrim[hidden] { display: none; }
 
@@ -4869,6 +4879,7 @@ select.input-sm {
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    animation: modalScaleIn 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 :root[data-theme="light"] .cfm {
     background: #f2f2f7;
@@ -5433,6 +5444,7 @@ input.pl-input--sm {
     background: rgba(0,0,0,0.6);
     display: flex; align-items: center; justify-content: center;
     backdrop-filter: blur(4px);
+    animation: modalScrimIn 0.3s ease-out;
 }
 .pl-modal-scrim[hidden] { display: none; }
 .pl-modal-popup {
@@ -5443,6 +5455,7 @@ input.pl-input--sm {
     width: 380px; max-width: 92vw;
     max-height: 85vh; overflow-y: auto;
     box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    animation: modalScaleIn 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 .pl-modal-form { display: flex; flex-direction: column; gap: 0.5rem; }
 .pl-modal-form[hidden] { display: none; }
