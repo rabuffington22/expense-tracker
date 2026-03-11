@@ -334,9 +334,9 @@ def index():
 
     # ── Two-mode scenario modeling ────────────────────────────────────────
     # Revenue mode (default): set revenue target, salary = surplus
-    # Salary mode: set desired salary, revenue = back-calculated
+    # Take-home mode: set desired take-home, back-calculate gross + revenue
     target_mode = request.args.get("mode", "revenue")
-    if target_mode not in ("revenue", "salary"):
+    if target_mode not in ("revenue", "takehome"):
         target_mode = "revenue"
 
     target_staff_payroll = bfm_budgets["staff_payroll_cents"]
@@ -344,14 +344,17 @@ def index():
     target_bfm_operating = bfm_budgets["operating_cents"]
     bfm_costs = target_staff_payroll + target_bfm_fixed + target_bfm_operating
 
-    if target_mode == "salary":
-        # Salary mode: desired gross salary → required revenue
+    if target_mode == "takehome":
+        # Take-home mode: desired take-home → gross → required revenue
         try:
-            owner_gross = int(float(request.args.get("owner_salary", 0)) * 100)
+            desired_take_home = int(float(request.args.get("take_home", 0)) * 100)
         except (ValueError, TypeError):
-            owner_gross = _OWNER_SALARY_GROSS
-        if owner_gross <= 0:
-            owner_gross = _OWNER_SALARY_GROSS
+            desired_take_home = 0
+        if desired_take_home <= 0:
+            # Default: back-calculate from _OWNER_SALARY_GROSS
+            desired_take_home = int(_OWNER_SALARY_GROSS * (10000 - _EFFECTIVE_TAX_RATE_BPS) / 10000)
+        # Gross = take_home / (1 - tax_rate)
+        owner_gross = int(desired_take_home * 10000 / (10000 - _EFFECTIVE_TAX_RATE_BPS))
         target_revenue = owner_gross + bfm_costs
         target_bfm_surplus = owner_gross
     else:

@@ -151,18 +151,18 @@
   <div class="wf-segmented wf-mode-toggle">
     <button type="button" class="wf-seg-btn {% if target_mode == 'revenue' %}wf-seg-btn--active{% endif %}"
             onclick="wfSetMode('revenue')">Revenue Target</button>
-    <button type="button" class="wf-seg-btn {% if target_mode == 'salary' %}wf-seg-btn--active{% endif %}"
-            onclick="wfSetMode('salary')">Desired Salary</button>
+    <button type="button" class="wf-seg-btn {% if target_mode == 'takehome' %}wf-seg-btn--active{% endif %}"
+            onclick="wfSetMode('takehome')">Desired Take-Home</button>
   </div>
   <div class="wf-target-input-group">
     <span class="wf-target-input-wrap">$<input type="text" class="wf-target-input" id="wf-input-value"
-           value="{% if target_mode == 'salary' %}{{ '{:,.0f}'.format(owner_gross / 100) }}{% else %}{{ '{:,.0f}'.format(target_revenue / 100) }}{% endif %}"
+           value="{% if target_mode == 'takehome' %}{{ '{:,.0f}'.format(owner_take_home / 100) }}{% else %}{{ '{:,.0f}'.format(target_revenue / 100) }}{% endif %}"
            onkeydown="if(event.key==='Enter'){wfApplyTargets();}"
            inputmode="numeric"></span>
   </div>
   <div class="wf-target-summary" id="wf-target-summary">
-    {% if target_mode == 'salary' %}
-      Revenue needed: {{ fmt_dollars(target_revenue) }} &nbsp;→&nbsp; Surplus {{ fmt_dollars(target_bfm_surplus) }} &nbsp;→&nbsp; Take-home {{ fmt_dollars(owner_take_home) }}
+    {% if target_mode == 'takehome' %}
+      Gross {{ fmt_dollars(owner_gross) }} &nbsp;→&nbsp; Revenue needed {{ fmt_dollars(target_revenue) }}
     {% else %}
       Surplus {{ fmt_dollars(target_bfm_surplus) }} &nbsp;→&nbsp; Salary {{ fmt_dollars(owner_gross) }} &nbsp;→&nbsp; Take-home {{ fmt_dollars(owner_take_home) }}
     {% endif %}
@@ -424,7 +424,7 @@ function wfSwitch(mode) {
     });
 }
 
-/* ── Mode toggle (Revenue / Salary) ─────────────────────────────── */
+/* ── Mode toggle (Revenue / Take-Home) ─────────────────────────── */
 var _wfMode = '{{ target_mode }}';
 
 function wfSetMode(mode) {
@@ -432,7 +432,7 @@ function wfSetMode(mode) {
     /* Toggle active seg button */
     document.querySelectorAll('.wf-mode-toggle .wf-seg-btn').forEach(function(btn) {
         btn.classList.toggle('wf-seg-btn--active', btn.textContent.trim() ===
-            (mode === 'salary' ? 'Desired Salary' : 'Revenue Target'));
+            (mode === 'takehome' ? 'Desired Take-Home' : 'Revenue Target'));
     });
     /* Swap input value — clear and focus */
     var inp = document.getElementById('wf-input-value');
@@ -447,10 +447,10 @@ function wfApplyTargets() {
     var url = new URL(window.location);
     /* Clear both params, set only the active one */
     url.searchParams.delete('target_revenue');
-    url.searchParams.delete('owner_salary');
-    if (_wfMode === 'salary') {
-        url.searchParams.set('owner_salary', val);
-        url.searchParams.set('mode', 'salary');
+    url.searchParams.delete('take_home');
+    if (_wfMode === 'takehome') {
+        url.searchParams.set('take_home', val);
+        url.searchParams.set('mode', 'takehome');
     } else {
         url.searchParams.set('target_revenue', val);
         url.searchParams.set('mode', 'revenue');
@@ -461,7 +461,7 @@ function wfApplyTargets() {
 /* Animate bars on load — auto-open Target if URL has target params */
 document.addEventListener('DOMContentLoaded', function() {
     var params = new URLSearchParams(window.location.search);
-    var startView = (params.has('target_revenue') || params.has('owner_salary') || params.has('mode')) ? 'target' : 'actual';
+    var startView = (params.has('target_revenue') || params.has('take_home') || params.has('mode')) ? 'target' : 'actual';
     if (startView === 'target') {
         wfSwitch('target');
     } else {
