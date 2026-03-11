@@ -269,6 +269,7 @@ def create_app():
     from web.routes.subscriptions import bp as subscriptions_bp
     from web.routes.ai import bp as ai_bp
     from web.routes.payroll import bp as payroll_bp
+    from web.routes.weekly import bp as weekly_bp
     from web.routes.kristine import bp as kristine_bp
 
     app.register_blueprint(dashboard_bp)
@@ -288,6 +289,7 @@ def create_app():
     app.register_blueprint(subscriptions_bp)
     app.register_blueprint(ai_bp)
     app.register_blueprint(payroll_bp)
+    app.register_blueprint(weekly_bp)
     app.register_blueprint(kristine_bp)
 
     # ── Legacy redirect: /vendors → /data-sources ──────────────────────────

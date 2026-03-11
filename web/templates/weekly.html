@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Weekly Check-In — The Ledger{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Weekly Check-In</h1>
+  <button type="button" class="joker-btn" onclick="aiChatOpen('weekly')" title="Ask Opus" aria-label="Ask Opus">
+    <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
+  </button>
+</div>
+
+<!-- Week Navigator -->
+<div class="wk-nav">
+  <a href="{{ url_for('weekly.index', week=prev_week) }}" class="wk-nav-arrow" aria-label="Previous week">&#8249;</a>
+  <span class="wk-nav-label">{{ week_label }}</span>
+  {% if next_week %}
+  <a href="{{ url_for('weekly.index', week=next_week) }}" class="wk-nav-arrow" aria-label="Next week">&#8250;</a>
+  {% else %}
+  <span class="wk-nav-arrow wk-nav-arrow--disabled">&#8250;</span>
+  {% endif %}
+</div>
+
+<!-- KPI Band -->
+<div class="wk-kpi-band">
+  <div class="wk-kpi">
+    <div class="wk-kpi-label">SPENT THIS WEEK</div>
+    <div class="wk-kpi-value">{{ fmt_dollars(spent_cents) }}</div>
+  </div>
+  <div class="wk-kpi">
+    <div class="wk-kpi-label">WEEKLY PACE</div>
+    <div class="wk-kpi-value">{{ fmt_dollars(weekly_pace) }}</div>
+  </div>
+  <div class="wk-kpi">
+    <div class="wk-kpi-label">REMAINING</div>
+    <div class="wk-kpi-value {% if remaining_cents >= 0 %}wk-positive{% else %}wk-negative{% endif %}">
+      {{ fmt_dollars(remaining_cents) }}
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- CREDIT CARD PAYDOWN                                                     -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+{% if cc_cards %}
+<div class="wk-section">
+  <div class="section-title">Credit Card Paydown</div>
+  <div class="outline-panel">
+    {% for card in cc_cards %}
+    <div class="wk-cc-row">
+      <span class="wk-cc-name">{{ card.name }}</span>
+      <span class="wk-cc-balance">{{ fmt_dollars(card.balance_cents) }}</span>
+      <div class="wk-cc-bar-track">
+        <div class="wk-cc-bar {% if card.pct > 80 %}wk-cc-bar--over{% elif card.pct > 50 %}wk-cc-bar--warn{% endif %}"
+             style="width: {{ card.pct }}%;"></div>
+      </div>
+      {% if card.limit_cents > 0 %}
+      <span class="wk-cc-limit">of {{ fmt_dollars(card.limit_cents) }}</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="wk-cc-total-row">
+      <span class="wk-cc-total-label">Total CC Debt</span>
+      <span class="wk-cc-total-value">{{ fmt_dollars(cc_total) }}</span>
+    </div>
+
+    {% if paydown_pace %}
+    <!-- Pace indicator -->
+    <div class="wk-cc-pace">
+      {% if paydown_pace.on_pace %}
+      <div class="wk-cc-pace-text wk-positive">
+        On pace — expected {{ fmt_dollars(paydown_pace.expected_cents) }} by now
+      </div>
+      {% else %}
+      <div class="wk-cc-pace-text wk-negative">
+        Behind — should be {{ fmt_dollars(paydown_pace.expected_cents) }} by now
+      </div>
+      {% endif %}
+      <div class="wk-cc-progress-track">
+        <div class="wk-cc-progress {% if paydown_pace.on_pace %}wk-cc-progress--ok{% else %}wk-cc-progress--behind{% endif %}"
+             style="width: {{ paydown_pace.pct_complete }}%;"></div>
+      </div>
+      <div class="wk-cc-pace-meta">
+        {{ paydown_pace.pct_complete }}% paid off · {{ paydown_pace.days_remaining }} days left · Target {{ paydown_pace.target_date[:7] }}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Target date form -->
+    <form class="wk-cc-target-form" method="post" action="{{ url_for('weekly.save_paydown_goal') }}">
+      <input type="hidden" name="week" value="{{ week_str }}">
+      <label class="wk-cc-target-label">
+        {% if paydown_goal %}Target date{% else %}Set payoff target{% endif %}
+      </label>
+      <input type="date" name="target_date" class="wk-cc-target-input"
+             value="{{ paydown_goal.target_date if paydown_goal else '' }}"
+             min="{{ '%04d-%02d-%02d' | format(monday.year, monday.month, monday.day) }}">
+      <button type="submit" class="btn btn-sm wk-cc-target-btn">
+        {% if paydown_goal %}Update{% else %}Set{% endif %}
+      </button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- THIS WEEK'S BILLS                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="wk-section">
+  <div class="section-title">This Week's Bills</div>
+  <div class="outline-panel">
+    {% if bills %}
+    <table class="wk-bills-table">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Description</th>
+          <th class="wk-bills-source">Source</th>
+          <th class="wk-bills-amount">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for bill in bills %}
+        <tr>
+          <td class="wk-bills-day">{{ bill.day_name }}</td>
+          <td>{{ bill.merchant }}</td>
+          <td class="wk-bills-source text-muted">{{ bill.source }}</td>
+          <td class="wk-bills-amount">
+            {% if bill.amount_cents %}{{ fmt_dollars(bill.amount_cents) }}{% else %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      {% if bills_total %}
+      <tfoot>
+        <tr>
+          <td colspan="3" class="wk-bills-total-label">Total</td>
+          <td class="wk-bills-amount wk-bills-total">{{ fmt_dollars(bills_total) }}</td>
+        </tr>
+      </tfoot>
+      {% endif %}
+    </table>
+    {% else %}
+    <div class="wk-empty">No bills due this week</div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- LAST WEEK SCORECARD                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="wk-section">
+  <div class="section-title">Last Week <span class="text-muted" style="font-weight:400; font-size:var(--ui-font-sm);">{{ last_week_label }}</span></div>
+  <div class="outline-panel">
+
+    <!-- Top line -->
+    <div class="wk-topline">
+      <span class="wk-topline-label">You spent</span>
+      <span class="wk-topline-value {% if last_week_total <= last_week_pace %}wk-positive{% else %}wk-negative{% endif %}">
+        {{ fmt_dollars(last_week_total) }}
+      </span>
+      <span class="wk-topline-label">last week</span>
+    </div>
+
+    <!-- Burn rate -->
+    {% if monthly_budget > 0 %}
+    <div class="wk-burn">
+      At this pace, you'll end {{ budget_month_name }}
+      {% if burn_rate.on_track %}
+        <strong class="wk-positive">{{ fmt_dollars(burn_rate.over_under_cents) }} under budget</strong>
+      {% else %}
+        <strong class="wk-negative">{{ fmt_dollars(-burn_rate.over_under_cents) }} over budget</strong>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Top 5 categories -->
+    {% if last_week_top5 %}
+    <div class="wk-cats">
+      {% for cat in last_week_top5 %}
+      <a href="{{ url_for('transactions.index', start=last_monday, end=last_sunday, category=cat.category) }}" class="wk-cat-row">
+        <span class="wk-cat-name">{{ cat.category }}</span>
+        <span class="wk-cat-amount">{{ fmt_dollars(cat.total_cents) }}</span>
+        {% if cat.pace_cents > 0 %}
+        <div class="wk-cat-bar-track">
+          {% set bar_pct = [cat.pct, 100] | min %}
+          <div class="wk-cat-bar {% if cat.pct <= 100 %}wk-bar-ok{% elif cat.pct <= 130 %}wk-bar-warn{% else %}wk-bar-over{% endif %}"
+               style="width: {{ bar_pct }}%;"></div>
+        </div>
+        {% else %}
+        <div class="wk-cat-bar-track wk-cat-bar-track--empty"></div>
+        {% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Warnings -->
+    {% if warnings %}
+    <div class="wk-warnings">
+      {% for w in warnings %}
+      <div class="wk-warning-row">{{ w }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not last_week_top5 and not warnings %}
+    <div class="wk-empty">No spending last week</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

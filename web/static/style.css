@@ -8080,3 +8080,363 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
 
 /* Theme toggle not used — always light blue/pink */
 .kd-theme-btn { display: none; }
+
+/* ══════════════════════════════════════════════════════════════════════════════ */
+/* WEEKLY CHECK-IN                                                               */
+/* ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Week Navigator ───────────────────────────────────────────────────────── */
+.wk-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+.wk-nav-arrow {
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+    transition: background var(--transition), color var(--transition);
+}
+.wk-nav-arrow:hover {
+    background: var(--hover-bg);
+    color: var(--text);
+}
+.wk-nav-arrow--disabled {
+    opacity: 0.25;
+    pointer-events: none;
+}
+.wk-nav-label {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 140px;
+    text-align: center;
+}
+
+/* ── KPI Band ─────────────────────────────────────────────────────────────── */
+.wk-kpi-band {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem 0;
+}
+.wk-kpi {
+    text-align: center;
+}
+.wk-kpi-label {
+    font-size: var(--ui-font-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+}
+.wk-kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+}
+.wk-positive { color: var(--green); }
+.wk-negative { color: var(--red); }
+
+/* ── Sections ─────────────────────────────────────────────────────────────── */
+.wk-section {
+    margin-bottom: 2rem;
+}
+
+/* ── Bills Table ──────────────────────────────────────────────────────────── */
+.wk-bills-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--ui-font-base);
+}
+.wk-bills-table th {
+    font-size: var(--ui-font-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    text-align: left;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+.wk-bills-table td {
+    padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+.wk-bills-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.wk-bills-day {
+    width: 50px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.wk-bills-source {
+    color: var(--text-muted);
+    font-size: var(--ui-font-sm);
+}
+.wk-bills-amount {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.wk-bills-total-label {
+    text-align: right;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: var(--ui-font-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+}
+.wk-bills-total {
+    font-weight: 700;
+}
+.wk-bills-table tfoot td {
+    border-top: 1px solid var(--border);
+    padding-top: 0.6rem;
+}
+
+/* ── Last Week Scorecard ──────────────────────────────────────────────────── */
+.wk-topline {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    justify-content: center;
+    padding: 0.6rem 0;
+    font-size: 1rem;
+}
+.wk-topline-label {
+    color: var(--text-muted);
+}
+.wk-topline-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+.wk-burn {
+    text-align: center;
+    font-size: var(--ui-font-base);
+    color: var(--text-secondary);
+    padding: 0.3rem 0 0.8rem;
+}
+
+/* ── Category Pace Bars ───────────────────────────────────────────────────── */
+.wk-cats {
+    margin-top: 0.5rem;
+}
+.wk-cat-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--text);
+    transition: background var(--transition);
+}
+.wk-cat-row:hover {
+    background: var(--hover-bg);
+}
+.wk-cat-name {
+    font-size: var(--ui-font-base);
+    font-weight: 500;
+}
+.wk-cat-amount {
+    font-size: var(--ui-font-base);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+.wk-cat-bar-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.wk-cat-bar-track--empty {
+    opacity: 0.3;
+}
+.wk-cat-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+.wk-bar-ok   { background: var(--green); }
+.wk-bar-warn { background: var(--orange); }
+.wk-bar-over { background: var(--red); }
+
+/* ── Warnings ─────────────────────────────────────────────────────────────── */
+.wk-warnings {
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+}
+.wk-warning-row {
+    font-size: var(--ui-font-sm);
+    color: var(--orange);
+    padding: 0.25rem 0.5rem;
+}
+
+/* ── Empty State ──────────────────────────────────────────────────────────── */
+.wk-empty {
+    text-align: center;
+    padding: 1.2rem 0;
+    font-size: var(--ui-font-base);
+    color: var(--text-muted);
+}
+
+/* ── Credit Card Paydown ───────────────────────────────────────────────── */
+.wk-cc-row {
+    display: grid;
+    grid-template-columns: 1fr auto 120px auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.25rem;
+}
+.wk-cc-name {
+    font-size: var(--ui-font-base);
+    font-weight: 500;
+    color: var(--text);
+}
+.wk-cc-balance {
+    font-size: var(--ui-font-base);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--text);
+}
+.wk-cc-bar-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.wk-cc-bar {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--green);
+    transition: width 0.3s ease;
+}
+.wk-cc-bar--warn { background: var(--orange); }
+.wk-cc-bar--over { background: var(--red); }
+.wk-cc-limit {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.wk-cc-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.6rem 0.25rem 0.4rem;
+    margin-top: 0.3rem;
+    border-top: 1px solid var(--border);
+}
+.wk-cc-total-label {
+    font-size: var(--ui-font-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+}
+.wk-cc-total-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* Pace indicator */
+.wk-cc-pace {
+    padding: 0.5rem 0.25rem 0;
+}
+.wk-cc-pace-text {
+    font-size: var(--ui-font-base);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+.wk-cc-progress-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.wk-cc-progress {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+.wk-cc-progress--ok { background: var(--green); }
+.wk-cc-progress--behind { background: var(--orange); }
+.wk-cc-pace-meta {
+    font-size: var(--ui-font-xs);
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+/* Target date form */
+.wk-cc-target-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.25rem 0;
+    margin-top: 0.4rem;
+    border-top: 1px solid var(--border);
+}
+.wk-cc-target-label {
+    font-size: var(--ui-font-xs);
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+.wk-cc-target-input {
+    font-size: var(--ui-font-sm);
+    padding: 0.2rem 0.4rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    max-width: 150px;
+}
+.wk-cc-target-btn {
+    font-size: var(--ui-font-xs);
+    padding: 0.2rem 0.6rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .wk-kpi-band {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .wk-kpi-value {
+        font-size: 1.25rem;
+    }
+    .wk-cat-row {
+        grid-template-columns: 1fr auto;
+    }
+    .wk-cat-bar-track {
+        grid-column: 1 / -1;
+    }
+    .wk-bills-source {
+        display: none;
+    }
+    .wk-cc-row {
+        grid-template-columns: 1fr auto;
+    }
+    .wk-cc-bar-track {
+        grid-column: 1 / -1;
+    }
+    .wk-cc-limit {
+        display: none;
+    }
+}

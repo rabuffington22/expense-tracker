@@ -779,6 +779,17 @@ UPDATE budget_items SET category = 'Mortgage'
     WHERE category = 'Housing';
 """
 
+_MIGRATION_56 = """
+-- Credit card paydown goal (singleton per entity)
+CREATE TABLE IF NOT EXISTS cc_paydown_goal (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    target_date TEXT NOT NULL,
+    start_date TEXT NOT NULL,
+    start_balance_cents INTEGER NOT NULL,
+    created_at TEXT DEFAULT (datetime('now'))
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -835,6 +846,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (53, _MIGRATION_53),
     (54, _MIGRATION_54),
     (55, _MIGRATION_55),
+    (56, _MIGRATION_56),
 ]
 
 _DEFAULT_CATEGORIES = [

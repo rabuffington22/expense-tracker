@@ -69,6 +69,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     planning.py                    # GET/POST /planning (net worth projections)
     payroll.py                     # GET/POST /payroll (employee roster, Phoenix import, role spending)
     short_term_planning.py         # GET/POST /planning/short-term (budgets, action items, goals)
+    weekly.py                      # GET/POST /weekly (weekly check-in, bills, CC paydown)
     reports.py                     # GET /reports (monthly detail + spending trend)
     ai.py                          # POST /ai/ask, /ai/clear (global Ask Opus chat, per-page context)
     plaid.py                       # GET/POST /plaid (connect, sync, disconnect)
@@ -107,6 +108,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     planning.html                  # Net worth projections + add/edit modals
     payroll.html                   # Employee roster, role spending, Phoenix import
     reports.html                   # Two-section layout: monthly detail + spending trend
+    weekly.html                    # Weekly check-in: KPI, CC paydown, bills, scorecard
     plaid.html                     # Connected Accounts (Plaid Link)
     upload.html                    # Import tab + Settings tab
     upload_dialog.html             # File upload + preview/confirm
@@ -121,7 +123,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
     joker-button.png               # Ask Opus button icon (66×66 display, purple ? with glow)
 core/                              # Business logic
-  db.py                            # Schema migrations (55 so far), DB init, connections
+  db.py                            # Schema migrations (56 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
@@ -162,6 +164,7 @@ Pattern used across routes:
 - **Cash Flow** -- Per-account balances, upcoming recurring charges, Plaid liabilities
 - **Planning** -- Long-term net worth projections (assets + liabilities at milestone ages, inflation-adjusted)
 - **Payroll** -- Employee roster, Phoenix/CyberPayroll import, role-based spending (BFM only)
+- **Weekly** -- Weekly check-in: KPI band (spent/pace/remaining), credit card paydown tracker with per-card utilization bars and target-date pace indicator, this week's bills (from 5 data sources), last week scorecard (top categories, burn rate, warnings). ISO week navigation (Mon–Sun). Hidden for LL entity.
 - **Reports** -- Monthly detail + spending trend (pure CSS bar chart)
 - **Connected Accounts** -- Plaid Link, sync, disconnect
 - **Kristine's Dashboard** (`/k/`) -- Public (no auth), mobile-first page for Kristine. Shows Personal Focus budget status (categories, subcategories, transaction drill-down), Luxe Legacy business summary, account balances (BOA Primary, LL, Apple Card), and praise/gamification. Light blue and pink theme. Standalone template (no sidebar/base.html).
@@ -175,7 +178,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (55 Migrations)
+## Database (56 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 35 categories. BFM: 32 categories. Every category has a "General" subcategory.
@@ -200,6 +203,7 @@ Key tables:
 - **`payroll_schedule`** -- Biweekly payroll cadence (Migration 50). Singleton table (CHECK id=1). Fields: anchor_date (known payday YYYY-MM-DD), cadence_days (14), pay_dow (day-of-week payment hits bank, 0=Mon, 2=Wed). Used by `_count_pay_periods()` to compute how many paydays fall in a given month (typically 2, sometimes 3). Only BFM uses this; Personal/LL have no row.
 - **`order_line_items`** -- Individual products within multi-item vendor orders (Migration 53). Fields: amazon_order_id (FK → amazon_orders), item_description, qty, unit_price_cents, category, subcategory, line_number. Breaks down aggregate orders into per-item categorization.
 - **`transaction_splits`** -- Split a single bank transaction across multiple budget categories (Migration 54). Fields: transaction_id (FK → transactions), description, amount_cents, category, subcategory, sort_order, source (manual/vendor_line_item), line_item_id (FK → order_line_items), created_at. When splits exist, `effective_txns_cte()` replaces parent with split pieces in all reporting queries.
+- **`cc_paydown_goal`** -- Credit card paydown target date goal (Migration 56). Singleton per entity (CHECK id=1). Fields: target_date, start_date, start_balance_cents, created_at. Used by Weekly page to compute linear pace toward $0 balance.
 
 ## Vendor Workflow (Three-Phase)
 
@@ -381,6 +385,17 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-10 — Weekly Check-In page + CC Paydown tracker (Migration 56)
+New `/weekly` page with ISO week navigation, spending pace tracking, credit card paydown goals, and bill aggregation from 5 data sources.
+
+1. **Weekly page (`web/routes/weekly.py`)** — New blueprint at `/weekly`. ISO week navigation (Mon–Sun boundaries) with prev/next arrows. KPI band shows Spent This Week, Weekly Pace (monthly budget × 7 / days_in_month), and Remaining (green when on pace, red when over). Hidden for LL entity (redirects to dashboard).
+2. **This Week's Bills** — Aggregates bills from 5 sources: action items (manual-pay due dates), auto-detected recurring merchants, manual recurring charges, credit card payment due dates, and BFM payroll schedule. Filters to current week's Mon–Sun window. Shows merchant, amount, day of week, and source tag. Bills vary correctly across weeks based on actual due dates.
+3. **Last Week Scorecard** — Previous week's spending total, burn rate vs monthly budget (over/under with color), top 5 categories with pace bars (green ≤100%, orange 100–115%, red >115%), and up to 3 warnings (categories >115% of weekly pace).
+4. **Credit Card Paydown (Migration 56)** — New `cc_paydown_goal` singleton table per entity (target_date, start_date, start_balance_cents). Per-card utilization bars (green <50%, orange 50–80%, red >80%) with balance and limit. Total CC Debt row. Inline target date form saves goal via `POST /weekly/paydown-goal`. Progress bar with linear pace calculation: `expected = start_balance × (1 - days_elapsed / total_days)`. Shows "On pace" (green) or "Behind" (red) with percentage complete and days remaining. Preserves start_date/start_balance on target date updates, snapshots current total on first set.
+5. **Week navigation** — ISO week format (`2026-W11`). URL param `?w=2026-W11`. Prev/next arrows. Current week shows "This Week (Mar 9–15)", other weeks show "Week of Mar 2–8". `_week_bounds()` computes Monday–Sunday from ISO week string.
+6. **Blueprint registration** — `weekly_bp` registered in `web/__init__.py`. Sidebar link between "To Do" and "Cash Flow", gated for non-LL entities (`entity_key != 'luxelegacy'`).
+7. **CSS** — ~360 lines of `.wk-*` styles: nav strip, KPI band, bills table, category bars, warnings, CC paydown section (`.wk-cc-*` for rows, utilization bars, pace indicator, progress bar, target form). Responsive at 600px breakpoint.
 
 ### 2026-03-10 — Category audit + centralized exclusions + Migration 55 + data fixes
 Comprehensive category audit after Personal expanded to 35 categories and BFM to 32. Centralized exclusion lists, fixed stale references, and resolved two production data issues.

@@ -28,6 +28,9 @@
     <div class="sb-nav">
         <a href="{{ url_for('dashboard.index') }}" class="sb-link {% if request.path == '/' %}active{% endif %}">Dashboard</a>
         <a href="{{ url_for('todo.index') }}" class="sb-link {% if request.path.startswith('/todo') %}active{% endif %}">To Do</a>
+        {% if entity_key != 'luxelegacy' %}
+        <a href="{{ url_for('weekly.index') }}" class="sb-link {% if request.path.startswith('/weekly') %}active{% endif %}">Weekly</a>
+        {% endif %}
         <a href="{{ url_for('cashflow.index') }}" class="sb-link {% if request.path.startswith('/cashflow') %}active{% endif %}">Cash Flow</a>
         {% if entity_key != 'luxelegacy' %}
         <a href="{{ url_for('short_term_planning.index') }}" class="sb-link {% if request.path.startswith('/planning/short-term') %}active{% endif %}">Short-Term Planning</a>
