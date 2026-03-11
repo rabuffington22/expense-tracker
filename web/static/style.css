@@ -8936,24 +8936,22 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
 .wf-payoff-text strong { color: var(--text); font-weight: 700; }
 
 /* ── Target section labels ──────────────────────────────────────────────── */
-/* ── Target scenario inputs ────────────────────────────────────────────── */
-.wf-target-inputs {
+/* ── Target mode toggle + input ────────────────────────────────────────── */
+.wf-mode-section {
     display: flex;
-    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
     margin-bottom: 1.25rem;
-    padding: 0 0.2rem;
+}
+.wf-mode-toggle {
+    margin-bottom: 0.2rem;
 }
 .wf-target-input-group {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.2rem;
-}
-.wf-target-input-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--text-muted);
 }
 .wf-target-input-wrap {
     display: inline-flex;
@@ -8974,14 +8972,18 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
     color: var(--text);
     width: 110px;
     padding: 0.1rem 0;
+    text-align: center;
     -webkit-appearance: none;
 }
 .wf-target-input:focus {
     border-bottom-color: var(--blue) !important;
     box-shadow: none !important;
 }
-@media (max-width: 600px) {
-    .wf-target-inputs { flex-direction: column; gap: 0.75rem; }
+.wf-target-summary {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: center;
 }
 
 .wf-target-section-label {
@@ -9062,7 +9064,7 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
 :root[data-theme="light"] .wf-payoff { border-top-color: rgba(0,0,0,0.06); }
 :root[data-theme="light"] .wf-wf-connector { opacity: 0.3; }
 :root[data-theme="light"] .wf-target-input {
-    border-bottom-color: rgba(0,0,0,0.15);
+    border-bottom-color: rgba(0,0,0,0.15) !important;
 }
 :root[data-theme="light"] .wf-bridge-line {
     background: linear-gradient(90deg,

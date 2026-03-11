@@ -310,28 +310,37 @@ def index():
 
     personal_budgets = _get_personal_budget_totals()
 
-    # Allow URL overrides for scenario modeling
-    try:
-        target_revenue = int(float(request.args.get("target_revenue", 0)) * 100) or _TARGET_REVENUE
-    except (ValueError, TypeError):
-        target_revenue = _TARGET_REVENUE
-    try:
-        owner_salary_override = request.args.get("owner_salary")
-        owner_gross_input = int(float(owner_salary_override) * 100) if owner_salary_override else _OWNER_SALARY_GROSS
-    except (ValueError, TypeError):
-        owner_gross_input = _OWNER_SALARY_GROSS
+    # ── Two-mode scenario modeling ────────────────────────────────────────
+    # Revenue mode (default): set revenue target, salary = surplus
+    # Salary mode: set desired salary, revenue = back-calculated
+    target_mode = request.args.get("mode", "revenue")
+    if target_mode not in ("revenue", "salary"):
+        target_mode = "revenue"
+
     target_staff_payroll = bfm_budgets["staff_payroll_cents"]
     target_bfm_fixed = bfm_budgets["fixed_cents"]
     target_bfm_operating = bfm_budgets["operating_cents"]
-    target_bfm_surplus = (target_revenue - target_staff_payroll
-                          - target_bfm_fixed - target_bfm_operating)
+    bfm_costs = target_staff_payroll + target_bfm_fixed + target_bfm_operating
 
-    # Default owner salary to BFM surplus (can't pay yourself more than you earn)
-    # URL override still respected for scenario modeling
-    if not owner_salary_override:
-        owner_gross = max(target_bfm_surplus, 0)
+    if target_mode == "salary":
+        # Salary mode: desired gross salary → required revenue
+        try:
+            owner_gross = int(float(request.args.get("owner_salary", 0)) * 100)
+        except (ValueError, TypeError):
+            owner_gross = _OWNER_SALARY_GROSS
+        if owner_gross <= 0:
+            owner_gross = _OWNER_SALARY_GROSS
+        target_revenue = owner_gross + bfm_costs
+        target_bfm_surplus = owner_gross
     else:
-        owner_gross = owner_gross_input
+        # Revenue mode: revenue target → surplus → salary
+        try:
+            target_revenue = int(float(request.args.get("target_revenue", 0)) * 100) or _TARGET_REVENUE
+        except (ValueError, TypeError):
+            target_revenue = _TARGET_REVENUE
+        target_bfm_surplus = target_revenue - bfm_costs
+        owner_gross = max(target_bfm_surplus, 0)
+
     owner_take_home = int(owner_gross * (10000 - _EFFECTIVE_TAX_RATE_BPS) / 10000)
 
     personal_fixed = personal_budgets["fixed_cents"]
@@ -416,12 +425,14 @@ def index():
         total_expenses=total_expenses,
         surplus_cents=surplus_cents,
         # Target waterfall
+        target_mode=target_mode,
         target_bfm_rows=target_bfm_rows,
         target_personal_rows=target_personal_rows,
         target_revenue=target_revenue,
         owner_gross=owner_gross,
         owner_take_home=owner_take_home,
         target_bfm_surplus=target_bfm_surplus,
+        bfm_costs=bfm_costs,
         personal_remaining=personal_remaining,
         # Personal debt
         cc_cards=cc_cards,

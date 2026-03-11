@@ -144,21 +144,26 @@
      ═══════════════════════════════════════════════════════════════════ -->
 <div id="wf-view-target" hidden>
 
-<!-- ── Target Inputs ──────────────────────────────────────────────────── -->
-<div class="wf-target-inputs">
+<!-- ── Mode Toggle + Input ────────────────────────────────────────────── -->
+<div class="wf-mode-section">
+  <div class="wf-segmented wf-mode-toggle">
+    <button type="button" class="wf-seg-btn {% if target_mode == 'revenue' %}wf-seg-btn--active{% endif %}"
+            onclick="wfSetMode('revenue')">Revenue Target</button>
+    <button type="button" class="wf-seg-btn {% if target_mode == 'salary' %}wf-seg-btn--active{% endif %}"
+            onclick="wfSetMode('salary')">Desired Salary</button>
+  </div>
   <div class="wf-target-input-group">
-    <label class="wf-target-input-label">Revenue Target</label>
-    <span class="wf-target-input-wrap">$<input type="text" class="wf-target-input" id="wf-input-revenue"
-           value="{{ '{:,.0f}'.format(target_revenue / 100) }}"
+    <span class="wf-target-input-wrap">$<input type="text" class="wf-target-input" id="wf-input-value"
+           value="{% if target_mode == 'salary' %}{{ '{:,.0f}'.format(owner_gross / 100) }}{% else %}{{ '{:,.0f}'.format(target_revenue / 100) }}{% endif %}"
            onkeydown="if(event.key==='Enter'){wfApplyTargets();}"
            inputmode="numeric"></span>
   </div>
-  <div class="wf-target-input-group">
-    <label class="wf-target-input-label">Owner Salary (gross)</label>
-    <span class="wf-target-input-wrap">$<input type="text" class="wf-target-input" id="wf-input-salary"
-           value="{{ '{:,.0f}'.format(owner_gross / 100) }}"
-           onkeydown="if(event.key==='Enter'){wfApplyTargets();}"
-           inputmode="numeric"></span>
+  <div class="wf-target-summary" id="wf-target-summary">
+    {% if target_mode == 'salary' %}
+      Revenue needed: {{ fmt_dollars(target_revenue) }} &nbsp;→&nbsp; Surplus {{ fmt_dollars(target_bfm_surplus) }} &nbsp;→&nbsp; Take-home {{ fmt_dollars(owner_take_home) }}
+    {% else %}
+      Surplus {{ fmt_dollars(target_bfm_surplus) }} &nbsp;→&nbsp; Salary {{ fmt_dollars(owner_gross) }} &nbsp;→&nbsp; Take-home {{ fmt_dollars(owner_take_home) }}
+    {% endif %}
   </div>
 </div>
 
@@ -370,20 +375,44 @@ function wfSwitch(mode) {
     });
 }
 
-/* ── Apply target inputs ───────────────────────────────────────── */
+/* ── Mode toggle (Revenue / Salary) ─────────────────────────────── */
+var _wfMode = '{{ target_mode }}';
+
+function wfSetMode(mode) {
+    _wfMode = mode;
+    /* Toggle active seg button */
+    document.querySelectorAll('.wf-mode-toggle .wf-seg-btn').forEach(function(btn) {
+        btn.classList.toggle('wf-seg-btn--active', btn.textContent.trim() ===
+            (mode === 'salary' ? 'Desired Salary' : 'Revenue Target'));
+    });
+    /* Swap input value — clear and focus */
+    var inp = document.getElementById('wf-input-value');
+    inp.value = '';
+    inp.focus();
+}
+
+/* ── Apply target input ────────────────────────────────────────── */
 function wfApplyTargets() {
-    var rev = document.getElementById('wf-input-revenue').value.replace(/[^0-9.]/g, '');
-    var sal = document.getElementById('wf-input-salary').value.replace(/[^0-9.]/g, '');
+    var val = document.getElementById('wf-input-value').value.replace(/[^0-9.]/g, '');
+    if (!val) return;
     var url = new URL(window.location);
-    if (rev) url.searchParams.set('target_revenue', rev);
-    if (sal) url.searchParams.set('owner_salary', sal);
+    /* Clear both params, set only the active one */
+    url.searchParams.delete('target_revenue');
+    url.searchParams.delete('owner_salary');
+    if (_wfMode === 'salary') {
+        url.searchParams.set('owner_salary', val);
+        url.searchParams.set('mode', 'salary');
+    } else {
+        url.searchParams.set('target_revenue', val);
+        url.searchParams.set('mode', 'revenue');
+    }
     window.location = url.toString();
 }
 
 /* Animate bars on load — auto-open Target if URL has target params */
 document.addEventListener('DOMContentLoaded', function() {
     var params = new URLSearchParams(window.location.search);
-    var startView = (params.has('target_revenue') || params.has('owner_salary')) ? 'target' : 'actual';
+    var startView = (params.has('target_revenue') || params.has('owner_salary') || params.has('mode')) ? 'target' : 'actual';
     if (startView === 'target') {
         wfSwitch('target');
     } else {
