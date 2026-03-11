@@ -339,6 +339,15 @@ def index():
     if target_mode not in ("revenue", "takehome"):
         target_mode = "revenue"
 
+    # Adjustable effective tax rate (URL param overrides default)
+    try:
+        tax_rate_pct = float(request.args.get("tax_rate", _EFFECTIVE_TAX_RATE_BPS / 100))
+    except (ValueError, TypeError):
+        tax_rate_pct = _EFFECTIVE_TAX_RATE_BPS / 100
+    tax_rate_bps = int(round(tax_rate_pct * 100))
+    if tax_rate_bps < 0 or tax_rate_bps > 9999:
+        tax_rate_bps = _EFFECTIVE_TAX_RATE_BPS
+
     target_staff_payroll = bfm_budgets["staff_payroll_cents"]
     target_bfm_fixed = bfm_budgets["fixed_cents"]
     target_bfm_operating = bfm_budgets["operating_cents"]
@@ -352,9 +361,9 @@ def index():
             desired_take_home = 0
         if desired_take_home <= 0:
             # Default: back-calculate from _OWNER_SALARY_GROSS
-            desired_take_home = int(_OWNER_SALARY_GROSS * (10000 - _EFFECTIVE_TAX_RATE_BPS) / 10000)
+            desired_take_home = int(_OWNER_SALARY_GROSS * (10000 - tax_rate_bps) / 10000)
         # Gross = take_home / (1 - tax_rate)
-        owner_gross = int(desired_take_home * 10000 / (10000 - _EFFECTIVE_TAX_RATE_BPS))
+        owner_gross = int(desired_take_home * 10000 / (10000 - tax_rate_bps))
         target_revenue = owner_gross + bfm_costs
         target_bfm_surplus = owner_gross
     else:
@@ -366,7 +375,7 @@ def index():
         target_bfm_surplus = target_revenue - bfm_costs
         owner_gross = max(target_bfm_surplus, 0)
 
-    owner_take_home = int(owner_gross * (10000 - _EFFECTIVE_TAX_RATE_BPS) / 10000)
+    owner_take_home = int(owner_gross * (10000 - tax_rate_bps) / 10000)
 
     personal_fixed = personal_budgets["fixed_cents"]
     personal_variable = personal_budgets["variable_cents"]
@@ -463,6 +472,7 @@ def index():
         owner_take_home=owner_take_home,
         target_bfm_surplus=target_bfm_surplus,
         bfm_costs=bfm_costs,
+        tax_rate_pct=tax_rate_pct,
         personal_remaining=personal_remaining,
         # Target tooltip data (category → budget)
         bfm_fixed_tip=bfm_budgets.get("fixed_items", []),
