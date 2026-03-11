@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}Waterfall — The Ledger{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Waterfall</h1>
+  <button type="button" class="joker-btn" onclick="aiChatOpen('waterfall')" title="Ask Opus" aria-label="Ask Opus">
+    <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
+  </button>
+</div>
+
+{% if not has_data %}
+<div class="outline-panel" style="text-align:center; padding:2rem;">
+  <p style="color:var(--text-muted);">No BFM transaction data found.</p>
+</div>
+{% else %}
+
+<!-- ── Month Navigator ──────────────────────────────────────────────── -->
+<div class="wf-nav">
+  {% if prev_month %}
+  <a href="?month={{ prev_month }}" class="wf-nav-arrow">&#8249;</a>
+  {% else %}
+  <span class="wf-nav-arrow wf-nav-arrow--disabled">&#8249;</span>
+  {% endif %}
+  <span class="wf-nav-label">{{ month_label }}</span>
+  {% if next_month %}
+  <a href="?month={{ next_month }}" class="wf-nav-arrow">&#8250;</a>
+  {% else %}
+  <span class="wf-nav-arrow wf-nav-arrow--disabled">&#8250;</span>
+  {% endif %}
+</div>
+
+<!-- ── KPI Band ─────────────────────────────────────────────────────── -->
+<div class="wf-kpi-band">
+  <div class="wf-kpi">
+    <div class="wf-kpi-label">BFM REVENUE</div>
+    <div class="wf-kpi-value">{{ fmt_dollars(income_cents) }}</div>
+  </div>
+  <div class="wf-kpi">
+    <div class="wf-kpi-label">TOTAL EXPENSES</div>
+    <div class="wf-kpi-value">{{ fmt_dollars(total_expenses) }}</div>
+  </div>
+  <div class="wf-kpi">
+    <div class="wf-kpi-label">SURPLUS</div>
+    <div class="wf-kpi-value {% if surplus_cents >= 0 %}wf-positive{% else %}wf-negative{% endif %}">
+      {{ fmt_dollars(surplus_cents) }}
+    </div>
+  </div>
+</div>
+
+<!-- ── Business Waterfall ───────────────────────────────────────────── -->
+<div class="wf-section">
+  <div class="section-title">Business Waterfall</div>
+  <div class="outline-panel">
+    <!-- Gross Revenue -->
+    <div class="wf-flow-row wf-flow-row--income">
+      <span class="wf-flow-label">Gross Revenue</span>
+      <span class="wf-flow-value wf-positive">{{ fmt_dollars(income_cents) }}</span>
+    </div>
+
+    <!-- Fixed Costs (collapsible) -->
+    <div class="wf-flow-row wf-flow-row--expense" onclick="wfToggle('fixed')">
+      <span class="wf-flow-label">
+        <span class="wf-chevron" id="wf-chevron-fixed">&#9654;</span>
+        Fixed Costs
+      </span>
+      <span class="wf-flow-value wf-negative">{{ fmt_dollars(fixed_total) }}</span>
+    </div>
+    <div class="wf-detail-rows" id="wf-detail-fixed" hidden>
+      {% for item in fixed_costs %}
+      <div class="wf-detail-row">
+        <span class="wf-detail-name">{{ item.category }}</span>
+        <span class="wf-detail-value">{{ fmt_dollars(item.spent_cents) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Operating Costs (collapsible) -->
+    <div class="wf-flow-row wf-flow-row--expense" onclick="wfToggle('operating')">
+      <span class="wf-flow-label">
+        <span class="wf-chevron" id="wf-chevron-operating">&#9654;</span>
+        Operating Costs
+      </span>
+      <span class="wf-flow-value wf-negative">{{ fmt_dollars(operating_total) }}</span>
+    </div>
+    <div class="wf-detail-rows" id="wf-detail-operating" hidden>
+      {% for item in operating_costs %}
+      <div class="wf-detail-row">
+        <span class="wf-detail-name">{{ item.category }}</span>
+        <span class="wf-detail-value">{{ fmt_dollars(item.spent_cents) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Divider + Surplus -->
+    <div class="wf-divider"></div>
+    <div class="wf-flow-row wf-flow-row--surplus">
+      <span class="wf-flow-label">Available for Personal</span>
+      <span class="wf-flow-value {% if surplus_cents >= 0 %}wf-positive{% else %}wf-negative{% endif %}">
+        {{ fmt_dollars(surplus_cents) }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Personal Credit Card Debt ────────────────────────────────────── -->
+{% if cc_cards %}
+<div class="wf-section">
+  <div class="section-title">Personal Credit Card Debt</div>
+  <div class="outline-panel">
+    {% for card in cc_cards %}
+    <div class="wk-cc-row">
+      <span class="wk-cc-name">{{ card.name }}</span>
+      <span class="wk-cc-balance">{{ fmt_dollars(card.balance_cents) }}</span>
+      <div class="wk-cc-bar-track">
+        <div class="wk-cc-bar {% if card.pct > 80 %}wk-cc-bar--over{% elif card.pct > 50 %}wk-cc-bar--warn{% endif %}"
+             style="width: {{ card.pct }}%;"></div>
+      </div>
+      {% if card.limit_cents > 0 %}
+      <span class="wk-cc-limit">of {{ fmt_dollars(card.limit_cents) }}</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="wk-cc-total-row">
+      <span class="wk-cc-total-label">Total CC Debt</span>
+      <span class="wk-cc-total-value">{{ fmt_dollars(cc_total) }}</span>
+    </div>
+
+    {% if payoff_estimate %}
+    <div class="wf-payoff">
+      <span class="wf-payoff-text">
+        At {{ fmt_dollars(avg_surplus) }}/mo surplus → CCs paid off in
+        <strong>{{ payoff_estimate.months }} months</strong>
+        ({{ fmt_month_full(payoff_estimate.payoff_date_ym) }})
+      </span>
+    </div>
+    {% elif avg_surplus <= 0 and cc_total > 0 %}
+    <div class="wf-payoff">
+      <span class="wf-payoff-text wf-negative">No surplus available for paydown</span>
+    </div>
+    {% endif %}
+
+    {% if paydown_pace %}
+    <div class="wk-cc-pace">
+      {% if paydown_pace.on_pace %}
+      <div class="wk-cc-pace-text wk-positive">
+        On pace — {{ paydown_pace.pct_complete }}% paid off
+      </div>
+      {% else %}
+      <div class="wk-cc-pace-text wk-negative">
+        Behind — expected {{ fmt_dollars(paydown_pace.expected_cents) }} by now
+      </div>
+      {% endif %}
+      <div class="wk-cc-progress-track">
+        <div class="wk-cc-progress {% if paydown_pace.on_pace %}wk-cc-progress--ok{% else %}wk-cc-progress--behind{% endif %}"
+             style="width: {{ paydown_pace.pct_complete }}%;"></div>
+      </div>
+      <div class="wk-cc-pace-meta">
+        {{ paydown_pace.days_remaining }} days remaining · Target {{ paydown_pace.target_date }}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Other Liabilities ────────────────────────────────────────────── -->
+{% if liabilities %}
+<div class="wf-section">
+  <div class="section-title">Other Liabilities</div>
+  <div class="outline-panel">
+    {% for lia in liabilities %}
+    <div class="wf-lia-row">
+      <span class="wf-lia-name">{{ lia.name }}</span>
+      <span class="wf-lia-balance">{{ fmt_dollars(lia.current_value_cents) }}</span>
+      {% if lia.annual_rate_bps and lia.annual_rate_bps > 0 %}
+      <span class="wf-lia-rate">{{ '%.2f'|format(lia.annual_rate_bps / 100) }}%</span>
+      {% else %}
+      <span class="wf-lia-rate">0%</span>
+      {% endif %}
+      <span class="wf-lia-payment">{{ fmt_dollars(lia.monthly_payment_cents) }}/mo</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Surplus Trend ────────────────────────────────────────────────── -->
+{% if trend|length > 1 %}
+<div class="wf-section">
+  <div class="section-title">Surplus Trend</div>
+  <div class="outline-panel">
+    <div class="chart-bars wf-trend-chart">
+      {% for t in trend %}
+      <div class="chart-col {% if t.month == month %}chart-col--selected{% endif %}">
+        <div class="chart-value {% if t.surplus_cents < 0 %}wf-negative{% endif %}">
+          {{ fmt_dollars(t.surplus_cents) }}
+        </div>
+        <div class="chart-track">
+          {% set pct = ((t.surplus_cents|abs * 100) / max_abs)|int %}
+          <div class="chart-fill {% if t.surplus_cents < 0 %}wf-bar-negative{% endif %} {% if t.month == month %}chart-fill--selected{% endif %}"
+               style="height: {{ [pct, 100]|min }}%;"></div>
+        </div>
+        <div class="chart-label">{{ fmt_month_short(t.month) }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<script>
+function wfToggle(section) {
+    var detail = document.getElementById('wf-detail-' + section);
+    var chevron = document.getElementById('wf-chevron-' + section);
+    if (detail.hidden) {
+        detail.hidden = false;
+        chevron.classList.add('wf-chevron--open');
+    } else {
+        detail.hidden = true;
+        chevron.classList.remove('wf-chevron--open');
+    }
+}
+</script>
+
+{% endif %}
+{% endblock %}

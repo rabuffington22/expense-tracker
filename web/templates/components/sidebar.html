@@ -30,6 +30,7 @@
         <a href="{{ url_for('todo.index') }}" class="sb-link {% if request.path.startswith('/todo') %}active{% endif %}">To Do</a>
         {% if entity_key != 'luxelegacy' %}
         <a href="{{ url_for('weekly.index') }}" class="sb-link {% if request.path.startswith('/weekly') %}active{% endif %}">Weekly</a>
+        <a href="{{ url_for('waterfall.index') }}" class="sb-link {% if request.path.startswith('/waterfall') %}active{% endif %}">Waterfall</a>
         {% endif %}
         <a href="{{ url_for('cashflow.index') }}" class="sb-link {% if request.path.startswith('/cashflow') %}active{% endif %}">Cash Flow</a>
         {% if entity_key != 'luxelegacy' %}

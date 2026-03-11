@@ -8440,3 +8440,163 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
         display: none;
     }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* WATERFALL PAGE                                                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Month Navigator ──────────────────────────────────────────────────────── */
+.wf-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.wf-nav-arrow {
+    font-size: 1.6rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    transition: background 0.15s;
+    cursor: pointer;
+    user-select: none;
+}
+.wf-nav-arrow:hover { background: var(--hover-bg); color: var(--text); }
+.wf-nav-arrow--disabled { opacity: 0.25; pointer-events: none; }
+.wf-nav-label {
+    font-size: 1.3rem;
+    font-weight: 700;
+    min-width: 160px;
+    text-align: center;
+}
+
+/* ── KPI Band ─────────────────────────────────────────────────────────────── */
+.wf-kpi-band {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+.wf-kpi { text-align: center; min-width: 120px; }
+.wf-kpi-label {
+    font-size: var(--ui-font-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--label-tracking);
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+}
+.wf-kpi-value { font-size: 1.5rem; font-weight: 700; }
+.wf-positive { color: var(--green); }
+.wf-negative { color: var(--red); }
+
+/* ── Section spacing ──────────────────────────────────────────────────────── */
+.wf-section { margin-bottom: 1.5rem; }
+
+/* ── Waterfall flow rows ──────────────────────────────────────────────────── */
+.wf-flow-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.wf-flow-row:last-child { border-bottom: none; }
+.wf-flow-row--expense { cursor: pointer; border-radius: 6px; }
+.wf-flow-row--expense:hover { background: var(--hover-bg); }
+.wf-flow-label { font-size: 0.92rem; font-weight: 600; }
+.wf-flow-value {
+    font-size: 0.92rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.wf-flow-row--surplus { padding-top: 0.8rem; }
+.wf-flow-row--surplus .wf-flow-label { font-size: 1rem; font-weight: 700; }
+.wf-flow-row--surplus .wf-flow-value { font-size: 1.1rem; }
+
+/* ── Chevron ──────────────────────────────────────────────────────────────── */
+.wf-chevron {
+    display: inline-block;
+    font-size: 0.6rem;
+    margin-right: 0.4rem;
+    transition: transform 0.2s ease;
+    color: var(--text-muted);
+}
+.wf-chevron--open { transform: rotate(90deg); }
+
+/* ── Detail rows (indented categories) ────────────────────────────────────── */
+.wf-detail-rows { padding-left: 1.4rem; }
+.wf-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0.4rem;
+    font-size: var(--ui-font-base);
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.wf-detail-row:last-child { border-bottom: none; }
+.wf-detail-name { font-weight: 500; }
+.wf-detail-value { font-variant-numeric: tabular-nums; }
+
+/* ── Divider ──────────────────────────────────────────────────────────────── */
+.wf-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+    margin: 0.5rem 0;
+}
+
+/* ── Payoff estimate ──────────────────────────────────────────────────────── */
+.wf-payoff {
+    padding: 0.6rem 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 0.5rem;
+}
+.wf-payoff-text {
+    font-size: var(--ui-font-base);
+    color: var(--text-secondary);
+}
+.wf-payoff-text strong { color: var(--text); font-weight: 700; }
+
+/* ── Liabilities rows ─────────────────────────────────────────────────────── */
+.wf-lia-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0.4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.wf-lia-row:last-child { border-bottom: none; }
+.wf-lia-name { flex: 1; font-weight: 600; font-size: 0.92rem; }
+.wf-lia-balance { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 0.92rem; }
+.wf-lia-rate { color: var(--text-muted); font-size: var(--ui-font-sm); min-width: 3.5rem; text-align: right; }
+.wf-lia-payment { color: var(--text-secondary); font-size: var(--ui-font-sm); min-width: 5.5rem; text-align: right; }
+
+/* ── Surplus trend chart ──────────────────────────────────────────────────── */
+.wf-trend-chart { height: 180px; }
+.wf-bar-negative {
+    background: linear-gradient(180deg, rgba(248,113,113,0.85), rgba(248,113,113,0.55)) !important;
+}
+.wf-bar-negative::after { display: none; }
+
+/* ── Light mode overrides ─────────────────────────────────────────────────── */
+:root[data-theme="light"] .wf-flow-row { border-bottom-color: rgba(0,0,0,0.06); }
+:root[data-theme="light"] .wf-detail-row { border-bottom-color: rgba(0,0,0,0.04); }
+:root[data-theme="light"] .wf-divider { background: rgba(0,0,0,0.10); }
+:root[data-theme="light"] .wf-payoff { border-top-color: rgba(0,0,0,0.06); }
+:root[data-theme="light"] .wf-lia-row { border-bottom-color: rgba(0,0,0,0.04); }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .wf-kpi-band { flex-direction: column; gap: 0.5rem; padding: 0.75rem; }
+    .wf-kpi-value { font-size: 1.2rem; }
+    .wf-nav-label { font-size: 1.1rem; min-width: 120px; }
+    .wf-lia-row { flex-wrap: wrap; gap: 0.5rem; }
+    .wf-lia-rate, .wf-lia-payment { font-size: var(--ui-font-xs); }
+    .wf-trend-chart { height: 140px; }
+}

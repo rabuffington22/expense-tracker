@@ -70,6 +70,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     payroll.py                     # GET/POST /payroll (employee roster, Phoenix import, role spending)
     short_term_planning.py         # GET/POST /planning/short-term (budgets, action items, goals)
     weekly.py                      # GET/POST /weekly (weekly check-in, bills, CC paydown)
+    waterfall.py                   # GET /waterfall (BFM surplus to personal debt paydown)
     reports.py                     # GET /reports (monthly detail + spending trend)
     ai.py                          # POST /ai/ask, /ai/clear (global Ask Opus chat, per-page context)
     plaid.py                       # GET/POST /plaid (connect, sync, disconnect)
@@ -109,6 +110,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     payroll.html                   # Employee roster, role spending, Phoenix import
     reports.html                   # Two-section layout: monthly detail + spending trend
     weekly.html                    # Weekly check-in: KPI, CC paydown, bills, scorecard
+    waterfall.html                 # BFM surplus waterfall to personal debt
     plaid.html                     # Connected Accounts (Plaid Link)
     upload.html                    # Import tab + Settings tab
     upload_dialog.html             # File upload + preview/confirm
@@ -165,6 +167,7 @@ Pattern used across routes:
 - **Planning** -- Long-term net worth projections (assets + liabilities at milestone ages, inflation-adjusted)
 - **Payroll** -- Employee roster, Phoenix/CyberPayroll import, role-based spending (BFM only)
 - **Weekly** -- Weekly check-in: KPI band (spent/pace/remaining), credit card paydown tracker with per-card utilization bars and target-date pace indicator, this week's bills (from 5 data sources), last week scorecard (top categories, burn rate, warnings). ISO week navigation (Mon–Sun). Hidden for LL entity.
+- **Waterfall** -- BFM surplus to personal debt paydown. Monthly view showing business revenue → fixed costs → operating costs → surplus. Personal CC debt with utilization bars and payoff estimate. Other liabilities (mortgages/loans). 6-month surplus trend chart. Cross-entity (always queries BFM + Personal). Hidden for LL entity.
 - **Reports** -- Monthly detail + spending trend (pure CSS bar chart)
 - **Connected Accounts** -- Plaid Link, sync, disconnect
 - **Kristine's Dashboard** (`/k/`) -- Public (no auth), mobile-first page for Kristine. Shows Personal Focus budget status (categories, subcategories, transaction drill-down), Luxe Legacy business summary, account balances (BOA Primary, LL, Apple Card), and praise/gamification. Light blue and pink theme. Standalone template (no sidebar/base.html).
@@ -385,6 +388,19 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-10 — Waterfall page: BFM surplus to personal debt paydown
+New `/waterfall` page showing monthly business cash flow waterfall and personal debt targets.
+
+1. **Waterfall route (`web/routes/waterfall.py`)** — New blueprint at `/waterfall`. Cross-entity page that always queries both `company.sqlite` (BFM income/expenses) and `personal.sqlite` (CC balances, mortgages). Month navigation via `?month=YYYY-MM`. LL entity redirects to dashboard.
+2. **KPI band** — Three cells: BFM Revenue, Total Expenses, Surplus (green when positive, red when negative).
+3. **Business Waterfall breakdown** — Stacked flow rows: Gross Revenue → Fixed Costs (collapsible, shows Payroll, Facilities, EIDL Loan, etc.) → Operating Costs (collapsible, shows IT, Medical Supplies, Software, etc.) → divider → Available for Personal. Expense grouping from `_get_budget_status()` budget_section field (fixed vs focus/other/none).
+4. **Personal CC Debt section** — Reuses `.wk-cc-*` CSS classes from Weekly page. Per-card utilization bars, total debt, payoff estimate ("At $X/mo surplus → CCs paid off in N months"), and pace indicator from existing `cc_paydown_goal`.
+5. **Other Liabilities** — Personal mortgages/loans from `planning_items` table with balance, rate, and monthly payment.
+6. **Surplus Trend chart** — Last 6 months of BFM surplus as pure CSS bar chart (reuses `.chart-*` classes from Reports). Selected month highlighted. Negative surplus months shown in red bars.
+7. **Data reuse** — No new database tables. Imports: `_get_budget_status()` from STP, `_get_cc_balances()`/`_get_paydown_goal()`/`_compute_paydown_pace()` from weekly.py, `_get_items()` from planning.py, `get_available_months()`/`effective_txns_cte()`/`exclude_sql()` from reporting.py.
+8. **CSS** — ~170 lines of `.wf-*` styles (nav, KPI band, flow rows, chevron toggle, detail rows, divider, payoff estimate, liability rows, trend chart overrides). Light mode overrides. Responsive at 600px.
+9. **Sidebar link** — "Waterfall" between Weekly and Cash Flow, gated for non-LL entities.
 
 ### 2026-03-10 — Weekly Check-In page + CC Paydown tracker (Migration 56)
 New `/weekly` page with ISO week navigation, spending pace tracking, credit card paydown goals, and bill aggregation from 5 data sources.
