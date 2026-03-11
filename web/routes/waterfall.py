@@ -145,6 +145,8 @@ def _get_bfm_budget_totals(conn, month: str) -> dict:
     payroll_budget = 0
     fixed_no_payroll = 0
     operating_budget = 0
+    fixed_items = []
+    operating_items = []
 
     for item in budget_status:
         sec = item.get("budget_section")
@@ -156,17 +158,25 @@ def _get_bfm_budget_totals(conn, month: str) -> dict:
                 payroll_budget = budget
             else:
                 fixed_no_payroll += budget
+                if budget > 0:
+                    fixed_items.append({"c": cat, "v": budget})
         elif sec in ("focus", "other") or sec is None:
             operating_budget += budget
+            if budget > 0:
+                operating_items.append({"c": cat, "v": budget})
 
     # Staff payroll = full payroll budget (owner not on payroll, takes draws)
     staff_payroll = payroll_budget
+    fixed_items.sort(key=lambda x: x["v"], reverse=True)
+    operating_items.sort(key=lambda x: x["v"], reverse=True)
 
     return {
         "staff_payroll_cents": staff_payroll,
         "fixed_cents": fixed_no_payroll,
         "operating_cents": operating_budget,
         "payroll_budget_cents": payroll_budget,
+        "fixed_items": fixed_items,
+        "operating_items": operating_items,
     }
 
 
@@ -190,19 +200,31 @@ def _get_personal_budget_totals() -> dict:
 
     fixed = 0
     variable = 0
+    fixed_items = []
+    variable_items = []
 
     for item in budget_status:
         sec = item.get("budget_section")
+        cat = item.get("category", "")
         budget = item.get("budget_cents", 0)
         if sec == "fixed":
             fixed += budget
+            if budget > 0:
+                fixed_items.append({"c": cat, "v": budget})
         elif sec in ("focus", "other") or sec is None:
             variable += budget
+            if budget > 0:
+                variable_items.append({"c": cat, "v": budget})
+
+    fixed_items.sort(key=lambda x: x["v"], reverse=True)
+    variable_items.sort(key=lambda x: x["v"], reverse=True)
 
     return {
         "fixed_cents": fixed,
         "variable_cents": variable,
         "total_cents": fixed + variable,
+        "fixed_items": fixed_items,
+        "variable_items": variable_items,
     }
 
 
@@ -424,6 +446,11 @@ def index():
         operating_total=operating_total,
         total_expenses=total_expenses,
         surplus_cents=surplus_cents,
+        # Actual tooltip data (category → spent)
+        actual_fixed_tip=[{"c": x["category"], "v": x["spent_cents"]}
+                          for x in sections.get("fixed", []) if x["spent_cents"] > 0],
+        actual_operating_tip=[{"c": x["category"], "v": x["spent_cents"]}
+                              for x in operating_items if x.get("spent_cents", 0) > 0],
         # Target waterfall
         target_mode=target_mode,
         target_bfm_rows=target_bfm_rows,
@@ -434,6 +461,11 @@ def index():
         target_bfm_surplus=target_bfm_surplus,
         bfm_costs=bfm_costs,
         personal_remaining=personal_remaining,
+        # Target tooltip data (category → budget)
+        bfm_fixed_tip=bfm_budgets.get("fixed_items", []),
+        bfm_operating_tip=bfm_budgets.get("operating_items", []),
+        personal_fixed_tip=personal_budgets.get("fixed_items", []),
+        personal_variable_tip=personal_budgets.get("variable_items", []),
         # Personal debt
         cc_cards=cc_cards,
         cc_total=cc_total,

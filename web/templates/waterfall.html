@@ -69,7 +69,9 @@
   <div class="wf-chart-panel outline-panel">
     <div class="wf-waterfall">
       {% for row in chart_rows %}
-      <div class="wf-wf-row">
+      <div class="wf-wf-row"
+           {%- if row.label == 'Fixed Costs' and actual_fixed_tip %} data-tip='{{ actual_fixed_tip|tojson }}'{% endif %}
+           {%- if row.label == 'Operating' and actual_operating_tip %} data-tip='{{ actual_operating_tip|tojson }}'{% endif %}>
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">
@@ -174,7 +176,9 @@
   <div class="wf-chart-panel outline-panel">
     <div class="wf-waterfall">
       {% for row in target_bfm_rows %}
-      <div class="wf-wf-row">
+      <div class="wf-wf-row"
+           {%- if row.label == 'BFM Fixed' and bfm_fixed_tip %} data-tip='{{ bfm_fixed_tip|tojson }}'{% endif %}
+           {%- if row.label == 'BFM Operating' and bfm_operating_tip %} data-tip='{{ bfm_operating_tip|tojson }}'{% endif %}>
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">
@@ -217,7 +221,9 @@
   <div class="wf-chart-panel outline-panel">
     <div class="wf-waterfall">
       {% for row in target_personal_rows %}
-      <div class="wf-wf-row">
+      <div class="wf-wf-row"
+           {%- if row.label == 'Personal Fixed' and personal_fixed_tip %} data-tip='{{ personal_fixed_tip|tojson }}'{% endif %}
+           {%- if row.label == 'Personal Variable' and personal_variable_tip %} data-tip='{{ personal_variable_tip|tojson }}'{% endif %}>
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">
@@ -331,7 +337,50 @@
 </div>
 {% endif %}
 
+<!-- Shared tooltip -->
+<div class="wf-tip" id="wf-tip" hidden></div>
+
 <script>
+/* ── Bar hover tooltips ──────────────────────────────────────────── */
+(function() {
+    var tip = document.getElementById('wf-tip');
+    function fmtDollars(cents) {
+        var d = Math.round(Math.abs(cents) / 100);
+        return '$' + d.toLocaleString('en-US');
+    }
+    function showTip(el) {
+        var data;
+        try { data = JSON.parse(el.getAttribute('data-tip')); } catch(e) { return; }
+        if (!data || !data.length) return;
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += '<div class="wf-tip-row"><span class="wf-tip-cat">' +
+                data[i].c + '</span><span class="wf-tip-val">' +
+                fmtDollars(data[i].v) + '</span></div>';
+        }
+        tip.innerHTML = html;
+        /* Position near the row, fixed to viewport */
+        var rect = el.getBoundingClientRect();
+        tip.style.position = 'fixed';
+        tip.style.left = rect.left + 'px';
+        /* Show below row; if that overflows viewport, show above */
+        tip.removeAttribute('hidden');
+        var tipH = tip.offsetHeight;
+        var below = rect.bottom + 6;
+        if (below + tipH > window.innerHeight) {
+            tip.style.top = (rect.top - tipH - 6) + 'px';
+        } else {
+            tip.style.top = below + 'px';
+        }
+    }
+    function hideTip() { tip.setAttribute('hidden', ''); }
+
+    document.querySelectorAll('.wf-wf-row[data-tip]').forEach(function(row) {
+        row.addEventListener('mouseenter', function() { showTip(row); });
+        row.addEventListener('mouseleave', hideTip);
+    });
+})();
+
 function wfToggle(section) {
     var detail = document.getElementById('wf-detail-' + section);
     var chevron = document.getElementById('wf-chevron-' + section);
