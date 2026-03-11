@@ -180,21 +180,26 @@ def _get_bfm_budget_totals(conn, month: str) -> dict:
     }
 
 
-def _get_personal_budget_totals() -> dict:
-    """Get personal budget totals grouped into fixed and variable.
+def _get_personal_budget_totals(month: str | None = None) -> dict:
+    """Get personal budget totals AND actual spending grouped into fixed/variable.
 
     Returns dict with:
         fixed_cents: Fixed section budget total
         variable_cents: Focus + Other + None budget totals
-        total_cents: Sum of all
+        total_cents: Sum of all budgets
+        fixed_items: [{c, v}] budget per category (for target tooltips)
+        variable_items: [{c, v}] budget per category
+        actual_fixed_cents: Actual fixed spending for the month
+        actual_variable_cents: Actual variable spending for the month
+        actual_fixed_items: [{c, v}] actual spend per category
+        actual_variable_items: [{c, v}] actual spend per category
     """
     from web.routes.short_term_planning import _get_budget_status
 
     conn = get_connection("personal")
     try:
-        # Use current month for budget lookup (budgets are static per category)
-        current_month = date.today().strftime("%Y-%m")
-        budget_status = _get_budget_status(conn, "personal", current_month)
+        use_month = month or date.today().strftime("%Y-%m")
+        budget_status = _get_budget_status(conn, "personal", use_month)
     finally:
         conn.close()
 
@@ -202,22 +207,35 @@ def _get_personal_budget_totals() -> dict:
     variable = 0
     fixed_items = []
     variable_items = []
+    actual_fixed = 0
+    actual_variable = 0
+    actual_fixed_items = []
+    actual_variable_items = []
 
     for item in budget_status:
         sec = item.get("budget_section")
         cat = item.get("category", "")
         budget = item.get("budget_cents", 0)
+        spent = item.get("spent_cents", 0)
         if sec == "fixed":
             fixed += budget
+            actual_fixed += spent
             if budget > 0:
                 fixed_items.append({"c": cat, "v": budget})
+            if spent > 0:
+                actual_fixed_items.append({"c": cat, "v": spent})
         elif sec in ("focus", "other") or sec is None:
             variable += budget
+            actual_variable += spent
             if budget > 0:
                 variable_items.append({"c": cat, "v": budget})
+            if spent > 0:
+                actual_variable_items.append({"c": cat, "v": spent})
 
     fixed_items.sort(key=lambda x: x["v"], reverse=True)
     variable_items.sort(key=lambda x: x["v"], reverse=True)
+    actual_fixed_items.sort(key=lambda x: x["v"], reverse=True)
+    actual_variable_items.sort(key=lambda x: x["v"], reverse=True)
 
     return {
         "fixed_cents": fixed,
@@ -225,6 +243,10 @@ def _get_personal_budget_totals() -> dict:
         "total_cents": fixed + variable,
         "fixed_items": fixed_items,
         "variable_items": variable_items,
+        "actual_fixed_cents": actual_fixed,
+        "actual_variable_cents": actual_variable,
+        "actual_fixed_items": actual_fixed_items,
+        "actual_variable_items": actual_variable_items,
     }
 
 
@@ -330,7 +352,7 @@ def index():
     finally:
         conn_co.close()
 
-    personal_budgets = _get_personal_budget_totals()
+    personal_budgets = _get_personal_budget_totals(month)
 
     # ── Two-mode scenario modeling ────────────────────────────────────────
     # Revenue mode (default): set revenue target, salary = surplus
@@ -425,6 +447,31 @@ def index():
              "type": "surplus" if personal_remaining >= 0 else "deficit"},
         ]
 
+    # ── Actual personal waterfall (extends BFM actual into personal) ──────
+    actual_owner_gross = max(surplus_cents, 0)
+    actual_take_home = int(actual_owner_gross * (10000 - tax_rate_bps) / 10000)
+    actual_personal_fixed = personal_budgets["actual_fixed_cents"]
+    actual_personal_variable = personal_budgets["actual_variable_cents"]
+    actual_personal_remaining = actual_take_home - actual_personal_fixed - actual_personal_variable
+
+    actual_personal_rows = []
+    if actual_take_home > 0:
+        apf_pct = _pct(actual_personal_fixed, actual_take_home)
+        apv_pct = _pct(actual_personal_variable, actual_take_home)
+        apr_pct = _pct(max(actual_personal_remaining, 0), actual_take_home)
+
+        actual_personal_rows = [
+            {"label": "Take-Home Pay", "left": 0, "width": 100,
+             "cents": actual_take_home, "type": "income"},
+            {"label": "Personal Fixed", "left": 0, "width": apf_pct,
+             "cents": actual_personal_fixed, "type": "expense"},
+            {"label": "Personal Variable", "left": apf_pct, "width": apv_pct,
+             "cents": actual_personal_variable, "type": "expense"},
+            {"label": "Remaining", "left": 100 - apr_pct, "width": apr_pct,
+             "cents": abs(actual_personal_remaining),
+             "type": "surplus" if actual_personal_remaining >= 0 else "deficit"},
+        ]
+
     # ── Personal debt data ────────────────────────────────────────────────
     init_db("personal")
     cc_cards, cc_total, paydown_goal, paydown_pace = _get_personal_cc()
@@ -463,6 +510,14 @@ def index():
                           for x in sections.get("fixed", []) if x["spent_cents"] > 0],
         actual_operating_tip=[{"c": x["category"], "v": x["spent_cents"]}
                               for x in operating_items if x.get("spent_cents", 0) > 0],
+        # Actual personal waterfall
+        actual_personal_rows=actual_personal_rows,
+        actual_owner_gross=actual_owner_gross,
+        actual_take_home=actual_take_home,
+        actual_personal_remaining=actual_personal_remaining,
+        # Actual personal tooltip data (category → actual spend)
+        actual_personal_fixed_tip=personal_budgets.get("actual_fixed_items", []),
+        actual_personal_variable_tip=personal_budgets.get("actual_variable_items", []),
         # Target waterfall
         target_mode=target_mode,
         target_bfm_rows=target_bfm_rows,
