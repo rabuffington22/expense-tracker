@@ -287,6 +287,7 @@
 <div class="stp-section outline-panel stp-section--border-label">
     <div class="stp-section-header">
         <span class="stp-section-label stp-section-label--border">MONTHLY BUDGET</span>
+        <a href="/transactions?start={{ current_month }}-01&end={{ current_month }}-{{ month_last_day }}" class="stp-edit-txns-link" title="Edit transactions for this month">Edit Transactions ›</a>
     </div>
 
     {% if budget_status %}

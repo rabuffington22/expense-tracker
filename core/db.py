@@ -790,6 +790,19 @@ CREATE TABLE IF NOT EXISTS cc_paydown_goal (
 );
 """
 
+_MIGRATION_57 = """
+-- Cut list: expenses to cancel/reduce
+CREATE TABLE IF NOT EXISTS cut_list (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    monthly_cents INTEGER DEFAULT 0,
+    notes TEXT,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'done')),
+    completed_at TEXT,
+    created_at TEXT DEFAULT (datetime('now'))
+);
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -847,6 +860,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (54, _MIGRATION_54),
     (55, _MIGRATION_55),
     (56, _MIGRATION_56),
+    (57, _MIGRATION_57),
 ]
 
 _DEFAULT_CATEGORIES = [

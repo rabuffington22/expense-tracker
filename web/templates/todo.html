@@ -140,6 +140,89 @@
     </div>
 </div>
 
+{# ── Cut List ───────────────────────────────────────────────────────────── #}
+{% if cut_items %}
+<div class="todo-section-label">
+    Cut List
+    {% if cut_summary.pending_count > 0 %}
+    <span class="cl-savings">${{ '{:,.0f}'.format(cut_summary.pending_monthly) }}/mo to save</span>
+    {% endif %}
+</div>
+<div class="outline-panel cl-panel">
+    <div class="todo-list">
+        {% for item in cut_items if item.status == 'pending' %}
+        <div class="cl-row">
+            <form method="post" action="{{ url_for('todo.cut_toggle', item_id=item.id) }}" class="cl-form">
+                <button type="submit" class="cl-check" title="Mark done">
+                    <span class="cl-check-box"></span>
+                </button>
+            </form>
+            <div class="cl-info">
+                <span class="cl-name">{{ item.name }}</span>
+                {% if item.notes %}
+                <span class="cl-notes">{{ item.notes }}</span>
+                {% endif %}
+            </div>
+            {% if item.monthly_cents > 0 %}
+            <span class="cl-amount">${{ '{:,.0f}'.format(item.monthly_dollars) }}/mo</span>
+            {% endif %}
+            <form method="post" action="{{ url_for('todo.cut_delete', item_id=item.id) }}" class="cl-form">
+                <button type="submit" class="cl-del" title="Remove">&times;</button>
+            </form>
+        </div>
+        {% endfor %}
+
+        {# ── Completed items ─── #}
+        {% set done_items = cut_items | selectattr('status', 'equalto', 'done') | list %}
+        {% if done_items %}
+        <div class="cl-done-divider"></div>
+        {% for item in done_items %}
+        <div class="cl-row cl-row--done">
+            <form method="post" action="{{ url_for('todo.cut_toggle', item_id=item.id) }}" class="cl-form">
+                <button type="submit" class="cl-check cl-check--done" title="Undo">
+                    <span class="cl-check-box cl-check-box--done">&#x2713;</span>
+                </button>
+            </form>
+            <div class="cl-info">
+                <span class="cl-name">{{ item.name }}</span>
+            </div>
+            {% if item.monthly_cents > 0 %}
+            <span class="cl-amount">${{ '{:,.0f}'.format(item.monthly_dollars) }}/mo</span>
+            {% endif %}
+            <form method="post" action="{{ url_for('todo.cut_delete', item_id=item.id) }}" class="cl-form">
+                <button type="submit" class="cl-del" title="Remove">&times;</button>
+            </form>
+        </div>
+        {% endfor %}
+        {% if cut_summary.done_monthly > 0 %}
+        <div class="cl-saved-total">
+            Saved so far: <strong>${{ '{:,.0f}'.format(cut_summary.done_monthly) }}/mo</strong>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    {# ── Add new item ─── #}
+    <form method="post" action="{{ url_for('todo.cut_add') }}" class="cl-add-form">
+        <input type="text" name="name" placeholder="Add expense to cut…" required class="cl-add-input">
+        <input type="text" name="monthly" placeholder="$/mo" class="cl-add-input cl-add-input--amt">
+        <input type="text" name="notes" placeholder="Notes" class="cl-add-input cl-add-input--notes">
+        <button type="submit" class="cl-add-btn">+</button>
+    </form>
+</div>
+{% else %}
+{# Show empty state with just the add form #}
+<div class="todo-section-label">Cut List</div>
+<div class="outline-panel cl-panel">
+    <form method="post" action="{{ url_for('todo.cut_add') }}" class="cl-add-form">
+        <input type="text" name="name" placeholder="Add expense to cut…" required class="cl-add-input">
+        <input type="text" name="monthly" placeholder="$/mo" class="cl-add-input cl-add-input--amt">
+        <input type="text" name="notes" placeholder="Notes" class="cl-add-input cl-add-input--notes">
+        <button type="submit" class="cl-add-btn">+</button>
+    </form>
+</div>
+{% endif %}
+
 </div>{# .todo-page #}
 
 {# ── Queue Detail Modal ─────────────────────────────────────────── #}

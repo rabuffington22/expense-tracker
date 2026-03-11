@@ -1,4 +1,4 @@
-"""To Do page — review queues, periodic tasks, statement reminders."""
+"""To Do page — review queues, periodic tasks, statement reminders, cut list."""
 
 import calendar
 from datetime import date, datetime, timedelta
@@ -338,6 +338,38 @@ def _get_new_merchants(conn) -> list[dict]:
     return result
 
 
+# ── Cut list helpers ──────────────────────────────────────────────────────────
+
+def _get_cut_list(conn) -> list[dict]:
+    """Fetch cut list items, pending first then done."""
+    try:
+        rows = conn.execute(
+            "SELECT id, name, monthly_cents, notes, status, completed_at "
+            "FROM cut_list ORDER BY status ASC, id ASC"
+        ).fetchall()
+        items = []
+        for r in rows:
+            d = dict(r)
+            d["monthly_dollars"] = d["monthly_cents"] / 100 if d["monthly_cents"] else 0
+            items.append(d)
+        return items
+    except Exception:
+        return []
+
+
+def _cut_list_summary(items: list[dict]) -> dict:
+    """Compute cut list totals."""
+    pending = [i for i in items if i["status"] == "pending"]
+    done = [i for i in items if i["status"] == "done"]
+    return {
+        "pending_count": len(pending),
+        "done_count": len(done),
+        "pending_monthly": sum(i["monthly_cents"] for i in pending) / 100,
+        "done_monthly": sum(i["monthly_cents"] for i in done) / 100,
+        "total_monthly": sum(i["monthly_cents"] for i in items) / 100,
+    }
+
+
 # ── Routes ───────────────────────────────────────────────────────────────────
 
 def _get_watchlist_count(conn) -> int:
@@ -362,12 +394,16 @@ def index():
         counts = _get_queue_counts(conn)
         periodic_tasks = _get_periodic_tasks(conn)
         watchlist_count = _get_watchlist_count(conn)
+        cut_items = _get_cut_list(conn)
+        cut_summary = _cut_list_summary(cut_items)
         return render_template(
             "todo.html",
             schedules=schedules,
             counts=counts,
             periodic_tasks=periodic_tasks,
             watchlist_count=watchlist_count,
+            cut_items=cut_items,
+            cut_summary=cut_summary,
             period_key=period_key,
             today=date.today(),
         )
@@ -695,6 +731,71 @@ def delete_task(task_id):
             "DELETE FROM periodic_tasks WHERE id = ?",
             (task_id,),
         )
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("todo.index"))
+
+
+# ── Cut list routes ──────────────────────────────────────────────────────────
+
+@bp.route("/cut/add", methods=["POST"])
+def cut_add():
+    """Add a new item to the cut list."""
+    name = (request.form.get("name") or "").strip()
+    if not name:
+        return redirect(url_for("todo.index"))
+    monthly_str = request.form.get("monthly", "0")
+    notes = (request.form.get("notes") or "").strip() or None
+    try:
+        monthly_cents = int(float(monthly_str.replace(",", "").replace("$", "")) * 100)
+    except (ValueError, TypeError):
+        monthly_cents = 0
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute(
+            "INSERT INTO cut_list (name, monthly_cents, notes) VALUES (?, ?, ?)",
+            (name, monthly_cents, notes),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("todo.index"))
+
+
+@bp.route("/cut/toggle/<int:item_id>", methods=["POST"])
+def cut_toggle(item_id):
+    """Toggle a cut list item between pending and done."""
+    conn = get_connection(g.entity_key)
+    try:
+        row = conn.execute(
+            "SELECT status FROM cut_list WHERE id = ?", (item_id,)
+        ).fetchone()
+        if row:
+            if row[0] == "pending":
+                conn.execute(
+                    "UPDATE cut_list SET status = 'done', "
+                    "completed_at = datetime('now') WHERE id = ?",
+                    (item_id,),
+                )
+            else:
+                conn.execute(
+                    "UPDATE cut_list SET status = 'pending', "
+                    "completed_at = NULL WHERE id = ?",
+                    (item_id,),
+                )
+            conn.commit()
+    finally:
+        conn.close()
+    return redirect(url_for("todo.index"))
+
+
+@bp.route("/cut/delete/<int:item_id>", methods=["POST"])
+def cut_delete(item_id):
+    """Delete a cut list item."""
+    conn = get_connection(g.entity_key)
+    try:
+        conn.execute("DELETE FROM cut_list WHERE id = ?", (item_id,))
         conn.commit()
     finally:
         conn.close()

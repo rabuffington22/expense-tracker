@@ -660,6 +660,7 @@ def index():
             budget_month = bm_date.strftime("%Y-%m")
 
         current_month = budget_month
+        month_last_day = calendar.monthrange(bm_date.year, bm_date.month)[1]
 
         # Build month options for dropdown (current month back 12 months)
         budget_months = []
@@ -712,6 +713,7 @@ def index():
             bank_accounts=bank_accounts,
             categories=categories,
             suggested_extra=suggested_extra,
+            month_last_day=month_last_day,
         )
     finally:
         conn.close()
