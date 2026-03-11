@@ -167,7 +167,7 @@ Pattern used across routes:
 - **Planning** -- Long-term net worth projections (assets + liabilities at milestone ages, inflation-adjusted)
 - **Payroll** -- Employee roster, Phoenix/CyberPayroll import, role-based spending (BFM only)
 - **Weekly** -- Weekly check-in: KPI band (spent/pace/remaining), credit card paydown tracker with per-card utilization bars and target-date pace indicator, this week's bills (from 5 data sources), last week scorecard (top categories, burn rate, warnings). ISO week navigation (Mon–Sun). Hidden for LL entity.
-- **Waterfall** -- BFM surplus to personal debt paydown. Monthly view showing business revenue → fixed costs → operating costs → surplus. Personal CC debt with utilization bars and payoff estimate. Other liabilities (mortgages/loans). 6-month surplus trend chart. Cross-entity (always queries BFM + Personal). Hidden for LL entity.
+- **Waterfall** -- BFM surplus to personal debt paydown. Two tabs: **Actual** (monthly actuals: revenue → fixed costs → operating costs → surplus) and **Target** (budget-based scenario: revenue target → staff payroll → BFM fixed → BFM operating → surplus → owner salary at 22% tax → personal fixed → personal variable → remaining). Personal CC debt with utilization bars and payoff estimate. Other liabilities (mortgages/loans). 6-month surplus trend chart. Cross-entity (always queries BFM + Personal). Hidden for LL entity.
 - **Reports** -- Monthly detail + spending trend (pure CSS bar chart)
 - **Connected Accounts** -- Plaid Link, sync, disconnect
 - **Kristine's Dashboard** (`/k/`) -- Public (no auth), mobile-first page for Kristine. Shows Personal Focus budget status (categories, subcategories, transaction drill-down), Luxe Legacy business summary, account balances (BOA Primary, LL, Apple Card), and praise/gamification. Light blue and pink theme. Standalone template (no sidebar/base.html).
@@ -388,6 +388,16 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
 ## Change Log
+
+### 2026-03-11 — Waterfall Target view fixes + BFM budget recalibration + production sync
+Waterfall Target tab now derives owner salary from BFM surplus. BFM budgets recalibrated from 3-month actuals. Full production database category sync.
+
+1. **Owner salary defaults to BFM surplus** — Previously hardcoded at $48,000/mo. Now `owner_gross = max(target_bfm_surplus, 0)` when no URL override. Salary input field still editable for scenario modeling via `?owner_salary=X` URL param.
+2. **Effective tax rate 26.5% → 22%** — `_EFFECTIVE_TAX_RATE_BPS` updated from 2650 to 2200.
+3. **Deficit display fix** — Remaining row in personal waterfall now shows minus sign for deficits (e.g., "−$2,691" in red). Previously showed unsigned amount which was confusing.
+4. **BFM budget recalibration** — Rebuilt all 27 BFM budget items using Dec 2025–Feb 2026 3-month spending averages. Key changes: Payroll $24,500/payroll (was $25,773), Insurance $4,700 (was $6,000), Office Supplies $650 (was $1,550), new Accounting $700, new Storage $470. Total: $127,949/mo.
+5. **BFM category cleanup** — Added missing Accounting category. Fixed 34 Rent and 12 IT transactions with NULL subcategories → General. Merged IT Services ($3,000) + IT ($400) budgets → IT $3,400. Removed duplicate aliases (Chansen Media, providential).
+6. **Production database full sync** — Synced all BFM category changes to production via transaction_id matching. 193 transactions recategorized (Insurance 83, Taxes 39, Rent 34, Medical Billing 15, Accounting 13, etc.). Budget items and merchant aliases fully replaced. Remaining 4-transaction gap (Income/Fees) confirmed as newer Plaid transactions on production only.
 
 ### 2026-03-10 — Waterfall page: BFM surplus to personal debt paydown
 New `/waterfall` page showing monthly business cash flow waterfall and personal debt targets.

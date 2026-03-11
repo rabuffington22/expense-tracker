@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 # ── Target waterfall constants ─────────────────────────────────────────────
 _TARGET_REVENUE = 17_000_000        # $170,000/mo in cents
 _OWNER_SALARY_GROSS = 4_800_000     # $48,000/mo gross in cents
-_EFFECTIVE_TAX_RATE_BPS = 2650      # 26.5% effective tax rate
+_EFFECTIVE_TAX_RATE_BPS = 2200      # 22% effective tax rate
 
 bp = Blueprint("waterfall", __name__, url_prefix="/waterfall")
 
@@ -326,7 +326,12 @@ def index():
     target_bfm_surplus = (target_revenue - target_staff_payroll
                           - target_bfm_fixed - target_bfm_operating)
 
-    owner_gross = owner_gross_input
+    # Default owner salary to BFM surplus (can't pay yourself more than you earn)
+    # URL override still respected for scenario modeling
+    if not owner_salary_override:
+        owner_gross = max(target_bfm_surplus, 0)
+    else:
+        owner_gross = owner_gross_input
     owner_take_home = int(owner_gross * (10000 - _EFFECTIVE_TAX_RATE_BPS) / 10000)
 
     personal_fixed = personal_budgets["fixed_cents"]

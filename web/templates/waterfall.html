@@ -73,7 +73,7 @@
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">
-            {%- if row.type == 'expense' %}&minus;{% endif %}{{ fmt_dollars(row.cents) }}
+            {%- if row.type in ('expense', 'deficit') %}&minus;{% endif %}{{ fmt_dollars(row.cents) }}
           </span>
         </div>
         <div class="wf-wf-track">
@@ -173,7 +173,7 @@
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">
-            {%- if row.type == 'expense' %}&minus;{% endif %}{{ fmt_dollars(row.cents) }}
+            {%- if row.type in ('expense', 'deficit') %}&minus;{% endif %}{{ fmt_dollars(row.cents) }}
           </span>
         </div>
         <div class="wf-wf-track">
@@ -216,7 +216,7 @@
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">
-            {%- if row.type == 'expense' %}&minus;{% endif %}{{ fmt_dollars(row.cents) }}
+            {%- if row.type in ('expense', 'deficit') %}&minus;{% endif %}{{ fmt_dollars(row.cents) }}
           </span>
         </div>
         <div class="wf-wf-track">
