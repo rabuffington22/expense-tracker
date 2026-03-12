@@ -1958,15 +1958,15 @@ a.kpi-panel-cell:hover {
     height: 100%;
     border-radius: 9px;
     min-width: 2px;
-    background: linear-gradient(90deg, rgba(124,58,237,0.85), rgba(124,58,237,0.55));
+    background: linear-gradient(90deg, #4b2d8e, #3a1f75);
     transition: width 0.3s ease;
     overflow: visible;
     position: relative;
 }
-/* Budget-aware bar colors */
-.dcat-fill--ok   { background: linear-gradient(90deg, rgba(74,222,128,0.85), rgba(74,222,128,0.55)); }
-.dcat-fill--warn { background: linear-gradient(90deg, rgba(255,159,10,0.85), rgba(255,159,10,0.55)); }
-.dcat-fill--over { background: linear-gradient(90deg, rgba(248,113,113,0.85), rgba(248,113,113,0.55)); }
+/* Budget-aware bar colors — Joker palette */
+.dcat-fill--ok   { background: linear-gradient(90deg, #1a7a4a, #145e39); }
+.dcat-fill--warn { background: linear-gradient(90deg, #b8860b, #8b6508); }
+.dcat-fill--over { background: linear-gradient(90deg, #8b1a4a, #6b1038); }
 .dcat-bar-label {
     position: absolute;
     right: 0.4rem;
