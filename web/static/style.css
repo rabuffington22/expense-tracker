@@ -1965,11 +1965,17 @@ a.kpi-panel-cell:hover {
 .dcat-fill--warn { background: linear-gradient(90deg, rgba(255,159,10,0.85), rgba(255,159,10,0.55)); }
 .dcat-fill--over { background: linear-gradient(90deg, rgba(248,113,113,0.85), rgba(248,113,113,0.55)); }
 .dcat-value {
-    flex: 0 0 82px;
+    flex: 0 0 130px;
     text-align: right;
     font-size: 0.88rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
+}
+.dcat-budget {
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-left: 0.25rem;
 }
 .dcat-val--ok   { color: var(--green); }
 .dcat-val--warn { color: var(--orange, #ff9f0a); }
@@ -2061,7 +2067,8 @@ a.kpi-panel-cell:hover {
 @media (max-width: 480px) {
     .dcat-name { flex: 0 0 90px; }
     .dcat-sub-name { flex: 0 0 76px; }
-    .dcat-value, .dcat-sub-value { flex: 0 0 60px; font-size: var(--ui-font-xs); }
+    .dcat-value, .dcat-sub-value { flex: 0 0 90px; font-size: var(--ui-font-xs); }
+    .dcat-budget { display: none; }
 }
 
 /* ── Compare Category Horizontal Bars ──────────────────────────────────── */

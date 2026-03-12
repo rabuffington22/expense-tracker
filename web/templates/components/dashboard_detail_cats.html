@@ -17,7 +17,7 @@
       <div class="dcat-track">
         <div class="dcat-fill{% if cat.bar_color is defined %} dcat-fill--{{ cat.bar_color }}{% endif %}" style="width: {{ cat.pct }}%;"></div>
       </div>
-      <span class="dcat-value{% if cat.bar_color is defined %} dcat-val--{{ cat.bar_color }}{% endif %}">${{ "{:,.0f}".format(cat.total_cents / 100) }}</span>
+      <span class="dcat-value{% if cat.bar_color is defined %} dcat-val--{{ cat.bar_color }}{% endif %}">${{ "{:,.0f}".format(cat.total_cents / 100) }}{% if cat.budget_cents is defined and cat.budget_cents > 0 %}<span class="dcat-budget">/ ${{ "{:,.0f}".format(cat.budget_cents / 100) }}</span>{% endif %}</span>
       {% if has_subs %}
       <span class="dcat-chevron">›</span>
       {% else %}
