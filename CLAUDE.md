@@ -389,6 +389,15 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 
 ## Change Log
 
+### 2026-03-12 — Personal budget review + dashboard category bar redesign + Joker palette
+Complete Personal budget review (30 categories), dashboard UX overhaul for category rows, and Joker-themed color palette.
+
+1. **Personal budget review** — Reviewed all spending categories using Dec/Jan/Feb 3-month averages. Set budgets for 30 categories totaling ~$33,579/mo. New budgets created: Cleaning ($600 fixed), Laundry Service ($500 fixed), Self Storage ($200 fixed), Security ($122 fixed), Streaming ($140 fixed), Gifts ($200 other), Toys ($200 other), ATM Withdrawals ($100 other), Home Improvement ($100 other). Existing budgets adjusted: Abuelitos $533→$700, Childcare $513→$500, Shopping $901→$450, Entertainment $943→$230, Clothing $686→$350, Transportation $356→$250, LL Expense $232→$200, Health & Beauty $306→$200, Healthcare $306→$100, Insurance $1,533→$1,500, Pets $47→$50. Stale entries deleted: Electronics, Storage (no transactions).
+2. **CCI → Care Credit identification** — Two CCI charges ($161 each) on BankAmericard identified as Care Credit dental payments for abuelitos. Recategorized to Abuelitos/Healthcare. Merchant alias created: pattern='CCI', pattern_type='contains', merchant_canonical='Care Credit', default_category='Abuelitos', default_subcategory='Healthcare'. Abuelitos budget bumped $600→$700 to accommodate.
+3. **Production sync** — Comprehensive sync script replaced all 30 budget_items, added Care Credit alias, and updated 477 Dec–Mar transaction categories on production. All successful (477 updated, 0 not found).
+4. **Dashboard category bar redesign** — Multiple iterations redesigning category rows. Final design: spent amount rendered inside the colored progress bar (white text with text-shadow, right-aligned via `position: absolute; right: 0.4rem`). Small bars (<15% width) get `dcat-fill--narrow` class that flips label to the right of the bar in normal text color. $0 categories hide the label entirely. Budget shown in fixed-width gray column (60px) at far right. Chevrons hidden (`display: none`) to give bars more room. Category name column narrowed from 150px to 120px.
+5. **Joker color palette** — Bar colors changed to dark, rich tones for better white text contrast: emerald green (`#1a7a4a→#145e39`) for under-budget, dark gold (`#b8860b→#8b6508`) for warning, deep berry/crimson (`#8b1a4a→#6b1038`) for over-budget, deep purple (`#4b2d8e→#3a1f75`) for no-budget default.
+
 ### 2026-03-11 — Waterfall Target: two-mode toggle, hover tooltips, take-home mode + BFM recalibration
 Major Waterfall Target tab improvements: two-mode scenario modeling, per-category hover tooltips, and Desired Take-Home mode. Plus BFM budget recalibration and production sync.
 
