@@ -1934,7 +1934,7 @@ a.kpi-panel-cell:hover {
 .dcat-row:last-child { border-bottom: none; }
 
 .dcat-name {
-    flex: 0 0 150px;
+    flex: 0 0 120px;
     font-size: 0.88rem;
     font-weight: 700;
     color: var(--text);
@@ -1950,46 +1950,60 @@ a.kpi-panel-cell:hover {
     height: 18px;
     background: rgba(255,255,255,0.04);
     border-radius: 9px;
-    overflow: hidden;
-    min-width: 0;
+    overflow: visible;
+    min-width: 60px;
+    position: relative;
 }
 .dcat-fill {
     height: 100%;
-    border-radius: 4px;
+    border-radius: 9px;
     min-width: 2px;
     background: linear-gradient(90deg, rgba(124,58,237,0.85), rgba(124,58,237,0.55));
     transition: width 0.3s ease;
+    overflow: visible;
+    position: relative;
 }
 /* Budget-aware bar colors */
 .dcat-fill--ok   { background: linear-gradient(90deg, rgba(74,222,128,0.85), rgba(74,222,128,0.55)); }
 .dcat-fill--warn { background: linear-gradient(90deg, rgba(255,159,10,0.85), rgba(255,159,10,0.55)); }
 .dcat-fill--over { background: linear-gradient(90deg, rgba(248,113,113,0.85), rgba(248,113,113,0.55)); }
-.dcat-value {
-    flex: 0 0 130px;
-    text-align: right;
-    font-size: 0.88rem;
-    font-weight: 600;
+.dcat-bar-label {
+    position: absolute;
+    right: 0.4rem;
+    top: -1px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 20px;
+    white-space: nowrap;
     font-variant-numeric: tabular-nums;
+    z-index: 1;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+/* When bar is too small for the label, flip label to the right of the bar */
+.dcat-fill--narrow .dcat-bar-label {
+    right: auto;
+    left: 100%;
+    padding-left: 0.4rem;
+    color: var(--text);
+    text-shadow: none;
 }
 .dcat-budget {
-    font-size: 0.68rem;
-    font-weight: 400;
+    flex: 0 0 60px;
+    text-align: right;
+    font-size: 0.78rem;
+    font-weight: 500;
     color: var(--text-secondary);
-    margin-left: 0.25rem;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    margin-left: 0.3rem;
 }
-.dcat-val--ok   { color: var(--green); }
-.dcat-val--warn { color: var(--orange, #ff9f0a); }
-.dcat-val--over { color: var(--red); }
 
 .dcat-chevron {
-    flex: 0 0 16px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    transition: transform 0.2s ease;
+    display: none;
 }
-.dcat-chevron--empty { visibility: hidden; }
-.dcat-row--open .dcat-chevron { transform: rotate(90deg); }
+.dcat-chevron--empty { display: none; }
+.dcat-row--open .dcat-chevron { display: none; }
 
 /* Subcategory rows */
 .dcat-subs { padding-left: 1rem; }
@@ -2067,7 +2081,7 @@ a.kpi-panel-cell:hover {
 @media (max-width: 480px) {
     .dcat-name { flex: 0 0 90px; }
     .dcat-sub-name { flex: 0 0 76px; }
-    .dcat-value, .dcat-sub-value { flex: 0 0 90px; font-size: var(--ui-font-xs); }
+    .dcat-bar-label { font-size: 0.68rem; }
     .dcat-budget { display: none; }
 }
 
