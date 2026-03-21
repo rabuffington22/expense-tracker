@@ -32,9 +32,9 @@ bp = Blueprint("reports", __name__, url_prefix="/reports")
 
 # Curated palette — imported by dashboard.py for donut chart
 COLORS = [
-    "#0a84ff", "#30d158", "#ff453a", "#ff9f0a", "#bf5af2",
-    "#64d2ff", "#ffd60a", "#ac8e68", "#98989d", "#ff6482",
-    "#30b0c7", "#8e8e93",
+    "#3b82f6", "#22c55e", "#ef4444", "#f59e0b", "#8b5cf6",
+    "#2dd4bf", "#eab308", "#a78bfa", "#94a3b8", "#f472b6",
+    "#06b6d4", "#64748b",
 ]
 
 

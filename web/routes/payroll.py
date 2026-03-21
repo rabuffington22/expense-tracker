@@ -28,13 +28,13 @@ os.makedirs(_TEMP_DIR, exist_ok=True)
 # ── Role colors for badges ───────────────────────────────────────────────────
 
 ROLE_COLORS: dict[str, str] = {
-    "Providers": "#ff453a",
-    "Nurses": "#bf5af2",
-    "Scribes": "#ff9f0a",
-    "Front Office": "#30d158",
-    "Office Manager": "#0a84ff",
-    "HR": "#5e5ce6",
-    "Owner": "#98989d",
+    "Providers": "#ef4444",
+    "Nurses": "#8b5cf6",
+    "Scribes": "#f59e0b",
+    "Front Office": "#22c55e",
+    "Office Manager": "#3b82f6",
+    "HR": "#6366f1",
+    "Owner": "#94a3b8",
 }
 
 ROLE_ORDER = ["Providers", "Nurses", "Scribes", "Front Office", "Office Manager", "HR", "Owner"]
