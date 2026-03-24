@@ -124,6 +124,15 @@ web/                               # Flask app (replaced old app/ Streamlit code
     htmx.min.js                    # HTMX library (~14KB)
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
     joker-button.png               # Ask Opus button icon (66×66 display, purple ? with glow)
+    sw.js                          # Service worker (PWA: cache-first static, network-first navigation)
+    manifest.json                  # PWA manifest (installable, standalone display)
+    icon-192x192.png               # PWA icon 192px (gold L monogram on dark rounded-rect)
+    icon-512x512.png               # PWA icon 512px (gold L monogram)
+    icon-1024x1024.png             # PWA icon 1024px (gold L monogram, master size)
+    the-ledger-logo-lockup.png     # Full logo lockup (header/mobile-header use)
+    the-ledger-seal.png            # Wax seal artwork (sidebar brand icon)
+  templates/
+    offline.html                   # PWA offline fallback page (standalone, no base.html)
 core/                              # Business logic
   db.py                            # Schema migrations (56 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
@@ -387,7 +396,35 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **Settings bar** — No Update button; inflation rate and custom milestone submit via Enter key.
 - **HTMX** — Cashflow account dropdown populated via `GET /planning/cashflow-accounts/<entity_key>`.
 
+## PWA (Progressive Web App)
+- **Installable** — Meets all PWA installability requirements (manifest + service worker + HTTPS + icons).
+- **Service worker** — `web/static/sw.js`, served from `/sw.js` (root scope). Registered in `base.html` on page load.
+- **Caching strategy:**
+  - Static assets (`/static/*`): cache-first, fall back to network
+  - HTML navigation: network-first, fall back to cache, then offline page
+  - Other requests (HTMX partials, API): network-first, fall back to cache
+- **Pre-cached on install:** App shell (`/`), offline page, CSS, JS, all icons/logos, manifest (15 assets).
+- **Cache versioning** — `CACHE_NAME = 'the-ledger-v2'`. Bump version when changing static assets to force SW update. Old caches auto-deleted on activate.
+- **Offline fallback** — `/offline` route renders `offline.html` (standalone template, branded, retry button). Auth bypassed.
+- **Manifest** — `web/static/manifest.json`: name, short_name, start_url, id, display=standalone, 3 icons (192 any, 512 any, 512 maskable).
+- **Icons** — Gold "L" monogram on dark rounded-rect background. Clean at all dock/home-screen sizes. Wax seal artwork (`the-ledger-seal.png`) retained for in-app sidebar use only.
+- **Mobile meta tags** — `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style` (black-translucent), `apple-mobile-web-app-title`, `mobile-web-app-capable`.
+- **Auth bypass** — `/sw.js` and `/offline` routes bypass basic auth and entity setup in `web/__init__.py`.
+- **Updating icons** — Replace PNGs in `web/static/`, bump `CACHE_NAME` version in `sw.js`, deploy. Users must remove and re-add the app to dock/home-screen to see new icon (OS caches icon at install time).
+
 ## Change Log
+
+### 2026-03-24 — PWA: service worker, installability, offline fallback + monogram icons
+Made the app a proper installable Progressive Web App with service worker caching and offline support. Replaced wax seal PWA icons with clean L monogram for better dock/home-screen appearance.
+
+1. **Service worker (`web/static/sw.js`)** — Cache-first for static assets, network-first with offline fallback for navigation. Pre-caches 15 app shell assets on install. Served from `/sw.js` (root scope) via Flask route in `web/__init__.py`. `max_age=0` ensures browsers always check for SW updates.
+2. **Offline fallback (`web/templates/offline.html`)** — Standalone branded page with theme support (dark/light via localStorage), plug icon, "You're Offline" message, and Retry button. No dependency on base.html or entity context.
+3. **Manifest updates (`web/static/manifest.json`)** — Added `id`, `description`, `orientation` fields. Added maskable icon entry (512px). All required installability fields present.
+4. **SW registration (`web/templates/base.html`)** — Registration script added before `</body>` with `'serviceWorker' in navigator` guard. Auto-detects and activates new SW versions via `updatefound` listener.
+5. **Mobile meta tags** — Added `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`, `apple-mobile-web-app-title`, `mobile-web-app-capable` to `base.html` `<head>`.
+6. **Auth bypass** — `/sw.js` and `/offline` routes skip basic auth, entity setup, and context processor in `web/__init__.py`.
+7. **Monogram icons** — Replaced wax seal PWA icons (busy/illegible at small sizes) with clean gold L monogram on dark rounded-rect background. Files: `icon-192x192.png`, `icon-512x512.png`, `icon-1024x1024.png`, `apple-touch-icon.png`. Header logo (`the-ledger-logo-lockup.png`) and sidebar seal (`the-ledger-seal.png`) unchanged.
+8. **Cache version v2** — Bumped `CACHE_NAME` from `the-ledger-v1` to `the-ledger-v2` to force re-cache of new monogram icons.
 
 ### 2026-03-12 — Personal budget review + dashboard category bar redesign + Joker palette
 Complete Personal budget review (30 categories), dashboard UX overhaul for category rows, and Joker-themed color palette.
