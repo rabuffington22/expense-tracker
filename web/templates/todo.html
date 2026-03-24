@@ -34,7 +34,7 @@
             <span class="todo-name">Unmatched vendor charges</span>
             <span class="todo-row-right">
                 {% if counts.vendor_breakdown > 0 %}
-                <span class="badge badge-red">{{ counts.vendor_breakdown }}</span>
+                <span class="badge badge-amber">{{ counts.vendor_breakdown }}</span>
                 {% endif %}
                 <span class="todo-chevron">&#x203A;</span>
             </span>
@@ -60,7 +60,7 @@
             <span class="todo-name">Transactions</span>
             <span class="todo-row-right">
                 {% if counts.uncategorized > 0 %}
-                <span class="badge badge-red">{{ counts.uncategorized }}</span>
+                <span class="badge badge-amber">{{ counts.uncategorized }}</span>
                 {% endif %}
                 <span class="todo-chevron">&#x203A;</span>
             </span>

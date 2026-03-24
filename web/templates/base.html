@@ -12,13 +12,15 @@
         document.documentElement.setAttribute('data-theme', t);
         /* Update theme-color meta for mobile browsers */
         var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = t === 'light' ? '#f4f6f9' : '#000000';
+        if (meta) meta.content = t === 'light' ? '#F7F9FC' : '#000000';
     })();
     </script>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}?v=2" sizes="any">
+    <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='favicon-64x64.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
     <script src="{{ url_for('static', filename='htmx.min.js') }}"></script>
     {% block head %}{% endblock %}
@@ -35,7 +37,7 @@
                 <line x1="3" y1="16" x2="19" y2="16"/>
             </svg>
         </button>
-        <span class="mobile-title">The Ledger</span>
+        <img src="{{ url_for('static', filename='the-ledger-logo-lockup.png') }}" alt="The Ledger" class="mobile-logo">
         <div style="width:36px;"></div>
     </div>
 
@@ -62,7 +64,7 @@
         var icon = document.querySelector('.theme-toggle-icon');
         if (icon) icon.textContent = theme === 'dark' ? '\u263E' : '\u2600\uFE0F';
         var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = theme === 'light' ? '#f4f6f9' : '#000000';
+        if (meta) meta.content = theme === 'light' ? '#F7F9FC' : '#000000';
     }
     function toggleTheme() {
         var html = document.documentElement;
