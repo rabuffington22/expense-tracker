@@ -7,7 +7,7 @@
  *   - Offline fallback: Simple branded page when nothing is available
  */
 
-const CACHE_NAME = 'the-ledger-v1';
+const CACHE_NAME = 'the-ledger-v2';
 const OFFLINE_URL = '/offline';
 
 // App shell and static assets to pre-cache on install
