@@ -311,6 +311,14 @@ a:hover { text-decoration: underline; }
     font-size: 1.05rem;
     letter-spacing: -0.01em;
 }
+.mobile-logo {
+    flex: 1;
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
 
 /* ── Sidebar Wordmark ───────────────────────────────────────────────────── */
 .sidebar-wordmark {
@@ -337,7 +345,7 @@ a:hover { text-decoration: underline; }
 
 /* ── Sidebar Redesign (sb-* prefix) ────────────────────────────────────── */
 .sb-brand {
-    padding: 1.6rem 0 1.6rem;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -351,16 +359,18 @@ a:hover { text-decoration: underline; }
 }
 .sb-brand-icon-flip {
     position: relative;
-    width: 102px;
+    width: 100%;
     transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
     transform-style: preserve-3d;
 }
 .sb-brand-icon-wrap.sb-heath-open .sb-brand-icon-flip {
     transform: rotateY(180deg);
 }
-.sb-brand-icon {
-    width: 102px;
+/* Logo lockup — fills sidebar width, aspect ratio preserved, never cropped */
+.sb-brand-logo {
+    width: 100%;
     height: auto;
+    max-width: 190px;
     border-radius: 0;
     flex-shrink: 0;
     object-fit: contain;
@@ -5935,7 +5945,7 @@ input.pl-input--sm {
     filter: brightness(1);
 }
 
-/* ── Joker Button (Ask Opus) ───────────────────────────────────────────── */
+/* ── Joker Button (Ask Opus) — legacy, kept for other pages ───────────── */
 .joker-btn {
     margin-left: auto;
     flex-shrink: 0;
@@ -5957,6 +5967,38 @@ input.pl-input--sm {
     width: 42px;
     height: 42px;
     object-fit: contain;
+}
+/* ── Ask Opus text button (transparent) ──────────────────────────────── */
+.ask-opus-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 0.35rem 0.9rem;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.ask-opus-btn:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.25);
+    color: var(--text);
+}
+.ask-opus-btn:active {
+    background: rgba(255,255,255,0.03);
+}
+:root[data-theme="light"] .ask-opus-btn {
+    border-color: rgba(0,0,0,0.12);
+    color: var(--text-secondary);
+}
+:root[data-theme="light"] .ask-opus-btn:hover {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.2);
+    color: var(--text);
 }
 
 /* ── AI Chat Modal ─────────────────────────────────────────────────────── */
