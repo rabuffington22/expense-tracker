@@ -21,7 +21,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 import base64
-from flask import Flask, request, g, redirect, url_for, Response
+from flask import Flask, request, g, redirect, url_for, Response, send_from_directory, render_template
 
 from core.db import init_db, get_connection
 
@@ -156,8 +156,8 @@ def create_app():
 
     @app.before_request
     def _basic_auth():
-        if request.path.startswith("/k") or request.path.startswith("/static/"):
-            return  # Public pages + static assets — no auth required
+        if request.path.startswith("/k") or request.path.startswith("/static/") or request.path in ("/sw.js", "/offline"):
+            return  # Public pages, static assets, SW, offline — no auth required
         if not _AUTH_USER or not _AUTH_PASS:
             return  # Auth not configured — skip (local dev)
         auth = request.headers.get("Authorization", "")
@@ -178,8 +178,8 @@ def create_app():
     # ── Before-request: init DB, set entity context ──────────────────────────
     @app.before_request
     def _setup_entity():
-        if request.path.startswith("/k"):
-            return  # Kristine's page manages its own DB connections
+        if request.path.startswith("/k") or request.path in ("/sw.js", "/offline"):
+            return  # Kristine's page, SW, offline — manage own context
         g.entity_display, g.entity_key = get_entity()
         g.accent = get_accent()
         init_db(g.entity_key)
@@ -188,8 +188,8 @@ def create_app():
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor
     def _inject_globals():
-        if request.path.startswith("/k"):
-            return {}  # Kristine's page doesn't use entity context
+        if request.path.startswith("/k") or request.path in ("/sw.js", "/offline"):
+            return {}  # These pages don't use entity context
         labels = _ENTITY_LABELS.get(g.entity_display, _DEFAULT_LABELS)
         return {
             "entity_display": g.entity_display,
@@ -293,6 +293,20 @@ def create_app():
     app.register_blueprint(weekly_bp)
     app.register_blueprint(waterfall_bp)
     app.register_blueprint(kristine_bp)
+
+    # ── Service worker (must be served from root for max scope) ─────────────
+    @app.route("/sw.js")
+    def service_worker():
+        return send_from_directory(
+            app.static_folder, "sw.js",
+            mimetype="application/javascript",
+            max_age=0,  # Always check for SW updates
+        )
+
+    # ── Offline fallback page ─────────────────────────────────────────────────
+    @app.route("/offline")
+    def offline():
+        return render_template("offline.html")
 
     # ── Legacy redirect: /vendors → /data-sources ──────────────────────────
     @app.route("/vendors")

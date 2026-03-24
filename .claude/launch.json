@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "expense-tracker",
-      "runtimeExecutable": "/Users/ryanbuffington/expense-tracker/.venv/bin/python",
+      "runtimeExecutable": "/Users/ryanbuffington/Documents/GitHub/expense-tracker/.venv/bin/python",
       "runtimeArgs": ["run.py"],
       "port": 8501
     }

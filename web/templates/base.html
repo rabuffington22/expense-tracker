@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="The Ledger">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>{% block title %}The Ledger{% endblock %}</title>
     <script>
     /* Theme init — runs before CSS/paint to prevent flash */
@@ -294,6 +298,29 @@
             }
         });
     })();
+    </script>
+
+    <script>
+    /* ── Service Worker registration ───────────────────────────── */
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                /* Auto-activate new SW versions */
+                reg.addEventListener('updatefound', function() {
+                    var newWorker = reg.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', function() {
+                            if (newWorker.state === 'activated') {
+                                console.log('[SW] New version activated');
+                            }
+                        });
+                    }
+                });
+            }).catch(function(err) {
+                console.log('[SW] Registration failed:', err);
+            });
+        });
+    }
     </script>
 </body>
 </html>
