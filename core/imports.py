@@ -711,6 +711,9 @@ def commit_transactions(df: pd.DataFrame, entity: str) -> tuple[int, int]:
     try:
         conn.executemany(sql, new_df[cols].values.tolist())
         conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
     return len(new_df), skipped

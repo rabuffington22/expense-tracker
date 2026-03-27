@@ -266,5 +266,8 @@ def apply_aliases_to_db(entity: str) -> int:
             )
             conn.commit()
         return len(updates)
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()

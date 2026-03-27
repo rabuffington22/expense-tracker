@@ -204,8 +204,8 @@ def create_app():
     # ── Before-request: init DB, set entity context ──────────────────────────
     @app.before_request
     def _setup_entity():
-        if request.path.startswith("/k") or request.path in ("/sw.js", "/offline"):
-            return  # Kristine's page, SW, offline — manage own context
+        if request.path.startswith("/k") or request.path in ("/sw.js", "/offline", "/health"):
+            return  # Kristine's page, SW, offline, health — manage own context
         g.entity_display, g.entity_key = get_entity()
         g.accent = get_accent()
         init_db(g.entity_key)
@@ -214,7 +214,7 @@ def create_app():
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor
     def _inject_globals():
-        if request.path.startswith("/k") or request.path in ("/sw.js", "/offline"):
+        if request.path.startswith("/k") or request.path in ("/sw.js", "/offline", "/health"):
             return {}  # These pages don't use entity context
         labels = _ENTITY_LABELS.get(g.entity_display, _DEFAULT_LABELS)
         return {
@@ -328,6 +328,11 @@ def create_app():
             mimetype="application/javascript",
             max_age=0,  # Always check for SW updates
         )
+
+    # ── Health check ──────────────────────────────────────────────────────────
+    @app.route("/health")
+    def health():
+        return {"status": "ok"}, 200
 
     # ── Offline fallback page ─────────────────────────────────────────────────
     @app.route("/offline")

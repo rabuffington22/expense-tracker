@@ -262,7 +262,8 @@ def get_income_total(entity: str, month: str) -> float:
     """
     conn = get_connection(entity)
     try:
-        return conn.execute(sql, (month,)).fetchone()[0]
+        row = conn.execute(sql, (month,)).fetchone()
+        return row[0] if row else 0.0
     finally:
         conn.close()
 
