@@ -40,6 +40,19 @@ git push origin main
 
 That's it. No SSH, no manual restart needed.
 
+### IMPORTANT: Set FLASK_SECRET Before First Deploy
+`FLASK_SECRET` is required — the app will fail to start without it. Set it once via Fly secrets (not in fly.toml):
+
+```bash
+# Production
+fly secrets set FLASK_SECRET=$(python -c "import secrets; print(secrets.token_hex(32))")
+
+# Demo
+fly secrets set FLASK_SECRET=$(python -c "import secrets; print(secrets.token_hex(32))") -a ledger-oak-demo
+```
+
+For local dev, create a `.env` file (see `.env.example`).
+
 ### Demo Instance
 Separate Fly app (`ledger-oak-demo`) with fake seed data, no auth, 2 entities (Personal + Business).
 
