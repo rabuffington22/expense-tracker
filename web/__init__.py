@@ -1,6 +1,7 @@
 """Flask app factory for The Ledger."""
 
 import os
+import secrets
 import sys
 import time
 import tempfile
@@ -20,7 +21,7 @@ _ROOT = Path(__file__).parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from flask import Flask, request, g, redirect, url_for, send_from_directory, render_template
+from flask import Flask, request, g, redirect, url_for, send_from_directory, render_template, session, abort
 
 from core.db import init_db, get_connection
 
@@ -146,13 +147,59 @@ def create_app():
         template_folder=str(Path(__file__).parent / "templates"),
         static_folder=str(Path(__file__).parent / "static"),
     )
-    app.secret_key = os.environ.get("FLASK_SECRET", "expense-tracker-dev-key")
+    _secret = os.environ.get("FLASK_SECRET")
+    if not _secret:
+        raise RuntimeError(
+            "FLASK_SECRET environment variable is required. "
+            "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
+        )
+    app.secret_key = _secret
     app.config["MAX_CONTENT_LENGTH"] = 64 * 1024 * 1024  # 64MB upload limit
 
     # ── Auth: client-side password gate (see base.html) ─────────────────────
     # HTTP Basic Auth removed — it breaks PWA installs and service workers.
     # Auth is now handled by a client-side SHA-256 hash check in base.html
     # with localStorage persistence (shared across apps on same domain).
+
+    # ── Security headers ─────────────────────────────────────────────────
+    @app.after_request
+    def _security_headers(response):
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        if request.is_secure:
+            response.headers["Strict-Transport-Security"] = (
+                "max-age=31536000; includeSubDomains"
+            )
+        return response
+
+    # ── CSRF protection ──────────────────────────────────────────────────
+    _CSRF_SAFE_METHODS = frozenset(("GET", "HEAD", "OPTIONS"))
+    _CSRF_EXEMPT_PATHS = ("/sw.js", "/offline")
+
+    def _get_csrf_token():
+        """Return the CSRF token for the current session, creating one if needed."""
+        if "_csrf_token" not in session:
+            session["_csrf_token"] = secrets.token_hex(32)
+        return session["_csrf_token"]
+
+    @app.before_request
+    def _csrf_protect():
+        if app.config.get("TESTING"):
+            return
+        if request.method in _CSRF_SAFE_METHODS:
+            return
+        if request.path in _CSRF_EXEMPT_PATHS:
+            return
+        token = (
+            request.form.get("_csrf_token")
+            or request.headers.get("X-CSRF-Token")
+        )
+        if not token or token != session.get("_csrf_token"):
+            abort(403)
+
+    app.jinja_env.globals["csrf_token"] = _get_csrf_token
 
     # ── Before-request: init DB, set entity context ──────────────────────────
     @app.before_request
@@ -286,6 +333,19 @@ def create_app():
     @app.route("/offline")
     def offline():
         return render_template("offline.html")
+
+    # ── Error handlers ────────────────────────────────────────────────────
+    @app.errorhandler(403)
+    def _forbidden(e):
+        return render_template("errors/403.html"), 403
+
+    @app.errorhandler(404)
+    def _not_found(e):
+        return render_template("errors/404.html"), 404
+
+    @app.errorhandler(500)
+    def _server_error(e):
+        return render_template("errors/500.html"), 500
 
     # ── Legacy redirect: /vendors → /data-sources ──────────────────────────
     @app.route("/vendors")
