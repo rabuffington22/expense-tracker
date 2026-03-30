@@ -31,6 +31,15 @@ Each has its own DB, categories, aliases, import checklists. Entity selected via
 - **Liabilities integration:** `get_liabilities()` in `plaid_client.py` fetches credit card balance, credit limit, next payment due date, minimum payment. Cash Flow page auto-populates from Plaid when `plaid_account_id` is linked. Falls back to manual entry if Plaid unavailable. Payment section hidden when no data from either source.
 - **SDK note:** plaid-python v38.3.0 only has `Sandbox` and `Production` environments (no `Development`)
 
+## Auth
+Client-side SHA-256 password gate (replaced HTTP Basic Auth — which broke PWA installs and service workers).
+
+- **How it works:** `base.html` renders an overlay `<div id="authOverlay">` that covers the entire page. On submit, JS computes `SHA-256(password)` via the Web Crypto API and compares against a hardcoded expected hash. On match, the overlay is hidden and the result stored in `localStorage` (`atlas-auth` key) so the user isn't re-prompted across page loads or app installs.
+- **Env var:** No `APP_USERNAME`/`APP_PASSWORD` env vars needed — the hash is baked into `base.html` at build time.
+- **Demo instance:** Auth disabled entirely (no hash check, no overlay).
+- **Bypassed routes:** `/k/*` (Kristine's public page), `/sw.js`, `/offline` — these never render `base.html` and bypass all auth.
+- **PWA benefit:** Service worker registration and installability work correctly because the app shell is served without a `401` challenge.
+
 ## Deploy
 Push to `main` — GitHub Actions automatically deploys to Fly.io via `.github/workflows/fly-deploy.yml`.
 
@@ -52,7 +61,7 @@ fly ssh console -a ledger-oak-demo -C 'python3 /app/scripts/seed_demo_data.py'
 ```
 
 - **Config:** `fly.demo.toml` — separate volume (`ledger_oak_demo_data`), `ENTITIES=Personal:personal,Business:company`
-- **Auth:** Disabled (no `APP_USERNAME`/`APP_PASSWORD` env vars)
+- **Auth:** Disabled (no password hash in `base.html` for demo build — overlay not rendered)
 - **Entity override:** `ENTITIES` env var in `web/__init__.py` — format `"Display:key,Display:key"`
 - **Seed script:** `scripts/seed_demo_data.py` — ~1010 personal (26 categories) + ~688 business (22 categories) transactions, accounts, recurring. Wipes and re-seeds on each run.
 
@@ -76,7 +85,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     plaid.py                       # GET/POST /plaid (connect, sync, disconnect)
     saved_views.py                 # POST /saved-views (CRUD for filter presets)
     upload.py                      # GET/POST /upload (bank statement import)
-    vendors.py                     # GET/POST /vendors (Amazon CSV, Henry Schein XLSX)
+    data_sources.py                # GET/POST /data-sources (vendor upload + Plaid vendor accounts; replaces vendors.py)
     match.py                       # GET/POST /match (link orders to bank txns)
     categorize_vendors.py          # GET/POST /categorize-vendors (label vendor orders)
     categorize.py                  # GET/POST /categorize (remaining txns + settings)
@@ -93,6 +102,9 @@ web/                               # Flask app (replaced old app/ Streamlit code
       dashboard_detail_cats.html   # Detail categories bar chart (Details view)
       dashboard_ie_insights.html   # Income vs Expenses Insights (below IE chart)
       ai_analysis.html             # AI analysis results partial
+      ie_ai_analysis.html          # Income vs Expenses AI analysis partial (below IE chart)
+      rpt_view.html                # Reports view partial (HTMX swap target)
+      subcat_txns_popup.html       # Subcategory transaction drill-down popup
       txn_results.html             # Transaction list results (HTMX swap target)
       txn_row.html                 # Single transaction row (includes split badge)
       txn_row_edit.html            # Inline-edit transaction row
@@ -114,7 +126,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
     plaid.html                     # Connected Accounts (Plaid Link)
     upload.html                    # Import tab + Settings tab
     upload_dialog.html             # File upload + preview/confirm
-    vendors.html                   # Upload + date filter + save
+    data_sources.html              # Vendor upload + Plaid vendor account connection
     match.html
     categorize_vendors.html
     categorize.html                # Review tab + Settings tab
@@ -122,8 +134,15 @@ web/                               # Flask app (replaced old app/ Streamlit code
   static/
     style.css                      # Apple-style dual theme (dark default + light), CSS custom properties on data-theme, SF Pro fonts
     htmx.min.js                    # HTMX library (~14KB)
+    favicon.ico                    # Browser favicon
+    favicon-16x16.png              # Favicon 16px
+    favicon-32x32.png              # Favicon 32px
+    favicon-64x64.png              # Favicon 64px
+    apple-touch-icon.png           # iOS home screen icon (180px)
     ledger-ai-icon.png             # Sidebar brand icon (176×176 display, vertical stacked layout)
+    ledger-oak-icon.png            # Legacy icon (kept for reference)
     joker-button.png               # Ask Opus button icon (66×66 display, purple ? with glow)
+    heath-standing.png             # Joker (Heath) Easter egg image (sidebar flip)
     sw.js                          # Service worker (PWA: cache-first static, network-first navigation)
     manifest.json                  # PWA manifest (installable, standalone display)
     icon-192x192.png               # PWA icon 192px (gold L monogram on dark rounded-rect)
@@ -134,7 +153,7 @@ web/                               # Flask app (replaced old app/ Streamlit code
   templates/
     offline.html                   # PWA offline fallback page (standalone, no base.html)
 core/                              # Business logic
-  db.py                            # Schema migrations (56 so far), DB init, connections
+  db.py                            # Schema migrations (57 so far), DB init, connections
   ai_client.py                     # OpenRouter API client (Claude via OpenRouter for AI features)
   imports.py                       # CSV/PDF parsing, normalization, dedup
   categorize.py                    # Alias matching, keyword heuristics
@@ -143,6 +162,7 @@ core/                              # Business logic
   payroll_parser.py                # Phoenix/Greenpage CyberPayroll report parser
   plaid_client.py                  # Plaid API client (link, sync, liabilities)
   reporting.py                     # Query helpers for Reports page + centralized exclusion lists
+  vendor_matching.py               # Venmo/PayPal vendor transaction matching (1:1, 3-pass algorithm)
   coverage.py                      # Test coverage utilities
 scripts/
   seed_demo_data.py                # Seed fake data for demo instance (2 entities)
@@ -178,6 +198,7 @@ Pattern used across routes:
 - **Weekly** -- Weekly check-in: KPI band (spent/pace/remaining), credit card paydown tracker with per-card utilization bars and target-date pace indicator, this week's bills (from 5 data sources), last week scorecard (top categories, burn rate, warnings). ISO week navigation (Mon–Sun). Hidden for LL entity.
 - **Waterfall** -- BFM surplus to personal debt paydown. Two tabs: **Actual** (monthly actuals: revenue → fixed costs → operating costs → surplus) and **Target** (budget-based scenario modeling). Target has two-mode toggle: **Revenue Target** (set revenue, see resulting take-home) or **Desired Take-Home** (set after-tax take-home, back-calculates gross at 22% tax and required revenue). Hover tooltips on bars show per-category breakdown (actuals show spending, target shows budgets). Personal CC debt with utilization bars and payoff estimate. Other liabilities (mortgages/loans). 6-month surplus trend chart. Cross-entity (always queries BFM + Personal). Hidden for LL entity.
 - **Reports** -- Monthly detail + spending trend (pure CSS bar chart)
+- **Data Sources** (`/data-sources`) -- Vendor order upload (Amazon CSV, Henry Schein XLSX) + Plaid vendor account connection (Venmo/PayPal). Replaces the old `/vendors` page. Legacy `/vendors` URL redirects here with 301.
 - **Connected Accounts** -- Plaid Link, sync, disconnect
 - **Kristine's Dashboard** (`/k/`) -- Public (no auth), mobile-first page for Kristine. Shows Personal Focus budget status (categories, subcategories, transaction drill-down), Luxe Legacy business summary, account balances (BOA Primary, LL, Apple Card), and praise/gamification. Light blue and pink theme. Standalone template (no sidebar/base.html).
 
@@ -190,7 +211,7 @@ Pattern used across routes:
 
 Workflow pages removed from sidebar in PR #23 redesign; now accessible via To Do page Workflows section.
 
-## Database (56 Migrations)
+## Database (57 Migrations)
 Key tables:
 - **`transactions`** -- Main ledger. PK = SHA-256(date, amount, description)[:24]. Negative amount = debit.
 - **`categories`** -- Per-entity categories. Personal: 35 categories. BFM: 32 categories. Every category has a "General" subcategory.
@@ -216,6 +237,7 @@ Key tables:
 - **`order_line_items`** -- Individual products within multi-item vendor orders (Migration 53). Fields: amazon_order_id (FK → amazon_orders), item_description, qty, unit_price_cents, category, subcategory, line_number. Breaks down aggregate orders into per-item categorization.
 - **`transaction_splits`** -- Split a single bank transaction across multiple budget categories (Migration 54). Fields: transaction_id (FK → transactions), description, amount_cents, category, subcategory, sort_order, source (manual/vendor_line_item), line_item_id (FK → order_line_items), created_at. When splits exist, `effective_txns_cte()` replaces parent with split pieces in all reporting queries.
 - **`cc_paydown_goal`** -- Credit card paydown target date goal (Migration 56). Singleton per entity (CHECK id=1). Fields: target_date, start_date, start_balance_cents, created_at. Used by Weekly page to compute linear pace toward $0 balance.
+- **`cut_list`** -- Expenses to cancel/reduce (Migration 57). Fields: name, monthly_cents, notes, status (pending/done), completed_at, created_at. Tracked on the To Do page to surface cost-cutting opportunities.
 
 ## Vendor Workflow (Three-Phase)
 
@@ -413,6 +435,16 @@ Long-term net worth projections at `/planning`. Settings stored in `personal.sql
 - **Updating icons** — Replace PNGs in `web/static/`, bump `CACHE_NAME` version in `sw.js`, deploy. Users must remove and re-add the app to dock/home-screen to see new icon (OS caches icon at install time).
 
 ## Change Log
+
+### 2026-03-30 — Client-side auth gate + Data Sources page + vendor matching + cut list
+Replaced HTTP Basic Auth with a PWA-compatible client-side password gate, consolidated vendor upload into a new Data Sources page, and added Venmo/PayPal vendor matching and a cut list feature.
+
+1. **Client-side auth gate** — Removed HTTP Basic Auth (broke PWA installs and service workers). New overlay in `base.html` computes `SHA-256(password)` via Web Crypto API and stores result in `localStorage` (`atlas-auth` key). Users aren't re-prompted across page loads or installs. Bypassed for `/k/*`, `/sw.js`, `/offline`.
+2. **Data Sources page (`/data-sources`)** — Merged vendor upload (Amazon CSV, Henry Schein XLSX) and Plaid vendor account connection (Venmo/PayPal) into a single page. Legacy `/vendors` route redirects here with 301. Blueprint: `data_sources` in `web/routes/data_sources.py`. Template: `web/templates/data_sources.html`.
+3. **Vendor matching (`core/vendor_matching.py`)** — 3-pass matching algorithm for Venmo/PayPal vendor transactions to bank charges. Pass 1 (exact): ≤1% amount + ≤3 days → auto-apply at 0.95 confidence. Pass 2 (likely): ≤1% amount + ≤7 days → review at 0.80. Pass 3 (loose): ≤5% amount + ≤10 days → review at 0.50. Simpler than Amazon matching — 1:1 only, no multi-order grouping.
+4. **Cut list (Migration 57)** — New `cut_list` table for tracking expenses to cancel/reduce. Fields: name, monthly_cents, notes, status (pending/done), completed_at. Managed from the To Do page (`web/routes/todo.py`). CRUD: add item, toggle done/pending, delete.
+5. **Auth color match** — Auth overlay title and button use app blue (`#2F7BFF`) matching the rest of the UI.
+6. **Remove plotly** — Removed unused `plotly` dependency from `requirements.txt` (reports page switched to pure CSS bars earlier).
 
 ### 2026-03-24 — PWA: service worker, installability, offline fallback + monogram icons
 Made the app a proper installable Progressive Web App with service worker caching and offline support. Replaced wax seal PWA icons with clean L monogram for better dock/home-screen appearance.
@@ -747,7 +779,7 @@ Plaid upgraded to production. Liabilities product enabled. Major category reorga
 Public demo at `ledger-oak-demo.fly.dev` with fake seed data, no auth, 2 entities. Made entity map configurable via env var.
 
 1. **`ENTITIES` env var** — `web/__init__.py` parses `ENTITIES=Personal:personal,Business:company` to override the default 3-entity map. Colors and labels fall back gracefully for unknown display names (e.g. "Business" gets blue accent + business labels).
-2. **`fly.demo.toml`** — Separate Fly config: `app=ledger-oak-demo`, own volume (`ledger_oak_demo_data`), `ENTITIES` override, no `APP_USERNAME`/`APP_PASSWORD` (auth disabled).
+2. **`fly.demo.toml`** — Separate Fly config: `app=ledger-oak-demo`, own volume (`ledger_oak_demo_data`), `ENTITIES` override, auth disabled (no password overlay in demo build).
 3. **`scripts/seed_demo_data.py`** — Generates realistic fake data for 2 entities. Wipes and re-seeds on each run. Personal: ~1010 transactions, 5 accounts (2 bank + 3 credit), 2 manual recurring, 26 categories with 154 subcategories. Business: ~688 transactions, 4 accounts (3 bank + 1 credit), 2 manual recurring, 22 categories with 108 subcategories. Business merchants: Staples, Adobe, Zoom, Delta, ADP, Google Ads, McKinsey, UnitedHealthcare, etc.
 4. **Dynamic `_ENTITY_DISPLAY`** — `cashflow.py` replaced hardcoded entity display map with `_build_entity_display()` that derives from `_ENTITY_MAP` at runtime. Cross-entity sections show correct names for both prod and demo.
 5. **Upcoming charges capped at 3** — `cashflow.py` `_load_entity_section()` slices `combined[:3]` to limit upcoming charges per account card.
