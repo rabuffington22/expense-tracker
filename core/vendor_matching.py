@@ -251,10 +251,12 @@ def get_vendor_match_stats(entity_key: str) -> dict:
     """Get stats for the vendor matching page."""
     conn = get_connection(entity_key)
     try:
-        total = conn.execute("SELECT COUNT(*) FROM vendor_transactions").fetchone()[0]
-        matched = conn.execute(
+        row = conn.execute("SELECT COUNT(*) FROM vendor_transactions").fetchone()
+        total = row[0] if row else 0
+        row = conn.execute(
             "SELECT COUNT(*) FROM vendor_transactions WHERE matched_transaction_id IS NOT NULL"
-        ).fetchone()[0]
+        ).fetchone()
+        matched = row[0] if row else 0
         return {
             "total": total,
             "matched": matched,

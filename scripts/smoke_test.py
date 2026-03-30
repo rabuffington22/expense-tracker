@@ -125,6 +125,7 @@ def main() -> None:
 
         # ── 8. Route regression tests ────────────────────────────────
         print("\n8. Route regression tests…")
+        os.environ.setdefault("FLASK_SECRET", "smoke-test-secret-key")
         from web import create_app
         app = create_app()
         app.config["TESTING"] = True

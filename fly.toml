@@ -10,7 +10,8 @@ primary_region = 'dfw'
 
 [env]
   DATA_DIR = '/data'
-  FLASK_SECRET = ''
+  # FLASK_SECRET must be set via `fly secrets set FLASK_SECRET=<value>`
+  # Do NOT put it here — empty string will cause app to fail to start.
 
 [[mounts]]
   source = 'ledger_oak_data'

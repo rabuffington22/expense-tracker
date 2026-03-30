@@ -683,6 +683,9 @@ def save_orders_to_db(entity: str, orders: list[dict], vendor: str = "amazon") -
 
         conn.commit()
         return inserted, skipped
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 
@@ -722,10 +725,12 @@ def get_order_counts(entity: str) -> tuple[int, int]:
     """Return (total_orders, unmatched_orders) counts."""
     conn = get_connection(entity)
     try:
-        total = conn.execute("SELECT COUNT(*) FROM amazon_orders").fetchone()[0]
-        unmatched = conn.execute(
+        row = conn.execute("SELECT COUNT(*) FROM amazon_orders").fetchone()
+        total = row[0] if row else 0
+        row = conn.execute(
             "SELECT COUNT(*) FROM amazon_orders WHERE matched_transaction_id IS NULL"
-        ).fetchone()[0]
+        ).fetchone()
+        unmatched = row[0] if row else 0
         return total, unmatched
     finally:
         conn.close()
@@ -825,6 +830,9 @@ def apply_matches(entity: str, matches: list[dict]) -> int:
             updated += 1
 
         conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 

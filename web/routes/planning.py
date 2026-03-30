@@ -295,7 +295,7 @@ def update_settings():
 
 @bp.route("/items/add", methods=["POST"])
 def add_item():
-    entity_key = request.form.get("entity_key", g.entity_key)
+    entity_key = g.entity_key
     item_type = request.form.get("item_type", "asset")
     name = request.form.get("name", "").strip()
     if not name:
@@ -337,7 +337,7 @@ def add_item():
 
 @bp.route("/items/update/<int:item_id>", methods=["POST"])
 def update_item(item_id):
-    entity_key = request.form.get("entity_key", g.entity_key)
+    entity_key = g.entity_key
     name = request.form.get("name", "").strip()
     value_cents = _parse_dollar_to_cents(request.form.get("current_value", "0"))
     rate_bps = _parse_rate_to_bps(request.form.get("annual_rate", "0"))
@@ -369,7 +369,7 @@ def update_item(item_id):
 
 @bp.route("/items/delete/<int:item_id>", methods=["POST"])
 def delete_item(item_id):
-    entity_key = request.form.get("entity_key", g.entity_key)
+    entity_key = g.entity_key
     conn = get_connection(entity_key)
     try:
         conn.execute("DELETE FROM planning_items WHERE id = ?", (item_id,))
