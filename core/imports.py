@@ -721,6 +721,9 @@ def commit_transactions(df: pd.DataFrame, entity: str) -> tuple[int, int]:
 
 def save_upload(file_bytes: bytes, filename: str) -> Path:
     """Persist an uploaded file to DATA_DIR/uploads/ and return the path."""
-    dest = get_data_dir() / "uploads" / filename
+    safe_name = Path(filename).name  # Strip directory components
+    if not safe_name:
+        safe_name = "upload"
+    dest = get_data_dir() / "uploads" / safe_name
     dest.write_bytes(file_bytes)
     return dest

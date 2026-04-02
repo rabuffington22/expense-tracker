@@ -80,9 +80,10 @@ def _sync_plaid_accounts(conn, entity_key: str):
     card_sort = 100
     synced_plaid_ids = set()  # Track which accounts we actually want on Cash Flow
 
+    from core.crypto import decrypt_token
     for item in items:
         try:
-            accounts = get_accounts(item["access_token"])
+            accounts = get_accounts(decrypt_token(item["access_token"]))
         except Exception as e:
             log.warning("Failed to fetch accounts for %s: %s", item["institution_name"], e)
             continue
@@ -384,10 +385,11 @@ def _fetch_plaid_liabilities(conn) -> dict:
     if not items:
         return {}
 
+    from core.crypto import decrypt_token
     all_liabilities = {}
     for item in items:
         try:
-            liab = get_liabilities(item["access_token"])
+            liab = get_liabilities(decrypt_token(item["access_token"]))
             all_liabilities.update(liab)
         except Exception as e:
             log.warning("Failed to fetch liabilities for item %s: %s", item["item_id"], e)

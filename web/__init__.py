@@ -176,7 +176,7 @@ def create_app():
 
     # ── CSRF protection ──────────────────────────────────────────────────
     _CSRF_SAFE_METHODS = frozenset(("GET", "HEAD", "OPTIONS"))
-    _CSRF_EXEMPT_PATHS = ("/sw.js", "/offline")
+    _CSRF_EXEMPT_PATHS = ("/sw.js", "/offline", "/auth/verify")
 
     def _get_csrf_token():
         """Return the CSRF token for the current session, creating one if needed."""
@@ -201,10 +201,47 @@ def create_app():
 
     app.jinja_env.globals["csrf_token"] = _get_csrf_token
 
+    # ── Server-side auth ─────────────────────────────────────────────────
+    _AUTH_HASH = os.environ.get("APP_PASSWORD_HASH", "").lower().strip()
+    _AUTH_EXEMPT = frozenset(("/sw.js", "/offline", "/health", "/auth/verify"))
+
+    @app.route("/auth/verify", methods=["POST"])
+    def _auth_verify():
+        """Verify password hash from client-side auth overlay."""
+        from flask import jsonify as _jsonify
+        submitted = (request.get_json(silent=True) or {}).get("hash", "")
+        if not _AUTH_HASH:
+            # No password configured (demo mode) — auto-authenticate
+            session["authenticated"] = True
+            return _jsonify({"ok": True})
+        if submitted.lower().strip() == _AUTH_HASH:
+            session["authenticated"] = True
+            return _jsonify({"ok": True})
+        return _jsonify({"ok": False, "error": "Invalid password"}), 401
+
+    @app.before_request
+    def _check_auth():
+        if not _AUTH_HASH:
+            return  # No password configured (demo mode) — skip auth
+        if request.path in _AUTH_EXEMPT:
+            return
+        if request.path.startswith("/k/") or request.path == "/k":
+            return  # Kristine's page — public
+        if request.path.startswith("/static/"):
+            return  # Static assets — always accessible
+        if session.get("authenticated"):
+            return
+        # For HTMX/fetch requests, return 401 so the client can show the overlay
+        if request.headers.get("HX-Request") or request.is_json:
+            abort(401)
+        # For full page requests, the client-side overlay handles the UI —
+        # but we still return the page so the overlay JS can run
+        return
+
     # ── Before-request: init DB, set entity context ──────────────────────────
     @app.before_request
     def _setup_entity():
-        if request.path.startswith("/k") or request.path in ("/sw.js", "/offline", "/health"):
+        if request.path.startswith("/k/") or request.path == "/k" or request.path in ("/sw.js", "/offline", "/health"):
             return  # Kristine's page, SW, offline, health — manage own context
         g.entity_display, g.entity_key = get_entity()
         g.accent = get_accent()
@@ -214,7 +251,7 @@ def create_app():
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor
     def _inject_globals():
-        if request.path.startswith("/k") or request.path in ("/sw.js", "/offline", "/health"):
+        if request.path.startswith("/k/") or request.path == "/k" or request.path in ("/sw.js", "/offline", "/health"):
             return {}  # These pages don't use entity context
         labels = _ENTITY_LABELS.get(g.entity_display, _DEFAULT_LABELS)
         return {

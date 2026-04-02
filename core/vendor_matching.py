@@ -211,6 +211,9 @@ def apply_vendor_matches(entity_key: str, matches: list[dict]) -> int:
             _apply_single_match(conn, m)
             applied += 1
         conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
     return applied

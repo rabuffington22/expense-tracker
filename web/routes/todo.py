@@ -298,7 +298,8 @@ def _get_large_txns(conn) -> list[dict]:
         "WHERE ABS(amount_cents) >= 50000 "
         "AND date > ? AND date <= ? "
         "AND COALESCE(category, '') NOT IN "
-        "    ('Internal Transfer', 'Credit Card Payment') "
+        "    ('Internal Transfer', 'Credit Card Payment', 'Income', "
+        "     'Owner Contribution', 'Partner Buyout') "
         "ORDER BY ABS(amount_cents) DESC",
         (start, today_iso),
     ).fetchall()
@@ -324,7 +325,8 @@ def _get_new_merchants(conn) -> list[dict]:
         "WHERE date > ? AND date <= ? "
         "AND merchant_canonical IS NOT NULL AND merchant_canonical != '' "
         "AND COALESCE(category, '') NOT IN "
-        "    ('Internal Transfer', 'Credit Card Payment') "
+        "    ('Internal Transfer', 'Credit Card Payment', 'Income', "
+        "     'Owner Contribution', 'Partner Buyout') "
         "AND merchant_canonical NOT IN ("
         "  SELECT DISTINCT merchant_canonical FROM transactions "
         "  WHERE date >= ? AND date < ? "
@@ -364,9 +366,9 @@ def _cut_list_summary(items: list[dict]) -> dict:
     return {
         "pending_count": len(pending),
         "done_count": len(done),
-        "pending_monthly": sum(i["monthly_cents"] for i in pending) / 100,
-        "done_monthly": sum(i["monthly_cents"] for i in done) / 100,
-        "total_monthly": sum(i["monthly_cents"] for i in items) / 100,
+        "pending_monthly": sum(i.get("monthly_cents") or 0 for i in pending) / 100,
+        "done_monthly": sum(i.get("monthly_cents") or 0 for i in done) / 100,
+        "total_monthly": sum(i.get("monthly_cents") or 0 for i in items) / 100,
     }
 
 

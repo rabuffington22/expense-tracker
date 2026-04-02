@@ -21,10 +21,13 @@ from plaid.model.link_token_create_request_statements import LinkTokenCreateRequ
 def _get_env():
     """Map PLAID_ENV string to Plaid API environment."""
     env = os.environ.get("PLAID_ENV", "sandbox").lower()
-    return {
+    env_map = {
         "sandbox": plaid.Environment.Sandbox,
         "production": plaid.Environment.Production,
-    }.get(env, plaid.Environment.Sandbox)
+    }
+    if env not in env_map:
+        raise ValueError(f"Invalid PLAID_ENV={env!r}. Must be 'sandbox' or 'production'.")
+    return env_map[env]
 
 
 def _get_client() -> plaid_api.PlaidApi:

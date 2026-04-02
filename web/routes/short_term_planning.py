@@ -7,6 +7,7 @@ import logging
 from datetime import date, datetime, timedelta, timezone
 
 from flask import Blueprint, render_template, request, g, redirect, url_for, make_response, jsonify
+from markupsafe import escape
 
 from core.db import get_connection, init_db
 from core.reporting import effective_txns_cte, EXCLUDE_CATS
@@ -1034,7 +1035,7 @@ def budget_status():
 
             html_parts.append(
                 f'<tr class="{color_class}">'
-                f'<td>{item["category"]}</td>'
+                f'<td>{escape(item["category"])}</td>'
                 f'<td>${item["budget_cents"] / 100:,.0f}</td>'
                 f'<td>${item["spent_cents"] / 100:,.0f}</td>'
                 f'<td>${item["remaining_cents"] / 100:,.0f}</td>'

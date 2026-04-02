@@ -1,10 +1,13 @@
 """Plaid integration routes — connect banks, sync transactions."""
 
 import hashlib
+import logging
 import threading
 from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for, g, jsonify
+
+log = logging.getLogger(__name__)
 
 from core.db import get_connection
 from core.imports import compute_transaction_id, commit_transactions
@@ -100,8 +103,9 @@ def link_token():
         from core.plaid_client import create_link_token
         token = create_link_token(user_id=f"expense-tracker-{g.entity_key}")
         return jsonify({"link_token": token})
-    except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+    except Exception:
+        log.exception("Plaid link_token error")
+        return jsonify({"error": "Failed to create link token"}), 500
 
 
 @bp.route("/exchange-token", methods=["POST"])
@@ -124,6 +128,7 @@ def exchange_token():
         access_token = result["access_token"]
         item_id = result["item_id"]
 
+        from core.crypto import encrypt_token
         now = datetime.now(timezone.utc).isoformat()
         conn = get_connection(g.entity_key)
         try:
@@ -131,7 +136,7 @@ def exchange_token():
                 """INSERT OR IGNORE INTO plaid_items
                    (item_id, access_token, institution_name, institution_id, created_at)
                    VALUES (?,?,?,?,?)""",
-                (item_id, access_token, institution_name, institution_id, now),
+                (item_id, encrypt_token(access_token), institution_name, institution_id, now),
             )
             # Fetch and store accounts
             accounts = get_accounts(access_token)
@@ -148,8 +153,9 @@ def exchange_token():
             conn.close()
 
         return jsonify({"success": True, "item_id": item_id, "accounts": len(accounts)})
-    except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+    except Exception:
+        log.exception("Plaid exchange_token error")
+        return jsonify({"error": "Failed to connect account"}), 500
 
 
 @bp.route("/sync", methods=["POST"])
@@ -190,6 +196,10 @@ def _do_sync():
     if not items:
         flash("No connected accounts to sync.", "warning")
         return redirect(url_for("plaid.index"))
+
+    from core.crypto import decrypt_token
+    for item in items:
+        item["access_token"] = decrypt_token(item["access_token"])
 
     total_new = 0
     total_modified = 0
@@ -386,7 +396,8 @@ def disconnect(item_id):
         # Try to remove from Plaid (best effort)
         try:
             from core.plaid_client import remove_item
-            remove_item(row["access_token"])
+            from core.crypto import decrypt_token
+            remove_item(decrypt_token(row["access_token"]))
         except Exception:
             pass  # Item may already be removed on Plaid's side
 

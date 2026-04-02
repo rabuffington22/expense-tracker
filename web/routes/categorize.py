@@ -257,6 +257,13 @@ def delete_category(name):
     try:
         conn.execute("DELETE FROM categories WHERE name=?", (name,))
         conn.execute("DELETE FROM subcategories WHERE category_name=?", (name,))
+        conn.execute("DELETE FROM budget_items WHERE category=?", (name,))
+        conn.execute("DELETE FROM budget_subcategories WHERE category=?", (name,))
+        conn.execute("DELETE FROM merchant_aliases WHERE default_category=?", (name,))
+        conn.execute("UPDATE transactions SET category=NULL WHERE category=?", (name,))
+        conn.execute("UPDATE amazon_orders SET category=NULL WHERE category=?", (name,))
+        conn.execute("UPDATE transaction_splits SET category=NULL WHERE category=?", (name,))
+        conn.execute("UPDATE order_line_items SET category=NULL WHERE category=?", (name,))
         conn.commit()
     finally:
         conn.close()
@@ -286,6 +293,22 @@ def rename_category():
         )
         conn.execute(
             "UPDATE amazon_orders SET category=? WHERE category=?",
+            (new_name, old_name),
+        )
+        conn.execute(
+            "UPDATE budget_items SET category=? WHERE category=?",
+            (new_name, old_name),
+        )
+        conn.execute(
+            "UPDATE budget_subcategories SET category=? WHERE category=?",
+            (new_name, old_name),
+        )
+        conn.execute(
+            "UPDATE transaction_splits SET category=? WHERE category=?",
+            (new_name, old_name),
+        )
+        conn.execute(
+            "UPDATE order_line_items SET category=? WHERE category=?",
             (new_name, old_name),
         )
         conn.commit()

@@ -790,6 +790,9 @@ def mark_orders_matched(entity: str, matches: list[dict]) -> None:
                     (txn_id, order_id),
                 )
         conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 

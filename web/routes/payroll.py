@@ -40,14 +40,22 @@ ROLE_COLORS: dict[str, str] = {
 ROLE_ORDER = ["Providers", "Nurses", "Scribes", "Front Office", "Office Manager", "HR", "Owner"]
 
 
+def _sanitize_temp_key(key: str) -> str:
+    """Strip path separators to prevent directory traversal."""
+    return os.path.basename(key).replace("..", "")
+
+
 def _save_temp(key: str, data: dict) -> None:
-    path = os.path.join(_TEMP_DIR, f"{key}.json")
+    path = os.path.join(_TEMP_DIR, f"{_sanitize_temp_key(key)}.json")
     with open(path, "w") as f:
         json.dump(data, f)
 
 
 def _load_temp(key: str) -> dict | None:
-    path = os.path.join(_TEMP_DIR, f"{key}.json")
+    safe_key = _sanitize_temp_key(key)
+    if not safe_key:
+        return None
+    path = os.path.join(_TEMP_DIR, f"{safe_key}.json")
     if not os.path.exists(path):
         return None
     with open(path) as f:
@@ -396,9 +404,9 @@ def import_parse():
 
         employees = _get_employees(conn)
         role_avgs = _get_compensation_analysis(conn)
-        available_months = _get_available_months(conn)
-        spending_month = date.today().strftime("%Y-%m")
-        role_spending = _get_role_spending(conn, spending_month, spending_month)
+        available_periods = _get_available_pay_periods(conn)
+        spending_period = available_periods[-1] if available_periods else date.today().strftime("%Y-%m-%d")
+        role_spending = _get_role_spending(conn, spending_period)
         grand_total = sum(rs["total_cents"] for rs in role_spending)
 
         return render_template(
@@ -409,8 +417,8 @@ def import_parse():
             grand_total=grand_total,
             role_colors=ROLE_COLORS,
             role_order=ROLE_ORDER,
-            available_months=available_months,
-            spending_month=spending_month,
+            available_periods=available_periods,
+            spending_period=spending_period,
             import_preview=True,
             import_temp_key=temp_key,
             import_matched=matched,

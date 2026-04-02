@@ -170,20 +170,27 @@
     if (e.target.classList.contains('split-amount')) splitUpdateTotal();
   });
 
+  // --- HTML escape helper ---
+  function _esc(str) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(str));
+    return d.innerHTML;
+  }
+
   // --- Category change → reload subcategories ---
   window.splitCatChange = async function(sel) {
     const line = sel.closest('.split-line');
     const subcatSel = line.querySelector('.split-subcat');
     const cat = sel.value;
     const subs = await loadSubcats(cat);
-    subcatSel.innerHTML = subs.map(s => '<option value="'+s+'">'+s+'</option>').join('');
+    subcatSel.innerHTML = subs.map(s => '<option value="'+_esc(s)+'">'+_esc(s)+'</option>').join('');
   };
 
   // --- Add new split line ---
   window.splitAddLine = function() {
     const container = document.getElementById('split-lines');
     const idx = container.querySelectorAll('.split-line').length;
-    const opts = allCats.map(c => '<option value="'+c+'">'+c+'</option>').join('');
+    const opts = allCats.map(c => '<option value="'+_esc(c)+'">'+_esc(c)+'</option>').join('');
     const html = `
     <div class="split-line" data-idx="${idx}">
       <div style="display:flex; gap:0.3rem; align-items:center;">
@@ -303,7 +310,7 @@
         const subcatSel = line.querySelector('.split-subcat');
         const currentVal = subcatSel.dataset.initial || subcatSel.value || 'General';
         subcatSel.innerHTML = subs.map(s =>
-          '<option value="'+s+'"' + (s === currentVal ? ' selected' : '') + '>'+s+'</option>'
+          '<option value="'+_esc(s)+'"' + (s === currentVal ? ' selected' : '') + '>'+_esc(s)+'</option>'
         ).join('');
       }
     }

@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import tempfile
-from datetime import date as _date, datetime
+from datetime import date as _date, datetime, timezone
+
+log = logging.getLogger(__name__)
 
 import pandas as pd
 from flask import Blueprint, render_template, request, flash, redirect, url_for, g, session, jsonify
@@ -218,8 +221,9 @@ def link_token():
         from core.plaid_client import create_link_token
         token = create_link_token(user_id=f"vendor-{g.entity_key}")
         return jsonify({"link_token": token})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        log.exception("Vendor link_token error")
+        return jsonify({"error": "Failed to create link token"}), 500
 
 
 @bp.route("/exchange-token", methods=["POST"])
@@ -237,18 +241,20 @@ def exchange_token():
         result = exchange_public_token(public_token)
         access_token = result["access_token"]
         item_id = result["item_id"]
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        log.exception("Vendor exchange_token error")
+        return jsonify({"error": "Failed to connect account"}), 500
 
     # Save as vendor Plaid item (is_vendor=1)
+    from core.crypto import encrypt_token
     conn = get_connection(g.entity_key)
     try:
         conn.execute(
             "INSERT OR IGNORE INTO plaid_items "
             "(item_id, access_token, institution_name, institution_id, is_vendor, created_at) "
             "VALUES (?, ?, ?, ?, 1, ?)",
-            (item_id, access_token, institution_name, institution_id,
-             datetime.utcnow().isoformat()),
+            (item_id, encrypt_token(access_token), institution_name, institution_id,
+             datetime.now(timezone.utc).isoformat()),
         )
         conn.commit()
     finally:
@@ -275,7 +281,8 @@ def sync_vendor(item_id):
         flash("Vendor account not found.", "danger")
         return redirect(url_for("data_sources.index"))
 
-    access_token, institution_name, cursor = row
+    from core.crypto import decrypt_token
+    access_token, institution_name, cursor = decrypt_token(row[0]), row[1], row[2]
 
     # Determine vendor type from institution name
     inst_lower = (institution_name or "").lower()
@@ -382,16 +389,16 @@ def _upsert_vendor_transaction(conn, txn: dict, item_id: str, vendor_type: str) 
     recipient = name
 
     try:
-        conn.execute(
+        cur = conn.execute(
             "INSERT OR IGNORE INTO vendor_transactions "
             "(plaid_item_id, plaid_transaction_id, plaid_account_id, date, amount, "
             "amount_cents, name, merchant_name, recipient, vendor_type, imported_at) "
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (item_id, txn_id, account_id, date, amount, amount_cents,
              name, merchant_name, recipient, vendor_type,
-             datetime.utcnow().isoformat()),
+             datetime.now(timezone.utc).isoformat()),
         )
-        return conn.total_changes > 0
+        return cur.rowcount > 0
     except Exception:
         return False
 

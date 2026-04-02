@@ -35,12 +35,20 @@ def _save_match_data(review_data, no_match_data, source="orders"):
     session["match_skipped"] = 0
 
 
+def _sanitize_temp_key(key: str) -> str:
+    """Strip path separators to prevent directory traversal."""
+    return os.path.basename(key).replace("..", "")
+
+
 def _load_match_data():
     """Load match data from temp file."""
     temp_key = session.get("match_temp_key")
     if not temp_key:
         return [], [], "orders"
-    path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
+    safe_key = _sanitize_temp_key(temp_key)
+    if not safe_key:
+        return [], [], "orders"
+    path = os.path.join(_TEMP_DIR, f"{safe_key}.json")
     if not os.path.exists(path):
         return [], [], "orders"
     with open(path) as f:
@@ -55,9 +63,11 @@ def _clear_match_data():
     accepted = session.pop("match_accepted", 0)
     skipped = session.pop("match_skipped", 0)
     if temp_key:
-        path = os.path.join(_TEMP_DIR, f"{temp_key}.json")
-        if os.path.exists(path):
-            os.remove(path)
+        safe_key = _sanitize_temp_key(temp_key)
+        if safe_key:
+            path = os.path.join(_TEMP_DIR, f"{safe_key}.json")
+            if os.path.exists(path):
+                os.remove(path)
     return accepted, skipped
 
 

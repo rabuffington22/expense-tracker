@@ -384,6 +384,10 @@ def delete_item(item_id):
 def cashflow_accounts(entity_key):
     """HTMX helper: return <option> tags for cashflow account dropdown."""
     from markupsafe import escape
+    # Validate entity_key against allowed values
+    allowed = {"personal", "company", "luxelegacy"}
+    if entity_key not in allowed:
+        return "", 404
     accounts = _get_cashflow_accounts(entity_key)
     html = '<option value="">Select account...</option>'
     for name in accounts:

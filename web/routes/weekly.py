@@ -227,24 +227,25 @@ def _get_weekly_bills(conn, entity_key: str, week_start: date, week_end: date) -
     if schedule:
         anchor = datetime.strptime(schedule["anchor_date"], "%Y-%m-%d").date()
         cadence = schedule["cadence_days"]
-        # Walk from anchor to find paydays in the week
-        d = anchor
-        while d < week_start:
-            d += timedelta(days=cadence)
-        while d > week_end:
-            d -= timedelta(days=cadence)
-        # Check if any payday falls in range
-        while d <= week_end:
-            if d >= week_start:
-                bills.append({
-                    "type": "payroll",
-                    "merchant": "Payroll",
-                    "amount_cents": None,
-                    "date": d,
-                    "day_name": _DOW_NAMES[d.weekday()],
-                    "source": "Payroll",
-                })
-            d += timedelta(days=cadence)
+        if cadence and cadence > 0:  # Guard against zero/null cadence
+            # Walk from anchor to find paydays in the week
+            d = anchor
+            while d < week_start:
+                d += timedelta(days=cadence)
+            while d > week_end:
+                d -= timedelta(days=cadence)
+            # Check if any payday falls in range
+            while d <= week_end:
+                if d >= week_start:
+                    bills.append({
+                        "type": "payroll",
+                        "merchant": "Payroll",
+                        "amount_cents": None,
+                        "date": d,
+                        "day_name": _DOW_NAMES[d.weekday()],
+                        "source": "Payroll",
+                    })
+                d += timedelta(days=cadence)
 
     bills.sort(key=lambda b: b["date"])
     return bills

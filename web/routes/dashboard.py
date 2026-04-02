@@ -860,7 +860,7 @@ def _process_merchant_groups(rows, patterns, is_income):
         })
 
 
-def _build_upcoming(patterns, horizon_days=5):
+def _build_upcoming(patterns, horizon_days=30):
     """Filter recurring patterns to those expected within the next horizon_days.
 
     Returns sorted list of up to 6 upcoming items for the template.

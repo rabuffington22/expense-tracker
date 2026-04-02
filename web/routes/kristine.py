@@ -20,6 +20,8 @@ log = logging.getLogger(__name__)
 # ── Background Plaid sync ────────────────────────────────────────────────────
 
 _sync_lock = threading.Lock()
+_last_sync_time = 0.0  # epoch seconds
+_SYNC_INTERVAL = 900   # 15 minutes
 
 
 def _background_sync():
@@ -33,6 +35,7 @@ def _background_sync():
 
     try:
         from core.plaid_client import get_transactions as plaid_get_transactions
+        from core.crypto import decrypt_token
         from web.routes.plaid import _upsert_plaid_transaction
 
         for entity_key in ("personal", "luxelegacy"):
@@ -58,7 +61,7 @@ def _background_sync():
                     finally:
                         conn.close()
 
-                    result = plaid_get_transactions(item["access_token"], cursor=item.get("cursor"))
+                    result = plaid_get_transactions(decrypt_token(item["access_token"]), cursor=item.get("cursor"))
 
                     conn = get_connection(entity_key)
                     try:
@@ -443,8 +446,13 @@ def index():
     init_db("personal")
     init_db("luxelegacy")
 
-    # Kick off background Plaid sync (non-blocking)
-    threading.Thread(target=_background_sync, daemon=True).start()
+    # Kick off background Plaid sync (non-blocking, throttled to once per 15 min)
+    import time as _time
+    global _last_sync_time
+    now = _time.monotonic()
+    if now - _last_sync_time >= _SYNC_INTERVAL:
+        _last_sync_time = now
+        threading.Thread(target=_background_sync, daemon=True).start()
 
     # Personal Focus budget + account balances
     personal_conn = get_connection("personal")
