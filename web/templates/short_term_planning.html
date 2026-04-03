@@ -393,6 +393,43 @@
             </table>
         </div>
         {% endfor %}
+
+        {# ── Budget Totals Box ── #}
+        <div class="outline-panel stp-totals-box">
+            <div class="stp-totals-row">
+                <div class="stp-totals-cell">
+                    <span class="stp-totals-label">BUDGETED</span>
+                    <span class="stp-totals-value">${{ "{:,.0f}".format(budget_totals.budgeted_cents / 100) }}</span>
+                </div>
+                <div class="stp-totals-cell">
+                    <span class="stp-totals-label">SPENT</span>
+                    <span class="stp-totals-value">${{ "{:,.0f}".format(budget_totals.spent_cents / 100) }}</span>
+                </div>
+                <div class="stp-totals-cell">
+                    <span class="stp-totals-label">3-MO AVG</span>
+                    <span class="stp-totals-value">${{ "{:,.0f}".format(budget_totals.avg_3mo_cents / 100) }}</span>
+                </div>
+                <div class="stp-totals-cell">
+                    <span class="stp-totals-label">REMAINING</span>
+                    {% set rem = budget_totals.remaining_cents %}
+                    <span class="stp-totals-value {{ 'stp-green' if rem >= -100 else 'stp-red' }}">
+                        {{ '\u2212' if rem < -100 else '' }}${{ "{:,.0f}".format((rem if rem >= 0 else -rem) / 100) }}
+                    </span>
+                </div>
+                <div class="stp-totals-cell">
+                    <span class="stp-totals-label">PROGRESS</span>
+                    <div class="stp-totals-progress">
+                        <div class="stp-budget-bar">
+                            {% set pct = budget_totals.pct %}
+                            <div class="stp-budget-bar-fill {{ 'stp-bar-green' if pct <= 100 else ('stp-bar-yellow' if pct <= 115 else 'stp-bar-red') }}"
+                                 style="width:{{ [pct, 100] | min }}%"></div>
+                        </div>
+                        <span class="stp-budget-pct">{{ pct }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="stp-budget-actions">
             <button type="submit" class="btn btn-sm">Update Budgets</button>
         </div>

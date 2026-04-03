@@ -679,8 +679,19 @@ def index():
         budget_sections = _group_budget_items(budget_status)
 
         # Budget summary (only count items that have budgets set)
-        total_budgeted = sum(b["budget_cents"] for b in budget_status if b["budget_cents"] > 0)
-        total_spent = sum(b["spent_cents"] for b in budget_status if b["budget_cents"] > 0)
+        budgeted_items = [b for b in budget_status if b["budget_cents"] > 0]
+        total_budgeted = sum(b["budget_cents"] for b in budgeted_items)
+        total_spent = sum(b["spent_cents"] for b in budgeted_items)
+        total_avg_3mo = sum(b.get("avg_3mo_cents", 0) for b in budgeted_items)
+        total_remaining = total_budgeted - total_spent
+        total_pct = int(total_spent / total_budgeted * 100) if total_budgeted > 0 else 0
+        budget_totals = {
+            "budgeted_cents": total_budgeted,
+            "spent_cents": total_spent,
+            "avg_3mo_cents": total_avg_3mo,
+            "remaining_cents": total_remaining,
+            "pct": total_pct,
+        }
 
         # Action items + CC due dates
         action_items = _get_action_items(conn)
@@ -707,6 +718,7 @@ def index():
             budget_sections=budget_sections,
             total_budgeted=total_budgeted,
             total_spent=total_spent,
+            budget_totals=budget_totals,
             current_month=current_month,
             current_month_display=bm_date.strftime("%B %Y"),
             budget_months=budget_months,
