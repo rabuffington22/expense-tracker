@@ -258,11 +258,21 @@ def _do_sync():
                     )
                     total_modified += 1
 
-                # Process removed transactions — clear plaid_item_id so they
-                # remain in the ledger but are no longer associated with Plaid
+                # Process removed transactions — delete them from the ledger.
+                # Plaid removes pending transactions when they post (the posted
+                # version arrives as an "added" transaction in the same sync),
+                # so keeping the old row would create duplicates.
                 for plaid_txn_id in result["removed"]:
+                    # Also clean up any splits tied to this transaction
                     conn.execute(
-                        "UPDATE transactions SET plaid_item_id=NULL"
+                        "DELETE FROM transaction_splits"
+                        " WHERE transaction_id = ("
+                        "   SELECT transaction_id FROM transactions"
+                        "   WHERE plaid_transaction_id=?)",
+                        (plaid_txn_id,),
+                    )
+                    conn.execute(
+                        "DELETE FROM transactions"
                         " WHERE plaid_transaction_id=?",
                         (plaid_txn_id,),
                     )
