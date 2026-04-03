@@ -7029,7 +7029,20 @@ input.pl-input--sm {
     border-collapse: collapse;
     font-size: 1.0rem;
     font-weight: 600;
+    table-layout: fixed;
 }
+.stp-budget-table th:nth-child(1),
+.stp-budget-table td:nth-child(1) { width: 28%; }
+.stp-budget-table th:nth-child(2),
+.stp-budget-table td:nth-child(2) { width: 12%; }
+.stp-budget-table th:nth-child(3),
+.stp-budget-table td:nth-child(3) { width: 14%; }
+.stp-budget-table th:nth-child(4),
+.stp-budget-table td:nth-child(4) { width: 14%; }
+.stp-budget-table th:nth-child(5),
+.stp-budget-table td:nth-child(5) { width: 14%; }
+.stp-budget-table th:nth-child(6),
+.stp-budget-table td:nth-child(6) { width: 18%; }
 .stp-budget-table th {
     font-size: 0.78rem;
     font-weight: 700;
