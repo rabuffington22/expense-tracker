@@ -7129,18 +7129,8 @@ input.pl-input--sm {
 .stp-bar-yellow { background: var(--orange, #ff9f0a); }
 .stp-bar-red { background: var(--red); }
 
-/* ── Budget Totals Box ── */
-.stp-totals-box { margin-top: 1rem; padding: 0.75rem 1rem; }
-.stp-totals-row { display: flex; justify-content: space-between; gap: 1rem; }
-.stp-totals-cell { flex: 1; text-align: center; }
-.stp-totals-label { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.55; margin-bottom: 0.25rem; }
-.stp-totals-value { font-size: 1.05rem; font-weight: 700; }
-.stp-totals-progress { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-top: 0.2rem; }
-.stp-totals-progress .stp-budget-bar { width: 80px; }
-@media (max-width: 600px) {
-    .stp-totals-row { flex-wrap: wrap; gap: 0.5rem; }
-    .stp-totals-cell { flex: 0 0 45%; }
-}
+/* ── Budget Totals Row ── */
+.stp-budget-total-row td { font-size: 1.0rem; font-weight: 700; }
 
 .stp-budget-actions {
     margin-top: 0.75rem;
