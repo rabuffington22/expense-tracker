@@ -230,127 +230,28 @@ function prefillAlias(desc) {
 {% else %}
 <!-- ═══════════ SETTINGS TAB ═══════════ -->
 
-<!-- ── Categories ─────────────────────────── -->
+<!-- ── Categories (read-only — defined in categories.md) ─────────────────── -->
 <h2 class="section-title">Categories</h2>
+<p class="text-muted text-sm" style="margin-bottom: 0.5rem;">
+    Categories and subcategories are defined in <code>categories.md</code>.
+    Edit that file to add, rename, or remove categories.
+</p>
 
 <div style="max-width: 500px;">
-{% if cats %}
 {% for cat in cats %}
-<div class="flex-between" style="padding: 0.3rem 0; border-bottom: 1px solid var(--border);">
-    <span>{{ cat }}</span>
-    <form method="post" action="{{ url_for('categorize.delete_category', name=cat) }}" style="display:inline;">
-        <button type="submit" class="btn btn-sm btn-danger"
-                onclick="return confirm('Delete category ' + {{ cat|tojson }} + '?')">Delete</button>
-    </form>
-</div>
-{% endfor %}
-{% else %}
-<p class="text-muted">No categories defined.</p>
-{% endif %}
-</div>
-
-<form method="post" action="{{ url_for('categorize.add_category') }}" class="mt-1">
-    <div class="form-row" style="max-width: 400px;">
-        <div class="form-group" style="flex: 3;">
-            <input type="text" name="name" placeholder="New category name" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="align-self: flex-start; margin-top: 0.1rem;">Add</button>
-    </div>
-</form>
-
-<!-- Rename -->
-<details class="mt-1">
-    <summary>Rename a category</summary>
-    <div>
-        <p class="text-xs text-muted mb-1">Also updates all matching transactions and aliases</p>
-        <form method="post" action="{{ url_for('categorize.rename_category') }}">
-            <div class="form-row form-narrow">
-                <div class="form-group">
-                    <label>Existing</label>
-                    <select name="old_name">
-                        {% for cat in cats %}
-                        <option value="{{ cat }}">{{ cat }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>New name</label>
-                    <input type="text" name="new_name" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="align-self: flex-end; margin-bottom: 0.8rem;">Rename</button>
-            </div>
-        </form>
+<details style="border-bottom: 1px solid var(--border);">
+    <summary style="padding: 0.3rem 0; cursor: pointer;">{{ cat }}</summary>
+    <div style="padding: 0 0 0.4rem 1rem;">
+        {% set subs = get_subcategories(entity_key, cat) %}
+        {% for sub in subs %}
+            {% if sub != 'Unknown' %}
+            <span class="text-sm text-muted">{{ sub }}{% if not loop.last %}, {% endif %}</span>
+            {% endif %}
+        {% endfor %}
     </div>
 </details>
-
-<hr class="divider">
-
-<!-- ── Subcategories ──────────────────────── -->
-<h2 class="section-title">Subcategories</h2>
-
-<div class="form-group" style="max-width: 250px;">
-    <label>Show subcategories for</label>
-    <select id="sub-cat-filter" onchange="loadSubcategories(this.value)">
-        {% for cat in cats %}
-        <option value="{{ cat }}">{{ cat }}</option>
-        {% endfor %}
-    </select>
+{% endfor %}
 </div>
-
-<div id="subcategory-list">
-    <p class="text-muted text-sm">Select a category above.</p>
-</div>
-
-<script>
-function _escapeHtml(str) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
-}
-function loadSubcategories(cat) {
-    fetch('{{ url_for("categorize.subcategories") }}?category=' + encodeURIComponent(cat))
-        .then(r => r.text())
-        .then(html => {
-            // Parse the option tags to display as a list
-            const parser = new DOMParser();
-            const doc = parser.parseFromString('<select>' + html + '</select>', 'text/html');
-            const options = doc.querySelectorAll('option');
-            let listHtml = '';
-            options.forEach(opt => {
-                if (opt.value !== 'Unknown') {
-                    var escaped = _escapeHtml(opt.textContent);
-                    listHtml += `<div class="flex-between" style="padding:0.3rem 0;border-bottom:1px solid var(--border);">
-                        <span class="text-sm">${escaped}</span>
-                    </div>`;
-                }
-            });
-            if (!listHtml) listHtml = '<p class="text-muted text-sm">No subcategories defined. "Unknown" is always available.</p>';
-            document.getElementById('subcategory-list').innerHTML = listHtml;
-        });
-}
-// Load initial
-if (document.getElementById('sub-cat-filter').value) {
-    loadSubcategories(document.getElementById('sub-cat-filter').value);
-}
-</script>
-
-<form method="post" action="{{ url_for('categorize.add_subcategory') }}" class="mt-1">
-    <div class="form-row form-narrow">
-        <div class="form-group">
-            <label>Category</label>
-            <select name="category">
-                {% for cat in cats %}
-                <option value="{{ cat }}">{{ cat }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Subcategory name</label>
-            <input type="text" name="name" placeholder="New subcategory" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="align-self: flex-end; margin-bottom: 0.8rem;">Add</button>
-    </div>
-</form>
 
 <hr class="divider">
 

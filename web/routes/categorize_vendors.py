@@ -1,11 +1,8 @@
 """Categorize Vendors route — HTMX card queue for labeling vendor orders."""
 
-from datetime import datetime, timezone
-
 from markupsafe import escape
 from flask import Blueprint, render_template, request, session, g
 
-from core.db import get_connection
 from core.amazon import get_uncategorized_orders, get_order_counts, categorize_order, infer_category
 from web import get_categories, get_subcategories
 
@@ -76,19 +73,6 @@ def save():
     final_sub = custom_sub if custom_sub else subcategory
 
     if order_id and category:
-        # Save custom subcategory to DB
-        if final_sub and final_sub != "Unknown":
-            conn = get_connection(g.entity_key)
-            try:
-                conn.execute(
-                    "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
-                    "VALUES (?,?,?)",
-                    (category, final_sub, datetime.now(timezone.utc).isoformat()),
-                )
-                conn.commit()
-            finally:
-                conn.close()
-
         categorize_order(g.entity_key, order_id, category, final_sub)
 
     ctx = _build_card_context(g.entity_key)

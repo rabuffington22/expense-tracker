@@ -448,13 +448,6 @@ def update(txn_id):
 
     conn = get_connection(g.entity_key)
     try:
-        # Auto-create subcategory if it's new
-        if category and subcategory and subcategory not in ("General", "Unknown"):
-            conn.execute(
-                "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
-                "VALUES (?,?,?)",
-                (category, subcategory, datetime.now(timezone.utc).isoformat()),
-            )
         conn.execute(
             "UPDATE transactions SET category=?, subcategory=?, notes=?, confidence=1.0 "
             "WHERE transaction_id=?",
@@ -506,14 +499,6 @@ def create_rule(txn_id):
         cat = request.form.get("category") or row["category"] or ""
         sub = request.form.get("subcategory") or row["subcategory"] or ""
         desc = row["description_raw"] or ""
-
-        # Auto-create subcategory if it's new
-        if cat and sub and sub not in ("General", "Unknown"):
-            conn.execute(
-                "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
-                "VALUES (?,?,?)",
-                (cat, sub, datetime.now(timezone.utc).isoformat()),
-            )
 
         # Save the transaction with the current dropdown values first
         conn.execute(

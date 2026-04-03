@@ -491,12 +491,6 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
             else:
                 cat, subcat, confidence = _keyword_suggest(description)
                 if cat:
-                    if subcat and subcat not in ("General", "Unknown"):
-                        conn.execute(
-                            "INSERT OR IGNORE INTO subcategories "
-                            "(category_name, name, created_at) VALUES (?, ?, datetime('now'))",
-                            (cat, subcat),
-                        )
                     conn.execute(
                         "UPDATE transactions SET category=?, subcategory=?, "
                         "confidence=? WHERE transaction_id=?",

@@ -1,4 +1,5 @@
 """Flask app factory for The Ledger."""
+from __future__ import annotations
 
 import os
 import secrets
@@ -21,9 +22,11 @@ _ROOT = Path(__file__).parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from flask import Flask, request, g, redirect, url_for, send_from_directory, render_template, session, abort
+from flask import Flask, request, g, redirect, url_for, send_from_directory, render_template, session, abort, flash
+from markupsafe import Markup
 
 from core.db import init_db, get_connection
+from core.categories import load_categories
 
 
 # ── Entity helpers ────────────────────────────────────────────────────────────
@@ -139,6 +142,119 @@ def _cleanup_temp_files():
         logging.getLogger(__name__).info(f"Cleaned up {removed} expired temp file(s)")
 
 
+# ── Sync categories from categories.md ───────────────────────────────────────
+
+_synced_entities: set[str] = set()
+
+# Orphaned categories/subcategories: removed from categories.md but still
+# referenced by transactions.  Keyed by entity_key.
+_category_orphans: dict[str, list[dict]] = {}
+
+
+def get_category_orphans(entity_key: str) -> list[dict]:
+    """Return list of orphaned categories for the given entity."""
+    return _category_orphans.get(entity_key, [])
+
+
+def clear_category_orphan(entity_key: str, old_category: str, old_subcategory: str | None = None) -> None:
+    """Remove a resolved orphan from the in-memory list."""
+    orphans = _category_orphans.get(entity_key, [])
+    _category_orphans[entity_key] = [
+        o for o in orphans
+        if not (o["old_category"] == old_category and o.get("old_subcategory") == old_subcategory)
+    ]
+
+
+def sync_categories_from_file(entity_key: str) -> None:
+    """Ensure DB categories/subcategories match categories.md.
+
+    Runs once per entity per process lifetime. Adds missing entries and
+    collects orphans (categories removed from file but still referenced by
+    transactions) for the user to reassign via /categorize/orphans.
+    """
+    if entity_key in _synced_entities:
+        return
+    _synced_entities.add(entity_key)
+
+    file_cats = load_categories(entity_key)
+    if not file_cats:
+        return
+
+    orphans: list[dict] = []
+
+    conn = get_connection(entity_key)
+    try:
+        # Current DB state
+        db_cats = {r[0] for r in conn.execute("SELECT name FROM categories").fetchall()}
+        db_subs: dict[str, set[str]] = {}
+        for row in conn.execute("SELECT category_name, name FROM subcategories").fetchall():
+            db_subs.setdefault(row[0], set()).add(row[1])
+
+        file_cat_names = set(file_cats.keys())
+
+        # INSERT categories in file but not in DB
+        for cat in file_cat_names - db_cats:
+            conn.execute(
+                "INSERT OR IGNORE INTO categories (name, created_at) VALUES (?, datetime('now'))",
+                (cat,),
+            )
+
+        # INSERT subcategories in file but not in DB
+        for cat, subs in file_cats.items():
+            existing = db_subs.get(cat, set())
+            for sub in subs:
+                if sub not in existing:
+                    conn.execute(
+                        "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
+                        "VALUES (?, ?, datetime('now'))",
+                        (cat, sub),
+                    )
+
+        # Handle categories in DB but not in file
+        for cat in sorted(db_cats - file_cat_names):
+            count = conn.execute(
+                "SELECT COUNT(*) FROM transactions WHERE category = ?", (cat,)
+            ).fetchone()[0]
+            if count > 0:
+                orphans.append({
+                    "old_category": cat,
+                    "old_subcategory": None,
+                    "count": count,
+                })
+            else:
+                # Safe to delete — no transactions reference it
+                conn.execute("DELETE FROM subcategories WHERE category_name = ?", (cat,))
+                conn.execute("DELETE FROM categories WHERE name = ?", (cat,))
+
+        # Handle subcategories in DB but not in file
+        for cat, subs in file_cats.items():
+            file_subs = set(subs)
+            existing = db_subs.get(cat, set())
+            for sub in sorted(existing - file_subs):
+                count = conn.execute(
+                    "SELECT COUNT(*) FROM transactions WHERE category = ? AND subcategory = ?",
+                    (cat, sub),
+                ).fetchone()[0]
+                if count > 0:
+                    orphans.append({
+                        "old_category": cat,
+                        "old_subcategory": sub,
+                        "count": count,
+                    })
+                else:
+                    conn.execute(
+                        "DELETE FROM subcategories WHERE category_name = ? AND name = ?",
+                        (cat, sub),
+                    )
+
+        conn.commit()
+    finally:
+        conn.close()
+
+    if orphans:
+        _category_orphans[entity_key] = orphans
+
+
 # ── App factory ──────────────────────────────────────────────────────────────
 
 def create_app():
@@ -154,6 +270,12 @@ def create_app():
             "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
         )
     app.secret_key = _secret
+
+    # Validate that hardcoded category references match categories.md
+    from core.categories import validate_references
+    import logging
+    for warning in validate_references():
+        logging.getLogger(__name__).warning(warning)
     app.config["MAX_CONTENT_LENGTH"] = 64 * 1024 * 1024  # 64MB upload limit
 
     # ── Auth: client-side password gate (see base.html) ─────────────────────
@@ -246,6 +368,21 @@ def create_app():
         g.entity_display, g.entity_key = get_entity()
         g.accent = get_accent()
         init_db(g.entity_key)
+        sync_categories_from_file(g.entity_key)
+
+        # Flash orphan warning once per session per entity
+        orphans = get_category_orphans(g.entity_key)
+        orphan_key = f"orphan_warning_{g.entity_key}"
+        if orphans and not session.get(orphan_key):
+            n = len(orphans)
+            word = "category" if n == 1 else "categories"
+            link = '<a href="/categorize/orphans">Reassign them</a>'
+            flash(
+                Markup(f"{n} {word} removed from categories.md still have transactions. {link}."),
+                "warning",
+            )
+            session[orphan_key] = True
+
         _cleanup_temp_files()
 
     # ── Template context ─────────────────────────────────────────────────────
@@ -313,6 +450,7 @@ def create_app():
     app.jinja_env.globals["fmt_dollars"] = fmt_dollars
     app.jinja_env.globals["fmt_due_date"] = fmt_due_date
     app.jinja_env.globals["cache_bust"] = str(int(time.time()))
+    app.jinja_env.globals["get_subcategories"] = get_subcategories
 
     # ── Register blueprints ──────────────────────────────────────────────────
     from web.routes.dashboard import bp as dashboard_bp

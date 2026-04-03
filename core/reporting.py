@@ -55,39 +55,51 @@ def effective_txns_cte(alias: str = "t") -> str:
     )"""
 
 
-# ── Exclusion list (shared across queries) ─────────────────────────────────────
-# Single source of truth for categories excluded from reports/budgets.
-# Import these in other modules instead of redefining.
+# ── Exclusion list (from categories.md [exclude] markers) ─────────────────────
+# Categories marked [exclude] in categories.md are excluded from spending reports.
+# Use get_exclude_cats(entity_key) for per-entity exclusions.
+# The module-level EXCLUDE_CATS tuple is kept for backward compatibility but
+# should be replaced with get_exclude_cats() calls over time.
 
-EXCLUDE_CATS = (
-    "Internal Transfer",
-    "Credit Card Payment",
-    "Income",
-    "Owner Contribution",
-    "Partner Buyout",
-)
-
-EXCLUDE_CATS_NO_INCOME = (
-    "Internal Transfer",
-    "Credit Card Payment",
-    "Owner Contribution",
-    "Partner Buyout",
-)
+from core.categories import excluded_categories as _excluded_categories
 
 
-def exclude_sql(col: str = "t.category", include_income: bool = False) -> str:
+def get_exclude_cats(entity_key: str, include_income: bool = False) -> tuple[str, ...]:
+    """Return excluded categories for an entity from categories.md.
+
+    Args:
+        entity_key: Entity DB key (personal, company, luxelegacy)
+        include_income: If True, keep Income visible (exclude everything else)
+    """
+    cats = _excluded_categories(entity_key)
+    if include_income:
+        cats = tuple(c for c in cats if c != "Income")
+    return cats
+
+
+def exclude_sql(col: str = "t.category", include_income: bool = False,
+                entity_key: str | None = None) -> str:
     """Generate a SQL NOT IN clause for excluded categories.
 
     Args:
         col: Column reference (e.g. 't.category', 'category', 'eff.category')
         include_income: If True, only exclude transfers (keep Income visible)
+        entity_key: Entity DB key. If None, uses BFM exclusions (superset).
     """
-    cats = EXCLUDE_CATS_NO_INCOME if include_income else EXCLUDE_CATS
+    if entity_key:
+        cats = get_exclude_cats(entity_key, include_income)
+    else:
+        # Fallback: use BFM exclusions (the superset across all entities)
+        cats = get_exclude_cats("company", include_income)
     placeholders = ",".join(f"'{c}'" for c in cats)
     return f"COALESCE({col},'') NOT IN ({placeholders})"
 
 
-# Backward-compat aliases (private names used in this module)
+# Backward-compat: module-level tuples for code that imports these directly.
+# These use BFM exclusions (the superset). Prefer get_exclude_cats() for new code.
+EXCLUDE_CATS = get_exclude_cats("company", include_income=False)
+EXCLUDE_CATS_NO_INCOME = get_exclude_cats("company", include_income=True)
+
 _EXCLUDE_CATS = EXCLUDE_CATS
 _EXCLUDE_CATS_NO_INCOME = EXCLUDE_CATS_NO_INCOME
 

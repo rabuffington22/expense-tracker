@@ -11,6 +11,7 @@ from markupsafe import escape
 
 from core.db import get_connection, init_db
 from core.reporting import effective_txns_cte, EXCLUDE_CATS
+from web import get_categories
 
 log = logging.getLogger(__name__)
 
@@ -464,10 +465,6 @@ def _get_linked_account_details(conn, goal: dict) -> list[dict]:
     return accounts
 
 
-def _get_categories(conn) -> list[str]:
-    """Return sorted list of category names."""
-    rows = conn.execute("SELECT name FROM categories ORDER BY name").fetchall()
-    return [r["name"] for r in rows]
 
 
 def _get_credit_card_accounts(conn) -> list[dict]:
@@ -700,7 +697,7 @@ def index():
         # Available accounts for goal creation
         cc_accounts = _get_credit_card_accounts(conn)
         bank_accounts = _get_bank_accounts(conn)
-        categories = _get_categories(conn)
+        categories = get_categories(g.entity_key)
         suggested_extra = _suggest_monthly_extra(conn)
 
         active_goals = [g for g in goals if g["status"] == "active"]
@@ -974,12 +971,6 @@ def save_budget():
                 category, subcategory = parts
                 cents = _parse_dollar_to_cents(value)
                 if cents > 0:
-                    # Ensure subcategory row exists so it always appears
-                    conn.execute(
-                        "INSERT OR IGNORE INTO subcategories "
-                        "(category_name, name, created_at) VALUES (?, ?, datetime('now'))",
-                        (category, subcategory),
-                    )
                     conn.execute(
                         "INSERT OR REPLACE INTO budget_subcategories "
                         "(category, subcategory, monthly_budget_cents) VALUES (?, ?, ?)",
@@ -1227,13 +1218,6 @@ def budget_update_txn(txn_id):
 
     conn = get_connection(g.entity_key)
     try:
-        # Auto-create subcategory if new
-        if new_subcategory and new_subcategory not in ("General", "Unknown"):
-            conn.execute(
-                "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
-                "VALUES (?,?,?)",
-                (new_category, new_subcategory, datetime.now(timezone.utc).isoformat()),
-            )
         conn.execute(
             "UPDATE transactions SET category=?, subcategory=?, confidence=1.0 "
             "WHERE transaction_id=?",

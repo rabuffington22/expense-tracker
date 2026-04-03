@@ -10,6 +10,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from core.db import get_connection
 from core.categorize import suggest_categories, apply_aliases_to_db
 from core.reporting import get_uncategorized
+from web import get_categories
 
 bp = Blueprint("categorize", __name__, url_prefix="/categorize")
 
@@ -30,14 +31,6 @@ def _is_vendor_transaction(description: str) -> bool:
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
-
-def _get_categories(entity_key):
-    conn = get_connection(entity_key)
-    try:
-        rows = conn.execute("SELECT name FROM categories ORDER BY name").fetchall()
-        return [r[0] for r in rows]
-    finally:
-        conn.close()
 
 
 def _get_subcategories(entity_key, category):
@@ -73,7 +66,7 @@ _PAGE_SIZE = 50
 def index():
     tab = request.args.get("tab", "review")
     raw = get_uncategorized(g.entity_key)
-    categories = _get_categories(g.entity_key) + ["Uncategorized"]
+    categories = get_categories(g.entity_key) + ["Uncategorized"]
 
     # Check if we have suggested data in session
     suggested = session.get("categorize_suggested")
@@ -98,7 +91,7 @@ def index():
     txns = all_txns[start:start + _PAGE_SIZE]
 
     # Settings tab data
-    cats = _get_categories(g.entity_key)
+    cats = get_categories(g.entity_key)
     aliases = _load_aliases(g.entity_key)
 
     return render_template(
@@ -172,13 +165,6 @@ def accept():
             if not subcat or subcat == "Unknown":
                 subcat = None
 
-            # Ensure subcategory row exists
-            if cat and subcat and subcat not in ("General",):
-                conn.execute(
-                    "INSERT OR IGNORE INTO subcategories "
-                    "(category_name, name, created_at) VALUES (?, ?, datetime('now'))",
-                    (cat, subcat),
-                )
             conn.execute(
                 "UPDATE transactions SET category=?, subcategory=?, confidence=1.0, notes=? "
                 "WHERE transaction_id=?",
@@ -235,130 +221,10 @@ def reapply_aliases():
     return redirect(url_for("categorize.index", tab="settings"))
 
 
-# ── Category CRUD ────────────────────────────────────────────────────────────
-
-@bp.route("/add-category", methods=["POST"])
-def add_category():
-    name = request.form.get("name", "").strip()
-    if not name:
-        flash("Name cannot be blank.", "danger")
-        return redirect(url_for("categorize.index", tab="settings"))
-
-    now = datetime.now(timezone.utc).isoformat()
-    conn = get_connection(g.entity_key)
-    try:
-        conn.execute(
-            "INSERT OR IGNORE INTO categories (name, created_at) VALUES (?,?)",
-            (name, now),
-        )
-        conn.commit()
-    finally:
-        conn.close()
-    flash(f"Category '{name}' added.", "success")
-    return redirect(url_for("categorize.index", tab="settings"))
-
-
-@bp.route("/delete-category/<name>", methods=["POST"])
-def delete_category(name):
-    conn = get_connection(g.entity_key)
-    try:
-        conn.execute("DELETE FROM categories WHERE name=?", (name,))
-        conn.execute("DELETE FROM subcategories WHERE category_name=?", (name,))
-        conn.execute("DELETE FROM budget_items WHERE category=?", (name,))
-        conn.execute("DELETE FROM budget_subcategories WHERE category=?", (name,))
-        conn.execute("DELETE FROM merchant_aliases WHERE default_category=?", (name,))
-        conn.execute("UPDATE transactions SET category=NULL WHERE category=?", (name,))
-        conn.execute("UPDATE amazon_orders SET category=NULL WHERE category=?", (name,))
-        conn.execute("UPDATE transaction_splits SET category=NULL WHERE category=?", (name,))
-        conn.execute("UPDATE order_line_items SET category=NULL WHERE category=?", (name,))
-        conn.commit()
-    finally:
-        conn.close()
-    flash(f"Category '{name}' deleted.", "success")
-    return redirect(url_for("categorize.index", tab="settings"))
-
-
-@bp.route("/rename-category", methods=["POST"])
-def rename_category():
-    old_name = request.form.get("old_name", "").strip()
-    new_name = request.form.get("new_name", "").strip()
-    if not old_name or not new_name:
-        flash("Both old and new names are required.", "danger")
-        return redirect(url_for("categorize.index", tab="settings"))
-
-    conn = get_connection(g.entity_key)
-    try:
-        conn.execute("UPDATE categories SET name=? WHERE name=?", (new_name, old_name))
-        conn.execute("UPDATE transactions SET category=? WHERE category=?", (new_name, old_name))
-        conn.execute(
-            "UPDATE merchant_aliases SET default_category=? WHERE default_category=?",
-            (new_name, old_name),
-        )
-        conn.execute(
-            "UPDATE subcategories SET category_name=? WHERE category_name=?",
-            (new_name, old_name),
-        )
-        conn.execute(
-            "UPDATE amazon_orders SET category=? WHERE category=?",
-            (new_name, old_name),
-        )
-        conn.execute(
-            "UPDATE budget_items SET category=? WHERE category=?",
-            (new_name, old_name),
-        )
-        conn.execute(
-            "UPDATE budget_subcategories SET category=? WHERE category=?",
-            (new_name, old_name),
-        )
-        conn.execute(
-            "UPDATE transaction_splits SET category=? WHERE category=?",
-            (new_name, old_name),
-        )
-        conn.execute(
-            "UPDATE order_line_items SET category=? WHERE category=?",
-            (new_name, old_name),
-        )
-        conn.commit()
-    finally:
-        conn.close()
-    flash(f"Renamed '{old_name}' to '{new_name}'.", "success")
-    return redirect(url_for("categorize.index", tab="settings"))
-
-
-# ── Subcategory CRUD ─────────────────────────────────────────────────────────
-
-@bp.route("/add-subcategory", methods=["POST"])
-def add_subcategory():
-    cat = request.form.get("category", "").strip()
-    name = request.form.get("name", "").strip()
-    if not cat or not name:
-        flash("Category and subcategory name are required.", "danger")
-        return redirect(url_for("categorize.index", tab="settings"))
-
-    now = datetime.now(timezone.utc).isoformat()
-    conn = get_connection(g.entity_key)
-    try:
-        conn.execute(
-            "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) VALUES (?,?,?)",
-            (cat, name, now),
-        )
-        conn.commit()
-    finally:
-        conn.close()
-    flash(f"Subcategory '{name}' added to {cat}.", "success")
-    return redirect(url_for("categorize.index", tab="settings"))
-
-
-@bp.route("/delete-subcategory/<int:sub_id>", methods=["POST"])
-def delete_subcategory(sub_id):
-    conn = get_connection(g.entity_key)
-    try:
-        conn.execute("DELETE FROM subcategories WHERE id=?", (sub_id,))
-        conn.commit()
-    finally:
-        conn.close()
-    flash("Subcategory deleted.", "success")
-    return redirect(url_for("categorize.index", tab="settings"))
+# ── Category/Subcategory CRUD removed ────────────────────────────────────────
+# Categories and subcategories are defined in categories.md (single source of
+# truth). Edit that file to add, rename, or delete categories. The DB is synced
+# from the file on app startup.
 
 
 @bp.route("/subcategories")
@@ -377,7 +243,7 @@ def subcategories():
 def all_subcategories():
     """Return all subcategories as JSON map {category: [sub1, sub2, ...]}."""
     from flask import jsonify
-    cats = _get_categories(g.entity_key)
+    cats = get_categories(g.entity_key)
     result = {}
     for cat in cats:
         subs = _get_subcategories(g.entity_key, cat)
@@ -462,3 +328,108 @@ def delete_alias(alias_id):
         conn.close()
     flash("Alias deleted.", "success")
     return redirect(url_for("categorize.index", tab="settings"))
+
+
+# ── Orphan resolution ────────────────────────────────────────────────────────
+
+@bp.route("/orphans")
+def orphans():
+    """Show categories removed from categories.md that still have transactions."""
+    from web import get_category_orphans
+    orphan_list = get_category_orphans(g.entity_key)
+    categories = get_categories(g.entity_key)
+    return render_template(
+        "categorize_orphans.html",
+        orphans=orphan_list,
+        categories=categories,
+    )
+
+
+@bp.route("/orphans/reassign", methods=["POST"])
+def orphans_reassign():
+    """Reassign all transactions from an orphaned category to a new one."""
+    from web import get_category_orphans, clear_category_orphan
+
+    old_category = request.form.get("old_category", "").strip()
+    old_subcategory = request.form.get("old_subcategory", "").strip() or None
+    new_category = request.form.get("new_category", "").strip()
+    new_subcategory = request.form.get("new_subcategory", "").strip() or "General"
+
+    if not old_category or not new_category:
+        flash("Both old and new categories are required.", "danger")
+        return redirect(url_for("categorize.orphans"))
+
+    conn = get_connection(g.entity_key)
+    try:
+        if old_subcategory:
+            # Subcategory-level orphan: only reassign transactions with this specific subcat
+            _tables_with_subcat = [
+                ("transactions", "category", "subcategory"),
+                ("amazon_orders", "category", "subcategory"),
+                ("transaction_splits", "category", "subcategory"),
+                ("order_line_items", "category", "subcategory"),
+            ]
+            for table, cat_col, sub_col in _tables_with_subcat:
+                conn.execute(
+                    f"UPDATE {table} SET {cat_col}=?, {sub_col}=? "
+                    f"WHERE {cat_col}=? AND {sub_col}=?",
+                    (new_category, new_subcategory, old_category, old_subcategory),
+                )
+            conn.execute(
+                "DELETE FROM budget_subcategories WHERE category=? AND subcategory=?",
+                (old_category, old_subcategory),
+            )
+            # Delete the orphaned subcategory row
+            conn.execute(
+                "DELETE FROM subcategories WHERE category_name=? AND name=?",
+                (old_category, old_subcategory),
+            )
+        else:
+            # Whole-category orphan: reassign everything
+            _tables_cat_only = [
+                ("transactions", "category"),
+                ("amazon_orders", "category"),
+                ("transaction_splits", "category"),
+                ("order_line_items", "category"),
+                ("merchant_aliases", "default_category"),
+                ("budget_items", "category"),
+                ("budget_subcategories", "category"),
+            ]
+            for table, col in _tables_cat_only:
+                conn.execute(
+                    f"UPDATE {table} SET {col}=? WHERE {col}=?",
+                    (new_category, old_category),
+                )
+            # Also update subcategory columns to the new subcategory
+            _tables_with_subcat = [
+                ("transactions", "subcategory"),
+                ("amazon_orders", "subcategory"),
+                ("transaction_splits", "subcategory"),
+                ("order_line_items", "subcategory"),
+            ]
+            for table, col in _tables_with_subcat:
+                conn.execute(
+                    f"UPDATE {table} SET {col}=? WHERE category=? AND ({col} IS NULL OR {col}='' OR {col}='General')",
+                    (new_subcategory, new_category),
+                )
+            # Delete the orphaned category and its subcategories
+            conn.execute("DELETE FROM subcategories WHERE category_name=?", (old_category,))
+            conn.execute("DELETE FROM categories WHERE name=?", (old_category,))
+
+        conn.commit()
+    finally:
+        conn.close()
+
+    clear_category_orphan(g.entity_key, old_category, old_subcategory)
+
+    label = f"{old_category}/{old_subcategory}" if old_subcategory else old_category
+    flash(f"Reassigned all '{label}' transactions to {new_category}/{new_subcategory}.", "success")
+
+    # If more orphans remain, go back to the orphans page
+    remaining = get_category_orphans(g.entity_key)
+    if remaining:
+        return redirect(url_for("categorize.orphans"))
+
+    # Clear the session warning flag so it doesn't persist
+    session.pop(f"orphan_warning_{g.entity_key}", None)
+    return redirect(url_for("categorize.index"))

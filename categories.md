@@ -1,0 +1,90 @@
+# Personal
+
+- ATM Withdrawals
+- Abuelitos [Healthcare, Stipend]
+- Childcare
+- Cleaning [Bulk Trash, Cleaning Service]
+- Clothing [Kids, Kristine, Ryan]
+- Credit Card Payment [exclude]
+- Education [Online Learning]
+- Entertainment [Audible, Books, Fantasy Football, Games, Kids, Software, Trip]
+- Fees [Bank Fees, Interest, Wire Fees]
+- Food [Coffee, Delivery, Fast Food, Groceries, Restaurant, Snacks]
+- Gifts
+- Health & Beauty [Fitness, Haircare, Skincare]
+- Healthcare
+- Home [Cleaning, Decor, Hardware, Landscaping, Laundry, Pest Control, Plumbing, Security]
+- Home Improvement [Tools]
+- Home Services [Landscaping, Pest Control, Plumbing]
+- Income [exclude]
+- Insurance [Auto, Health, Home, Life]
+- Internal Transfer [exclude]
+- Kitchen
+- LL Expense [Shipping, Supplies]
+- Laundry Service
+- Mortgage
+- Needs Review [Ask Kristine]
+- Pets [Food, Health, Toys]
+- Ranch [Equipment, Insurance, Mortgage, Supplies, Utilities]
+- Retirement [Contribution, Withdrawal]
+- Security
+- Self Storage
+- Shopping [Target, Walmart]
+- Streaming [Streaming Music, Streaming Video]
+- Student Loans [Kristine, Ryan]
+- Toys
+- Transportation [Car Wash, Gas, Maintenance, Parking, Registration, Rideshare, Tolls]
+- Utilities [Electric, Gas, Trash]
+
+# BFM
+
+- Accounting
+- Collections
+- Credit Card Payment [exclude]
+- EIDL Loan
+- Electronics
+- Facilities [Document Shredding, Janitorial, Medical Waste, Office Maintenance, Pest Control, Plumbing]
+- Fees [Credentialing]
+- Food [Coffee, Delivery, Groceries, Restaurants, Water Delivery]
+- HR
+- IT [AI, Hardware, Web Hosting]
+- Income [Athena Health, Insurance Incentive, Patient Payments] [exclude]
+- Insurance [Health Insurance, Life Insurance, Malpractice Insurance]
+- Internal Transfer [exclude]
+- Marketing
+- Medical Billing
+- Medical Supplies
+- Needs Review
+- Office Environment [Media]
+- Office Supplies
+- Owner Contribution [exclude]
+- Partner Buyout [exclude]
+- Patient Services [Communication, Telehealth, Translation]
+- Payroll [Front Office, HR, Nurses, Office Manager, Owner, Providers, Scribes]
+- Professional Development [Continuing Education, Membership]
+- Rent
+- Retirement [Simple IRA]
+- Shipping
+- Software [Accounting, Automation, Collaboration, Communication, Financial Monitoring, HR, Marketing, OS, Productivity]
+- Staff Gifts
+- Storage
+- Taxes [Payroll Taxes]
+- Training [Safety]
+- Transportation [Gas, Maintenance, Parking, Rideshare, Tolls]
+- Utilities [Electric, Internet, Phone, Water]
+
+# LL
+
+- Cost of Goods [Authentication, Marketplace, Retail, Thrift Stores, Wholesale]
+- Equipment
+- Fees [Platform Fees, Poshmark Commission]
+- Income [Other Sales, Poshmark Sales] [exclude]
+- Internal Transfer [Bank to Bank, Venmo to Bank] [exclude]
+- Marketing
+- Needs Review
+- Owner Draw [Personal]
+- Shipping [Packaging, Postage]
+- Software [Listing Tools, Photo Editing]
+- Storage
+- Supplies
+- Transportation [Post Office, Sourcing Trips]

@@ -100,7 +100,7 @@ _KEYWORD_RULES: list[tuple[list[str], str, Optional[str], float]] = [
     (["jani king"],
      "Facilities", "Janitorial", 0.7),
     (["on-site pc", "onsite pc"],
-     "IT Services", None, 0.7),
+     "IT", None, 0.7),
     (["vistaprint", "printing", "shredding", "iron mountain", "ironmountain"],
      "Office Supplies", None, 0.6),
     (["salary.com", "indeed", "spokeo"],

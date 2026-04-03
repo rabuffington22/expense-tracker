@@ -863,63 +863,9 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (57, _MIGRATION_57),
 ]
 
-_DEFAULT_CATEGORIES = [
-    # Shared across entities
-    "Credit Card Payment", "Entertainment", "Fees", "Food",
-    "Healthcare", "Home", "Income", "Insurance",
-    "Internal Transfer", "Needs Review", "Owner Contribution",
-    "Retirement", "Shipping", "Transportation", "Utilities",
-    # Personal-leaning
-    "Abuelitos", "ATM Withdrawals", "Childcare", "Cleaning",
-    "Clothing", "Education", "Gifts", "Health & Beauty",
-    "Home Improvement", "Home Services", "Kitchen",
-    "Laundry Service", "LL Expense", "Mortgage",
-    "Pets", "Ranch", "Security", "Self Storage",
-    "Shopping", "Streaming", "Student Loans", "Toys",
-    # Business-leaning
-    "Collections", "EIDL Loan", "Electronics", "Facilities",
-    "HR", "IT", "IT Services", "Marketing", "Medical Supplies",
-    "Office Environment", "Office Supplies", "Partner Buyout",
-    "Patient Services", "Payroll", "Professional Development",
-    "Software", "Staff Gifts", "Storage", "Subscriptions",
-    "Training",
-]
 
-
-_DEFAULT_SUBCATEGORIES = {
-    "Abuelitos": ["Stipend", "Healthcare"],
-    "Cleaning": ["Bulk Trash", "Cleaning Service"],
-    "Clothing": ["Kids", "Kristine", "Ryan"],
-    "Education": ["Online Learning"],
-    "Entertainment": ["Audible", "Books", "Fantasy Football", "Games", "Kids", "Software", "Trip"],
-    "Facilities": ["Document Shredding", "Janitorial", "Medical Waste", "Office Maintenance", "Pest Control", "Plumbing"],
-    "Fees": ["Bank Fees", "Credentialing", "Interest", "Wire Fees"],
-    "Food": ["Coffee", "Delivery", "Fast Food", "Groceries", "Restaurant", "Snacks", "Water Delivery"],
-    "Health & Beauty": ["Fitness", "Haircare", "Skincare"],
-    "Home": ["Decor", "Hardware"],
-    "Home Improvement": ["Tools"],
-    "Home Services": ["Landscaping", "Pest Control", "Plumbing"],
-    "Income": ["Athena Health", "Insurance Incentive", "Patient Payments"],
-    "Insurance": ["Life", "Health", "Home", "Auto"],
-    "IT": ["AI", "Hardware", "Web Hosting"],
-    "LL Expense": ["Supplies", "Shipping"],
-    "Medical Supplies": ["Diagnostics", "Exam Supplies", "Liquid Nitrogen", "Needles & Syringes", "PPE", "Rx", "Wound Care"],
-    "Needs Review": ["Ask Kristine"],
-    "Office Environment": ["Media"],
-    "Patient Services": ["Communication", "Telehealth", "Translation"],
-    "Payroll": ["Front Office", "Nurses", "Office Manager", "Owner", "Providers", "Scribes"],
-    "Pets": ["Food", "Health", "Toys"],
-    "Professional Development": ["Continuing Education", "Membership"],
-    "Ranch": ["Equipment", "Insurance", "Mortgage", "Supplies", "Utilities"],
-    "Retirement": ["Contribution", "Simple IRA", "Withdrawal"],
-    "Shopping": ["Target", "Walmart"],
-    "Software": ["Accounting", "Automation", "Collaboration", "Communication", "Financial Monitoring", "HR", "Marketing", "OS", "Productivity"],
-    "Streaming": ["Streaming Music", "Streaming Video"],
-    "Student Loans": ["Kristine", "Ryan"],
-    "Training": ["Safety"],
-    "Transportation": ["Car Wash", "Gas", "Maintenance", "Parking", "Registration", "Rideshare", "Tolls"],
-    "Utilities": ["Electric", "Gas", "Internet", "Phone", "Trash", "Water"],
-}
+# Categories are defined in categories.md (single source of truth).
+# See core/categories.py for the parser.
 
 
 _DEFAULT_PROFILES = [
@@ -962,27 +908,23 @@ def init_db(entity: str) -> None:
                 )
                 conn.commit()
 
-        # Seed default categories once
+        # Seed categories from categories.md (single source of truth)
+        from core.categories import load_categories
         if conn.execute("SELECT COUNT(*) FROM categories").fetchone()[0] == 0:
+            cats = load_categories(entity)
             now = datetime.now(timezone.utc).isoformat()
             conn.executemany(
                 "INSERT OR IGNORE INTO categories (name, created_at) VALUES (?,?)",
-                [(c, now) for c in _DEFAULT_CATEGORIES],
+                [(c, now) for c in cats],
             )
             conn.commit()
 
-        # Seed default subcategories once
+        # Seed subcategories from categories.md
         try:
             if conn.execute("SELECT COUNT(*) FROM subcategories").fetchone()[0] == 0:
+                cats = load_categories(entity)
                 now = datetime.now(timezone.utc).isoformat()
-                # Add "General" subcategory to every category
-                for cat in _DEFAULT_CATEGORIES:
-                    conn.execute(
-                        "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
-                        "VALUES (?,?,?)",
-                        (cat, "General", now),
-                    )
-                for cat, subs in _DEFAULT_SUBCATEGORIES.items():
+                for cat, subs in cats.items():
                     for sub in subs:
                         conn.execute(
                             "INSERT OR IGNORE INTO subcategories (category_name, name, created_at) "
