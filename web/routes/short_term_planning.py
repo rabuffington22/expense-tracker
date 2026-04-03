@@ -974,6 +974,12 @@ def save_budget():
                 category, subcategory = parts
                 cents = _parse_dollar_to_cents(value)
                 if cents > 0:
+                    # Ensure subcategory row exists so it always appears
+                    conn.execute(
+                        "INSERT OR IGNORE INTO subcategories "
+                        "(category_name, name, created_at) VALUES (?, ?, datetime('now'))",
+                        (category, subcategory),
+                    )
                     conn.execute(
                         "INSERT OR REPLACE INTO budget_subcategories "
                         "(category, subcategory, monthly_budget_cents) VALUES (?, ?, ?)",

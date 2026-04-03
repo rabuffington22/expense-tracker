@@ -172,6 +172,13 @@ def accept():
             if not subcat or subcat == "Unknown":
                 subcat = None
 
+            # Ensure subcategory row exists
+            if cat and subcat and subcat not in ("General",):
+                conn.execute(
+                    "INSERT OR IGNORE INTO subcategories "
+                    "(category_name, name, created_at) VALUES (?, ?, datetime('now'))",
+                    (cat, subcat),
+                )
             conn.execute(
                 "UPDATE transactions SET category=?, subcategory=?, confidence=1.0, notes=? "
                 "WHERE transaction_id=?",
