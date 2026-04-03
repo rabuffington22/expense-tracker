@@ -76,7 +76,7 @@
     <div class="wf-waterfall">
       {% for row in chart_rows %}
       <div class="wf-wf-row"
-           data-tip='{% if row.label == "Fixed Costs" and actual_fixed_tip %}{{ actual_fixed_tip|tojson }}{% elif row.label == "Operating" and actual_operating_tip %}{{ actual_operating_tip|tojson }}{% else %}[{"c":"{{ row.label }}","v":{{ row.cents }}}]{% endif %}'>
+           data-tip='{% if row.label == "Fixed Costs" and actual_fixed_tip %}{{ actual_fixed_tip|tojson }}{% elif row.label == "Focus" and actual_focus_tip %}{{ actual_focus_tip|tojson }}{% elif row.label == "Everything Else" and actual_other_tip %}{{ actual_other_tip|tojson }}{% else %}[{"c":"{{ row.label }}","v":{{ row.cents }}}]{% endif %}'>
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">
@@ -122,15 +122,31 @@
             {% endfor %}
           </div>
         </div>
-        <!-- Operating Costs -->
+        <!-- Focus -->
         <div class="wf-breakdown-group">
-          <div class="wf-breakdown-header" onclick="wfToggle('operating')">
-            <span class="wf-chevron" id="wf-chevron-operating">&#9654;</span>
-            <span class="wf-breakdown-name">Operating Costs</span>
-            <span class="wf-breakdown-val wf-negative">{{ fmt_dollars(operating_total) }}</span>
+          <div class="wf-breakdown-header" onclick="wfToggle('focus')">
+            <span class="wf-chevron" id="wf-chevron-focus">&#9654;</span>
+            <span class="wf-breakdown-name">Focus</span>
+            <span class="wf-breakdown-val wf-negative">{{ fmt_dollars(focus_total) }}</span>
           </div>
-          <div id="wf-detail-operating" hidden>
-            {% for item in operating_costs %}
+          <div id="wf-detail-focus" hidden>
+            {% for item in focus_costs %}
+            <div class="wf-breakdown-item">
+              <span>{{ item.category }}</span>
+              <span class="wf-breakdown-item-val">{{ fmt_dollars(item.spent_cents) }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <!-- Everything Else -->
+        <div class="wf-breakdown-group">
+          <div class="wf-breakdown-header" onclick="wfToggle('other')">
+            <span class="wf-chevron" id="wf-chevron-other">&#9654;</span>
+            <span class="wf-breakdown-name">Everything Else</span>
+            <span class="wf-breakdown-val wf-negative">{{ fmt_dollars(other_total) }}</span>
+          </div>
+          <div id="wf-detail-other" hidden>
+            {% for item in other_costs %}
             <div class="wf-breakdown-item">
               <span>{{ item.category }}</span>
               <span class="wf-breakdown-item-val">{{ fmt_dollars(item.spent_cents) }}</span>
@@ -233,7 +249,7 @@
     <div class="wf-waterfall">
       {% for row in target_bfm_rows %}
       <div class="wf-wf-row"
-           data-tip='{% if row.label == "BFM Fixed" and bfm_fixed_tip %}{{ bfm_fixed_tip|tojson }}{% elif row.label == "BFM Operating" and bfm_operating_tip %}{{ bfm_operating_tip|tojson }}{% else %}[{"c":"{{ row.label }}","v":{{ row.cents }}}]{% endif %}'>
+           data-tip='{% if row.label == "BFM Fixed" and bfm_fixed_tip %}{{ bfm_fixed_tip|tojson }}{% elif row.label == "BFM Focus" and bfm_focus_tip %}{{ bfm_focus_tip|tojson }}{% elif row.label == "BFM Everything Else" and bfm_other_tip %}{{ bfm_other_tip|tojson }}{% else %}[{"c":"{{ row.label }}","v":{{ row.cents }}}]{% endif %}'>
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">

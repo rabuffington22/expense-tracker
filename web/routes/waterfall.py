@@ -133,10 +133,11 @@ def _get_historical_surplus(months: list[str]) -> list[dict]:
 def _get_bfm_budget_totals(conn, month: str) -> dict:
     """Get BFM budget totals grouped by section for the Target waterfall.
 
-    Returns dict with:
-        staff_payroll_cents: Payroll budget minus owner salary
+    Mirrors the 3 budget sections from Short-Term Planning:
+        staff_payroll_cents: Payroll budget (extracted from fixed)
         fixed_cents: Fixed budget (excl Payroll)
-        operating_cents: Focus + Other + None budget totals
+        focus_cents: Focus section budget
+        other_cents: Everything Else + no-budget totals
     """
     from web.routes.short_term_planning import _get_budget_status
 
@@ -144,9 +145,11 @@ def _get_bfm_budget_totals(conn, month: str) -> dict:
 
     payroll_budget = 0
     fixed_no_payroll = 0
-    operating_budget = 0
+    focus_budget = 0
+    other_budget = 0
     fixed_items = []
-    operating_items = []
+    focus_items = []
+    other_items = []
 
     for item in budget_status:
         sec = item.get("budget_section")
@@ -160,23 +163,30 @@ def _get_bfm_budget_totals(conn, month: str) -> dict:
                 fixed_no_payroll += budget
                 if budget > 0:
                     fixed_items.append({"c": cat, "v": budget})
-        elif sec in ("focus", "other") or sec is None:
-            operating_budget += budget
+        elif sec == "focus":
+            focus_budget += budget
             if budget > 0:
-                operating_items.append({"c": cat, "v": budget})
+                focus_items.append({"c": cat, "v": budget})
+        else:  # "other" or None (no budget)
+            other_budget += budget
+            if budget > 0:
+                other_items.append({"c": cat, "v": budget})
 
     # Staff payroll = full payroll budget (owner not on payroll, takes draws)
     staff_payroll = payroll_budget
     fixed_items.sort(key=lambda x: x["v"], reverse=True)
-    operating_items.sort(key=lambda x: x["v"], reverse=True)
+    focus_items.sort(key=lambda x: x["v"], reverse=True)
+    other_items.sort(key=lambda x: x["v"], reverse=True)
 
     return {
         "staff_payroll_cents": staff_payroll,
         "fixed_cents": fixed_no_payroll,
-        "operating_cents": operating_budget,
+        "focus_cents": focus_budget,
+        "other_cents": other_budget,
         "payroll_budget_cents": payroll_budget,
         "fixed_items": fixed_items,
-        "operating_items": operating_items,
+        "focus_items": focus_items,
+        "other_items": other_items,
     }
 
 
@@ -314,22 +324,21 @@ def index():
         sections = _get_bfm_expenses_by_section(conn_co, "company", month)
 
         fixed_total = sum(i["spent_cents"] for i in sections.get("fixed", []))
-        operating_items = (
-            sections.get("focus", [])
-            + sections.get("other", [])
-            + sections.get("none", [])
-        )
-        # Re-sort combined operating items by spend descending
-        operating_items.sort(key=lambda x: x["spent_cents"], reverse=True)
-        operating_total = sum(i["spent_cents"] for i in operating_items)
-        total_expenses = fixed_total + operating_total
+        focus_items = sections.get("focus", [])
+        focus_items.sort(key=lambda x: x["spent_cents"], reverse=True)
+        focus_total = sum(i["spent_cents"] for i in focus_items)
+        other_items = sections.get("other", []) + sections.get("none", [])
+        other_items.sort(key=lambda x: x["spent_cents"], reverse=True)
+        other_total = sum(i["spent_cents"] for i in other_items)
+        total_expenses = fixed_total + focus_total + other_total
         surplus_cents = income_cents - total_expenses
 
         # ── Actual waterfall chart rows (horizontal bars) ────────────────
         chart_rows = []
         if income_cents > 0:
             fixed_pct = min(round(fixed_total / income_cents * 100, 1), 100)
-            operating_pct = min(round(operating_total / income_cents * 100, 1), 100)
+            focus_pct = min(round(focus_total / income_cents * 100, 1), 100)
+            other_pct = min(round(other_total / income_cents * 100, 1), 100)
             surplus_pct = round(max(surplus_cents, 0) / income_cents * 100, 1)
 
             chart_rows = [
@@ -337,8 +346,10 @@ def index():
                  "cents": income_cents, "type": "income"},
                 {"label": "Fixed Costs", "left": 0, "width": fixed_pct,
                  "cents": fixed_total, "type": "expense"},
-                {"label": "Operating", "left": fixed_pct, "width": operating_pct,
-                 "cents": operating_total, "type": "expense"},
+                {"label": "Focus", "left": fixed_pct, "width": focus_pct,
+                 "cents": focus_total, "type": "expense"},
+                {"label": "Everything Else", "left": fixed_pct + focus_pct, "width": other_pct,
+                 "cents": other_total, "type": "expense"},
                 {"label": "Surplus", "left": 100 - surplus_pct, "width": surplus_pct,
                  "cents": abs(surplus_cents),
                  "type": "surplus" if surplus_cents >= 0 else "deficit"},
@@ -369,8 +380,10 @@ def index():
 
     target_staff_payroll = bfm_budgets["staff_payroll_cents"]
     target_bfm_fixed = bfm_budgets["fixed_cents"]
-    target_bfm_operating = bfm_budgets["operating_cents"]
-    bfm_costs = target_staff_payroll + target_bfm_fixed + target_bfm_operating
+    target_bfm_focus = bfm_budgets["focus_cents"]
+    target_bfm_other = bfm_budgets["other_cents"]
+    bfm_costs = (target_staff_payroll + target_bfm_fixed
+                 + target_bfm_focus + target_bfm_other)
 
     if target_mode == "takehome":
         # Take-home mode: desired take-home → gross → required revenue
@@ -404,12 +417,13 @@ def index():
     def _pct(v, base):
         return min(round(abs(v) / base * 100, 1), 100)
 
-    # ── Target BFM rows (relative to $150k) ─────────────────────────────
+    # ── Target BFM rows (relative to revenue) ─────────────────────────────
     target_bfm_rows = []
     if target_revenue > 0:
         sp_pct = _pct(target_staff_payroll, target_revenue)
         bf_pct = _pct(target_bfm_fixed, target_revenue)
-        bo_pct = _pct(target_bfm_operating, target_revenue)
+        bfo_pct = _pct(target_bfm_focus, target_revenue)
+        boe_pct = _pct(target_bfm_other, target_revenue)
         bs_pct = _pct(max(target_bfm_surplus, 0), target_revenue)
 
         target_bfm_rows = [
@@ -419,8 +433,10 @@ def index():
              "cents": target_staff_payroll, "type": "expense"},
             {"label": "BFM Fixed", "left": sp_pct, "width": bf_pct,
              "cents": target_bfm_fixed, "type": "expense"},
-            {"label": "BFM Operating", "left": sp_pct + bf_pct, "width": bo_pct,
-             "cents": target_bfm_operating, "type": "expense"},
+            {"label": "BFM Focus", "left": sp_pct + bf_pct, "width": bfo_pct,
+             "cents": target_bfm_focus, "type": "expense"},
+            {"label": "BFM Everything Else", "left": sp_pct + bf_pct + bfo_pct, "width": boe_pct,
+             "cents": target_bfm_other, "type": "expense"},
             {"label": "BFM Surplus", "left": 100 - bs_pct, "width": bs_pct,
              "cents": abs(target_bfm_surplus),
              "type": "surplus" if target_bfm_surplus >= 0 else "deficit"},
@@ -507,15 +523,19 @@ def index():
         income_cents=income_cents,
         fixed_costs=sections.get("fixed", []),
         fixed_total=fixed_total,
-        operating_costs=operating_items,
-        operating_total=operating_total,
+        focus_costs=focus_items,
+        focus_total=focus_total,
+        other_costs=other_items,
+        other_total=other_total,
         total_expenses=total_expenses,
         surplus_cents=surplus_cents,
         # Actual tooltip data (category → spent)
         actual_fixed_tip=[{"c": x["category"], "v": x["spent_cents"]}
                           for x in sections.get("fixed", []) if x["spent_cents"] > 0],
-        actual_operating_tip=[{"c": x["category"], "v": x["spent_cents"]}
-                              for x in operating_items if x.get("spent_cents", 0) > 0],
+        actual_focus_tip=[{"c": x["category"], "v": x["spent_cents"]}
+                          for x in focus_items if x.get("spent_cents", 0) > 0],
+        actual_other_tip=[{"c": x["category"], "v": x["spent_cents"]}
+                          for x in other_items if x.get("spent_cents", 0) > 0],
         # Actual personal waterfall
         actual_personal_rows=actual_personal_rows,
         actual_owner_gross=actual_owner_gross,
@@ -538,7 +558,8 @@ def index():
         personal_remaining=personal_remaining,
         # Target tooltip data (category → budget)
         bfm_fixed_tip=bfm_budgets.get("fixed_items", []),
-        bfm_operating_tip=bfm_budgets.get("operating_items", []),
+        bfm_focus_tip=bfm_budgets.get("focus_items", []),
+        bfm_other_tip=bfm_budgets.get("other_items", []),
         personal_fixed_tip=personal_budgets.get("fixed_items", []),
         personal_focus_tip=personal_budgets.get("focus_items", []),
         personal_other_tip=personal_budgets.get("other_items", []),
