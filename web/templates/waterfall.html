@@ -168,7 +168,7 @@
     <div class="wf-waterfall">
       {% for row in actual_personal_rows %}
       <div class="wf-wf-row"
-           data-tip='{% if row.label == "Personal Fixed" and actual_personal_fixed_tip %}{{ actual_personal_fixed_tip|tojson }}{% elif row.label == "Personal Variable" and actual_personal_variable_tip %}{{ actual_personal_variable_tip|tojson }}{% else %}[{"c":"{{ row.label }}","v":{{ row.cents }}}]{% endif %}'>
+           data-tip='{% if row.label == "Personal Fixed" and actual_personal_fixed_tip %}{{ actual_personal_fixed_tip|tojson }}{% elif row.label == "Personal Focus" and actual_personal_focus_tip %}{{ actual_personal_focus_tip|tojson }}{% elif row.label == "Personal Everything Else" and actual_personal_other_tip %}{{ actual_personal_other_tip|tojson }}{% else %}[{"c":"{{ row.label }}","v":{{ row.cents }}}]{% endif %}'>
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">
@@ -282,7 +282,7 @@
     <div class="wf-waterfall">
       {% for row in target_personal_rows %}
       <div class="wf-wf-row"
-           data-tip='{% if row.label == "Personal Fixed" and personal_fixed_tip %}{{ personal_fixed_tip|tojson }}{% elif row.label == "Personal Variable" and personal_variable_tip %}{{ personal_variable_tip|tojson }}{% else %}[{"c":"{{ row.label }}","v":{{ row.cents }}}]{% endif %}'>
+           data-tip='{% if row.label == "Personal Fixed" and personal_fixed_tip %}{{ personal_fixed_tip|tojson }}{% elif row.label == "Personal Focus" and personal_focus_tip %}{{ personal_focus_tip|tojson }}{% elif row.label == "Personal Everything Else" and personal_other_tip %}{{ personal_other_tip|tojson }}{% else %}[{"c":"{{ row.label }}","v":{{ row.cents }}}]{% endif %}'>
         <div class="wf-wf-header">
           <span class="wf-wf-label">{{ row.label }}</span>
           <span class="wf-wf-amount {% if row.type == 'expense' %}wf-negative{% elif row.type == 'deficit' %}wf-negative{% else %}wf-positive{% endif %}">

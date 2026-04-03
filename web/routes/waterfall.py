@@ -181,18 +181,15 @@ def _get_bfm_budget_totals(conn, month: str) -> dict:
 
 
 def _get_personal_budget_totals(month: str | None = None) -> dict:
-    """Get personal budget totals AND actual spending grouped into fixed/variable.
+    """Get personal budget totals AND actual spending grouped into fixed/focus/other.
 
-    Returns dict with:
+    Mirrors the 3 budget sections from Short-Term Planning:
         fixed_cents: Fixed section budget total
-        variable_cents: Focus + Other + None budget totals
+        focus_cents: Focus section budget total
+        other_cents: Everything Else + no-budget totals
         total_cents: Sum of all budgets
-        fixed_items: [{c, v}] budget per category (for target tooltips)
-        variable_items: [{c, v}] budget per category
-        actual_fixed_cents: Actual fixed spending for the month
-        actual_variable_cents: Actual variable spending for the month
-        actual_fixed_items: [{c, v}] actual spend per category
-        actual_variable_items: [{c, v}] actual spend per category
+        *_items: [{c, v}] per category (for hover tooltips)
+        actual_*_cents / actual_*_items: Actual spending equivalents
     """
     from web.routes.short_term_planning import _get_budget_status
 
@@ -203,50 +200,50 @@ def _get_personal_budget_totals(month: str | None = None) -> dict:
     finally:
         conn.close()
 
-    fixed = 0
-    variable = 0
-    fixed_items = []
-    variable_items = []
-    actual_fixed = 0
-    actual_variable = 0
-    actual_fixed_items = []
-    actual_variable_items = []
+    buckets = {
+        "fixed": {"budget": 0, "spent": 0, "budget_items": [], "spent_items": []},
+        "focus": {"budget": 0, "spent": 0, "budget_items": [], "spent_items": []},
+        "other": {"budget": 0, "spent": 0, "budget_items": [], "spent_items": []},
+    }
 
     for item in budget_status:
         sec = item.get("budget_section")
         cat = item.get("category", "")
         budget = item.get("budget_cents", 0)
         spent = item.get("spent_cents", 0)
+        # Map to 3 buckets matching STP sections
         if sec == "fixed":
-            fixed += budget
-            actual_fixed += spent
-            if budget > 0:
-                fixed_items.append({"c": cat, "v": budget})
-            if spent > 0:
-                actual_fixed_items.append({"c": cat, "v": spent})
-        elif sec in ("focus", "other") or sec is None:
-            variable += budget
-            actual_variable += spent
-            if budget > 0:
-                variable_items.append({"c": cat, "v": budget})
-            if spent > 0:
-                actual_variable_items.append({"c": cat, "v": spent})
+            key = "fixed"
+        elif sec == "focus":
+            key = "focus"
+        else:  # "other" or None (no budget)
+            key = "other"
+        b = buckets[key]
+        b["budget"] += budget
+        b["spent"] += spent
+        if budget > 0:
+            b["budget_items"].append({"c": cat, "v": budget})
+        if spent > 0:
+            b["spent_items"].append({"c": cat, "v": spent})
 
-    fixed_items.sort(key=lambda x: x["v"], reverse=True)
-    variable_items.sort(key=lambda x: x["v"], reverse=True)
-    actual_fixed_items.sort(key=lambda x: x["v"], reverse=True)
-    actual_variable_items.sort(key=lambda x: x["v"], reverse=True)
+    for b in buckets.values():
+        b["budget_items"].sort(key=lambda x: x["v"], reverse=True)
+        b["spent_items"].sort(key=lambda x: x["v"], reverse=True)
 
     return {
-        "fixed_cents": fixed,
-        "variable_cents": variable,
-        "total_cents": fixed + variable,
-        "fixed_items": fixed_items,
-        "variable_items": variable_items,
-        "actual_fixed_cents": actual_fixed,
-        "actual_variable_cents": actual_variable,
-        "actual_fixed_items": actual_fixed_items,
-        "actual_variable_items": actual_variable_items,
+        "fixed_cents": buckets["fixed"]["budget"],
+        "focus_cents": buckets["focus"]["budget"],
+        "other_cents": buckets["other"]["budget"],
+        "total_cents": sum(b["budget"] for b in buckets.values()),
+        "fixed_items": buckets["fixed"]["budget_items"],
+        "focus_items": buckets["focus"]["budget_items"],
+        "other_items": buckets["other"]["budget_items"],
+        "actual_fixed_cents": buckets["fixed"]["spent"],
+        "actual_focus_cents": buckets["focus"]["spent"],
+        "actual_other_cents": buckets["other"]["spent"],
+        "actual_fixed_items": buckets["fixed"]["spent_items"],
+        "actual_focus_items": buckets["focus"]["spent_items"],
+        "actual_other_items": buckets["other"]["spent_items"],
     }
 
 
@@ -400,8 +397,9 @@ def index():
     owner_take_home = int(owner_gross * (10000 - tax_rate_bps) / 10000)
 
     personal_fixed = personal_budgets["fixed_cents"]
-    personal_variable = personal_budgets["variable_cents"]
-    personal_remaining = owner_take_home - personal_fixed - personal_variable
+    personal_focus = personal_budgets["focus_cents"]
+    personal_other = personal_budgets["other_cents"]
+    personal_remaining = owner_take_home - personal_fixed - personal_focus - personal_other
 
     def _pct(v, base):
         return min(round(abs(v) / base * 100, 1), 100)
@@ -432,7 +430,8 @@ def index():
     target_personal_rows = []
     if owner_take_home > 0:
         pf_pct = _pct(personal_fixed, owner_take_home)
-        pv_pct = _pct(personal_variable, owner_take_home)
+        pfo_pct = _pct(personal_focus, owner_take_home)
+        po_pct = _pct(personal_other, owner_take_home)
         pr_pct = _pct(max(personal_remaining, 0), owner_take_home)
 
         target_personal_rows = [
@@ -440,8 +439,10 @@ def index():
              "cents": owner_take_home, "type": "income"},
             {"label": "Personal Fixed", "left": 0, "width": pf_pct,
              "cents": personal_fixed, "type": "expense"},
-            {"label": "Personal Variable", "left": pf_pct, "width": pv_pct,
-             "cents": personal_variable, "type": "expense"},
+            {"label": "Personal Focus", "left": pf_pct, "width": pfo_pct,
+             "cents": personal_focus, "type": "expense"},
+            {"label": "Personal Everything Else", "left": pf_pct + pfo_pct, "width": po_pct,
+             "cents": personal_other, "type": "expense"},
             {"label": "Remaining", "left": 100 - pr_pct, "width": pr_pct,
              "cents": abs(personal_remaining),
              "type": "surplus" if personal_remaining >= 0 else "deficit"},
@@ -451,13 +452,16 @@ def index():
     actual_owner_gross = max(surplus_cents, 0)
     actual_take_home = int(actual_owner_gross * (10000 - tax_rate_bps) / 10000)
     actual_personal_fixed = personal_budgets["actual_fixed_cents"]
-    actual_personal_variable = personal_budgets["actual_variable_cents"]
-    actual_personal_remaining = actual_take_home - actual_personal_fixed - actual_personal_variable
+    actual_personal_focus = personal_budgets["actual_focus_cents"]
+    actual_personal_other = personal_budgets["actual_other_cents"]
+    actual_personal_remaining = (actual_take_home - actual_personal_fixed
+                                 - actual_personal_focus - actual_personal_other)
 
     actual_personal_rows = []
     if actual_take_home > 0:
         apf_pct = _pct(actual_personal_fixed, actual_take_home)
-        apv_pct = _pct(actual_personal_variable, actual_take_home)
+        apfo_pct = _pct(actual_personal_focus, actual_take_home)
+        apo_pct = _pct(actual_personal_other, actual_take_home)
         apr_pct = _pct(max(actual_personal_remaining, 0), actual_take_home)
 
         actual_personal_rows = [
@@ -465,8 +469,10 @@ def index():
              "cents": actual_take_home, "type": "income"},
             {"label": "Personal Fixed", "left": 0, "width": apf_pct,
              "cents": actual_personal_fixed, "type": "expense"},
-            {"label": "Personal Variable", "left": apf_pct, "width": apv_pct,
-             "cents": actual_personal_variable, "type": "expense"},
+            {"label": "Personal Focus", "left": apf_pct, "width": apfo_pct,
+             "cents": actual_personal_focus, "type": "expense"},
+            {"label": "Personal Everything Else", "left": apf_pct + apfo_pct, "width": apo_pct,
+             "cents": actual_personal_other, "type": "expense"},
             {"label": "Remaining", "left": 100 - apr_pct, "width": apr_pct,
              "cents": abs(actual_personal_remaining),
              "type": "surplus" if actual_personal_remaining >= 0 else "deficit"},
@@ -517,7 +523,8 @@ def index():
         actual_personal_remaining=actual_personal_remaining,
         # Actual personal tooltip data (category → actual spend)
         actual_personal_fixed_tip=personal_budgets.get("actual_fixed_items", []),
-        actual_personal_variable_tip=personal_budgets.get("actual_variable_items", []),
+        actual_personal_focus_tip=personal_budgets.get("actual_focus_items", []),
+        actual_personal_other_tip=personal_budgets.get("actual_other_items", []),
         # Target waterfall
         target_mode=target_mode,
         target_bfm_rows=target_bfm_rows,
@@ -533,7 +540,8 @@ def index():
         bfm_fixed_tip=bfm_budgets.get("fixed_items", []),
         bfm_operating_tip=bfm_budgets.get("operating_items", []),
         personal_fixed_tip=personal_budgets.get("fixed_items", []),
-        personal_variable_tip=personal_budgets.get("variable_items", []),
+        personal_focus_tip=personal_budgets.get("focus_items", []),
+        personal_other_tip=personal_budgets.get("other_items", []),
         # Personal debt
         cc_cards=cc_cards,
         cc_total=cc_total,
