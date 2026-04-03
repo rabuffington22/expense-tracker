@@ -1316,7 +1316,37 @@ def budget_subcategories():
         ).fetchall()
         sub_budgets = {r["subcategory"]: r["monthly_budget_cents"] for r in budget_rows}
 
-        # 4. Build sorted list: spent desc, then alphabetical for $0 items
+        # 4. 3-month average by subcategory (same logic as category-level)
+        try:
+            bm = datetime.strptime(month, "%Y-%m").date()
+        except ValueError:
+            bm = date.today().replace(day=1)
+        avg_months = []
+        d = bm
+        for _ in range(3):
+            d = (d.replace(day=1) - timedelta(days=1)).replace(day=1)
+            avg_months.append(d.strftime("%Y-%m"))
+        mp = ",".join("?" for _ in avg_months)
+        avg_rows = conn.execute(
+            f"WITH {_cte} "
+            "SELECT COALESCE(NULLIF(t.subcategory,''), 'General') as sub, "
+            "ABS(SUM(t.amount)) as total, "
+            "COUNT(DISTINCT strftime('%%Y-%%m', t.date)) as month_count "
+            "FROM t "
+            "WHERE t.category = ? "
+            "AND strftime('%%Y-%%m', t.date) IN (%s) "
+            "AND t.amount < 0 "
+            "GROUP BY sub" % mp,
+            (category, *avg_months),
+        ).fetchall()
+        avg_map = {}  # sub -> avg cents
+        avg_mc_map = {}  # sub -> month count
+        for r in avg_rows:
+            mc = r["month_count"]
+            avg_map[r["sub"]] = int(round(r["total"] * 100 / max(mc, 1)))
+            avg_mc_map[r["sub"]] = mc
+
+        # 5. Build sorted list: spent desc, then alphabetical for $0 items
         sorted_subs = sorted(all_subs, key=lambda s: (-spend_map.get(s, 0), s))
 
         import json
@@ -1331,6 +1361,20 @@ def budget_subcategories():
             sub_js = escape(json.dumps(sub_name))
             field_name = escape(f"subbudget_{category}__{sub_name}")
             budget_cents = sub_budgets.get(sub_name)
+
+            # 3-mo avg for this subcategory
+            sub_avg = avg_map.get(sub_name, 0)
+            sub_mc = avg_mc_map.get(sub_name, 0)
+            avg_over = (
+                "stp-avg--over"
+                if budget_cents and budget_cents > 0 and sub_avg > budget_cents * 1.1
+                else ""
+            )
+            mc_note = f'<span class="stp-avg-note">{sub_mc}mo</span>' if sub_mc < 3 else ""
+            avg_td = (
+                f'<td class="stp-avg {avg_over}">'
+                f'${sub_avg / 100:,.0f}{mc_note}</td>'
+            )
 
             # Spent cell (always clickable)
             spent_td = (
@@ -1356,7 +1400,7 @@ def budget_subcategories():
                     f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
                     f'<input type="text" name="{field_name}" value="{budget_val}" '
                     f'size="{len(budget_val)}" class="stp-budget-input stp-budget-input--sub"></span></td>'
-                    f'<td></td>'
+                    f'{avg_td}'
                     f'<td class="{rem_class}">${remaining / 100:,.0f}</td>'
                     f'<td><div class="stp-budget-progress-wrap">'
                     f'<div class="stp-budget-bar stp-budget-bar--sub">'
@@ -1374,7 +1418,7 @@ def budget_subcategories():
                     f'<input type="text" name="{field_name}" value="" '
                     f'placeholder="\u2014" size="3" '
                     f'class="stp-budget-input stp-budget-input--sub"></span></td>'
-                    f'<td></td>'
+                    f'{avg_td}'
                     f'<td></td>'
                     f'<td></td>'
                     f'</tr>'
