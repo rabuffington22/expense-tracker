@@ -395,15 +395,18 @@
         {% endfor %}
 
         {# ── Budget Totals Box ── #}
-        <div class="outline-panel stp-totals-box">
+        <div class="outline-panel stp-budget-section-box stp-section--border-label">
+            <div class="stp-section-header">
+                <span class="stp-section-label stp-section-label--border">TOTALS</span>
+            </div>
             <div class="stp-totals-row">
-                <div class="stp-totals-cell">
-                    <span class="stp-totals-label">BUDGETED</span>
-                    <span class="stp-totals-value">${{ "{:,.0f}".format(budget_totals.budgeted_cents / 100) }}</span>
-                </div>
                 <div class="stp-totals-cell">
                     <span class="stp-totals-label">SPENT</span>
                     <span class="stp-totals-value">${{ "{:,.0f}".format(budget_totals.spent_cents / 100) }}</span>
+                </div>
+                <div class="stp-totals-cell">
+                    <span class="stp-totals-label">BUDGET</span>
+                    <span class="stp-totals-value">${{ "{:,.0f}".format(budget_totals.budgeted_cents / 100) }}</span>
                 </div>
                 <div class="stp-totals-cell">
                     <span class="stp-totals-label">3-MO AVG</span>
