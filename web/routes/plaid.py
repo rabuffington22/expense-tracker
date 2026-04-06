@@ -85,11 +85,20 @@ def index():
             # Format last_synced ISO timestamp
             if item.get("last_synced"):
                 item["last_synced_display"] = _fmt_date(item["last_synced"][:10])
+        # Manual accounts (not yet Plaid-connected) — shown as "not connected" placeholders
+        manual_rows = conn.execute(
+            "SELECT id, account_name FROM account_balances "
+            "WHERE plaid_account_id IS NULL AND balance_source='manual' "
+            "AND account_type='credit_card' ORDER BY sort_order"
+        ).fetchall()
+        manual_accounts = [dict(r) for r in manual_rows]
     finally:
         conn.close()
+
     return render_template(
         "plaid.html",
         items=items,
+        manual_accounts=manual_accounts,
         plaid_available=_plaid_available(),
     )
 
@@ -148,6 +157,28 @@ def exchange_token():
                     (item_id, acc["account_id"], acc["name"], acc["mask"],
                      acc["type"], acc["subtype"]),
                 )
+            # Auto-remove manual placeholder accounts that match this institution.
+            # Match: manual account name starts with the first word of the institution
+            # name or any connected Plaid account name (e.g. "Apple Card Ryan" when
+            # institution is "Apple Card", "Chase Sapphire" when inst is "Chase").
+            inst_first = institution_name.split()[0].lower() if institution_name else ""
+            plaid_first_words = {
+                (acc.get("name") or "").split()[0].lower()
+                for acc in accounts if acc.get("name")
+            }
+            keywords = {w for w in ({inst_first} | plaid_first_words) if w}
+            if keywords:
+                manual_rows = conn.execute(
+                    "SELECT id, account_name FROM account_balances "
+                    "WHERE plaid_account_id IS NULL AND balance_source='manual'"
+                ).fetchall()
+                for manual in manual_rows:
+                    first_word = manual["account_name"].split()[0].lower()
+                    if first_word in keywords:
+                        conn.execute(
+                            "DELETE FROM account_balances WHERE id=?", (manual["id"],)
+                        )
+
             conn.commit()
         finally:
             conn.close()

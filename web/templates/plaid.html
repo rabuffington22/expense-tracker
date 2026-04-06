@@ -119,6 +119,24 @@
 </div>
 {% endfor %}
 
+{% if manual_accounts %}
+<h2 class="section-title" style="margin-top: 2rem;">Not Connected</h2>
+<div class="outline-panel">
+    <table style="width: 100%;">
+        <tbody>
+            {% for acct in manual_accounts %}
+            <tr>
+                <td style="padding: 0.4rem 0.5rem;">{{ acct.account_name }}</td>
+                <td style="padding: 0.4rem 0.5rem; text-align: right;">
+                    <button class="btn btn-sm btn-secondary" onclick="startPlaidLink()">Connect</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
 {% endif %}
 {% endif %}
 
