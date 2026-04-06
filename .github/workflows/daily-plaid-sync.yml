@@ -1,0 +1,16 @@
+name: Daily Plaid Sync
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # 4 AM CDT (UTC-5); 3 AM in winter CST (UTC-6)
+  workflow_dispatch:      # Allow manual trigger from Actions tab
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Plaid sync for all entities
+        run: |
+          curl --fail --max-time 120 \
+            -X POST https://ledger-oak.fly.dev/plaid/sync-all \
+            -H "Authorization: Bearer ${{ secrets.SYNC_SECRET }}"

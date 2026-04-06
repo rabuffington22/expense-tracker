@@ -206,10 +206,59 @@ def sync():
         _sync_lock.release()
 
 
+@bp.route("/sync-all", methods=["POST"])
+def sync_all():
+    """Sync all entities — called by automated daily cron. Protected by SYNC_SECRET."""
+    import os
+    expected = os.environ.get("SYNC_SECRET", "")
+    if not expected:
+        return jsonify({"error": "SYNC_SECRET not configured"}), 500
+    if request.headers.get("Authorization") != f"Bearer {expected}":
+        return jsonify({"error": "Unauthorized"}), 401
+    if not _plaid_available():
+        return jsonify({"error": "Plaid not configured"}), 500
+    if not _sync_lock.acquire(blocking=False):
+        return jsonify({"error": "Sync already in progress"}), 429
+
+    try:
+        from web import _ENTITY_MAP
+        results = {}
+        for entity_key in _ENTITY_MAP.values():
+            results[entity_key] = _sync_entity(entity_key)
+        return jsonify({"ok": True, "results": results})
+    finally:
+        _sync_lock.release()
+
+
 def _do_sync():
-    """Sync logic extracted for lock wrapping."""
-    target_item_id = request.form.get("item_id")
-    conn = get_connection(g.entity_key)
+    """Sync the current entity (g.entity_key), flash result, redirect."""
+    result = _sync_entity(g.entity_key, target_item_id=request.form.get("item_id"))
+
+    if result.get("skipped"):
+        flash("No connected accounts to sync.", "warning")
+        return redirect(url_for("plaid.index"))
+
+    parts = []
+    if result["new"]:        parts.append(f"{result['new']} new")
+    if result["modified"]:   parts.append(f"{result['modified']} updated")
+    if result["removed"]:    parts.append(f"{result['removed']} removed")
+    if result["backfilled"]: parts.append(f"{result['backfilled']} backfilled")
+    if not parts:
+        parts.append("no new transactions")
+
+    msg = f"Sync complete: {', '.join(parts)}."
+    if result["errors"]:
+        msg += f" Errors: {'; '.join(result['errors'])}"
+        flash(msg, "warning")
+    else:
+        flash(msg, "success")
+
+    return redirect(url_for("plaid.index"))
+
+
+def _sync_entity(entity_key: str, target_item_id: str | None = None) -> dict:
+    """Core Plaid sync for one entity. Returns result dict (no Flask side-effects)."""
+    conn = get_connection(entity_key)
     try:
         if target_item_id:
             rows = conn.execute(
@@ -225,8 +274,7 @@ def _do_sync():
         conn.close()
 
     if not items:
-        flash("No connected accounts to sync.", "warning")
-        return redirect(url_for("plaid.index"))
+        return {"new": 0, "modified": 0, "removed": 0, "backfilled": 0, "errors": [], "skipped": True}
 
     from core.crypto import decrypt_token
     for item in items:
@@ -241,9 +289,7 @@ def _do_sync():
 
     for item in items:
         try:
-            # Get enabled account IDs for filtering
-            enabled_accounts = set()
-            conn = get_connection(g.entity_key)
+            conn = get_connection(entity_key)
             try:
                 acct_rows = conn.execute(
                     "SELECT account_id FROM plaid_accounts WHERE item_id=? AND enabled=1",
@@ -255,23 +301,19 @@ def _do_sync():
 
             result = plaid_get_transactions(item["access_token"], cursor=item.get("cursor"))
 
-            conn = get_connection(g.entity_key)
+            conn = get_connection(entity_key)
             try:
-                # Process added transactions
                 for t in result["added"]:
                     if t["account_id"] not in enabled_accounts:
                         continue
-                    new_count = _upsert_plaid_transaction(conn, g.entity_key, item["item_id"], t)
-                    total_new += new_count
+                    total_new += _upsert_plaid_transaction(conn, entity_key, item["item_id"], t)
 
-                # Process modified transactions — update existing rows in place
                 for t in result["modified"]:
                     if t["account_id"] not in enabled_accounts:
                         continue
                     description = t.get("merchant_name") or t.get("name") or ""
                     amount = -t["amount"]
                     amount_cents = round(amount * 100)
-                    # Look up account name so we always keep it current
                     acct_row = conn.execute(
                         "SELECT name FROM plaid_accounts WHERE account_id=?",
                         (t["account_id"],),
@@ -284,17 +326,11 @@ def _do_sync():
                                plaid_item_id=COALESCE(plaid_item_id, ?)
                            WHERE plaid_transaction_id=?""",
                         (description, description, amount, amount_cents,
-                         account_name, item["item_id"],
-                         t["plaid_transaction_id"]),
+                         account_name, item["item_id"], t["plaid_transaction_id"]),
                     )
                     total_modified += 1
 
-                # Process removed transactions — delete them from the ledger.
-                # Plaid removes pending transactions when they post (the posted
-                # version arrives as an "added" transaction in the same sync),
-                # so keeping the old row would create duplicates.
                 for plaid_txn_id in result["removed"]:
-                    # Also clean up any splits tied to this transaction
                     conn.execute(
                         "DELETE FROM transaction_splits"
                         " WHERE transaction_id = ("
@@ -303,13 +339,11 @@ def _do_sync():
                         (plaid_txn_id,),
                     )
                     conn.execute(
-                        "DELETE FROM transactions"
-                        " WHERE plaid_transaction_id=?",
+                        "DELETE FROM transactions WHERE plaid_transaction_id=?",
                         (plaid_txn_id,),
                     )
                     total_removed += 1
 
-                # Update cursor and last_synced
                 now = datetime.now(timezone.utc).isoformat()
                 conn.execute(
                     "UPDATE plaid_items SET cursor=?, last_synced=? WHERE item_id=?",
@@ -322,9 +356,9 @@ def _do_sync():
         except Exception as exc:
             errors.append(f"{item.get('institution_name', item['item_id'])}: {exc}")
 
-    # Backfill account column on existing Plaid transactions missing it.
-    # For items with exactly one enabled account, this is unambiguous.
-    conn = get_connection(g.entity_key)
+    # Backfill account column for single-account Plaid items
+    backfilled = 0
+    conn = get_connection(entity_key)
     try:
         single_acct_items = conn.execute("""
             SELECT pi.item_id, pa.name
@@ -333,7 +367,6 @@ def _do_sync():
             GROUP BY pi.item_id
             HAVING COUNT(*) = 1
         """).fetchall()
-        backfilled = 0
         for row in single_acct_items:
             cur = conn.execute(
                 "UPDATE transactions SET account=? "
@@ -346,26 +379,8 @@ def _do_sync():
     finally:
         conn.close()
 
-    parts = []
-    if total_new:
-        parts.append(f"{total_new} new")
-    if total_modified:
-        parts.append(f"{total_modified} updated")
-    if total_removed:
-        parts.append(f"{total_removed} removed")
-    if backfilled:
-        parts.append(f"{backfilled} backfilled")
-    if not parts:
-        parts.append("no new transactions")
-
-    msg = f"Sync complete: {', '.join(parts)}."
-    if errors:
-        msg += f" Errors: {'; '.join(errors)}"
-        flash(msg, "warning")
-    else:
-        flash(msg, "success")
-
-    return redirect(url_for("plaid.index"))
+    return {"new": total_new, "modified": total_modified, "removed": total_removed,
+            "backfilled": backfilled, "errors": errors}
 
 
 @bp.route("/toggle-account/<account_id>", methods=["POST"])
