@@ -390,6 +390,10 @@ def create_app():
     def _inject_globals():
         if request.path.startswith("/k/") or request.path == "/k" or request.path in ("/sw.js", "/offline", "/health"):
             return {}  # These pages don't use entity context
+        # API/cron endpoints (e.g. /plaid/sync-all) skip _setup_entity context;
+        # if an exception triggers the default error template, fall through safely.
+        if not hasattr(g, "entity_display"):
+            return {}
         labels = _ENTITY_LABELS.get(g.entity_display, _DEFAULT_LABELS)
         return {
             "entity_display": g.entity_display,
