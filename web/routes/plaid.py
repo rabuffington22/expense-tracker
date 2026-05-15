@@ -379,6 +379,13 @@ def _sync_entity(entity_key: str, target_item_id: str | None = None) -> dict:
     finally:
         conn.close()
 
+    if entity_key == "luxelegacy":
+        try:
+            from core.luxury_bridge import push_luxelegacy_to_supabase
+            push_luxelegacy_to_supabase()
+        except Exception as exc:
+            errors.append(f"luxury_bridge: {exc}")
+
     return {"new": total_new, "modified": total_modified, "removed": total_removed,
             "backfilled": backfilled, "errors": errors}
 

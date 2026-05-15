@@ -95,6 +95,13 @@ def _background_sync():
                     log.warning("Kristine sync error (%s/%s): %s",
                                 entity_key, item.get("institution_name"), exc)
 
+            if entity_key == "luxelegacy":
+                try:
+                    from core.luxury_bridge import push_luxelegacy_to_supabase
+                    push_luxelegacy_to_supabase()
+                except Exception as exc:
+                    log.warning("luxury_bridge push failed: %s", exc)
+
         log.info("Kristine background sync complete")
     except Exception as exc:
         log.warning("Kristine background sync failed: %s", exc)
