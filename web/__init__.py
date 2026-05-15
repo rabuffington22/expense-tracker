@@ -298,7 +298,9 @@ def create_app():
 
     # ── CSRF protection ──────────────────────────────────────────────────
     _CSRF_SAFE_METHODS = frozenset(("GET", "HEAD", "OPTIONS"))
-    _CSRF_EXEMPT_PATHS = ("/sw.js", "/offline", "/auth/verify")
+    # /plaid/sync-all is the daily cron endpoint and is guarded by SYNC_SECRET
+    # bearer auth — CSRF doesn't apply (no session, no browser).
+    _CSRF_EXEMPT_PATHS = ("/sw.js", "/offline", "/auth/verify", "/plaid/sync-all")
 
     def _get_csrf_token():
         """Return the CSRF token for the current session, creating one if needed."""
