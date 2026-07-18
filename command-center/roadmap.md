@@ -6,7 +6,7 @@ Ryan confirmed Phases 1-5 as the baseline roadmap on 2026-07-17. Work still runs
 
 ## Phase 0: Full Runway OS Installation And Baseline
 
-Status: active
+Status: complete
 
 Goal: install the complete in-repo command center, migrate current planning truth into its canonical surfaces, and establish a safe verified baseline without changing application or production behavior.
 
@@ -16,7 +16,7 @@ Goal: install the complete in-repo command center, migrate current planning trut
 - **Task 4: Adapt the verification contract to the existing repo shape.** Recognize `web/`, `core/`, `scripts/`, and root entry points instead of requiring scratch-only `app/` and `scratch/` folders. Status: done.
 - **Task 5: Verify and close the bootstrap.** Refresh the dashboard, run Runway OS health checks, run the synthetic smoke suite, inspect the generated dashboard, and run git consistency checks. Status: done.
 - **Task 6: Review the proposed roadmap and authorize the first operational block.** Ryan confirms or changes the proposed phase plan and the Phase 1 work block before any workflow, production, or application mutation. Status: done; Ryan accepted Phases 1-5 and confirmed 1A.
-- **Task 7: Commit and push the verified Runway OS baseline.** Stage only `PROJECT_STRUCTURE.md` and `command-center/`, preserve the pre-existing untracked files, commit the install branch, and push it to `origin`. Status: current after Ryan confirmed the roadmap, durability, and work block 1A.
+- **Task 7: Commit and push the verified Runway OS baseline.** Stage only `PROJECT_STRUCTURE.md` and `command-center/`, preserve the pre-existing untracked files, commit the install branch, and push it to `origin`. Status: done; baseline commit `e9a8e5e` is pushed on `origin/codex/runway-os-full-install`.
 
 ### Confirmed Work Block 0A: Full Runway OS Install
 
@@ -46,7 +46,7 @@ Verification:
 
 ### Confirmed Work Block 0B: Target Durability Closeout
 
-Status: active
+Status: done
 
 Included: Task 7.
 
@@ -70,7 +70,7 @@ Verification:
 
 ## Phase 1: Operational Reliability Recovery
 
-Status: planned
+Status: active
 
 Goal: restore and prove the automated financial-data pipeline before broader feature work.
 
@@ -81,7 +81,7 @@ Goal: restore and prove the automated financial-data pipeline before broader fea
 
 ### Proposed Work Block 1A: Restore Daily Sync And Operational Baseline
 
-Status: confirmed; queued after work block 0B
+Status: active
 
 Included: Tasks 1-3.
 

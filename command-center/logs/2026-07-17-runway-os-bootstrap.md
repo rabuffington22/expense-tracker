@@ -31,3 +31,7 @@ Final dashboard refresh and health check passed. Final visual inspection confirm
 ## Result
 
 Work block 0A completed successfully. The install remains local-only on `codex/runway-os-full-install`; commit, push, PR, merge, and parent provenance were outside the confirmed block. The current project checkpoint is Phase 0 Task 6: Ryan review of the proposed roadmap and proposed Phase 1 work block 1A.
+
+## Durability Follow-Through
+
+Ryan later accepted Phases 1-5, authorized target-branch durability, and confirmed work block 1A. Work block 0B staged only `PROJECT_STRUCTURE.md` and `command-center/`, preserved both pre-existing untracked files, committed the verified baseline as `e9a8e5e`, and pushed `origin/codex/runway-os-full-install` without force.

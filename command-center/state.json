@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-17 9:40 PM CST",
+    "lastUpdated": "2026-07-17 9:42 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Runway OS install is verified locally; confirmed work block 0B is committing and pushing codex/runway-os-full-install"
+    "durabilityStatus": "committed-and-pushed: e9a8e5e89f54d82e749ac553a6fef147cd5af588 on origin/codex/runway-os-full-install"
   },
   "phase": {
-    "name": "Full Runway OS Installation And Baseline",
+    "name": "Operational Reliability Recovery",
     "status": "active",
-    "summary": "The complete Runway OS is verified and the roadmap is confirmed; target-branch durability is the final Phase 0 task before live recovery.",
-    "progress": 99
+    "summary": "Restore and prove the automated financial-data pipeline before broader feature work.",
+    "progress": 5
   },
   "currentTask": {
-    "title": "Task 7: Commit and push the verified Runway OS baseline",
+    "title": "Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization",
     "owner": "Codex",
     "status": "current",
-    "supportingAgent": "Git and existing GitHub remote",
-    "nextAction": "Stage only PROJECT_STRUCTURE.md and command-center, commit, and push codex/runway-os-full-install without force.",
-    "blocker": "None; live work block 1A remains queued until durability completes"
+    "supportingAgent": "GitHub Actions via the authenticated GitHub CLI",
+    "nextAction": "Record the reviewed workflow state, enable it, verify active state, and dispatch one controlled run.",
+    "blocker": "None inside confirmed work block 1A"
   },
   "routerHealth": {
     "status": "healthy",
@@ -61,11 +61,11 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Make the verified baseline durable",
+    "title": "Restore and prove Daily Plaid Sync",
     "status": "in-progress",
     "owner": "Codex",
-    "why": "Ryan confirmed the roadmap, target durability, and live recovery sequence; the Runway OS baseline should exist on GitHub before the workflow changes.",
-    "action": "Complete work block 0B, then activate confirmed work block 1A.",
+    "why": "The verified Runway OS baseline is pushed and the scheduled sync remains the first known operational reliability issue.",
+    "action": "Execute confirmed work block 1A Tasks 1-3 and stop on any workflow, production, downstream, or sensitive-output anomaly.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
@@ -100,13 +100,13 @@
       "id": "phase-0",
       "name": "Phase 0",
       "label": "Full Runway OS Installation And Baseline",
-      "status": "active"
+      "status": "done"
     },
     {
       "id": "phase-1",
       "name": "Phase 1",
       "label": "Operational Reliability Recovery",
-      "status": "upcoming"
+      "status": "active"
     },
     {
       "id": "phase-2",
@@ -179,7 +179,7 @@
       "phaseId": "phase-1",
       "label": "1A",
       "name": "Restore Daily Sync And Operational Baseline",
-      "status": "confirmed",
+      "status": "active",
       "includedTasks": [
         "Task 1",
         "Task 2",
@@ -214,7 +214,7 @@
       "phaseId": "phase-0",
       "label": "0B",
       "name": "Target Durability Closeout",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 7"
       ],
@@ -239,7 +239,8 @@
         "Push codex/runway-os-full-install without force",
         "Verify upstream branch and remote commit"
       ],
-      "reportBack": "Transition to active Phase 1 work block 1A only after the verified baseline is committed and pushed."
+      "reportBack": "Transitioned to active Phase 1 work block 1A after the verified baseline was committed and pushed.",
+      "result": "Committed and pushed the verified Runway OS baseline as e9a8e5e on origin/codex/runway-os-full-install."
     }
   ],
   "phaseTasks": [
@@ -308,19 +309,19 @@
       "phaseId": "phase-0",
       "taskId": "P0-T7",
       "title": "Task 7: Commit and push the verified Runway OS baseline",
-      "status": "current",
+      "status": "done",
       "owner": "Codex",
       "summary": "Stage only the approved Runway OS paths, commit the install branch, and push it without force.",
-      "nextAction": "Verify, stage PROJECT_STRUCTURE.md and command-center only, commit, and push the branch.",
-      "blocker": "None"
+      "result": "Staged only approved Runway OS paths, committed e9a8e5e, and pushed the branch without force."
     },
     {
       "phaseId": "phase-1",
       "taskId": "P1-T1",
       "title": "Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization",
-      "status": "planned",
+      "status": "current",
       "owner": "Codex",
-      "summary": "Restore the intended schedule through an explicitly approved external GitHub mutation."
+      "summary": "Restore the intended schedule through an explicitly approved external GitHub mutation.",
+      "nextAction": "Record the exact state, enable the workflow, confirm active state, and dispatch one controlled run."
     },
     {
       "phaseId": "phase-1",
@@ -604,6 +605,10 @@
     {
       "time": "2026-07-17",
       "text": "Ryan accepted Phases 1-5, authorized target-branch commit/push, and confirmed work block 1A with its controlled live effects."
+    },
+    {
+      "time": "2026-07-17",
+      "text": "Committed and pushed the verified full Runway OS baseline as e9a8e5e on origin/codex/runway-os-full-install."
     }
   ],
   "openQuestions": [
@@ -632,8 +637,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Verified Runway OS baseline pushed",
-    "description": "The full command center is committed and pushed on codex/runway-os-full-install before work block 1A changes the disabled workflow."
+    "name": "Daily Plaid Sync restored and proven",
+    "description": "The workflow is active, one controlled run completes successfully, production and demo health baselines pass, and sanitized evidence is durable in Runway OS."
   },
   "verification": {
     "dashboardRefresh": "pass",
