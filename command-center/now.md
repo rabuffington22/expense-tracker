@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Prepare the first bounded Phase 3 functional-audit work block after completing and releasing project-truth recovery.
+Prepare the next bounded Phase 3 audit block after completing the synthetic transaction-foundation and three-entity-isolation audit.
 
 ## Current Phase
 
@@ -10,38 +10,36 @@ Phase 3: Functional Audit And Prioritization — active.
 
 ## Completed Work Block
 
-2B-R: Publish Canonical Project Guidance — merged, deployed, and verified.
+3A: Synthetic Transaction Foundation Audit — complete and verified locally.
 
 ## Current Task
 
-Phase 3 Task 1: audit core workflows for Personal, BFM, and Luxe Legacy with safe data-handling rules — awaiting a just-in-time planning pass and separately confirmed audit work block.
+Phase 3 Task 2: audit statement and vendor-order import, matching, and categorization workflows — awaiting just-in-time work-block planning and separate confirmation.
 
 ## Owner
 
-Ryan owns confirmation or revision of the first Phase 3 audit block. Codex Desktop owns the verified 2B-R release evidence, Phase 2 closeout, dashboard currency, and the next just-in-time planning pass.
+Ryan owns confirmation or revision of the next Phase 3 audit block and later repair prioritization. Codex Desktop owns the verified 3A evidence, dashboard currency, and Task 2 just-in-time planning pass.
 
-## Release Result
+## Audit Result
 
-PR #85 was marked ready and merged to `main` as `216a992`. Automatic Fly Deploy run `29647452643` completed successfully, including every job step. Production root and `/health` both returned HTTP 200. Only sanitized workflow, job, step, and HTTP status was inspected; no deployment logs, response bodies, credentials, secrets, or financial data were opened.
+Work block 3A passed the existing synthetic smoke suite and ephemeral checks for all three databases, entity isolation, negative debit cents, transaction edits, split validation, cross-entity denial, and effective-reporting replacement.
 
-The release established tracked `AGENTS.md` as the canonical agent instruction source, reduced `CLAUDE.md` to a compatibility entry point, and retired `PROJECT_KNOWLEDGE.md` plus `plan.md` as competing guidance while preserving their history. The Short-Term Planning verification gap remains parked for Phase 3 audit rather than being assumed fixed.
+It reproduced one high-severity financial-data completeness defect: transaction identity omits account/source identity, so otherwise identical legitimate rows can collide and one is silently skipped. It also confirmed a medium regression-confidence gap because edit, split, and effective-reporting behavior is not covered by tracked smoke tests. Plaid source uses the same identity helper, but Task 5 owns that bounded impact audit.
 
 ## Durability
 
-- PR: https://github.com/rabuffington22/expense-tracker/pull/85
-- Merge commit: `216a992`
-- Fly Deploy run: `29647452643` — success
-- Production root: HTTP 200
-- Production `/health`: HTTP 200
-- Status: merged and deployed on `main`; sanitized closeout published with `[skip actions]`
+- Work block 3A and its findings are published directly to `main` under Ryan's separate durability authorization using `[skip actions]`.
+- No application or tracked test file changed.
+- No production, demo, Plaid, workflow, Fly, credential, upload, or financial-data access occurred.
 - Preserved user file: untracked `scripts/sync_prod_to_local.sh`, untouched and unstaged
 
 ## Current Action
 
-Run a just-in-time planning pass over the smallest useful Phase 3 audit slice and propose one separately confirmed work block before opening financial data, accessing Plaid, testing production behavior beyond safe HTTP status, or beginning audit execution.
+Run a just-in-time planning pass over Task 2 and propose a synthetic-first work block 3B before auditing statement/vendor import, matching, or categorization behavior.
 
 ## Phase 3 Boundary
 
-- No functional audit, production account access, Plaid action, row-level financial-data read, workflow action, application change, or test expansion begins without a separately confirmed Phase 3 work block.
-- The first planning pass should decide whether Task 1 needs local decomposition before selecting a safe synthetic-first audit slice.
+- Work block 3A is complete; it does not authorize a repair or tracked regression-test implementation.
+- Task 2 audit execution requires its own confirmed work block.
+- Production account access, Plaid action, row-level financial-data read, workflow action, application change, tracked test expansion, and GitHub durability remain excluded until separately authorized.
 - The parked Short-Term Planning verification gap is an audit input, not an automatically authorized fix.

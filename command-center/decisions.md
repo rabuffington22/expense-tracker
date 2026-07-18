@@ -102,6 +102,18 @@ Ryan explicitly instructed Codex to commit and push the verified documentation-g
 
 Ready PR #85 merged the verified canonical-guidance and legacy-document governance work to `main` as `216a992`. Automatic Fly Deploy run `29647452643` and every job step passed, and production root plus `/health` returned HTTP 200. Only sanitized workflow, job, step, and HTTP status was inspected. Phase 2 is complete, and Phase 3 becomes active for just-in-time audit decomposition without authorizing functional-audit execution.
 
+### 2026-07-18 — Confirm work block 3A for the synthetic transaction foundation audit
+
+Ryan confirmed Task 1 as a synthetic-only audit of the transaction foundation and Personal, BFM, and Luxe Legacy isolation. Codex may inspect tracked source, run the existing smoke suite, execute ephemeral probes against temporary databases, create a sanitized audit log, record ranked findings, and close Runway OS state. Tasks 2-8, product fixes, tracked test expansion, real databases, uploads, credentials, row-level financial data, production/demo access, Plaid or workflow actions, authentication/security changes, pre-existing `scripts/sync_prod_to_local.sh`, and all commit, push, PR, merge, and deployment actions remain excluded.
+
+### 2026-07-18 — Accept work block 3A as verified with one correctness defect and one coverage gap
+
+The existing smoke suite passed, and ephemeral temporary-database probes passed all-entity initialization, schema alignment, isolation, signed-cents, edit, split-validation, rejected-update preservation, and effective-reporting checks. A high financial-data completeness defect was reproduced: identity hashes only date, amount, and description, so distinct transactions with different accounts can collide and one is silently skipped. The same helper is used by Plaid source, but Plaid impact remains unverified under Task 5. Edit, split, and effective-reporting behavior passed but lacks tracked regression coverage. Both findings are recorded without repair or test expansion, Task 1 is done, and Task 2 becomes current for a separately confirmed audit block.
+
+### 2026-07-18 — Authorize direct-main durability for the 3A audit closeout
+
+Ryan explicitly instructed Codex to commit and push the verified 3A command-center closeout to `main`. This authorizes staging only the seven 3A command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product and tracked test files, pre-existing untracked `scripts/sync_prod_to_local.sh`, application/workflow changes, production deployment, live access, protected data, credentials, Plaid, Fly, and all recovery outside the exact closeout remain excluded.
+
 ## Pending Ryan Direction
 
-- Confirm or revise the first bounded Phase 3 functional-audit work block after Codex completes the just-in-time planning pass.
+- Confirm or revise the next bounded Phase 3 Task 2 audit block after Codex completes its just-in-time planning pass. Any product fix, tracked regression coverage, protected-data access, live action, or durability step requires a separate decision.

@@ -97,3 +97,65 @@ Work block 2B is documentation governance only. Adding product tests or demo dat
 Promotion trigger:
 
 Phase 3 decomposes the functional audit and decides whether the missing dedicated cases are defects, useful regression additions, or superseded requirements.
+
+## Transaction Identity Can Collapse Distinct Transactions
+
+Status: open; discovered in work block 3A
+
+Severity: high financial-data completeness risk
+
+Captured: 2026-07-18
+
+Where seen: `core/imports.py`, `web/routes/plaid.py`, and synthetic temporary-database reproduction
+
+Revisit: Phase 4 Task 1 for repair design; Phase 3 Task 5 for the bounded Plaid-path impact audit
+
+Summary:
+
+`compute_transaction_id()` hashes only date, amount, and normalized description. A synthetic pair with the same date, amount, and description but different accounts produced the same primary key; `commit_transactions()` inserted one row and silently counted the other as skipped. Legitimate repeated transactions with the same hash inputs can therefore be treated as duplicates. Source inspection also found that Plaid ingestion calls the same identity helper, but work block 3A did not perform Plaid or live-system testing.
+
+Impact:
+
+The importer can omit a legitimate transaction without surfacing an error, producing an incomplete ledger and understated or overstated downstream reporting. The audit did not inspect real data, so actual production occurrence is unknown.
+
+Acceptance checks:
+
+- Two legitimate transactions that differ by account or another stable source identity can coexist.
+- Exact re-imports of the same source transaction remain deduplicated.
+- Existing transaction relationships, including splits and vendor matches, have a safe preservation or migration path.
+- Synthetic coverage proves CSV/import behavior and, in its separately authorized audit or repair scope, Plaid identity behavior.
+
+Why not fixed now:
+
+Work block 3A is audit-only. Changing the primary identity contract requires repair design, migration judgment, tracked regression coverage, and a separately confirmed Phase 4 work block.
+
+## Transaction Edit, Split, And Effective-Reporting Paths Lack Tracked Regression Coverage
+
+Status: parked for Phase 4 regression coverage
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py`, `web/routes/transactions.py`, and `core/reporting.py`
+
+Revisit: Phase 4 Task 2, preferably alongside the transaction-identity repair block
+
+Summary:
+
+Work block 3A's ephemeral temporary-database probe confirmed current edit persistence, cross-entity edit and split denial, split sign and total validation, rejected-update preservation, and effective-reporting replacement of a split parent with signed split pieces. The tracked smoke suite does not exercise those behaviors, so the passing evidence is current but not a durable regression guard.
+
+Impact:
+
+Future changes to transaction editing, split validation, entity scoping, or reporting expansion could regress without the existing smoke suite detecting them.
+
+Acceptance checks:
+
+- Tracked synthetic tests cover successful edit and split operations.
+- Cross-entity edit and split attempts return not found and leave every entity unchanged.
+- Invalid split sign or total is rejected without replacing the prior valid split set.
+- Effective reporting excludes the split parent, emits the split pieces, and preserves the signed total.
+
+Why not added now:
+
+Tracked test expansion was explicitly excluded from audit work block 3A and belongs in a separately confirmed Phase 4 regression-coverage block.

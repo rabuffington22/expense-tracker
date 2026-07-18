@@ -412,14 +412,53 @@ Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is pu
 
 ## Phase 3: Functional Audit And Prioritization
 
-Status: active; Task 1 is current for just-in-time audit decomposition and work-block planning
+Status: active; Task 1 and work block 3A are done, and Task 2 is current awaiting a separately confirmed audit block
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
-- **Task 1: Audit core workflows for Personal, BFM, and Luxe Legacy with safe data-handling rules.** Status: current; awaiting a just-in-time planning pass and separately confirmed audit work block.
-- **Task 2: Audit Plaid, vendor import/matching, categorization, reporting, planning, payroll, weekly, waterfall, PWA, and public dashboard behavior.** Status: planned.
-- **Task 3: Convert findings into severity-ranked issues with reproduction and acceptance checks.** Status: planned.
-- **Task 4: Confirm the repair order and bounded implementation work blocks with Ryan.** Status: planned.
+- **Task 1: Audit the transaction foundation and three-entity isolation with synthetic data.** Status: done through work block 3A. The audit passed initialization, isolation, debit-sign, edit, split, and effective-reporting probes; it found a high-severity identity collision risk and a medium tracked-regression-coverage gap without implementing fixes.
+- **Task 2: Audit statement and vendor-order import, matching, and categorization workflows.** Status: current; awaiting just-in-time work-block planning and separate confirmation. Cover CSV/PDF source profiles, upload/confirm/undo boundaries, Amazon and Henry Schein ingestion, vendor matching, aliases, suggestions, and category/subcategory handling with synthetic inputs.
+- **Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior.** Status: planned. Check shared reporting rules, split replacement, exclusions, empty states, date filters, recurring detection, balances, and entity-specific output without opening production data.
+- **Task 4: Audit planning, weekly, waterfall, and payroll workflows.** Status: planned. Include the parked Short-Term Planning goal/snapshot/budget/payoff/entity-isolation evidence gap and decide whether its historical expectations remain valid; use synthetic payroll and planning records only.
+- **Task 5: Audit Plaid and downstream-sync integration boundaries.** Status: planned. Begin with source and synthetic/mocked behavior; any production account access, Plaid action, workflow action, credential use, or downstream write requires a separate target-specific authorization.
+- **Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries.** Status: planned. Use tracked source and synthetic/local behavior first; do not change authentication, CSRF, credential, encryption, or public-route behavior during the audit.
+- **Task 7: Consolidate audit findings into severity-ranked issues.** Status: planned. Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.
+- **Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks with Ryan.** Status: planned. Prioritize only evidence-backed findings after the relevant audit slices are complete.
+
+### Confirmed Work Block 3A: Synthetic Transaction Foundation Audit
+
+Status: done; confirmed and completed on 2026-07-18
+
+Included: Task 1.
+
+Excluded: Tasks 2-8; product fixes; tracked test expansion; real databases, uploads, credentials, or row-level financial data; production or demo access; Plaid, workflow, Fly, or downstream actions; authentication, encryption, CSRF, credential, or public-route changes; commit, push, PR, merge, and deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Outcome: determine whether the tracked transaction foundation behaves consistently across Personal, BFM, and Luxe Legacy using source inspection, the existing synthetic smoke suite, and ephemeral probes against temporary databases. Classify each audited behavior as pass, defect, regression-coverage gap, or unverified boundary without implementing repairs.
+
+Owner and recommended agent: Codex Desktop in the current task. The sensitive-retrofit block couples source inspection, synthetic verification, finding classification, and command-center stewardship; no external worker or second opinion is needed.
+
+Expected surfaces: read `core/db.py`, `core/imports.py`, `core/reporting.py`, `web/__init__.py`, transaction routes/templates, tracked fixtures, and `scripts/smoke_test.py`; write a sanitized 3A audit log and update `command-center/issues.md` only when findings require it; close out through Runway OS sources, state, and dashboard. No application or tracked test file should change.
+
+Stop conditions:
+
+- Verification would require real databases, uploads, financial rows, credentials, production/demo access, Plaid, or another live action.
+- A finding requires a product fix or tracked regression test; record it and stop short of implementation.
+- Entity isolation appears violated or ambiguous, or a security/authentication/destructive-data condition appears.
+- Scope expands beyond Task 1 or a verification failure changes the audit plan.
+- The command center cannot be refreshed or health check cannot pass.
+
+Verification:
+
+- `.venv/bin/python scripts/smoke_test.py`
+- ephemeral temporary-`DATA_DIR` checks for all three entities, deterministic transaction IDs, re-import deduplication, negative-debit convention, edit/split behavior, effective-reporting split replacement, and cross-entity denial/isolation
+- `git diff --check`
+- Runway OS refresh, health check, generated-dashboard inspection, and final worktree review
+
+Durability: after 3A completed locally, Ryan separately authorized publishing the exact command-center closeout directly to `main` with `[skip actions]`; no PR, merge, or deploy is part of that durability step.
+
+Report point: return a sanitized pass/gap/unverified matrix, ranked findings with acceptance checks, exact synthetic checks, preserved boundaries, and a recommendation for work block 3B covering Task 2.
+
+Result: the existing smoke suite and the ephemeral all-entity probe passed initialization, schema alignment, isolation, signed-cents, edit, split-validation, and effective-reporting checks. One high-severity financial-data completeness defect was reproduced: identity hashes only date, amount, and description, so otherwise identical rows from different accounts collide and one is silently skipped. Edit/split/reporting behavior passed but lacks tracked regression coverage, recorded as a medium risk. Plaid uses the same identity helper in source, but its impact remains an unverified Task 5 boundary. No repair, tracked test, live access, protected-data read, or durability action occurred.
 
 ## Phase 4: Core Repairs And Regression Coverage
 

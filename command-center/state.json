@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 9:14 AM CST",
+    "lastUpdated": "2026-07-18 9:39 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "PR 85 is merged to main as 216a992, Fly Deploy run 29647452643 passed, and the command-center-only 2B-R closeout is being published with skip actions"
+    "durabilityStatus": "Work block 3A's exact command-center closeout is published directly to main under Ryan's separate authorization with skip actions; no product change or deployment is included"
   },
   "phase": {
     "name": "Functional Audit And Prioritization",
     "status": "active",
-    "summary": "Phase 2 is released and verified; Phase 3 Task 1 is current for just-in-time planning only, with no audit execution authorized.",
-    "progress": 0
+    "summary": "Task 1 and work block 3A are done with one high-severity transaction-identity defect and one medium regression-coverage gap; Task 2 is current awaiting a separate work block.",
+    "progress": 13
   },
   "currentTask": {
-    "title": "Task 1: Audit core workflows for all three entities",
+    "title": "Task 2: Audit statement and vendor-order import, matching, and categorization workflows",
     "owner": "Ryan",
     "status": "awaiting work block",
-    "supportingAgent": "Codex Desktop owns just-in-time decomposition, protected-data boundaries, stop conditions, and verification design before Ryan confirms audit execution",
-    "nextAction": "Define the smallest useful Phase 3 audit slice and return one bounded work-block proposal for Ryan confirmation.",
-    "blocker": "No functional audit, production account access, Plaid action, row-level financial-data read, workflow action, application change, or test expansion is authorized yet"
+    "supportingAgent": "Codex Desktop owns the verified 3A evidence, Task 2 just-in-time planning pass, protected-data boundaries, and dashboard currency",
+    "nextAction": "Define the smallest coherent synthetic Task 2 audit slice and return work block 3B for Ryan confirmation.",
+    "blocker": "No Task 2 audit execution, transaction-identity repair, tracked test expansion, protected-data access, live action, or GitHub durability is authorized yet"
   },
   "routerHealth": {
     "status": "healthy",
@@ -61,23 +61,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define the first bounded Phase 3 functional-audit block",
+    "title": "Define work block 3B for Task 2 synthetic import and categorization audit",
     "status": "awaiting planning",
     "owner": "Ryan",
-    "why": "Phase 2 is released and the next safe step is to decompose Task 1 before any live or row-level audit work begins.",
-    "action": "Run a just-in-time planning pass, specify synthetic versus live surfaces and protected-data rules, and return one work block for separate confirmation.",
+    "why": "Work block 3A is verified and Task 2 is the next visible Phase 3 slice; its statement and vendor import surfaces need a bounded fixture and parser plan before execution.",
+    "action": "Run a just-in-time Task 2 planning pass and return one synthetic-first work block for separate confirmation.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Phase 3 audit block before audit execution begins.",
+    "summary": "Ryan reviews the next separately proposed Task 2 audit block before audit execution begins.",
     "items": [
-      "Confirm or revise the first bounded Phase 3 functional-audit work block after just-in-time planning."
+      "Confirm or revise work block 3B after the Task 2 just-in-time planning pass."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Phase 3 planning may decompose Task 1, but audit execution and protected-data access remain outside the current authorization.",
-    "decisionQueue": "The next decision is confirmation or revision of the first bounded Phase 3 audit block.",
+    "phaseQuestions": "Work block 3A is complete; Task 2 audit execution, transaction-identity repair, tracked tests, protected-data access, and live actions remain outside authorization.",
+    "decisionQueue": "The next decision is confirmation or revision of work block 3B; identity repair and regression coverage remain later separately scoped choices.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -558,6 +558,51 @@
       "reportBack": "Returned the merge commit, deploy run and sanitized result, production HTTP health, final main state, protected boundaries, closeout commit, and Phase 3 planning boundary.",
       "durability": "PR 85 merged to main as 216a992; the verified command-center-only closeout is published directly to main with skip actions so no second deployment runs.",
       "result": "Marked PR 85 ready and merged its verified thirteen-path documentation-governance diff as 216a992. Fly Deploy run 29647452643 and every job step passed without opening logs, and production root plus /health returned HTTP 200. Phase 2 closed and Phase 3 activated for planning only."
+    },
+    {
+      "id": "phase-3-block-a",
+      "phaseId": "phase-3",
+      "label": "3A",
+      "name": "Synthetic Transaction Foundation Audit",
+      "status": "done",
+      "includedTasks": [
+        "Task 1"
+      ],
+      "excludedTasks": [
+        "Tasks 2-8",
+        "Product fixes and tracked test expansion",
+        "Real databases, uploads, credentials, row-level financial data, production or demo access, Plaid, workflows, Fly, downstream writes, authentication or security changes",
+        "Commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive-retrofit block couples source inspection, synthetic verification, finding classification, command-center stewardship, and final intake.",
+      "expectedFiles": [
+        "Read-only product source and tracked fixtures",
+        "command-center/logs/2026-07-18-synthetic-transaction-foundation-audit-3a.md",
+        "command-center/issues.md only if findings require it",
+        "command-center/roadmap.md, now.md, decisions.md, state.json, and index.html"
+      ],
+      "stopConditions": [
+        "Verification requires real databases, uploads, financial rows, credentials, production or demo access, Plaid, or another live action",
+        "A finding requires a product fix or tracked regression test",
+        "Entity isolation appears violated or ambiguous, or a security, authentication, or destructive-data condition appears",
+        "Scope expands beyond Task 1 or verification failure changes the audit plan",
+        "The command center cannot be refreshed or health check cannot pass"
+      ],
+      "verification": [
+        ".venv/bin/python scripts/smoke_test.py",
+        "Ephemeral temporary-DATA_DIR checks for all three entities, deterministic transaction IDs, re-import deduplication, negative-debit convention, edit and split behavior, effective-reporting split replacement, and cross-entity denial",
+        "git diff --check",
+        "Runway OS refresh, health check, generated-dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Returned a sanitized pass, gap, and unverified matrix; ranked findings with acceptance checks; exact synthetic checks; preserved boundaries; and the Task 2 work-block recommendation.",
+      "durability": "Published directly to main under Ryan's separate post-block authorization with skip actions; no PR, merge, or deploy occurred.",
+      "evidence": [
+        "command-center/logs/2026-07-18-synthetic-transaction-foundation-audit-3a.md",
+        "command-center/issues.md"
+      ],
+      "result": "Existing smoke and ephemeral all-entity probes passed initialization, isolation, signed-cents, edit, split, and effective-reporting checks. Transaction identity omitted account or source identity and collapsed one legitimate synthetic collision row, recorded as a high financial-data completeness defect. Passing edit, split, isolation, and reporting behavior lacked tracked regression coverage, recorded as a medium risk. Plaid source impact remains unverified for Task 5, and no excluded action occurred."
     }
   ],
   "phaseTasks": [
@@ -743,36 +788,73 @@
     {
       "phaseId": "phase-3",
       "taskId": "P3-T1",
-      "title": "Task 1: Audit core workflows for all three entities",
-      "status": "current",
-      "owner": "Ryan",
-      "summary": "Evaluate Personal, BFM, and Luxe Legacy behavior under explicit data-handling rules.",
-      "nextAction": "Confirm or revise a separately proposed bounded audit work block after just-in-time planning.",
-      "blocker": "Audit execution is not authorized until the work block defines synthetic versus live surfaces, protected-data rules, stop conditions, and verification."
+      "title": "Task 1: Audit the transaction foundation and three-entity isolation with synthetic data",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Inspect migrations, entity selection, transaction import and deduplication, CRUD/edit/split behavior, reporting-effective transaction semantics, and cross-entity denial using only tracked source, fixtures, and temporary databases.",
+      "result": "Work block 3A passed initialization, isolation, signed-cents, edit, split, and effective-reporting probes; found a high transaction-identity collision risk and a medium tracked-regression-coverage gap without implementation.",
+      "evidence": [
+        "command-center/logs/2026-07-18-synthetic-transaction-foundation-audit-3a.md",
+        "command-center/issues.md"
+      ]
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T2",
-      "title": "Task 2: Audit product subsystems",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "Review sync, import, matching, categorization, reporting, planning, payroll, weekly, waterfall, PWA, and public dashboard behavior."
+      "title": "Task 2: Audit statement and vendor-order import, matching, and categorization workflows",
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Cover CSV and PDF source profiles, upload, confirm and undo boundaries, Amazon and Henry Schein ingestion, vendor matching, aliases, suggestions, and category and subcategory handling with synthetic inputs.",
+      "nextAction": "Confirm or revise work block 3B after the just-in-time Task 2 planning pass.",
+      "blocker": "Task 2 audit execution is not authorized until a synthetic fixture boundary, exact included surfaces, stop conditions, and verification are confirmed."
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T3",
-      "title": "Task 3: Convert findings into ranked issues",
+      "title": "Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior",
       "status": "planned",
       "owner": "Codex",
-      "summary": "Record reproduction, impact, severity, and acceptance checks."
+      "summary": "Check shared reporting rules, split replacement, exclusions, empty states, date filters, recurring detection, balances, and entity-specific output without opening production data."
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T4",
-      "title": "Task 4: Confirm repair order and work blocks",
+      "title": "Task 4: Audit planning, weekly, waterfall, and payroll workflows",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Include the parked Short-Term Planning goal, snapshot, budget, payoff, and entity-isolation evidence gap, and use synthetic payroll and planning records only."
+    },
+    {
+      "phaseId": "phase-3",
+      "taskId": "P3-T5",
+      "title": "Task 5: Audit Plaid and downstream-sync integration boundaries",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Begin with source and synthetic or mocked behavior; any production account access, Plaid action, workflow action, credential use, or downstream write requires separate target-specific authorization."
+    },
+    {
+      "phaseId": "phase-3",
+      "taskId": "P3-T6",
+      "title": "Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Use tracked source and synthetic or local behavior first without changing authentication, CSRF, credential, encryption, or public-route behavior."
+    },
+    {
+      "phaseId": "phase-3",
+      "taskId": "P3-T7",
+      "title": "Task 7: Consolidate audit findings into severity-ranked issues",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary."
+    },
+    {
+      "phaseId": "phase-3",
+      "taskId": "P3-T8",
+      "title": "Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks",
       "status": "planned",
       "owner": "Ryan",
-      "summary": "Approve the implementation sequence before fixes begin."
+      "summary": "Prioritize only evidence-backed findings after the relevant audit slices are complete."
     },
     {
       "phaseId": "phase-4",
@@ -1072,11 +1154,23 @@
     {
       "time": "2026-07-18",
       "text": "Completed work block 2B-R: PR 85 merged as 216a992, Fly Deploy run 29647452643 passed, production root and health returned HTTP 200, Phase 2 closed, and Phase 3 activated for just-in-time planning only."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 3A for a synthetic-only Task 1 audit of the transaction foundation and Personal, BFM, and Luxe Legacy isolation; fixes, tracked test expansion, live access, protected data, and GitHub durability remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 3A: synthetic foundation and entity-isolation checks passed except for a high transaction-identity collision defect; a medium tracked-regression-coverage gap was also recorded, and no repair, live access, protected data, or durability action occurred."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan separately authorized committing and pushing the exact seven-path 3A command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
     }
   ],
   "openQuestions": [],
   "projectQuestions": [
-    "What is the first bounded Phase 3 functional-audit work block after Phase 2 closes?"
+    "What is the smallest coherent synthetic Task 2 audit block for statement and vendor import, matching, and categorization behavior?"
   ],
   "ideas": [],
   "issues": [
@@ -1107,18 +1201,32 @@
       "status": "parked",
       "severity": "medium",
       "source": "command-center/issues.md"
+    },
+    {
+      "title": "Transaction identity can collapse distinct transactions",
+      "summary": "Synthetic 3A evidence showed that rows sharing date, amount, and description but differing by account receive the same ID, causing one legitimate row to be silently skipped; real-data occurrence is unknown.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Transaction edit, split, and effective-reporting paths lack tracked regression coverage",
+      "summary": "The 3A ephemeral probe passed edit, split, cross-entity denial, and reporting replacement behavior, but the tracked smoke suite does not guard those paths.",
+      "status": "parked",
+      "severity": "medium",
+      "source": "command-center/issues.md"
     }
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "First bounded Phase 3 functional-audit decision",
-    "description": "Define and confirm the smallest safe audit slice with explicit synthetic versus live surfaces, protected-data rules, stop conditions, and verification before execution."
+    "name": "Bounded Task 2 audit decision",
+    "description": "Define and confirm the smallest synthetic statement and vendor import, matching, and categorization audit slice before execution."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
-    "browserSmoke": "pass; rendered Expense Tracker dashboard shows Phase 2 done, Phase 3 active at 0 percent, Task 1 awaiting a separately confirmed work block with Ryan as owner, and no stale release gate",
-    "applicationSmoke": "pass; synthetic temp DATA_DIR suite",
+    "browserSmoke": "pass; generated dashboard state shows Phase 3 active at 13 percent, Task 1 and 3A done, Task 2 current behind Ryan's work-block confirmation gate, and one clear waiting item",
+    "applicationSmoke": "pass; existing synthetic temporary-DATA_DIR suite initialized all three entities, verified import and exact re-import deduplication, and passed route, export, saved-view, and To Do checks",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
     "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; first natural minute-17 run remains under the independent monitor",
@@ -1131,6 +1239,9 @@
     "documentationGovernance": "pass; canonical authority, stale-guidance, sensitive-content, path, Git-object, and exact-scope checks passed for work block 2B",
     "phase2DraftDurability": "pass; source commit 912c9bb was published through PR 85",
     "phase2GovernanceRelease": "pass; ready PR 85 merged as 216a992, Fly Deploy run 29647452643 and every step passed, and production root plus health returned HTTP 200",
-    "phase2CloseoutDurability": "pass; this command-center-only closeout is the direct-main skip-actions durability record and excludes application, workflow, data, and pre-existing untracked-file changes"
+    "phase2CloseoutDurability": "pass; this command-center-only closeout is the direct-main skip-actions durability record and excludes application, workflow, data, and pre-existing untracked-file changes",
+    "phase3TransactionFoundationAudit": "pass with findings; all-entity initialization, isolation, signed-cents, edit, split, rejected-update preservation, and effective-reporting probes passed; transaction identity collision was reproduced and tracked coverage gaps were recorded",
+    "phase3AuditBoundaries": "pass; temporary synthetic data only, no product or tracked test changes, no real financial data or credentials, and no production/demo/Plaid/workflow/Fly/downstream action",
+    "phase3CloseoutDurability": "pass; exact seven-path command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script"
   }
 }
