@@ -2,25 +2,27 @@
 
 ## Active Objective
 
-Review the verified work block 2A draft PR, then define the separate Phase 2 governance block for the preserved legacy and instruction files.
+Publish the verified work block 2A documentation to `main`, observe the resulting production deploy, and close the release without triggering a second deploy.
 
 ## Current Phase
 
 Phase 2: Project Truth And Documentation Recovery — active.
 
-## Completed Work Block
+## Active Work Block
 
-2A: Restore the Root Project Entry Point — complete and verified on draft PR #84.
+2A-R: Publish the Root Project Entry Point — explicitly authorized and active.
 
 ## Current Task
 
-Phase 2 Task 2: decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`, awaiting review of draft PR #84 and a separately confirmed work block.
+Phase 2 Task 1 release: publish the verified README and Task 4 operating boundaries from PR #84 to `main`.
 
 ## Owner
 
-Ryan owns review of draft PR #84 and confirmation or revision of the next Phase 2 governance block. Codex Desktop owns the verified 2A evidence, branch closeout, and the next just-in-time planning pass.
+Codex Desktop owns exact-scope release, Fly Deploy observation, sanitized HTTP verification, and Runway OS closeout. Ryan retains the separate Task 2 and Task 3 governance decisions.
 
 ## Status
+
+Ryan explicitly authorized committing and pushing the verified 2A documentation to `main`. Draft PR #84 is open, clean, and limited to the expected eight documentation and Runway OS files. Its head is `77b7e7a`; current `origin/main` is `cb80fa9`. The automatic production Fly deploy is an expected live effect of the authorized `main` publication.
 
 Work block 2A replaced the retired Streamlit/manual-import/two-entity README with a current Flask, HTMX, Plaid, Fly.io, and three-entity project entry point. The README now records local synthetic setup, application surfaces, entity/data isolation, environment-variable names without values, deploy mechanics, and explicit authorization gates for live or sensitive actions. `PROJECT_STRUCTURE.md` now classifies the README as current.
 
@@ -48,12 +50,14 @@ The 2A source implementation commit is `c249c9b` on pushed branch `codex/phase-2
 
 ## Current Action
 
-Review draft PR #84, then run a just-in-time planning pass for a possible 2B governance block covering Tasks 2 and 3. No legacy-document or instruction-source mutation is authorized yet.
+Record and verify the active release block, rerun safe pre-release checks, mark PR #84 ready, merge it to `main`, observe the resulting Fly Deploy, confirm production health, and publish the command-center-only closeout with `[skip actions]`.
 
-## Locked Boundaries After Work Block 2A
+## Locked Boundaries During Work Block 2A-R
 
 - No `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, or `AGENTS.md` edit, archive, deletion, or tracking change.
 - No edit, staging, or tracking change to pre-existing untracked `scripts/sync_prod_to_local.sh`.
 - No application, workflow, monitor, credential, ignored-data, database, Fly, authentication, deploy, merge, or parent-repo action.
-- Draft PR #84 may be reviewed; merge and deployment require separate Ryan direction.
+- PR #84 merge and its single automatic production deploy are authorized; no manual workflow dispatch, rerun, Fly action, or recovery mutation is authorized.
+- The verified PR content may not expand before merge.
+- The release closeout must use `[skip actions]` to avoid a second deploy.
 - The active monitor remains read-only and never performs recovery automatically.

@@ -78,6 +78,10 @@ Ryan authorized rebuilding `README.md` for the current Flask, HTMX, Fly.io, Plai
 
 The root README now reflects the tracked Flask, HTMX, Plaid, Fly.io, and three-entity implementation and records sanitized deployment, data, and side-effect boundaries. The synthetic smoke suite, documentation truth checks, exact-scope checks, dashboard refresh, and Runway OS health check passed. Source commit `c249c9b` is pushed on `codex/phase-2-root-docs`, and draft PR #84 is open without merge or deployment. Tasks 2 and 3 remain separate governance work requiring a new confirmation.
 
+### 2026-07-18 — Authorize work block 2A-R to publish PR #84 to main
+
+Ryan explicitly instructed Codex to commit and push the verified work to `main`. This authorizes marking PR #84 ready, merging it without force, observing the one production Fly deploy automatically triggered by the `main` update, and checking sanitized workflow status plus production root/health HTTP status. It also authorizes a command-center-only closeout commit pushed directly to `main` with `[skip actions]` to prevent a second deployment. Tasks 2 and 3, content expansion, manual workflow actions, Fly mutations, credentials, financial data, databases, application/authentication changes, and pre-existing untracked files remain excluded.
+
 ## Pending Ryan Direction
 
 - Review draft PR #84 and decide whether it should later be merged.

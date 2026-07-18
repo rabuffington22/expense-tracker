@@ -277,6 +277,42 @@ Result: replaced the retired Streamlit/manual-import/two-entity README with a tr
 
 Target durability: source implementation commit `c249c9b` is pushed on `origin/codex/phase-2-root-docs` and included in draft PR #84. The verified closeout is added to the same branch; nothing is merged to `main` and no Fly deploy is triggered.
 
+### Work Block 2A-R — Publish the Root Project Entry Point
+
+Status: active
+
+Included: Task 1 and Task 4 publication only.
+
+Excluded: Task 2; Task 3; content changes beyond the verified PR #84 diff; application code; workflows; monitor changes; databases; Plaid; credentials; row-level financial data; Fly configuration or secrets; legacy or untracked files; parent-repo changes; and any recovery action outside the release plan.
+
+Why this grouping: Ryan explicitly authorized committing and pushing the verified 2A documentation to `main`. The source, review surface, production-deploy observation, HTTP health check, and skip-actions closeout form one release path. The deferred governance tasks do not affect whether the already-verified documentation can be published.
+
+Owner and agent: Codex Desktop in the current thread. This release requires exact-scope GitHub mutation, production-deploy observation, stop judgment, and Runway OS closeout; no delegation or second opinion is needed.
+
+Expected live effect: mark draft PR #84 ready, merge it to `main`, trigger one automatic production Fly deploy, and then publish a command-center-only closeout to `main` with `[skip actions]` so no second deploy starts.
+
+Stop conditions:
+
+- PR #84 is no longer open, clean, or limited to the verified eight documentation and Runway OS paths;
+- `main` diverges or branch protection changes the release path;
+- synthetic smoke, dashboard, health, or exact-diff verification regresses;
+- Fly Deploy fails or production root/health does not return HTTP 200;
+- verification would require deployment logs, secrets, financial data, Plaid access, database access, or manual workflow dispatch;
+- recovery requires application, authentication, infrastructure, credential, or financial-system mutation;
+- the closeout push would unexpectedly trigger a second Fly deployment.
+
+Verification:
+
+- recheck the exact PR file list, draft/open state, and clean mergeability;
+- rerun the synthetic smoke suite, Runway OS refresh/health, and `git diff --check` before release;
+- mark PR #84 ready and merge it without force;
+- identify the resulting `main` merge commit and Fly Deploy run;
+- inspect only sanitized workflow, job, and step status without opening logs;
+- confirm production `/health` and root return HTTP 200;
+- return Task 2 to current, close 2A-R, refresh and health-check Runway OS, and push the closeout with `[skip actions]`.
+
+Report point: return the merge commit, deploy run and result, production HTTP health, final `main`/`origin/main` state, protected boundaries, closeout commit, and remaining Phase 2 decision.
+
 ## Phase 3: Functional Audit And Prioritization
 
 Status: planned
