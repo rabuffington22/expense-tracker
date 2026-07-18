@@ -34,6 +34,10 @@ The automation create surface normalized the new cron to `ACTIVE` immediately ev
 
 The current `0 9 * * *` trigger is at the start of an hour, which GitHub documents as a higher delay/drop period. That source change is Task 6 and remains outside 1C. The Runway OS work was found already merged and pushed to `main`; local `main` and `origin/main` were both at `0b9d60d` before the 1B closeout edits. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain untouched.
 
+## Durability
+
+The completed 1C command-center closeout was committed as `b1742cf` and pushed directly to `origin/main`. The current dashboard durability record is also tracked on `main`. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded and untouched.
+
 ## Recommended Next Action
 
 Propose a separate work block 1D for Task 6 before any workflow source edit or release action.

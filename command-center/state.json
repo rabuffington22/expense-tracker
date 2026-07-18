@@ -22,7 +22,7 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "committed-and-pushed on main, including the Runway OS merge and work block 1B closeout; origin/codex/runway-os-full-install retains the 1A closeout at c7ab1e2"
+    "durabilityStatus": "committed-and-pushed on main through work block 1C; 1C closeout commit b1742cf and its follow-up dashboard durability record are both tracked on main; origin/codex/runway-os-full-install retains the 1A closeout at c7ab1e2"
   },
   "phase": {
     "name": "Operational Reliability Recovery",
@@ -740,6 +740,10 @@
     {
       "time": "2026-07-18",
       "text": "Completed work block 1C: active automation expense-tracker-daily-plaid-sync-monitor passed its public scheduled-run metadata test without workflow or financial-system mutation."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Committed and pushed the completed 1C command-center closeout as b1742cf directly to main while preserving pre-existing untracked files; the dashboard durability record followed on main."
     }
   ],
   "openQuestions": [
@@ -788,6 +792,7 @@
     "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 active and latest scheduled run 29640666471 succeeded",
     "safeguardResearch": "pass; authoritative GitHub behavior cited, five options compared, and one implementation-ready path recommended",
     "independentMonitor": "pass; expense-tracker-daily-plaid-sync-monitor active on a daily 7:00 AM local schedule; public schedule-event test returned healthy with manual dispatch excluded",
+    "gitDurability": "pass; 1C closeout and dashboard durability record committed and pushed directly to main without staging pre-existing untracked files",
     "httpHealth": "pass; production and demo roots returned HTTP 200"
   }
 }
