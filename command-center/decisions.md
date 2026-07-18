@@ -42,8 +42,20 @@ Ryan authorized enabling Daily Plaid Sync and dispatching one controlled workflo
 
 The workflow changed from `disabled_inactivity` to `active`. Controlled run `29627530457` completed successfully with every job step passing, the workflow remained active, and production/demo roots returned HTTP 200. Only job/step status was inspected; no response-body, financial-row, or credential output was opened.
 
+### 2026-07-18 — Confirm work block 1B as a read-only safeguard-definition block
+
+Ryan authorized sanitized GitHub platform research, option comparison, a recommendation, and an implementation-ready follow-up. The block did not authorize a monitor, automation, workflow mutation, sync, credential or financial-data access, deploy, commit, push, PR, or merge.
+
+### 2026-07-18 — Record Runway OS as merged and pushed on main
+
+Before 1B research began, repository state showed `codex/runway-os-full-install` had already been fast-forward merged and `main` plus `origin/main` pointed to `0b9d60d`. The command center now treats `main` as the durable current branch rather than describing the earlier branch push or merge as pending.
+
+### 2026-07-18 — Publish the 1B closeout directly to main
+
+Ryan authorized committing and pushing the completed work block 1B command-center changes directly to `main`. The pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded.
+
 ## Pending Ryan Direction
 
 - Decide in Phase 2 whether `AGENTS.md` becomes tracked and which legacy documentation is archived or replaced.
-- Decide after evidence from 1A how Phase 1 Task 4 should prevent or detect future scheduled-workflow inactivity.
-- Decide later whether the Runway OS branch should open a PR and merge to `main`.
+- Confirm or revise proposed work block 1C, which creates an independent alert-only Codex monitor using public workflow metadata and never enables or dispatches Daily Plaid Sync.
+- Decide later whether Task 6 should move the cron trigger away from minute zero through a separate source-and-release block.

@@ -77,7 +77,9 @@ Goal: restore and prove the automated financial-data pipeline before broader fea
 - **Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization.** Treat this as an external GitHub mutation and preserve the exact before/after state. Status: done; workflow is active.
 - **Task 2: Verify one controlled sync execution.** Confirm authentication, all-entity results, downstream Luxe Legacy isolation, and failure reporting without exposing financial row data. Status: done; controlled run `29627530457` completed successfully.
 - **Task 3: Establish production and demo health baselines.** Capture safe HTTP health, latest deploy status, workflow state, and restartable checks in Runway OS. Status: done; both roots returned HTTP 200 and both workflows are active.
-- **Task 4: Define recurring operational checks.** Decide what belongs in manual re-entry, dashboard status, GitHub Actions, or a later monitored automation. Status: current at the work-block confirmation gate.
+- **Task 4: Define recurring operational checks.** Decide what belongs in manual re-entry, dashboard status, GitHub Actions, or a later monitored automation. Status: done; work block 1B recommended an independent alert-only Codex monitor.
+- **Task 5: Add an independent read-only Daily Plaid Sync monitor.** Create a project-local recurring Codex automation that checks public workflow state and scheduled-run freshness, alerts Ryan on failure, and never enables or dispatches the workflow. Status: proposed; awaiting work block 1C confirmation.
+- **Task 6: Move the daily trigger away from the start of the hour.** Change the schedule from minute zero through a separate source-and-release block because GitHub documents higher delay/drop risk at the start of an hour. Status: planned after Task 5; separate verification and deployment boundary.
 
 ### Proposed Work Block 1A: Restore Daily Sync And Operational Baseline
 
@@ -115,9 +117,9 @@ Verification:
 
 Result: the remote workflow definition matched the reviewed local file, the workflow changed from `disabled_inactivity` to `active`, controlled workflow-dispatch run `29627530457` completed successfully in about 20 seconds, all job steps passed, the workflow remained active, and production/demo roots returned HTTP 200. Row-level logs were not opened.
 
-### Proposed Work Block 1B: Define Recurring Sync Safeguards
+### Confirmed Work Block 1B: Define Recurring Sync Safeguards
 
-Status: proposed; awaiting Ryan confirmation
+Status: done; confirmed and completed on 2026-07-18
 
 Included: Task 4.
 
@@ -140,6 +142,39 @@ Verification:
 - one recommended path with implementation and stop boundaries;
 - roadmap/state updated without live mutation;
 - dashboard refresh and health check pass.
+
+Result: the repository is public and had a more-than-60-day commit gap before GitHub reported `disabled_inactivity`, matching GitHub's documented inactivity rule. Five options were compared. An independent, alert-only Codex monitor is recommended because it can detect disabled state, missing scheduled runs, and non-successful runs without workflow writes or financial-data access. The current top-of-hour cron timing was recorded as a separate hardening task because GitHub documents delay/drop risk at the start of an hour.
+
+### Proposed Work Block 1C: Independent Daily Sync Monitor
+
+Status: proposed; awaiting Ryan confirmation
+
+Included: Task 5.
+
+Excluded: Task 6; workflow edits; automatic enable, dispatch, or rerun; Plaid, Fly, application, secret, database, or financial-data access; paid external services; commit, push, PR, merge, or deploy.
+
+Outcome: create one project-local recurring Codex automation that checks public GitHub workflow state and scheduled-run freshness after the expected daily run window, then alerts Ryan only when a defined health condition fails.
+
+Owner and recommended agent: Codex Desktop. The block requires project-local automation setup, exact sensitive-action boundaries, read-only validation, and Runway OS closeout.
+
+Expected live effect: one local recurring automation is created and activated. It reads public GitHub metadata and may notify Ryan; it cannot mutate the workflow or financial system.
+
+Stop conditions:
+
+- The automation requires credentials, private data, or a paid external service.
+- It cannot distinguish scheduled runs from manual dispatches.
+- It would enable, dispatch, rerun, or edit the workflow.
+- A read-only test cannot verify current workflow state and scheduled-run freshness.
+
+Verification:
+
+- inspect the automation definition before activation;
+- run one read-only test against current public workflow metadata;
+- confirm it reports the workflow as active and identifies the latest scheduled run without opening logs;
+- verify no workflow, application, or production state changed;
+- refresh and health-check Runway OS.
+
+Suggested later block: 1D for Task 6, using a separate branch and release boundary because a merge to `main` may trigger the existing Fly deployment workflow.
 
 ## Phase 2: Project Truth And Documentation Recovery
 

@@ -4,7 +4,7 @@ These are known defects, risks, or rough edges. They are not active work unless 
 
 ## Daily Plaid Sync Disabled For Inactivity
 
-Status: resolved in work block 1A; recurrence safeguard pending
+Status: recurrence cause defined in 1B; monitor implementation pending
 
 Severity: high operational reliability
 
@@ -20,15 +20,39 @@ The `Daily Plaid Sync` workflow was found `disabled_inactivity` after its last l
 
 Impact:
 
-Immediate sync scheduling is restored. A future quiet period could still allow the workflow to become inactive again unless Phase 1 Task 4 defines a detection or prevention safeguard.
+Immediate sync scheduling is restored. Work block 1B found that the public repository's more-than-60-day commit gap closely matches GitHub's documented automatic-disable rule. A future quiet period could still allow recurrence until Task 5 adds independent alert-only monitoring.
 
 Why not fully closed:
 
-Choosing and implementing a recurring safeguard is a separate project-control and automation decision outside work block 1A.
+The safeguard is now defined but not implemented. Proposed work block 1C creates a local Codex monitor that checks public workflow state and scheduled-run freshness without enabling or dispatching the workflow.
 
 Promotion trigger:
 
-Ryan confirms a safeguard-definition block, then separately approves any implementation that creates a monitor, automation, external service, or recurring cost.
+Ryan confirms proposed work block 1C.
+
+## Daily Plaid Sync Runs At The Start Of The Hour
+
+Status: planned hardening task
+
+Severity: low operational reliability
+
+Captured: 2026-07-18
+
+Where seen: `.github/workflows/daily-plaid-sync.yml`
+
+Revisit: Phase 1, Task 6
+
+Summary:
+
+The workflow uses `0 9 * * *`. GitHub documents that scheduled workflows are more likely to be delayed during high load at the start of an hour and that sufficiently loaded queued jobs may be dropped.
+
+Why not now:
+
+Changing the workflow file has a separate source, release, and production-deployment boundary. It does not belong in the alert-only monitor block.
+
+Promotion trigger:
+
+Ryan confirms a separate Task 6 work block after the monitor is in place.
 
 ## Project Documentation Contradicts Current Architecture
 

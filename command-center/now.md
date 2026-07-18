@@ -2,23 +2,23 @@
 
 ## Active Objective
 
-Review the successful Daily Plaid Sync recovery and decide how Phase 1 should prevent or detect future silent workflow inactivity.
+Review and confirm the recommended independent Daily Plaid Sync monitor before any recurring automation is created.
 
 ## Current Phase
 
-Phase 1: Operational Reliability Recovery — Tasks 1-3 complete.
+Phase 1: Operational Reliability Recovery — Tasks 1-4 complete; Tasks 5-6 remain.
 
 ## Completed Work Block
 
-1A: Restore Daily Sync And Operational Baseline — complete and verified.
+1B: Define Recurring Sync Safeguards — complete and verified.
 
 ## Current Task
 
-Task 4: Define recurring operational checks, currently at the proposed work block 1B confirmation gate.
+Task 5: Add an independent read-only Daily Plaid Sync monitor, currently at the proposed work block 1C confirmation gate.
 
 ## Owner
 
-Ryan owns confirmation of the next decision block. Codex owns the 1A closeout, sanitized evidence, target-branch durability, and any later confirmed safeguard analysis.
+Ryan owns confirmation of proposed work block 1C. Codex owns the completed 1B evidence, proposed monitor boundaries, and any later confirmed automation setup and closeout.
 
 ## Status
 
@@ -26,13 +26,15 @@ Daily Plaid Sync changed from `disabled_inactivity` to `active`. Controlled work
 
 No workflow logs containing response bodies, financial rows, or credentials were opened. No source-code, secret, Fly, database-transfer, authentication, documentation, PR, merge, or parent-repo change occurred.
 
-The verified Runway OS branch remains `codex/runway-os-full-install`. The 1A closeout is being committed and pushed. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain untouched.
+GitHub's documented 60-day inactivity rule matches the public repository's more-than-60-day commit gap before `disabled_inactivity`; this is an evidence-backed cause inference. Five safeguard options were compared. The recommended next step is an independent local Codex monitor that checks only public workflow metadata and alerts on disabled state, a missing scheduled run, or a non-successful latest scheduled run. It must never enable or dispatch the workflow.
+
+The current `0 9 * * *` trigger is at the start of an hour, which GitHub documents as a higher delay/drop period. That source change is Task 6 and remains outside 1C. The Runway OS work was found already merged and pushed to `main`; local `main` and `origin/main` were both at `0b9d60d` before the 1B closeout edits. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain untouched.
 
 ## Recommended Next Action
 
-Confirm or revise proposed work block 1B: Define Recurring Sync Safeguards. It compares safe prevention/detection options and recommends an implementation block without changing live state.
+Confirm or revise proposed work block 1C: Independent Daily Sync Monitor.
 
-## Locked Boundaries Until Confirmation
+## Locked Boundaries Until 1C Confirmation
 
 - No new monitor, automation, external service, or recurring cost.
 - No workflow mutation or additional Plaid sync.
