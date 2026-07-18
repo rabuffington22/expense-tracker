@@ -79,7 +79,7 @@ Goal: restore and prove the automated financial-data pipeline before broader fea
 - **Task 3: Establish production and demo health baselines.** Capture safe HTTP health, latest deploy status, workflow state, and restartable checks in Runway OS. Status: done; both roots returned HTTP 200 and both workflows are active.
 - **Task 4: Define recurring operational checks.** Decide what belongs in manual re-entry, dashboard status, GitHub Actions, or a later monitored automation. Status: done; work block 1B recommended an independent alert-only Codex monitor.
 - **Task 5: Add an independent read-only Daily Plaid Sync monitor.** Create a project-local recurring Codex automation that checks public workflow state and scheduled-run freshness, alerts Ryan on failure, and never enables or dispatches the workflow. Status: done; automation `expense-tracker-daily-plaid-sync-monitor` is active and its read-only test passed.
-- **Task 6: Move the daily trigger away from the start of the hour.** Change the schedule from minute zero through a separate source-and-release block because GitHub documents higher delay/drop risk at the start of an hour. Status: current; awaiting a separate work block 1D proposal and confirmation.
+- **Task 6: Move the daily trigger away from the start of the hour.** Change the schedule from minute zero through a separate source-and-release block because GitHub documents higher delay/drop risk at the start of an hour. Status: in progress through confirmed work block 1D.
 
 ### Proposed Work Block 1A: Restore Daily Sync And Operational Baseline
 
@@ -182,6 +182,41 @@ Suggested later block: 1D for Task 6, using a separate branch and release bounda
 Result: created active project-local automation `expense-tracker-daily-plaid-sync-monitor` on a daily 7:00 AM local schedule. Its prompt uses unauthenticated public GitHub REST metadata, filters to `schedule` events, applies the confirmed 36-hour and three-hour thresholds, and forbids all workflow or financial-system mutation. The read-only test identified active workflow ID `256886458` and successful scheduled run `29640666471` with no alert conditions; manual dispatch `29627530457` remained excluded. The app normalized creation to active immediately, but the stored definition was inspected before its first scheduled execution.
 
 Target durability: the 1C closeout was committed as `b1742cf` and pushed directly to `main`; the follow-up dashboard durability record is also tracked on `main`.
+
+### Confirmed Work Block 1D: Harden Daily Sync Schedule
+
+Status: active; confirmed on 2026-07-18
+
+Included: Task 6.
+
+Excluded: Tasks 1-5 reruns; workflow enable/disable/dispatch/rerun; manual Plaid sync; Phase 2 Tasks 1-4; application, Fly configuration, secret, credential, ignored-data, database, authentication, monitor, or parent-repo changes; pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh`.
+
+Outcome: change the Daily Plaid Sync cron from `0 9 * * *` to `17 9 * * *`, preserving the existing UTC hour and `workflow_dispatch`, then release through `codex/daily-sync-cron-hardening` and a ready PR.
+
+Owner and recommended agent: Codex Desktop. The block is a small sensitive-repo edit coupled to GitHub release handling, production-deploy observation, and Runway OS closeout; no delegation or second opinion is needed.
+
+Expected live effect: merging the ready PR to `main` triggers one production Fly deploy. No manual Plaid sync is authorized. A naturally scheduled run may occur only through the existing schedule.
+
+Stop conditions:
+
+- The diff expands beyond the confirmed workflow and command-center paths.
+- Remote divergence, branch protection, or PR state changes the release plan.
+- Local verification, the ready PR, Fly Deploy, production HTTP health, dashboard refresh, or health check fails.
+- Verification would require secrets, financial data, workflow response-body logs, or manual Plaid execution.
+- The `[skip actions]` closeout push unexpectedly starts another Fly deploy.
+- Recovery would require a new production or financial-system mutation.
+
+Verification:
+
+- confirm the cron and explanatory comment are the only workflow behavior changes;
+- run the synthetic smoke suite and `git diff --check`;
+- refresh and health-check Runway OS before release;
+- merge the ready PR and verify the default-branch source contains `17 9 * * *`;
+- confirm Daily Plaid Sync remains active and the independent monitor is unchanged;
+- confirm the resulting Fly Deploy succeeds and production plus demo roots return HTTP 200;
+- close Task 6 and Phase 1, refresh and health-check Runway OS, and push the sanitized closeout with `[skip actions]` without starting a second deploy.
+
+Report point: return the exact cron change, branch, PR, commit and deploy evidence, HTTP health, workflow state, protected boundaries, dashboard verification, and the pending natural-run observation handled by the existing monitor.
 
 ## Phase 2: Project Truth And Documentation Recovery
 

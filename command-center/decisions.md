@@ -62,7 +62,10 @@ Ryan authorized one project-local recurring Codex automation that checks unauthe
 
 Ryan authorized committing and pushing the completed work block 1C command-center changes directly to `main`. Publication remains limited to the 1C Runway OS sources, generated dashboard, and closeout log. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded.
 
+### 2026-07-18 — Confirm work block 1D for minute-zero cron hardening
+
+Ryan authorized changing Daily Plaid Sync from `0 9 * * *` to `17 9 * * *` on `codex/daily-sync-cron-hardening`, publishing a ready PR, merging it to `main`, and observing the single production Fly deploy triggered by that merge. The block preserves `workflow_dispatch`, does not manually dispatch or rerun the sync, and excludes application, Fly configuration, secret, credential, financial-data, database, authentication, monitor, parent-repo, and pre-existing untracked-file changes. After verified deployment, Codex may push the command-center-only closeout directly to `main` with `[skip actions]` to prevent a second deploy.
+
 ## Pending Ryan Direction
 
 - Decide in Phase 2 whether `AGENTS.md` becomes tracked and which legacy documentation is archived or replaced.
-- Decide later whether Task 6 should move the cron trigger away from minute zero through a separate source-and-release block.
