@@ -2,7 +2,7 @@ name: Daily Plaid Sync
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # 4 AM CDT (UTC-5); 3 AM in winter CST (UTC-6)
+    - cron: '17 9 * * *'  # 4:17 AM CDT (UTC-5); 3:17 AM in winter CST (UTC-6)
   workflow_dispatch:      # Allow manual trigger from Actions tab
 
 jobs:

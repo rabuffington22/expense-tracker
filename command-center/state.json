@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 7:39 AM CST",
+    "lastUpdated": "2026-07-18 7:58 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,16 +27,16 @@
   "phase": {
     "name": "Operational Reliability Recovery",
     "status": "active",
-    "summary": "Daily Plaid Sync is active and proven; work block 1C installed and verified an independent alert-only monitor, leaving only Task 6 cron hardening.",
+    "summary": "Work block 1D is active on the final Phase 1 task: move Daily Plaid Sync from minute zero to minute 17 and verify its source-and-release boundary.",
     "progress": 83
   },
   "currentTask": {
     "title": "Task 6: Move the daily trigger away from the start of the hour",
-    "owner": "Ryan",
-    "status": "awaiting confirmation",
-    "supportingAgent": "Codex Desktop owns the completed 1C evidence and will propose a separate source-and-release block 1D",
-    "nextAction": "Review a separate work block 1D proposal before any workflow source edit or release action.",
-    "blocker": "No workflow schedule change is authorized until Ryan confirms a separate 1D block"
+    "owner": "Codex",
+    "status": "in progress",
+    "supportingAgent": "Codex Desktop owns the confirmed cron edit, ready PR, production-deploy verification, and Runway OS closeout",
+    "nextAction": "Commit and push the verified codex/daily-sync-cron-hardening branch, open and merge the ready PR, then verify the resulting production Fly deploy.",
+    "blocker": "None; stop if the confirmed release or verification boundary changes"
   },
   "routerHealth": {
     "status": "healthy",
@@ -61,19 +61,17 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define the separate minute-zero cron hardening block",
-    "status": "recommended",
-    "owner": "Ryan",
-    "why": "The independent monitor is active and verified; Task 6 is the only remaining Phase 1 task and changes workflow source through a separate release boundary.",
-    "action": "Review a proposed work block 1D before any schedule edit, branch, merge, or deployment action.",
+    "title": "Execute work block 1D",
+    "status": "active",
+    "owner": "Codex",
+    "why": "The exact minute-17 edit and active Runway OS state passed local verification and are ready for the confirmed GitHub release path.",
+    "action": "Publish and merge the verified ready PR, then verify the resulting Fly deploy and production health.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews a future work block 1D before Daily Plaid Sync source or release work begins.",
-    "items": [
-      "Confirm or revise a separate Task 6 minute-zero cron hardening block"
-    ]
+    "summary": "No Ryan input is pending while work block 1D remains inside its confirmed boundaries.",
+    "items": []
   },
   "questionBoundaries": {
     "phaseQuestions": "Ryan reviews the next proposed work block or direction choice after the current verified block closes.",
@@ -318,6 +316,54 @@
       ],
       "reportBack": "Reported automation identity, cadence, alert thresholds, read-only test result, limitations, and the separate Task 6 boundary.",
       "result": "Created active automation expense-tracker-daily-plaid-sync-monitor; its unauthenticated public-metadata test identified active workflow 256886458 and successful scheduled run 29640666471 with no alert conditions, while excluding manual dispatch 29627530457."
+    },
+    {
+      "id": "phase-1-block-d",
+      "phaseId": "phase-1",
+      "label": "1D",
+      "name": "Harden Daily Sync Schedule",
+      "status": "active",
+      "includedTasks": [
+        "Task 6"
+      ],
+      "excludedTasks": [
+        "Tasks 1-5 reruns",
+        "Workflow enable, disable, dispatch, or rerun and manual Plaid sync",
+        "Phase 2 Tasks 1-4",
+        "Application, Fly configuration, secret, credential, financial-data, database, authentication, monitor, or parent-repo changes",
+        "Pre-existing untracked AGENTS.md and scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block is a small sensitive-repo edit coupled to GitHub release handling, production-deploy observation, and Runway OS closeout.",
+      "expectedFiles": [
+        ".github/workflows/daily-plaid-sync.yml",
+        "command-center/roadmap.md",
+        "command-center/now.md",
+        "command-center/decisions.md",
+        "command-center/state.json",
+        "command-center/index.html",
+        "command-center/logs/"
+      ],
+      "expectedLiveEffect": "Merge one ready PR to main, triggering one production Fly deploy; do not manually dispatch Plaid sync.",
+      "stopConditions": [
+        "The diff expands beyond confirmed workflow and command-center paths",
+        "Remote divergence, branch protection, or PR state changes the release plan",
+        "Local verification, Fly Deploy, production HTTP health, dashboard refresh, or health check fails",
+        "Verification requires secrets, financial data, response-body logs, or manual Plaid execution",
+        "The skip-annotated closeout push unexpectedly starts another Fly deploy",
+        "Recovery requires a new production or financial-system mutation"
+      ],
+      "verification": [
+        "Confirm only the cron and explanatory comment change workflow behavior",
+        "Run the synthetic smoke suite and git diff --check",
+        "Refresh and health-check Runway OS before release",
+        "Merge the ready PR and verify default-branch cron source",
+        "Confirm Daily Plaid Sync remains active and the independent monitor is unchanged",
+        "Confirm Fly Deploy succeeds and production plus demo roots return HTTP 200",
+        "Close Phase 1 and publish the closeout with skip actions without a second deploy"
+      ],
+      "reportBack": "Report exact cron change, branch, PR, commit and deploy evidence, HTTP health, workflow state, protected boundaries, dashboard verification, and pending natural-run observation."
     }
   ],
   "phaseTasks": [
@@ -441,10 +487,10 @@
       "taskId": "P1-T6",
       "title": "Task 6: Move the daily trigger away from the start of the hour",
       "status": "current",
-      "owner": "Ryan",
+      "owner": "Codex",
       "summary": "Reduce GitHub's documented top-of-hour delay/drop exposure through a separate source-and-release block.",
-      "nextAction": "Propose and confirm a separate work block 1D before source or release work.",
-      "blocker": "No workflow schedule change is authorized until Ryan confirms a separate 1D block"
+      "nextAction": "Publish and merge the locally verified codex/daily-sync-cron-hardening branch, then verify the resulting release.",
+      "blocker": "None; stop if the confirmed release or verification boundary changes"
     },
     {
       "phaseId": "phase-2",
@@ -744,11 +790,13 @@
     {
       "time": "2026-07-18",
       "text": "Committed and pushed the completed 1C command-center closeout as b1742cf directly to main while preserving pre-existing untracked files; the dashboard durability record followed on main."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 1D for the minute-17 cron edit, ready PR and merge, one resulting production Fly deploy, and a skip-annotated sanitized closeout."
     }
   ],
-  "openQuestions": [
-    "Should work block 1D move the Daily Plaid Sync trigger away from minute zero through a separate source-and-release boundary?"
-  ],
+  "openQuestions": [],
   "projectQuestions": [
     "Should AGENTS.md become a tracked instruction source during Phase 2?",
     "Which legacy documentation should be replaced, archived, or retained after migration?"
@@ -765,7 +813,7 @@
     {
       "title": "Daily Plaid Sync runs at the start of the hour",
       "summary": "The cron uses minute zero, which GitHub documents as a higher delay/drop period; Task 6 keeps this separate from monitor implementation.",
-      "status": "planned",
+      "status": "active",
       "severity": "low",
       "source": "command-center/issues.md"
     },
@@ -779,8 +827,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Minute-zero cron hardening decision",
-    "description": "Ryan reviews a separate work block 1D for moving the Daily Plaid Sync schedule away from minute zero through an explicit source-and-release boundary."
+    "name": "Work block 1D release verification",
+    "description": "Change Daily Plaid Sync to minute 17, merge the ready PR, verify the resulting Fly deploy, and close Phase 1."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -792,6 +840,7 @@
     "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 active and latest scheduled run 29640666471 succeeded",
     "safeguardResearch": "pass; authoritative GitHub behavior cited, five options compared, and one implementation-ready path recommended",
     "independentMonitor": "pass; expense-tracker-daily-plaid-sync-monitor active on a daily 7:00 AM local schedule; public schedule-event test returned healthy with manual dispatch excluded",
+    "preRelease": "pass; exact minute-17 workflow diff, YAML parse, synthetic smoke suite, dashboard refresh, health check, whitespace check, and visual dashboard inspection",
     "gitDurability": "pass; 1C closeout and dashboard durability record committed and pushed directly to main without staging pre-existing untracked files",
     "httpHealth": "pass; production and demo roots returned HTTP 200"
   }
