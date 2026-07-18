@@ -722,3 +722,220 @@ Acceptance checks:
 Why not added now:
 
 Tracked test expansion was explicitly excluded from audit work block 3E.
+
+## Non-BFM Entities Can Directly Access And Mutate Payroll
+
+Status: open; discovered in work block 3F
+
+Severity: high payroll/HR boundary risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/payroll.py`, `web/templates/components/sidebar.html`, `README.md`, and temporary all-entity route probes
+
+Revisit: Phase 4 Task 1 for route-level BFM enforcement; Phase 4 Task 2 for tracked boundary coverage
+
+Summary:
+
+Navigation and maintained documentation treat Payroll as BFM-only, but the payroll blueprint has no entity guard. Direct Personal and Luxe Legacy page requests returned 200, and direct employee creates persisted rows in those entity-local payroll tables.
+
+Impact:
+
+The visible product boundary is only a hidden navigation link. A direct request can create or expose payroll/HR state in entities where the feature is not intended, creating policy ambiguity and future disclosure risk even though the temporary audit confirmed database isolation.
+
+Acceptance checks:
+
+- Every payroll read and mutation denies non-BFM entities before opening payroll tables.
+- Personal and Luxe Legacy direct requests leave employee, pay-change, and payroll-entry counts unchanged.
+- BFM roster, import, detail, spending, and HTMX behavior remain intact.
+- Tracked tests cover page and mutation denial for both non-BFM entities.
+
+Why not fixed now:
+
+Route enforcement and tracked tests require a separately confirmed Phase 4 implementation block.
+
+## Payroll Preview Duplicates An Exact Existing Employee
+
+Status: open; discovered in work block 3F
+
+Severity: high payroll-history integrity risk
+
+Captured: 2026-07-18
+
+Where seen: `web/templates/payroll.html`, `web/routes/payroll.py`, and a generated-XLSX preview/save confirmation probe
+
+Revisit: Phase 4 Task 1 for stable assignment rendering and duplicate prevention; Phase 4 Task 2 for regression coverage
+
+Summary:
+
+The route correctly matches parsed entries to an existing same-name employee, but the template's loop-local assignment does not survive outside the loop. The preview therefore defaults to `Create new employee`; submitting that rendered default created a duplicate same-name roster row and assigned the paycheck to it.
+
+Impact:
+
+A normal import can split one person's roster, pay history, and payroll entries across duplicate employee IDs, corrupting employee detail and role-spending interpretation.
+
+Acceptance checks:
+
+- Exact matches render one stable existing-employee assignment.
+- The default save path cannot create a duplicate for an already-matched employee.
+- Explicit reassignment and genuinely unmatched new-employee creation remain available.
+- Re-import preserves both employee and payroll-entry counts.
+
+Why not fixed now:
+
+Template, route, and tracked-test changes were excluded from audit work block 3F.
+
+## Payroll Peer Averages Mix Hourly And Salary Units
+
+Status: open; discovered in work block 3F
+
+Severity: high compensation-comparison correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/payroll.py`, `web/templates/payroll.html`, and a mixed-pay-type synthetic roster
+
+Revisit: Phase 4 Task 1 for comparison-unit design and repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+Peer averages group active employees by role but ignore pay type. One hourly provider and one annual-salary provider were averaged as raw cents, then the result was formatted as hourly for the hourly employee and annual for the salaried employee.
+
+Impact:
+
+The peer card can present a materially meaningless compensation comparison that may influence pay decisions.
+
+Acceptance checks:
+
+- Peer cohorts distinguish hourly and salary compensation or normalize both to one documented comparable unit.
+- Display units match the calculation unit for every employee.
+- Mixed, single-member, inactive, zero-rate, and empty cohorts have explicit behavior.
+- Tracked tests reconcile the displayed comparison to deterministic source rates.
+
+Why not fixed now:
+
+Compensation semantics require separately confirmed product-direction and implementation scope.
+
+## Payroll Employee Inputs Are Not Safely Normalized
+
+Status: open; discovered in work block 3F
+
+Severity: medium data-integrity and availability risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/payroll.py` and direct synthetic employee-create probes
+
+Revisit: Phase 4 Task 1 for domain and numeric validation; Phase 4 Task 2 for regression coverage
+
+Summary:
+
+A direct request persisted a role outside the maintained payroll role domain. An invalid pay type reached SQLite's check constraint and raised `IntegrityError`, while a non-finite rate raised `OverflowError` during cents conversion.
+
+Impact:
+
+Malformed requests can create undefined role groupings or fail the route instead of preserving valid data and returning a controlled validation response.
+
+Acceptance checks:
+
+- Role, pay type, status, dates, and identifiers are checked against maintained domains before persistence.
+- Pay rates must be finite, non-negative, and within a documented bound.
+- Invalid requests leave prior data unchanged and return a controlled response.
+- Valid create/update and rate-history behavior remains intact.
+
+Why not fixed now:
+
+Validation and regression-test changes were excluded from audit work block 3F.
+
+## Canceling Payroll Preview Retains The Parsed Payload
+
+Status: open; discovered in work block 3F
+
+Severity: medium payroll-data retention risk
+
+Captured: 2026-07-18
+
+Where seen: payroll temporary-payload helpers, preview Cancel behavior, and an isolated synthetic temp directory
+
+Revisit: Phase 4 Task 1 for explicit cancel cleanup and payload lifecycle; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+Successful save consumes its temporary JSON payload, but navigating back through the preview's Cancel link leaves the parsed employee, paycheck, amount, and filename payload until the general age-based cleanup removes files older than four hours.
+
+Impact:
+
+Cancel does not end retention of an abandoned payroll payload, extending the lifetime of sensitive HR information beyond the user's apparent workflow.
+
+Acceptance checks:
+
+- Cancel invalidates and removes its exact payload immediately.
+- Save, cancel, missing, reused, expired, and malformed keys have deterministic behavior.
+- Cleanup never removes unrelated payloads and does not rely on Flask cookie storage.
+- Tracked tests use an isolated temporary directory and leave it empty.
+
+Why not fixed now:
+
+Temporary-payload lifecycle changes were outside audit-only work block 3F.
+
+## Malformed Payroll XLSX Raises Instead Of Returning An Import Error
+
+Status: open; discovered in work block 3F
+
+Severity: medium import-availability risk
+
+Captured: 2026-07-18
+
+Where seen: `core/payroll_parser.py`, `web/routes/payroll.py`, and a malformed synthetic upload
+
+Revisit: Phase 4 Task 1 for parser error normalization; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+A structurally valid XLSX without a Phoenix header returns the intended controlled error state, but non-XLSX bytes carrying an `.xlsx` filename propagate a pandas/openpyxl `ValueError` from the upload route.
+
+Impact:
+
+A corrupt or mislabeled payroll export can produce a server error instead of an actionable import message.
+
+Acceptance checks:
+
+- Malformed, headerless, empty, unsupported, and valid multi-section files return explicit controlled outcomes.
+- Parser exceptions are normalized without exposing file contents or internals.
+- No temporary payload is retained when parsing fails.
+- Valid import preview/save and duplicate behavior remain intact.
+
+Why not fixed now:
+
+Parser and route error-handling changes require separately confirmed Phase 4 scope.
+
+## Payroll Lifecycle Paths Lack Tracked Regression Coverage
+
+Status: parked for Phase 4 regression coverage
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py`, work block 3F's 40-check primary probe, and focused seven-check confirmation probe
+
+Revisit: Phase 4 Task 2, preferably alongside the related payroll repairs
+
+Summary:
+
+Work block 3F verified parser dates and totals, roster CRUD and history, explicit import persistence, deduplication, role-spending reconciliation, delete cascades, storage isolation, and successful-save cleanup. The tracked suite has no dedicated payroll cases and does not reproduce the six boundary, integrity, validation, retention, or malformed-input defects.
+
+Impact:
+
+Payroll behavior can regress or retain known defects without maintained synthetic verification detecting incorrect employees, compensation comparisons, access boundaries, payload cleanup, or imports.
+
+Acceptance checks:
+
+- Tracked tests generate payroll workbooks at runtime and use temporary all-entity databases.
+- Parser, roster/history, preview/save, duplicate import, aggregation, delete cascade, cleanup, and BFM-only boundaries are explicit.
+- Every repaired 3F defect has a failing-before and passing-after regression case.
+- Tests require no real payroll/HR data, credentials, production access, or external calls.
+
+Why not added now:
+
+Tracked test expansion was explicitly excluded from audit work block 3F.

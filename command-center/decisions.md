@@ -166,4 +166,17 @@ Ryan explicitly instructed Codex to commit and push the verified 3E command-cent
 
 ## Pending Ryan Direction
 
-- Confirm or revise work block 3F for the synthetic payroll roster/import/role-spending audit in Task 4D. Any 3A-3E repair, tracked regression coverage, protected-data access, live action, or further durability step requires a separate decision.
+- Confirm or revise work block 3G for a source-first, synthetic/mocked Plaid and downstream-sync boundary audit in Task 5.
+- Any 3A-3F repair, tracked regression coverage, protected-data access, live action, credential use, or external write requires a separate decision.
+
+### 2026-07-18 — Confirm work block 3F for the synthetic payroll lifecycle audit
+
+Ryan confirmed Task 4D as one synthetic-only audit of employee roster and pay-history behavior, generated Phoenix/CyberPayroll XLSX parsing and preview/save flow, duplicate handling, temporary-payload lifecycle, role mapping and spending aggregation, and the maintained BFM-only access boundary. Codex may inspect tracked source, run the existing smoke suite, execute deterministic probes against temporary all-entity databases and generated XLSX files, create a sanitized audit log, record ranked findings, and close Runway OS state. Tasks 5-8; repairs from 3A-3E; product repairs or migrations; tracked test, fixture, or demo changes; real payroll, HR, financial, upload, or credential data; production/demo access; external calls; live actions; authentication/security changes; pre-existing `scripts/sync_prod_to_local.sh`; and all GitHub durability remain excluded.
+
+### 2026-07-18 — Accept work block 3F as verified with six payroll defects and one coverage gap
+
+The tracked smoke suite passed. A 40-check primary temporary-database and generated-XLSX probe plus a focused seven-check confirmation probe produced 36 passing assertions and eleven controlled failures representing six defect clusters plus one tracked-coverage gap. Parser sections, dates, amounts, role suggestions, deduplication, headerless handling, BFM roster lifecycle and pay history, explicit import persistence and re-import stability, role-spending totals, delete cascades, storage isolation, successful-save cleanup, and final temporary cleanup passed. The maintained BFM-only boundary was not enforced on direct Personal or Luxe Legacy routes; the default preview duplicated an exact existing employee; peer averages mixed hourly and salary units; employee direct inputs were weakly validated; cancel retained its payload until age cleanup; malformed XLSX input raised instead of returning a controlled error; and no dedicated tracked payroll coverage exists. Task 4D and work block 3F are complete, and Task 5 becomes current for a separately confirmed 3G audit. No repair, tracked product/test/demo change, protected-data access, external call, live action, or GitHub durability occurred.
+
+### 2026-07-18 — Authorize direct-main durability for the 3F audit closeout
+
+Ryan explicitly instructed Codex to commit and push the verified 3F command-center closeout to `main`. This authorizes staging only the seven 3F command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, tracked test, and demo-seed files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or OpenRouter calls; Fly; and all recovery outside the exact closeout remain excluded.
