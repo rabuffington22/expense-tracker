@@ -224,14 +224,94 @@ Target durability: source and active-state changes are merged on `main`; the ver
 
 ## Phase 2: Project Truth And Documentation Recovery
 
-Status: active; awaiting the first separately confirmed work block
+Status: active; work block 2A complete on draft PR #84, with the next governance block awaiting review and confirmation
 
 Goal: remove contradictory project guidance while retaining useful domain history.
 
-- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: current; awaiting a just-in-time work-block proposal and Ryan confirmation.
-- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: planned.
+- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: done in work block 2A on draft PR #84.
+- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: current; awaiting review of draft PR #84 and a separately confirmed work block.
 - **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: planned.
-- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: planned.
+- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: done in work block 2A on draft PR #84.
+
+### Work Block 2A — Restore the Root Project Entry Point
+
+Status: done and verified on draft PR #84
+
+Included: Task 1 and Task 4.
+
+Excluded: Task 2; Task 3; application code; workflows; databases; production, Plaid, Fly, credential, or financial-data access; `PROJECT_KNOWLEDGE.md`; `plan.md`; `CLAUDE.md`; untracked `AGENTS.md`; untracked `scripts/sync_prod_to_local.sh`; parent-repo changes; merge or deployment.
+
+Why this grouping: the root README and sanitized operating boundaries form one trustworthy project entry point, use the same verified repository sources, and share one documentation verification path. Legacy-document disposition and agent-instruction governance remain separate Ryan decisions after the replacement README can be reviewed.
+
+Owner: Codex Desktop.
+
+Recommended agent: Codex manager in the current thread. This small cross-cutting documentation block requires source-of-truth reconciliation, sensitive-project boundaries, local verification, and command-center stewardship. No external worker or second opinion is needed.
+
+Expected files: `README.md`; `PROJECT_STRUCTURE.md` if its README classification needs updating; `command-center/roadmap.md`; `command-center/now.md`; `command-center/decisions.md`; `command-center/state.json`; `command-center/index.html`; and one sanitized closeout log.
+
+Stop conditions:
+
+- a claim cannot be verified without credentials, ignored files, or row-level financial data;
+- implementation requires application code, workflow, legacy-document, or pre-existing untracked-file changes;
+- a Ryan decision about archiving legacy documents or tracking `AGENTS.md` becomes necessary;
+- scope expands beyond Tasks 1 and 4;
+- smoke, documentation, dashboard, health, or exact-scope verification fails in a plan-changing way;
+- branch or draft-PR publication would include paths outside the confirmed scope.
+
+Verification:
+
+- cross-check README claims against the runtime, Flask factory, Fly configurations, workflows, `.env.example`, requirements, and current repository structure;
+- confirm stale Streamlit, no-bank-linking, and two-entity instructions are removed;
+- validate referenced paths and commands;
+- run `.venv/bin/python scripts/smoke_test.py`;
+- run `git diff --check`;
+- refresh and health-check Runway OS;
+- inspect the generated dashboard and exact staged paths;
+- confirm the pushed branch and draft PR contain no application, ignored-data, legacy-document, or untracked-file changes.
+
+Durability: work on `codex/phase-2-root-docs`, commit and push the verified branch, and open a draft PR for Ryan review. Do not merge or deploy.
+
+Report point: return the new README structure, important truth corrections, verification results, branch/commit/draft-PR status, preserved boundaries, and any documentation uncertainty discovered.
+
+Result: replaced the retired Streamlit/manual-import/two-entity README with a tracked-source-verified Flask, HTMX, Plaid, Fly.io, and three-entity entry point. Added local setup, entity/data isolation, application surfaces, imports and synchronization, configuration names without values, deploy mechanics, and explicit side-effect gates. Updated `PROJECT_STRUCTURE.md`, preserved every excluded legacy and untracked file, passed the full synthetic smoke suite plus documentation and Runway OS checks, and opened draft PR #84 from pushed branch `codex/phase-2-root-docs` without merge or deployment.
+
+Target durability: source implementation commit `c249c9b` is pushed on `origin/codex/phase-2-root-docs` and included in draft PR #84. The verified closeout is added to the same branch; nothing is merged to `main` and no Fly deploy is triggered.
+
+### Work Block 2A-R — Publish the Root Project Entry Point
+
+Status: active
+
+Included: Task 1 and Task 4 publication only.
+
+Excluded: Task 2; Task 3; content changes beyond the verified PR #84 diff; application code; workflows; monitor changes; databases; Plaid; credentials; row-level financial data; Fly configuration or secrets; legacy or untracked files; parent-repo changes; and any recovery action outside the release plan.
+
+Why this grouping: Ryan explicitly authorized committing and pushing the verified 2A documentation to `main`. The source, review surface, production-deploy observation, HTTP health check, and skip-actions closeout form one release path. The deferred governance tasks do not affect whether the already-verified documentation can be published.
+
+Owner and agent: Codex Desktop in the current thread. This release requires exact-scope GitHub mutation, production-deploy observation, stop judgment, and Runway OS closeout; no delegation or second opinion is needed.
+
+Expected live effect: mark draft PR #84 ready, merge it to `main`, trigger one automatic production Fly deploy, and then publish a command-center-only closeout to `main` with `[skip actions]` so no second deploy starts.
+
+Stop conditions:
+
+- PR #84 is no longer open, clean, or limited to the verified eight documentation and Runway OS paths;
+- `main` diverges or branch protection changes the release path;
+- synthetic smoke, dashboard, health, or exact-diff verification regresses;
+- Fly Deploy fails or production root/health does not return HTTP 200;
+- verification would require deployment logs, secrets, financial data, Plaid access, database access, or manual workflow dispatch;
+- recovery requires application, authentication, infrastructure, credential, or financial-system mutation;
+- the closeout push would unexpectedly trigger a second Fly deployment.
+
+Verification:
+
+- recheck the exact PR file list, draft/open state, and clean mergeability;
+- rerun the synthetic smoke suite, Runway OS refresh/health, and `git diff --check` before release;
+- mark PR #84 ready and merge it without force;
+- identify the resulting `main` merge commit and Fly Deploy run;
+- inspect only sanitized workflow, job, and step status without opening logs;
+- confirm production `/health` and root return HTTP 200;
+- return Task 2 to current, close 2A-R, refresh and health-check Runway OS, and push the closeout with `[skip actions]`.
+
+Report point: return the merge commit, deploy run and result, production HTTP health, final `main`/`origin/main` state, protected boundaries, closeout commit, and remaining Phase 2 decision.
 
 ## Phase 3: Functional Audit And Prioritization
 
