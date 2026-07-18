@@ -73,3 +73,31 @@ The bootstrap preserves existing files. Rewriting or archiving legacy docs requi
 Promotion trigger:
 
 Ryan confirms the proposed documentation-recovery phase and decides how `AGENTS.md` should be governed.
+
+## Short-Term Planning Legacy Plan Exceeds Current Verification Evidence
+
+Status: parked for Phase 3 audit
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: retired `plan.md`, `scripts/smoke_test.py`, and `scripts/seed_demo_data.py`
+
+Revisit: Phase 3 functional audit and prioritization
+
+Summary:
+
+The legacy Short-Term Planning plan proposed dedicated goal CRUD, snapshot, budget, payoff, entity-isolation, and cross-entity smoke cases plus seeded goals and snapshots. The current feature is substantially implemented, but the synthetic smoke suite contains no dedicated Short-Term Planning cases, and demo seeding covers budgets and action items rather than the planned goal and snapshot examples.
+
+Impact:
+
+The historical plan cannot be treated as acceptance proof. Current behavior may be correct, but regression confidence and demo coverage need a fresh evidence-based audit rather than an assumption based on an obsolete checklist.
+
+Why not now:
+
+Work block 2B is documentation governance only. Adding product tests or demo data would widen scope into Phase 3 or Phase 4 and requires its own bounded work block.
+
+Promotion trigger:
+
+Phase 3 decomposes the functional audit and decides whether the missing dedicated cases are defects, useful regression additions, or superseded requirements.

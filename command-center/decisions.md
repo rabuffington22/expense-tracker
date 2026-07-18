@@ -86,6 +86,10 @@ Ryan explicitly instructed Codex to commit and push the verified work to `main`.
 
 PR #84 was marked ready and merged to `main` as `6270304`. Automatic Fly Deploy run `29646390675` and every job step passed, and production `/health` plus the root returned HTTP 200. GitHub emitted a non-blocking annotation that `actions/checkout@v4` targets deprecated Node 20 and is currently forced to Node 24; it did not affect the release. No logs, response bodies, credentials, financial data, manual workflow action, or recovery mutation occurred. The sanitized closeout is published to `main` with `[skip actions]` so it does not deploy again.
 
+### 2026-07-18 — Confirm work block 2B for legacy and agent-instruction governance
+
+Ryan authorized replacing `PROJECT_KNOWLEDGE.md` and `plan.md` with concise in-place historical notices, making a concise tracked `AGENTS.md` the canonical agent instruction source, and reducing `CLAUDE.md` to a compatibility entry point. The block may update supporting README, project-structure, and Runway OS surfaces when needed, work on `codex/phase-2-document-governance`, commit and push the verified branch, and open a draft PR. It excludes application code, workflows, authentication, databases, Plaid, Fly configuration, credentials, financial data, production operations, untracked `scripts/sync_prod_to_local.sh`, parent-repo changes, merge, and deployment.
+
 ## Pending Ryan Direction
 
-- Confirm or revise a future Phase 2 governance block deciding whether `AGENTS.md` becomes tracked and which legacy documentation is archived, replaced, or labeled historical.
+- Review the verified work block 2B draft PR before any separately confirmed merge and deployment block.

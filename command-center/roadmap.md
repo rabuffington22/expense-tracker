@@ -224,13 +224,13 @@ Target durability: source and active-state changes are merged on `main`; the ver
 
 ## Phase 2: Project Truth And Documentation Recovery
 
-Status: active; Tasks 1 and 4 are published and verified on `main`, with Task 2 current for the next separately confirmed governance block
+Status: active; Tasks 1 and 4 are published and verified on `main`, and confirmed work block 2B is active for Tasks 2 and 3
 
 Goal: remove contradictory project guidance while retaining useful domain history.
 
 - **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: done, merged to `main`, deployed, and verified through work blocks 2A and 2A-R.
-- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: current; awaiting a separately confirmed work block.
-- **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: planned.
+- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: current in confirmed work block 2B.
+- **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: planned in confirmed work block 2B after Task 2.
 - **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: done, merged to `main`, deployed, and verified through work blocks 2A and 2A-R.
 
 ### Work Block 2A — Restore the Root Project Entry Point
@@ -316,6 +316,55 @@ Report point: return the merge commit, deploy run and result, production HTTP he
 Result: marked PR #84 ready and merged its exact verified eight-file diff to `main` as `6270304`. Automatic Fly Deploy run `29646390675` and every job step passed without opening logs. Production `/health` and the root returned HTTP 200. No manual workflow, Fly, Plaid, database, credential, financial-data, application, authentication, legacy-file, or untracked-file action occurred. GitHub emitted a non-blocking annotation that `actions/checkout@v4` targets deprecated Node 20 and is currently forced to Node 24.
 
 Target durability: PR #84 is merged on `main`; the sanitized release closeout is published directly to `main` with `[skip actions]` so no second Fly deploy starts.
+
+### Work Block 2B — Retire Legacy Guidance And Establish Canonical Agent Instructions
+
+Status: active and authorized on 2026-07-18
+
+Included: Task 2 and Task 3.
+
+Excluded: Tasks 1 and 4, which are already done; Phase 3 Tasks 1-4; application code; tests; workflows; authentication; databases; Plaid; Fly configuration; credentials; financial data; production operations; untracked `scripts/sync_prod_to_local.sh`; parent-repo changes; merge; and deployment.
+
+Governance decisions accepted by confirmation:
+
+- replace `PROJECT_KNOWLEDGE.md` with a concise historical notice pointing to the current README, command center, and Git history;
+- replace `plan.md` with a concise completed-plan notice pointing to the implemented Short-Term Planning surfaces and Git history;
+- make a concise tracked `AGENTS.md` the canonical agent instruction source;
+- reduce `CLAUDE.md` to a compatibility entry point directing Claude-based tools to `AGENTS.md`, the README, and command-center sources;
+- remove duplicated change logs, stale architecture, obsolete live commands, and row-level financial history from active agent context.
+
+Why this grouping: the four documents currently compete for project or agent truth. They share the same source-of-truth analysis, documentation-only change path, exact-scope review, and verification contract. Phase 3 audit work and publication to `main` use different risk and verification paths and remain separate.
+
+Owner and recommended agent: Codex Desktop in the current thread. This sensitive-retrofit governance block requires repo-wide source reconciliation, preservation of user-owned untracked content, command-center stewardship, exact-scope verification, and final intake. No delegation or second opinion is needed.
+
+Expected files: `PROJECT_KNOWLEDGE.md`; `plan.md`; `AGENTS.md`; `CLAUDE.md`; `README.md` and `PROJECT_STRUCTURE.md` only if governance links need correction; `command-center/roadmap.md`; `command-center/now.md`; `command-center/decisions.md`; `command-center/state.json`; `command-center/index.html`; and one sanitized closeout log.
+
+Stop conditions:
+
+- any supposedly obsolete document contains unique current guidance without a safe canonical destination;
+- the untracked `AGENTS.md` changes from the inspected copy or contains unique instructions that cannot be safely reconciled;
+- a proposed instruction would authorize live or sensitive actions more broadly than current operating rules;
+- application, workflow, database, credential, financial-data, production, parent-repo, or excluded-file changes become necessary;
+- the diff expands beyond the confirmed documentation and command-center scope;
+- smoke, dashboard, health, link, stale-guidance, or exact-scope verification fails in a plan-changing way;
+- branch publication includes unexpected paths.
+
+Verification:
+
+- cross-check retained guidance against `README.md`, tracked source, and command-center operating rules;
+- confirm the Short-Term Planning plan is substantially implemented before retiring it;
+- confirm `AGENTS.md` contains no stale model identifiers, obsolete architecture, destructive operational recipes, or duplicated financial history;
+- scan active documentation for contradictory authority and stale Streamlit or manual-deploy guidance;
+- validate referenced paths and commands;
+- run `.venv/bin/python scripts/smoke_test.py`;
+- run `git diff --check`;
+- refresh and health-check Runway OS;
+- inspect the generated dashboard and exact diff and staged paths;
+- confirm `scripts/sync_prod_to_local.sh` and all application files remain untouched.
+
+Durability: work on `codex/phase-2-document-governance`, commit and push the verified branch, and open a draft PR. Do not merge or deploy.
+
+Report point: return the exact governance outcomes, useful content retained or migrated, stale or risky material removed from active context, verification results, branch and commit, draft PR, preserved boundaries, and the proposed 2B-R release gate.
 
 ## Phase 3: Functional Audit And Prioritization
 

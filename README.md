@@ -212,7 +212,7 @@ Runway OS in `command-center/` is the source of truth for active phases, tasks, 
 - `command-center/state.json` — machine-readable dashboard state
 - `command-center/index.html` — generated dashboard view, not a source file
 
-`PROJECT_KNOWLEDGE.md` and `plan.md` remain preserved historical inputs pending a separate governance decision. `CLAUDE.md` remains a supporting domain reference rather than the project-control authority.
+`AGENTS.md` is the canonical agent and contributor instruction source. `CLAUDE.md` is a compatibility entry point that directs Claude-based tools to the same maintained guidance. `PROJECT_KNOWLEDGE.md` and `plan.md` are concise historical notices whose full former contents remain available through Git history.
 
 After changing command-center state, refresh and verify it with:
 

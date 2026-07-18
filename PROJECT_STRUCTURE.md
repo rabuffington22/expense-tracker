@@ -22,11 +22,11 @@
 
 ## Existing Documentation And Migration Status
 
-- `CLAUDE.md`: current but very large domain and operating reference; supporting source input, not the project-control authority.
+- `AGENTS.md`: tracked canonical agent and contributor instruction source.
+- `CLAUDE.md`: lightweight compatibility entry point directing Claude-based tools to `AGENTS.md` and current sources.
 - `README.md`: current root entry point for architecture, local setup, application surfaces, deployment mechanics, data handling, and sanitized operating boundaries.
-- `PROJECT_KNOWLEDGE.md`: tracked historical architecture reference; archive or replacement candidate in proposed Phase 2.
-- `plan.md`: tracked implementation plan whose major feature already exists; historical/archive candidate after review.
-- `AGENTS.md`: pre-existing untracked local instruction file; preserve untouched until Ryan explicitly decides its tracked status.
+- `PROJECT_KNOWLEDGE.md`: concise historical notice for the retired Streamlit and Atlas-hosted architecture; full content remains in Git history.
+- `plan.md`: concise historical notice for the Short-Term Planning implementation plan; current audit gaps belong in Runway OS.
 
 ## Data And Credential Boundary
 
