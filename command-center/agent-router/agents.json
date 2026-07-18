@@ -1,0 +1,14 @@
+{
+  "agents": [
+    {
+      "id": "codex",
+      "label": "Codex",
+      "role": "Runway OS steward, default orchestrator, implementer, reviewer, and final intake owner"
+    },
+    {
+      "id": "claude",
+      "label": "Claude",
+      "role": "Optional specialist reviewer through a sanitized, Ryan-approved handoff; external runner disabled"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "defaultOwner": "codex",
+  "approvalRequiredBeforeImplementation": true,
+  "profile": "sensitive-retrofit",
+  "externalWorkerExecution": "disabled",
+  "rules": [
+    {
+      "when": "work changes project direction, live operations, credentials, financial data, or production state",
+      "route": "ryan",
+      "reason": "Ryan must approve the exact project-local work block before execution"
+    },
+    {
+      "when": "work requires source-of-truth judgment, cross-file integration, or final intake",
+      "route": "codex",
+      "reason": "Codex owns Runway OS stewardship and verified integration"
+    },
+    {
+      "when": "a second opinion or specialist critique could reduce rework",
+      "route": "sanitized-handoff",
+      "reason": "Only a reviewed, non-financial handoff packet may leave the primary context"
+    }
+  ]
+}

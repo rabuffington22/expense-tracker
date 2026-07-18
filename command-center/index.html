@@ -1,0 +1,2891 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expense Tracker Command Center</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d0e11;
+      --panel: #15171c;
+      --panel-2: #1b1d23;
+      --panel-3: #22252c;
+      --line: #2c2f37;
+      --line-2: #3d424c;
+      --text: #f0f3f7;
+      --muted: #a6adb7;
+      --soft: #767d88;
+      --now: #3d8ee0;
+      --next: #c2ccd4;
+      --block: #c2ccd4;
+      --done: #3d8ee0;
+      --ink: #0d0e11;
+      --r: 10px;
+      --r-sm: 7px;
+      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; }
+
+    body {
+      background:
+        radial-gradient(1200px 600px at 78% -8%, rgba(61, 142, 224, 0.10), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      font: 15px/1.5 var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3, h4, p { margin: 0; }
+
+    .mono { font-family: var(--mono); }
+    .muted { color: var(--muted); }
+
+    /* eyebrow / section labels */
+    .label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--soft);
+      font-weight: 600;
+    }
+
+    /* ---------- shell ---------- */
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 236px minmax(0, 1fr);
+    }
+
+    aside {
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, #14161b, #0f1014);
+      padding: 16px 14px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    main {
+      padding: 26px 30px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      min-width: 0;
+    }
+
+    /* ---------- sidebar ---------- */
+    .brand { display: flex; gap: 10px; align-items: center; }
+    .brand-mark {
+      width: 32px; height: 32px; flex: 0 0 auto;
+      border-radius: var(--r-sm);
+      background: linear-gradient(135deg, var(--now), var(--next));
+      display: grid; place-items: center;
+      color: var(--ink); font-weight: 800; font-size: 12px;
+      font-family: var(--mono);
+    }
+    .brand h1 { font-size: 14px; line-height: 1.1; font-weight: 700; }
+    .brand p { display: none; }
+
+    .rail-block { display: flex; flex-direction: column; gap: 7px; }
+    .active-roles-block { margin-top: 12px; }
+    .rail-head { display: flex; align-items: center; justify-content: space-between; }
+
+    .roster { display: flex; flex-direction: column; gap: 6px; }
+    .agent {
+      display: grid;
+      grid-template-columns: 9px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 8px 9px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      background: var(--panel);
+    }
+    .agent.owner { border-color: var(--now); background: rgba(61, 142, 224, 0.10); }
+    .agent.idle { opacity: 0.62; }
+    .agent-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      margin-top: 5px; background: var(--soft);
+    }
+    .agent.live .agent-dot {
+      background: var(--done);
+      box-shadow: 0 0 0 3px rgba(61, 142, 224, 0.20);
+    }
+    .agent strong { font-size: 12.5px; font-weight: 650; display: block; }
+    .agent .role { font-size: 11px; color: var(--muted); line-height: 1.32; }
+    .agent .tag {
+      font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em;
+      color: var(--now); font-weight: 700; margin-top: 3px; display: inline-block;
+    }
+    .agent .delegated {
+      display: grid;
+      gap: 4px;
+      margin-top: 7px;
+      padding-top: 7px;
+      border-top: 1px solid var(--line);
+    }
+    .agent .delegated-item {
+      font-size: 10.5px;
+      line-height: 1.35;
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+    .agent .delegated-item b {
+      color: var(--soft);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .files { display: flex; flex-direction: column; gap: 4px; }
+    .workflow-drawer .files {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+      gap: 8px;
+    }
+    .file-card {
+      display: grid;
+      grid-template-columns: 7px minmax(0, 1fr);
+      gap: 10px;
+      padding: 10px 11px;
+      border-radius: var(--r-sm);
+      color: var(--muted);
+      font-size: 12.5px;
+      border: 1px solid var(--line);
+      background: rgba(245, 247, 248, 0.025);
+    }
+    a.file-card:hover { background: var(--panel-2); color: var(--text); border-color: rgba(194, 204, 212, 0.48); }
+    .files .fdot { width: 6px; height: 6px; margin-top: 6px; border-radius: 50%; background: var(--soft); }
+    .file-card:hover .fdot { background: var(--now); }
+    .file-main { min-width: 0; display: grid; gap: 6px; }
+    .file-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .file-name { color: var(--text); font-weight: 680; line-height: 1.25; overflow-wrap: anywhere; }
+    .file-role { color: var(--soft); font-family: var(--mono); font-size: 9.5px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+    .file-summary { color: var(--muted); line-height: 1.35; overflow-wrap: anywhere; }
+    .file-meta { display: flex; flex-wrap: wrap; gap: 5px; }
+    .file-meta span {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 7px;
+      color: var(--soft);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .file-use { color: var(--text); font-size: 11.5px; line-height: 1.35; overflow-wrap: anywhere; }
+    .rail-health {
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--r-sm);
+      padding: 10px;
+    }
+    .rail-health .router-status {
+      font-size: 10px;
+      color: var(--done);
+    }
+    .rail-health .router-status::before {
+      background: var(--done);
+      box-shadow: 0 0 0 3px rgba(61, 142, 224, 0.16);
+    }
+    .rail-health .router-summary {
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.38;
+    }
+    .rail-health-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+    }
+    .rail-health-metric {
+      appearance: none;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      background: var(--panel-2);
+      padding: 6px 5px;
+      min-width: 0;
+    }
+    button.rail-health-metric {
+      cursor: pointer;
+    }
+    button.rail-health-metric:hover {
+      border-color: rgba(61, 142, 224, 0.62);
+      background: rgba(61, 142, 224, 0.10);
+    }
+    button.rail-health-metric:disabled {
+      cursor: default;
+      opacity: 0.72;
+    }
+    button.rail-health-metric:disabled:hover {
+      border-color: var(--line);
+      background: var(--panel-2);
+    }
+    .rail-health-metric b {
+      display: block;
+      font-family: var(--mono);
+      font-size: 15px;
+      line-height: 1;
+    }
+    .rail-health-metric span {
+      display: block;
+      margin-top: 3px;
+      color: var(--soft);
+      font-family: var(--mono);
+      font-size: 8.5px;
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rail-foot {
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .rail-foot-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .rail-foot-note {
+      color: var(--soft);
+      font-size: 10.5px;
+      line-height: 1.35;
+    }
+    .cmd {
+      font-family: var(--mono); font-size: 10px;
+      background: transparent; border: 1px solid var(--line);
+      border-radius: var(--r-sm); padding: 6px 7px;
+      color: var(--muted); word-break: break-all; line-height: 1.35;
+    }
+    .cmd b { color: var(--soft); font-weight: 400; }
+
+    /* ---------- topbar ---------- */
+    .topbar {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 18px; flex-wrap: wrap;
+    }
+    .topbar .page-title { font-size: 27px; line-height: 1.1; font-weight: 720; letter-spacing: -0.01em; }
+    .topbar .sub { display: flex; flex-direction: column; gap: 6px; }
+    .pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill {
+      border: 1px solid var(--line); border-radius: 999px;
+      padding: 6px 11px; color: var(--muted); background: var(--panel);
+      font-size: 12px; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .pill .mono { font-size: 11px; }
+    .pill b { color: var(--text); font-weight: 600; }
+
+    /* ---------- major dashboard sections ---------- */
+    .section-shell {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+    }
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+    .section-shell.section-before-drawers {
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line-2);
+    }
+    .section-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      min-width: 0;
+    }
+    .section-index {
+      font-family: var(--mono);
+      color: var(--now);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .section-title {
+      font-size: 20px;
+      line-height: 1.15;
+      font-weight: 720;
+    }
+    .section-context {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+      white-space: nowrap;
+    }
+    .section-context { display: none; }
+
+    /* ---------- phase stepper ---------- */
+    .stepper-wrap {
+      background:
+        linear-gradient(180deg, rgba(194, 204, 212, 0.075), rgba(194, 204, 212, 0) 145px),
+        var(--panel);
+      border: 1px solid rgba(194, 204, 212, 0.18);
+      border-radius: var(--r);
+      box-shadow: 0 0 0 1px rgba(194, 204, 212, 0.035), 0 22px 50px -32px rgba(0, 0, 0, 0.7);
+      padding: 16px 18px 14px;
+    }
+    .stepper-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .stepper-top .ph-now { font-size: 13.5px; }
+    .stepper-top .ph-now b { color: var(--text); font-weight: 650; }
+    .stepper-top .ph-pct { font-family: var(--mono); font-size: 12px; color: var(--now); }
+
+    .stepper { display: grid; grid-template-columns: repeat(6, 1fr); row-gap: 32px; }
+    .step { position: relative; padding-right: 6px; }
+    .step::before {
+      content: ""; position: absolute; top: 9px; left: 19px; right: -1px;
+      height: 2px; background: var(--line-2); z-index: 0;
+    }
+    .step:last-child::before { display: none; }
+    .step.done::before, .step.active::before { background: var(--now); }
+    .step-node {
+      position: relative; z-index: 1;
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--line-2); background: var(--bg);
+      display: grid; place-items: center;
+      font-family: var(--mono); font-size: 10px; color: var(--soft); font-weight: 700;
+    }
+    .step.active .step-node { border-color: var(--now); background: var(--now); color: var(--ink); box-shadow: 0 0 0 4px rgba(61, 142, 224, 0.18); }
+    .step.next .step-node { border-color: var(--next); color: var(--next); }
+    .step.done .step-node { border-color: var(--now); background: var(--now); color: var(--ink); }
+    .step.parked .step-node { border-style: dashed; }
+    .step-body { margin-top: 11px; padding-right: 8px; }
+    .step-name { font-family: var(--mono); font-size: 10.5px; color: var(--soft); letter-spacing: 0.04em; }
+    .step-label { font-size: 13px; font-weight: 600; line-height: 1.2; margin-top: 2px; }
+    .step.upcoming .step-label, .step.parked .step-label { color: var(--muted); font-weight: 500; }
+    .step-status { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 5px; }
+    .step.active .step-status { color: var(--now); }
+    .step.next .step-status { color: var(--next); }
+    .step.parked .step-status { color: var(--block); }
+    .step.upcoming .step-status, .step.done .step-status { color: var(--soft); }
+    .drawer-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin: 14px 0 0 auto;
+    }
+    .project-drawer-toggle,
+    .phase-drawer-toggle {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--muted);
+      width: max-content;
+      height: 32px;
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px 0 12px;
+      margin: 14px 0 0 auto;
+      cursor: pointer;
+      transition: border-color 140ms ease, color 140ms ease, background 140ms ease, transform 140ms ease;
+    }
+    .project-drawer-toggle:hover,
+    .phase-drawer-toggle:hover {
+      border-color: var(--now);
+      color: var(--text);
+      background: rgba(61, 142, 224, 0.1);
+    }
+    .project-drawer-toggle:focus-visible,
+    .phase-drawer-toggle:focus-visible {
+      outline: 2px solid var(--now);
+      outline-offset: 2px;
+    }
+    .project-drawer-toggle svg,
+    .phase-drawer-toggle svg {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 auto;
+      transition: transform 140ms ease;
+    }
+    .drawer-toggle-label {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .project-drawer-toggle[aria-expanded="true"] svg,
+    .phase-drawer-toggle[aria-expanded="true"] svg {
+      transform: rotate(180deg);
+    }
+    .project-drawer,
+    .phase-drawer {
+      display: none;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+    .project-drawer.open,
+    .phase-drawer.open { display: grid; }
+    .project-drawer-card,
+    .phase-drawer-card {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: var(--r-sm);
+      padding: 13px;
+      min-width: 0;
+    }
+    .project-drawer-card .q-list,
+    .phase-drawer-card .q-list { margin-top: 10px; }
+    .phase-drawer-card .q-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    }
+    .section-note {
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.45;
+      margin-top: 7px;
+    }
+
+    /* ---------- focus stack ---------- */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 18px;
+      min-width: 0;
+    }
+
+    /* NOW card — the focal point */
+    .now-card {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(61, 142, 224, 0.12), rgba(61, 142, 224, 0) 130px),
+        var(--panel-2);
+      border: 1px solid rgba(61, 142, 224, 0.45);
+      border-radius: var(--r);
+      box-shadow: 0 0 0 1px rgba(61, 142, 224, 0.06), 0 22px 50px -28px rgba(0, 0, 0, 0.7);
+      padding: 18px 20px 20px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .task-card {
+      display: grid;
+      grid-template-columns: minmax(210px, 0.42fr) minmax(300px, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+    .task-queue {
+      background:
+        linear-gradient(180deg, rgba(61, 142, 224, 0.12), rgba(61, 142, 224, 0) 130px),
+        var(--panel-2);
+      border: 1px solid rgba(61, 142, 224, 0.45);
+      border-radius: var(--r);
+      box-shadow: 0 0 0 1px rgba(61, 142, 224, 0.06), 0 22px 50px -28px rgba(0, 0, 0, 0.7);
+      padding: 18px 20px 20px;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .task-queue-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .task-queue-count {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .task-list {
+      overflow-y: auto;
+      max-height: 330px;
+      padding-right: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .task-item {
+      appearance: none;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: var(--r-sm);
+      padding: 9px 10px;
+      display: grid;
+      grid-template-columns: 9px minmax(0, 1fr);
+      gap: 9px;
+      cursor: pointer;
+    }
+    .task-item:hover {
+      border-color: var(--line-2);
+      background: var(--panel-3);
+    }
+    .task-item:focus-visible {
+      outline: 2px solid var(--now);
+      outline-offset: 2px;
+    }
+    .task-item.current {
+      border-color: var(--now);
+      background: rgba(61, 142, 224, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(61, 142, 224, 0.18);
+    }
+    .task-item.in-work-block {
+      border-color: rgba(43, 127, 211, 0.95);
+      background: rgba(43, 127, 211, 0.24);
+      box-shadow: inset 0 0 0 1px rgba(43, 127, 211, 0.36);
+    }
+    .task-item.in-work-block:hover {
+      border-color: rgba(90, 170, 255, 0.98);
+      background: rgba(43, 127, 211, 0.32);
+    }
+    .task-item.selected {
+      border-color: var(--next);
+      box-shadow: inset 0 0 0 1px rgba(194, 204, 212, 0.2);
+    }
+    .task-item.in-work-block.selected {
+      border-color: rgba(117, 192, 255, 1);
+      box-shadow: inset 0 0 0 1px rgba(117, 192, 255, 0.48), 0 0 0 1px rgba(43, 127, 211, 0.22);
+    }
+    .task-item.current.selected {
+      border-color: var(--now);
+      box-shadow: inset 0 0 0 1px rgba(61, 142, 224, 0.32), 0 0 0 1px rgba(61, 142, 224, 0.16);
+    }
+    .router-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: var(--done);
+    }
+    .router-status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--done);
+      box-shadow: 0 0 0 3px rgba(61, 142, 224, 0.14);
+      flex: 0 0 auto;
+    }
+    .router-summary {
+      margin: 0;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .router-command {
+      display: block;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    .steering {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .steering-move,
+    .decision-queue {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--r);
+      padding: 16px;
+      min-width: 0;
+    }
+    .steering-move {
+      border-color: rgba(194, 204, 212, 0.48);
+      background:
+        linear-gradient(180deg, rgba(194, 204, 212, 0.12), rgba(194, 204, 212, 0) 150px),
+        var(--panel);
+      display: grid;
+      gap: 13px;
+    }
+    .steering-head,
+    .decision-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .steering-title {
+      font-size: 20px;
+      font-weight: 720;
+      line-height: 1.18;
+      margin-top: 5px;
+    }
+    .steering-body {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .steering-action {
+      border: 1px solid rgba(61, 142, 224, 0.46);
+      background: rgba(61, 142, 224, 0.1);
+      border-radius: var(--r-sm);
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+    }
+    .steering-action .label { color: var(--now); }
+    .steering-action p {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .steering-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .steering-meta-cell {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: var(--r-sm);
+      padding: 9px 10px;
+      min-width: 0;
+    }
+    .steering-meta-cell .v {
+      margin-top: 4px;
+      font-size: 12.5px;
+      color: var(--text);
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    .decision-queue {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .decision-count {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .decision-list {
+      display: grid;
+      gap: 9px;
+    }
+    .decision-item {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: var(--r-sm);
+      padding: 12px;
+      display: grid;
+      gap: 9px;
+    }
+    .decision-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .decision-title {
+      font-size: 13.5px;
+      font-weight: 680;
+      line-height: 1.3;
+    }
+    .decision-chip {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--next);
+      border: 1px solid rgba(194, 204, 212, 0.46);
+      border-radius: 999px;
+      padding: 3px 7px;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+    .decision-copy {
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .decision-rec {
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+      color: var(--text);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .decision-rec .label {
+      color: var(--soft);
+      display: block;
+      margin-bottom: 3px;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(5, 6, 8, 0.68);
+      backdrop-filter: blur(8px);
+    }
+    .modal-backdrop.hidden { display: none; }
+    .modal-panel {
+      width: min(720px, 100%);
+      max-height: min(760px, calc(100vh - 44px));
+      overflow: auto;
+      border: 1px solid var(--line-2);
+      background: var(--panel);
+      border-radius: var(--r);
+      box-shadow: 0 24px 80px -36px rgba(0, 0, 0, 0.9);
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .modal-head h3 {
+      font-size: 16px;
+      line-height: 1.25;
+    }
+    .modal-close {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--muted);
+      border-radius: var(--r-sm);
+      font: 700 12px/1 var(--mono);
+      padding: 7px 9px;
+      cursor: pointer;
+    }
+    .modal-close:hover {
+      color: var(--text);
+      border-color: var(--line-2);
+    }
+    .modal-body {
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .failed-item {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: var(--r-sm);
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .failed-item h4 {
+      font-size: 13px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+    .failed-meta,
+    .failed-files {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .task-item.done { opacity: 0.72; }
+    .task-item.done.in-work-block { opacity: 1; }
+    .task-item.upcoming { opacity: 0.9; }
+    .task-pin {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 6px;
+      background: var(--soft);
+    }
+    .task-item.done .task-pin { background: var(--done); }
+    .task-item.in-work-block .task-pin {
+      background: #75c0ff;
+      box-shadow: 0 0 0 3px rgba(43, 127, 211, 0.28);
+    }
+    .task-item.current .task-pin {
+      background: var(--now);
+      box-shadow: 0 0 0 3px rgba(61, 142, 224, 0.22);
+    }
+    .task-copy { min-width: 0; }
+    .task-name {
+      font-size: 13px;
+      font-weight: 650;
+      line-height: 1.25;
+    }
+    .task-status {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-top: 3px;
+    }
+    .task-item.current .task-status { color: var(--now); }
+    .task-item.done .task-status { color: var(--done); }
+    .task-item.in-work-block .task-status { color: #bfe0ff; }
+    .now-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .now-flag { display: inline-flex; align-items: center; gap: 9px; }
+    .live-dot {
+      width: 9px; height: 9px; border-radius: 50%; background: var(--now);
+      box-shadow: 0 0 0 0 rgba(61, 142, 224, 0.55);
+      animation: pulse 2s ease-out infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(61, 142, 224, 0.55); }
+      70% { box-shadow: 0 0 0 9px rgba(61, 142, 224, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(61, 142, 224, 0); }
+    }
+    .now-flag .label { color: var(--now); }
+
+    .now-title { font-size: 25px; line-height: 1.14; font-weight: 720; letter-spacing: -0.01em; }
+
+    .now-meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .meta-cell {
+      border: 1px solid var(--line); background: var(--panel);
+      border-radius: var(--r-sm); padding: 10px 11px;
+    }
+    .meta-cell .k { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+    .meta-cell .k .label { color: var(--soft); }
+    .meta-cell .v { font-size: 14px; font-weight: 600; line-height: 1.3; }
+    .meta-cell .v small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .meta-cell.block-clear .v { color: var(--done); }
+    .meta-cell.block-on { border-color: rgba(194, 204, 212, 0.5); background: rgba(194, 204, 212, 0.09); }
+    .meta-cell.block-on .v { color: var(--block); }
+
+    /* status chip */
+    .chip {
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.07em;
+      text-transform: uppercase; font-weight: 700;
+      padding: 5px 9px; border-radius: 999px;
+      color: var(--ink); background: var(--soft);
+      display: inline-flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+    }
+    .chip.active, .chip.in-progress { background: var(--now); }
+    .chip.next { background: var(--next); }
+    .chip.recommended { background: var(--next); }
+    .chip.planned { background: var(--muted); }
+    .chip.parked { background: var(--block); }
+    .chip.done { background: var(--done); }
+
+    /* NEXT band */
+    .next-band {
+      margin-top: 2px;
+      display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center;
+      border: 1px solid rgba(194, 204, 212, 0.5);
+      background: linear-gradient(90deg, rgba(194, 204, 212, 0.13), rgba(194, 204, 212, 0.03));
+      border-radius: var(--r-sm); padding: 12px 14px;
+    }
+    .next-band .nb-flag {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; font-weight: 700;
+      color: var(--next); display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    }
+    .next-band .nb-flag .ar { font-size: 15px; }
+    .next-band .nb-text { font-size: 14px; line-height: 1.4; color: var(--text); }
+    .task-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .task-detail-grid.hidden { display: none; }
+    .task-detail-box {
+      border: 1px solid var(--line);
+      background: rgba(245, 247, 248, 0.035);
+      border-radius: var(--r-sm);
+      padding: 10px 11px;
+      min-width: 0;
+    }
+    .task-detail-box.hidden { display: none; }
+    .task-detail-box .label { color: var(--soft); margin-bottom: 6px; display: block; }
+    .task-detail-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 6px;
+    }
+    .task-detail-list li {
+      color: var(--text);
+      font-size: 12.5px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    /* Phase / big-picture side card */
+    .phase-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background:
+        linear-gradient(180deg, rgba(194, 204, 212, 0.075), rgba(194, 204, 212, 0) 145px),
+        var(--panel);
+      border-color: rgba(194, 204, 212, 0.18);
+      box-shadow: 0 0 0 1px rgba(194, 204, 212, 0.035), 0 22px 50px -32px rgba(0, 0, 0, 0.7);
+    }
+    .phase-overview {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: 24px;
+      align-items: center;
+    }
+    .ring-row { display: flex; align-items: center; gap: 16px; }
+    .ring {
+      --pct: 0;
+      width: 84px; height: 84px; flex: 0 0 auto; border-radius: 50%;
+      background: conic-gradient(var(--now) calc(var(--pct) * 1%), var(--line-2) 0);
+      display: grid; place-items: center;
+      position: relative;
+    }
+    .ring::after {
+      content: ""; position: absolute; inset: 9px; border-radius: 50%;
+      background: var(--panel);
+    }
+    .ring .ring-num { position: relative; z-index: 1; font-family: var(--mono); font-weight: 700; font-size: 19px; }
+    .ring .ring-num small { font-size: 11px; color: var(--muted); }
+    .phase-card .pc-name { font-size: 16px; font-weight: 680; line-height: 1.25; }
+    .phase-card .pc-sum { font-size: 13px; color: var(--muted); line-height: 1.45; }
+
+    .work-blocks {
+      border-left: 1px dashed var(--line-2); padding-left: 20px;
+      display: flex; flex-direction: column; gap: 6px;
+      min-height: 104px;
+      justify-content: center;
+    }
+    .work-block-list { display: grid; gap: 6px; }
+    .work-block-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 7px 0;
+      border-top: 1px solid rgba(248, 251, 255, 0.1);
+    }
+    .work-block-row:first-child { border-top: 0; }
+    .wb-main { min-width: 0; display: flex; gap: 8px; align-items: baseline; }
+    .wb-label { font-family: var(--mono); font-size: 12px; font-weight: 750; color: var(--now); }
+    .wb-name { font-size: 13px; font-weight: 650; overflow-wrap: anywhere; }
+    .wb-tasks { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .wb-status {
+      font-family: var(--mono); font-size: 10px; color: var(--soft);
+      text-transform: uppercase; white-space: nowrap;
+    }
+
+    /* ---------- workflow pipeline ---------- */
+    .workflow-shell {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+    .workflow-toggle {
+      appearance: none;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .workflow-toggle:hover { background: rgba(61, 142, 224, 0.07); }
+    .workflow-toggle:focus-visible {
+      outline: 2px solid var(--now);
+      outline-offset: -2px;
+    }
+    .workflow-title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      min-width: 0;
+    }
+    .workflow-title .label { color: var(--text); }
+    .workflow-title .hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .workflow-toggle svg {
+      width: 17px;
+      height: 17px;
+      color: var(--muted);
+      flex: 0 0 auto;
+      transition: transform 140ms ease;
+    }
+    .workflow-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .workflow-drawer {
+      display: none;
+      border-top: 1px solid var(--line);
+      padding: 16px;
+    }
+    .workflow-drawer.open { display: block; }
+    .wf-operational {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: var(--r-sm);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .waiting-list {
+      display: grid;
+      gap: 10px;
+    }
+    .waiting-item {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: var(--r-sm);
+      padding: 12px;
+      display: grid;
+      gap: 9px;
+    }
+    .waiting-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .waiting-title {
+      font-weight: 680;
+      line-height: 1.25;
+    }
+    .waiting-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .waiting-chip {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 7px;
+      white-space: nowrap;
+    }
+    .waiting-body {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .waiting-related {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--soft);
+    }
+    .wf-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .wf-legend { display: flex; gap: 14px; flex-wrap: wrap; }
+    .wf-legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+    .lg { width: 9px; height: 9px; border-radius: 3px; }
+    .lg.core { background: var(--now); }
+    .lg.opt { background: var(--block); }
+    .lg.std { background: var(--line-2); }
+
+    .pipeline {
+      display: flex; align-items: stretch; gap: 0;
+      overflow-x: auto; padding-bottom: 4px;
+    }
+    .wf-node {
+      flex: 1 1 0; min-width: 116px;
+      border: 1px solid var(--line); background: var(--panel-2);
+      border-radius: var(--r-sm); padding: 12px 12px 11px;
+      display: flex; flex-direction: column; gap: 4px;
+      position: relative;
+    }
+    .wf-node.core { border-color: rgba(61, 142, 224, 0.55); }
+    .wf-node.owner {
+      border-color: var(--now);
+      background: rgba(61, 142, 224, 0.12);
+      box-shadow: 0 0 0 1px rgba(61, 142, 224, 0.28);
+    }
+    .wf-node .wn-name { font-size: 13.5px; font-weight: 650; line-height: 1.2; }
+    .wf-node .wn-kind { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--soft); }
+    .wf-node .wn-now {
+      position: absolute; top: -9px; right: 10px;
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; font-weight: 700;
+      background: var(--now); color: var(--ink); padding: 2px 6px; border-radius: 999px;
+    }
+    .wf-arrow {
+      flex: 0 0 26px; display: grid; place-items: center;
+      color: var(--soft); font-size: 16px; font-family: var(--mono);
+    }
+
+    .wf-edges {
+      margin-top: 16px;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 22px;
+    }
+    .wf-edge {
+      display: grid; grid-template-columns: auto auto auto minmax(0, 1fr); gap: 8px;
+      align-items: center; font-size: 12px; padding: 6px 0;
+      border-top: 1px solid var(--line);
+    }
+    .wf-edge b { font-weight: 600; white-space: nowrap; }
+    .wf-edge .ar { color: var(--next); font-family: var(--mono); }
+    .wf-edge .el { color: var(--muted); }
+    .wf-note {
+      margin-top: 14px; display: inline-flex; align-items: center; gap: 9px;
+      font-size: 12px; color: var(--muted);
+      border: 1px dashed var(--line-2); border-radius: 999px; padding: 6px 13px;
+    }
+    .wf-note .lin-dot { width: 8px; height: 8px; border-radius: 50%; border: 2px dashed var(--block); }
+    .wf-note b { color: var(--text); font-weight: 600; }
+
+    /* ---------- bottom grid ---------- */
+    .three { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+    .panel h3.label { margin-bottom: 12px; }
+
+    .q-list { gap: 8px; }
+    .q-item {
+      list-style: none; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px;
+      font-size: 13px; line-height: 1.45; color: var(--text);
+      border: 1px solid var(--line); background: var(--panel-2);
+      border-radius: var(--r-sm); padding: 10px 12px;
+    }
+    .q-item .qn { font-family: var(--mono); font-size: 11px; color: var(--next); font-weight: 700; }
+
+    /* ---------- responsive ---------- */
+    @media (max-width: 1040px) {
+      .shell { grid-template-columns: 1fr; }
+      aside {
+        height: auto; position: static; flex-direction: row; flex-wrap: wrap;
+        border-right: 0; border-bottom: 1px solid var(--line); gap: 18px 26px;
+        align-items: flex-start;
+      }
+      .brand { width: 100%; }
+      .rail-block { flex: 1 1 220px; }
+      .rail-foot { margin-top: 0; flex-basis: 100%; border-top: 0; padding-top: 0; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; }
+      .cmd { flex: 1 1 240px; }
+      .hero { grid-template-columns: 1fr; }
+      .phase-overview { grid-template-columns: 1fr; }
+      .steering { grid-template-columns: 1fr; }
+      .work-blocks {
+        border-left: 0;
+        border-top: 1px dashed var(--line-2);
+        padding-left: 0;
+        padding-top: 14px;
+        min-height: 0;
+      }
+      .three { grid-template-columns: 1fr; }
+      .wf-edges { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      main { padding: 18px 16px 32px; }
+      .topbar .page-title { font-size: 22px; }
+      .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .section-context {
+        text-align: left;
+        white-space: normal;
+      }
+      .stepper { grid-template-columns: repeat(2, 1fr); gap: 14px 8px; }
+      .step::before { display: none; }
+      .now-title { font-size: 21px; }
+      .task-card { grid-template-columns: 1fr; }
+      .now-meta { grid-template-columns: 1fr; }
+      .task-list { max-height: 280px; }
+      .next-band { grid-template-columns: 1fr; gap: 6px; }
+      .steering-meta { grid-template-columns: 1fr; }
+      .decision-top { flex-direction: column; }
+      .phase-drawer { grid-template-columns: 1fr; }
+      .ring-row { gap: 14px; }
+      .wf-node { min-width: 132px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div>
+          <h1>Command Center</h1>
+          <p class="muted mono" id="side-mode"></p>
+        </div>
+      </div>
+
+      <div class="rail-block">
+        <div class="rail-head">
+          <h3 class="label">Router Health</h3>
+        </div>
+        <div class="rail-health" aria-label="Agent router health">
+          <span class="router-status" id="router-status"></span>
+          <p class="router-summary" id="router-summary"></p>
+          <div class="rail-health-grid">
+            <div class="rail-health-metric">
+              <b id="router-review-count"></b>
+              <span>review</span>
+            </div>
+            <div class="rail-health-metric">
+              <b id="router-working-count"></b>
+              <span>working</span>
+            </div>
+            <div class="rail-health-metric">
+              <b id="router-done-count"></b>
+              <span>done</span>
+            </div>
+            <button class="rail-health-metric" id="router-failed-metric" type="button" aria-haspopup="dialog">
+              <b id="router-failed-count"></b>
+              <span>failed</span>
+            </button>
+          </div>
+          <code class="router-command" id="router-command"></code>
+        </div>
+      </div>
+
+      <div class="rail-block active-roles-block">
+        <div class="rail-head">
+          <h3 class="label">Active Roles</h3>
+          <span class="label" id="agents-live"></span>
+        </div>
+        <div class="roster" id="agents"></div>
+      </div>
+
+      <div class="rail-foot">
+        <div class="rail-foot-top">
+          <h3 class="label">Snapshot</h3>
+          <span class="rail-foot-note">dashboard refresh</span>
+        </div>
+        <code class="cmd" title="node command-center/scripts/refresh-dashboard.js">refresh-dashboard.js</code>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div class="sub">
+          <h2 class="page-title" id="project-title"></h2>
+        </div>
+        <div class="pills">
+          <span class="pill mono" id="project-date"></span>
+        </div>
+      </header>
+
+      <section class="section-shell" aria-labelledby="project-phases-heading">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="section-index">01</span>
+            <h2 class="section-title" id="project-phases-heading">Project Phases</h2>
+          </div>
+        </div>
+        <div class="stepper-wrap" aria-label="Project phases">
+          <div class="stepper-top">
+            <p class="ph-now"><b>Plan Progress</b></p>
+            <p class="ph-pct"><span id="stepper-pct"></span>% through this phase</p>
+          </div>
+          <div class="stepper" id="stepper"></div>
+          <button class="project-drawer-toggle" id="project-drawer-toggle" type="button" aria-label="Show project-level questions" aria-expanded="false" aria-controls="project-drawer">
+            <span class="drawer-toggle-label">Project Questions</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+          <div class="project-drawer" id="project-drawer">
+            <article class="project-drawer-card">
+              <h3 class="label">Project Questions</h3>
+              <ul class="q-list" id="project-questions"></ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-shell" aria-labelledby="current-phase-heading">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="section-index">02</span>
+            <h2 class="section-title" id="current-phase-heading">Current Phase</h2>
+          </div>
+        </div>
+        <section class="hero" aria-label="Current phase">
+          <article class="panel phase-card">
+            <h3 class="label" id="phase-card-title">Phase 1</h3>
+            <div class="phase-overview">
+              <div class="ring-row">
+                <div class="ring" id="phase-ring">
+                  <span class="ring-num"><span id="ring-pct"></span><small>%</small></span>
+                </div>
+                <div>
+                  <p class="pc-name" id="phase-name"></p>
+                  <p class="pc-sum" id="phase-summary"></p>
+                </div>
+              </div>
+              <div class="work-blocks">
+                <p class="label">Work Blocks</p>
+                <div class="work-block-list" id="work-block-list"></div>
+              </div>
+            </div>
+            <button class="phase-drawer-toggle" id="phase-drawer-toggle" type="button" aria-label="Hide phase questions" aria-expanded="true" aria-controls="phase-drawer">
+              <span class="drawer-toggle-label">Phase Questions</span>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </button>
+            <div class="phase-drawer open" id="phase-drawer">
+              <article class="phase-drawer-card">
+                <h3 class="label">Phase Questions</h3>
+                <p class="section-note" id="phase-questions-note"></p>
+                <ul class="q-list" id="open-questions"></ul>
+              </article>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section class="section-shell" aria-labelledby="phase-tasks-heading">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="section-index">03</span>
+            <h2 class="section-title" id="phase-tasks-heading">Phase Tasks</h2>
+          </div>
+        </div>
+        <article class="task-card" aria-label="Phase tasks">
+          <div class="task-queue">
+            <div class="task-queue-head">
+              <h3 class="label">Task List</h3>
+              <span class="task-queue-count" id="task-queue-count"></span>
+            </div>
+            <div class="task-list" id="phase-task-list"></div>
+          </div>
+
+          <div class="now-card">
+            <div class="now-head">
+              <span class="now-flag"><span class="live-dot"></span><span class="label" id="selected-task-kind">Current Action</span></span>
+              <span class="chip" id="now-status"></span>
+            </div>
+            <h2 class="now-title" id="now-title"></h2>
+            <div class="now-meta">
+              <div class="meta-cell">
+                <div class="k"><span class="label">Owner</span></div>
+                <p class="v" id="now-owner"></p>
+              </div>
+              <div class="meta-cell">
+                <div class="k"><span class="label">Support</span></div>
+                <p class="v" id="now-support"></p>
+              </div>
+              <div class="meta-cell" id="now-block-cell">
+                <div class="k"><span class="label">Blocker</span></div>
+                <p class="v" id="now-blocker"></p>
+              </div>
+            </div>
+            <div class="next-band">
+              <span class="nb-flag"><span class="ar">→</span> <span id="selected-task-detail-label">NEXT</span></span>
+              <span class="nb-text" id="now-next"></span>
+            </div>
+            <div class="task-detail-grid hidden" id="task-detail-grid">
+              <div class="task-detail-box" id="task-evidence-box">
+                <span class="label">Evidence</span>
+                <ul class="task-detail-list" id="task-evidence-list"></ul>
+              </div>
+              <div class="task-detail-box" id="task-checks-box">
+                <span class="label">Checks</span>
+                <ul class="task-detail-list" id="task-checks-list"></ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section-shell" aria-labelledby="next-heading">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="section-index">04</span>
+            <h2 class="section-title" id="next-heading">Next</h2>
+          </div>
+        </div>
+
+        <section class="steering" aria-label="Next">
+          <article class="steering-move">
+            <div class="steering-head">
+              <div>
+                <p class="label">Recommended Next Move</p>
+                <h2 class="steering-title" id="recommended-title"></h2>
+              </div>
+              <span class="chip" id="recommended-status"></span>
+            </div>
+            <p class="steering-body" id="recommended-why"></p>
+            <div class="steering-action">
+              <p class="label">Action</p>
+              <p id="recommended-action"></p>
+            </div>
+            <div class="steering-meta">
+              <div class="steering-meta-cell">
+                <p class="label">Owner</p>
+                <p class="v" id="recommended-owner"></p>
+              </div>
+              <div class="steering-meta-cell">
+                <p class="label">Source</p>
+                <p class="v" id="recommended-source"></p>
+              </div>
+            </div>
+          </article>
+
+        </section>
+
+      </section>
+
+      <section class="section-shell section-before-drawers" aria-labelledby="decision-work-heading">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="section-index">05</span>
+            <h2 class="section-title" id="decision-work-heading">Decision / Work Queue</h2>
+          </div>
+        </div>
+
+        <article class="decision-queue">
+          <div class="decision-head">
+            <div>
+              <h3 class="label">Deferred Ryan Decisions</h3>
+              <p class="section-note" id="decision-queue-note"></p>
+            </div>
+            <span class="decision-count" id="decision-count"></span>
+          </div>
+          <div class="decision-list" id="decision-list"></div>
+        </article>
+      </section>
+
+      <section class="workflow-shell waiting-shell" aria-label="Waiting and scheduled">
+        <button class="workflow-toggle" id="waiting-toggle" type="button" aria-label="Show waiting and scheduled items" aria-expanded="false" aria-controls="waiting-drawer">
+          <span class="workflow-title">
+            <span class="label">Waiting / Scheduled</span>
+            <span class="hint" id="waiting-count"></span>
+          </span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="workflow-drawer waiting-drawer" id="waiting-drawer">
+          <div class="waiting-list" id="waiting-list"></div>
+        </div>
+      </section>
+
+      <section class="workflow-shell" aria-label="Ideas">
+        <button class="workflow-toggle" id="ideas-toggle" type="button" aria-label="Show ideas" aria-expanded="false" aria-controls="ideas-drawer">
+          <span class="workflow-title">
+            <span class="label">Ideas</span>
+            <span class="hint" id="ideas-count"></span>
+          </span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="workflow-drawer" id="ideas-drawer">
+          <div class="waiting-list" id="ideas-list"></div>
+        </div>
+      </section>
+
+      <section class="workflow-shell" aria-label="Issues">
+        <button class="workflow-toggle" id="issues-toggle" type="button" aria-label="Show issues" aria-expanded="false" aria-controls="issues-drawer">
+          <span class="workflow-title">
+            <span class="label">Issues</span>
+            <span class="hint" id="issues-count"></span>
+          </span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="workflow-drawer" id="issues-drawer">
+          <div class="waiting-list" id="issues-list"></div>
+        </div>
+      </section>
+
+      <!-- HOW WORK MOVES -->
+      <section class="workflow-shell" aria-label="Workflow">
+        <button class="workflow-toggle" id="workflow-toggle" type="button" aria-label="Show workflow details" aria-expanded="false" aria-controls="workflow-drawer">
+          <span class="workflow-title">
+            <span class="label">Workflow</span>
+            <span class="hint">How work moves through agents and repo</span>
+          </span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="workflow-drawer" id="workflow-drawer">
+          <div class="wf-head">
+            <h3 class="label">Workflow &mdash; How Work Moves</h3>
+            <div class="wf-legend">
+              <span><i class="lg core"></i> core</span>
+              <span><i class="lg std"></i> step</span>
+              <span><i class="lg opt"></i> optional</span>
+            </div>
+          </div>
+          <p class="wf-operational" id="workflow-source-of-truth"></p>
+          <div class="pipeline" id="pipeline"></div>
+          <div class="wf-edges" id="wf-edges"></div>
+          <div class="wf-note" id="wf-note"></div>
+        </div>
+      </section>
+
+      <section class="workflow-shell" aria-label="Project files">
+        <button class="workflow-toggle" id="files-toggle" type="button" aria-label="Show project files" aria-expanded="false" aria-controls="files-drawer">
+          <span class="workflow-title">
+            <span class="label">Project Files</span>
+            <span class="hint" id="files-count"></span>
+          </span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="workflow-drawer" id="files-drawer">
+          <nav class="files" id="files" aria-label="Project files"></nav>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="failed-modal" role="dialog" aria-modal="true" aria-labelledby="failed-modal-title">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <div>
+          <p class="label">Router Failures</p>
+          <h3 id="failed-modal-title">Failed Queue Items</h3>
+        </div>
+        <button class="modal-close" id="failed-modal-close" type="button" aria-label="Close failed queue details">Close</button>
+      </div>
+      <div class="modal-body" id="failed-modal-body"></div>
+    </div>
+  </div>
+
+  <script id="dashboard-state" type="application/json">
+{
+  "project": {
+    "name": "Expense Tracker",
+    "slug": "expense-tracker",
+    "date": "2026-07-17",
+    "sourceOfTruth": "Expense Tracker repo and GitHub",
+    "mode": "Full Runway OS command center",
+    "lastUpdated": "2026-07-17 9:40 PM CST",
+    "scaffold": {
+      "product": "Runway OS",
+      "contractVersion": "0.1.2",
+      "installer": "scratch-project-command-center",
+      "installerVersion": "0.1.2",
+      "parentChangeLog": "Projects Project/command-center/template-productization/scaffold-change-log.md",
+      "profile": "sensitive-retrofit",
+      "installedAt": "2026-07-17",
+      "lastUpdatedAt": "2026-07-17"
+    },
+    "helperBundle": "sensitive-retrofit"
+  },
+  "childRepo": {
+    "localGit": "required",
+    "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
+    "parentTracking": "pointer-only",
+    "durabilityStatus": "Runway OS install is verified locally; confirmed work block 0B is committing and pushing codex/runway-os-full-install"
+  },
+  "phase": {
+    "name": "Full Runway OS Installation And Baseline",
+    "status": "active",
+    "summary": "The complete Runway OS is verified and the roadmap is confirmed; target-branch durability is the final Phase 0 task before live recovery.",
+    "progress": 99
+  },
+  "currentTask": {
+    "title": "Task 7: Commit and push the verified Runway OS baseline",
+    "owner": "Codex",
+    "status": "current",
+    "supportingAgent": "Git and existing GitHub remote",
+    "nextAction": "Stage only PROJECT_STRUCTURE.md and command-center, commit, and push codex/runway-os-full-install without force.",
+    "blocker": "None; live work block 1A remains queued until durability completes"
+  },
+  "routerHealth": {
+    "status": "healthy",
+    "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
+    "lastChecked": "2026-07-17",
+    "command": "node command-center/agent-router/scripts/queue-summary.js",
+    "healthCommand": "node command-center/scripts/health-check.js",
+    "counts": {
+      "todo": 0,
+      "working": 0,
+      "review": 0,
+      "done": 0,
+      "needsHuman": 0,
+      "failed": 0
+    },
+    "taskCounts": {
+      "done": 0,
+      "failed": 0
+    },
+    "activeTasks": [],
+    "failedDetails": [],
+    "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
+  },
+  "recommendedNextMove": {
+    "title": "Make the verified baseline durable",
+    "status": "in-progress",
+    "owner": "Codex",
+    "why": "Ryan confirmed the roadmap, target durability, and live recovery sequence; the Runway OS baseline should exist on GitHub before the workflow changes.",
+    "action": "Complete work block 0B, then activate confirmed work block 1A.",
+    "source": "command-center/roadmap.md"
+  },
+  "decisionsNeeded": [],
+  "waitingOnRyan": {
+    "summary": "No Ryan decision blocks confirmed work blocks 0B or 1A.",
+    "items": []
+  },
+  "questionBoundaries": {
+    "phaseQuestions": "Ryan will confirm, add, remove, or rename proposed phases after work block 0A.",
+    "decisionQueue": "Only intentionally deferred Ryan decisions belong here; none block the current bootstrap.",
+    "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
+  },
+  "agents": [
+    {
+      "name": "Ryan",
+      "role": "Owner and final decision-maker for direction and live actions",
+      "active": true
+    },
+    {
+      "name": "Codex Desktop",
+      "role": "Runway OS steward, planner, implementation lead, reviewer, and verifier",
+      "active": true
+    },
+    {
+      "name": "Claude Desktop",
+      "role": "Optional specialist reviewer through sanitized handoff packets",
+      "active": false
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-0",
+      "name": "Phase 0",
+      "label": "Full Runway OS Installation And Baseline",
+      "status": "active"
+    },
+    {
+      "id": "phase-1",
+      "name": "Phase 1",
+      "label": "Operational Reliability Recovery",
+      "status": "upcoming"
+    },
+    {
+      "id": "phase-2",
+      "name": "Phase 2",
+      "label": "Project Truth And Documentation Recovery",
+      "status": "upcoming"
+    },
+    {
+      "id": "phase-3",
+      "name": "Phase 3",
+      "label": "Functional Audit And Prioritization",
+      "status": "upcoming"
+    },
+    {
+      "id": "phase-4",
+      "name": "Phase 4",
+      "label": "Core Repairs And Regression Coverage",
+      "status": "upcoming"
+    },
+    {
+      "id": "phase-5",
+      "name": "Phase 5",
+      "label": "UX Polish, Operations, And Durable Handoff",
+      "status": "upcoming"
+    }
+  ],
+  "phaseWorkBlocks": [
+    {
+      "id": "phase-0-block-a",
+      "phaseId": "phase-0",
+      "label": "0A",
+      "name": "Full Runway OS Install",
+      "status": "done",
+      "includedTasks": [
+        "Task 1",
+        "Task 2",
+        "Task 3",
+        "Task 4",
+        "Task 5"
+      ],
+      "excludedTasks": [
+        "Task 6"
+      ],
+      "owner": "Codex",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block requires scaffold installation, source-of-truth judgment, cross-file integration, local verification, and dashboard stewardship.",
+      "expectedFiles": [
+        "PROJECT_STRUCTURE.md",
+        "command-center/"
+      ],
+      "stopConditions": [
+        "An existing project file would be overwritten",
+        "Verification requires credentials, production data, or a live financial mutation",
+        "The scope expands into application implementation or production operations",
+        "Meaningful Runway OS health checks cannot be adapted to the existing repo shape"
+      ],
+      "verification": [
+        "node command-center/scripts/refresh-dashboard.js",
+        "node command-center/scripts/health-check.js",
+        ".venv/bin/python scripts/smoke_test.py",
+        "git diff --check",
+        "generated dashboard inspection",
+        "git status --short --branch"
+      ],
+      "reportBack": "Reported created surfaces, passing verification, preserved files, local-only durability, proposed roadmap, and the first operational block for Ryan review.",
+      "result": "Installed and verified the full Runway OS command center without changing application or production behavior."
+    },
+    {
+      "id": "phase-1-block-a",
+      "phaseId": "phase-1",
+      "label": "1A",
+      "name": "Restore Daily Sync And Operational Baseline",
+      "status": "confirmed",
+      "includedTasks": [
+        "Task 1",
+        "Task 2",
+        "Task 3"
+      ],
+      "excludedTasks": [
+        "Task 4"
+      ],
+      "owner": "Codex",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block requires a controlled GitHub mutation, sanitized workflow intake, live-system stop judgment, and Runway OS closeout.",
+      "expectedLiveEffect": "Enable the scheduled workflow and dispatch one run that may insert newly available transactions and invoke the existing Luxe Legacy bridge.",
+      "stopConditions": [
+        "GitHub authorization or workflow access is unavailable",
+        "The workflow targets an unexpected endpoint",
+        "The run exposes credential or financial-row output",
+        "Any entity sync, downstream bridge, production check, or workflow job fails",
+        "Recovery requires source-code, secret, Fly, database, or authentication changes"
+      ],
+      "verification": [
+        "Record workflow state before and after enable",
+        "Confirm one manual dispatch and wait for completion",
+        "Record only sanitized per-entity success or failure",
+        "Confirm the workflow remains active",
+        "Verify production and demo root HTTP status",
+        "Refresh and health-check Runway OS"
+      ],
+      "reportBack": "Report exact workflow state change, sanitized controlled-run outcome, HTTP health baseline, stop conditions, Runway OS closeout, and target durability."
+    },
+    {
+      "id": "phase-0-block-b",
+      "phaseId": "phase-0",
+      "label": "0B",
+      "name": "Target Durability Closeout",
+      "status": "active",
+      "includedTasks": [
+        "Task 7"
+      ],
+      "excludedTasks": [
+        "Phase 1 Tasks 1-4"
+      ],
+      "owner": "Codex",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block requires exact staging boundaries, source-of-truth verification, and non-force target-branch push.",
+      "expectedFiles": [
+        "PROJECT_STRUCTURE.md",
+        "command-center/"
+      ],
+      "stopConditions": [
+        "Staging includes any path outside PROJECT_STRUCTURE.md and command-center",
+        "Verification regresses",
+        "Push requires force or encounters unexpected remote divergence"
+      ],
+      "verification": [
+        "Inspect staged paths and diff summary",
+        "Commit the verified baseline",
+        "Push codex/runway-os-full-install without force",
+        "Verify upstream branch and remote commit"
+      ],
+      "reportBack": "Transition to active Phase 1 work block 1A only after the verified baseline is committed and pushed."
+    }
+  ],
+  "phaseTasks": [
+    {
+      "phaseId": "phase-0",
+      "taskId": "P0-T1",
+      "title": "Task 1: Inventory the existing repo and preserve pre-existing state",
+      "status": "done",
+      "owner": "Codex",
+      "summary": "Record repo identity, planning surfaces, safe checks, live workflow state, and closed data boundaries.",
+      "result": "Read-only intake completed; tracked baseline was clean and two pre-existing untracked files were preserved.",
+      "evidence": [
+        "command-center/retrofit-intake.md"
+      ]
+    },
+    {
+      "phaseId": "phase-0",
+      "taskId": "P0-T2",
+      "title": "Task 2: Install the full Runway OS scaffold on a dedicated branch",
+      "status": "done",
+      "owner": "Codex",
+      "summary": "Stage the standard scaffold separately and transplant only new Runway OS surfaces.",
+      "result": "Created codex/runway-os-full-install and added PROJECT_STRUCTURE.md plus the complete command-center tree without overwriting existing files.",
+      "evidence": [
+        "PROJECT_STRUCTURE.md",
+        "command-center/state.json"
+      ]
+    },
+    {
+      "phaseId": "phase-0",
+      "taskId": "P0-T3",
+      "title": "Task 3: Migrate current project-control truth",
+      "status": "done",
+      "owner": "Codex",
+      "summary": "Replace generic scaffold placeholders with Expense Tracker's canonical current state, roadmap, decisions, rules, architecture, issues, and migration map.",
+      "result": "Created canonical project-control sources, the source migration map, parked issues, and proposed multiphase roadmap."
+    },
+    {
+      "phaseId": "phase-0",
+      "taskId": "P0-T4",
+      "title": "Task 4: Adapt the verification contract to the existing repo shape",
+      "status": "done",
+      "owner": "Codex",
+      "summary": "Require existing product roots for retrofit profiles instead of scratch-only app and scratch folders.",
+      "result": "Health checks now preserve and validate the existing web, core, and scripts product roots."
+    },
+    {
+      "phaseId": "phase-0",
+      "taskId": "P0-T5",
+      "title": "Task 5: Verify and close the bootstrap",
+      "status": "done",
+      "owner": "Codex",
+      "summary": "Refresh and inspect the dashboard, run Runway OS health checks, rerun the synthetic smoke suite, and verify the diff and worktree.",
+      "result": "Refresh, health check, synthetic smoke suite, JSON validation, visual inspection, and whitespace checks passed."
+    },
+    {
+      "phaseId": "phase-0",
+      "taskId": "P0-T6",
+      "title": "Task 6: Review the proposed roadmap and authorize the first operational block",
+      "status": "done",
+      "owner": "Ryan",
+      "summary": "Confirm or change the proposed phases and approve the exact Phase 1 work block before any external or production mutation.",
+      "result": "Ryan accepted Phases 1-5, target-branch durability, and work block 1A with its documented live effects."
+    },
+    {
+      "phaseId": "phase-0",
+      "taskId": "P0-T7",
+      "title": "Task 7: Commit and push the verified Runway OS baseline",
+      "status": "current",
+      "owner": "Codex",
+      "summary": "Stage only the approved Runway OS paths, commit the install branch, and push it without force.",
+      "nextAction": "Verify, stage PROJECT_STRUCTURE.md and command-center only, commit, and push the branch.",
+      "blocker": "None"
+    },
+    {
+      "phaseId": "phase-1",
+      "taskId": "P1-T1",
+      "title": "Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Restore the intended schedule through an explicitly approved external GitHub mutation."
+    },
+    {
+      "phaseId": "phase-1",
+      "taskId": "P1-T2",
+      "title": "Task 2: Verify one controlled sync execution",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Verify all-entity results and failure reporting without exposing financial row data."
+    },
+    {
+      "phaseId": "phase-1",
+      "taskId": "P1-T3",
+      "title": "Task 3: Establish production and demo health baselines",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Capture safe HTTP, deploy, and workflow health checks in Runway OS."
+    },
+    {
+      "phaseId": "phase-1",
+      "taskId": "P1-T4",
+      "title": "Task 4: Define recurring operational checks",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Decide what remains manual and what later becomes a monitored automation."
+    },
+    {
+      "phaseId": "phase-2",
+      "taskId": "P2-T1",
+      "title": "Task 1: Rebuild the root README for the current architecture",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Replace retired Streamlit and no-bank-linking guidance with the current Flask, Plaid, Fly.io, and three-entity system."
+    },
+    {
+      "phaseId": "phase-2",
+      "taskId": "P2-T2",
+      "title": "Task 2: Decide the future of PROJECT_KNOWLEDGE.md and plan.md",
+      "status": "planned",
+      "owner": "Ryan",
+      "summary": "Approve archive, replacement, or historical labels after useful content is migrated."
+    },
+    {
+      "phaseId": "phase-2",
+      "taskId": "P2-T3",
+      "title": "Task 3: Reconcile CLAUDE.md and the untracked AGENTS.md",
+      "status": "planned",
+      "owner": "Ryan and Codex",
+      "summary": "Define one maintained instruction source and decide whether AGENTS.md becomes tracked."
+    },
+    {
+      "phaseId": "phase-2",
+      "taskId": "P2-T4",
+      "title": "Task 4: Document deployment, data, and side-effect boundaries",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Create current operator guidance without credentials or row-level financial detail."
+    },
+    {
+      "phaseId": "phase-3",
+      "taskId": "P3-T1",
+      "title": "Task 1: Audit core workflows for all three entities",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Evaluate Personal, BFM, and Luxe Legacy behavior under explicit data-handling rules."
+    },
+    {
+      "phaseId": "phase-3",
+      "taskId": "P3-T2",
+      "title": "Task 2: Audit product subsystems",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Review sync, import, matching, categorization, reporting, planning, payroll, weekly, waterfall, PWA, and public dashboard behavior."
+    },
+    {
+      "phaseId": "phase-3",
+      "taskId": "P3-T3",
+      "title": "Task 3: Convert findings into ranked issues",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Record reproduction, impact, severity, and acceptance checks."
+    },
+    {
+      "phaseId": "phase-3",
+      "taskId": "P3-T4",
+      "title": "Task 4: Confirm repair order and work blocks",
+      "status": "planned",
+      "owner": "Ryan",
+      "summary": "Approve the implementation sequence before fixes begin."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1",
+      "title": "Task 1: Repair confirmed reliability and correctness defects",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Implement prioritized fixes in bounded verified work blocks."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T2",
+      "title": "Task 2: Expand regression coverage",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Add synthetic tests around repaired workflows and entity isolation."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T3",
+      "title": "Task 3: Add safe CI checks",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Create private-repo CI that uses only synthetic data and no live credentials."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T4",
+      "title": "Task 4: Deploy an explicitly approved release",
+      "status": "planned",
+      "owner": "Ryan and Codex",
+      "summary": "Deploy only after local and CI verification plus a release approval gate."
+    },
+    {
+      "phaseId": "phase-5",
+      "taskId": "P5-T1",
+      "title": "Task 1: Review desktop, mobile, and installed-PWA workflows",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Evaluate usability and accessibility after core repairs."
+    },
+    {
+      "phaseId": "phase-5",
+      "taskId": "P5-T2",
+      "title": "Task 2: Polish high-friction journeys",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Improve confirmed friction without widening financial or authentication risk."
+    },
+    {
+      "phaseId": "phase-5",
+      "taskId": "P5-T3",
+      "title": "Task 3: Finalize runbooks and release evidence",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Make project re-entry, monitoring, and maintenance durable."
+    },
+    {
+      "phaseId": "phase-5",
+      "taskId": "P5-T4",
+      "title": "Task 4: Complete target and parent durability closeout",
+      "status": "planned",
+      "owner": "Codex",
+      "summary": "Commit and push target history and record a compact sanitized parent pointer when authorized."
+    }
+  ],
+  "architecture": [
+    {
+      "from": "Ryan",
+      "to": "Codex",
+      "label": "direction and live-action approvals"
+    },
+    {
+      "from": "Codex",
+      "to": "Runway OS",
+      "label": "updates project source of truth"
+    },
+    {
+      "from": "Runway OS",
+      "to": "Flask app",
+      "label": "orders verified work"
+    },
+    {
+      "from": "Flask app",
+      "to": "Core financial logic",
+      "label": "uses"
+    },
+    {
+      "from": "GitHub Actions",
+      "to": "Fly and Plaid",
+      "label": "approved automation"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "Current Focus",
+      "path": "command-center/now.md"
+    },
+    {
+      "name": "Roadmap",
+      "path": "command-center/roadmap.md"
+    },
+    {
+      "name": "Decision Log",
+      "path": "command-center/decisions.md"
+    },
+    {
+      "name": "Operating Rules",
+      "path": "command-center/operating-rules.md"
+    },
+    {
+      "name": "Retrofit Intake",
+      "path": "command-center/retrofit-intake.md"
+    },
+    {
+      "name": "Project Structure",
+      "path": "PROJECT_STRUCTURE.md"
+    },
+    {
+      "name": "Architecture",
+      "path": "command-center/architecture.md"
+    },
+    {
+      "name": "Ideas",
+      "path": "command-center/ideas.md"
+    },
+    {
+      "name": "Issues",
+      "path": "command-center/issues.md"
+    },
+    {
+      "name": "Bootstrap Log",
+      "path": "command-center/logs/2026-07-17-runway-os-bootstrap.md"
+    },
+    {
+      "name": "Agent Selection",
+      "path": "command-center/agent-selection.md"
+    },
+    {
+      "name": "Claude Handoff Template",
+      "path": "command-center/templates/claude-handoff.md"
+    },
+    {
+      "name": "Second Opinion Template",
+      "path": "command-center/templates/second-opinion.md"
+    },
+    {
+      "name": "Closeout Report Template",
+      "path": "command-center/templates/closeout-report.md"
+    },
+    {
+      "name": "Existing-Project Retrofit Template",
+      "path": "command-center/templates/existing-project-retrofit-intake.md"
+    },
+    {
+      "name": "Project Manager Helper",
+      "path": "command-center/skills/project-manager/SKILL.md"
+    },
+    {
+      "name": "Dashboard Refresh Helper",
+      "path": "command-center/skills/dashboard-refresh/SKILL.md"
+    },
+    {
+      "name": "Second Opinion Helper",
+      "path": "command-center/skills/second-opinion/SKILL.md"
+    },
+    {
+      "name": "Claude Handoff Helper",
+      "path": "command-center/skills/claude-handoff/SKILL.md"
+    },
+    {
+      "name": "Queue Summary Script",
+      "path": "command-center/agent-router/scripts/queue-summary.js"
+    }
+  ],
+  "recentActivity": [
+    {
+      "time": "2026-07-17",
+      "text": "Completed read-only existing-project intake and identified a disabled Daily Plaid Sync workflow."
+    },
+    {
+      "time": "2026-07-17",
+      "text": "Ryan confirmed a full in-repo Runway OS install rather than a thin overlay."
+    },
+    {
+      "time": "2026-07-17",
+      "text": "Created codex/runway-os-full-install and added the standard protected-retrofit scaffold without overwriting existing files."
+    },
+    {
+      "time": "2026-07-17",
+      "text": "Completed work block 0A with passing Runway OS health, synthetic application smoke, visual dashboard inspection, and whitespace checks."
+    },
+    {
+      "time": "2026-07-17",
+      "text": "Ryan accepted Phases 1-5, authorized target-branch commit/push, and confirmed work block 1A with its controlled live effects."
+    }
+  ],
+  "openQuestions": [
+    "What recurring check should prevent or detect future scheduled-workflow inactivity after 1A?"
+  ],
+  "projectQuestions": [
+    "Should AGENTS.md become a tracked instruction source during Phase 2?",
+    "Which legacy documentation should be replaced, archived, or retained after migration?"
+  ],
+  "ideas": [],
+  "issues": [
+    {
+      "title": "Daily Plaid Sync disabled for inactivity",
+      "summary": "The scheduled workflow is disabled after successful runs through 2026-07-15; restoring it requires a separately confirmed external-action block.",
+      "status": "parked",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Project documentation contradicts current architecture",
+      "summary": "Tracked docs mix retired Streamlit guidance with the current Flask, Plaid, Fly.io, and three-entity system.",
+      "status": "parked",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    }
+  ],
+  "waitingScheduled": [],
+  "nextMilestone": {
+    "name": "Verified Runway OS baseline pushed",
+    "description": "The full command center is committed and pushed on codex/runway-os-full-install before work block 1A changes the disabled workflow."
+  },
+  "verification": {
+    "dashboardRefresh": "pass",
+    "healthCheck": "pass",
+    "browserSmoke": "pass; generated dashboard visually inspected at 1600x1400",
+    "applicationSmoke": "pass; synthetic temp DATA_DIR suite",
+    "gitDiffCheck": "pass; tracked diff and new-file whitespace checks"
+  }
+}
+</script>
+
+  <script>
+    (function () {
+      const state = JSON.parse(document.getElementById("dashboard-state").textContent);
+      const byId = (id) => document.getElementById(id);
+      const slug = (v) => String(v || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const esc = (v) => String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      const text = (id, v) => { const el = byId(id); if (el) el.textContent = v; };
+
+      const p = state.project || {};
+      const phase = state.phase || {};
+      const allPhaseTasks = state.phaseTasks || [];
+      const phases = state.phases || [];
+      const activeIdx = Math.max(0, phases.findIndex((x) => slug(x.status) === "active"));
+      const activePhase = phases[activeIdx] || {};
+      const activePhaseId = activePhase.id || slug(activePhase.name);
+      const workBlock = state.currentWorkBlock || {};
+      const workBlockIsActive = ["active", "current", "in-progress", "in progress"].includes(slug(workBlock.status));
+      const workBlockTaskIds = new Set((workBlockIsActive && Array.isArray(workBlock.includedTasks) ? workBlock.includedTasks : [])
+        .map((item) => item.id || item.taskId || item.number)
+        .filter(Boolean));
+      const explicitWorkBlocks = (state.phaseWorkBlocks || []).filter((item) => !item.phaseId || item.phaseId === activePhaseId);
+      const phaseTasks = allPhaseTasks
+        .filter((item) => !item.phaseId || item.phaseId === activePhaseId)
+        .map((item) => ({
+          ...item,
+          inCurrentWorkBlock: Boolean(
+            (item.taskId && workBlockTaskIds.has(item.taskId)) ||
+            (item.id && workBlockTaskIds.has(item.id)) ||
+            (item.number && workBlockTaskIds.has(item.number))
+          )
+        }));
+      const currentPhaseTask = phaseTasks.find((x) => slug(x.status) === "current") || {};
+      const task = Object.assign({}, currentPhaseTask, state.currentTask || {});
+      const agents = state.agents || [];
+      const routerHealth = state.routerHealth || {};
+      const routerCounts = routerHealth.counts || {};
+      const failedDetails = routerHealth.failedDetails || [];
+
+      /* ---- topbar ---- */
+      text("side-mode", p.mode || "");
+      text("project-title", p.name || "Projects Project AI Command Center");
+      text("project-date", "Last updated · " + (p.lastUpdated || routerHealth.lastChecked || p.date || "—"));
+      text("workflow-source-of-truth", "Source of truth: " + (p.sourceOfTruth || "Repo") + ". Router state is derived during dashboard refresh.");
+
+      /* ---- phase counter ---- */
+      const counterIdx = phases.length ? activeIdx + 1 : 0;
+      text("phase-counter", phases.length ? counterIdx + " / " + phases.length : "—");
+
+      /* ---- stepper ---- */
+      const pct = Math.max(0, Math.min(100, Number(phase.progress) || 0));
+      text("stepper-pct", pct);
+
+      byId("stepper").innerHTML = phases.map((ph, i) => {
+        const s = slug(ph.status);
+        let cls = s;
+        if (s === "done" || i < activeIdx) cls = "done";
+        else if (s === "active") cls = "active";
+        else if (s === "next") cls = "next";
+        else if (s === "parked") cls = "parked";
+        else cls = "upcoming";
+        const glyph = cls === "done" ? "✓" : cls === "active" ? "●" : (i + 1);
+        return (
+          '<div class="step ' + cls + '">' +
+            '<div class="step-node">' + glyph + "</div>" +
+            '<div class="step-body">' +
+              '<div class="step-name">' + esc(ph.name) + "</div>" +
+              '<div class="step-label">' + esc(ph.label) + "</div>" +
+              '<div class="step-status">' + esc(ph.status) + "</div>" +
+            "</div>" +
+          "</div>"
+        );
+      }).join("");
+
+      /* ---- project-level drawer ---- */
+      byId("project-questions").innerHTML = (state.projectQuestions || []).map((q, i) =>
+        '<li class="q-item"><span class="qn">PQ' + (i + 1) + "</span><span>" + esc(q) + "</span></li>"
+      ).join("");
+      byId("project-drawer-toggle").addEventListener("click", () => {
+        const drawer = byId("project-drawer");
+        const nextOpen = !drawer.classList.contains("open");
+        drawer.classList.toggle("open", nextOpen);
+        byId("project-drawer-toggle").setAttribute("aria-expanded", nextOpen ? "true" : "false");
+        byId("project-drawer-toggle").setAttribute(
+          "aria-label",
+          nextOpen ? "Hide project-level questions" : "Show project-level questions"
+        );
+      });
+      byId("phase-drawer-toggle").addEventListener("click", () => {
+        const drawer = byId("phase-drawer");
+        const nextOpen = !drawer.classList.contains("open");
+        drawer.classList.toggle("open", nextOpen);
+        byId("phase-drawer-toggle").setAttribute("aria-expanded", nextOpen ? "true" : "false");
+        byId("phase-drawer-toggle").setAttribute(
+          "aria-label",
+          nextOpen ? "Hide phase questions" : "Show phase questions"
+        );
+      });
+      byId("waiting-toggle").addEventListener("click", () => {
+        const drawer = byId("waiting-drawer");
+        const nextOpen = !drawer.classList.contains("open");
+        drawer.classList.toggle("open", nextOpen);
+        byId("waiting-toggle").setAttribute("aria-expanded", nextOpen ? "true" : "false");
+        byId("waiting-toggle").setAttribute("aria-label", nextOpen ? "Hide waiting and scheduled items" : "Show waiting and scheduled items");
+      });
+      byId("ideas-toggle").addEventListener("click", () => {
+        const drawer = byId("ideas-drawer");
+        const nextOpen = !drawer.classList.contains("open");
+        drawer.classList.toggle("open", nextOpen);
+        byId("ideas-toggle").setAttribute("aria-expanded", nextOpen ? "true" : "false");
+        byId("ideas-toggle").setAttribute("aria-label", nextOpen ? "Hide ideas" : "Show ideas");
+      });
+      byId("issues-toggle").addEventListener("click", () => {
+        const drawer = byId("issues-drawer");
+        const nextOpen = !drawer.classList.contains("open");
+        drawer.classList.toggle("open", nextOpen);
+        byId("issues-toggle").setAttribute("aria-expanded", nextOpen ? "true" : "false");
+        byId("issues-toggle").setAttribute("aria-label", nextOpen ? "Hide issues" : "Show issues");
+      });
+      byId("workflow-toggle").addEventListener("click", () => {
+        const drawer = byId("workflow-drawer");
+        const nextOpen = !drawer.classList.contains("open");
+        drawer.classList.toggle("open", nextOpen);
+        byId("workflow-toggle").setAttribute("aria-expanded", nextOpen ? "true" : "false");
+        byId("workflow-toggle").setAttribute("aria-label", nextOpen ? "Hide workflow details" : "Show workflow details");
+      });
+      byId("files-toggle").addEventListener("click", () => {
+        const drawer = byId("files-drawer");
+        const nextOpen = !drawer.classList.contains("open");
+        drawer.classList.toggle("open", nextOpen);
+        byId("files-toggle").setAttribute("aria-expanded", nextOpen ? "true" : "false");
+        byId("files-toggle").setAttribute("aria-label", nextOpen ? "Hide project files" : "Show project files");
+      });
+
+      /* ---- active phase card ---- */
+      text("phase-card-title", activePhase.name || ("Phase " + (counterIdx || 1)));
+
+      /* ---- phase task list ---- */
+      const doneCount = phaseTasks.filter((x) => slug(x.status) === "done").length;
+      text(
+        "task-queue-count",
+        phaseTasks.length
+          ? doneCount + " done · " + phaseTasks.length + " phase tasks" + (workBlockIsActive && workBlockTaskIds.size ? " · blue = " + (workBlock.name || "current work block") : "")
+          : "No tasks yet"
+      );
+      let selectedTaskIndex = Math.max(0, phaseTasks.findIndex((x) => slug(x.status) === "current"));
+      byId("phase-task-list").innerHTML = phaseTasks.map((item, index) => {
+        const s = slug(item.status) || "upcoming";
+        const isCurrent = s === "current";
+        const statusText = isCurrent ? "current action" : (item.status || "upcoming");
+        const blockClass = item.inCurrentWorkBlock ? " in-work-block" : "";
+        const blockTag = item.inCurrentWorkBlock ? " · work block" : "";
+        return (
+          '<button type="button" class="task-item ' + esc(s) + blockClass + (index === selectedTaskIndex ? " selected" : "") + '" data-task-index="' + index + '"' + (isCurrent ? ' data-current-task="true"' : "") + ">" +
+            '<span class="task-pin"></span>' +
+            '<div class="task-copy">' +
+              '<div class="task-name">' + esc(item.title) + "</div>" +
+              '<div class="task-status">' + esc(statusText + blockTag) + "</div>" +
+            "</div>" +
+          "</button>"
+        );
+      }).join("");
+      const currentTaskNode = document.querySelector('[data-current-task="true"]');
+      if (currentTaskNode) currentTaskNode.scrollIntoView({ block: "nearest" });
+
+      /* ---- router health ---- */
+      text("router-status", (routerHealth.status || "unknown") + (routerHealth.lastChecked ? " · " + routerHealth.lastChecked : ""));
+      text("router-summary", routerHealth.summary || "Router queue state has not been summarized yet.");
+      const routerCommand = routerHealth.command || "node command-center/agent-router/scripts/queue-summary.js";
+      const routerCommandNode = byId("router-command");
+      text("router-command", "Source: queue-summary.js");
+      routerCommandNode.setAttribute("title", routerCommand);
+      routerCommandNode.setAttribute("aria-label", "Router health source command: " + routerCommand);
+      text("router-review-count", routerCounts.review ?? "—");
+      text("router-working-count", routerCounts.working ?? "—");
+      text("router-done-count", routerCounts.done ?? "—");
+      text("router-failed-count", routerCounts.failed ?? "—");
+      const failedMetric = byId("router-failed-metric");
+      failedMetric.disabled = failedDetails.length === 0;
+      failedMetric.setAttribute(
+        "aria-label",
+        failedDetails.length
+          ? "Show failed router queue items"
+          : "No failed router queue details"
+      );
+
+      const failedModal = byId("failed-modal");
+      const failedModalTitle = byId("failed-modal-title");
+      const failedModalBody = byId("failed-modal-body");
+      const closeFailedModal = () => failedModal.classList.add("hidden");
+      const renderFailedModal = () => {
+        const failedFileCount = routerCounts.failed ?? 0;
+        const failedTaskCount = (routerHealth.taskCounts || {}).failed ?? failedDetails.length;
+        failedModalTitle.textContent = failedFileCount + " failed queue files · " + failedTaskCount + " task IDs";
+        failedModalBody.innerHTML = failedDetails.length
+          ? failedDetails.map((item) => {
+              const meta = [
+                item.type ? "type " + item.type : "",
+                item.assignedTo ? "worker " + item.assignedTo : "",
+                item.modified ? "updated " + item.modified.slice(0, 10) : ""
+              ].filter(Boolean).join(" · ");
+              const files = (item.files || []).map((file) => esc(file.kind + ": " + file.name)).join("<br>");
+              return (
+                '<article class="failed-item">' +
+                  "<h4>" + esc(item.id) + "</h4>" +
+                  '<p class="failed-meta">' + esc(meta || "No metadata recorded.") + "</p>" +
+                  '<p class="failed-files">' + files + "</p>" +
+                "</article>"
+              );
+            }).join("")
+          : '<article class="failed-item"><p class="failed-meta">No failed queue items are recorded.</p></article>';
+      };
+      failedMetric.addEventListener("click", () => {
+        renderFailedModal();
+        failedModal.classList.remove("hidden");
+      });
+      byId("failed-modal-close").addEventListener("click", closeFailedModal);
+      failedModal.addEventListener("click", (event) => {
+        if (event.target === failedModal) closeFailedModal();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeFailedModal();
+      });
+
+      /* ---- recommended next move ---- */
+      const recommended = state.recommendedNextMove || {};
+      const questionBoundaries = state.questionBoundaries || {};
+      text("recommended-title", recommended.title || "Choose the next useful command-center move");
+      const recStatus = byId("recommended-status");
+      recStatus.textContent = recommended.status || "recommended";
+      recStatus.className = "chip " + slug(recommended.status || "recommended");
+      text("recommended-why", recommended.why || "No recommendation has been recorded yet.");
+      text("recommended-action", recommended.action || "Update state.json with the next recommended action.");
+      text("recommended-owner", recommended.owner || "Unassigned");
+      text("recommended-source", recommended.source || "state.json");
+      text("phase-questions-note", questionBoundaries.phaseQuestions || "Broad orientation questions for the active phase.");
+      text("decision-queue-note", questionBoundaries.decisionQueue || "Deferred Ryan decisions with a workaround path.");
+
+      /* ---- lightweight decision queue ---- */
+      const decisionsNeeded = state.decisionsNeeded || [];
+      text("decision-count", decisionsNeeded.length ? decisionsNeeded.length + " deferred decisions" : "clear");
+      byId("decision-list").innerHTML = decisionsNeeded.length
+        ? decisionsNeeded.map((item) =>
+            '<article class="decision-item">' +
+              '<div class="decision-top">' +
+                '<h3 class="decision-title">' + esc(item.decision || "Untitled decision") + "</h3>" +
+                '<span class="decision-chip">' + esc(item.status || "open") + "</span>" +
+              "</div>" +
+              '<p class="decision-copy">' + esc(item.whyItMatters || "No reason recorded.") + "</p>" +
+              '<p class="decision-rec"><span class="label">Workaround</span>' + esc(item.workaround || item.defaultRecommendation || "No workaround recorded.") + "</p>" +
+            "</article>"
+          ).join("")
+        : '<article class="decision-item"><p class="decision-copy">No deferred Ryan decisions need a workaround right now.</p></article>';
+
+      function selectedTaskMeta(item) {
+        const s = slug(item.status);
+        if (s === "done") {
+          return {
+            kind: "Completed Task",
+            detailLabel: "WHAT WAS DONE",
+            detail: item.result || item.summary || "Completed.",
+            status: item.status || "done",
+            support: item.supportingAgent || "Completed",
+            blocker: "None",
+            evidence: item.evidence || [],
+            checks: item.checks || []
+          };
+        }
+        if (s === "current") {
+          return {
+            kind: "Current Action",
+            detailLabel: "NEXT",
+            detail: item.nextAction || item.plan || item.summary || "Choose the next action.",
+            status: task.status || item.status || "current",
+            support: item.supportingAgent || task.supportingAgent || "—",
+            blocker: item.blocker || task.blocker || "None",
+            evidence: item.evidence || [],
+            checks: item.checks || []
+          };
+        }
+        return {
+          kind: "Planned Task",
+          detailLabel: "PLAN",
+          detail: item.plan || item.summary || "Planned for later in this phase.",
+          status: item.status || "upcoming",
+          support: item.supportingAgent || "Not assigned yet",
+          blocker: item.blocker || "Not started",
+          evidence: item.evidence || [],
+          checks: item.checks || []
+        };
+      }
+
+      function renderDetailList(listId, boxId, items) {
+        const list = byId(listId);
+        const box = byId(boxId);
+        const values = Array.isArray(items) ? items.filter(Boolean) : [];
+        box.classList.toggle("hidden", values.length === 0);
+        list.innerHTML = values.map((value) => "<li>" + esc(value) + "</li>").join("");
+        return values.length;
+      }
+
+      function renderSelectedTask(index) {
+        selectedTaskIndex = Math.max(0, Math.min(index, phaseTasks.length - 1));
+        const item = phaseTasks[selectedTaskIndex] || task;
+        const meta = selectedTaskMeta(item);
+        document.querySelectorAll(".task-item").forEach((el) => {
+          const selected = Number(el.getAttribute("data-task-index")) === selectedTaskIndex;
+          el.classList.toggle("selected", selected);
+          el.setAttribute("aria-selected", selected ? "true" : "false");
+        });
+
+        text("selected-task-kind", meta.kind);
+        text("selected-task-detail-label", meta.detailLabel);
+        text("now-title", item.title || "");
+        const st = byId("now-status");
+        st.textContent = meta.status || "";
+        st.className = "chip " + slug(meta.status);
+        text("now-owner", item.owner || "—");
+        text("now-support", meta.support || "—");
+        text("now-next", meta.detail || "—");
+        const evidenceCount = renderDetailList("task-evidence-list", "task-evidence-box", meta.evidence);
+        const checksCount = renderDetailList("task-checks-list", "task-checks-box", meta.checks);
+        byId("task-detail-grid").classList.toggle("hidden", evidenceCount + checksCount === 0);
+
+        const blocker = (meta.blocker || "").trim();
+        const blocked = blocker && !/^(none|n\/a|no|clear|completed|not started)$/i.test(blocker);
+        const bCell = byId("now-block-cell");
+        bCell.classList.remove("block-on", "block-clear");
+        bCell.classList.add(blocked ? "block-on" : "block-clear");
+        byId("now-blocker").textContent = blocked ? blocker : blocker === "Not started" ? "Not started" : "Clear — none";
+      }
+
+      byId("phase-task-list").addEventListener("click", (event) => {
+        const button = event.target.closest(".task-item");
+        if (!button) return;
+        renderSelectedTask(Number(button.getAttribute("data-task-index")));
+      });
+      renderSelectedTask(selectedTaskIndex);
+
+      /* ---- phase ring ---- */
+      const ring = byId("phase-ring");
+      ring.style.setProperty("--pct", pct);
+      text("ring-pct", pct);
+      text("phase-name", phase.name || "");
+      text("phase-summary", phase.summary || "");
+
+      function taskNumberFrom(item) {
+        const source = item.title || item.id || item.taskId || "";
+        const match = String(source).match(/(?:Task|T)[\s-]*(\d+)/i);
+        return match ? Number(match[1]) : null;
+      }
+
+      function formatTaskNumbers(items) {
+        const numbers = [...new Set((items || []).map(taskNumberFrom).filter(Number.isFinite))].sort((a, b) => a - b);
+        if (numbers.length === 0) return "";
+        const ranges = [];
+        let start = numbers[0];
+        let prev = numbers[0];
+        for (const num of numbers.slice(1)) {
+          if (num === prev + 1) {
+            prev = num;
+            continue;
+          }
+          ranges.push(start === prev ? String(start) : start + "-" + prev);
+          start = num;
+          prev = num;
+        }
+        ranges.push(start === prev ? String(start) : start + "-" + prev);
+        return (numbers.length === 1 ? "Task " : "Tasks ") + ranges.join(", ");
+      }
+
+      function deriveWorkBlocks() {
+        if (explicitWorkBlocks.length) return explicitWorkBlocks;
+        const groups = new Map();
+        for (const item of phaseTasks) {
+          if (!item.workBlock) continue;
+          if (!groups.has(item.workBlock)) groups.set(item.workBlock, []);
+          groups.get(item.workBlock).push(item);
+        }
+        return [...groups.entries()].map(([name, items]) => ({
+          name,
+          status: items.every((item) => slug(item.status) === "done") ? "done" : "current",
+          tasks: formatTaskNumbers(items)
+        }));
+      }
+
+      function labelForWorkBlock(block) {
+        if (block.label) return block.label;
+        const match = String(block.name || "").match(/Phase\s+(\d+[A-Z])/i);
+        return match ? match[1] : "";
+      }
+
+      function nameForWorkBlock(block) {
+        return block.title || String(block.name || "").replace(/^Phase\s+\d+[A-Z]\s*-\s*/i, "") || "Untitled block";
+      }
+
+      function tasksForWorkBlock(block) {
+        if (block.tasks) return block.tasks;
+        if (Array.isArray(block.taskNumbers)) return formatTaskNumbers(block.taskNumbers.map((number) => ({ title: "Task " + number })));
+        if (Array.isArray(block.includedTasks)) return formatTaskNumbers(block.includedTasks);
+        if (Array.isArray(block.taskIds)) {
+          const items = block.taskIds.map((id) => phaseTasks.find((taskItem) => taskItem.taskId === id || taskItem.id === id) || { id });
+          return formatTaskNumbers(items);
+        }
+        return "";
+      }
+
+      const phaseWorkBlocks = deriveWorkBlocks();
+      byId("work-block-list").innerHTML = phaseWorkBlocks.length
+        ? phaseWorkBlocks.map((block) =>
+            '<article class="work-block-row">' +
+              '<div class="wb-main">' +
+                '<span class="wb-label">' + esc(labelForWorkBlock(block)) + "</span>" +
+                '<span class="wb-name">' + esc(nameForWorkBlock(block)) + "</span>" +
+              "</div>" +
+              '<span class="wb-tasks">' + esc(tasksForWorkBlock(block)) + "</span>" +
+              '<span class="wb-status">' + esc(block.status || "planned") + "</span>" +
+            "</article>"
+          ).join("")
+        : '<article class="work-block-row"><div class="wb-main"><span class="wb-name">No work blocks yet</span></div><span class="wb-tasks">Phase tasks only</span><span class="wb-status">open</span></article>';
+
+      /* ---- agents roster ---- */
+      function ownsCurrentAction(agent, owner) {
+        const ownerText = slug(owner || "");
+        const agentName = slug(agent.name || "");
+        const workerId = slug(agent.workerId || "");
+        if (!ownerText) return false;
+        if (ownerText.includes(workerId) && workerId) return true;
+        if (ownerText.includes(agentName) && agentName) return true;
+        if (ownerText.includes("codex-worker")) return workerId === "codex-worker";
+        if (ownerText.includes("claude-cli")) return workerId === "claude-cli";
+        if (ownerText.includes("codex")) return agentName === "codex-desktop";
+        if (ownerText.includes("claude")) return agentName === "claude-desktop" || workerId === "claude-cli";
+        return ownerText.includes(agentName.split("-")[0]);
+      }
+      const activeDelegatedTasks = routerHealth.activeTasks || [];
+      const delegatedForAgent = (agent) => {
+        const workerId = agent.workerId || "";
+        if (!workerId) return [];
+        return activeDelegatedTasks.filter((item) => item.assignedTo === workerId);
+      };
+      const visibleAgents = agents.filter((a) => {
+        const isOwner = ownsCurrentAction(a, task.owner);
+        return a.active || isOwner || delegatedForAgent(a).length > 0;
+      });
+      let liveCount = 0;
+      byId("agents").innerHTML = visibleAgents.map((a) => {
+        const isOwner = ownsCurrentAction(a, task.owner);
+        const delegated = delegatedForAgent(a);
+        const isLive = a.active || delegated.length > 0;
+        if (isLive) liveCount++;
+        const cls = ["agent", isLive ? "live" : "idle", isOwner ? "owner" : ""].join(" ").trim();
+        return (
+          '<div class="' + cls + '">' +
+            '<span class="agent-dot"></span>' +
+            "<div>" +
+              "<strong>" + esc(a.name) + "</strong>" +
+              '<span class="role">' + esc(a.role) + "</span>" +
+              (isOwner ? '<span class="tag">▸ ON CURRENT ACTION</span>' : "") +
+              (delegated.length > 0 ? '<span class="tag">▸ DELEGATED ' + delegated.length + "</span>" : "") +
+              (delegated.length > 0
+                ? '<div class="delegated">' + delegated.map((item) =>
+                    '<div class="delegated-item"><b>' + esc(item.folder || "active") + "</b> " + esc(item.id || "untitled task") + "</div>"
+                  ).join("") + "</div>"
+                : "") +
+            "</div>" +
+          "</div>"
+        );
+      }).join("");
+      text("agents-live", liveCount + " live");
+
+      /* ---- files ---- */
+      const artifacts = state.artifacts || [];
+      text("files-count", artifacts.length ? artifacts.length + " repo artifacts" : "no files listed");
+      function artifactHref(path) {
+        if (!path || path.indexOf("~/") === 0 || path.indexOf("/") === 0) return "";
+        if (path.indexOf("command-center/") === 0) return path.replace(/^command-center\//, "");
+        return "../" + path;
+      }
+      byId("files").innerHTML = artifacts.map((a) => {
+        const href = artifactHref(a.path || "");
+        const tag = href ? "a" : "div";
+        const attrs = href ? ' href="' + esc(href) + '"' : "";
+        const role = a.role || a.category || "Artifact";
+        const summary = a.summary || a.path || "";
+        const meta = [
+          a.category,
+          a.sourceStatus,
+          a.created ? "created " + a.created : "",
+          a.updated ? "updated " + a.updated : "",
+          a.owner ? "owner " + a.owner : ""
+        ].filter(Boolean);
+        return "<" + tag + ' class="file-card"' + attrs + ' title="' + esc(a.path || a.name || "") + '">' +
+          '<span class="fdot"></span>' +
+          '<span class="file-main">' +
+            '<span class="file-head">' +
+              '<span class="file-name">' + esc(a.name || a.path || "Untitled artifact") + "</span>" +
+              '<span class="file-role">' + esc(role) + "</span>" +
+            "</span>" +
+            '<span class="file-summary">' + esc(summary) + "</span>" +
+            '<span class="file-meta">' + meta.map((item) => "<span>" + esc(item) + "</span>").join("") + "</span>" +
+            (a.usage ? '<span class="file-use">' + esc(a.usage) + "</span>" : "") +
+          "</span>" +
+        "</" + tag + ">";
+      }).join("");
+
+      /* ---- workflow pipeline ---- */
+      const edges = state.architecture || [];
+      // order nodes by first appearance across edges (from, then to)
+      const order = [];
+      edges.forEach((e) => { [e.from, e.to].forEach((n) => { if (order.indexOf(n) === -1) order.push(n); }); });
+
+      const PEOPLE = new Set(agents.map((a) => a.name).concat(["Ryan", "Codex", "Claude"]));
+      function kindOf(n) {
+        if (/repo/i.test(n)) return { k: "Source of truth", cls: "core" };
+        if (/codex/i.test(n)) return { k: "Orchestrator", cls: "core" };
+        if (/github/i.test(n)) return { k: "Durable remote", cls: "" };
+        if (/dashboard/i.test(n)) return { k: "Local view", cls: "" };
+        if (/ryan/i.test(n)) return { k: "Owner", cls: "" };
+        if (/claude/i.test(n)) return { k: "Implementer", cls: "" };
+        if (/log/i.test(n)) return { k: "Results", cls: "" };
+        if (/handoff/i.test(n)) return { k: "Work packet", cls: "" };
+        return { k: PEOPLE.has(n) ? "Agent" : "Artifact", cls: "" };
+      }
+
+      const pieces = [];
+      order.forEach((n, i) => {
+        const meta = kindOf(n);
+        const isOwner = ownsCurrentAction({ name: n }, task.owner);
+        pieces.push(
+          '<div class="wf-node ' + meta.cls + (isOwner ? " owner" : "") + '">' +
+            (isOwner ? '<span class="wn-now">NOW</span>' : "") +
+            '<span class="wn-name">' + esc(n) + "</span>" +
+            '<span class="wn-kind">' + meta.k + "</span>" +
+          "</div>"
+        );
+        if (i < order.length - 1) pieces.push('<div class="wf-arrow">→</div>');
+      });
+      byId("pipeline").innerHTML = pieces.join("");
+
+      byId("wf-edges").innerHTML = edges.map((e) =>
+        '<div class="wf-edge">' +
+          "<b>" + esc(e.from) + "</b>" +
+          '<span class="ar">→</span>' +
+          "<b>" + esc(e.to) + "</b>" +
+          '<span class="el">' + esc(e.label) + "</span>" +
+        "</div>"
+      ).join("");
+
+      // optional layer note (anything in agents not in the pipeline)
+      const inFlow = new Set(order.map((n) => slug(n)));
+      const optional = agents.filter((a) => !a.active && !inFlow.has(slug(a.name)) && !PEOPLE.has(a.name));
+      const opt = optional[0];
+      byId("wf-note").innerHTML = opt
+        ? '<span class="lin-dot"></span><span><b>' + esc(opt.name) + "</b> — " + esc(opt.role) + " · outside the core loop</span>"
+        : '<span class="lin-dot"></span><span>Optional coordination layers stay outside the core loop until evaluated.</span>';
+
+      /* ---- open questions ---- */
+      byId("open-questions").innerHTML = (state.openQuestions || []).map((q, i) =>
+        '<li class="q-item"><span class="qn">Q' + (i + 1) + "</span><span>" + esc(q) + "</span></li>"
+      ).join("");
+
+      /* ---- universal waiting / scheduled ---- */
+      const waitingItems = state.waitingScheduled || [];
+      text("waiting-count", waitingItems.length ? waitingItems.length + " external holds" : "nothing external");
+      byId("waiting-list").innerHTML = waitingItems.length
+        ? waitingItems.map((item) =>
+            '<article class="waiting-item">' +
+              '<div class="waiting-top">' +
+                '<h3 class="waiting-title">' + esc(item.title) + "</h3>" +
+                '<div class="waiting-meta">' +
+                  '<span class="waiting-chip">' + esc(item.scope || "Project") + "</span>" +
+                  '<span class="waiting-chip">' + esc(item.type || "waiting") + "</span>" +
+                "</div>" +
+              "</div>" +
+              '<p class="waiting-body">' + esc(item.resumeCondition || "Resume when ready.") + "</p>" +
+              (item.note ? '<p class="waiting-body">' + esc(item.note) + "</p>" : "") +
+              '<p class="waiting-related">Owner: ' + esc(item.owner || "Unassigned") + " · Related: " + esc(item.related || "None") + "</p>" +
+            "</article>"
+          ).join("")
+        : '<article class="waiting-item"><p class="waiting-body">' + esc(questionBoundaries.waitingScheduled || "Nothing waiting or scheduled outside the phase plan.") + "</p></article>";
+
+      /* ---- ideas ---- */
+      const normalizeParkedCard = (item, fallbackKind) => {
+        if (typeof item === "string") {
+          const textValue = item.trim();
+          return {
+            title: textValue || "Untitled " + fallbackKind,
+            summary: textValue || "No summary recorded."
+          };
+        }
+
+        if (!item || typeof item !== "object") {
+          return {
+            title: "Untitled " + fallbackKind,
+            summary: "No summary recorded."
+          };
+        }
+
+        return {
+          ...item,
+          title: item.title || item.name || item.summary || "Untitled " + fallbackKind,
+          summary: item.summary || item.description || item.title || item.name || "No summary recorded."
+        };
+      };
+
+      const ideas = (state.ideas || []).map((item) => normalizeParkedCard(item, "idea"));
+      text("ideas-count", ideas.length ? ideas.length + " uncommitted" : "no parked ideas");
+      byId("ideas-list").innerHTML = ideas.length
+        ? ideas.map((item) =>
+            '<article class="waiting-item">' +
+              '<div class="waiting-top">' +
+                '<h3 class="waiting-title">' + esc(item.title || "Untitled idea") + "</h3>" +
+                '<div class="waiting-meta">' +
+                  '<span class="waiting-chip">' + esc(item.status || "idea") + "</span>" +
+                  '<span class="waiting-chip">' + esc(item.type || "general") + "</span>" +
+                "</div>" +
+              "</div>" +
+              '<p class="waiting-body">' + esc(item.summary || "No summary recorded.") + "</p>" +
+              (item.revisit ? '<p class="waiting-related">Revisit: ' + esc(item.revisit) + "</p>" : "") +
+              (item.promotionTest ? '<p class="waiting-body"><span class="label">Promotion test</span> ' + esc(item.promotionTest) + "</p>" : "") +
+            "</article>"
+          ).join("")
+        : '<article class="waiting-item"><p class="waiting-body">No parked ideas. Capture possibilities here without promoting them into the roadmap.</p></article>';
+
+      /* ---- issues ---- */
+      const issues = (state.issues || []).map((item) => normalizeParkedCard(item, "issue"));
+      text("issues-count", issues.length ? issues.length + " parked" : "no parked issues");
+      byId("issues-list").innerHTML = issues.length
+        ? issues.map((item) =>
+            '<article class="waiting-item">' +
+              '<div class="waiting-top">' +
+                '<h3 class="waiting-title">' + esc(item.title || "Untitled issue") + "</h3>" +
+                '<div class="waiting-meta">' +
+                  '<span class="waiting-chip">' + esc(item.status || "open") + "</span>" +
+                  '<span class="waiting-chip">' + esc(item.severity || "untriaged") + "</span>" +
+                "</div>" +
+              "</div>" +
+              '<p class="waiting-body">' + esc(item.summary || "No summary recorded.") + "</p>" +
+              (item.whereSeen ? '<p class="waiting-related">Where seen: ' + esc(item.whereSeen) + "</p>" : "") +
+              (item.revisit ? '<p class="waiting-related">Revisit: ' + esc(item.revisit) + "</p>" : "") +
+            "</article>"
+          ).join("")
+        : '<article class="waiting-item"><p class="waiting-body">No parked issues. Known bugs or risks can live here until promoted into a task or work block.</p></article>';
+    })();
+  </script>
+</body>
+</html>
