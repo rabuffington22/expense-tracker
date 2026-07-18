@@ -2,27 +2,29 @@
 
 ## Active Objective
 
-Publish the verified work block 2A documentation to `main`, observe the resulting production deploy, and close the release without triggering a second deploy.
+Prepare the next bounded Phase 2 governance block after publishing and verifying the restored root project entry point.
 
 ## Current Phase
 
 Phase 2: Project Truth And Documentation Recovery — active.
 
-## Active Work Block
+## Completed Work Block
 
-2A-R: Publish the Root Project Entry Point — explicitly authorized and active.
+2A-R: Publish the Root Project Entry Point — merged, deployed, and verified.
 
 ## Current Task
 
-Phase 2 Task 1 release: publish the verified README and Task 4 operating boundaries from PR #84 to `main`.
+Phase 2 Task 2: decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`, awaiting a separately confirmed governance work block.
 
 ## Owner
 
-Codex Desktop owns exact-scope release, Fly Deploy observation, sanitized HTTP verification, and Runway OS closeout. Ryan retains the separate Task 2 and Task 3 governance decisions.
+Ryan owns confirmation or revision of the next Phase 2 governance block. Codex Desktop owns the verified 2A-R release evidence, closeout, and next just-in-time planning pass.
 
 ## Status
 
-Ryan explicitly authorized committing and pushing the verified 2A documentation to `main`. Draft PR #84 is open, clean, and limited to the expected eight documentation and Runway OS files. Its head is `77b7e7a`; current `origin/main` is `cb80fa9`. The automatic production Fly deploy is an expected live effect of the authorized `main` publication.
+PR #84 was marked ready and merged to `main` as `6270304`. Automatic Fly Deploy run `29646390675` completed successfully, including every job step. Production `/health` and the root both returned HTTP 200. Only sanitized workflow, job, and step status was inspected; no deployment logs, response bodies, credentials, secrets, or financial data were opened.
+
+GitHub emitted one non-blocking workflow annotation: `actions/checkout@v4` targets deprecated Node 20 and is currently forced to Node 24. It did not affect this deployment. No workflow update or follow-up implementation is authorized in this closeout.
 
 Work block 2A replaced the retired Streamlit/manual-import/two-entity README with a current Flask, HTMX, Plaid, Fly.io, and three-entity project entry point. The README now records local synthetic setup, application surfaces, entity/data isolation, environment-variable names without values, deploy mechanics, and explicit authorization gates for live or sensitive actions. `PROJECT_STRUCTURE.md` now classifies the README as current.
 
@@ -46,18 +48,16 @@ No manual sync, workflow enable/disable/dispatch/rerun, application change, fina
 
 ## Durability
 
-The 2A source implementation commit is `c249c9b` on pushed branch `codex/phase-2-root-docs` and draft PR #84. The verified closeout is being added to that same branch. Nothing is merged to `main`, and no Fly deployment is triggered. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded and untouched.
+PR #84 is merged to `main` as `6270304`, and Fly Deploy run `29646390675` passed. This sanitized closeout is published directly to `main` with `[skip actions]` to avoid a second deployment. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded and untouched.
 
 ## Current Action
 
-Record and verify the active release block, rerun safe pre-release checks, mark PR #84 ready, merge it to `main`, observe the resulting Fly Deploy, confirm production health, and publish the command-center-only closeout with `[skip actions]`.
+Run a just-in-time planning pass for a possible Phase 2 governance block covering Tasks 2 and 3 before changing any legacy or instruction file.
 
-## Locked Boundaries During Work Block 2A-R
+## Locked Boundaries After Work Block 2A-R
 
 - No `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, or `AGENTS.md` edit, archive, deletion, or tracking change.
 - No edit, staging, or tracking change to pre-existing untracked `scripts/sync_prod_to_local.sh`.
-- No application, workflow, monitor, credential, ignored-data, database, Fly, authentication, deploy, merge, or parent-repo action.
-- PR #84 merge and its single automatic production deploy are authorized; no manual workflow dispatch, rerun, Fly action, or recovery mutation is authorized.
-- The verified PR content may not expand before merge.
-- The release closeout must use `[skip actions]` to avoid a second deploy.
+- No application, workflow, monitor, credential, ignored-data, database, Fly, authentication, deploy, merge, or parent-repo action is authorized.
+- No Task 2 or Task 3 implementation begins without a separately confirmed work block.
 - The active monitor remains read-only and never performs recovery automatically.

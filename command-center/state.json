@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 8:33 AM CST",
+    "lastUpdated": "2026-07-18 8:37 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "main contains the verified Phase 1 closeout at cb80fa9; PR 84 head 77b7e7a is verified and Ryan authorized work block 2A-R to merge it to main, observe one automatic Fly deploy, and publish a skip-actions closeout"
+    "durabilityStatus": "PR 84 is merged to main as 6270304; Fly Deploy run 29646390675 passed; the verified 2A-R closeout is published directly to main with skip actions to prevent a second deploy"
   },
   "phase": {
     "name": "Project Truth And Documentation Recovery",
     "status": "active",
-    "summary": "Work block 2A completed Tasks 1 and 4 on draft PR 84; release block 2A-R is active to publish them to main and verify the resulting deploy.",
+    "summary": "Tasks 1 and 4 are merged to main and production-verified through work blocks 2A and 2A-R; Task 2 is current for a separately confirmed governance block.",
     "progress": 50
   },
   "currentTask": {
-    "title": "Task 1: Rebuild the root README for the current architecture",
-    "owner": "Codex",
-    "status": "releasing",
-    "supportingAgent": "Codex Desktop owns exact-scope merge, Fly Deploy observation, sanitized production health verification, and Runway OS closeout",
-    "nextAction": "Verify the active 2A-R record, mark PR 84 ready, merge it to main, observe one automatic Fly deploy, and publish the closeout with skip actions.",
-    "blocker": "None inside the confirmed release scope; stop on PR drift, deploy failure, non-200 health, or any need for manual recovery"
+    "title": "Task 2: Decide the future of PROJECT_KNOWLEDGE.md and plan.md",
+    "owner": "Ryan",
+    "status": "awaiting work block",
+    "supportingAgent": "Codex Desktop owns the verified 2A-R release evidence and will propose the next just-in-time governance block",
+    "nextAction": "Confirm or revise a bounded Phase 2 governance block for Tasks 2 and 3 before changing preserved legacy or instruction files.",
+    "blocker": "No legacy-document, CLAUDE.md, AGENTS.md, workflow-maintenance, or other implementation is authorized without separate Ryan direction"
   },
   "routerHealth": {
     "status": "healthy",
@@ -61,17 +61,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish PR 84 and verify the resulting production deploy",
-    "status": "active",
-    "owner": "Codex",
-    "why": "Ryan explicitly authorized committing and pushing the verified 2A documentation to main, which triggers one expected production Fly deploy.",
-    "action": "Merge the exact verified PR, wait for Fly Deploy, confirm sanitized production health, then publish a skip-actions command-center closeout.",
+    "title": "Define the Phase 2 legacy-document and instruction-governance block",
+    "status": "recommended",
+    "owner": "Ryan",
+    "why": "The root project entry point is current and production-verified; the remaining Phase 2 work is the explicit governance choice for PROJECT_KNOWLEDGE.md, plan.md, CLAUDE.md, and the untracked AGENTS.md.",
+    "action": "Review a separately proposed work block for Tasks 2 and 3 before any preserved file is edited, archived, deleted, replaced, or tracked.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    "Confirm or revise the next Phase 2 governance block for Tasks 2 and 3"
+  ],
   "waitingOnRyan": {
-    "summary": "No immediate Ryan input is required while confirmed release block 2A-R is active.",
-    "items": []
+    "summary": "Ryan reviews the next separately proposed Phase 2 governance block.",
+    "items": [
+      "Confirm or revise the bounded governance scope before legacy or instruction-file changes"
+    ]
   },
   "questionBoundaries": {
     "phaseQuestions": "Ryan reviews the next proposed work block or direction choice after the current verified block closes.",
@@ -422,7 +426,7 @@
       "phaseId": "phase-2",
       "label": "2A-R",
       "name": "Publish the Root Project Entry Point",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1",
         "Task 4"
@@ -455,7 +459,9 @@
         "Confirm production health and root return HTTP 200",
         "Return Task 2 to current, close 2A-R, refresh and health-check Runway OS, and push the closeout with skip actions"
       ],
-      "reportBack": "Return the merge commit, deploy run and result, production HTTP health, final main and origin/main state, protected boundaries, closeout commit, and remaining Phase 2 decision."
+      "reportBack": "Returned merge commit, successful deploy run and steps, production HTTP health, final main state, protected boundaries, skip-actions closeout, and the remaining Phase 2 decision.",
+      "durability": "PR 84 is merged to main as 6270304; the verified closeout is published directly to main with skip actions so no second deploy starts.",
+      "result": "Marked PR 84 ready and merged its verified eight-file diff to main as 6270304. Fly Deploy run 29646390675 and every job step passed, production health and root returned HTTP 200, no sensitive logs or data were opened, and no manual recovery or excluded action occurred."
     }
   ],
   "phaseTasks": [
@@ -587,12 +593,10 @@
       "phaseId": "phase-2",
       "taskId": "P2-T1",
       "title": "Task 1: Rebuild the root README for the current architecture",
-      "status": "current",
+      "status": "done",
       "owner": "Codex",
       "summary": "Replace retired Streamlit and no-bank-linking guidance with the current Flask, Plaid, Fly.io, and three-entity system.",
-      "nextAction": "Publish the verified PR 84 documentation to main and verify the resulting production deploy in work block 2A-R.",
-      "blocker": "None inside the confirmed release scope; stop on PR drift, deploy failure, non-200 health, or any need for manual recovery.",
-      "result": "README.md now provides a current tracked-source-verified project entry point on draft PR 84.",
+      "result": "README.md provides the current tracked-source-verified project entry point on main through PR 84 and passed production release verification.",
       "evidence": [
         "README.md",
         "command-center/logs/2026-07-18-root-project-entry-point-2a.md"
@@ -602,11 +606,11 @@
       "phaseId": "phase-2",
       "taskId": "P2-T2",
       "title": "Task 2: Decide the future of PROJECT_KNOWLEDGE.md and plan.md",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Approve archive, replacement, or historical labels after useful content is migrated.",
-      "nextAction": "Review draft PR 84 and a separately proposed governance block before changing preserved legacy files.",
-      "blocker": "Awaiting Ryan review and work-block confirmation"
+      "nextAction": "Review a separately proposed governance block before changing preserved legacy files.",
+      "blocker": "Awaiting Ryan work-block confirmation"
     },
     {
       "phaseId": "phase-2",
@@ -845,6 +849,10 @@
     {
       "name": "Work Block 2A Root Project Entry Point Closeout",
       "path": "command-center/logs/2026-07-18-root-project-entry-point-2a.md"
+    },
+    {
+      "name": "Work Block 2A-R Root Project Entry Point Release Closeout",
+      "path": "command-center/logs/2026-07-18-root-project-entry-point-release-2a-r.md"
     }
   ],
   "recentActivity": [
@@ -923,6 +931,10 @@
     {
       "time": "2026-07-18",
       "text": "Ryan authorized release block 2A-R to merge verified PR 84 to main, observe one automatic production Fly deploy, and publish a skip-actions closeout."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 2A-R: PR 84 merged as 6270304, Fly Deploy run 29646390675 passed, production health and root returned HTTP 200, and the closeout was prepared with skip actions."
     }
   ],
   "openQuestions": [],

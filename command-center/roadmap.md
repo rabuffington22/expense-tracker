@@ -224,18 +224,18 @@ Target durability: source and active-state changes are merged on `main`; the ver
 
 ## Phase 2: Project Truth And Documentation Recovery
 
-Status: active; work block 2A complete on draft PR #84, with the next governance block awaiting review and confirmation
+Status: active; Tasks 1 and 4 are published and verified on `main`, with Task 2 current for the next separately confirmed governance block
 
 Goal: remove contradictory project guidance while retaining useful domain history.
 
-- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: done in work block 2A on draft PR #84.
-- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: current; awaiting review of draft PR #84 and a separately confirmed work block.
+- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: done, merged to `main`, deployed, and verified through work blocks 2A and 2A-R.
+- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: current; awaiting a separately confirmed work block.
 - **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: planned.
-- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: done in work block 2A on draft PR #84.
+- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: done, merged to `main`, deployed, and verified through work blocks 2A and 2A-R.
 
 ### Work Block 2A — Restore the Root Project Entry Point
 
-Status: done and verified on draft PR #84
+Status: done, released, and verified through work block 2A-R
 
 Included: Task 1 and Task 4.
 
@@ -275,11 +275,11 @@ Report point: return the new README structure, important truth corrections, veri
 
 Result: replaced the retired Streamlit/manual-import/two-entity README with a tracked-source-verified Flask, HTMX, Plaid, Fly.io, and three-entity entry point. Added local setup, entity/data isolation, application surfaces, imports and synchronization, configuration names without values, deploy mechanics, and explicit side-effect gates. Updated `PROJECT_STRUCTURE.md`, preserved every excluded legacy and untracked file, passed the full synthetic smoke suite plus documentation and Runway OS checks, and opened draft PR #84 from pushed branch `codex/phase-2-root-docs` without merge or deployment.
 
-Target durability: source implementation commit `c249c9b` is pushed on `origin/codex/phase-2-root-docs` and included in draft PR #84. The verified closeout is added to the same branch; nothing is merged to `main` and no Fly deploy is triggered.
+Target durability: source implementation commit `c249c9b` and the verified 2A closeout are merged to `main` through PR #84 as `6270304`; release verification is recorded by 2A-R.
 
 ### Work Block 2A-R — Publish the Root Project Entry Point
 
-Status: active
+Status: done and verified
 
 Included: Task 1 and Task 4 publication only.
 
@@ -312,6 +312,10 @@ Verification:
 - return Task 2 to current, close 2A-R, refresh and health-check Runway OS, and push the closeout with `[skip actions]`.
 
 Report point: return the merge commit, deploy run and result, production HTTP health, final `main`/`origin/main` state, protected boundaries, closeout commit, and remaining Phase 2 decision.
+
+Result: marked PR #84 ready and merged its exact verified eight-file diff to `main` as `6270304`. Automatic Fly Deploy run `29646390675` and every job step passed without opening logs. Production `/health` and the root returned HTTP 200. No manual workflow, Fly, Plaid, database, credential, financial-data, application, authentication, legacy-file, or untracked-file action occurred. GitHub emitted a non-blocking annotation that `actions/checkout@v4` targets deprecated Node 20 and is currently forced to Node 24.
+
+Target durability: PR #84 is merged on `main`; the sanitized release closeout is published directly to `main` with `[skip actions]` so no second Fly deploy starts.
 
 ## Phase 3: Functional Audit And Prioritization
 
