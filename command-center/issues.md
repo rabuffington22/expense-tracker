@@ -229,19 +229,19 @@ Projection logic and tracked tests require a separately confirmed Phase 4 repair
 
 ## Transaction Identity Can Collapse Distinct Transactions
 
-Status: open; discovered in work block 3A
+Status: open; discovered in work block 3A and confirmed on the Plaid path in work block 3G
 
 Severity: high financial-data completeness risk
 
 Captured: 2026-07-18
 
-Where seen: `core/imports.py`, `web/routes/plaid.py`, and synthetic temporary-database reproduction
+Where seen: `core/imports.py`, `web/routes/plaid.py`, work block 3A's import reproduction, and work block 3G's mocked Plaid reproduction
 
-Revisit: Phase 4 Task 1 for repair design; Phase 3 Task 5 for the bounded Plaid-path impact audit
+Revisit: Phase 4 Task 1 for repair design and Phase 4 Task 2 for tracked import/Plaid coverage
 
 Summary:
 
-`compute_transaction_id()` hashes only date, amount, and normalized description. A synthetic pair with the same date, amount, and description but different accounts produced the same primary key; `commit_transactions()` inserted one row and silently counted the other as skipped. Legitimate repeated transactions with the same hash inputs can therefore be treated as duplicates. Source inspection also found that Plaid ingestion calls the same identity helper, but work block 3A did not perform Plaid or live-system testing.
+`compute_transaction_id()` hashes only date, amount, and normalized description. Work block 3A showed that two imported rows differing by account collapse to one primary key. Work block 3G confirmed the same behavior with mocked Plaid input: two different Plaid transaction IDs on different accounts but with the same date, amount, and merchant stored one row and reported one new transaction. Exact re-delivery of the same Plaid ID remained idempotent.
 
 Impact:
 
@@ -252,7 +252,7 @@ Acceptance checks:
 - Two legitimate transactions that differ by account or another stable source identity can coexist.
 - Exact re-imports of the same source transaction remain deduplicated.
 - Existing transaction relationships, including splits and vendor matches, have a safe preservation or migration path.
-- Synthetic coverage proves CSV/import behavior and, in its separately authorized audit or repair scope, Plaid identity behavior.
+- Synthetic coverage proves both CSV/import and Plaid identity behavior while preserving exact Plaid re-delivery idempotency.
 
 Why not fixed now:
 
@@ -939,3 +939,238 @@ Acceptance checks:
 Why not added now:
 
 Tracked test expansion was explicitly excluded from audit work block 3F.
+
+## Plaid Persistence Errors Can Advance The Cursor Past Missing Data
+
+Status: open; discovered in work block 3G
+
+Severity: high financial-data completeness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/plaid.py` and a deterministic forced-SQLite-failure probe
+
+Revisit: Phase 4 Task 1 for transactional repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+`_upsert_plaid_transaction()` catches every exception and returns zero, the same result used for an exact duplicate. A synthetic trigger forced the insert to fail; `_sync_entity()` returned no error and committed the next cursor while the transaction remained absent.
+
+Impact:
+
+A transient schema, constraint, categorization, or write failure can move the incremental cursor beyond a transaction that never entered the ledger.
+
+Acceptance checks:
+
+- Exact duplicates and persistence errors have distinct outcomes.
+- Any transaction persistence error rolls back or withholds the item cursor and returns a sanitized item error.
+- A later retry can ingest the missed transaction without manual cursor repair.
+
+Why not fixed now:
+
+Transaction and cursor semantics require separately confirmed repair and regression scope.
+
+## Plaid Balance Reconciliation Is Unsafe On Disabled Or Partially Failed Items
+
+Status: open; discovered in work block 3G
+
+Severity: high account-state integrity risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/cashflow.py` and mocked multi-item balance refreshes
+
+Revisit: Phase 4 Task 1 for per-item reconciliation; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+When one item refreshed and a sibling raised, the successful account IDs became the global keep-set and the failed item's cached balance row was deleted. When every account was disabled, the empty keep-set skipped cleanup and retained the disabled row.
+
+Impact:
+
+A partial API failure can erase useful cached account state, while disabling every account can leave an unwanted balance visible indefinitely.
+
+Acceptance checks:
+
+- Reconciliation is scoped per successfully fetched item and preserves prior rows on failure.
+- Disabled or removed accounts are consistently removed after an authoritative response.
+- Manual accounts remain untouched in every success, empty, disabled, and failure case.
+
+Why not fixed now:
+
+Balance reconciliation behavior and tracked tests were excluded from work block 3G.
+
+## Normal Cash Flow Refresh Skips Plaid Liabilities
+
+Status: open; discovered in work block 3G
+
+Severity: high cash-flow and payment accuracy risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/cashflow.py` and a mocked first-load balance/liability probe
+
+Revisit: Phase 4 Task 1 for freshness separation; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+Cash Flow refreshes balances first, which writes a current `updated_at`; the liability helper then uses that same timestamp as its cache guard. On the normal mocked path, liabilities were never fetched and minimum payment plus due date were not applied.
+
+Impact:
+
+Credit-card planning can display stale or missing payment obligations even after the page refreshes the balance.
+
+Acceptance checks:
+
+- Balance and liability freshness are separate or refreshed atomically.
+- A normal stale load fetches and applies both data sets without unnecessary repeat calls.
+- Liability unavailability and API errors remain distinguishable.
+
+Why not fixed now:
+
+Freshness schema/logic and regression changes require separate implementation scope.
+
+## Linking A Plaid Institution Can Delete Unrelated Manual Accounts
+
+Status: open; discovered in work block 3G
+
+Severity: high destructive account-state risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/plaid.py` exchange-token route and a mocked connection probe
+
+Revisit: Phase 4 Task 1 for explicit placeholder matching; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+The exchange route deletes every manual balance whose first word matches the institution or a connected account. Linking synthetic Chase data removed a distinct manual `Chase Emergency Reserve` row.
+
+Impact:
+
+Connecting one bank can silently delete manually maintained balance state for another similarly named account.
+
+Acceptance checks:
+
+- Manual rows are removed only through explicit stable placeholder identity or user confirmation.
+- Similar names do not delete distinct state, and failed exchange paths leave every row unchanged.
+
+Why not fixed now:
+
+Changing the link cleanup contract is product behavior and requires separate repair scope.
+
+## Plaid Balance Freshness Uses An Entity-Wide Maximum
+
+Status: open; discovered in work block 3G
+
+Severity: medium account-freshness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/cashflow.py` and a mixed-freshness account probe
+
+Revisit: Phase 4 Task 1 for item/account freshness; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+The cache guard checks `MAX(updated_at)` across all Plaid balance rows. One fresh synthetic account suppressed refresh while a sibling was two hours stale.
+
+Impact:
+
+An account can remain stale when another continues receiving recent timestamps, producing a mixed-age view that appears current.
+
+Acceptance checks:
+
+- Freshness is evaluated per item/account or by a complete successful refresh marker.
+- One fresh row or a partial failure cannot mark stale siblings current.
+
+Why not fixed now:
+
+Freshness behavior and tracked tests were outside the audit-only block.
+
+## Missing Plaid Modified Rows Are Reported As Updated
+
+Status: open; discovered in work block 3G
+
+Severity: medium sync-observability risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/plaid.py` and a mocked modified-event probe
+
+Revisit: Phase 4 Task 1 for row-count handling; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+The modified-event path increments `total_modified` without checking SQLite row count. A modification for an absent Plaid ID reported one update while changing no row.
+
+Impact:
+
+Sync summaries can claim reconciliation while records remain missing, including records lost to the confirmed identity collision.
+
+Acceptance checks:
+
+- Modified and removed counts reflect actual affected rows.
+- A missing target becomes an explicit safe recovery/error path before cursor advancement.
+
+Why not fixed now:
+
+Sync semantics and tracked regression changes require a separate repair block.
+
+## One Corrupt Plaid Token Aborts Valid Sibling Items
+
+Status: open; discovered in work block 3G
+
+Severity: medium item-isolation and reliability risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/plaid.py` and a mixed valid/corrupt synthetic token probe
+
+Revisit: Phase 4 Task 1 for per-item decryption isolation; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+`_sync_entity()` decrypts every item token before entering its per-item exception boundary. One corrupt synthetic ciphertext raised before a valid sibling item could sync.
+
+Impact:
+
+A single damaged token can block every connected institution in that entity instead of producing one sanitized item-level failure.
+
+Acceptance checks:
+
+- Decryption happens inside the per-item boundary, healthy siblings continue, and failed item reporting exposes no token material.
+
+Why not fixed now:
+
+Failure-isolation changes and regression coverage were excluded from work block 3G.
+
+## Primary Plaid Paths Lack Tracked Regression Coverage
+
+Status: parked for Phase 4 regression coverage
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py` and work block 3G's 56-check mocked probe plus deterministic confirmation pass
+
+Revisit: Phase 4 Task 2, preferably alongside the related Plaid repairs
+
+Summary:
+
+The tracked smoke suite renders Connected Accounts but does not exercise token/item persistence, account lifecycle, balance/liability refresh, incremental ingestion, pagination, cursor safety, deduplication, item failures, or three-entity sync isolation.
+
+Impact:
+
+Passing primary Plaid behavior can regress, and the eight confirmed defect clusters can persist or change, without maintained synthetic detection.
+
+Acceptance checks:
+
+- Tests use fake tokens, mocked SDK/HTTP entry points, blocked outbound calls, and temporary all-entity databases.
+- Passing connection, account, balance, liability, transaction, pagination, deduplication, cursor, and isolation paths are explicit.
+- Every repaired 3G defect has a failing-before and passing-after regression case.
+
+Why not added now:
+
+Tracked test expansion was explicitly excluded from audit work block 3G.

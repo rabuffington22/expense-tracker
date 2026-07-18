@@ -166,8 +166,20 @@ Ryan explicitly instructed Codex to commit and push the verified 3E command-cent
 
 ## Pending Ryan Direction
 
-- Confirm or revise work block 3G for a source-first, synthetic/mocked Plaid and downstream-sync boundary audit in Task 5.
-- Any 3A-3F repair, tracked regression coverage, protected-data access, live action, credential use, or external write requires a separate decision.
+- Confirm or revise work block 3H for a mocked-only scheduled and public background-sync entry-point audit in Task 5C.
+- Any 3A-3G repair, tracked regression coverage, protected-data access, live action, credential use, or external write requires a separate decision.
+
+### 2026-07-18 — Confirm work block 3G for the mocked primary Plaid boundary audit
+
+Ryan confirmed Tasks 5A-5B as one mocked-only audit of Plaid connection and account state, encrypted item persistence, balance and liability propagation, and incremental transaction ingestion across temporary Personal, BFM, and Luxe Legacy databases. Codex may inspect tracked source, run the existing smoke suite, execute deterministic mocked probes without outbound calls, create a sanitized audit log, record ranked findings, and close Runway OS state. Tasks 5C-5D and 6-8; repairs from 3A-3F; product repairs or migrations; tracked test, fixture, or demo changes; real databases, balances, transactions, financial rows, credentials, or Plaid tokens; production/demo access; network calls; live Plaid, workflow, Fly, or downstream actions; authentication/security changes; pre-existing `scripts/sync_prod_to_local.sh`; and all GitHub durability remain excluded.
+
+### 2026-07-18 — Accept work block 3G with eight primary Plaid defects and one coverage gap
+
+The tracked smoke suite passed. A 56-check mocked all-entity probe produced 44 passes, twelve controlled failures, and zero unexpected failures, and a confirmation pass reproduced the same failures and cleanup. Normal encryption, configuration rejection, pagination, entity-local account lifecycle, balance refresh, manual preservation, transaction add/modify/remove, sign, enabled-account filtering, successful cursor progression, review categorization, exact re-delivery, and isolation passed. Eight defect clusters were recorded across manual cleanup, balance reconciliation, cache freshness, liabilities, transaction identity, cursor safety, modified-event reporting, and token failure isolation, plus a medium tracked-coverage gap. Tasks 5A-5B and work block 3G are complete; Task 5C becomes current for a separately confirmed 3H audit. No repair, tracked product/test change, protected-data access, credential use, network call, live action, or GitHub durability occurred.
+
+### 2026-07-18 — Authorize direct-main durability for the 3G audit closeout
+
+Ryan explicitly instructed Codex to commit and push the verified 3G command-center closeout to `main`. This authorizes staging only the exact seven 3G command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, tracked-test, workflow, and deployment files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application behavior; production or demo access; protected data; credentials; Plaid, Fly, workflow, or downstream actions; and all recovery outside the exact closeout remain excluded.
 
 ### 2026-07-18 — Confirm work block 3F for the synthetic payroll lifecycle audit
 

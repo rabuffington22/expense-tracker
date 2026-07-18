@@ -412,7 +412,7 @@ Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is pu
 
 ## Phase 3: Functional Audit And Prioritization
 
-Status: active; Tasks 1-3 and 4A-4D plus work blocks 3A-3F are done, and Task 5 is current awaiting a separately confirmed integration-boundary audit block
+Status: active; Tasks 1-3, 4A-4D, and 5A-5B plus work blocks 3A-3G are done, and Task 5C is current awaiting a separately confirmed entry-point audit block
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
@@ -423,7 +423,10 @@ Goal: determine what “working properly” means across the live product, then 
 - **Task 4B: Audit short-term goals, snapshots, budgets, actions, and payoff planning.** Status: done through work block 3D. CRUD, entity-local choices, budgets, effective splits, averages, per-payroll math, actions, and direct payoff engines passed; APR-blind locked plans, snapshot-note loss, LL direct-route denial, and tracked-coverage gaps were recorded without repair.
 - **Task 4C: Audit weekly and waterfall derived workflows.** Status: done through work block 3E. Current-period calculations, effective spending, valid target modes, empty states, intended Personal/BFM sharing, LL denial, and read-only preservation passed; six functional defects and one tracked-coverage gap were recorded without repair.
 - **Task 4D: Audit payroll roster, Phoenix/CyberPayroll import, and role spending.** Status: done through work block 3F. Parser, roster lifecycle, explicit import persistence, re-import deduplication, role-spending totals, delete cascades, storage isolation, and successful-save cleanup passed; three high payroll-integrity/boundary defects, three medium validation/retention/import defects, and one medium tracked-coverage gap were recorded without repair.
-- **Task 5: Audit Plaid and downstream-sync integration boundaries.** Status: current; awaiting a separately confirmed work block 3G. Begin with source and synthetic/mocked behavior; any production account access, Plaid action, workflow action, credential use, or downstream write requires a separate target-specific authorization.
+- **Task 5A: Audit Plaid connection, account, balance, and liability boundaries.** Status: done through work block 3G. Encryption, entity-local exchange, account toggle/rename/disconnect, normal balance refresh, and manual-row preservation passed; overbroad manual cleanup, unsafe disabled/partial reconciliation, global freshness, liability starvation, and tracked-coverage defects were recorded without repair.
+- **Task 5B: Audit incremental Plaid transaction-sync semantics.** Status: done through work block 3G. Pagination, normal all-entity add/modify/remove, sign, enabled-account filtering, cursor success, categorization, exact re-delivery, and isolation passed; Plaid identity collision, swallowed persistence failure with cursor advance, false modified counts, corrupt-token fanout, and tracked-coverage defects were recorded without repair.
+- **Task 5C: Audit scheduled and public background-sync entry points.** Status: current; awaiting a separately confirmed work block 3H. Check `/plaid/sync-all`, its bearer and CSRF boundary, all-entity iteration, locking, partial-failure reporting, and the `/k/` background-sync path with mocked internals only. This task audits sync execution behavior; Task 6 retains the broader public-dashboard and authentication-policy audit.
+- **Task 5D: Audit the Luxe Legacy downstream-mirror boundary.** Status: planned after Task 5B. Check LL-only invocation, no-op configuration, row eligibility and exclusions, request/auth shape, idempotency contract, timeout/failure isolation, and absence of Personal/BFM downstream writes using mocked HTTP only.
 - **Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries.** Status: planned. Use tracked source and synthetic/local behavior first; do not change authentication, CSRF, credential, encryption, or public-route behavior during the audit.
 - **Task 7: Consolidate audit findings into severity-ranked issues.** Status: planned. Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.
 - **Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks with Ryan.** Status: planned. Prioritize only evidence-backed findings after the relevant audit slices are complete.
@@ -645,6 +648,43 @@ Durability: published directly to `main` under Ryan's separate post-block author
 Report point: return a sanitized payroll pass, defect, gap, and unverified matrix; ranked findings with acceptance checks; exact synthetic verification performed; temporary-payload cleanup result; protected boundaries; tracked-coverage assessment; and whether Task 5 is ready for just-in-time work-block planning.
 
 Result: the tracked synthetic smoke suite passed. Across a 40-check primary payroll probe and focused seven-check confirmation probe, 36 of 47 assertions passed and eleven controlled failures collapsed into six defect clusters plus one tracked-coverage gap. Multi-section parsing, date and amount normalization, known/unknown role mapping, parser deduplication, headerless-file handling, BFM roster CRUD and pay history, delete cascades, explicit import persistence, re-import row stability, role and employee totals, successful-save cleanup, three-entity storage isolation, and complete audit cleanup passed. Personal and Luxe Legacy direct routes violated the maintained BFM-only boundary; the default preview duplicated an exact existing employee; peer averages mixed hourly and salary units; employee direct inputs were weakly normalized; cancel retained its parsed payload; and malformed XLSX bytes raised instead of returning a controlled error. No repair, tracked product/test/demo change, protected-data access, external call, live action, or GitHub durability occurred.
+
+### Confirmed Work Block 3G: Mocked Primary Plaid Boundary Audit
+
+Status: done; confirmed and completed locally on 2026-07-18
+
+Included: Tasks 5A-5B.
+
+Excluded: Tasks 5C-5D and 6-8; all repairs from work blocks 3A-3F; product repairs or migrations; tracked test, fixture, or demo-seed changes; real databases, balances, transactions, financial rows, credentials, or Plaid tokens; production or demo access; network calls; live Plaid, workflow, Fly, or downstream actions; authentication, CSRF, encryption, credential, or public-route changes; commit, push, PR, merge, and deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Outcome: determine whether Plaid connection and account state, cached balances and liabilities, and incremental transaction ingestion preserve token, entity, account, cursor, deduplication, sign, categorization, removal, and failure boundaries against mocked SDK responses and temporary all-entity databases. Classify behavior as pass, defect, regression-coverage gap, or unverified boundary without implementing repairs.
+
+Why this grouping: connection/account state and incremental ingestion share `core/plaid_client.py`, `web/routes/plaid.py`, the Plaid schema, encrypted item storage, temporary entity databases, and one deterministic mocked verification harness. Task 5C adds protected/public entry-point and concurrency behavior; Task 5D adds a separate downstream HTTP/write boundary. Both depend on the primary Plaid result and remain separate.
+
+Owner and recommended agent: Codex Desktop in the current task. This sensitive-retrofit audit couples source inspection, mocked integration behavior, temporary three-entity state, finding classification, command-center stewardship, and final intake; no delegation or second opinion is needed.
+
+Expected surfaces: read `core/plaid_client.py`, `core/crypto.py`, Plaid migrations in `core/db.py`, `web/routes/plaid.py`, Plaid account and liability helpers in `web/routes/cashflow.py`, relevant app initialization and templates, and `scripts/smoke_test.py`. Write a sanitized 3G audit log and update `command-center/issues.md` only when findings require it; close out through Runway OS sources, state, and dashboard. No application, fixture, tracked-test, workflow, or deployment file should change.
+
+Stop conditions:
+
+- Verification would require real credentials, Plaid tokens, databases, balances, transactions, financial rows, production/demo access, a network call, or another live action.
+- Entity isolation, token handling, authentication, destructive behavior, or sensitive-data handling appears unsafe.
+- A finding requires repair, migration, or tracked regression coverage; record it without implementation.
+- The known Task 1 transaction-identity defect prevents a trustworthy Tasks 5A-5B conclusion rather than being isolated.
+- Scope expands into Tasks 5C-5D or 6-8, verification changes the audit plan, or Runway OS cannot refresh and pass health checks.
+
+Verification:
+
+- `.venv/bin/python scripts/smoke_test.py`
+- mocked connection/exchange, encrypted persistence, account enable/rename/disconnect, manual-account preservation, balance-cache, and liability checks against temporary all-entity databases
+- deterministic mocked added, modified, removed, paginated, duplicate, disabled-account, cursor, sign, categorization, failure-isolation, and transaction-identity checks across Personal, BFM, and Luxe Legacy
+- no-outbound-call confirmation, tracked regression-coverage assessment, temporary-data cleanup, `git diff --check`, Runway OS refresh, health check, generated-dashboard inspection, and final worktree review
+
+Durability: Ryan separately authorized publishing the exact seven-path 3G command-center closeout directly to `main` with `[skip actions]`. This commit is the durability record; no PR, merge, deployment, live Plaid action, workflow action, or downstream write is included.
+
+Report point: return a sanitized Tasks 5A-5B pass, defect, gap, and unverified matrix; ranked findings with acceptance checks; exact mocked verification; protected boundaries; temporary cleanup; tracked-coverage assessment; and Task 5C readiness.
+
+Result: the tracked smoke suite passed. A deterministic 56-check mocked probe produced 44 passes, twelve controlled failures, and zero unexpected failures; a confirmation pass reproduced the same failures and cleanup. Encryption, configuration rejection, pagination, entity-local exchange, account toggle/rename/disconnect, normal balance refresh, manual-row preservation, all-entity add/modify/remove, sign, enabled-account filtering, successful cursor movement, review categorization, exact re-delivery, and isolation passed. Eight defect clusters were recorded: first-word link cleanup can delete unrelated manual balances; balance reconciliation can retain disabled-only rows or delete failed-item rows; entity-wide maximum freshness can hide stale accounts; normal balance refresh starves liability refresh; distinct Plaid IDs can collide; persistence errors can be swallowed while the cursor advances; absent modified rows are reported successful; and one corrupt token aborts healthy sibling items. Primary Plaid paths also lack tracked regression coverage. No product/test change, protected-data access, network call, live action, or GitHub durability occurred.
 
 ## Phase 4: Core Repairs And Regression Coverage
 
