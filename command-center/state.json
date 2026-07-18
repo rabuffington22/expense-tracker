@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 12:57 PM CST",
+    "lastUpdated": "2026-07-18 1:32 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks 3A, 3B, 3C, and 3D have exact command-center closeouts published directly to main under separate Ryan authorizations with skip actions"
+    "durabilityStatus": "Work blocks 3A, 3B, 3C, 3D, and 3E have exact command-center closeouts published directly to main under separate Ryan authorizations with skip actions"
   },
   "phase": {
     "name": "Functional Audit And Prioritization",
     "status": "active",
-    "summary": "Tasks 1-3 and 4A-4B plus work blocks 3A-3D are done; Task 4C is current awaiting a separately confirmed synthetic weekly/waterfall audit block.",
-    "progress": 45
+    "summary": "Tasks 1-3 and 4A-4C plus work blocks 3A-3E are done; Task 4D is current awaiting a separately confirmed synthetic payroll audit block.",
+    "progress": 55
   },
   "currentTask": {
-    "title": "Task 4C: Audit weekly and waterfall derived workflows",
+    "title": "Task 4D: Audit payroll roster, Phoenix/CyberPayroll import, and role spending",
     "owner": "Ryan",
     "status": "awaiting work block",
-    "supportingAgent": "Codex Desktop owns the verified 3D evidence, Task 4C just-in-time planning pass, protected-data boundaries, and dashboard currency",
-    "nextAction": "Define the smallest coherent synthetic Task 4C audit slice and return work block 3E for Ryan confirmation.",
-    "blocker": "No Task 4C audit execution, 3D repair, tracked test expansion, protected-data access, live action, or further GitHub durability is authorized yet"
+    "supportingAgent": "Codex Desktop owns the verified 3E evidence, Task 4D just-in-time planning pass, protected-data boundaries, and dashboard currency",
+    "nextAction": "Define the smallest coherent synthetic Task 4D audit slice and return work block 3F for Ryan confirmation.",
+    "blocker": "No Task 4D audit execution, 3A-3E repair, tracked test expansion, protected-data access, live action, or further GitHub durability is authorized yet"
   },
   "currentWorkBlock": null,
   "routerHealth": {
@@ -62,23 +62,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define work block 3E for Task 4C weekly/waterfall audit",
+    "title": "Define work block 3F for Task 4D payroll audit",
     "status": "awaiting planning",
     "owner": "Ryan",
-    "why": "Work block 3D verified the planning and budget foundations sufficiently for a separately bounded synthetic audit of the weekly and waterfall consumers.",
-    "action": "Run a just-in-time Task 4C planning pass and return one synthetic-first work block for separate confirmation.",
+    "why": "Work block 3E verified the payroll schedule as a controlled Weekly input and completed Task 4C without invalidating the separate payroll roster/import audit path.",
+    "action": "Run a just-in-time Task 4D planning pass and return one synthetic-first work block for separate confirmation.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Task 4C audit block before audit execution begins.",
+    "summary": "Ryan reviews the next separately proposed Task 4D audit block before payroll audit execution begins.",
     "items": [
-      "Confirm or revise work block 3E after the Task 4C just-in-time planning pass."
+      "Confirm or revise work block 3F after the Task 4D just-in-time planning pass."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 3D is complete; Task 4C audit execution, Task 4D, 3D repairs, tracked tests, protected-data access, and live actions remain outside authorization.",
-    "decisionQueue": "The next decision is confirmation or revision of work block 3E; 3A-3D repairs remain later separately scoped choices.",
+    "phaseQuestions": "Work block 3E is complete; Task 4D audit execution, all 3A-3E repairs, tracked tests, protected-data access, and live actions remain outside authorization.",
+    "decisionQueue": "The next decision is confirmation or revision of work block 3F; 3A-3E repairs remain later separately scoped choices.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -740,6 +740,51 @@
         "command-center/issues.md"
       ],
       "result": "The tracked smoke suite passed. The final ephemeral probe ran 58 checks with 48 passes, zero runtime errors, and ten controlled failures representing four defects: APR-blind locked payoff schedules, missing LL direct-route denial, same-day snapshot-note loss, and ignored negative appreciation. Goal CRUD, budgets, effective splits, averages, per-payroll math, actions, direct payoff engines, positive projections, linked balances, summaries, and Personal/BFM visibility passed. One medium tracked-coverage gap remains; no repair, protected-data access, live action, or durability occurred."
+    },
+    {
+      "id": "phase-3-block-e",
+      "phaseId": "phase-3",
+      "label": "3E",
+      "name": "Synthetic Weekly and Waterfall Audit",
+      "status": "done",
+      "includedTasks": [
+        "Task 4C"
+      ],
+      "excludedTasks": [
+        "Completed Tasks 1-3 and 4A-4B plus Tasks 4D and 5-8",
+        "Product repairs, migrations, and tracked test, fixture, or demo-seed expansion",
+        "Real financial or payroll data, credentials, production or demo access, Plaid or OpenRouter calls, workflows, Fly, downstream writes, and authentication or security changes",
+        "Commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive-retrofit audit couples source inspection, deterministic temporary state, cross-entity reconciliation, finding classification, command-center stewardship, and final intake.",
+      "expectedFiles": [
+        "Read-only weekly, waterfall, short-term-planning, cash-flow, reporting, template, schema, seed, and smoke source",
+        "command-center/logs/2026-07-18-synthetic-weekly-waterfall-audit-3e.md",
+        "command-center/issues.md only if findings require it",
+        "command-center/roadmap.md, now.md, decisions.md, state.json, and index.html"
+      ],
+      "stopConditions": [
+        "Verification requires protected financial or payroll data, credentials, production or demo access, Plaid, OpenRouter, or another external action",
+        "Entity isolation, authentication, destructive behavior, or sensitive-data handling appears unsafe",
+        "A finding requires product repair, migration, tracked test, fixture, or demo-data change",
+        "An earlier defect prevents a trustworthy Task 4C conclusion",
+        "Scope expands into Task 4D or Tasks 5-8, verification changes the plan, or command-center checks fail"
+      ],
+      "verification": [
+        ".venv/bin/python scripts/smoke_test.py",
+        "Deterministic temporary-DATA_DIR checks for week/date math, pace, spending, bills, burn rate, warnings, balances, paydown goals, and empty states",
+        "Multi-month BFM-to-Personal checks for actual and target waterfall calculations, tax handling, trends, payoff estimates, invalid inputs, rendered routes, intended entity boundaries, and Luxe Legacy denial",
+        "Temporary-data cleanup, git diff --check, dashboard refresh, health check, dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Return a sanitized weekly/waterfall pass, defect, gap, and unverified matrix; ranked findings with acceptance checks; exact synthetic checks; preserved boundaries; tracked-coverage assessment; and Task 4D readiness.",
+      "durability": "Published directly to main under Ryan's separate post-block authorization with skip actions; no PR, merge, or deploy occurred.",
+      "evidence": [
+        "command-center/logs/2026-07-18-synthetic-weekly-waterfall-audit-3e.md",
+        "command-center/issues.md"
+      ],
+      "result": "The tracked smoke suite passed. The corrected 58-check primary probe and focused ten-check confirmation probe recorded six functional defects and one tracked-coverage gap without unexpected runtime errors. Current-period effective spending, valid planning math, bill-source assembly, paydown pace, BFM payroll date, actual and target waterfall reconciliation, historical series, empty states, intended Personal/BFM sharing, LL denial, read-only preservation, and cleanup passed. Selected-date anchoring, scheduled card-payment amounts, signed payoff averaging, invalid paydown dates, sub-month payoff rounding, and tax validation failed without repair, protected-data access, live action, or durability."
     }
   ],
   "phaseTasks": [
@@ -991,19 +1036,24 @@
       "phaseId": "phase-3",
       "taskId": "P3-T4C",
       "title": "Task 4C: Audit weekly and waterfall derived workflows",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "After the planning foundation audit, reconcile weekly pace and bills plus BFM-to-Personal waterfall calculations, dates, empty states, and entity boundaries against validated synthetic planning, budget, transaction, balance, paydown-goal, and payroll-schedule inputs.",
-      "nextAction": "Confirm or revise work block 3E after a just-in-time Task 4C planning pass.",
-      "blocker": "Task 4C audit execution is not authorized until a synthetic state boundary, exact included surfaces, stop conditions, and verification are confirmed."
+      "result": "Current-period effective spending, valid planning math, bill-source assembly, paydown pace, payroll date, actual/target waterfall reconciliation, empty states, intended sharing, LL denial, and read-only preservation passed; six functional defects and one tracked-coverage gap were recorded without repair.",
+      "evidence": [
+        "command-center/logs/2026-07-18-synthetic-weekly-waterfall-audit-3e.md",
+        "command-center/issues.md"
+      ]
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T4D",
       "title": "Task 4D: Audit payroll roster, Phoenix/CyberPayroll import, and role spending",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "Use generated synthetic XLSX and payroll records to check employee CRUD and pay history, parse-preview-save and duplicate behavior, role mapping and aggregation, temporary-payload cleanup, and intended entity and access boundaries without real payroll or HR data."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Use generated synthetic XLSX and payroll records to check employee CRUD and pay history, parse-preview-save and duplicate behavior, role mapping and aggregation, temporary-payload cleanup, and intended entity and access boundaries without real payroll or HR data.",
+      "nextAction": "Confirm or revise work block 3F after a just-in-time Task 4D planning pass.",
+      "blocker": "Task 4D audit execution is not authorized until the generated-XLSX boundary, exact included surfaces, stop conditions, and verification are confirmed."
     },
     {
       "phaseId": "phase-3",
@@ -1245,6 +1295,10 @@
     {
       "name": "Work Block 3D Synthetic Planning Foundations Audit",
       "path": "command-center/logs/2026-07-18-synthetic-planning-foundations-audit-3d.md"
+    },
+    {
+      "name": "Work Block 3E Synthetic Weekly and Waterfall Audit",
+      "path": "command-center/logs/2026-07-18-synthetic-weekly-waterfall-audit-3e.md"
     }
   ],
   "recentActivity": [
@@ -1391,11 +1445,23 @@
     {
       "time": "2026-07-18",
       "text": "Ryan separately authorized committing and pushing the exact seven-path 3D command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 3E for a synthetic-only Task 4C audit of weekly and BFM-to-Personal waterfall derived workflows; payroll import, repairs, tracked tests, protected data, live actions, and GitHub durability remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 3E: the tracked smoke suite passed, current-period and boundary controls passed, and six weekly/waterfall functional defects plus one medium coverage gap were recorded without repair, protected-data access, live action, or GitHub durability."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan separately authorized committing and pushing the exact seven-path 3E command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
     }
   ],
   "openQuestions": [],
   "projectQuestions": [
-    "What is the smallest coherent synthetic Task 4C audit block for weekly and waterfall behavior?"
+    "What is the smallest coherent synthetic Task 4D audit block for payroll roster, Phoenix/CyberPayroll import, and role-spending behavior?"
   ],
   "ideas": [],
   "issues": [
@@ -1517,17 +1583,66 @@
       "status": "open",
       "severity": "medium",
       "source": "command-center/issues.md"
+    },
+    {
+      "title": "Weekly historical views mix selected and current dates",
+      "summary": "Historical pace used today's month length, historical recurring/card bills were omitted, and a cross-month burn window reversed the synthetic budget-health conclusion.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Weekly credit-card bills use full balance instead of scheduled payment",
+      "summary": "A card titled 50 dollars due contributed its full 1,200 dollar balance to the row and weekly bill total.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Waterfall payoff average excludes deficit months",
+      "summary": "The labeled three-month average used only positive months, producing 1,750 dollars instead of the signed 500 dollar average in the synthetic history.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Invalid Weekly paydown dates persist and break the page",
+      "summary": "A direct POST saved a malformed date and the next Weekly read raised ValueError while parsing it.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Waterfall can report zero months while debt remains",
+      "summary": "The payoff helper rounds a fractional month to zero when positive debt is less than half one month of positive surplus.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Waterfall tax fallback can disagree with display and fail on non-finite input",
+      "summary": "A 100 percent input displayed 100 while calculations used the 22 percent fallback, and a direct nan value raised ValueError.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Weekly and Waterfall paths lack tracked regression coverage",
+      "summary": "The 3E temporary probes verified current behavior and reproduced six defects, but the tracked smoke suite has no dedicated Weekly or Waterfall cases.",
+      "status": "parked",
+      "severity": "medium",
+      "source": "command-center/issues.md"
     }
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Bounded Task 4C audit decision",
-    "description": "Define and confirm the synthetic weekly and waterfall audit slice before execution."
+    "name": "Bounded Task 4D payroll audit decision",
+    "description": "Define and confirm the synthetic payroll roster, import, and role-spending audit slice before execution."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
-    "browserSmoke": "pass; generated dashboard state shows Phase 3 active at 45 percent, Tasks 1-3 and 4A-4B plus work blocks 3A-3D done, Task 4C current behind Ryan's work-block confirmation gate, four 3D defects, one 3D coverage gap, and one clear waiting item",
+    "browserSmoke": "pass; generated dashboard state shows Phase 3 at 55 percent, Tasks 1-3 and 4A-4C plus work blocks 3A-3E done, Task 4D behind the work-block 3F confirmation gate, six 3E functional findings, one 3E coverage gap, and one clear waiting item",
     "applicationSmoke": "pass; existing synthetic temporary-DATA_DIR suite initialized all three entities, verified import and exact re-import deduplication, and passed route, export, saved-view, and To Do checks",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
@@ -1553,6 +1668,9 @@
     "phase3FinancialReadModelDurability": "pass; exact seven-path 3C command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script",
     "phase3PlanningFoundationsAudit": "pass with findings; tracked smoke passed, 48 of 58 ephemeral checks passed, and ten controlled failures produced four defects across APR ordering, LL direct-route denial, snapshot-note persistence, and negative appreciation",
     "phase3PlanningFoundationsBoundaries": "pass; temporary synthetic data only, temporary data removed, no product or tracked fixture/test/demo changes, no real financial or payroll data or credentials, and no production/demo/Plaid/OpenRouter/workflow/Fly/downstream action",
-    "phase3PlanningFoundationsDurability": "pass; exact seven-path 3D command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script"
+    "phase3PlanningFoundationsDurability": "pass; exact seven-path 3D command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script",
+    "phase3WeeklyWaterfallAudit": "pass with findings; tracked smoke passed, the corrected 58-check primary probe and focused ten-check confirmation probe verified current-period and boundary controls while six functional defects and one tracked-coverage gap were recorded",
+    "phase3WeeklyWaterfallBoundaries": "pass; temporary synthetic data only, temporary data removed, no product or tracked fixture/test/demo changes, no real financial or payroll data or credentials, and no production/demo/Plaid/OpenRouter/workflow/Fly/downstream action",
+    "phase3WeeklyWaterfallDurability": "pass; exact seven-path 3E command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script"
   }
 }

@@ -412,7 +412,7 @@ Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is pu
 
 ## Phase 3: Functional Audit And Prioritization
 
-Status: active; Tasks 1-3 and 4A-4B plus work blocks 3A-3D are done, and Task 4C is current awaiting a separately confirmed weekly/waterfall audit block
+Status: active; Tasks 1-3 and 4A-4C plus work blocks 3A-3E are done, and Task 4D is current awaiting a separately confirmed payroll audit block
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
@@ -421,8 +421,8 @@ Goal: determine what “working properly” means across the live product, then 
 - **Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior.** Status: done through work block 3C. The tracked smoke suite passed; 297 of 306 ephemeral assertions passed, and the remaining nine controlled errors reproduced one medium Recurring Charges report SQL defect at three layers in all three entities. A medium tracked-coverage gap was also recorded without implementation.
 - **Task 4A: Audit long-term planning projections and cross-entity visibility.** Status: done through work block 3D. Positive projections, linked balances, CRUD, summaries, and Personal/BFM visibility passed; negative depreciation and LL direct-route denial defects were recorded without repair.
 - **Task 4B: Audit short-term goals, snapshots, budgets, actions, and payoff planning.** Status: done through work block 3D. CRUD, entity-local choices, budgets, effective splits, averages, per-payroll math, actions, and direct payoff engines passed; APR-blind locked plans, snapshot-note loss, LL direct-route denial, and tracked-coverage gaps were recorded without repair.
-- **Task 4C: Audit weekly and waterfall derived workflows.** Status: current; awaiting a separately confirmed work block 3E. Reuse validated synthetic planning, budget, transaction, balance, paydown-goal, and payroll-schedule inputs to reconcile weekly pace/bills and BFM-to-Personal waterfall calculations, dates, empty states, and entity boundaries.
-- **Task 4D: Audit payroll roster, Phoenix/CyberPayroll import, and role spending.** Status: planned after Task 4C. Use generated synthetic XLSX/payroll records to check employee CRUD and pay history, parse-preview-save and duplicate behavior, role mapping and aggregation, temporary-payload cleanup, and intended entity/access boundaries without real payroll or HR data.
+- **Task 4C: Audit weekly and waterfall derived workflows.** Status: done through work block 3E. Current-period calculations, effective spending, valid target modes, empty states, intended Personal/BFM sharing, LL denial, and read-only preservation passed; six functional defects and one tracked-coverage gap were recorded without repair.
+- **Task 4D: Audit payroll roster, Phoenix/CyberPayroll import, and role spending.** Status: current; awaiting a separately confirmed work block 3F. Use generated synthetic XLSX/payroll records to check employee CRUD and pay history, parse-preview-save and duplicate behavior, role mapping and aggregation, temporary-payload cleanup, and intended entity/access boundaries without real payroll or HR data.
 - **Task 5: Audit Plaid and downstream-sync integration boundaries.** Status: planned. Begin with source and synthetic/mocked behavior; any production account access, Plaid action, workflow action, credential use, or downstream write requires a separate target-specific authorization.
 - **Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries.** Status: planned. Use tracked source and synthetic/local behavior first; do not change authentication, CSRF, credential, encryption, or public-route behavior during the audit.
 - **Task 7: Consolidate audit findings into severity-ranked issues.** Status: planned. Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.
@@ -571,6 +571,43 @@ Durability: published directly to `main` under Ryan's separate post-block author
 Report point: return a sanitized pass, defect, gap, superseded, and unverified matrix; a verdict on the parked legacy expectations; ranked findings with acceptance checks; exact synthetic checks; preserved boundaries; and whether work block 3E should proceed with Task 4C.
 
 Result: the tracked synthetic smoke suite passed. The final ephemeral 3D probe ran 58 checks with 48 passes, zero runtime errors, and ten controlled assertion failures that cluster into four defects: locked avalanche schedules ignore stored APRs, LL denial is absent from direct planning routes, automatic same-day snapshots erase manual review notes, and negative asset appreciation is treated as zero growth. Goal CRUD/status/delete, budgets and subcategories, effective split replacement, three-month averages, per-payroll math, actions, direct payoff engines, positive projections, linked balances, summaries, and Personal/BFM visibility passed. The legacy goal/snapshot/budget/payoff/isolation expectations remain valid; short-term cross-entity linking and custom allocation are superseded. Planning paths still lack tracked coverage, and demo goals/snapshots remain unseeded. No repair, tracked product/test/demo change, protected-data access, external call, live action, or GitHub durability occurred.
+
+### Confirmed Work Block 3E: Synthetic Weekly and Waterfall Audit
+
+Status: done; confirmed and completed locally on 2026-07-18
+
+Included: Task 4C.
+
+Excluded: completed Tasks 1-3 and 4A-4B; Tasks 4D and 5-8; product repairs or migrations; tracked test, fixture, or demo-seed expansion; real financial or payroll data, credentials, production or demo access; Plaid or OpenRouter calls; workflows, Fly, downstream writes, authentication or security changes; commit, push, PR, merge, and deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Outcome: determine whether weekly pace, bills, burn rate, warnings, and paydown tracking plus the BFM-to-Personal actual and target waterfall produce internally consistent results from the same deterministic synthetic budgets, effective transactions, balances, recurring-charge state, paydown goal, and payroll schedule. Classify behavior as pass, defect, regression-coverage gap, or unverified boundary without implementing repairs.
+
+Why this grouping: Weekly and Waterfall are coupled derived consumers of the same validated Task 4A-4B planning inputs and Task 3 financial read model. One deterministic multi-month state can reconcile their dates, budget sections, spending totals, balances, paydown pace, and intended Personal/BFM/LL boundaries. Task 4D introduces generated XLSX, temporary-upload, employee-lifecycle, and payroll/HR verification and remains separate.
+
+Owner and recommended agent: Codex Desktop in the current task. This sensitive-retrofit audit couples source inspection, synthetic cross-entity verification, finding classification, command-center stewardship, and final intake; no delegation or second opinion is needed.
+
+Expected surfaces: read `web/routes/weekly.py`, `web/routes/waterfall.py`, relevant short-term-planning and cash-flow helpers, `core/reporting.py`, `core/db.py`, related templates, `scripts/seed_demo_data.py`, and `scripts/smoke_test.py`. Write a sanitized 3E audit log and update `command-center/issues.md` only when findings require it; close out through Runway OS sources, state, and dashboard. No application, fixture, tracked test, or demo-seed file should change.
+
+Stop conditions:
+
+- Verification would require protected financial or payroll data, credentials, production/demo access, Plaid, OpenRouter, or another external action.
+- Entity isolation, authentication, destructive behavior, or sensitive-data handling appears unsafe.
+- A finding requires a product repair, migration, tracked test, fixture, or demo-data change; record it without implementation.
+- An earlier defect prevents a trustworthy Task 4C conclusion rather than being isolated.
+- Scope expands into Task 4D or Tasks 5-8, verification changes the plan, or command-center checks fail.
+
+Verification:
+
+- `.venv/bin/python scripts/smoke_test.py`
+- deterministic temporary-`DATA_DIR` checks for ISO-week navigation, cross-month/year dates, budget and category pace, effective split spending, exclusions, burn rate, warnings, action/recurring/card/payroll bills, balances, paydown-goal persistence, and empty states
+- multi-month BFM-to-Personal checks for actual income/expense/surplus, budget-section grouping, revenue and take-home target modes, tax handling, historical trend, payoff estimate, invalid inputs, rendered routes, intended cross-entity visibility, Luxe Legacy denial, and absence of cross-entity mutation
+- temporary-data cleanup, `git diff --check`, Runway OS refresh, health check, generated-dashboard inspection, and final worktree review
+
+Durability: published directly to `main` under Ryan's separate post-block authorization with `[skip actions]`; no PR, merge, or deployment is part of this command-center-only closeout.
+
+Report point: return a sanitized weekly/waterfall pass, defect, gap, and unverified matrix; ranked findings with acceptance checks; exact synthetic checks; preserved boundaries; tracked-coverage assessment; and whether work block 3F should proceed with Task 4D.
+
+Result: the tracked synthetic smoke suite passed. The final 58-check primary audit, corrected for three harness expectations and supported by a focused ten-check confirmation probe, found six functional defect clusters and one medium tracked-coverage gap without unexpected runtime errors. Current-period effective spending, exclusions, valid pace and target math, bill-source assembly, paydown pace, BFM payroll date, empty states, actual and target waterfall reconciliation, historical series, intended Personal/BFM sharing, LL denial, read-only preservation, and temporary cleanup passed. Weekly historical navigation mixes selected and current dates; card bills use full balances rather than scheduled payments; Waterfall excludes deficit months from its payoff average; invalid paydown dates persist and break Weekly; sub-month payoff estimates can show zero months; and tax fallback/display plus non-finite input handling are inconsistent. No repair, tracked product/test/demo change, protected-data access, external call, live action, or GitHub durability occurred.
 
 ## Phase 4: Core Repairs And Regression Coverage
 

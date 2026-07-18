@@ -507,3 +507,218 @@ Acceptance checks:
 Why not added now:
 
 Tracked fixture and test expansion was explicitly excluded from audit work block 3C.
+
+## Weekly Historical Views Mix Selected And Current Dates
+
+Status: open; discovered in work block 3E
+
+Severity: high financial-planning correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/weekly.py`, Short-Term Planning bill helpers, Cash Flow recurrence helpers, and deterministic current/historical/cross-month probes
+
+Revisit: Phase 4 Task 1 for date-anchor repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+Weekly accepts an arbitrary ISO week, but only transaction queries and action-item due days consistently use that selected interval. Budget and category pace use `date.today()` for the divisor, recurring and credit-card bills compute their next occurrence from today, and the last-week burn-rate window can start in the previous month while ending in the viewed month. In the synthetic cross-month case, 42 days of spending were projected against a 30-day month and changed the conclusion from $3,216.67 over budget to $1,628.57 under budget.
+
+Impact:
+
+Navigating to a historical or boundary week can show the wrong pace, omit bills that belonged to that week, and reverse the budget-health conclusion. Current-week behavior passed, so the defect is specifically the incomplete propagation of the selected date.
+
+Acceptance checks:
+
+- Pace and category pace derive their day count from the viewed budget month.
+- Manual, detected-recurring, and credit-card due items are projected into the selected week rather than always from today.
+- Last-week scorecard, pace, MTD window, day count, and displayed month use one coherent calendar period across month/year boundaries.
+- Current-week, historical, cross-month, cross-year, empty, and all-entity cases have tracked synthetic coverage.
+
+Why not fixed now:
+
+Work block 3E is audit-only. Date-anchor repair and tracked tests require separate Phase 4 implementation scope.
+
+## Weekly Credit-Card Bills Use Full Balance Instead Of Scheduled Payment
+
+Status: open; discovered in work block 3E
+
+Severity: high cash-planning correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/short_term_planning.py`, `web/routes/weekly.py`, `web/templates/weekly.html`, and deterministic bill-total reproduction
+
+Revisit: Phase 4 Task 1 for bill-amount repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+The credit-card due helper formats the title from `payment_amount_cents`, such as `Card Current — $50 due`, but Weekly copies `balance_cents` into the bill amount. The rendered row and weekly total therefore used $1,200 for the same synthetic card. With a $20 recurring charge and $50 manual charge, the displayed total was $1,270 instead of the scheduled $120.
+
+Impact:
+
+Weekly can materially overstate near-term bills and available cash even while the row title communicates the correct scheduled payment.
+
+Acceptance checks:
+
+- A credit-card bill row uses the scheduled payment amount when one exists.
+- Missing scheduled-payment behavior is explicit and does not silently substitute the full balance unless the product deliberately labels it that way.
+- Row title, amount column, total, and source helper reconcile in integer cents.
+- Multiple cards, zero balances, missing amounts, and entity isolation have tracked tests.
+
+Why not fixed now:
+
+Bill semantics and regression tests were excluded from audit work block 3E.
+
+## Waterfall Payoff Average Excludes Deficit Months
+
+Status: open; discovered in work block 3E
+
+Severity: high debt-planning correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/waterfall.py` and deterministic three-month surplus reproduction
+
+Revisit: Phase 4 Task 1 for averaging repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+Waterfall labels its payoff input a three-month rolling average, but it first removes every non-positive month and averages only the remaining surpluses. Synthetic monthly results of $1,000, negative $2,000, and $2,500 produced a displayed average of $1,750 instead of the signed three-month average of $500.
+
+Impact:
+
+The debt-payoff estimate can substantially overstate recurring cash available for repayment precisely when recent deficits make the plan less reliable.
+
+Acceptance checks:
+
+- The rolling window and signed-surplus rule are explicit and use every included month.
+- Deficit, zero, missing, and fewer-than-three-month histories have defined behavior.
+- Displayed average, months-to-payoff, and payoff date reconcile to the same inputs.
+- Tracked tests cover mixed surplus/deficit history and all-empty/non-positive history.
+
+Why not fixed now:
+
+Waterfall calculation changes and tracked tests require a separately confirmed Phase 4 block.
+
+## Invalid Weekly Paydown Dates Persist And Break The Page
+
+Status: open; discovered in work block 3E
+
+Severity: medium functional-availability risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/weekly.py` and a deterministic direct-route POST/read reproduction
+
+Revisit: Phase 4 Task 1 for validation and defensive-read repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+The paydown-goal POST persists any non-empty target date. A synthetic direct request stored `not-a-date`, redirected successfully, and caused the next Weekly read to raise `ValueError` while parsing the saved goal.
+
+Impact:
+
+A malformed direct request or pre-existing bad value can make the Weekly page unavailable until the row is corrected.
+
+Acceptance checks:
+
+- Only valid ISO dates inside the accepted product range are persisted.
+- Invalid POSTs preserve the prior valid goal and return a safe validation response.
+- Malformed stored values cannot crash Weekly or Waterfall reads.
+- Valid create/update behavior and Personal/BFM/LL boundaries remain intact.
+
+Why not fixed now:
+
+Route validation and defensive-read changes were excluded from audit work block 3E.
+
+## Waterfall Can Report Zero Months While Debt Remains
+
+Status: open; discovered in work block 3E
+
+Severity: medium financial-display correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/waterfall.py` and direct payoff-estimate reproduction
+
+Revisit: Phase 4 Task 1 for payoff rounding repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+The payoff helper rounds the fractional month to the nearest integer. When positive debt is smaller than half of one month's positive surplus, the result becomes `0 months` even though the balance is not zero.
+
+Impact:
+
+The summary can claim immediate payoff while debt remains, creating a visible contradiction between the card balance and payoff estimate.
+
+Acceptance checks:
+
+- Positive debt and positive surplus produce at least one payoff month.
+- Zero debt and non-positive surplus retain explicit empty/no-estimate behavior.
+- Displayed months and payoff date use a documented rounding rule and reconcile at boundary values.
+
+Why not fixed now:
+
+Payoff calculation changes and tracked tests were outside the 3E audit scope.
+
+## Waterfall Tax Fallback Can Disagree With Display And Crash On Non-Finite Input
+
+Status: open; discovered in work block 3E
+
+Severity: medium scenario-integrity and availability risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/waterfall.py`, `web/templates/waterfall.html`, and deterministic invalid-input route probes
+
+Revisit: Phase 4 Task 1 for normalization repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+An out-of-range 100% tax input resets the calculation to the 22% default but leaves `tax_rate_pct` at 100 for rendering, so the page displays 100% next to a 22% result. A direct `tax_rate=nan` request reaches integer conversion of a non-finite float and raises `ValueError`.
+
+Impact:
+
+The scenario can display an input different from the rate actually applied, and malformed direct input can make the Waterfall page unavailable.
+
+Acceptance checks:
+
+- Tax input must be finite, normalized once, and range-checked before calculation or rendering.
+- The displayed rate, owner take-home, target revenue, and actual continuation use the same normalized value.
+- Invalid, empty, boundary, and non-finite inputs return a safe default or validation response without a server error.
+
+Why not fixed now:
+
+Input normalization and tracked tests require separately confirmed implementation scope.
+
+## Weekly And Waterfall Paths Lack Tracked Regression Coverage
+
+Status: parked for Phase 4 regression coverage
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py`, work block 3E's 58-check primary probe, and focused ten-check confirmation probe
+
+Revisit: Phase 4 Task 2, preferably alongside the related 3E repairs
+
+Summary:
+
+Work block 3E confirmed current-period effective spending, valid budget/target math, bill-source assembly, paydown pace, empty states, actual/target waterfall reconciliation, intended Personal/BFM sharing, LL denial, and read-only preservation. The tracked smoke suite contains no dedicated Weekly or Waterfall cases and does not reproduce the six functional defects found at date and input edges.
+
+Impact:
+
+Derived financial views can regress or preserve known defects without the maintained suite detecting incorrect dates, totals, payoff estimates, invalid-input failures, or entity-boundary changes.
+
+Acceptance checks:
+
+- Tracked tests use one deterministic all-entity dataset for Weekly and Waterfall reconciliation.
+- Current, historical, cross-month/year, empty, invalid-input, and intended cross-entity cases are explicit.
+- Each repaired 3E defect has a failing-before and passing-after regression case.
+- Tests remain synthetic and require no production data, credentials, Plaid, OpenRouter, or external access.
+
+Why not added now:
+
+Tracked test expansion was explicitly excluded from audit work block 3E.

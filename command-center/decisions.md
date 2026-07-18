@@ -152,6 +152,18 @@ The tracked smoke suite passed, and the final ephemeral all-entity planning prob
 
 Ryan explicitly instructed Codex to commit and push the verified 3D command-center closeout to `main`. This authorizes staging only the seven 3D command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, tracked test, and demo-seed files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or OpenRouter calls; Fly; and all recovery outside the exact closeout remain excluded.
 
+### 2026-07-18 — Confirm work block 3E for the synthetic weekly and waterfall audit
+
+Ryan confirmed Task 4C as one synthetic-only audit of weekly pace, bills, burn rate, warnings, and paydown tracking plus BFM-to-Personal actual and target waterfall behavior. Codex may inspect tracked source, run the existing smoke suite, execute deterministic ephemeral probes against temporary entity databases, create a sanitized audit log, record ranked findings, and close Runway OS state. Completed Tasks 1-3 and 4A-4B; Tasks 4D and 5-8; product repairs or migrations; tracked test/fixture/demo expansion; real financial or payroll data; credentials; production/demo access; Plaid or OpenRouter calls; workflows, Fly, downstream writes, authentication/security changes; pre-existing `scripts/sync_prod_to_local.sh`; and all commit, push, PR, merge, and deployment actions remain excluded.
+
+### 2026-07-18 — Accept work block 3E as verified with six functional defects and one coverage gap
+
+The tracked smoke suite passed. A 58-check primary temporary-database probe, corrected for three harness expectations, plus a focused ten-check confirmation probe verified current-period effective spending, valid planning math, bill-source assembly, paydown pace, BFM payroll dates, actual/target waterfall reconciliation, historical series, empty states, intended Personal/BFM sharing, LL denial, and read-only preservation. Six functional defects were recorded: selected Weekly dates do not anchor all pace/bill/burn calculations; credit-card bills use full balances rather than scheduled payments; Waterfall's three-month payoff average excludes deficit months; invalid paydown dates persist and break Weekly; sub-month payoff estimates can report zero months; and Waterfall tax normalization can disagree with display or fail on non-finite input. Weekly/Waterfall also lack dedicated tracked coverage. Task 4C and work block 3E are complete, and Task 4D becomes current for a separately confirmed 3F audit. No repair, tracked product/test/demo change, protected-data access, external call, live action, or GitHub durability occurred.
+
+### 2026-07-18 — Authorize direct-main durability for the 3E audit closeout
+
+Ryan explicitly instructed Codex to commit and push the verified 3E command-center closeout to `main`. This authorizes staging only the seven 3E command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, tracked test, and demo-seed files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or OpenRouter calls; Fly; and all recovery outside the exact closeout remain excluded.
+
 ## Pending Ryan Direction
 
-- Confirm or revise work block 3E for the synthetic weekly and waterfall audit in Task 4C. Any 3D repair, tracked regression coverage, protected-data access, live action, or further durability step requires a separate decision.
+- Confirm or revise work block 3F for the synthetic payroll roster/import/role-spending audit in Task 4D. Any 3A-3E repair, tracked regression coverage, protected-data access, live action, or further durability step requires a separate decision.
