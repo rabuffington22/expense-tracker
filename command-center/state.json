@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 8:17 AM CST",
+    "lastUpdated": "2026-07-18 8:24 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "main contains the verified Phase 1 closeout at cb80fa9; confirmed work block 2A is active on local branch codex/phase-2-root-docs and is not yet committed or pushed"
+    "durabilityStatus": "main contains the verified Phase 1 closeout at cb80fa9; work block 2A source commit c249c9b is pushed on origin/codex/phase-2-root-docs and draft PR 84 is open; nothing is merged or deployed"
   },
   "phase": {
     "name": "Project Truth And Documentation Recovery",
     "status": "active",
-    "summary": "Phase 1 is verified complete; Phase 2 work block 2A is active for Tasks 1 and 4, with Tasks 2 and 3 intentionally deferred.",
-    "progress": 0
+    "summary": "Work block 2A completed Tasks 1 and 4 on draft PR 84; Task 2 is current for a separately confirmed legacy-document and instruction-governance block.",
+    "progress": 50
   },
   "currentTask": {
-    "title": "Task 1: Rebuild the root README for the current architecture",
-    "owner": "Codex",
-    "status": "active",
-    "supportingAgent": "Codex Desktop owns implementation, verification, command-center closeout, and draft-PR publication",
-    "nextAction": "Rebuild README.md from verified repository truth and document sanitized operating boundaries without touching excluded legacy or untracked files.",
-    "blocker": "None; stop if a legacy-document, instruction-governance, sensitive-data, application, production, merge, or deployment decision becomes necessary"
+    "title": "Task 2: Decide the future of PROJECT_KNOWLEDGE.md and plan.md",
+    "owner": "Ryan",
+    "status": "awaiting work block",
+    "supportingAgent": "Codex Desktop owns the verified 2A evidence and will propose the next just-in-time governance block after draft PR review",
+    "nextAction": "Review draft PR 84, then confirm or revise a bounded Phase 2 governance block for Tasks 2 and 3.",
+    "blocker": "No legacy-document, CLAUDE.md, AGENTS.md, merge, or deployment change is authorized without separate Ryan direction"
   },
   "routerHealth": {
     "status": "healthy",
@@ -61,17 +61,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute work block 2A root project entry-point recovery",
-    "status": "active",
-    "owner": "Codex",
-    "why": "The current README describes the retired Streamlit, two-entity, manual-import-only architecture, while Tasks 1 and 4 can restore one evidence-backed and operationally safe root entry point without requiring the deferred governance decisions.",
-    "action": "Rewrite and verify README.md, update supporting Runway OS truth, then commit and push codex/phase-2-root-docs and open a draft PR without merging or deploying.",
+    "title": "Review draft PR 84 and define the Phase 2 governance block",
+    "status": "waiting",
+    "owner": "Ryan",
+    "why": "Tasks 1 and 4 are verified on a draft branch; the next work concerns legacy-document disposition and instruction-source ownership, which are explicit Ryan decisions.",
+    "action": "Review the new root entry point, then confirm or revise a possible 2B block for Tasks 2 and 3 without merging or changing preserved files yet.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    "Review draft PR 84 and decide whether it should later be merged",
+    "Confirm or revise the next Phase 2 governance block for Tasks 2 and 3"
+  ],
   "waitingOnRyan": {
-    "summary": "No immediate Ryan input is required while confirmed work block 2A is active.",
-    "items": []
+    "summary": "Ryan reviews draft PR 84 and the next separately proposed Phase 2 governance block.",
+    "items": [
+      "Review the work block 2A README and boundary documentation on draft PR 84",
+      "Confirm or revise the next Phase 2 governance block before legacy or instruction-file changes"
+    ]
   },
   "questionBoundaries": {
     "phaseQuestions": "Ryan reviews the next proposed work block or direction choice after the current verified block closes.",
@@ -371,7 +377,7 @@
       "phaseId": "phase-2",
       "label": "2A",
       "name": "Restore the Root Project Entry Point",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1",
         "Task 4"
@@ -413,8 +419,9 @@
         "Inspect the generated dashboard and exact staged paths",
         "Confirm the pushed branch and draft PR contain no application, ignored-data, legacy-document, or untracked-file changes"
       ],
-      "reportBack": "Return the new README structure, important truth corrections, verification results, branch, commit, draft-PR status, preserved boundaries, and any documentation uncertainty discovered.",
-      "durability": "Work on codex/phase-2-root-docs, commit and push the verified branch, and open a draft PR without merge or deployment."
+      "reportBack": "Returned the new README structure, important truth corrections, passing verification, pushed branch, source commit, draft PR, preserved boundaries, and isolated governance uncertainty.",
+      "durability": "Source commit c249c9b is pushed on origin/codex/phase-2-root-docs and included in draft PR 84; the verified closeout is on the same branch, with no merge or deployment.",
+      "result": "Replaced the retired Streamlit, manual-import-only, two-entity README with a tracked-source-verified Flask, HTMX, Plaid, Fly.io, and three-entity entry point; added sanitized operating boundaries; updated PROJECT_STRUCTURE.md; preserved every excluded file; passed synthetic, documentation, exact-scope, dashboard, and health verification; and opened draft PR 84 without merge or deployment."
     }
   ],
   "phaseTasks": [
@@ -546,19 +553,24 @@
       "phaseId": "phase-2",
       "taskId": "P2-T1",
       "title": "Task 1: Rebuild the root README for the current architecture",
-      "status": "current",
+      "status": "done",
       "owner": "Codex",
       "summary": "Replace retired Streamlit and no-bank-linking guidance with the current Flask, Plaid, Fly.io, and three-entity system.",
-      "nextAction": "Rebuild README.md from verified repository truth in work block 2A.",
-      "blocker": "None inside the confirmed scope"
+      "result": "README.md now provides a current tracked-source-verified project entry point on draft PR 84.",
+      "evidence": [
+        "README.md",
+        "command-center/logs/2026-07-18-root-project-entry-point-2a.md"
+      ]
     },
     {
       "phaseId": "phase-2",
       "taskId": "P2-T2",
       "title": "Task 2: Decide the future of PROJECT_KNOWLEDGE.md and plan.md",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
-      "summary": "Approve archive, replacement, or historical labels after useful content is migrated."
+      "summary": "Approve archive, replacement, or historical labels after useful content is migrated.",
+      "nextAction": "Review draft PR 84 and a separately proposed governance block before changing preserved legacy files.",
+      "blocker": "Awaiting Ryan review and work-block confirmation"
     },
     {
       "phaseId": "phase-2",
@@ -572,9 +584,14 @@
       "phaseId": "phase-2",
       "taskId": "P2-T4",
       "title": "Task 4: Document deployment, data, and side-effect boundaries",
-      "status": "active",
+      "status": "done",
       "owner": "Codex",
-      "summary": "Create current operator guidance without credentials or row-level financial detail."
+      "summary": "Create current operator guidance without credentials or row-level financial detail.",
+      "result": "README.md now documents configuration names, deployment mechanics, data protection, and explicit authorization gates without secret values or financial detail.",
+      "evidence": [
+        "README.md",
+        "command-center/logs/2026-07-18-root-project-entry-point-2a.md"
+      ]
     },
     {
       "phaseId": "phase-3",
@@ -788,6 +805,10 @@
     {
       "name": "Queue Summary Script",
       "path": "command-center/agent-router/scripts/queue-summary.js"
+    },
+    {
+      "name": "Work Block 2A Root Project Entry Point Closeout",
+      "path": "command-center/logs/2026-07-18-root-project-entry-point-2a.md"
     }
   ],
   "recentActivity": [
@@ -858,6 +879,10 @@
     {
       "time": "2026-07-18",
       "text": "Ryan confirmed work block 2A for Tasks 1 and 4: restore the root README and sanitized operating boundaries on codex/phase-2-root-docs, then publish a draft PR without merge or deployment."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 2A: rebuilt the root project entry point, passed synthetic and Runway OS verification, pushed source commit c249c9b, and opened draft PR 84 without merge or deployment."
     }
   ],
   "openQuestions": [],

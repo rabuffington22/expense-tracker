@@ -74,6 +74,11 @@ Ready PR `#83` merged the minute-17 schedule as `96af7dc`. Fly Deploy run `29645
 
 Ryan authorized rebuilding `README.md` for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture and documenting sanitized deployment, data, and side-effect boundaries. Codex may work on `codex/phase-2-root-docs`, update the supporting project-structure and Runway OS surfaces, commit and push the verified branch, and open a draft PR. The block excludes application code, workflows, databases, production/Plaid/Fly/credential/financial-data access, legacy-document edits or archival, `CLAUDE.md`, pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh`, merge, and deployment.
 
+### 2026-07-18 — Accept work block 2A as verified on draft PR #84
+
+The root README now reflects the tracked Flask, HTMX, Plaid, Fly.io, and three-entity implementation and records sanitized deployment, data, and side-effect boundaries. The synthetic smoke suite, documentation truth checks, exact-scope checks, dashboard refresh, and Runway OS health check passed. Source commit `c249c9b` is pushed on `codex/phase-2-root-docs`, and draft PR #84 is open without merge or deployment. Tasks 2 and 3 remain separate governance work requiring a new confirmation.
+
 ## Pending Ryan Direction
 
-- Decide in Phase 2 whether `AGENTS.md` becomes tracked and which legacy documentation is archived or replaced.
+- Review draft PR #84 and decide whether it should later be merged.
+- Confirm or revise a future Phase 2 governance block deciding whether `AGENTS.md` becomes tracked and which legacy documentation is archived, replaced, or labeled historical.

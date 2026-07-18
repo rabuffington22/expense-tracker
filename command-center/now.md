@@ -2,25 +2,31 @@
 
 ## Active Objective
 
-Execute confirmed work block 2A to restore a trustworthy root project entry point without changing application or production behavior.
+Review the verified work block 2A draft PR, then define the separate Phase 2 governance block for the preserved legacy and instruction files.
 
 ## Current Phase
 
 Phase 2: Project Truth And Documentation Recovery — active.
 
-## Active Work Block
+## Completed Work Block
 
-2A: Restore the Root Project Entry Point — confirmed and active.
+2A: Restore the Root Project Entry Point — complete and verified on draft PR #84.
 
 ## Current Task
 
-Phase 2 Tasks 1 and 4: rebuild the root README for the current architecture and document sanitized deployment, data, and side-effect boundaries.
+Phase 2 Task 2: decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`, awaiting review of draft PR #84 and a separately confirmed work block.
 
 ## Owner
 
-Codex Desktop owns implementation, verification, command-center stewardship, branch durability, and draft-PR publication. Ryan owns review of the draft PR and the later Task 2 and Task 3 governance decisions.
+Ryan owns review of draft PR #84 and confirmation or revision of the next Phase 2 governance block. Codex Desktop owns the verified 2A evidence, branch closeout, and the next just-in-time planning pass.
 
 ## Status
+
+Work block 2A replaced the retired Streamlit/manual-import/two-entity README with a current Flask, HTMX, Plaid, Fly.io, and three-entity project entry point. The README now records local synthetic setup, application surfaces, entity/data isolation, environment-variable names without values, deploy mechanics, and explicit authorization gates for live or sensitive actions. `PROJECT_STRUCTURE.md` now classifies the README as current.
+
+The full synthetic smoke suite passed, documentation claims were cross-checked against tracked runtime and deployment sources, stale architecture instructions were absent, excluded tracked files had no diff, and Runway OS refresh and health checks passed. Source commit `c249c9b` is pushed on `origin/codex/phase-2-root-docs`, and draft PR #84 is open without merge or deployment.
+
+`PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, untracked `AGENTS.md`, and untracked `scripts/sync_prod_to_local.sh` remain preserved and unchanged. Their future is intentionally outside 2A.
 
 Daily Plaid Sync changed from `disabled_inactivity` to `active`. Controlled workflow-dispatch run `29627530457` completed successfully; its sync job and all three job steps passed. The workflow remained active afterward. Production and demo roots both returned HTTP 200.
 
@@ -38,16 +44,16 @@ No manual sync, workflow enable/disable/dispatch/rerun, application change, fina
 
 ## Durability
 
-The 1D source change is committed as `e34c239` and merged to `main` as `96af7dc` through PR `#83`. This verified command-center closeout is published directly to `main` with `[skip actions]` so it does not trigger a second Fly deploy. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded and untouched.
+The 2A source implementation commit is `c249c9b` on pushed branch `codex/phase-2-root-docs` and draft PR #84. The verified closeout is being added to that same branch. Nothing is merged to `main`, and no Fly deployment is triggered. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded and untouched.
 
 ## Current Action
 
-Rebuild `README.md` from verified repository truth, add the confirmed sanitized operating boundaries, run the synthetic and Runway OS checks, and publish a draft PR from `codex/phase-2-root-docs` without merging or deploying.
+Review draft PR #84, then run a just-in-time planning pass for a possible 2B governance block covering Tasks 2 and 3. No legacy-document or instruction-source mutation is authorized yet.
 
-## Locked Boundaries During Work Block 2A
+## Locked Boundaries After Work Block 2A
 
 - No `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, or `AGENTS.md` edit, archive, deletion, or tracking change.
 - No edit, staging, or tracking change to pre-existing untracked `scripts/sync_prod_to_local.sh`.
 - No application, workflow, monitor, credential, ignored-data, database, Fly, authentication, deploy, merge, or parent-repo action.
-- Draft-PR creation is authorized; merge and deployment remain excluded.
+- Draft PR #84 may be reviewed; merge and deployment require separate Ryan direction.
 - The active monitor remains read-only and never performs recovery automatically.

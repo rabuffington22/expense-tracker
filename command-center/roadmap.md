@@ -224,18 +224,18 @@ Target durability: source and active-state changes are merged on `main`; the ver
 
 ## Phase 2: Project Truth And Documentation Recovery
 
-Status: active; work block 2A confirmed and active
+Status: active; work block 2A complete on draft PR #84, with the next governance block awaiting review and confirmation
 
 Goal: remove contradictory project guidance while retaining useful domain history.
 
-- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: active in work block 2A.
-- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: planned.
+- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: done in work block 2A on draft PR #84.
+- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: current; awaiting review of draft PR #84 and a separately confirmed work block.
 - **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: planned.
-- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: active in work block 2A.
+- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: done in work block 2A on draft PR #84.
 
 ### Work Block 2A — Restore the Root Project Entry Point
 
-Status: active
+Status: done and verified on draft PR #84
 
 Included: Task 1 and Task 4.
 
@@ -272,6 +272,10 @@ Verification:
 Durability: work on `codex/phase-2-root-docs`, commit and push the verified branch, and open a draft PR for Ryan review. Do not merge or deploy.
 
 Report point: return the new README structure, important truth corrections, verification results, branch/commit/draft-PR status, preserved boundaries, and any documentation uncertainty discovered.
+
+Result: replaced the retired Streamlit/manual-import/two-entity README with a tracked-source-verified Flask, HTMX, Plaid, Fly.io, and three-entity entry point. Added local setup, entity/data isolation, application surfaces, imports and synchronization, configuration names without values, deploy mechanics, and explicit side-effect gates. Updated `PROJECT_STRUCTURE.md`, preserved every excluded legacy and untracked file, passed the full synthetic smoke suite plus documentation and Runway OS checks, and opened draft PR #84 from pushed branch `codex/phase-2-root-docs` without merge or deployment.
+
+Target durability: source implementation commit `c249c9b` is pushed on `origin/codex/phase-2-root-docs` and included in draft PR #84. The verified closeout is added to the same branch; nothing is merged to `main` and no Fly deploy is triggered.
 
 ## Phase 3: Functional Audit And Prioritization
 
