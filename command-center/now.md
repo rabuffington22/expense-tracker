@@ -2,23 +2,23 @@
 
 ## Active Objective
 
-Prepare the first bounded Phase 2 documentation-recovery work block after operational reliability recovery completed successfully.
+Execute confirmed work block 2A to restore a trustworthy root project entry point without changing application or production behavior.
 
 ## Current Phase
 
-Phase 2: Project Truth And Documentation Recovery — active for just-in-time work-block planning; no documentation implementation is authorized yet.
+Phase 2: Project Truth And Documentation Recovery — active.
 
-## Completed Work Block
+## Active Work Block
 
-1D: Harden Daily Sync Schedule — complete, released, and verified.
+2A: Restore the Root Project Entry Point — confirmed and active.
 
 ## Current Task
 
-Phase 2 Task 1: Rebuild the root README for the current architecture, awaiting a separate work block proposal and Ryan confirmation.
+Phase 2 Tasks 1 and 4: rebuild the root README for the current architecture and document sanitized deployment, data, and side-effect boundaries.
 
 ## Owner
 
-Ryan owns confirmation of the first Phase 2 work block. Codex Desktop owns the verified 1D evidence, Phase 1 closeout, and the next just-in-time planning pass.
+Codex Desktop owns implementation, verification, command-center stewardship, branch durability, and draft-PR publication. Ryan owns review of the draft PR and the later Task 2 and Task 3 governance decisions.
 
 ## Status
 
@@ -42,10 +42,12 @@ The 1D source change is committed as `e34c239` and merged to `main` as `96af7dc`
 
 ## Current Action
 
-Run a just-in-time planning pass over Phase 2 Tasks 1-4 and propose one bounded first Phase 2 work block before changing legacy documentation or tracking `AGENTS.md`.
+Rebuild `README.md` from verified repository truth, add the confirmed sanitized operating boundaries, run the synthetic and Runway OS checks, and publish a draft PR from `codex/phase-2-root-docs` without merging or deploying.
 
-## Locked Boundaries Until Phase 2 Work-Block Confirmation
+## Locked Boundaries During Work Block 2A
 
-- No README, `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, or `AGENTS.md` edit, archive, deletion, or tracking change.
-- No application, workflow, monitor, credential, ignored-data, database, Fly, authentication, deploy, PR, merge, or parent-repo action.
+- No `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, or `AGENTS.md` edit, archive, deletion, or tracking change.
+- No edit, staging, or tracking change to pre-existing untracked `scripts/sync_prod_to_local.sh`.
+- No application, workflow, monitor, credential, ignored-data, database, Fly, authentication, deploy, merge, or parent-repo action.
+- Draft-PR creation is authorized; merge and deployment remain excluded.
 - The active monitor remains read-only and never performs recovery automatically.

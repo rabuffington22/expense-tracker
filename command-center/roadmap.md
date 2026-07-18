@@ -224,14 +224,54 @@ Target durability: source and active-state changes are merged on `main`; the ver
 
 ## Phase 2: Project Truth And Documentation Recovery
 
-Status: active; awaiting the first separately confirmed work block
+Status: active; work block 2A confirmed and active
 
 Goal: remove contradictory project guidance while retaining useful domain history.
 
-- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: current; awaiting a just-in-time work-block proposal and Ryan confirmation.
+- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: active in work block 2A.
 - **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: planned.
 - **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: planned.
-- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: planned.
+- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: active in work block 2A.
+
+### Work Block 2A — Restore the Root Project Entry Point
+
+Status: active
+
+Included: Task 1 and Task 4.
+
+Excluded: Task 2; Task 3; application code; workflows; databases; production, Plaid, Fly, credential, or financial-data access; `PROJECT_KNOWLEDGE.md`; `plan.md`; `CLAUDE.md`; untracked `AGENTS.md`; untracked `scripts/sync_prod_to_local.sh`; parent-repo changes; merge or deployment.
+
+Why this grouping: the root README and sanitized operating boundaries form one trustworthy project entry point, use the same verified repository sources, and share one documentation verification path. Legacy-document disposition and agent-instruction governance remain separate Ryan decisions after the replacement README can be reviewed.
+
+Owner: Codex Desktop.
+
+Recommended agent: Codex manager in the current thread. This small cross-cutting documentation block requires source-of-truth reconciliation, sensitive-project boundaries, local verification, and command-center stewardship. No external worker or second opinion is needed.
+
+Expected files: `README.md`; `PROJECT_STRUCTURE.md` if its README classification needs updating; `command-center/roadmap.md`; `command-center/now.md`; `command-center/decisions.md`; `command-center/state.json`; `command-center/index.html`; and one sanitized closeout log.
+
+Stop conditions:
+
+- a claim cannot be verified without credentials, ignored files, or row-level financial data;
+- implementation requires application code, workflow, legacy-document, or pre-existing untracked-file changes;
+- a Ryan decision about archiving legacy documents or tracking `AGENTS.md` becomes necessary;
+- scope expands beyond Tasks 1 and 4;
+- smoke, documentation, dashboard, health, or exact-scope verification fails in a plan-changing way;
+- branch or draft-PR publication would include paths outside the confirmed scope.
+
+Verification:
+
+- cross-check README claims against the runtime, Flask factory, Fly configurations, workflows, `.env.example`, requirements, and current repository structure;
+- confirm stale Streamlit, no-bank-linking, and two-entity instructions are removed;
+- validate referenced paths and commands;
+- run `.venv/bin/python scripts/smoke_test.py`;
+- run `git diff --check`;
+- refresh and health-check Runway OS;
+- inspect the generated dashboard and exact staged paths;
+- confirm the pushed branch and draft PR contain no application, ignored-data, legacy-document, or untracked-file changes.
+
+Durability: work on `codex/phase-2-root-docs`, commit and push the verified branch, and open a draft PR for Ryan review. Do not merge or deploy.
+
+Report point: return the new README structure, important truth corrections, verification results, branch/commit/draft-PR status, preserved boundaries, and any documentation uncertainty discovered.
 
 ## Phase 3: Functional Audit And Prioritization
 

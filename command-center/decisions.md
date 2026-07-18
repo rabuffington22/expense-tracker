@@ -70,6 +70,10 @@ Ryan authorized changing Daily Plaid Sync from `0 9 * * *` to `17 9 * * *` on `c
 
 Ready PR `#83` merged the minute-17 schedule as `96af7dc`. Fly Deploy run `29645346441` and every job step passed, default-branch source contains `17 9 * * *`, Daily Plaid Sync remains active, and production plus demo returned HTTP 200. The first natural scheduled execution is left to the existing independent monitor rather than a manual dispatch. Phase 1 is complete, and Phase 2 becomes active for just-in-time work-block planning without authorizing documentation edits.
 
+### 2026-07-18 — Confirm work block 2A for the root project entry point
+
+Ryan authorized rebuilding `README.md` for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture and documenting sanitized deployment, data, and side-effect boundaries. Codex may work on `codex/phase-2-root-docs`, update the supporting project-structure and Runway OS surfaces, commit and push the verified branch, and open a draft PR. The block excludes application code, workflows, databases, production/Plaid/Fly/credential/financial-data access, legacy-document edits or archival, `CLAUDE.md`, pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh`, merge, and deployment.
+
 ## Pending Ryan Direction
 
 - Decide in Phase 2 whether `AGENTS.md` becomes tracked and which legacy documentation is archived or replaced.

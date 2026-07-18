@@ -1,173 +1,222 @@
-# Expense Tracker
+# The Ledger
 
-A lightweight, privacy-first expense tracker built with **Streamlit + SQLite**.
-No bank linking. All data stays local. Ingest via CSV or PDF statements.
+The Ledger is a Flask, HTMX, and SQLite expense tracker for personal and business finances. It combines Plaid transaction sync, CSV/PDF statement import, vendor-order matching, categorization, reporting, cash-flow planning, and installable PWA behavior in one server-rendered application.
 
----
+- Production: [ledger-oak.fly.dev](https://ledger-oak.fly.dev)
+- Demo: [ledger-oak-demo.fly.dev](https://ledger-oak-demo.fly.dev)
+- Runtime: Flask + Gunicorn on Fly.io
+- UI: Jinja templates + HTMX, with responsive desktop/mobile layouts
+- Storage: one SQLite database per entity on the configured `DATA_DIR`
 
-## Features
+## Entity isolation
 
-- **Two fully separate entities** — Personal and Company, each with its own SQLite database
-- **CSV & PDF import** with reusable import profiles per issuer
-- **Auto-categorization** via merchant alias rules and keyword heuristics (OpenClaw LLM stub)
-- **Reports** — monthly stacked bar chart, category totals, transaction drill-down, CSV export
-- **Category & Alias management** — add, rename, delete categories; manage merchant alias rules
-- **Deduplication** — same transaction imported twice is safely skipped
+Production has three entities. The selected entity is stored in a browser cookie, and each entity uses its own database and category configuration.
 
----
+| Display name | Database | Notes |
+| --- | --- | --- |
+| Personal | `personal.sqlite` | Personal spending, cash flow, planning, and debt tracking |
+| BFM | `company.sqlite` | Company expenses, payroll, budgets, and surplus waterfall inputs |
+| LL | `luxelegacy.sqlite` | Luxe Legacy business transactions and reporting |
 
-## Local dev setup
+The demo overrides this map with `ENTITIES=Personal:personal,Business:company` and uses a separate Fly app and volume.
 
-### 1. Clone and create a virtual environment
+## Core capabilities
+
+- Plaid account connection, transaction sync, account balances, and credit-card liabilities
+- CSV and PDF bank-statement import with reusable source profiles and deterministic deduplication
+- Amazon CSV and Henry Schein XLSX order import, transaction matching, line-item breakdown, and categorization
+- Merchant aliases, keyword suggestions, category/subcategory budgets, transaction splits, and review queues
+- Dashboard analysis, transaction filtering, saved views, subscriptions, cash flow, and monthly reports
+- Long-term planning, short-term goals and budgets, weekly check-ins, and BFM-to-Personal waterfall planning
+- BFM employee roster and Phoenix/CyberPayroll import
+- Optional OpenRouter-powered chat, category suggestions, subscription tips, and dashboard analysis
+- PWA manifest, service worker, offline fallback, mobile navigation, and dark/light themes
+- Public mobile-oriented dashboard at `/k/`; this route intentionally bypasses the main app password gate
+
+## Architecture
+
+```text
+Browser / installed PWA
+        |
+        v
+Flask routes + Jinja templates + HTMX
+        |
+        v
+Core import, categorization, reporting, planning, and sync modules
+        |
+        +--> personal.sqlite
+        +--> company.sqlite
+        +--> luxelegacy.sqlite
+        |
+        +--> Plaid API (optional)
+        +--> OpenRouter API (optional)
+        +--> Luxe Legacy downstream mirror (optional, LL sync only)
+```
+
+`web/` owns HTTP and UI behavior. `core/` owns database migrations and business logic. SQLite databases use WAL mode and are initialized or migrated when an entity is accessed. `categories.md` is the domain source of truth for category and subcategory definitions.
+
+## Local development
+
+Use Python 3.12 when possible to match the production container.
 
 ```bash
-git clone https://github.com/rabuffington22/expense-tracker.git
-cd expense-tracker
-
 python3 -m venv .venv
-source .venv/bin/activate      # macOS/Linux
-# .venv\Scripts\activate       # Windows
-
+source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env
 ```
 
-### 2. Run the app
+Generate a local Flask secret:
 
 ```bash
-streamlit run app/main.py --server.address 127.0.0.1 --server.port 8501
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-Or simply `streamlit run app/main.py` — the `.streamlit/config.toml` already sets
-`address = "127.0.0.1"` and `port = 8501`.
+Replace the placeholder `FLASK_SECRET` in `.env` with the generated value, then start the app:
 
-Open http://127.0.0.1:8501 in your browser.
-
----
-
-## DATA_DIR
-
-All SQLite databases, uploaded files, and backups are stored in a single directory
-controlled by the `DATA_DIR` environment variable.
-
-| Scenario | Path |
-|----------|------|
-| Local dev (default) | `./local_state/` (relative to cwd) |
-| Custom | Set `DATA_DIR=/your/path` |
-
-**Directory layout created automatically:**
-
+```bash
+python run.py
 ```
-$DATA_DIR/
+
+Open [http://127.0.0.1:8501](http://127.0.0.1:8501). `run.py` loads the project-root `.env` file and starts Flask on port 8501. Local data defaults to `./local_state/`.
+
+### Synthetic smoke test
+
+```bash
+.venv/bin/python scripts/smoke_test.py
+```
+
+The smoke suite creates a temporary `DATA_DIR` and uses synthetic fixtures. It does not need a live server, production credentials, or real financial data.
+
+## Configuration
+
+Never place real secret values in tracked files, documentation, test fixtures, command-center artifacts, or issue/PR text.
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `FLASK_SECRET` | Yes | Flask session signing and the key source for encrypted Plaid access tokens |
+| `DATA_DIR` | No | Database, upload, and backup root; defaults to `./local_state` and is `/data` on Fly |
+| `FLASK_DEBUG` | No | Enables local Flask debug mode when truthy |
+| `ENTITIES` | No | Overrides the display-name/database map, primarily for the demo app |
+| `APP_PASSWORD_HASH` | Production gate | Enables server-side session verification backing the main UI password overlay; unset disables the server-side gate |
+| `PLAID_CLIENT_ID` | Plaid only | Plaid application identifier |
+| `PLAID_SECRET` | Plaid only | Plaid environment secret |
+| `PLAID_ENV` | Plaid only | `sandbox` or `production`; defaults to `sandbox` |
+| `SYNC_SECRET` | Scheduled sync only | Bearer secret protecting `/plaid/sync-all` |
+| `OPENROUTER_API_KEY` | AI only | Enables optional AI features |
+| `LUXURY_SUPABASE_URL` | LL mirror only | Optional downstream Luxe Legacy endpoint |
+| `LUXURY_SUPABASE_SERVICE_KEY` | LL mirror only | Optional downstream Luxe Legacy service credential |
+
+The main UI uses a client-side password overlay plus a server-side authenticated session when `APP_PASSWORD_HASH` is configured. Static assets, health/offline surfaces, and `/k/` follow explicit exemptions in `web/__init__.py`. Authentication changes are controlled work and should not be treated as a routine documentation or deployment edit.
+
+## Data layout and handling
+
+With the default local configuration:
+
+```text
+local_state/
 ├── personal.sqlite
 ├── company.sqlite
+├── luxelegacy.sqlite
 ├── uploads/
 └── backups/
 ```
 
-### Setting DATA_DIR
+Real databases, WAL/SHM files, `.env`, uploads, backups, statements, exports, and temporary financial payloads are ignored and must remain outside Git history. Parsed upload and AI-chat intermediates use temporary directories so Flask's cookie session stays below its size limit.
 
-**Session (macOS/Linux):**
+Transaction IDs are deterministic, so importing the same normalized bank transaction again does not create a duplicate. Reporting uses centralized exclusion rules and replaces a split parent transaction with its categorized split pieces when splits exist.
+
+## Main application surfaces
+
+| Surface | Route | Purpose |
+| --- | --- | --- |
+| Dashboard | `/` | KPI comparisons, trends, insights, recurring items, and review status |
+| To Do | `/todo/` | Review queues, recurring work, tasks, cut list, and workflow entry points |
+| Transactions | `/transactions/` | Filtering, saved views, inline edits, rules, suggestions, and splits |
+| Subscriptions | `/subscriptions/` | Recurring-subscription detection, tracking, account notes, and cancellation tips |
+| Cash Flow | `/cashflow/` | Manual/Plaid balances, liabilities, and upcoming recurring charges |
+| Short-Term Planning | `/planning/short-term` | Goals, budgets, action items, progress, and plan locking |
+| Long-Term Planning | `/planning/` | Asset/liability projections and milestone planning |
+| Payroll | `/payroll/` | BFM employee roster, pay history, and Phoenix/CyberPayroll imports |
+| Weekly | `/weekly/` | Weekly scorecard, bills, pace, and credit-card paydown tracking |
+| Waterfall | `/waterfall/` | BFM surplus and Personal debt-paydown scenarios |
+| Reports | `/reports/` | Monthly detail, category drill-downs, exports, and CSS spending trends |
+| Connected Accounts | `/plaid/` | Plaid Link, per-item sync, account visibility, rename, and disconnect |
+| Data Sources | `/data-sources/` | Vendor-order imports and supported vendor-account connections |
+| Import | `/upload/` | CSV/PDF statement sources, profiles, preview, confirmation, and undo |
+| Match/Categorize | `/match/`, `/categorize-vendors/`, `/categorize/` | Vendor matching and remaining categorization workflow |
+| Public dashboard | `/k/` | Standalone mobile-oriented dashboard outside the main auth gate |
+
+## Imports and synchronization
+
+Plaid is the primary bank-transaction integration when configured. Users can connect and sync accounts from `/plaid/`. GitHub Actions also calls the bearer-protected `/plaid/sync-all` endpoint on the configured daily schedule. The application does not perform a Plaid sync merely because the server starts.
+
+CSV/PDF bank statements remain available as a fallback. Vendor imports support Amazon order CSVs and Henry Schein XLSX exports. Vendor data can be matched to bank transactions to replace generic charge descriptions with actual product/order context and to create categorized transaction splits.
+
+After a successful LL Plaid sync, an optional bridge can upsert eligible transactions to the configured Luxe Legacy downstream service. The bridge is a no-op when its environment variables are absent and does not change the Ledger databases' source-of-truth role.
+
+## Deployment and operations
+
+Production uses `fly.toml`, a persistent `/data` volume, and Gunicorn on internal port 8080. The demo uses `fly.demo.toml`, its own app and volume, a separate entity override, and synthetic seed data.
+
+GitHub Actions currently owns two operational workflows:
+
+- `Fly Deploy`: a push to `main` deploys the production Fly app. It can also be dispatched manually.
+- `Daily Plaid Sync`: runs at 09:17 UTC and calls the protected all-entity sync endpoint. It can also be dispatched manually.
+
+Feature-branch pushes and draft PRs do not match the production deploy trigger. Merging to `main`, manually dispatching either workflow, changing Fly secrets, and invoking a Plaid sync are live side effects and require an explicitly approved work block.
+
+The application exposes `/health` for a minimal health check. The production and demo roots may also be checked by HTTP status when a confirmed verification block allows external reads.
+
+## Operating boundaries
+
+Safe default development and verification work uses only source code, synthetic fixtures, temporary test databases, and sanitized project-control metadata.
+
+The following actions require explicit target-specific authorization before execution:
+
+- Plaid link, sync, disconnect, or account changes
+- GitHub Actions enable, disable, dispatch, or rerun
+- Fly deploy, secret, SSH, console, restart, or production database operations
+- Local/production database transfers, data cleanup, migration, or destructive demo reseeding
+- Downstream Luxe Legacy writes
+- Authentication, encryption, CSRF, credential, or public-route behavior changes
+- Inspection or disclosure of row-level financial, payroll, credential, or upload data
+
+When one of these boundaries is reached, stop at the exact gate and request direction. Do not work around missing credentials or broaden a documentation/testing task into a live operational action.
+
+## Repository map
+
+```text
+web/                    Flask application, routes, templates, static assets, PWA
+core/                   Database migrations and financial business logic
+scripts/                Synthetic tests, demo seeding, and controlled utilities
+fixtures/               Synthetic import fixtures
+.github/workflows/      Production deploy and scheduled Plaid sync
+command-center/         Canonical project direction, state, decisions, and dashboard
+categories.md           Category/subcategory domain source of truth
+run.py                  Local Flask entry point
+Dockerfile              Production Gunicorn image
+fly.toml                Production Fly configuration
+fly.demo.toml           Demo Fly configuration
+requirements.txt        Python dependencies
+```
+
+## Project control and documentation
+
+Runway OS in `command-center/` is the source of truth for active phases, tasks, decisions, safety rules, and verified closeouts:
+
+- `command-center/now.md` — current phase, work block, owner, blocker, and next action
+- `command-center/roadmap.md` — phases and numbered task inventory
+- `command-center/decisions.md` — accepted and pending direction choices
+- `command-center/operating-rules.md` — durable privacy and side-effect boundaries
+- `command-center/state.json` — machine-readable dashboard state
+- `command-center/index.html` — generated dashboard view, not a source file
+
+`PROJECT_KNOWLEDGE.md` and `plan.md` remain preserved historical inputs pending a separate governance decision. `CLAUDE.md` remains a supporting domain reference rather than the project-control authority.
+
+After changing command-center state, refresh and verify it with:
+
 ```bash
-export DATA_DIR=/Users/you/Documents/expense-data
-streamlit run app/main.py
-```
-
-**Persistent (add to `~/.zshrc` or `~/.bash_profile`):**
-```bash
-export DATA_DIR=/Users/you/Documents/expense-data
-```
-
-**On Atlas (launchd / cron):**
-Add `DATA_DIR=/path/to/data` to the environment for the cron job or launchd plist.
-
----
-
-## Tailscale / remote access
-
-The app binds to `127.0.0.1` by default and is **not** exposed on the LAN.
-
-To access it from another device on your Tailscale network, run it on a machine
-that is already a Tailscale node and bind to its Tailscale IP:
-
-```bash
-streamlit run app/main.py --server.address 100.x.x.x --server.port 8501
-```
-
-Or add to `.streamlit/config.toml`:
-```toml
-[server]
-address = "100.x.x.x"   # your Tailscale IP
-port = 8501
-```
-
-**Do not bind to `0.0.0.0`** unless you have additional network-level access control.
-
----
-
-## Smoke test
-
-Verifies DB init, CSV parsing, normalization, import, and deduplication using
-synthetic fixtures — no real financial data.
-
-```bash
-python scripts/smoke_test.py
-```
-
----
-
-## Project structure
-
-```
-expense-tracker/
-├── app/
-│   ├── main.py                     # Home page (Streamlit entry point)
-│   ├── shared.py                   # Shared helpers (entity selector, page config)
-│   └── pages/
-│       ├── 1_Upload_Import.py      # CSV/PDF upload and import
-│       ├── 2_Categorize.py         # Review and accept category suggestions
-│       ├── 3_Reports.py            # Monthly charts and drill-downs
-│       └── 4_Categories_Aliases.py # Manage categories and merchant rules
-├── core/
-│   ├── db.py           # DB init, migrations, connections
-│   ├── imports.py      # CSV/PDF parsing, normalization, dedup, commit
-│   ├── categorize.py   # Alias matching + keyword heuristic stub
-│   └── reporting.py    # Query helpers for reports
-├── fixtures/
-│   └── sample.csv      # Synthetic test data (no real financial data)
-├── scripts/
-│   └── smoke_test.py   # Automated smoke test
-├── .streamlit/
-│   └── config.toml     # Streamlit server/theme config
-├── requirements.txt
-└── .gitignore
-```
-
----
-
-## Schema
-
-Each entity DB has these tables:
-
-| Table | Purpose |
-|-------|---------|
-| `transactions` | Canonical transaction ledger |
-| `categories` | Category list (seeded with defaults) |
-| `merchant_aliases` | Pattern → canonical merchant + category rules |
-| `import_profiles` | Saved column mappings per bank/issuer |
-| `schema_version` | Migration tracking |
-
-Schema migrations are additive and safe to run on existing databases.
-
----
-
-## OpenClaw integration (future)
-
-`core/categorize.py::suggest_categories()` currently runs a deterministic stub
-(alias rules + keyword heuristics).  To swap in an OpenClaw LLM call, replace
-the body of that function — the interface is:
-
-```python
-def suggest_categories(df: pd.DataFrame, entity: str) -> pd.DataFrame:
-    # Input:  DataFrame of transactions
-    # Output: same DataFrame with category + confidence filled in
+node command-center/scripts/refresh-dashboard.js
+node command-center/scripts/health-check.js
 ```
