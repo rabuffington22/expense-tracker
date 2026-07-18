@@ -70,33 +70,162 @@ Resolution:
 
 Work block 2B added a concise tracked `AGENTS.md` as canonical, reduced `CLAUDE.md` to a compatibility pointer, and replaced `PROJECT_KNOWLEDGE.md` plus `plan.md` with historical notices backed by Git history. Work block 2B-R merged PR #85 as `216a992`, and the resulting production deployment plus HTTP health checks passed.
 
-## Short-Term Planning Legacy Plan Exceeds Current Verification Evidence
+## Planning Foundations Lack Tracked Regression And Demo Goal Evidence
 
-Status: parked for Phase 3 audit
+Status: confirmed by work block 3D; parked for Phase 4 regression coverage and Phase 5 demo review
 
 Severity: medium regression-confidence risk
 
 Captured: 2026-07-18
 
-Where seen: retired `plan.md`, `scripts/smoke_test.py`, and `scripts/seed_demo_data.py`
+Where seen: retired `plan.md`, `scripts/smoke_test.py`, `scripts/seed_demo_data.py`, and work block 3D's 58-check temporary-database probe
 
-Revisit: Phase 3 functional audit and prioritization
+Revisit: Phase 4 Task 2 for tracked coverage; Phase 5 for demo fidelity if still useful
 
 Summary:
 
-The legacy Short-Term Planning plan proposed dedicated goal CRUD, snapshot, budget, payoff, entity-isolation, and cross-entity smoke cases plus seeded goals and snapshots. The current feature is substantially implemented, but the synthetic smoke suite contains no dedicated Short-Term Planning cases, and demo seeding covers budgets and action items rather than the planned goal and snapshot examples.
+The legacy Short-Term Planning plan proposed dedicated goal CRUD, snapshot, budget, payoff, entity-isolation, and cross-entity smoke cases plus seeded goals and snapshots. Work block 3D confirmed that goal CRUD/status/delete, budget and subcategory persistence, effective split accounting, three-month averages, per-payroll budgets, action items, payoff engines when supplied correct rates, and entity-local Personal/BFM account choices work against temporary synthetic data. The tracked smoke suite still contains no dedicated long- or short-term planning cases, and demo seeding still omits goals and snapshots.
+
+The audit treats goal CRUD, snapshot persistence, budget behavior, payoff correctness, and entity isolation as valid current expectations. It treats Short-Term Planning cross-entity account linking and the retired custom-allocation strategy as superseded: current repository rules require explicit cross-entity behavior, the live short-term UI is entity-local, and only avalanche and snowball are exposed. Personal/BFM sharing remains an explicit Long-Term Planning behavior and passed.
 
 Impact:
 
-The historical plan cannot be treated as acceptance proof. Current behavior may be correct, but regression confidence and demo coverage need a fresh evidence-based audit rather than an assumption based on an obsolete checklist.
+The 3D evidence is current but ephemeral. Future changes can regress planning CRUD, projections, snapshots, budgets, payoff ordering, or entity boundaries without the maintained smoke suite detecting them. The public demo also cannot demonstrate goal progress history from its seeded state.
 
-Why not now:
+Acceptance checks:
 
-Work block 2B is documentation governance only. Adding product tests or demo data would widen scope into Phase 3 or Phase 4 and requires its own bounded work block.
+- Tracked synthetic tests cover the passing 3D long- and short-term paths plus each separately repaired defect.
+- Personal/BFM Long-Term Planning sharing and Luxe Legacy denial are explicit route and mutation assertions.
+- Short-Term Planning goals and linked-account choices remain entity-local unless a new product decision explicitly widens them.
+- Demo goal and snapshot seeding is either added with synthetic examples or explicitly declined as unnecessary.
 
-Promotion trigger:
+Why not added now:
 
-Phase 3 decomposes the functional audit and decides whether the missing dedicated cases are defects, useful regression additions, or superseded requirements.
+Tracked test and demo-seed expansion were explicitly excluded from audit work block 3D and require separate implementation scope.
+
+## Locked Payoff Schedules Ignore Stored Account APRs
+
+Status: open; discovered in work block 3D
+
+Severity: high financial-planning correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/short_term_planning.py`, migrated `account_balances.apr_bps`, and deterministic lock-plan reproduction
+
+Revisit: Phase 4 Task 1 for repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+The direct payoff engine correctly applies the APR values it receives, but `lock_plan()` does not select `apr_bps` from linked accounts and hard-codes every card to 20%. In a synthetic avalanche plan with a 9.99% card listed before a 29.99% card, the stored month-one schedule sent the extra payment to the low-APR card. The resulting rounded balances were $288 on the low-APR card and $1,195 on the high-APR card, the opposite of avalanche ordering.
+
+Impact:
+
+Locked plans can recommend and display the wrong payment sequence, interest accumulation, and payoff trajectory. A user could make a financial decision from a schedule that appears account-specific but ignores the account APR data already stored by the application.
+
+Acceptance checks:
+
+- Linked account details pass the stored `apr_bps` value into payoff computation.
+- Avalanche targets the highest APR and snowball targets the smallest current balance regardless of linked-account order.
+- Missing APR behavior is explicit and does not silently make different cards equivalent.
+- The saved narrative and month-by-month schedule reconcile to the same inputs and have tracked synthetic coverage.
+
+Why not fixed now:
+
+Work block 3D is audit-only. Product repair and tracked tests require a separately confirmed Phase 4 block.
+
+## Luxe Legacy Planning Denial Is Enforced Only On Page Entry
+
+Status: open; discovered in work block 3D
+
+Severity: high entity-boundary and hidden-data risk
+
+Captured: 2026-07-18
+
+Where seen: Long-Term and Short-Term Planning routes plus temporary Luxe Legacy and Personal databases
+
+Revisit: Phase 4 Task 1 for route-boundary repair; Phase 4 Task 2 for direct-route coverage
+
+Summary:
+
+The two planning index routes redirect Luxe Legacy to the dashboard, but their supporting GET and POST routes do not enforce the same denial. With the LL entity selected, synthetic direct requests created a hidden LL planning item, goal, budget, and action item; exposed Personal cash-flow account names through the planning helper; and changed the Personal singleton planning inflation setting from 0 to 9.90%. The probe restored the synthetic setting afterward and removed its temporary data directory.
+
+Impact:
+
+The UI communicates that planning is unavailable to LL while direct routes can create unseen LL records and cross the intended boundary into Personal planning configuration and account-name metadata. This violates the explicit entity and LL planning boundary even though no real data or live system was accessed during the audit.
+
+Acceptance checks:
+
+- Every Long-Term and Short-Term Planning GET/POST helper applies the same LL denial as its index route.
+- Denied requests leave all three entity databases unchanged and reveal no Personal/BFM account names.
+- Personal/BFM Long-Term Planning sharing remains read-only for the secondary section and continues to work.
+- Tracked tests exercise page and direct-route denial for item, settings, goal, snapshot, budget, action, and helper endpoints.
+
+Why not fixed now:
+
+Adding authorization guards changes route behavior and requires separate repair and regression scope.
+
+## Automatic Goal Snapshots Erase Same-Day Review Notes
+
+Status: open; discovered in work block 3D
+
+Severity: medium planning-record persistence risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/short_term_planning.py` and deterministic same-day snapshot reproduction
+
+Revisit: Phase 4 Task 1 for snapshot upsert repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+A manual monthly review stores the note on the goal's current-day snapshot and initially satisfies the monthly-review check. The next Short-Term Planning page load runs `_auto_snapshot()` with `INSERT OR REPLACE` but no note value, replacing the row and clearing the note. The same synthetic goal immediately returned to `needs_review=True`.
+
+Impact:
+
+User-entered monthly review context is silently lost during an ordinary page reload, and the interface asks for a review that was already completed.
+
+Acceptance checks:
+
+- Repeated automatic snapshots update the current balance without deleting an existing note or changing the snapshot's identity unexpectedly.
+- Manual review notes survive page loads and continue to satisfy the current-month review check.
+- A later manual review can intentionally replace the note when requested.
+- Tracked tests cover same-day auto/manual ordering and a month transition.
+
+Why not fixed now:
+
+Snapshot upsert behavior and tracked tests were excluded from audit work block 3D.
+
+## Negative Asset Appreciation Is Treated As Zero Growth
+
+Status: open; discovered in work block 3D
+
+Severity: medium long-term projection correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/planning.py`, demo Equipment seed data, and deterministic projection reproduction
+
+Revisit: Phase 4 Task 1 for projection repair; Phase 4 Task 2 for tracked coverage
+
+Summary:
+
+Long-Term Planning labels negative asset rates as depreciation, and demo Equipment is seeded at -15%, but `_compute_projections()` only compounds when the rate is greater than zero. A synthetic $10,000 asset at -10% remained $10,000 at the future milestone instead of declining.
+
+Impact:
+
+Depreciating assets are overstated in future asset and net-worth totals, making the combined long-term projection internally inconsistent with the rate shown to the user.
+
+Acceptance checks:
+
+- Negative rates compound downward while zero rates remain flat apart from contributions.
+- Positive appreciation, inflation adjustment, contributions, and liability payoff behavior remain correct.
+- Summary and combined net-worth totals reconcile to repaired item projections.
+- Demo Equipment produces a declining projection and the behavior has tracked synthetic coverage.
+
+Why not fixed now:
+
+Projection logic and tracked tests require a separately confirmed Phase 4 repair block.
 
 ## Transaction Identity Can Collapse Distinct Transactions
 

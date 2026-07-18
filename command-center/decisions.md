@@ -140,6 +140,18 @@ The tracked smoke suite passed. The final ephemeral all-entity probe ran 306 che
 
 Ryan explicitly instructed Codex to commit and push the verified 3C command-center closeout to `main`. This authorizes staging only the seven 3C command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, and tracked test files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or OpenRouter calls; Fly; and all recovery outside the exact closeout remain excluded.
 
+### 2026-07-18 — Confirm work block 3D for the synthetic planning foundations audit
+
+Ryan confirmed Tasks 4A-4B as one synthetic-only audit of long-term projections and cross-entity visibility plus short-term goals, snapshots, budgets, actions, and payoff planning. Codex may inspect tracked source, run the existing smoke suite, execute deterministic ephemeral probes against temporary entity databases, reconcile the parked legacy expectations, create a sanitized audit log, record ranked findings, and close Runway OS state. Tasks 4C-4D and 5-8, product repairs or migrations, tracked test/fixture/demo expansion, real financial or payroll data, credentials, production/demo access, Plaid or OpenRouter calls, workflows, Fly, downstream writes, authentication/security changes, pre-existing `scripts/sync_prod_to_local.sh`, and all commit, push, PR, merge, and deployment actions remain excluded.
+
+### 2026-07-18 — Accept work block 3D as verified with four planning defects and one coverage gap
+
+The tracked smoke suite passed, and the final ephemeral all-entity planning probe ran 58 checks with 48 passes, zero runtime errors, and ten controlled failures representing four distinct defects: locked payoff schedules hard-code APRs, LL denial is missing from direct planning routes, automatic snapshots erase same-day review notes, and negative appreciation does not depreciate assets. Goal CRUD, budgets, effective splits, averages, per-payroll math, actions, direct payoff engines, positive projections, linked balances, summaries, and intended Personal/BFM visibility passed. The core legacy goal/snapshot/budget/payoff/isolation expectations remain valid; short-term cross-entity linking and custom allocation are superseded. Planning paths still lack tracked regression coverage, demo goals/snapshots remain unseeded, Tasks 4A-4B and work block 3D are complete, and Task 4C becomes current for a separately confirmed 3E audit. No repair, tracked product/test/demo change, protected-data access, external call, live action, or GitHub durability occurred.
+
+### 2026-07-18 — Authorize direct-main durability for the 3D audit closeout
+
+Ryan explicitly instructed Codex to commit and push the verified 3D command-center closeout to `main`. This authorizes staging only the seven 3D command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, tracked test, and demo-seed files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or OpenRouter calls; Fly; and all recovery outside the exact closeout remain excluded.
+
 ## Pending Ryan Direction
 
-- Confirm or revise work block 3D for the synthetic planning, weekly, waterfall, and payroll audit. Any product fix, tracked regression coverage, protected-data access, live action, or durability step requires a separate decision.
+- Confirm or revise work block 3E for the synthetic weekly and waterfall audit in Task 4C. Any 3D repair, tracked regression coverage, protected-data access, live action, or further durability step requires a separate decision.
