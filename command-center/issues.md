@@ -48,7 +48,7 @@ Work block 1D changed the workflow to `17 9 * * *` through ready PR `#83`, prese
 
 ## Project Documentation Contradicts Current Architecture
 
-Status: parked pending roadmap confirmation
+Status: resolved on draft PR #85; release pending
 
 Severity: medium project reliability
 
@@ -56,7 +56,7 @@ Captured: 2026-07-17
 
 Where seen: `README.md`, `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, and `AGENTS.md`
 
-Revisit: proposed Phase 2
+Revisit: work block 2B-R release decision
 
 Summary:
 
@@ -66,10 +66,34 @@ Impact:
 
 Agents and maintainers can begin from an incorrect architecture, execute obsolete commands, or mistake completed planning for future work.
 
+Resolution:
+
+Work block 2B added a concise tracked `AGENTS.md` as canonical, reduced `CLAUDE.md` to a compatibility pointer, and replaced `PROJECT_KNOWLEDGE.md` plus `plan.md` with historical notices backed by Git history. The verified change is on draft PR #85 and is not yet released to `main`.
+
+## Short-Term Planning Legacy Plan Exceeds Current Verification Evidence
+
+Status: parked for Phase 3 audit
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: retired `plan.md`, `scripts/smoke_test.py`, and `scripts/seed_demo_data.py`
+
+Revisit: Phase 3 functional audit and prioritization
+
+Summary:
+
+The legacy Short-Term Planning plan proposed dedicated goal CRUD, snapshot, budget, payoff, entity-isolation, and cross-entity smoke cases plus seeded goals and snapshots. The current feature is substantially implemented, but the synthetic smoke suite contains no dedicated Short-Term Planning cases, and demo seeding covers budgets and action items rather than the planned goal and snapshot examples.
+
+Impact:
+
+The historical plan cannot be treated as acceptance proof. Current behavior may be correct, but regression confidence and demo coverage need a fresh evidence-based audit rather than an assumption based on an obsolete checklist.
+
 Why not now:
 
-The bootstrap preserves existing files. Rewriting or archiving legacy docs requires a separate reviewed documentation block.
+Work block 2B is documentation governance only. Adding product tests or demo data would widen scope into Phase 3 or Phase 4 and requires its own bounded work block.
 
 Promotion trigger:
 
-Ryan confirms the proposed documentation-recovery phase and decides how `AGENTS.md` should be governed.
+Phase 3 decomposes the functional audit and decides whether the missing dedicated cases are defects, useful regression additions, or superseded requirements.

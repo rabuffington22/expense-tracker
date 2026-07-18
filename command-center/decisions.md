@@ -86,6 +86,18 @@ Ryan explicitly instructed Codex to commit and push the verified work to `main`.
 
 PR #84 was marked ready and merged to `main` as `6270304`. Automatic Fly Deploy run `29646390675` and every job step passed, and production `/health` plus the root returned HTTP 200. GitHub emitted a non-blocking annotation that `actions/checkout@v4` targets deprecated Node 20 and is currently forced to Node 24; it did not affect the release. No logs, response bodies, credentials, financial data, manual workflow action, or recovery mutation occurred. The sanitized closeout is published to `main` with `[skip actions]` so it does not deploy again.
 
+### 2026-07-18 — Confirm work block 2B for legacy and agent-instruction governance
+
+Ryan authorized replacing `PROJECT_KNOWLEDGE.md` and `plan.md` with concise in-place historical notices, making a concise tracked `AGENTS.md` the canonical agent instruction source, and reducing `CLAUDE.md` to a compatibility entry point. The block may update supporting README, project-structure, and Runway OS surfaces when needed, work on `codex/phase-2-document-governance`, commit and push the verified branch, and open a draft PR. It excludes application code, workflows, authentication, databases, Plaid, Fly configuration, credentials, financial data, production operations, untracked `scripts/sync_prod_to_local.sh`, parent-repo changes, merge, and deployment.
+
+### 2026-07-18 — Accept work block 2B as verified on draft PR #85
+
+The repository now has one concise tracked canonical instruction source in `AGENTS.md`; `CLAUDE.md` is a compatibility entry point; and `PROJECT_KNOWLEDGE.md` plus `plan.md` are historical notices with Git recovery commands rather than competing guidance. The legacy Short-Term Planning plan's missing dedicated smoke and seeded goal/snapshot coverage is parked for Phase 3 rather than hidden. All documentation, synthetic, exact-scope, dashboard, and health checks passed. Commit `912c9bb` is pushed on `codex/phase-2-document-governance`, and draft PR #85 is open without merge or deployment.
+
+### 2026-07-18 — Authorize work block 2B-R to publish PR #85 to main
+
+Ryan explicitly instructed Codex to commit and push the verified documentation-governance work to `main`. This authorizes recording 2B-R on the feature branch, marking draft PR #85 ready, merging it without force, observing the single automatic Fly Deploy triggered by the merge, and checking sanitized workflow status plus production root and `/health` HTTP status. It also authorizes a command-center-only closeout pushed directly to `main` with `[skip actions]` to prevent a second deployment. Content changes beyond the verified PR, application and workflow edits, manual workflow actions, Fly mutations, credentials, financial data, databases, Plaid, authentication, parent-repo changes, and pre-existing untracked files remain excluded.
+
 ## Pending Ryan Direction
 
-- Confirm or revise a future Phase 2 governance block deciding whether `AGENTS.md` becomes tracked and which legacy documentation is archived, replaced, or labeled historical.
+- None during active work block 2B-R unless a stop condition is reached.

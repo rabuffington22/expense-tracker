@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 8:37 AM CST",
+    "lastUpdated": "2026-07-18 9:07 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,21 +1619,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "PR 84 is merged to main as 6270304; Fly Deploy run 29646390675 passed; the verified 2A-R closeout is published directly to main with skip actions to prevent a second deploy"
+    "durabilityStatus": "Work block 2B-R is active to publish verified PR 85; main and production remain at the verified 2A-R release until the authorized merge completes"
   },
   "phase": {
     "name": "Project Truth And Documentation Recovery",
     "status": "active",
-    "summary": "Tasks 1 and 4 are merged to main and production-verified through work blocks 2A and 2A-R; Task 2 is current for a separately confirmed governance block.",
-    "progress": 50
+    "summary": "Tasks 1 and 4 are released on main; Tasks 2 and 3 are verified on PR 85; confirmed release block 2B-R is active.",
+    "progress": 75
   },
   "currentTask": {
-    "title": "Task 2: Decide the future of PROJECT_KNOWLEDGE.md and plan.md",
-    "owner": "Ryan",
-    "status": "awaiting work block",
-    "supportingAgent": "Codex Desktop owns the verified 2A-R release evidence and will propose the next just-in-time governance block",
-    "nextAction": "Confirm or revise a bounded Phase 2 governance block for Tasks 2 and 3 before changing preserved legacy or instruction files.",
-    "blocker": "No legacy-document, CLAUDE.md, AGENTS.md, workflow-maintenance, or other implementation is authorized without separate Ryan direction"
+    "title": "Task 3: Reconcile CLAUDE.md and the untracked AGENTS.md",
+    "owner": "Codex",
+    "status": "current",
+    "supportingAgent": "Codex Desktop owns exact-scope release execution, sanitized deploy observation, stop judgment, command-center closeout, and final report",
+    "nextAction": "Commit the active 2B-R record, rerun safe verification, mark PR 85 ready, merge it, and observe the one automatic production deploy.",
+    "blocker": "Stop if PR scope or mergeability changes, verification regresses, deployment fails, or recovery would require an excluded action"
   },
   "routerHealth": {
     "status": "healthy",
@@ -1658,25 +1658,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define the Phase 2 legacy-document and instruction-governance block",
-    "status": "recommended",
-    "owner": "Ryan",
-    "why": "The root project entry point is current and production-verified; the remaining Phase 2 work is the explicit governance choice for PROJECT_KNOWLEDGE.md, plan.md, CLAUDE.md, and the untracked AGENTS.md.",
-    "action": "Review a separately proposed work block for Tasks 2 and 3 before any preserved file is edited, archived, deleted, replaced, or tracked.",
+    "title": "Release PR 85 through confirmed work block 2B-R",
+    "status": "active",
+    "owner": "Codex",
+    "why": "Ryan explicitly authorized publication to main, and the verified PR remains clean, mergeable, and limited to the approved documentation-governance scope.",
+    "action": "Rerun safe pre-release checks, mark PR 85 ready, merge without force, observe the automatic Fly Deploy, verify HTTP health, and close Phase 2.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [
-    "Confirm or revise the next Phase 2 governance block for Tasks 2 and 3"
-  ],
+  "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Phase 2 governance block.",
-    "items": [
-      "Confirm or revise the bounded governance scope before legacy or instruction-file changes"
-    ]
+    "summary": "Nothing during active work block 2B-R unless a stop condition is reached.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Ryan reviews the next proposed work block or direction choice after the current verified block closes.",
-    "decisionQueue": "Only intentionally deferred Ryan decisions belong here; none block the current bootstrap.",
+    "phaseQuestions": "Phase 2 release is active; Phase 3 audit planning remains outside the current block.",
+    "decisionQueue": "Only intentionally deferred Ryan decisions belong here; none block active release work.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2059,6 +2055,103 @@
       "reportBack": "Returned merge commit, successful deploy run and steps, production HTTP health, final main state, protected boundaries, skip-actions closeout, and the remaining Phase 2 decision.",
       "durability": "PR 84 is merged to main as 6270304; the verified closeout is published directly to main with skip actions so no second deploy starts.",
       "result": "Marked PR 84 ready and merged its verified eight-file diff to main as 6270304. Fly Deploy run 29646390675 and every job step passed, production health and root returned HTTP 200, no sensitive logs or data were opened, and no manual recovery or excluded action occurred."
+    },
+    {
+      "id": "phase-2-block-b",
+      "phaseId": "phase-2",
+      "label": "2B",
+      "name": "Retire Legacy Guidance And Establish Canonical Agent Instructions",
+      "status": "done",
+      "includedTasks": [
+        "Task 2",
+        "Task 3"
+      ],
+      "excludedTasks": [
+        "Tasks 1 and 4, which are already done",
+        "Phase 3 Tasks 1-4",
+        "Application code, tests, workflows, authentication, databases, Plaid, Fly configuration, credentials, financial data, production operations, parent-repo changes, merge, and deployment",
+        "Untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "This sensitive-retrofit governance block requires repo-wide source reconciliation, preservation of user-owned untracked content, command-center stewardship, exact-scope verification, and final intake.",
+      "expectedFiles": [
+        "PROJECT_KNOWLEDGE.md",
+        "plan.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "README.md and PROJECT_STRUCTURE.md only if governance links need correction",
+        "command-center/roadmap.md",
+        "command-center/now.md",
+        "command-center/decisions.md",
+        "command-center/state.json",
+        "command-center/index.html",
+        "command-center/logs/"
+      ],
+      "stopConditions": [
+        "A supposedly obsolete document contains unique current guidance without a safe canonical destination",
+        "The inspected untracked AGENTS.md cannot be safely reconciled or changes before implementation",
+        "A proposed instruction would broaden live or sensitive authority beyond current operating rules",
+        "Application, workflow, database, credential, financial-data, production, parent-repo, or excluded-file changes become necessary",
+        "The diff expands beyond confirmed documentation and command-center scope",
+        "Smoke, dashboard, health, link, stale-guidance, or exact-scope verification fails in a plan-changing way",
+        "Branch publication includes unexpected paths"
+      ],
+      "verification": [
+        "Cross-check retained guidance against README.md, tracked source, and command-center operating rules",
+        "Confirm the Short-Term Planning plan is substantially implemented before retiring it",
+        "Confirm AGENTS.md contains no stale model identifiers, obsolete architecture, destructive operational recipes, or duplicated financial history",
+        "Scan active documentation for contradictory authority and stale Streamlit or manual-deploy guidance",
+        "Validate referenced paths and commands",
+        "Run .venv/bin/python scripts/smoke_test.py",
+        "Run git diff --check",
+        "Refresh and health-check Runway OS",
+        "Inspect the generated dashboard and exact diff and staged paths",
+        "Confirm scripts/sync_prod_to_local.sh and application files remain untouched"
+      ],
+      "reportBack": "Returned the exact governance outcomes, retained history, removed stale and risky active guidance, discovered verification gap, passing checks, source commit, draft PR 85, preserved boundaries, and proposed 2B-R release gate.",
+      "durability": "Source commit 912c9bb is pushed on origin/codex/phase-2-document-governance and included in draft PR 85; main and production remain unchanged.",
+      "result": "Established tracked AGENTS.md as canonical, reduced CLAUDE.md to a compatibility entry point, retired PROJECT_KNOWLEDGE.md and plan.md in place with Git recovery commands, updated documentation and Runway OS, parked the legacy Short-Term Planning verification gap for Phase 3, passed all required checks, and opened draft PR 85 without merge or deployment."
+    },
+    {
+      "id": "phase-2-block-b-release",
+      "phaseId": "phase-2",
+      "label": "2B-R",
+      "name": "Publish Canonical Project Guidance",
+      "status": "active",
+      "includedTasks": [
+        "Task 2",
+        "Task 3"
+      ],
+      "excludedTasks": [
+        "Content changes beyond the verified PR 85 diff",
+        "Application code, workflows or monitor changes, authentication, databases, Plaid, Fly configuration or secrets, credentials, financial data, parent-repo changes, and out-of-plan recovery",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and manual workflow dispatch"
+      ],
+      "owner": "Codex",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-scope GitHub mutation, production-deploy observation, stop judgment, Runway OS closeout, and final intake.",
+      "expectedLiveEffect": "Mark PR 85 ready and merge it to main, triggering one automatic production Fly deploy; then push a command-center-only closeout with skip actions so no second deploy starts.",
+      "stopConditions": [
+        "PR 85 is no longer open, clean, mergeable, or limited to the verified thirteen paths",
+        "Main diverges or branch protection changes the release path",
+        "Synthetic smoke, dashboard, health, or exact-diff verification regresses",
+        "Fly Deploy fails or production root or health does not return HTTP 200",
+        "Verification requires logs, secrets, credentials, financial data, Plaid, databases, or manual workflow dispatch",
+        "Recovery requires application, authentication, infrastructure, credential, or financial-system mutation",
+        "The closeout push would unexpectedly trigger a second Fly deployment"
+      ],
+      "verification": [
+        "Recheck exact PR files, draft and open state, clean mergeability, and branch and base identity",
+        "Rerun the synthetic smoke suite, Runway OS refresh and health, and git diff --check",
+        "Mark PR 85 ready and merge without force",
+        "Identify the resulting main merge commit and automatic Fly Deploy run",
+        "Inspect only sanitized workflow, job, and step status without logs",
+        "Confirm production health and root return HTTP 200",
+        "Close Tasks 2 and 3 plus Phase 2, activate Phase 3 for just-in-time audit planning, and publish a skip-actions closeout without a second deploy"
+      ],
+      "reportBack": "Return the merge commit, deploy run and sanitized result, production HTTP health, final main state, protected boundaries, closeout commit, and Phase 3 planning boundary.",
+      "durability": "Commit and push the active release record on codex/phase-2-document-governance, merge PR 85 to main, then publish a command-center-only closeout directly to main with skip actions."
     }
   ],
   "phaseTasks": [
@@ -2203,19 +2296,31 @@
       "phaseId": "phase-2",
       "taskId": "P2-T2",
       "title": "Task 2: Decide the future of PROJECT_KNOWLEDGE.md and plan.md",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex",
       "summary": "Approve archive, replacement, or historical labels after useful content is migrated.",
-      "nextAction": "Review a separately proposed governance block before changing preserved legacy files.",
-      "blocker": "Awaiting Ryan work-block confirmation"
+      "result": "Replaced both files with concise historical notices, linked current canonical sources, preserved full contents through exact Git recovery commands, and parked the legacy plan's verification gap for Phase 3.",
+      "evidence": [
+        "PROJECT_KNOWLEDGE.md",
+        "plan.md",
+        "command-center/logs/2026-07-18-document-governance-2b.md"
+      ]
     },
     {
       "phaseId": "phase-2",
       "taskId": "P2-T3",
       "title": "Task 3: Reconcile CLAUDE.md and the untracked AGENTS.md",
-      "status": "planned",
-      "owner": "Ryan and Codex",
-      "summary": "Define one maintained instruction source and decide whether AGENTS.md becomes tracked."
+      "status": "current",
+      "owner": "Codex",
+      "summary": "Create a concise tracked AGENTS.md as the canonical instruction source and reduce CLAUDE.md to a compatibility entry point.",
+      "result": "Implementation is verified on draft PR 85: AGENTS.md is the tracked canonical source and CLAUDE.md is a compatibility entry point.",
+      "nextAction": "Release the verified implementation through active work block 2B-R.",
+      "blocker": "Stop if release verification fails or recovery would require an excluded action",
+      "evidence": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "command-center/logs/2026-07-18-document-governance-2b.md"
+      ]
     },
     {
       "phaseId": "phase-2",
@@ -2450,6 +2555,14 @@
     {
       "name": "Work Block 2A-R Root Project Entry Point Release Closeout",
       "path": "command-center/logs/2026-07-18-root-project-entry-point-release-2a-r.md"
+    },
+    {
+      "name": "Canonical Agent Instructions",
+      "path": "AGENTS.md"
+    },
+    {
+      "name": "Work Block 2B Documentation Governance Closeout",
+      "path": "command-center/logs/2026-07-18-document-governance-2b.md"
     }
   ],
   "recentActivity": [
@@ -2532,12 +2645,23 @@
     {
       "time": "2026-07-18",
       "text": "Completed work block 2A-R: PR 84 merged as 6270304, Fly Deploy run 29646390675 passed, production health and root returned HTTP 200, and the closeout was prepared with skip actions."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 2B for Tasks 2 and 3: retire legacy guidance, establish tracked AGENTS.md as canonical, publish a verified feature branch, and open a draft PR without merge or deployment."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 2B: canonicalized agent guidance, retired competing legacy documents with Git recovery paths, parked the Short-Term Planning verification gap for Phase 3, pushed source commit 912c9bb, and opened draft PR 85 without merge or deployment."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan authorized release block 2B-R to publish verified PR 85 to main, observe one automatic production Fly deploy, and publish a skip-actions command-center closeout."
     }
   ],
   "openQuestions": [],
   "projectQuestions": [
-    "Should AGENTS.md become a tracked instruction source during Phase 2?",
-    "Which legacy documentation should be replaced, archived, or retained after migration?"
+    "What is the first bounded Phase 3 functional-audit work block after Phase 2 closes?"
   ],
   "ideas": [],
   "issues": [
@@ -2557,7 +2681,14 @@
     },
     {
       "title": "Project documentation contradicts current architecture",
-      "summary": "Tracked docs mix retired Streamlit guidance with the current Flask, Plaid, Fly.io, and three-entity system.",
+      "summary": "Resolved on draft PR 85 by establishing tracked AGENTS.md as canonical and retiring competing legacy guidance in place; release remains pending.",
+      "status": "resolved",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Short-Term Planning legacy plan exceeds current verification evidence",
+      "summary": "The feature is substantially implemented, but the legacy plan's dedicated smoke cases and seeded goal and snapshot examples are not present as written and need a fresh Phase 3 audit.",
       "status": "parked",
       "severity": "medium",
       "source": "command-center/issues.md"
@@ -2565,13 +2696,13 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "First Phase 2 work-block decision",
-    "description": "Run a just-in-time planning pass over Phase 2 Tasks 1-4 and ask Ryan to confirm one bounded documentation-recovery block before implementation."
+    "name": "Verified Phase 2 release and transition to Phase 3 planning",
+    "description": "Merge verified PR 85, confirm the one automatic Fly deployment and production HTTP health, close Phase 2, and activate Phase 3 without starting audit implementation."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
-    "browserSmoke": "pass; generated dashboard visually inspected at 1600x1400",
+    "browserSmoke": "pass; rendered Expense Tracker dashboard shows Phase 2 at 75 percent, Task 3 current, Ryan as owner, work block 2B done, and the 2B-R release decision without stale placeholders",
     "applicationSmoke": "pass; synthetic temp DATA_DIR suite",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
@@ -2581,7 +2712,9 @@
     "preRelease": "pass; exact minute-17 workflow diff, YAML parse, synthetic smoke suite, dashboard refresh, health check, whitespace check, and visual dashboard inspection",
     "cronHardening": "pass; ready PR 83 merged as 96af7dc and Fly Deploy run 29645346441 plus every job step succeeded",
     "gitDurability": "pass; 1D source is merged to main and the verified Phase 1 closeout is committed and pushed directly to main with skip actions",
-    "httpHealth": "pass; production and demo roots returned HTTP 200"
+    "httpHealth": "pass; production and demo roots returned HTTP 200",
+    "documentationGovernance": "pass; canonical authority, stale-guidance, sensitive-content, path, Git-object, and exact-scope checks passed for work block 2B",
+    "phase2DraftDurability": "pass; source commit 912c9bb is pushed on codex/phase-2-document-governance and draft PR 85 is open without merge or deployment"
   }
 }
 </script>
