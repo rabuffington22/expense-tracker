@@ -28,8 +28,8 @@ Retire `PROJECT_KNOWLEDGE.md` and `plan.md` as active guidance, establish a conc
 - Current documentation authority and stale-guidance scans — passed.
 - Added-line sensitive-content scan — passed; only protective boundary language matched.
 - Historical Git object and referenced-path validation — passed.
-- Exact staged-path inspection — passed; twelve authorized paths only.
-- Draft PR inspection — passed; PR #85 is open, draft, targets `main`, and contains the expected twelve paths.
+- Source-commit staged-path inspection — passed; twelve authorized implementation and active-state paths only.
+- Final draft PR inspection — passed; PR #85 is open, draft, mergeable, targets `main`, and contains the expected thirteen paths after adding this closeout log.
 
 ## Durability
 

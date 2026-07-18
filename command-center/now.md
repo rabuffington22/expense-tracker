@@ -28,7 +28,7 @@ The source review found that Short-Term Planning is substantially implemented, b
 
 Synthetic smoke tests passed. Documentation authority, stale-guidance, model-name, path, sensitive-content, Git-object, exact-scope, whitespace, dashboard-refresh, and command-center health checks passed. The original pre-block untracked `AGENTS.md` remains recoverable as Git blob `f8c8b792f29e91e3faf8cf8b253cfcb7e5ecb313`.
 
-Source commit `912c9bb` is pushed on `origin/codex/phase-2-document-governance`. Draft PR #85 targets `main` and contains only the twelve authorized documentation and command-center paths. The GitHub connector lacked PR-write access, so the authenticated `gh` fallback created the draft PR as allowed by the publication workflow.
+Source commit `912c9bb` is pushed on `origin/codex/phase-2-document-governance`. Draft PR #85 targets `main` and contains only the thirteen authorized documentation and command-center paths, including the required 2B closeout log. The GitHub connector lacked PR-write access, so the authenticated `gh` fallback created the draft PR as allowed by the publication workflow.
 
 ## Durability
 
