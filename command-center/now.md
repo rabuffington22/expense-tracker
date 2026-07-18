@@ -2,50 +2,46 @@
 
 ## Active Objective
 
-Publish verified documentation-governance work through confirmed release block 2B-R and close Phase 2 without widening content or operational scope.
+Prepare the first bounded Phase 3 functional-audit work block after completing and releasing project-truth recovery.
 
 ## Current Phase
 
-Phase 2: Project Truth And Documentation Recovery — active.
+Phase 3: Functional Audit And Prioritization — active.
 
-## Active Work Block
+## Completed Work Block
 
-2B-R: Publish Canonical Project Guidance — active and authorized.
-
-Included: Phase 2 Tasks 2 and 3 publication only.
-
-Excluded: content changes beyond verified PR #85; application code; workflows or monitor changes; authentication; databases; Plaid; Fly configuration or secrets; credentials; financial data; parent-repo changes; pre-existing untracked `scripts/sync_prod_to_local.sh`; manual workflow actions; and out-of-plan recovery.
+2B-R: Publish Canonical Project Guidance — merged, deployed, and verified.
 
 ## Current Task
 
-Phase 2 Task 3: publish the verified `AGENTS.md` and `CLAUDE.md` governance decision with the related legacy-document retirement through PR #85.
+Phase 3 Task 1: audit core workflows for Personal, BFM, and Luxe Legacy with safe data-handling rules — awaiting a just-in-time planning pass and separately confirmed audit work block.
 
 ## Owner
 
-Codex Desktop owns exact-scope release execution, sanitized deploy observation, stop judgment, command-center closeout, and final report. Ryan authorized the `main` publication and resulting automatic production deployment.
+Ryan owns confirmation or revision of the first Phase 3 audit block. Codex Desktop owns the verified 2B-R release evidence, Phase 2 closeout, dashboard currency, and the next just-in-time planning pass.
 
-## Current State
+## Release Result
 
-PR #85 is open, draft, mergeable, targets `main`, and contains the expected thirteen documentation and Runway OS paths. Source and closeout commits are pushed on `origin/codex/phase-2-document-governance`; the feature branch is aligned with its remote. The only unrelated working-tree item is pre-existing untracked `scripts/sync_prod_to_local.sh`, which remains untouched and unstaged.
+PR #85 was marked ready and merged to `main` as `216a992`. Automatic Fly Deploy run `29647452643` completed successfully, including every job step. Production root and `/health` both returned HTTP 200. Only sanitized workflow, job, step, and HTTP status was inspected; no deployment logs, response bodies, credentials, secrets, or financial data were opened.
 
-## Current Action
-
-Commit and push the active 2B-R record to the feature branch, rerun safe pre-release verification, mark PR #85 ready, merge without force, observe the single automatic Fly Deploy using sanitized status only, and verify production root plus `/health` return HTTP 200.
-
-## Stop Conditions
-
-- PR #85 changes scope, loses clean mergeability, or no longer targets `main` from the expected branch.
-- `main` diverges or branch protection changes the release path.
-- Safe verification regresses.
-- Fly Deploy fails or production root or `/health` does not return HTTP 200.
-- Verification would require logs, credentials, secrets, financial data, Plaid, databases, or manual workflow action.
-- Recovery requires application, authentication, infrastructure, credential, or financial-system mutation.
-- The command-center closeout push would trigger a second deploy.
-
-## Report Point
-
-Return the merge commit, automatic deploy run and sanitized result, HTTP health, final branch durability, protected boundaries, closeout commit, and the Phase 3 just-in-time planning boundary.
+The release established tracked `AGENTS.md` as the canonical agent instruction source, reduced `CLAUDE.md` to a compatibility entry point, and retired `PROJECT_KNOWLEDGE.md` plus `plan.md` as competing guidance while preserving their history. The Short-Term Planning verification gap remains parked for Phase 3 audit rather than being assumed fixed.
 
 ## Durability
 
-The active 2B-R record will be committed and pushed on `codex/phase-2-document-governance` before the PR is released. After verified deployment, a command-center-only closeout may be committed directly to `main` with `[skip actions]` so it does not trigger another deployment.
+- PR: https://github.com/rabuffington22/expense-tracker/pull/85
+- Merge commit: `216a992`
+- Fly Deploy run: `29647452643` — success
+- Production root: HTTP 200
+- Production `/health`: HTTP 200
+- Status: merged and deployed on `main`; sanitized closeout published with `[skip actions]`
+- Preserved user file: untracked `scripts/sync_prod_to_local.sh`, untouched and unstaged
+
+## Current Action
+
+Run a just-in-time planning pass over the smallest useful Phase 3 audit slice and propose one separately confirmed work block before opening financial data, accessing Plaid, testing production behavior beyond safe HTTP status, or beginning audit execution.
+
+## Phase 3 Boundary
+
+- No functional audit, production account access, Plaid action, row-level financial-data read, workflow action, application change, or test expansion begins without a separately confirmed Phase 3 work block.
+- The first planning pass should decide whether Task 1 needs local decomposition before selecting a safe synthetic-first audit slice.
+- The parked Short-Term Planning verification gap is an audit input, not an automatically authorized fix.

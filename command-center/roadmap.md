@@ -224,13 +224,13 @@ Target durability: source and active-state changes are merged on `main`; the ver
 
 ## Phase 2: Project Truth And Documentation Recovery
 
-Status: active; Tasks 1 and 4 are published on `main`, Tasks 2 and 3 are verified on PR #85, and confirmed release block 2B-R is active
+Status: complete; all four tasks are merged to `main`, deployed, and verified through work blocks 2A, 2A-R, 2B, and 2B-R
 
 Goal: remove contradictory project guidance while retaining useful domain history.
 
 - **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: done, merged to `main`, deployed, and verified through work blocks 2A and 2A-R.
-- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: done and verified on draft PR #85; not yet released to `main`.
-- **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: current in confirmed release block 2B-R; implementation is verified on PR #85.
+- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: done, merged to `main`, deployed, and verified through work blocks 2B and 2B-R.
+- **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: done, merged to `main`, deployed, and verified through work blocks 2B and 2B-R.
 - **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: done, merged to `main`, deployed, and verified through work blocks 2A and 2A-R.
 
 ### Work Block 2A — Restore the Root Project Entry Point
@@ -368,11 +368,11 @@ Report point: return the exact governance outcomes, useful content retained or m
 
 Result: added a concise tracked `AGENTS.md` as the canonical agent and contributor instruction source; reduced `CLAUDE.md` to a compatibility entry point; replaced `PROJECT_KNOWLEDGE.md` and `plan.md` with concise historical notices backed by Git-history recovery commands; updated the README, project structure, and Runway OS authority map; and parked the legacy Short-Term Planning plan's missing dedicated smoke and demo-goal coverage for a fresh Phase 3 audit. The synthetic smoke suite, documentation scans, path and Git-object checks, exact-scope checks, dashboard refresh, health check, and whitespace checks passed. Source commit `912c9bb` is pushed on `origin/codex/phase-2-document-governance`, and draft PR #85 is open without merge or deployment.
 
-Target durability: the verified implementation is pushed on `codex/phase-2-document-governance` and visible in draft PR #85. `main` and production remain unchanged pending a separately confirmed 2B-R release block.
+Target durability: the verified implementation is merged to `main` through PR #85 as `216a992`; release verification is recorded by 2B-R.
 
 ### Work Block 2B-R — Publish Canonical Project Guidance
 
-Status: active and authorized on 2026-07-18
+Status: done and verified
 
 Included: Task 2 and Task 3 publication only.
 
@@ -406,16 +406,20 @@ Verification:
 
 Report point: return the merge commit, deploy run and result, production HTTP health, final `main` and `origin/main` state, protected boundaries, closeout commit, and the Phase 3 planning boundary.
 
+Result: marked PR #85 ready and merged its verified thirteen-path documentation and Runway OS diff to `main` as `216a992`. Automatic Fly Deploy run `29647452643` and every job step passed without opening logs. Production root and `/health` returned HTTP 200. No manual workflow, Fly, Plaid, database, credential, financial-data, application, authentication, parent-repo, or pre-existing untracked-file action occurred.
+
+Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is published directly to `main` with `[skip actions]` so no second Fly deploy starts.
+
 ## Phase 3: Functional Audit And Prioritization
 
-Status: planned
+Status: active; Task 1 is current for just-in-time audit decomposition and work-block planning
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
-- **Task 1: Audit core workflows for Personal, BFM, and Luxe Legacy with safe data-handling rules.**
-- **Task 2: Audit Plaid, vendor import/matching, categorization, reporting, planning, payroll, weekly, waterfall, PWA, and public dashboard behavior.**
-- **Task 3: Convert findings into severity-ranked issues with reproduction and acceptance checks.**
-- **Task 4: Confirm the repair order and bounded implementation work blocks with Ryan.**
+- **Task 1: Audit core workflows for Personal, BFM, and Luxe Legacy with safe data-handling rules.** Status: current; awaiting a just-in-time planning pass and separately confirmed audit work block.
+- **Task 2: Audit Plaid, vendor import/matching, categorization, reporting, planning, payroll, weekly, waterfall, PWA, and public dashboard behavior.** Status: planned.
+- **Task 3: Convert findings into severity-ranked issues with reproduction and acceptance checks.** Status: planned.
+- **Task 4: Confirm the repair order and bounded implementation work blocks with Ryan.** Status: planned.
 
 ## Phase 4: Core Repairs And Regression Coverage
 

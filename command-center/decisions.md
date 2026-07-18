@@ -98,6 +98,10 @@ The repository now has one concise tracked canonical instruction source in `AGEN
 
 Ryan explicitly instructed Codex to commit and push the verified documentation-governance work to `main`. This authorizes recording 2B-R on the feature branch, marking draft PR #85 ready, merging it without force, observing the single automatic Fly Deploy triggered by the merge, and checking sanitized workflow status plus production root and `/health` HTTP status. It also authorizes a command-center-only closeout pushed directly to `main` with `[skip actions]` to prevent a second deployment. Content changes beyond the verified PR, application and workflow edits, manual workflow actions, Fly mutations, credentials, financial data, databases, Plaid, authentication, parent-repo changes, and pre-existing untracked files remain excluded.
 
+### 2026-07-18 — Accept work block 2B-R and Phase 2 as verified complete
+
+Ready PR #85 merged the verified canonical-guidance and legacy-document governance work to `main` as `216a992`. Automatic Fly Deploy run `29647452643` and every job step passed, and production root plus `/health` returned HTTP 200. Only sanitized workflow, job, step, and HTTP status was inspected. Phase 2 is complete, and Phase 3 becomes active for just-in-time audit decomposition without authorizing functional-audit execution.
+
 ## Pending Ryan Direction
 
-- None during active work block 2B-R unless a stop condition is reached.
+- Confirm or revise the first bounded Phase 3 functional-audit work block after Codex completes the just-in-time planning pass.

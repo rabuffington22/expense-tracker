@@ -48,7 +48,7 @@ Work block 1D changed the workflow to `17 9 * * *` through ready PR `#83`, prese
 
 ## Project Documentation Contradicts Current Architecture
 
-Status: resolved on draft PR #85; release pending
+Status: resolved and released through PR #85
 
 Severity: medium project reliability
 
@@ -56,7 +56,7 @@ Captured: 2026-07-17
 
 Where seen: `README.md`, `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, and `AGENTS.md`
 
-Revisit: work block 2B-R release decision
+Revisit: none unless active guidance diverges again
 
 Summary:
 
@@ -68,7 +68,7 @@ Agents and maintainers can begin from an incorrect architecture, execute obsolet
 
 Resolution:
 
-Work block 2B added a concise tracked `AGENTS.md` as canonical, reduced `CLAUDE.md` to a compatibility pointer, and replaced `PROJECT_KNOWLEDGE.md` plus `plan.md` with historical notices backed by Git history. The verified change is on draft PR #85 and is not yet released to `main`.
+Work block 2B added a concise tracked `AGENTS.md` as canonical, reduced `CLAUDE.md` to a compatibility pointer, and replaced `PROJECT_KNOWLEDGE.md` plus `plan.md` with historical notices backed by Git history. Work block 2B-R merged PR #85 as `216a992`, and the resulting production deployment plus HTTP health checks passed.
 
 ## Short-Term Planning Legacy Plan Exceeds Current Verification Evidence
 
