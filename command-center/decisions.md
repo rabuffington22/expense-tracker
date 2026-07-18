@@ -90,6 +90,10 @@ PR #84 was marked ready and merged to `main` as `6270304`. Automatic Fly Deploy 
 
 Ryan authorized replacing `PROJECT_KNOWLEDGE.md` and `plan.md` with concise in-place historical notices, making a concise tracked `AGENTS.md` the canonical agent instruction source, and reducing `CLAUDE.md` to a compatibility entry point. The block may update supporting README, project-structure, and Runway OS surfaces when needed, work on `codex/phase-2-document-governance`, commit and push the verified branch, and open a draft PR. It excludes application code, workflows, authentication, databases, Plaid, Fly configuration, credentials, financial data, production operations, untracked `scripts/sync_prod_to_local.sh`, parent-repo changes, merge, and deployment.
 
+### 2026-07-18 — Accept work block 2B as verified on draft PR #85
+
+The repository now has one concise tracked canonical instruction source in `AGENTS.md`; `CLAUDE.md` is a compatibility entry point; and `PROJECT_KNOWLEDGE.md` plus `plan.md` are historical notices with Git recovery commands rather than competing guidance. The legacy Short-Term Planning plan's missing dedicated smoke and seeded goal/snapshot coverage is parked for Phase 3 rather than hidden. All documentation, synthetic, exact-scope, dashboard, and health checks passed. Commit `912c9bb` is pushed on `codex/phase-2-document-governance`, and draft PR #85 is open without merge or deployment.
+
 ## Pending Ryan Direction
 
-- Review the verified work block 2B draft PR before any separately confirmed merge and deployment block.
+- Review verified draft PR #85 and confirm or revise a separate 2B-R merge and deployment block.

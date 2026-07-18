@@ -48,7 +48,7 @@ Work block 1D changed the workflow to `17 9 * * *` through ready PR `#83`, prese
 
 ## Project Documentation Contradicts Current Architecture
 
-Status: parked pending roadmap confirmation
+Status: resolved on draft PR #85; release pending
 
 Severity: medium project reliability
 
@@ -56,7 +56,7 @@ Captured: 2026-07-17
 
 Where seen: `README.md`, `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, and `AGENTS.md`
 
-Revisit: proposed Phase 2
+Revisit: work block 2B-R release decision
 
 Summary:
 
@@ -66,13 +66,9 @@ Impact:
 
 Agents and maintainers can begin from an incorrect architecture, execute obsolete commands, or mistake completed planning for future work.
 
-Why not now:
+Resolution:
 
-The bootstrap preserves existing files. Rewriting or archiving legacy docs requires a separate reviewed documentation block.
-
-Promotion trigger:
-
-Ryan confirms the proposed documentation-recovery phase and decides how `AGENTS.md` should be governed.
+Work block 2B added a concise tracked `AGENTS.md` as canonical, reduced `CLAUDE.md` to a compatibility pointer, and replaced `PROJECT_KNOWLEDGE.md` plus `plan.md` with historical notices backed by Git history. The verified change is on draft PR #85 and is not yet released to `main`.
 
 ## Short-Term Planning Legacy Plan Exceeds Current Verification Evidence
 
