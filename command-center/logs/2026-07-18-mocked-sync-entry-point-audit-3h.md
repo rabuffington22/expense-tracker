@@ -103,4 +103,4 @@ Task 5C is complete as an audit. Task 5D remains ready for a separately confirme
 
 ## Durability
 
-The 3H closeout is local-only. No commit, push, PR, merge, deployment, workflow action, live integration action, or downstream write is authorized by this block.
+Ryan subsequently authorized publishing the exact seven-path 3H command-center closeout directly to `main`. Commit `c3130ea` is on local `main` and `origin/main` with `[skip actions]`; no PR, merge, deployment, workflow action, live integration action, downstream write, product change, or pre-existing untracked-file change occurred.

@@ -1414,3 +1414,124 @@ Acceptance checks:
 Why not added now:
 
 Tracked test expansion was explicitly excluded from work block 3H.
+
+## Luxe Legacy Owner Draw Is Mirrored Despite The Exclusion Intent
+
+Status: open; discovered in work block 3I
+
+Severity: high downstream-data boundary risk
+
+Captured: 2026-07-18
+
+Where seen: `core/luxury_bridge.py`, `categories.md`, and the repeated mocked 3I payload probe
+
+Revisit: Phase 4 Task 1 for eligibility-contract repair; Phase 4 Task 2 for exclusion coverage
+
+Summary:
+
+The bridge comment says owner draws are not sale or purchase activity and should be excluded, but `EXCLUDE_CATS` uses `Owner Contribution`. LL defines `Owner Draw [Personal]` and does not define `Owner Contribution`, so a synthetic Owner Draw row entered the downstream payload.
+
+Impact:
+
+When the optional bridge is configured, a transaction type explicitly intended to remain outside the matching mirror can cross the downstream boundary and clutter or distort sale/purchase matching.
+
+Acceptance checks:
+
+- Bridge exclusions derive from or are explicitly reconciled with the maintained LL category contract.
+- `Owner Draw` is omitted without suppressing valid LL sale or purchase categories.
+- Scheduled and public bridge seams preserve the same corrected selection behavior.
+
+Why not fixed now:
+
+Product repair and tracked-test expansion were excluded from work block 3I.
+
+## Luxe Legacy Mirror Idempotency Contract Permits Duplicate Conflict Keys
+
+Status: open; discovered in work block 3I
+
+Severity: high downstream correctness and availability risk
+
+Captured: 2026-07-18
+
+Where seen: `core/db.py`, `core/luxury_bridge.py`, and a repeated mocked duplicate-Plaid-ID probe
+
+Revisit: Phase 4 Task 1 for local and downstream contract repair; Phase 4 Task 2 for duplicate-key coverage
+
+Summary:
+
+The local transaction schema creates a non-unique index on `plaid_transaction_id`. Two synthetic rows with the same Plaid ID were accepted and submitted in one bridge request. The request declares merge-duplicates but does not explicitly name `plaid_transaction_id` as its conflict target. The actual remote unique constraint and response were intentionally not inspected.
+
+Impact:
+
+One duplicate local key can make an all-eligible-row mirror batch ambiguous or fail as a unit, while the upstream Ledger sync still reports success because bridge failures are isolated and return zero.
+
+Acceptance checks:
+
+- The local schema or payload builder prevents duplicate downstream conflict keys in one request.
+- The tracked downstream schema or request explicitly establishes `plaid_transaction_id` as the conflict key.
+- Duplicate handling is deterministic, preserves the Ledger source of truth, and cannot silently drop an unrelated eligible row.
+- Failure and recovery behavior has synthetic regression coverage without live downstream access.
+
+Why not fixed now:
+
+Schema, bridge, downstream-contract, and tracked-test changes were excluded from work block 3I.
+
+## Luxe Legacy Mirror Accepts Empty Plaid Transaction IDs
+
+Status: open; discovered in work block 3I
+
+Severity: medium downstream validation risk
+
+Captured: 2026-07-18
+
+Where seen: `core/luxury_bridge.py` and the repeated mocked 3I eligibility probe
+
+Revisit: Phase 4 Task 1 for selection validation; Phase 4 Task 2 for malformed-key coverage
+
+Summary:
+
+The bridge requires `plaid_transaction_id IS NOT NULL` but does not reject an empty string. A synthetic row with an empty Plaid ID entered the downstream payload as an idempotency key.
+
+Impact:
+
+Malformed local state can produce an invalid or colliding downstream request instead of being skipped or surfaced explicitly.
+
+Acceptance checks:
+
+- Only non-empty, normalized Plaid transaction IDs qualify for mirroring.
+- Malformed identifiers are skipped or reported without affecting valid rows.
+- Personal and BFM remain untouched and the Ledger source rows remain intact.
+
+Why not fixed now:
+
+Product repair and tracked coverage were excluded from work block 3I.
+
+## Luxe Legacy Downstream Mirror Lacks Tracked Regression Coverage
+
+Status: parked for Phase 4 regression coverage
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py` and work block 3I's repeated mocked bridge probe
+
+Revisit: Phase 4 Task 2, preferably alongside mirror eligibility and idempotency repairs
+
+Summary:
+
+The maintained smoke suite does not exercise `core/luxury_bridge.py` or its scheduled and public invocation seams. Work block 3I's 44 passing checks, three controlled failures, two gaps, and remote-unverified classification are deterministic but ephemeral.
+
+Impact:
+
+Configuration no-ops, LL-only invocation, selection rules, authentication and payload shape, conflict-key behavior, timeout isolation, and Personal/BFM non-mutation can regress without maintained detection.
+
+Acceptance checks:
+
+- Tests use fake configuration, temporary all-entity databases, mocked HTTP and sync dependencies, and denied outbound sockets.
+- Passing no-op, request-shape, failure-isolation, and entity-boundary behavior is explicit.
+- Every repaired 3I finding has failing-before and passing-after coverage.
+
+Why not added now:
+
+Tracked test expansion was explicitly excluded from work block 3I.

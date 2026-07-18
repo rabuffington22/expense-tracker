@@ -172,10 +172,26 @@ Ryan confirmed Task 5C as one mocked-only audit of the bearer-protected and CSRF
 
 The tracked smoke suite passed. A 32-check mocked entry-point probe produced 22 passes, ten controlled failures representing seven functional/boundary defect clusters plus one tracked-coverage gap, and zero unexpected failures; a confirmation pass reproduced the same results and cleanup. Method and bearer rejection, secret-safe errors, CSRF separation, normal all-entity iteration, same-process lock contention/release, public reachability and one-process throttle, Personal/LL scope, normal cursor movement, item-failure containment, and cleanup passed. Scheduled partial errors return HTTP 200 and `ok: true`; scheduled/public paths have separate process-local coordination under two Gunicorn workers; the public worker ignores removed events while advancing cursors and includes vendor items; one scheduled entity exception aborts later entities without structured partial state; unauthorized requests run entity setup before bearer rejection; failed public thread start consumes the throttle; and the paths lack tracked coverage. Task 5C and work block 3H are complete, and Task 5D becomes current for separate planning. No repair, tracked product/test/workflow change, protected-data access, credential use, network call, live action, or GitHub durability occurred.
 
+### 2026-07-18 — Record work block 3H as published on main
+
+Repository verification shows the exact seven-path 3H command-center closeout is commit `c3130ea` on both local `main` and `origin/main` with `[skip actions]`. This corrects the stale local-only durability wording; the publication contained no product, workflow, deployment, credential, protected-data, Plaid, Fly, or downstream mutation.
+
+### 2026-07-18 — Confirm work block 3I for the mocked Luxe Legacy downstream-mirror audit
+
+Ryan confirmed Task 5D as one mocked-only audit of the optional Luxe Legacy bridge, including LL-only invocation, configuration and empty-row no-op behavior, eligible-row and category exclusions, request/auth/payload/timeout shape, stable repeat-request and upsert signaling, upstream failure isolation, and absence of Personal or BFM mutation. Codex may inspect tracked source, run the maintained synthetic smoke suite, use fake configuration, temporary all-entity databases, mocked HTTP, and outbound-socket denial, create a sanitized audit log, record ranked findings, and close Runway OS state. Tasks 6-8; all 3A-3H repairs; product, migration, tracked-test, fixture, workflow, authentication, and public-route changes; real databases or financial rows; credentials; network calls; downstream schema access or writes; production/demo, Plaid, Fly, or workflow actions; pre-existing `scripts/sync_prod_to_local.sh`; and all GitHub durability remain excluded.
+
+### 2026-07-18 — Accept work block 3I with three controlled failures, two gaps, and one remote-unverified boundary
+
+The tracked smoke suite passed. A deterministic mocked bridge probe produced 44 passes, three controlled failures, two contract/coverage gaps, one intentionally unverified remote boundary, and complete cleanup; a confirmation pass reproduced the same classifications. Configuration/no-op, LL-only invocation and storage, request/auth/payload/timeout shape, standard exclusions, stable repeats, failure isolation, upstream preservation, Personal/BFM non-mutation, socket denial, and cleanup passed. LL Owner Draw crossed the mirror because the bridge excludes nonexistent LL category Owner Contribution; empty Plaid IDs qualified; duplicate Plaid IDs entered one request while the conflict target remained implicit; and tracked bridge coverage is absent. Actual remote uniqueness and merge behavior remains unverified without downstream access. Task 5D and work block 3I are complete, and Task 6 becomes current for separate planning. No repair, product/test change, protected-data access, credential use, network call, downstream write, live action, or GitHub durability occurred.
+
+### 2026-07-18 — Authorize direct-main durability for the 3I audit closeout
+
+Ryan explicitly instructed Codex to commit and push the verified 3I command-center closeout to `main`. This authorizes staging only the eight 3I command-center paths, including the factual 3H durability correction, committing with `[skip actions]`, and pushing `main` without force. Product, fixture, tracked-test, workflow, authentication, and deployment files; pre-existing untracked `scripts/sync_prod_to_local.sh`; production or demo access; protected data; credentials; Plaid, Fly, workflow, Supabase, or downstream actions; and all repair outside the exact closeout remain excluded.
+
 ## Pending Ryan Direction
 
-- Confirm or revise the next mocked-HTTP Task 5D downstream-mirror audit block after just-in-time planning.
-- Any 3A-3H repair, tracked regression coverage, protected-data access, live action, credential use, external write, or GitHub durability requires a separate decision.
+- Confirm or revise the next just-in-time Task 6 PWA, navigation, public-dashboard, and authentication-boundary audit block.
+- Any 3A-3I repair, tracked regression coverage, protected-data access, live action, credential use, external write, remote schema access, or GitHub durability requires a separate decision.
 
 ### 2026-07-18 — Confirm work block 3G for the mocked primary Plaid boundary audit
 
