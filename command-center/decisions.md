@@ -94,6 +94,10 @@ Ryan authorized replacing `PROJECT_KNOWLEDGE.md` and `plan.md` with concise in-p
 
 The repository now has one concise tracked canonical instruction source in `AGENTS.md`; `CLAUDE.md` is a compatibility entry point; and `PROJECT_KNOWLEDGE.md` plus `plan.md` are historical notices with Git recovery commands rather than competing guidance. The legacy Short-Term Planning plan's missing dedicated smoke and seeded goal/snapshot coverage is parked for Phase 3 rather than hidden. All documentation, synthetic, exact-scope, dashboard, and health checks passed. Commit `912c9bb` is pushed on `codex/phase-2-document-governance`, and draft PR #85 is open without merge or deployment.
 
+### 2026-07-18 — Authorize work block 2B-R to publish PR #85 to main
+
+Ryan explicitly instructed Codex to commit and push the verified documentation-governance work to `main`. This authorizes recording 2B-R on the feature branch, marking draft PR #85 ready, merging it without force, observing the single automatic Fly Deploy triggered by the merge, and checking sanitized workflow status plus production root and `/health` HTTP status. It also authorizes a command-center-only closeout pushed directly to `main` with `[skip actions]` to prevent a second deployment. Content changes beyond the verified PR, application and workflow edits, manual workflow actions, Fly mutations, credentials, financial data, databases, Plaid, authentication, parent-repo changes, and pre-existing untracked files remain excluded.
+
 ## Pending Ryan Direction
 
-- Review verified draft PR #85 and confirm or revise a separate 2B-R merge and deployment block.
+- None during active work block 2B-R unless a stop condition is reached.

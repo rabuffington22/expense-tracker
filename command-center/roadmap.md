@@ -224,13 +224,13 @@ Target durability: source and active-state changes are merged on `main`; the ver
 
 ## Phase 2: Project Truth And Documentation Recovery
 
-Status: active; Tasks 1 and 4 are published on `main`, Task 2 is verified on draft PR #85, and Task 3 is current at the separately confirmed release gate
+Status: active; Tasks 1 and 4 are published on `main`, Tasks 2 and 3 are verified on PR #85, and confirmed release block 2B-R is active
 
 Goal: remove contradictory project guidance while retaining useful domain history.
 
 - **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: done, merged to `main`, deployed, and verified through work blocks 2A and 2A-R.
 - **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: done and verified on draft PR #85; not yet released to `main`.
-- **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: current; implementation is verified on draft PR #85 and awaits a separately confirmed 2B-R release block.
+- **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: current in confirmed release block 2B-R; implementation is verified on PR #85.
 - **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: done, merged to `main`, deployed, and verified through work blocks 2A and 2A-R.
 
 ### Work Block 2A — Restore the Root Project Entry Point
@@ -369,6 +369,42 @@ Report point: return the exact governance outcomes, useful content retained or m
 Result: added a concise tracked `AGENTS.md` as the canonical agent and contributor instruction source; reduced `CLAUDE.md` to a compatibility entry point; replaced `PROJECT_KNOWLEDGE.md` and `plan.md` with concise historical notices backed by Git-history recovery commands; updated the README, project structure, and Runway OS authority map; and parked the legacy Short-Term Planning plan's missing dedicated smoke and demo-goal coverage for a fresh Phase 3 audit. The synthetic smoke suite, documentation scans, path and Git-object checks, exact-scope checks, dashboard refresh, health check, and whitespace checks passed. Source commit `912c9bb` is pushed on `origin/codex/phase-2-document-governance`, and draft PR #85 is open without merge or deployment.
 
 Target durability: the verified implementation is pushed on `codex/phase-2-document-governance` and visible in draft PR #85. `main` and production remain unchanged pending a separately confirmed 2B-R release block.
+
+### Work Block 2B-R — Publish Canonical Project Guidance
+
+Status: active and authorized on 2026-07-18
+
+Included: Task 2 and Task 3 publication only.
+
+Excluded: content changes beyond the verified PR #85 diff; application code; workflows or monitor changes; authentication; databases; Plaid; Fly configuration or secrets; credentials; financial data; parent-repo changes; pre-existing untracked `scripts/sync_prod_to_local.sh`; manual workflow dispatch; and any recovery action outside this release plan.
+
+Why this grouping: Ryan explicitly authorized committing and pushing the verified 2B work to `main`. The exact PR review, ready transition, merge, single automatic Fly deploy, sanitized health verification, and skip-actions closeout form one bounded release path.
+
+Owner and agent: Codex Desktop in the current thread. The block requires exact-scope GitHub mutation, production-deploy observation, stop judgment, and Runway OS closeout. No delegation or second opinion is needed.
+
+Expected live effect: mark draft PR #85 ready, merge it to `main`, trigger one automatic production Fly deploy, then publish a command-center-only closeout directly to `main` with `[skip actions]` so no second deploy starts.
+
+Stop conditions:
+
+- PR #85 is no longer open, clean, mergeable, or limited to the verified thirteen documentation and Runway OS paths;
+- `main` diverges or branch protection changes the release path;
+- synthetic smoke, dashboard, health, or exact-diff verification regresses;
+- Fly Deploy fails or production root or `/health` does not return HTTP 200;
+- verification would require deployment logs, secrets, credentials, financial data, Plaid, databases, or manual workflow dispatch;
+- recovery requires application, authentication, infrastructure, credential, or financial-system mutation;
+- the closeout push would unexpectedly trigger a second Fly deployment.
+
+Verification:
+
+- recheck the exact PR file list, draft/open state, clean mergeability, and branch/base identity;
+- rerun the synthetic smoke suite, Runway OS refresh and health, and `git diff --check` before release;
+- mark PR #85 ready and merge it without force;
+- identify the resulting `main` merge commit and automatic Fly Deploy run;
+- inspect only sanitized workflow, job, and step status without opening logs;
+- confirm production `/health` and root return HTTP 200;
+- close Tasks 2 and 3 plus Phase 2, activate Phase 3 for just-in-time audit planning, refresh and health-check Runway OS, and push the command-center-only closeout with `[skip actions]`.
+
+Report point: return the merge commit, deploy run and result, production HTTP health, final `main` and `origin/main` state, protected boundaries, closeout commit, and the Phase 3 planning boundary.
 
 ## Phase 3: Functional Audit And Prioritization
 
