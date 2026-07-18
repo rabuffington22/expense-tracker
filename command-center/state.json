@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 9:39 AM CST",
+    "lastUpdated": "2026-07-18 11:31 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 3A's exact command-center closeout is published directly to main under Ryan's separate authorization with skip actions; no product change or deployment is included"
+    "durabilityStatus": "Work blocks 3A and 3B have exact command-center closeouts published directly to main under separate Ryan authorizations with skip actions; no product change or deployment is included"
   },
   "phase": {
     "name": "Functional Audit And Prioritization",
     "status": "active",
-    "summary": "Task 1 and work block 3A are done with one high-severity transaction-identity defect and one medium regression-coverage gap; Task 2 is current awaiting a separate work block.",
-    "progress": 13
+    "summary": "Tasks 1-2 and work blocks 3A-3B are done; Task 3 is current awaiting a separately confirmed synthetic audit block.",
+    "progress": 25
   },
   "currentTask": {
-    "title": "Task 2: Audit statement and vendor-order import, matching, and categorization workflows",
+    "title": "Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior",
     "owner": "Ryan",
     "status": "awaiting work block",
-    "supportingAgent": "Codex Desktop owns the verified 3A evidence, Task 2 just-in-time planning pass, protected-data boundaries, and dashboard currency",
-    "nextAction": "Define the smallest coherent synthetic Task 2 audit slice and return work block 3B for Ryan confirmation.",
-    "blocker": "No Task 2 audit execution, transaction-identity repair, tracked test expansion, protected-data access, live action, or GitHub durability is authorized yet"
+    "supportingAgent": "Codex Desktop owns the verified 3B evidence, Task 3 just-in-time planning pass, protected-data boundaries, and dashboard currency",
+    "nextAction": "Define the smallest coherent synthetic Task 3 audit slice and return work block 3C for Ryan confirmation.",
+    "blocker": "No Task 3 audit execution, 3B repair, tracked test expansion, protected-data access, live action, or GitHub durability is authorized yet"
   },
   "routerHealth": {
     "status": "healthy",
@@ -61,23 +61,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define work block 3B for Task 2 synthetic import and categorization audit",
+    "title": "Define work block 3C for Task 3 reporting and cash-flow audit",
     "status": "awaiting planning",
     "owner": "Ryan",
-    "why": "Work block 3A is verified and Task 2 is the next visible Phase 3 slice; its statement and vendor import surfaces need a bounded fixture and parser plan before execution.",
-    "action": "Run a just-in-time Task 2 planning pass and return one synthetic-first work block for separate confirmation.",
+    "why": "Work block 3B is verified and Task 3 is the next visible Phase 3 slice; reporting, subscriptions, exports, and cash-flow behavior need a bounded synthetic fixture and date-range plan before execution.",
+    "action": "Run a just-in-time Task 3 planning pass and return one synthetic-first work block for separate confirmation.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Task 2 audit block before audit execution begins.",
+    "summary": "Ryan reviews the next separately proposed Task 3 audit block before audit execution begins.",
     "items": [
-      "Confirm or revise work block 3B after the Task 2 just-in-time planning pass."
+      "Confirm or revise work block 3C after the Task 3 just-in-time planning pass."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 3A is complete; Task 2 audit execution, transaction-identity repair, tracked tests, protected-data access, and live actions remain outside authorization.",
-    "decisionQueue": "The next decision is confirmation or revision of work block 3B; identity repair and regression coverage remain later separately scoped choices.",
+    "phaseQuestions": "Work block 3B is complete; Task 3 audit execution, 3B repairs, tracked tests, protected-data access, and live actions remain outside authorization.",
+    "decisionQueue": "The next decision is confirmation or revision of work block 3C; 3A and 3B repairs remain later separately scoped choices.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -603,6 +603,51 @@
         "command-center/issues.md"
       ],
       "result": "Existing smoke and ephemeral all-entity probes passed initialization, isolation, signed-cents, edit, split, and effective-reporting checks. Transaction identity omitted account or source identity and collapsed one legitimate synthetic collision row, recorded as a high financial-data completeness defect. Passing edit, split, isolation, and reporting behavior lacked tracked regression coverage, recorded as a medium risk. Plaid source impact remains unverified for Task 5, and no excluded action occurred."
+    },
+    {
+      "id": "phase-3-block-b",
+      "phaseId": "phase-3",
+      "label": "3B",
+      "name": "Synthetic Import-to-Categorization Audit",
+      "status": "done",
+      "includedTasks": [
+        "Task 2"
+      ],
+      "excludedTasks": [
+        "Task 1 and Tasks 3-8",
+        "Product fixes and tracked fixture or regression-test expansion",
+        "Real databases, statements, uploads, credentials, row-level financial data, production or demo access, Plaid or vendor-account actions, workflows, Fly, downstream writes, authentication or security changes",
+        "Commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive-retrofit audit couples source inspection, generated synthetic inputs, all-entity verification, finding classification, command-center stewardship, and final intake.",
+      "expectedFiles": [
+        "Read-only import, matching, categorization, route, template, schema, category, fixture, and smoke source",
+        "command-center/logs/2026-07-18-synthetic-import-categorization-audit-3b.md",
+        "command-center/issues.md only if findings require it",
+        "command-center/roadmap.md, now.md, decisions.md, state.json, and index.html"
+      ],
+      "stopConditions": [
+        "Verification requires real databases, statements, uploads, financial rows, credentials, production or demo access, Plaid, a live vendor connection, or another live action",
+        "Entity isolation or security behavior appears violated or unsafe",
+        "A finding requires product repair, migration design, or tracked regression coverage",
+        "The known transaction-identity defect prevents a trustworthy Task 2 conclusion",
+        "Scope expands beyond Task 2, verification changes the audit plan, or command-center checks fail"
+      ],
+      "verification": [
+        ".venv/bin/python scripts/smoke_test.py",
+        "Generated temporary CSV, PDF, and XLSX inputs plus route and file-flow probes against an ephemeral DATA_DIR",
+        "All-entity checks for profiles, preview, confirm, duplicate, undo, vendor-order persistence, exact, review and unmatched matching, aliases, suggestions, category and subcategory consistency, and cross-entity isolation",
+        "Temporary-file cleanup, git diff --check, Runway OS refresh, health check, dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Return a sanitized pass, gap, and unverified matrix; ranked findings with acceptance checks; exact synthetic checks; preserved boundaries; and the Task 3 work-block recommendation.",
+      "durability": "Published directly to main under Ryan's separate post-block authorization with skip actions; no PR, merge, or deploy occurred.",
+      "evidence": [
+        "command-center/logs/2026-07-18-synthetic-import-categorization-audit-3b.md",
+        "command-center/issues.md"
+      ],
+      "result": "The tracked smoke suite and 60 ephemeral checks passed CSV and PDF handling, upload confirmation, Amazon and Henry Schein parsing and deduplication, order matching, aliases, cleanup, and entity isolation. Vendor-payment matching failed on a missing transaction column, normal vendor imports discarded line items needed by auto-split, and category inference and acceptance escaped categories.md or varied nondeterministically. A medium tracked-coverage gap and low status-only Undo ambiguity were also recorded without repair, product or test changes, protected-data access, live action, or GitHub durability."
     }
   ],
   "phaseTasks": [
@@ -802,19 +847,24 @@
       "phaseId": "phase-3",
       "taskId": "P3-T2",
       "title": "Task 2: Audit statement and vendor-order import, matching, and categorization workflows",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Cover CSV and PDF source profiles, upload, confirm and undo boundaries, Amazon and Henry Schein ingestion, vendor matching, aliases, suggestions, and category and subcategory handling with synthetic inputs.",
-      "nextAction": "Confirm or revise work block 3B after the just-in-time Task 2 planning pass.",
-      "blocker": "Task 2 audit execution is not authorized until a synthetic fixture boundary, exact included surfaces, stop conditions, and verification are confirmed."
+      "result": "Work block 3B passed the tracked smoke suite and 60 ephemeral checks; it recorded three high-risk correctness defects, one medium regression-coverage gap, and one low operator-clarity issue without implementation.",
+      "evidence": [
+        "command-center/logs/2026-07-18-synthetic-import-categorization-audit-3b.md",
+        "command-center/issues.md"
+      ]
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T3",
       "title": "Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "Check shared reporting rules, split replacement, exclusions, empty states, date filters, recurring detection, balances, and entity-specific output without opening production data."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Check shared reporting rules, split replacement, exclusions, empty states, date filters, recurring detection, balances, and entity-specific output without opening production data.",
+      "nextAction": "Confirm or revise work block 3C after the just-in-time Task 3 planning pass.",
+      "blocker": "Task 3 audit execution is not authorized until a synthetic fixture boundary, exact included surfaces, stop conditions, and verification are confirmed."
     },
     {
       "phaseId": "phase-3",
@@ -1166,11 +1216,23 @@
     {
       "time": "2026-07-18",
       "text": "Ryan separately authorized committing and pushing the exact seven-path 3A command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 3B for a synthetic-only Task 2 audit from statement and vendor-order ingestion through matching and categorization across all three isolated entities; fixes, tracked fixture or test expansion, live access, protected data, and GitHub durability remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 3B: the tracked smoke suite and 60 ephemeral checks passed the core import, upload, order-matching, alias, cleanup, and isolation behaviors; three high-risk correctness defects, one medium coverage gap, and one low Undo ambiguity were recorded without repair or live access."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan separately authorized committing and pushing the exact seven-path 3B command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
     }
   ],
   "openQuestions": [],
   "projectQuestions": [
-    "What is the smallest coherent synthetic Task 2 audit block for statement and vendor import, matching, and categorization behavior?"
+    "What is the smallest coherent synthetic Task 3 audit block for dashboard, reporting, exports, subscriptions, and cash-flow behavior?"
   ],
   "ideas": [],
   "issues": [
@@ -1215,17 +1277,52 @@
       "status": "parked",
       "severity": "medium",
       "source": "command-center/issues.md"
+    },
+    {
+      "title": "Vendor-payment matching references a missing transaction column",
+      "summary": "Fresh Personal, BFM, and Luxe Legacy databases all failed vendor-payment matching because core/vendor_matching.py references transactions.matched_order_id, which no migration creates.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Vendor-order imports discard parsed line items",
+      "summary": "Synthetic Amazon and Henry Schein imports persisted order summaries but no order_line_items rows, leaving matched-order auto-split without the detail it requires.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Vendor categorization can escape the category source of truth",
+      "summary": "Synthetic matching wrote an undefined category in all three entities, mixed-category ties varied across hash seeds, and the categorization endpoint accepted undefined category and subcategory values.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Task 2 import and categorization paths lack tracked regression coverage",
+      "summary": "The 3B ephemeral probe passed 60 parser, upload, matching, alias, cleanup, and isolation checks, but the tracked smoke suite does not guard those paths.",
+      "status": "parked",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Upload Undo label does not explain its status-only effect",
+      "summary": "The action marks the monthly checklist incomplete but leaves imported transactions intact, while the interface labels it only Undo.",
+      "status": "open",
+      "severity": "low",
+      "source": "command-center/issues.md"
     }
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Bounded Task 2 audit decision",
-    "description": "Define and confirm the smallest synthetic statement and vendor import, matching, and categorization audit slice before execution."
+    "name": "Bounded Task 3 audit decision",
+    "description": "Define and confirm the smallest synthetic dashboard, reporting, export, subscription, and cash-flow audit slice before execution."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
-    "browserSmoke": "pass; generated dashboard state shows Phase 3 active at 13 percent, Task 1 and 3A done, Task 2 current behind Ryan's work-block confirmation gate, and one clear waiting item",
+    "browserSmoke": "pass; generated dashboard state shows Phase 3 active at 25 percent, Tasks 1-2 and work blocks 3A-3B done, Task 3 current behind Ryan's work-block confirmation gate, five 3B findings, and one clear waiting item",
     "applicationSmoke": "pass; existing synthetic temporary-DATA_DIR suite initialized all three entities, verified import and exact re-import deduplication, and passed route, export, saved-view, and To Do checks",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
@@ -1242,6 +1339,9 @@
     "phase2CloseoutDurability": "pass; this command-center-only closeout is the direct-main skip-actions durability record and excludes application, workflow, data, and pre-existing untracked-file changes",
     "phase3TransactionFoundationAudit": "pass with findings; all-entity initialization, isolation, signed-cents, edit, split, rejected-update preservation, and effective-reporting probes passed; transaction identity collision was reproduced and tracked coverage gaps were recorded",
     "phase3AuditBoundaries": "pass; temporary synthetic data only, no product or tracked test changes, no real financial data or credentials, and no production/demo/Plaid/workflow/Fly/downstream action",
-    "phase3CloseoutDurability": "pass; exact seven-path command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script"
+    "phase3CloseoutDurability": "pass; exact seven-path command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script",
+    "phase3ImportCategorizationAudit": "pass with findings; tracked smoke and 60 ephemeral checks passed core parser, upload, order-matching, alias, cleanup, and isolation behaviors while three high-risk correctness defects, one medium coverage gap, and one low Undo ambiguity were recorded",
+    "phase3ImportCategorizationBoundaries": "pass; generated temporary inputs only, temporary data removed, no product or tracked fixture/test changes, no real financial data or credentials, and no production/demo/Plaid/vendor-account/workflow/Fly/downstream action",
+    "phase3ImportCategorizationDurability": "pass; exact seven-path 3B command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script"
   }
 }

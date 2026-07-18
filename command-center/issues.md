@@ -159,3 +159,158 @@ Acceptance checks:
 Why not added now:
 
 Tracked test expansion was explicitly excluded from audit work block 3A and belongs in a separately confirmed Phase 4 regression-coverage block.
+
+## Vendor-Payment Matching References A Missing Transaction Column
+
+Status: open; discovered in work block 3B
+
+Severity: high functional correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `core/vendor_matching.py`, `core/db.py`, and fresh temporary databases for all three entities
+
+Revisit: Phase 4 Task 1 for schema/query repair; Phase 4 Task 2 for regression coverage
+
+Summary:
+
+`match_vendor_to_bank()` selects and updates `transactions.matched_order_id`, but no ordered migration creates that column. The same `sqlite3.OperationalError` occurred in fresh Personal, BFM, and Luxe Legacy databases before any exact, review, or unmatched vendor-payment result could be produced.
+
+Impact:
+
+The Venmo/PayPal vendor-matching workflow cannot run against the canonical migration-built schema. Actual production state was not inspected, so whether a manually divergent live schema masks the defect is unknown and must not be assumed.
+
+Acceptance checks:
+
+- A fresh migration-built database can run vendor-payment matching without a schema error.
+- Exact, review, unmatched-vendor, and unmatched-bank outcomes are covered synthetically.
+- Accepted matches enrich only the target entity and cannot overwrite an unrelated transaction.
+- Any schema change has an additive migration and a safe existing-data path.
+
+Why not fixed now:
+
+Work block 3B is audit-only. Schema/query repair and tracked tests require a separately confirmed Phase 4 block.
+
+## Vendor-Order Imports Discard Parsed Line Items
+
+Status: open; discovered in work block 3B
+
+Severity: high vendor-detail completeness risk
+
+Captured: 2026-07-18
+
+Where seen: `core/amazon.py`, `core/henryschein.py`, `web/routes/data_sources.py`, `scripts/populate_line_items.py`, and synthetic all-entity reproduction
+
+Revisit: Phase 4 Task 1 for import persistence repair; Phase 4 Task 2 for regression coverage
+
+Summary:
+
+Amazon and Henry Schein parsers produce grouped orders with individual item lists, but `save_orders_to_db()` persists only the order summary. Fresh imports therefore created zero `order_line_items` rows in every entity. The auto-split helper then returned `No categorized line items found`; the only existing population path is a separate file-specific script that reparses original files.
+
+Impact:
+
+New vendor imports cannot support the advertised line-item breakdown and category split path without a separate operational backfill that depends on retaining and locating the original files.
+
+Acceptance checks:
+
+- Normal Amazon and Henry Schein save flows persist their parsed line items transactionally with the parent order.
+- Exact re-imports remain idempotent for both orders and line items.
+- Item totals, quantity, tax/shipping treatment, category/subcategory, and parent totals reconcile in integer cents.
+- A matched multi-category order can create valid vendor-line-item splits without a separate production script.
+
+Why not fixed now:
+
+Changing persistence and backfill behavior is implementation work with migration and regression implications, excluded from work block 3B.
+
+## Vendor Categorization Can Escape The Category Source Of Truth
+
+Status: open; discovered in work block 3B
+
+Severity: high financial-classification integrity risk
+
+Captured: 2026-07-18
+
+Where seen: `core/amazon.py`, `web/routes/categorize.py`, `web/routes/categorize_vendors.py`, `categories.md`, and synthetic all-entity reproduction
+
+Revisit: Phase 4 Task 1 for domain-enforcement repair; Phase 4 Task 2 for regression coverage
+
+Summary:
+
+Amazon category inference returned and accepted matching wrote `Household`, which is absent from the Personal, BFM, and Luxe Legacy definitions in `categories.md`. Equal-frequency item-category ties selected `CE` or `Home` under different hash seeds because the grouping logic uses an unordered set. A synthetic POST to the categorization accept route also persisted an undefined category and subcategory without validation.
+
+Impact:
+
+Automated or stale-client categorization can create nondeterministic classifications outside the maintained category domain, fragment reporting, and produce new orphan-cleanup work. Actual production occurrence was not inspected.
+
+Acceptance checks:
+
+- Every inference result is validated against the target entity's current category/subcategory definitions.
+- Mixed-category tie handling is deterministic and documented.
+- Transaction and vendor-order acceptance reject undefined categories and invalid category/subcategory pairs without changing stored data.
+- Existing invalid classifications have a separately reviewed detection and remediation path.
+- Synthetic tests cover Personal, BFM, and Luxe Legacy independently.
+
+Why not fixed now:
+
+Domain-enforcement behavior, existing-row remediation, and tracked tests require product and data-migration judgment outside the 3B audit.
+
+## Task 2 Import And Categorization Paths Lack Tracked Regression Coverage
+
+Status: parked for Phase 4 regression coverage
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py` and work block 3B's ephemeral 60-check probe
+
+Revisit: Phase 4 Task 2, preferably alongside the related Task 2 repairs
+
+Summary:
+
+Work block 3B passed current synthetic behavior for CSV/PDF parsing, profiles, upload confirmation, Amazon/Henry parsing and deduplication, order matching, aliases, temporary-file cleanup, and entity isolation. The tracked smoke suite covers generic CSV import and route availability but does not guard these Task 2 paths.
+
+Impact:
+
+Passing behavior can regress without the maintained suite detecting it, and the three 3B correctness defects currently have no failing tracked reproductions.
+
+Acceptance checks:
+
+- Tracked synthetic fixtures cover CSV/PDF profiles and Amazon/Henry imports without real financial data.
+- Route tests cover preview, confirm, duplicate, missing payload, completion status, and explicit undo semantics.
+- Matching tests cover exact, review, unmatched, apply, line-item split, aliases, and all-entity isolation.
+- Regression cases fail before and pass after each separately authorized repair.
+
+Why not added now:
+
+Tracked fixture and test expansion was explicitly excluded from audit work block 3B.
+
+## Upload Undo Label Does Not Explain Its Status-Only Effect
+
+Status: open; discovered in work block 3B
+
+Severity: low operator-clarity risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/upload.py`, `web/templates/upload.html`, and synthetic route reproduction
+
+Revisit: Phase 5 Task 2 unless a related Phase 4 import repair makes the distinction urgent
+
+Summary:
+
+The upload page labels the completed-source action `Undo`. The route intentionally changes only `import_checklist_status.completed` and leaves imported transactions intact. The synthetic transaction count was unchanged after the checklist returned to incomplete.
+
+Impact:
+
+An operator can reasonably interpret `Undo` as reversing the import, then attempt another import or assume ledger rows were removed. Deduplication limits exact-repeat damage but does not make the action's meaning clear.
+
+Acceptance checks:
+
+- The UI states whether the action means `Mark incomplete` or truly reverses an import.
+- If status-only, confirmation text explicitly says imported transactions remain.
+- If true reversal is chosen later, it has an exact source/batch identity, preview, safety gate, and regression coverage.
+
+Why not changed now:
+
+User-facing wording or destructive reversal behavior is implementation and UX scope outside the 3B audit.

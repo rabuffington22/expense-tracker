@@ -116,4 +116,18 @@ Ryan explicitly instructed Codex to commit and push the verified 3A command-cent
 
 ## Pending Ryan Direction
 
-- Confirm or revise the next bounded Phase 3 Task 2 audit block after Codex completes its just-in-time planning pass. Any product fix, tracked regression coverage, protected-data access, live action, or durability step requires a separate decision.
+### 2026-07-18 — Confirm work block 3B for the synthetic import-to-categorization audit
+
+Ryan confirmed Task 2 as one synthetic-only vertical audit from statement and vendor-order ingestion through matching, aliases, suggestions, and category/subcategory handling across Personal, BFM, and Luxe Legacy. Codex may inspect tracked source, generate ephemeral CSV/PDF/XLSX inputs, run route and core probes against temporary databases, create a sanitized audit log, record ranked findings, and close Runway OS state. Tasks 1 and 3-8, product fixes, tracked test or fixture expansion, real databases/statements/uploads, credentials, row-level financial data, production/demo access, Plaid or vendor-account actions, workflows, Fly, downstream writes, authentication/security changes, pre-existing `scripts/sync_prod_to_local.sh`, and all commit, push, PR, merge, and deployment actions remain excluded.
+
+### 2026-07-18 — Accept work block 3B as verified with three high-risk correctness findings
+
+The tracked smoke suite passed, and 60 ephemeral all-entity checks passed the CSV/PDF parser, profile, sign, invalid-row, exact-reimport, upload confirmation, Amazon/Henry parsing and deduplication, exact/review/unmatched order-matching, alias, cleanup, and isolation behaviors. Vendor-payment matching failed on every fresh entity because it references nonexistent `transactions.matched_order_id`; normal vendor imports persisted no line items for auto-split; and Amazon/category acceptance wrote undefined or nondeterministic category values outside `categories.md`. Task 2 is complete as an audit with these three high-risk findings, a medium tracked-coverage gap, and a low status-only `Undo` ambiguity recorded. No repair, product/test change, protected-data access, live action, or GitHub durability occurred, and Task 3 becomes current for a separately confirmed work block.
+
+### 2026-07-18 — Authorize direct-main durability for the 3B audit closeout
+
+Ryan explicitly instructed Codex to commit and push the verified 3B command-center closeout to `main`. This authorizes staging only the seven 3B command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, and tracked test files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or vendor-account actions; Fly; and all recovery outside the exact closeout remain excluded.
+
+## Pending Ryan Direction
+
+- Confirm or revise the next bounded Phase 3 Task 3 audit block after Codex completes its just-in-time planning pass. Any product fix, tracked regression coverage, protected-data access, live action, or durability step requires a separate decision.

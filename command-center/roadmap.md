@@ -412,13 +412,13 @@ Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is pu
 
 ## Phase 3: Functional Audit And Prioritization
 
-Status: active; Task 1 and work block 3A are done, and Task 2 is current awaiting a separately confirmed audit block
+Status: active; Tasks 1-2 and work blocks 3A-3B are done, and Task 3 is current awaiting a separately confirmed audit block
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
 - **Task 1: Audit the transaction foundation and three-entity isolation with synthetic data.** Status: done through work block 3A. The audit passed initialization, isolation, debit-sign, edit, split, and effective-reporting probes; it found a high-severity identity collision risk and a medium tracked-regression-coverage gap without implementing fixes.
-- **Task 2: Audit statement and vendor-order import, matching, and categorization workflows.** Status: current; awaiting just-in-time work-block planning and separate confirmation. Cover CSV/PDF source profiles, upload/confirm/undo boundaries, Amazon and Henry Schein ingestion, vendor matching, aliases, suggestions, and category/subcategory handling with synthetic inputs.
-- **Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior.** Status: planned. Check shared reporting rules, split replacement, exclusions, empty states, date filters, recurring detection, balances, and entity-specific output without opening production data.
+- **Task 2: Audit statement and vendor-order import, matching, and categorization workflows.** Status: done through work block 3B. The audit passed 60 synthetic checks and found three high-risk correctness defects in vendor-payment schema compatibility, vendor line-item persistence, and category-domain enforcement, plus a medium coverage gap and low `Undo` ambiguity.
+- **Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior.** Status: current; awaiting just-in-time work-block planning and separate confirmation. Check shared reporting rules, split replacement, exclusions, empty states, date filters, recurring detection, balances, and entity-specific output without opening production data.
 - **Task 4: Audit planning, weekly, waterfall, and payroll workflows.** Status: planned. Include the parked Short-Term Planning goal/snapshot/budget/payoff/entity-isolation evidence gap and decide whether its historical expectations remain valid; use synthetic payroll and planning records only.
 - **Task 5: Audit Plaid and downstream-sync integration boundaries.** Status: planned. Begin with source and synthetic/mocked behavior; any production account access, Plaid action, workflow action, credential use, or downstream write requires a separate target-specific authorization.
 - **Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries.** Status: planned. Use tracked source and synthetic/local behavior first; do not change authentication, CSRF, credential, encryption, or public-route behavior during the audit.
@@ -459,6 +459,41 @@ Durability: after 3A completed locally, Ryan separately authorized publishing th
 Report point: return a sanitized pass/gap/unverified matrix, ranked findings with acceptance checks, exact synthetic checks, preserved boundaries, and a recommendation for work block 3B covering Task 2.
 
 Result: the existing smoke suite and the ephemeral all-entity probe passed initialization, schema alignment, isolation, signed-cents, edit, split-validation, and effective-reporting checks. One high-severity financial-data completeness defect was reproduced: identity hashes only date, amount, and description, so otherwise identical rows from different accounts collide and one is silently skipped. Edit/split/reporting behavior passed but lacks tracked regression coverage, recorded as a medium risk. Plaid uses the same identity helper in source, but its impact remains an unverified Task 5 boundary. No repair, tracked test, live access, protected-data read, or durability action occurred.
+
+### Confirmed Work Block 3B: Synthetic Import-to-Categorization Audit
+
+Status: done; confirmed and completed on 2026-07-18
+
+Included: Task 2.
+
+Excluded: Task 1 and Tasks 3-8; product fixes; tracked fixture or regression-test expansion; real databases, statements, uploads, credentials, or row-level financial data; production or demo access; Plaid or vendor-account link, sync, or disconnect actions; workflows, Fly, downstream writes, authentication or security changes; commit, push, PR, merge, and deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Outcome: determine whether the complete synthetic path from CSV/PDF statements and Amazon/Henry Schein orders through confirmation, matching, aliases, suggestions, and category/subcategory persistence behaves consistently across Personal, BFM, and Luxe Legacy. Classify each audited behavior as pass, defect, regression-coverage gap, or unverified boundary without implementing repairs.
+
+Owner and recommended agent: Codex Desktop in the current task. The sensitive-retrofit audit couples source inspection, generated fixture design, ephemeral all-entity verification, finding classification, and command-center stewardship; no delegation or second opinion is needed.
+
+Expected surfaces: read `core/imports.py`, `core/amazon.py`, `core/henryschein.py`, `core/vendor_matching.py`, `core/categorize.py`, database schema, categories, tracked fixtures, smoke coverage, and upload/data-source/match/categorization routes and templates. Write a sanitized 3B audit log and update `command-center/issues.md` only when findings require it; close out through Runway OS sources, state, and dashboard. No application, fixture, or tracked test file should change.
+
+Stop conditions:
+
+- Verification would require real databases, statements, uploads, financial rows, credentials, production/demo access, Plaid, a live vendor connection, or another live action.
+- Entity isolation or security behavior appears violated or unsafe.
+- A finding requires product repair, migration design, or tracked regression coverage; record it without implementing it.
+- The known transaction-identity defect prevents a trustworthy Task 2 conclusion.
+- Scope expands beyond Task 2, a verification failure changes the audit plan, or the command center cannot be refreshed and health-checked.
+
+Verification:
+
+- `.venv/bin/python scripts/smoke_test.py`
+- generated temporary CSV, PDF, and XLSX parser inputs plus route/file-flow probes against an ephemeral `DATA_DIR`
+- all-entity checks for import profiles, preview/confirm/duplicate/undo boundaries, Amazon and Henry Schein persistence, exact/review/unmatched matching, aliases, suggestions, category/subcategory consistency, and cross-entity isolation
+- temporary-file cleanup, `git diff --check`, Runway OS refresh, health check, generated-dashboard inspection, and final worktree review
+
+Durability: after 3B completed locally, Ryan separately authorized publishing the exact seven-path command-center closeout directly to `main` with `[skip actions]`; no PR, merge, or production deployment is part of that durability step.
+
+Report point: return a sanitized pass/gap/unverified matrix, ranked findings with acceptance checks, exact synthetic checks, preserved boundaries, and a recommendation for work block 3C covering Task 3.
+
+Result: the tracked smoke suite and 60 ephemeral checks passed the CSV/PDF, upload confirmation, Amazon/Henry parsing and deduplication, order-matching, alias, cleanup, and three-entity-isolation behaviors. Vendor-payment matching failed against every fresh migration-built entity because it references nonexistent `transactions.matched_order_id`; normal vendor imports persisted no line items for auto-split; and category inference/acceptance wrote undefined or nondeterministic values outside `categories.md`. A medium tracked-coverage gap and low status-only `Undo` ambiguity were also recorded. No repair, product/test change, protected-data access, live action, or GitHub durability occurred.
 
 ## Phase 4: Core Repairs And Regression Coverage
 

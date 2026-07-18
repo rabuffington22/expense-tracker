@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Prepare the next bounded Phase 3 audit block after completing the synthetic transaction-foundation and three-entity-isolation audit.
+Prepare the next bounded Phase 3 audit block after completing the synthetic import-to-categorization audit.
 
 ## Current Phase
 
@@ -10,36 +10,37 @@ Phase 3: Functional Audit And Prioritization — active.
 
 ## Completed Work Block
 
-3A: Synthetic Transaction Foundation Audit — complete and verified locally.
+3B: Synthetic Import-to-Categorization Audit — complete and verified locally with three high-risk correctness findings, one medium coverage gap, and one low operator-clarity issue.
 
 ## Current Task
 
-Phase 3 Task 2: audit statement and vendor-order import, matching, and categorization workflows — awaiting just-in-time work-block planning and separate confirmation.
+Phase 3 Task 3: audit dashboard, reporting, exports, subscriptions, and cash-flow behavior — awaiting just-in-time work-block planning and separate confirmation.
 
 ## Owner
 
-Ryan owns confirmation or revision of the next Phase 3 audit block and later repair prioritization. Codex Desktop owns the verified 3A evidence, dashboard currency, and Task 2 just-in-time planning pass.
+Ryan owns confirmation or revision of the next Phase 3 audit block and later repair prioritization. Codex Desktop owns the verified 3B evidence, dashboard currency, and Task 3 just-in-time planning pass.
 
 ## Audit Result
 
-Work block 3A passed the existing synthetic smoke suite and ephemeral checks for all three databases, entity isolation, negative debit cents, transaction edits, split validation, cross-entity denial, and effective-reporting replacement.
+Work block 3B passed the existing synthetic smoke suite and 60 ephemeral checks for CSV/PDF statement handling, Amazon and Henry Schein parsing, upload confirmation, exact/review/unmatched order matching, aliases, temporary-file cleanup, and three-entity isolation.
 
-It reproduced one high-severity financial-data completeness defect: transaction identity omits account/source identity, so otherwise identical legitimate rows can collide and one is silently skipped. It also confirmed a medium regression-confidence gap because edit, split, and effective-reporting behavior is not covered by tracked smoke tests. Plaid source uses the same identity helper, but Task 5 owns that bounded impact audit.
+It reproduced three high-risk correctness defects: vendor-payment matching references a missing transaction column; normal vendor imports discard the line items required by auto-split; and vendor/category writes can escape `categories.md` and vary nondeterministically on mixed-category ties. It also confirmed a medium tracked-coverage gap and a low ambiguity because upload `Undo` clears only checklist status, not imported transactions.
 
 ## Durability
 
 - Work block 3A and its findings are published directly to `main` under Ryan's separate durability authorization using `[skip actions]`.
-- No application or tracked test file changed.
+- Work block 3B and its findings are published directly to `main` under Ryan's separate durability authorization using `[skip actions]`.
+- No application, fixture, or tracked test file changed.
 - No production, demo, Plaid, workflow, Fly, credential, upload, or financial-data access occurred.
 - Preserved user file: untracked `scripts/sync_prod_to_local.sh`, untouched and unstaged
 
 ## Current Action
 
-Run a just-in-time planning pass over Task 2 and propose a synthetic-first work block 3B before auditing statement/vendor import, matching, or categorization behavior.
+Run a just-in-time planning pass over Task 3 and propose a synthetic-first work block 3C before auditing dashboard, reporting, export, subscription, or cash-flow behavior.
 
 ## Phase 3 Boundary
 
-- Work block 3A is complete; it does not authorize a repair or tracked regression-test implementation.
-- Task 2 audit execution requires its own confirmed work block.
-- Production account access, Plaid action, row-level financial-data read, workflow action, application change, tracked test expansion, and GitHub durability remain excluded until separately authorized.
+- Work block 3B is complete; it does not authorize any of the identified repairs or tracked regression-test implementation.
+- Task 3 audit execution requires its own confirmed work block.
+- Production/demo access, Plaid or vendor-account link/sync/disconnect action, workflow action, Fly or downstream action, application change, tracked test expansion, and GitHub durability remain excluded until separately authorized.
 - The parked Short-Term Planning verification gap is an audit input, not an automatically authorized fix.
