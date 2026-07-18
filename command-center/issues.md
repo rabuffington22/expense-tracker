@@ -32,7 +32,7 @@ The monitor reports a defined failure condition or Task 6 reveals a better contr
 
 ## Daily Plaid Sync Runs At The Start Of The Hour
 
-Status: planned hardening task
+Status: resolved
 
 Severity: low operational reliability
 
@@ -42,17 +42,9 @@ Where seen: `.github/workflows/daily-plaid-sync.yml`
 
 Revisit: Phase 1, Task 6
 
-Summary:
+Resolution:
 
-The workflow uses `0 9 * * *`. GitHub documents that scheduled workflows are more likely to be delayed during high load at the start of an hour and that sufficiently loaded queued jobs may be dropped.
-
-Why not now:
-
-Changing the workflow file has a separate source, release, and production-deployment boundary. It does not belong in the alert-only monitor block.
-
-Promotion trigger:
-
-Ryan confirms a separate Task 6 work block after the monitor is in place.
+Work block 1D changed the workflow to `17 9 * * *` through ready PR `#83`, preserving the existing UTC hour and `workflow_dispatch`. Merge commit `96af7dc` triggered Fly Deploy run `29645346441`; the run and every job step succeeded. Daily Plaid Sync remained active, and production plus demo returned HTTP 200. No manual sync or sensitive log access occurred. The existing independent monitor owns the first natural minute-17 run observation.
 
 ## Project Documentation Contradicts Current Architecture
 

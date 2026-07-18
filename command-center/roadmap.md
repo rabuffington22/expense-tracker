@@ -70,7 +70,7 @@ Verification:
 
 ## Phase 1: Operational Reliability Recovery
 
-Status: active
+Status: complete
 
 Goal: restore and prove the automated financial-data pipeline before broader feature work.
 
@@ -79,7 +79,7 @@ Goal: restore and prove the automated financial-data pipeline before broader fea
 - **Task 3: Establish production and demo health baselines.** Capture safe HTTP health, latest deploy status, workflow state, and restartable checks in Runway OS. Status: done; both roots returned HTTP 200 and both workflows are active.
 - **Task 4: Define recurring operational checks.** Decide what belongs in manual re-entry, dashboard status, GitHub Actions, or a later monitored automation. Status: done; work block 1B recommended an independent alert-only Codex monitor.
 - **Task 5: Add an independent read-only Daily Plaid Sync monitor.** Create a project-local recurring Codex automation that checks public workflow state and scheduled-run freshness, alerts Ryan on failure, and never enables or dispatches the workflow. Status: done; automation `expense-tracker-daily-plaid-sync-monitor` is active and its read-only test passed.
-- **Task 6: Move the daily trigger away from the start of the hour.** Change the schedule from minute zero through a separate source-and-release block because GitHub documents higher delay/drop risk at the start of an hour. Status: in progress through confirmed work block 1D.
+- **Task 6: Move the daily trigger away from the start of the hour.** Change the schedule from minute zero through a separate source-and-release block because GitHub documents higher delay/drop risk at the start of an hour. Status: done; PR `#83` moved the schedule to `17 9 * * *`, Fly Deploy run `29645346441` passed, and both HTTP health checks returned 200.
 
 ### Proposed Work Block 1A: Restore Daily Sync And Operational Baseline
 
@@ -185,7 +185,7 @@ Target durability: the 1C closeout was committed as `b1742cf` and pushed directl
 
 ### Confirmed Work Block 1D: Harden Daily Sync Schedule
 
-Status: active; confirmed on 2026-07-18
+Status: done; confirmed and completed on 2026-07-18
 
 Included: Task 6.
 
@@ -218,16 +218,20 @@ Verification:
 
 Report point: return the exact cron change, branch, PR, commit and deploy evidence, HTTP health, workflow state, protected boundaries, dashboard verification, and the pending natural-run observation handled by the existing monitor.
 
+Result: commit `e34c239` changed only the cron and explanatory comment in the workflow plus the active Runway OS record. Ready PR `#83` was mergeable and merged to `main` as `96af7dc`. Fly Deploy run `29645346441` and every job step completed successfully. Default-branch source contains `17 9 * * *`, Daily Plaid Sync workflow `256886458` remains active, and production plus demo roots returned HTTP 200. No manual sync or sensitive log access occurred. The existing independent monitor owns the first natural minute-17 scheduled-run observation.
+
+Target durability: source and active-state changes are merged on `main`; the verified command-center closeout is published directly to `main` with `[skip actions]` to avoid a second production deployment.
+
 ## Phase 2: Project Truth And Documentation Recovery
 
-Status: planned
+Status: active; awaiting the first separately confirmed work block
 
 Goal: remove contradictory project guidance while retaining useful domain history.
 
-- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.**
-- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated.
-- **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked.
-- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.**
+- **Task 1: Rebuild the root README for the current Flask, HTMX, Fly.io, Plaid, and three-entity architecture.** Status: current; awaiting a just-in-time work-block proposal and Ryan confirmation.
+- **Task 2: Decide the future of `PROJECT_KNOWLEDGE.md` and `plan.md`.** Archive, replace, or clearly mark their historical status after useful content is migrated. Status: planned.
+- **Task 3: Reconcile `CLAUDE.md` and the untracked `AGENTS.md`.** Define one maintained instruction source and explicitly decide whether `AGENTS.md` becomes tracked. Status: planned.
+- **Task 4: Document deployment, data, and side-effect boundaries without credentials or financial detail.** Status: planned.
 
 ## Phase 3: Functional Audit And Prioritization
 

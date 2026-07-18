@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 7:58 AM CST",
+    "lastUpdated": "2026-07-18 8:04 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "committed-and-pushed on main through work block 1C; 1C closeout commit b1742cf and its follow-up dashboard durability record are both tracked on main; origin/codex/runway-os-full-install retains the 1A closeout at c7ab1e2"
+    "durabilityStatus": "work block 1D source commit e34c239 is merged to main as 96af7dc through PR 83; the verified Phase 1 closeout is committed and pushed directly to main with skip actions; origin/codex/runway-os-full-install retains the 1A closeout at c7ab1e2"
   },
   "phase": {
-    "name": "Operational Reliability Recovery",
+    "name": "Project Truth And Documentation Recovery",
     "status": "active",
-    "summary": "Work block 1D is active on the final Phase 1 task: move Daily Plaid Sync from minute zero to minute 17 and verify its source-and-release boundary.",
-    "progress": 83
+    "summary": "Phase 1 is verified complete; Phase 2 is active for just-in-time planning, with Task 1 awaiting a separately confirmed work block.",
+    "progress": 0
   },
   "currentTask": {
-    "title": "Task 6: Move the daily trigger away from the start of the hour",
-    "owner": "Codex",
-    "status": "in progress",
-    "supportingAgent": "Codex Desktop owns the confirmed cron edit, ready PR, production-deploy verification, and Runway OS closeout",
-    "nextAction": "Commit and push the verified codex/daily-sync-cron-hardening branch, open and merge the ready PR, then verify the resulting production Fly deploy.",
-    "blocker": "None; stop if the confirmed release or verification boundary changes"
+    "title": "Task 1: Rebuild the root README for the current architecture",
+    "owner": "Ryan",
+    "status": "awaiting work block",
+    "supportingAgent": "Codex Desktop owns the just-in-time Phase 2 planning pass and will propose a bounded first work block",
+    "nextAction": "Review a future Phase 2 work block proposal before any legacy-document or AGENTS.md change.",
+    "blocker": "No Phase 2 documentation implementation is authorized until Ryan confirms a separate work block"
   },
   "routerHealth": {
     "status": "healthy",
@@ -61,17 +61,19 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute work block 1D",
-    "status": "active",
-    "owner": "Codex",
-    "why": "The exact minute-17 edit and active Runway OS state passed local verification and are ready for the confirmed GitHub release path.",
-    "action": "Publish and merge the verified ready PR, then verify the resulting Fly deploy and production health.",
+    "title": "Define the first Phase 2 documentation-recovery block",
+    "status": "recommended",
+    "owner": "Ryan",
+    "why": "Operational reliability recovery is complete, and the next phase has four existing numbered tasks with documentation-governance decisions that require bounded just-in-time planning.",
+    "action": "Review a proposed first Phase 2 work block before any documentation edit, archive, deletion, or tracking change.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No Ryan input is pending while work block 1D remains inside its confirmed boundaries.",
-    "items": []
+    "summary": "Ryan reviews the future first Phase 2 work block before documentation implementation begins.",
+    "items": [
+      "Confirm or revise the first bounded Phase 2 documentation-recovery work block"
+    ]
   },
   "questionBoundaries": {
     "phaseQuestions": "Ryan reviews the next proposed work block or direction choice after the current verified block closes.",
@@ -106,13 +108,13 @@
       "id": "phase-1",
       "name": "Phase 1",
       "label": "Operational Reliability Recovery",
-      "status": "active"
+      "status": "done"
     },
     {
       "id": "phase-2",
       "name": "Phase 2",
       "label": "Project Truth And Documentation Recovery",
-      "status": "upcoming"
+      "status": "active"
     },
     {
       "id": "phase-3",
@@ -322,7 +324,7 @@
       "phaseId": "phase-1",
       "label": "1D",
       "name": "Harden Daily Sync Schedule",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 6"
       ],
@@ -363,7 +365,8 @@
         "Confirm Fly Deploy succeeds and production plus demo roots return HTTP 200",
         "Close Phase 1 and publish the closeout with skip actions without a second deploy"
       ],
-      "reportBack": "Report exact cron change, branch, PR, commit and deploy evidence, HTTP health, workflow state, protected boundaries, dashboard verification, and pending natural-run observation."
+      "reportBack": "Reported exact cron change, branch, PR, commit and deploy evidence, HTTP health, workflow state, protected boundaries, dashboard verification, and pending natural-run observation.",
+      "result": "Source commit e34c239 changed the cron to minute 17 and merged through ready PR 83 as 96af7dc. Fly Deploy run 29645346441 and every step passed; the workflow remained active and production plus demo returned HTTP 200 without a manual sync or sensitive log access."
     }
   ],
   "phaseTasks": [
@@ -486,19 +489,20 @@
       "phaseId": "phase-1",
       "taskId": "P1-T6",
       "title": "Task 6: Move the daily trigger away from the start of the hour",
-      "status": "current",
+      "status": "done",
       "owner": "Codex",
       "summary": "Reduce GitHub's documented top-of-hour delay/drop exposure through a separate source-and-release block.",
-      "nextAction": "Publish and merge the locally verified codex/daily-sync-cron-hardening branch, then verify the resulting release.",
-      "blocker": "None; stop if the confirmed release or verification boundary changes"
+      "result": "Changed the default-branch schedule to 17 9 * * * through PR 83; Fly Deploy run 29645346441 passed, Daily Plaid Sync remained active, and production plus demo returned HTTP 200."
     },
     {
       "phaseId": "phase-2",
       "taskId": "P2-T1",
       "title": "Task 1: Rebuild the root README for the current architecture",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "Replace retired Streamlit and no-bank-linking guidance with the current Flask, Plaid, Fly.io, and three-entity system."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Replace retired Streamlit and no-bank-linking guidance with the current Flask, Plaid, Fly.io, and three-entity system.",
+      "nextAction": "Review a separately proposed first Phase 2 work block before implementation.",
+      "blocker": "No documentation implementation is authorized until Ryan confirms the next work block"
     },
     {
       "phaseId": "phase-2",
@@ -794,6 +798,14 @@
     {
       "time": "2026-07-18",
       "text": "Ryan confirmed work block 1D for the minute-17 cron edit, ready PR and merge, one resulting production Fly deploy, and a skip-annotated sanitized closeout."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 1D: PR 83 merged the minute-17 schedule as 96af7dc; Fly Deploy run 29645346441 passed; Daily Plaid Sync stayed active; production and demo returned HTTP 200."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Closed Phase 1 and activated Phase 2 for just-in-time work-block planning without authorizing documentation implementation."
     }
   ],
   "openQuestions": [],
@@ -812,8 +824,8 @@
     },
     {
       "title": "Daily Plaid Sync runs at the start of the hour",
-      "summary": "The cron uses minute zero, which GitHub documents as a higher delay/drop period; Task 6 keeps this separate from monitor implementation.",
-      "status": "active",
+      "summary": "Resolved by PR 83: the cron now uses minute 17; the resulting Fly Deploy passed and the workflow remained active.",
+      "status": "resolved",
       "severity": "low",
       "source": "command-center/issues.md"
     },
@@ -827,8 +839,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Work block 1D release verification",
-    "description": "Change Daily Plaid Sync to minute 17, merge the ready PR, verify the resulting Fly deploy, and close Phase 1."
+    "name": "First Phase 2 work-block decision",
+    "description": "Run a just-in-time planning pass over Phase 2 Tasks 1-4 and ask Ryan to confirm one bounded documentation-recovery block before implementation."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -837,11 +849,12 @@
     "applicationSmoke": "pass; synthetic temp DATA_DIR suite",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
-    "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 active and latest scheduled run 29640666471 succeeded",
+    "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; first natural minute-17 run remains under the independent monitor",
     "safeguardResearch": "pass; authoritative GitHub behavior cited, five options compared, and one implementation-ready path recommended",
     "independentMonitor": "pass; expense-tracker-daily-plaid-sync-monitor active on a daily 7:00 AM local schedule; public schedule-event test returned healthy with manual dispatch excluded",
     "preRelease": "pass; exact minute-17 workflow diff, YAML parse, synthetic smoke suite, dashboard refresh, health check, whitespace check, and visual dashboard inspection",
-    "gitDurability": "pass; 1C closeout and dashboard durability record committed and pushed directly to main without staging pre-existing untracked files",
+    "cronHardening": "pass; ready PR 83 merged as 96af7dc and Fly Deploy run 29645346441 plus every job step succeeded",
+    "gitDurability": "pass; 1D source is merged to main and the verified Phase 1 closeout is committed and pushed directly to main with skip actions",
     "httpHealth": "pass; production and demo roots returned HTTP 200"
   }
 }

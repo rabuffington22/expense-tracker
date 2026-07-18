@@ -66,6 +66,10 @@ Ryan authorized committing and pushing the completed work block 1C command-cente
 
 Ryan authorized changing Daily Plaid Sync from `0 9 * * *` to `17 9 * * *` on `codex/daily-sync-cron-hardening`, publishing a ready PR, merging it to `main`, and observing the single production Fly deploy triggered by that merge. The block preserves `workflow_dispatch`, does not manually dispatch or rerun the sync, and excludes application, Fly configuration, secret, credential, financial-data, database, authentication, monitor, parent-repo, and pre-existing untracked-file changes. After verified deployment, Codex may push the command-center-only closeout directly to `main` with `[skip actions]` to prevent a second deploy.
 
+### 2026-07-18 — Accept work block 1D and Phase 1 as verified complete
+
+Ready PR `#83` merged the minute-17 schedule as `96af7dc`. Fly Deploy run `29645346441` and every job step passed, default-branch source contains `17 9 * * *`, Daily Plaid Sync remains active, and production plus demo returned HTTP 200. The first natural scheduled execution is left to the existing independent monitor rather than a manual dispatch. Phase 1 is complete, and Phase 2 becomes active for just-in-time work-block planning without authorizing documentation edits.
+
 ## Pending Ryan Direction
 
 - Decide in Phase 2 whether `AGENTS.md` becomes tracked and which legacy documentation is archived or replaced.

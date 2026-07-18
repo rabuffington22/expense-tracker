@@ -2,23 +2,23 @@
 
 ## Active Objective
 
-Execute the confirmed source-and-release block that moves Daily Plaid Sync away from minute zero while preserving the existing daily window and independent monitor.
+Prepare the first bounded Phase 2 documentation-recovery work block after operational reliability recovery completed successfully.
 
 ## Current Phase
 
-Phase 1: Operational Reliability Recovery — work block 1D is active on the final Phase 1 task.
+Phase 2: Project Truth And Documentation Recovery — active for just-in-time work-block planning; no documentation implementation is authorized yet.
 
-## Active Work Block
+## Completed Work Block
 
-1D: Harden Daily Sync Schedule — confirmed and active.
+1D: Harden Daily Sync Schedule — complete, released, and verified.
 
 ## Current Task
 
-Task 6: Change the Daily Plaid Sync schedule from `0 9 * * *` to `17 9 * * *`, release it through a dedicated branch and ready PR, verify the resulting production Fly deploy, and close Phase 1.
+Phase 2 Task 1: Rebuild the root README for the current architecture, awaiting a separate work block proposal and Ryan confirmation.
 
 ## Owner
 
-Codex Desktop owns implementation, GitHub release coordination, sanitized live verification, and Runway OS closeout. Ryan confirmed the exact source, PR, merge, and single-production-deploy boundary and remains the decision-maker if a stop condition appears.
+Ryan owns confirmation of the first Phase 2 work block. Codex Desktop owns the verified 1D evidence, Phase 1 closeout, and the next just-in-time planning pass.
 
 ## Status
 
@@ -32,22 +32,20 @@ The stored automation is active on a daily 7:00 AM local schedule with a 36-hour
 
 The automation create surface normalized the new cron to `ACTIVE` immediately even though the initial request used `PAUSED`. Codex inspected the stored definition before its first scheduled execution. The prompt requests no separate healthy notification, but the app may still retain normal automation run history; the first scheduled run will reveal the exact quiet-success presentation.
 
-The current `0 9 * * *` trigger is at the start of an hour, which GitHub documents as a higher delay/drop period. Ryan confirmed work block 1D to move it to minute 17 without changing the UTC hour, preserve `workflow_dispatch`, and avoid any manual sync. Merging the ready PR to `main` is expected to trigger one production Fly deploy. The verified post-deploy command-center closeout will use GitHub's `[skip actions]` annotation so the documentation-only push does not trigger a second deploy. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain untouched.
+Work block 1D changed the default-branch cron from `0 9 * * *` to `17 9 * * *` without changing the UTC hour or `workflow_dispatch`. PR `#83` merged as `96af7dc`. Fly Deploy run `29645346441` completed successfully, including every job step. Daily Plaid Sync workflow `256886458` remained `active`, and production plus demo roots both returned HTTP 200.
 
-The branch `codex/daily-sync-cron-hardening` now contains the exact cron and explanatory-comment change plus the active Runway OS record. Workflow YAML parsing, the full synthetic smoke suite, dashboard refresh, command-center health check, whitespace checks, and visual dashboard inspection all passed before publication.
+No manual sync, workflow enable/disable/dispatch/rerun, application change, financial-data access, credential access, deployment-log read, monitor change, or parent-repo change occurred. The first natural minute-17 scheduled execution is intentionally not a closeout gate; the existing independent monitor will continue checking scheduled-run freshness and success after the normal run window.
 
 ## Durability
 
-The completed 1C command-center closeout was committed as `b1742cf` and pushed directly to `origin/main`. The current dashboard durability record is also tracked on `main`. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded and untouched.
+The 1D source change is committed as `e34c239` and merged to `main` as `96af7dc` through PR `#83`. This verified command-center closeout is published directly to `main` with `[skip actions]` so it does not trigger a second Fly deploy. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded and untouched.
 
 ## Current Action
 
-Stage only the confirmed six tracked files, commit and push `codex/daily-sync-cron-hardening`, open and merge the ready PR, then verify the resulting production Fly deploy.
+Run a just-in-time planning pass over Phase 2 Tasks 1-4 and propose one bounded first Phase 2 work block before changing legacy documentation or tracking `AGENTS.md`.
 
-## Confirmed Boundaries
+## Locked Boundaries Until Phase 2 Work-Block Confirmation
 
-- Only `.github/workflows/daily-plaid-sync.yml` and the Runway OS closeout surfaces may change.
-- One ready PR, merge to `main`, and the resulting production Fly deploy are authorized.
-- No workflow enable/disable/dispatch/rerun, manual Plaid sync, application change, credential, ignored-data, database, authentication, or parent-repo action.
+- No README, `PROJECT_KNOWLEDGE.md`, `plan.md`, `CLAUDE.md`, or `AGENTS.md` edit, archive, deletion, or tracking change.
+- No application, workflow, monitor, credential, ignored-data, database, Fly, authentication, deploy, PR, merge, or parent-repo action.
 - The active monitor remains read-only and never performs recovery automatically.
-- Stop before recovery if verification fails, remote state diverges, production health regresses, or the scope expands.
