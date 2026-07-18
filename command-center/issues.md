@@ -314,3 +314,67 @@ Acceptance checks:
 Why not changed now:
 
 User-facing wording or destructive reversal behavior is implementation and UX scope outside the 3B audit.
+
+## Recurring Charges Report Executes An Uninterpolated SQL Helper
+
+Status: open; discovered in work block 3C
+
+Severity: medium functional-availability risk
+
+Captured: 2026-07-18
+
+Where seen: `core/reporting.py`, `web/routes/reports.py`, and synthetic direct, prepared-report, and rendered-route reproduction in all three entities
+
+Revisit: Phase 4 Task 1 for query repair; Phase 4 Task 2 for regression coverage
+
+Summary:
+
+`get_recurring_charges()` builds its query with an ordinary triple-quoted string while embedding `{exclude_sql('category')}`. SQLite therefore receives the braces and helper call as literal SQL and raises `unrecognized token: "{"`. The same result occurred in fresh Personal, BFM, and Luxe Legacy databases at the direct helper, prepared-report, and rendered-report layers.
+
+Impact:
+
+The Reports page's Recurring Charges view and exports cannot produce a result when selected. Subscription detection and cash-flow recurring projections use separate implementations and passed, so the defect is currently isolated to the report path rather than all recurring behavior.
+
+Acceptance checks:
+
+- Recurring-report SQL is constructed safely and uses the target entity's current exclusion contract.
+- Direct, prepared, rendered, CSV, and PDF recurring-report paths pass in fresh Personal, BFM, and Luxe Legacy databases.
+- Repeated merchants are summarized correctly while transfers, payments, owner contributions, partner buyouts, and income follow the intended entity rules.
+- Empty and out-of-range requests return an empty/not-found response rather than a server error.
+- A tracked synthetic regression fails before and passes after the repair.
+
+Why not fixed now:
+
+Work block 3C is audit-only. Product repair and tracked regression coverage require a separately confirmed Phase 4 block.
+
+## Task 3 Financial Read-Model Paths Lack Tracked Regression Coverage
+
+Status: parked for Phase 4 regression coverage
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py` and work block 3C's ephemeral 306-check probe
+
+Revisit: Phase 4 Task 2, preferably alongside the recurring-report repair and other prioritized reporting fixes
+
+Summary:
+
+Work block 3C produced 297 passing assertions across effective transactions, dashboard reconciliation, standard report views, CSV/PDF/QBO exports, subscription lifecycle, cash-flow behavior, and all-entity isolation. The tracked smoke suite covers route availability and basic monthly CSV exports but does not guard the complete Task 3 read model or reproduce the Recurring Charges report failure.
+
+Impact:
+
+Shared totals, split replacement, entity exclusions, export formats, subscription workflows, and cash-flow calculations can regress without the maintained suite detecting them. The known recurring-report failure also has no tracked failing reproduction.
+
+Acceptance checks:
+
+- Tracked synthetic tests reconcile dashboard and report totals against one deterministic all-entity dataset.
+- Every supported report view and export format has happy-path, empty-range, and invalid-input coverage.
+- Subscription detection/lifecycle and cash-flow balance/recurring behavior are tested without Plaid or OpenRouter access.
+- Personal/BFM intended sharing and Luxe Legacy isolation are explicit assertions.
+- The recurring-report regression is captured before its separately authorized repair.
+
+Why not added now:
+
+Tracked fixture and test expansion was explicitly excluded from audit work block 3C.

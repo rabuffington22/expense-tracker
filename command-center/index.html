@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 11:31 AM CST",
+    "lastUpdated": "2026-07-18 12:12 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,21 +1619,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks 3A and 3B have exact command-center closeouts published directly to main under separate Ryan authorizations with skip actions; no product change or deployment is included"
+    "durabilityStatus": "Work blocks 3A, 3B, and 3C have exact command-center closeouts published directly to main under separate Ryan authorizations with skip actions; no product change or deployment is included"
   },
   "phase": {
     "name": "Functional Audit And Prioritization",
     "status": "active",
-    "summary": "Tasks 1-2 and work blocks 3A-3B are done; Task 3 is current awaiting a separately confirmed synthetic audit block.",
-    "progress": 25
+    "summary": "Tasks 1-3 and work blocks 3A-3C are done; Task 4 is current awaiting a separately confirmed synthetic audit block.",
+    "progress": 38
   },
   "currentTask": {
-    "title": "Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior",
+    "title": "Task 4: Audit planning, weekly, waterfall, and payroll workflows",
     "owner": "Ryan",
     "status": "awaiting work block",
-    "supportingAgent": "Codex Desktop owns the verified 3B evidence, Task 3 just-in-time planning pass, protected-data boundaries, and dashboard currency",
-    "nextAction": "Define the smallest coherent synthetic Task 3 audit slice and return work block 3C for Ryan confirmation.",
-    "blocker": "No Task 3 audit execution, 3B repair, tracked test expansion, protected-data access, live action, or GitHub durability is authorized yet"
+    "supportingAgent": "Codex Desktop owns the verified 3C evidence, Task 4 just-in-time planning pass, protected-data boundaries, and dashboard currency",
+    "nextAction": "Define the smallest coherent synthetic Task 4 audit slice and return work block 3D for Ryan confirmation.",
+    "blocker": "No Task 4 audit execution, 3C repair, tracked test expansion, protected-data access, live action, or GitHub durability is authorized yet"
   },
   "routerHealth": {
     "status": "healthy",
@@ -1658,23 +1658,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define work block 3C for Task 3 reporting and cash-flow audit",
+    "title": "Define work block 3D for Task 4 planning and payroll audit",
     "status": "awaiting planning",
     "owner": "Ryan",
-    "why": "Work block 3B is verified and Task 3 is the next visible Phase 3 slice; reporting, subscriptions, exports, and cash-flow behavior need a bounded synthetic fixture and date-range plan before execution.",
-    "action": "Run a just-in-time Task 3 planning pass and return one synthetic-first work block for separate confirmation.",
+    "why": "Work block 3C is verified and Task 4 is the next visible Phase 3 slice; planning, weekly, waterfall, and payroll behavior need a bounded synthetic state and entity-isolation plan before execution.",
+    "action": "Run a just-in-time Task 4 planning pass and return one synthetic-first work block for separate confirmation.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Task 3 audit block before audit execution begins.",
+    "summary": "Ryan reviews the next separately proposed Task 4 audit block before audit execution begins.",
     "items": [
-      "Confirm or revise work block 3C after the Task 3 just-in-time planning pass."
+      "Confirm or revise work block 3D after the Task 4 just-in-time planning pass."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 3B is complete; Task 3 audit execution, 3B repairs, tracked tests, protected-data access, and live actions remain outside authorization.",
-    "decisionQueue": "The next decision is confirmation or revision of work block 3C; 3A and 3B repairs remain later separately scoped choices.",
+    "phaseQuestions": "Work block 3C is complete; Task 4 audit execution, 3C repairs, tracked tests, protected-data access, and live actions remain outside authorization.",
+    "decisionQueue": "The next decision is confirmation or revision of work block 3D; 3A-3C repairs remain later separately scoped choices.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2245,6 +2245,51 @@
         "command-center/issues.md"
       ],
       "result": "The tracked smoke suite and 60 ephemeral checks passed CSV and PDF handling, upload confirmation, Amazon and Henry Schein parsing and deduplication, order matching, aliases, cleanup, and entity isolation. Vendor-payment matching failed on a missing transaction column, normal vendor imports discarded line items needed by auto-split, and category inference and acceptance escaped categories.md or varied nondeterministically. A medium tracked-coverage gap and low status-only Undo ambiguity were also recorded without repair, product or test changes, protected-data access, live action, or GitHub durability."
+    },
+    {
+      "id": "phase-3-block-c",
+      "phaseId": "phase-3",
+      "label": "3C",
+      "name": "Synthetic Financial Read-Model Audit",
+      "status": "done",
+      "includedTasks": [
+        "Task 3"
+      ],
+      "excludedTasks": [
+        "Tasks 1-2 and 4-8",
+        "Product fixes and tracked fixture or regression-test expansion",
+        "Real databases, exports, balances, credentials, row-level financial data, production or demo access, Plaid or OpenRouter calls, workflows, Fly, downstream writes, authentication or security changes",
+        "Commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive-retrofit audit couples source inspection, temporary-database probes, cross-surface reconciliation, finding classification, command-center stewardship, and final intake.",
+      "expectedFiles": [
+        "Read-only reporting, dashboard, export, subscription, cash-flow, template, schema, and smoke source",
+        "command-center/logs/2026-07-18-synthetic-financial-read-model-audit-3c.md",
+        "command-center/issues.md only if findings require it",
+        "command-center/roadmap.md, now.md, decisions.md, state.json, and index.html"
+      ],
+      "stopConditions": [
+        "Verification requires real financial data, credentials, production or demo access, Plaid, OpenRouter, or another external API call",
+        "Entity isolation, authentication, or destructive-data behavior appears unsafe",
+        "A finding requires implementation, migration design, or tracked regression coverage",
+        "An earlier defect prevents a trustworthy Task 3 conclusion",
+        "Scope expands beyond Task 3, verification changes the audit plan, or command-center checks fail"
+      ],
+      "verification": [
+        ".venv/bin/python scripts/smoke_test.py",
+        "Deterministic multi-month temporary data across all three entities covering effective transactions, entity-specific exclusions, dates, recurring patterns, balances, liabilities, and manual charges",
+        "Dashboard, HTMX, report-builder, CSV, PDF, QBO, subscription, and cash-flow probes reconciled to expected totals, empty states, and isolation",
+        "Temporary-data cleanup, git diff --check, Runway OS refresh, health check, dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Return a sanitized cross-surface pass, defect, gap, and unverified matrix; ranked findings with acceptance checks; exact synthetic checks; preserved boundaries; and the Task 4 work-block recommendation.",
+      "durability": "Published directly to main under Ryan's separate post-block authorization with skip actions; no PR, merge, or deploy occurred.",
+      "evidence": [
+        "command-center/logs/2026-07-18-synthetic-financial-read-model-audit-3c.md",
+        "command-center/issues.md"
+      ],
+      "result": "The tracked smoke suite passed. The final ephemeral probe ran 306 checks with 297 passes, zero assertion failures, and nine controlled reproductions of one Recurring Charges report SQL defect across three layers and all three entities. Dashboard, effective transactions, standard reports and exports, subscriptions, cash flow, intended Personal and BFM visibility, LL isolation, and cleanup passed. One medium functional defect and one medium tracked-coverage gap were recorded without repair, product or test changes, protected-data access, external calls, live action, or GitHub durability."
     }
   ],
   "phaseTasks": [
@@ -2457,19 +2502,24 @@
       "phaseId": "phase-3",
       "taskId": "P3-T3",
       "title": "Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Check shared reporting rules, split replacement, exclusions, empty states, date filters, recurring detection, balances, and entity-specific output without opening production data.",
-      "nextAction": "Confirm or revise work block 3C after the just-in-time Task 3 planning pass.",
-      "blocker": "Task 3 audit execution is not authorized until a synthetic fixture boundary, exact included surfaces, stop conditions, and verification are confirmed."
+      "result": "Work block 3C passed the tracked smoke suite and 297 of 306 ephemeral assertions; the remaining nine errors reproduced one medium Recurring Charges report SQL defect in all three entities. One medium tracked-regression-coverage gap was also recorded without implementation.",
+      "evidence": [
+        "command-center/logs/2026-07-18-synthetic-financial-read-model-audit-3c.md",
+        "command-center/issues.md"
+      ]
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T4",
       "title": "Task 4: Audit planning, weekly, waterfall, and payroll workflows",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "Include the parked Short-Term Planning goal, snapshot, budget, payoff, and entity-isolation evidence gap, and use synthetic payroll and planning records only."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Include the parked Short-Term Planning goal, snapshot, budget, payoff, and entity-isolation evidence gap, and use synthetic payroll and planning records only.",
+      "nextAction": "Confirm or revise work block 3D after the just-in-time Task 4 planning pass.",
+      "blocker": "Task 4 audit execution is not authorized until a synthetic state boundary, exact included surfaces, stop conditions, and verification are confirmed."
     },
     {
       "phaseId": "phase-3",
@@ -2703,6 +2753,10 @@
     {
       "name": "Work Block 2B-R Canonical Guidance Release Closeout",
       "path": "command-center/logs/2026-07-18-document-governance-release-2b-r.md"
+    },
+    {
+      "name": "Work Block 3C Synthetic Financial Read-Model Audit",
+      "path": "command-center/logs/2026-07-18-synthetic-financial-read-model-audit-3c.md"
     }
   ],
   "recentActivity": [
@@ -2825,11 +2879,23 @@
     {
       "time": "2026-07-18",
       "text": "Ryan separately authorized committing and pushing the exact seven-path 3B command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 3C for a synthetic-only Task 3 audit reconciling dashboard, report and export, subscription, and cash-flow behavior across all three isolated entities; repairs, tracked tests, protected data, external calls, live actions, and GitHub durability remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 3C: the tracked smoke suite passed and 297 of 306 ephemeral assertions passed; nine controlled errors reproduced one Recurring Charges report SQL defect across three layers and all entities, while one medium tracked-coverage gap was also recorded without repair or live access."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan separately authorized committing and pushing the exact seven-path 3C command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
     }
   ],
   "openQuestions": [],
   "projectQuestions": [
-    "What is the smallest coherent synthetic Task 3 audit block for dashboard, reporting, exports, subscriptions, and cash-flow behavior?"
+    "What is the smallest coherent synthetic Task 4 audit block for planning, weekly, waterfall, and payroll behavior?"
   ],
   "ideas": [],
   "issues": [
@@ -2909,17 +2975,31 @@
       "status": "open",
       "severity": "low",
       "source": "command-center/issues.md"
+    },
+    {
+      "title": "Recurring Charges report executes an uninterpolated SQL helper",
+      "summary": "Fresh Personal, BFM, and Luxe Legacy databases all failed the direct, prepared, and rendered recurring-report paths because core/reporting.py sends a literal exclude_sql helper token to SQLite.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Task 3 financial read-model paths lack tracked regression coverage",
+      "summary": "The 3C ephemeral probe produced 297 passing assertions across dashboard, reports, exports, subscriptions, cash flow, and isolation, but the tracked smoke suite does not guard the full read model or recurring-report failure.",
+      "status": "parked",
+      "severity": "medium",
+      "source": "command-center/issues.md"
     }
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Bounded Task 3 audit decision",
-    "description": "Define and confirm the smallest synthetic dashboard, reporting, export, subscription, and cash-flow audit slice before execution."
+    "name": "Bounded Task 4 audit decision",
+    "description": "Define and confirm the smallest synthetic planning, weekly, waterfall, and payroll audit slice before execution."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
-    "browserSmoke": "pass; generated dashboard state shows Phase 3 active at 25 percent, Tasks 1-2 and work blocks 3A-3B done, Task 3 current behind Ryan's work-block confirmation gate, five 3B findings, and one clear waiting item",
+    "browserSmoke": "pass; generated dashboard state shows Phase 3 active at 38 percent, Tasks 1-3 and work blocks 3A-3C done, Task 4 current behind Ryan's work-block confirmation gate, two 3C findings, and one clear waiting item",
     "applicationSmoke": "pass; existing synthetic temporary-DATA_DIR suite initialized all three entities, verified import and exact re-import deduplication, and passed route, export, saved-view, and To Do checks",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
@@ -2939,7 +3019,10 @@
     "phase3CloseoutDurability": "pass; exact seven-path command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script",
     "phase3ImportCategorizationAudit": "pass with findings; tracked smoke and 60 ephemeral checks passed core parser, upload, order-matching, alias, cleanup, and isolation behaviors while three high-risk correctness defects, one medium coverage gap, and one low Undo ambiguity were recorded",
     "phase3ImportCategorizationBoundaries": "pass; generated temporary inputs only, temporary data removed, no product or tracked fixture/test changes, no real financial data or credentials, and no production/demo/Plaid/vendor-account/workflow/Fly/downstream action",
-    "phase3ImportCategorizationDurability": "pass; exact seven-path 3B command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script"
+    "phase3ImportCategorizationDurability": "pass; exact seven-path 3B command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script",
+    "phase3FinancialReadModelAudit": "pass with findings; tracked smoke passed, 297 of 306 ephemeral assertions passed, and nine controlled errors reproduced one Recurring Charges report SQL defect across three layers and all entities",
+    "phase3FinancialReadModelBoundaries": "pass; temporary synthetic data only, temporary data removed, no product or tracked fixture/test changes, no real financial data or credentials, and no production/demo/Plaid/OpenRouter/workflow/Fly/downstream action",
+    "phase3FinancialReadModelDurability": "pass; exact seven-path 3C command-center closeout published directly to main under Ryan's separate authorization with skip actions, excluding product files and the pre-existing untracked sync script"
   }
 }
 </script>

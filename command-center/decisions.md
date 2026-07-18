@@ -128,6 +128,18 @@ The tracked smoke suite passed, and 60 ephemeral all-entity checks passed the CS
 
 Ryan explicitly instructed Codex to commit and push the verified 3B command-center closeout to `main`. This authorizes staging only the seven 3B command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, and tracked test files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or vendor-account actions; Fly; and all recovery outside the exact closeout remain excluded.
 
+### 2026-07-18 — Confirm work block 3C for the synthetic financial read-model audit
+
+Ryan confirmed Task 3 as one synthetic-only audit of dashboard metrics, report views and exports, subscription detection, and cash-flow projections against the same deterministic multi-month transaction and account timeline across Personal, BFM, and Luxe Legacy. Codex may inspect tracked source, run the existing smoke suite, exercise ephemeral route and core probes against temporary databases, create a sanitized audit log, record ranked findings, and close Runway OS state. Tasks 1-2 and 4-8, product fixes, tracked fixture or test expansion, real databases, exports, balances, credentials, row-level financial data, production/demo access, Plaid or OpenRouter calls, workflows, Fly, downstream writes, authentication/security changes, pre-existing `scripts/sync_prod_to_local.sh`, and all commit, push, PR, merge, and deployment actions remain excluded.
+
+### 2026-07-18 — Accept work block 3C as verified with one report defect and one coverage gap
+
+The tracked smoke suite passed. The final ephemeral all-entity probe ran 306 checks with 297 passes, zero assertion failures, and nine controlled error reproductions representing one defect at the direct-query, prepared-report, and rendered-route layers in Personal, BFM, and Luxe Legacy. Dashboard totals, effective split replacement, exclusions, filters, all non-recurring report views and exports, subscriptions, cash flow, intended Personal/BFM visibility, LL isolation, and cleanup passed. The Recurring Charges report executes a literal `{exclude_sql('category')}` token and cannot run; the Task 3 paths also lack tracked regression coverage. Both findings are recorded without repair, product/test change, protected-data access, external call, live action, or GitHub durability. Task 3 is complete as an audit, and Task 4 becomes current for a separately confirmed work block.
+
+### 2026-07-18 — Authorize direct-main durability for the 3C audit closeout
+
+Ryan explicitly instructed Codex to commit and push the verified 3C command-center closeout to `main`. This authorizes staging only the seven 3C command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, and tracked test files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or OpenRouter calls; Fly; and all recovery outside the exact closeout remain excluded.
+
 ## Pending Ryan Direction
 
-- Confirm or revise the next bounded Phase 3 Task 3 audit block after Codex completes its just-in-time planning pass. Any product fix, tracked regression coverage, protected-data access, live action, or durability step requires a separate decision.
+- Confirm or revise work block 3D for the synthetic planning, weekly, waterfall, and payroll audit. Any product fix, tracked regression coverage, protected-data access, live action, or durability step requires a separate decision.

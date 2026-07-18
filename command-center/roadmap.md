@@ -412,14 +412,14 @@ Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is pu
 
 ## Phase 3: Functional Audit And Prioritization
 
-Status: active; Tasks 1-2 and work blocks 3A-3B are done, and Task 3 is current awaiting a separately confirmed audit block
+Status: active; Tasks 1-3 and work blocks 3A-3C are done, and Task 4 is current awaiting a separately confirmed audit block
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
 - **Task 1: Audit the transaction foundation and three-entity isolation with synthetic data.** Status: done through work block 3A. The audit passed initialization, isolation, debit-sign, edit, split, and effective-reporting probes; it found a high-severity identity collision risk and a medium tracked-regression-coverage gap without implementing fixes.
 - **Task 2: Audit statement and vendor-order import, matching, and categorization workflows.** Status: done through work block 3B. The audit passed 60 synthetic checks and found three high-risk correctness defects in vendor-payment schema compatibility, vendor line-item persistence, and category-domain enforcement, plus a medium coverage gap and low `Undo` ambiguity.
-- **Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior.** Status: current; awaiting just-in-time work-block planning and separate confirmation. Check shared reporting rules, split replacement, exclusions, empty states, date filters, recurring detection, balances, and entity-specific output without opening production data.
-- **Task 4: Audit planning, weekly, waterfall, and payroll workflows.** Status: planned. Include the parked Short-Term Planning goal/snapshot/budget/payoff/entity-isolation evidence gap and decide whether its historical expectations remain valid; use synthetic payroll and planning records only.
+- **Task 3: Audit dashboard, reporting, exports, subscriptions, and cash-flow behavior.** Status: done through work block 3C. The tracked smoke suite passed; 297 of 306 ephemeral assertions passed, and the remaining nine controlled errors reproduced one medium Recurring Charges report SQL defect at three layers in all three entities. A medium tracked-coverage gap was also recorded without implementation.
+- **Task 4: Audit planning, weekly, waterfall, and payroll workflows.** Status: current; awaiting just-in-time work-block planning and separate confirmation. Include the parked Short-Term Planning goal/snapshot/budget/payoff/entity-isolation evidence gap and decide whether its historical expectations remain valid; use synthetic payroll and planning records only.
 - **Task 5: Audit Plaid and downstream-sync integration boundaries.** Status: planned. Begin with source and synthetic/mocked behavior; any production account access, Plaid action, workflow action, credential use, or downstream write requires a separate target-specific authorization.
 - **Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries.** Status: planned. Use tracked source and synthetic/local behavior first; do not change authentication, CSRF, credential, encryption, or public-route behavior during the audit.
 - **Task 7: Consolidate audit findings into severity-ranked issues.** Status: planned. Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.
@@ -494,6 +494,43 @@ Durability: after 3B completed locally, Ryan separately authorized publishing th
 Report point: return a sanitized pass/gap/unverified matrix, ranked findings with acceptance checks, exact synthetic checks, preserved boundaries, and a recommendation for work block 3C covering Task 3.
 
 Result: the tracked smoke suite and 60 ephemeral checks passed the CSV/PDF, upload confirmation, Amazon/Henry parsing and deduplication, order-matching, alias, cleanup, and three-entity-isolation behaviors. Vendor-payment matching failed against every fresh migration-built entity because it references nonexistent `transactions.matched_order_id`; normal vendor imports persisted no line items for auto-split; and category inference/acceptance wrote undefined or nondeterministic values outside `categories.md`. A medium tracked-coverage gap and low status-only `Undo` ambiguity were also recorded. No repair, product/test change, protected-data access, live action, or GitHub durability occurred.
+
+### Confirmed Work Block 3C: Synthetic Financial Read-Model Audit
+
+Status: done; confirmed and completed on 2026-07-18
+
+Included: Task 3.
+
+Excluded: Tasks 1-2 and 4-8; product fixes; tracked fixture or regression-test expansion; real databases, exports, balances, credentials, or row-level financial data; production or demo access; Plaid or OpenRouter calls; workflows, Fly, downstream writes, authentication or security changes; commit, push, PR, merge, and deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Outcome: determine whether dashboard metrics, report views and exports, subscription detection, and cash-flow projections produce a consistent financial read from the same deterministic synthetic transaction and account timeline across Personal, BFM, and Luxe Legacy. Classify each audited behavior as pass, defect, regression-coverage gap, or unverified boundary without implementing repairs.
+
+Why this grouping: every included surface consumes the same dates, accounts, entity-specific exclusions, split semantics, recurring-charge patterns, and balance inputs. One synthetic read model provides a coherent reconciliation path. Task 4 changes to planning, weekly, waterfall, and payroll state and remains a separate work block.
+
+Owner and recommended agent: Codex Desktop in the current task. The sensitive-retrofit audit couples source inspection, temporary-database probes, cross-surface reconciliation, finding classification, and command-center stewardship; no delegation or second opinion is needed.
+
+Expected surfaces: read `core/reporting.py`, reporting-related database migrations, `web/routes/dashboard.py`, `web/routes/reports.py`, `web/routes/subscriptions.py`, `web/routes/cashflow.py`, `web/export_helpers.py`, related templates, and `scripts/smoke_test.py`. Write a sanitized 3C audit log and update `command-center/issues.md` only when findings require it; close out through Runway OS sources, state, and dashboard. No application, fixture, or tracked test file should change.
+
+Stop conditions:
+
+- Verification would require real financial data, credentials, production/demo access, Plaid, OpenRouter, or another external API call.
+- Entity isolation, authentication, or destructive-data behavior appears unsafe.
+- A finding requires implementation, migration design, or tracked regression coverage; record it without implementing it.
+- An earlier defect prevents a trustworthy Task 3 conclusion.
+- Scope expands beyond Task 3, verification changes the audit plan, or command-center checks fail.
+
+Verification:
+
+- `.venv/bin/python scripts/smoke_test.py`
+- deterministic multi-month temporary data across all three entities covering ordinary spending, entity-specific exclusions, income, uncategorized rows, split replacement, repeated and irregular merchants, multiple accounts, balances, liabilities, and manual recurring charges
+- dashboard, HTMX, report-builder, CSV, PDF, QBO, subscription, and cash-flow probes reconciled to expected totals, dates, filenames, empty states, and entity isolation
+- temporary-data cleanup, `git diff --check`, Runway OS refresh, health check, generated-dashboard inspection, and final worktree review
+
+Durability: published directly to `main` under Ryan's separate post-block authorization with `[skip actions]`; no PR, merge, or deployment is part of this command-center-only closeout.
+
+Report point: return a sanitized cross-surface pass, defect, gap, and unverified matrix; ranked findings with acceptance checks; exact synthetic checks; preserved boundaries; and whether work block 3D should proceed with Task 4 as currently sequenced.
+
+Result: the tracked smoke suite passed, and the final ephemeral probe ran 306 checks with 297 passes, zero assertion failures, and nine controlled reproductions of one defect across direct query, prepared-report, and rendered-route layers in Personal, BFM, and Luxe Legacy. Dashboard reconciliation, effective split replacement, exclusions, account/date filters, every non-recurring report view, CSV/PDF/QBO exports, subscription lifecycle, cash-flow balances and projections, intended Personal/BFM visibility, LL isolation, and cleanup passed. The Recurring Charges report cannot run because its SQL contains a literal uninterpolated exclusion helper; the broader Task 3 paths also lack tracked regression coverage. No repair, product/test change, protected-data access, external call, live action, or GitHub durability occurred.
 
 ## Phase 4: Core Repairs And Regression Coverage
 
