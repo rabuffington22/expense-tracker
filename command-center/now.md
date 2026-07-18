@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Prepare the next bounded Phase 3 entry-point audit block after completing the mocked primary Plaid boundary audit.
+Prepare the next bounded Phase 3 downstream-mirror audit block after completing the mocked scheduled and public sync entry-point audit.
 
 ## Current Phase
 
@@ -10,39 +10,38 @@ Phase 3: Functional Audit And Prioritization — active.
 
 ## Completed Work Block
 
-3G: Mocked Primary Plaid Boundary Audit — complete and verified locally with eight defect clusters and one tracked-regression-coverage gap.
+3H: Mocked Sync Entry-Point Audit — complete and verified locally with seven functional/boundary defect clusters and one tracked-regression-coverage gap.
 
 ## Current Task
 
-Phase 3 Task 5C: audit scheduled and public background-sync entry points — awaiting just-in-time work-block planning and separate confirmation.
+Phase 3 Task 5D: audit the Luxe Legacy downstream-mirror boundary — awaiting just-in-time work-block planning and separate confirmation.
 
 ## Owner
 
-Ryan owns confirmation or revision of work block 3H and later repair prioritization. Codex Desktop owns the verified 3G evidence, protected-data and no-network boundaries, Task 5C planning pass, and dashboard currency.
+Ryan owns confirmation or revision of the next Task 5D block and later repair prioritization. Codex Desktop owns the verified 3H evidence, protected-data and no-network boundaries, Task 5D planning pass, and dashboard currency.
 
 ## Audit Result
 
-The tracked smoke suite passed. The primary 3G probe produced 44 passes and twelve controlled failures across 56 checks with zero unexpected failures; a deterministic confirmation pass reproduced the same failures and cleanup.
+The tracked smoke suite passed. The primary 3H probe produced 22 passes and ten controlled failures across 32 checks with zero unexpected failures; a deterministic confirmation pass reproduced the same results and cleanup.
 
-Token encryption, configuration rejection, SDK pagination, entity-local exchange, account toggle/rename/disconnect, normal balance refresh, manual-row preservation, all-entity add/modify/remove, debit sign, enabled-account filtering, successful cursor movement, review categorization, exact re-delivery, and entity isolation passed.
+Method and bearer rejection, secret-safe errors, CSRF separation, normal all-entity iteration, same-process lock contention/release, public route reachability, one-process throttling, Personal/LL scope, normal cursor movement, per-item failure containment, and cleanup passed.
 
-Eight defect clusters were confirmed: link cleanup can delete unrelated manual balances; disabled/partial balance reconciliation is unsafe; entity-wide maximum freshness hides stale accounts; normal balance refresh starves liabilities; distinct Plaid IDs collide; persistence errors can be swallowed while the cursor advances; absent modified rows are reported successful; and one corrupt token aborts healthy siblings. Primary Plaid behavior lacks tracked regression coverage.
+Seven defect clusters were confirmed: scheduled partial errors still report HTTP 200 and `ok: true`; scheduled and public paths lack shared cross-process coordination; the public worker advances past removed events; it consumes vendor items through the spending path; one scheduled entity exception aborts later entities without structured partial state; bearer rejection happens after normal entity setup; and failed public thread launch consumes the throttle window. These entry points also lack tracked regression coverage.
 
 ## Durability
 
-- Work block 3G and its findings are authorized for an exact seven-path command-center closeout pushed directly to `main` with `[skip actions]`; no PR, merge, or deployment is included.
-- No application, fixture, tracked test, demo-seed, workflow, or deployment file changed.
+- Work block 3H and its findings are local-only; no commit, push, PR, merge, deployment, workflow action, or live integration action is authorized.
+- No application, fixture, tracked-test, demo-seed, workflow, or deployment file changed.
 - No real database, balance, transaction, financial row, credential, Plaid token, production/demo surface, network call, workflow, Fly action, downstream write, or authentication surface was accessed or changed.
 - Preserved user file: untracked `scripts/sync_prod_to_local.sh`, untouched and unstaged.
 
 ## Current Action
 
-Run a just-in-time planning pass over Task 5C and propose a mocked-only work block 3H before auditing scheduled or public background-sync behavior.
+Run a just-in-time planning pass over Task 5D and propose one mocked-HTTP Luxe Legacy downstream-mirror audit block before inspecting request/auth/payload behavior.
 
 ## Phase 3 Boundary
 
-- Work block 3F is complete; it does not authorize any repair, migration, tracked regression-test, fixture, or demo-seed implementation.
-- Work block 3G is complete; it does not authorize repair, migration, tracked regression-test, fixture, or demo-seed implementation.
-- Task 5C is current for separate work-block planning; Task 5D remains planned because the protected/public sync entry points and downstream HTTP mirror have separate verification paths.
-- Source inspection and synthetic or mocked behavior may be proposed first, but production account access, Plaid actions, workflow actions, credential use, downstream writes, Fly actions, and any other live effect remain separately gated.
-- All 3A-3F findings are inputs to Phase 4 prioritization, not automatically authorized fixes.
+- Work blocks 3G and 3H are complete; neither authorizes repair, migration, tracked regression coverage, fixture, workflow, or demo-seed implementation.
+- Task 5D is current for separate work-block planning; it introduces mocked outbound-HTTP request, authentication, eligibility, and idempotency behavior without authorizing a real downstream call.
+- Broader public-dashboard and authentication-policy judgment remains Task 6.
+- All 3A-3H findings are inputs to Phase 4 prioritization, not automatically authorized fixes.

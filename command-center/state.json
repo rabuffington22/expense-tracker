@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 3:07 PM CST",
+    "lastUpdated": "2026-07-18 3:57 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks 3A-3F are published on main; the exact seven-path 3G closeout is the separately authorized direct-main skip-actions durability record"
+    "durabilityStatus": "Work blocks 3A-3G are published on main; completed work block 3H remains local-only with no GitHub durability authorized"
   },
   "phase": {
     "name": "Functional Audit And Prioritization",
     "status": "active",
-    "summary": "Tasks 1-3, 4A-4D, and 5A-5B plus work blocks 3A-3G are done; Task 5C is current awaiting a separately confirmed entry-point audit block.",
-    "progress": 64
+    "summary": "Tasks 1-3, 4A-4D, and 5A-5C plus work blocks 3A-3H are done; Task 5D is current awaiting a separately confirmed downstream-mirror audit block.",
+    "progress": 71
   },
   "currentTask": {
-    "title": "Task 5C: Audit scheduled and public background-sync entry points",
+    "title": "Task 5D: Audit the Luxe Legacy downstream-mirror boundary",
     "owner": "Ryan",
     "status": "awaiting work block",
-    "supportingAgent": "Codex Desktop owns the verified 3G evidence, Task 5C just-in-time planning pass, protected-data and no-network boundaries, and dashboard currency",
-    "nextAction": "Define and return work block 3H for a mocked-only scheduled and public background-sync entry-point audit.",
-    "blocker": "No Task 5C-5D execution, 3A-3G repair, tracked test expansion, credential use, external call or write, live action, or GitHub durability is authorized yet"
+    "supportingAgent": "Codex Desktop owns the verified 3H evidence, Task 5D just-in-time planning pass, protected-data and no-network boundaries, and dashboard currency",
+    "nextAction": "Define and return one mocked-HTTP work block for the Luxe Legacy downstream-mirror boundary.",
+    "blocker": "No Task 5D execution, 3A-3H repair, tracked test expansion, credential use, external call or write, live action, or GitHub durability is authorized yet"
   },
   "currentWorkBlock": null,
   "routerHealth": {
@@ -62,23 +62,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define work block 3H for Task 5C entry-point audit",
+    "title": "Define the Task 5D mocked downstream-mirror audit block",
     "status": "awaiting planning",
     "owner": "Ryan",
-    "why": "Work block 3G completed the primary Plaid behavior audit and isolated the sync semantics that Task 5C can now mock safely at the protected and public entry points.",
-    "action": "Run a just-in-time Task 5C planning pass and return one mocked-only work block for separate confirmation.",
+    "why": "Work block 3H completed the sync entry-point audit and preserved the separate Task 5D boundary around mocked outbound HTTP, row eligibility, authentication shape, and failure isolation.",
+    "action": "Run a just-in-time Task 5D planning pass and return one mocked-HTTP work block for separate confirmation.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Task 5C entry-point audit block.",
+    "summary": "Ryan reviews the next separately proposed Task 5D downstream-mirror audit block.",
     "items": [
-      "Confirm or revise work block 3H after the Task 5C planning pass."
+      "Confirm or revise the next Task 5D mocked-HTTP work block after just-in-time planning."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 3G is complete; Task 5C-5D execution, all 3A-3G repairs, tracked tests, credential use, external calls or writes, protected-data access, and live actions remain outside authorization.",
-    "decisionQueue": "The next decision is confirmation or revision of work block 3H; repairs and GitHub durability remain later separately scoped choices.",
+    "phaseQuestions": "Work block 3H is complete; Task 5D execution, broader Task 6 policy, all 3A-3H repairs, tracked tests, credential use, external access or writes, protected data, and live actions remain outside authorization.",
+    "decisionQueue": "The next decision is confirmation or revision of the Task 5D work block; repairs and GitHub durability remain later separately scoped choices.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -876,6 +876,51 @@
         "command-center/issues.md"
       ],
       "result": "The tracked smoke suite passed. A deterministic 56-check mocked probe produced 44 passes, twelve controlled failures, and zero unexpected failures; a confirmation pass reproduced the failures and cleanup. Encryption, configuration rejection, pagination, entity-local account lifecycle, normal balance refresh, manual-row preservation, all-entity transaction sync success behavior, exact re-delivery, and isolation passed. Eight defects were recorded across manual cleanup, balance reconciliation, freshness, liabilities, transaction identity, persistence/cursor safety, modified-event reporting, and corrupt-token isolation, plus one tracked-coverage gap."
+    },
+    {
+      "id": "phase-3-block-h",
+      "phaseId": "phase-3",
+      "label": "3H",
+      "name": "Mocked Sync Entry-Point Audit",
+      "status": "done",
+      "includedTasks": [
+        "Task 5C"
+      ],
+      "excludedTasks": [
+        "Task 5D and Tasks 6-8 plus all repairs from work blocks 3A-3G",
+        "Product repairs, migrations, and tracked test, fixture, workflow, or demo-seed changes",
+        "Real databases, balances, transactions, financial rows, credentials, or Plaid tokens; production or demo access; network calls; live Plaid, workflow, Fly, or downstream actions",
+        "Authentication, CSRF, encryption, credential, or public-route changes; commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive-retrofit audit couples local source inspection, mocked request and concurrency behavior, protected-data boundaries, finding classification, command-center stewardship, and final intake.",
+      "expectedFiles": [
+        "Read-only web/routes/plaid.py, web/routes/kristine.py, web/__init__.py, .github/workflows/daily-plaid-sync.yml, database helpers, and scripts/smoke_test.py",
+        "Disposable untracked mocked probe with fake environment values, temporary synthetic databases, mocked synchronization and thread dependencies, and outbound-socket denial",
+        "command-center/logs/2026-07-18-mocked-sync-entry-point-audit-3h.md",
+        "command-center/issues.md only if findings require it",
+        "command-center/roadmap.md, now.md, decisions.md, state.json, and index.html"
+      ],
+      "stopConditions": [
+        "Verification requires protected data, real credentials or tokens, external access, production or demo access, or another live action",
+        "Unsafe authentication, concurrency, entity-isolation, destructive-data, or sensitive-output behavior requires probing beyond the local mocked boundary",
+        "A finding requires repair, migration, tracked regression coverage, the Task 5D downstream contract, or broader Task 6 policy",
+        "Verification changes the audit plan materially or command-center refresh and health cannot pass"
+      ],
+      "verification": [
+        ".venv/bin/python scripts/smoke_test.py",
+        "Mocked sync-all method, bearer, CSRF, all-entity iteration, lock, partial-failure, response, and secret-safe output checks",
+        "Mocked public k trigger, throttle, daemon-thread, entity scope, item selection, failure handling, cursor/results, and separate-lock interaction checks",
+        "Outbound-socket denial, confirmation pass, cleanup, coverage assessment, diff check, dashboard refresh, health check, dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Returned the sanitized Task 5C behavior matrix, seven ranked defect clusters with acceptance checks, exact mocked verification, protected boundaries, cleanup, tracked-coverage gap, and Task 5D readiness.",
+      "durability": "Local-only unless Ryan separately authorizes a later exact command-center publish scope; no commit, push, PR, merge, deployment, integration action, or workflow action is included.",
+      "evidence": [
+        "command-center/logs/2026-07-18-mocked-sync-entry-point-audit-3h.md",
+        "command-center/issues.md"
+      ],
+      "result": "The tracked smoke suite passed. A deterministic 32-check mocked probe produced 22 passes, ten controlled failures, and zero unexpected failures; a confirmation pass reproduced the same results and cleanup. Method/bearer/CSRF boundaries, normal entity iteration, same-process lock behavior, public reachability and throttle, Personal/LL scope, cursor success, failure containment, and cleanup passed. Seven defect clusters were recorded across partial-result truthfulness, cross-path/cross-process coordination, removed events, vendor-item selection, entity exception fanout, pre-bearer setup, and thread-start throttling plus one tracked-coverage gap."
     }
   ],
   "phaseTasks": [
@@ -1179,19 +1224,24 @@
       "phaseId": "phase-3",
       "taskId": "P3-T5C",
       "title": "Task 5C: Audit scheduled and public background-sync entry points",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "After Tasks 5A-5B, use mocked internals to check the protected all-entity sync route and the public dashboard background-sync path while leaving the broader public-route authentication audit to Task 6.",
-      "nextAction": "Confirm or revise work block 3H after a just-in-time Task 5C planning pass.",
-      "blocker": "Task 5C execution is not authorized until the mocked entry-point scope, public/protected boundary, stop conditions, and verification are confirmed."
+      "result": "Method/bearer/CSRF separation, normal entity iteration, same-process lock behavior, public reachability and throttle, Personal/LL scope, cursor success, failure containment, and cleanup passed. Partial-result truthfulness, cross-path coordination, removed events, vendor filtering, entity exception fanout, pre-bearer setup, thread-start throttle, and tracked coverage failed without repair.",
+      "evidence": [
+        "command-center/logs/2026-07-18-mocked-sync-entry-point-audit-3h.md",
+        "command-center/issues.md"
+      ]
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T5D",
       "title": "Task 5D: Audit the Luxe Legacy downstream-mirror boundary",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "After Task 5B, use mocked HTTP to check LL-only invocation, no-op configuration, eligible-row filtering, request and auth shape, idempotency contract, failure isolation, and absence of Personal or BFM writes."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "After Task 5B, use mocked HTTP to check LL-only invocation, no-op configuration, eligible-row filtering, request and auth shape, idempotency contract, failure isolation, and absence of Personal or BFM writes.",
+      "nextAction": "Confirm or revise a separately proposed mocked-HTTP work block after just-in-time Task 5D planning.",
+      "blocker": "Task 5D execution is not authorized until its downstream request, data-selection, failure, stop, and verification boundaries are confirmed."
     },
     {
       "phaseId": "phase-3",
@@ -1437,6 +1487,10 @@
     {
       "name": "Work Block 3G Mocked Primary Plaid Boundary Audit",
       "path": "command-center/logs/2026-07-18-mocked-primary-plaid-boundary-audit-3g.md"
+    },
+    {
+      "name": "Work Block 3H Mocked Sync Entry-Point Audit",
+      "path": "command-center/logs/2026-07-18-mocked-sync-entry-point-audit-3h.md"
     }
   ],
   "recentActivity": [
@@ -1619,11 +1673,19 @@
     {
       "time": "2026-07-18",
       "text": "Ryan separately authorized committing and pushing the exact seven-path 3G command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 3H for a mocked-only Task 5C audit of the scheduled sync-all route and public k background-sync trigger; repairs, tracked tests, protected data, network calls, live actions, downstream HTTP, broader authentication policy, and GitHub durability remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 3H: the tracked smoke suite passed, 22 of 32 mocked assertions passed, and ten controlled failures produced seven scheduled/public sync entry-point defect clusters plus one tracked-coverage gap without repair, protected-data access, network calls, live action, or GitHub durability."
     }
   ],
   "openQuestions": [],
   "projectQuestions": [
-    "What is the smallest coherent mocked-only Task 5C block for scheduled and public background-sync entry points?"
+    "What is the smallest coherent mocked-HTTP Task 5D block for the Luxe Legacy downstream-mirror boundary?"
   ],
   "ideas": [],
   "issues": [
@@ -1899,17 +1961,73 @@
       "status": "parked",
       "severity": "medium",
       "source": "command-center/issues.md"
+    },
+    {
+      "title": "Scheduled Plaid sync can report partial failure as success",
+      "summary": "An entity result containing errors still produced HTTP 200 and top-level ok true, so the current curl-fail workflow can remain green during a partial sync failure.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Scheduled and public sync paths lack shared cross-process coordination",
+      "summary": "The two paths use distinct process-local locks and the public throttle is also process-local while production runs two Gunicorn workers.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Public background sync advances past removed Plaid events",
+      "summary": "A mocked removed event left the transaction stored while the public worker committed the next cursor.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Public background sync includes vendor Plaid items",
+      "summary": "The public worker selected is_vendor rows and consumed them through the normal spending transaction and cursor path.",
+      "status": "open",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "One scheduled entity exception aborts healthy later entities",
+      "summary": "A BFM exception returned a generic 500 and prevented Luxe Legacy from running without a structured partial completion result.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Sync-all runs entity setup before bearer validation",
+      "summary": "A missing-bearer request was rejected only after normal entity database initialization and category synchronization ran.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Failed public worker launch consumes its throttle window",
+      "summary": "The public route updates its last-sync timestamp before starting the daemon thread, so a launch failure suppresses retry in that worker for 15 minutes.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Background sync entry points lack tracked regression coverage",
+      "summary": "The repeated 3H probe verified entry-point behavior and reproduced seven defect clusters, but the maintained smoke suite does not exercise sync-all or the public background worker.",
+      "status": "parked",
+      "severity": "medium",
+      "source": "command-center/issues.md"
     }
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Bounded Task 5C entry-point audit decision",
-    "description": "Define and confirm the mocked-only scheduled and public background-sync entry-point audit before execution."
+    "name": "Bounded Task 5D downstream-mirror audit decision",
+    "description": "Define and confirm the mocked-HTTP Luxe Legacy downstream-mirror audit before execution."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
-    "browserSmoke": "pass; generated dashboard shows Phase 3 at 64 percent, work blocks 3A-3G done, Task 5C behind the work-block 3H confirmation gate, Ryan on the current action, the protected no-network boundary, the 3G findings, and no stale active work block",
+    "browserSmoke": "pass; generated dashboard shows Phase 3 at 71 percent, work blocks 3A-3H done, Task 5D behind a separate confirmation gate, Ryan on the current action, the protected no-network boundary, the 3H findings, and no stale active work block",
     "applicationSmoke": "pass; existing synthetic temporary-DATA_DIR suite initialized all three entities, verified import and exact re-import deduplication, and passed route, export, saved-view, and To Do checks",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
@@ -1945,6 +2063,10 @@
     "phase3PrimaryPlaidAudit": "pass with findings; tracked smoke passed, 44 of 56 mocked assertions passed, and twelve controlled failures produced eight defect clusters plus one tracked-coverage gap with zero unexpected failures",
     "phase3PrimaryPlaidBoundaries": "pass; fake tokens, mocked integration responses, blocked outbound connections, temporary all-entity databases, complete cleanup, no product or tracked test changes, no real financial data or credentials, and no production/demo/Plaid/workflow/Fly/downstream/authentication action",
     "phase3PrimaryPlaidConfirmation": "pass; the deterministic confirmation pass reproduced all twelve controlled failures and removed its temporary audit root",
-    "phase3PrimaryPlaidDurability": "pass; this exact seven-path command-center closeout is the separately authorized direct-main skip-actions durability record, excluding product files, deployment, live integration actions, and the pre-existing untracked sync script"
+    "phase3PrimaryPlaidDurability": "pass; this exact seven-path command-center closeout is the separately authorized direct-main skip-actions durability record, excluding product files, deployment, live integration actions, and the pre-existing untracked sync script",
+    "phase3SyncEntryPointAudit": "pass with findings; tracked smoke passed, 22 of 32 mocked assertions passed, and ten controlled failures produced seven functional and boundary defect clusters plus one tracked-coverage gap with zero unexpected failures",
+    "phase3SyncEntryPointBoundaries": "pass; fake environment values, mocked sync, thread, and downstream seams, blocked outbound connections, temporary all-entity databases, complete cleanup, no product, workflow, or tracked test changes, no real financial data or credentials, and no production, demo, Plaid, Fly, downstream, workflow, or authentication action",
+    "phase3SyncEntryPointConfirmation": "pass; the deterministic confirmation pass reproduced all ten controlled failures and removed its temporary audit root",
+    "phase3SyncEntryPointDurability": "local-only; no commit, push, PR, merge, deployment, live integration action, workflow action, or pre-existing untracked-file change is authorized"
   }
 }

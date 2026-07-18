@@ -1174,3 +1174,243 @@ Acceptance checks:
 Why not added now:
 
 Tracked test expansion was explicitly excluded from audit work block 3G.
+
+## Scheduled Plaid Sync Can Report Partial Failure As Success
+
+Status: open; discovered in work block 3H
+
+Severity: high operational reliability risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/plaid.py`, `.github/workflows/daily-plaid-sync.yml`, and mocked entity-result probes
+
+Revisit: Phase 4 Task 1 for response-contract repair; Phase 4 Task 2 for workflow-visible regression coverage
+
+Summary:
+
+`/plaid/sync-all` returns HTTP 200 and top-level `ok: true` when an entity result contains errors. The daily workflow uses `curl --fail`, so a partial entity/item failure can leave the GitHub run green.
+
+Impact:
+
+Monitoring can report a healthy scheduled sync while one or more entities did not complete cleanly.
+
+Acceptance checks:
+
+- Top-level status and HTTP status reflect nested errors and distinguish complete success, partial success, contention, configuration failure, and total failure.
+- Sanitized per-entity results remain available without secret or financial-row output.
+- A mocked workflow-visible regression test proves `curl --fail` receives failure for partial sync errors.
+
+Why not fixed now:
+
+Work block 3H was audit-only; response behavior and tracked tests require a separate repair block.
+
+## Scheduled And Public Sync Paths Lack Shared Cross-Process Coordination
+
+Status: open; discovered in work block 3H
+
+Severity: high cursor and financial-data consistency risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/plaid.py`, `web/routes/kristine.py`, `Dockerfile`, and mocked lock-contention probes
+
+Revisit: Phase 4 Task 1 for one canonical coordination design; Phase 4 Task 2 for concurrency coverage
+
+Summary:
+
+The scheduled and public paths use distinct `threading.Lock` objects, and each proceeded while the other's lock was held. Those locks and the public 15-minute throttle are process-local while production starts two Gunicorn workers.
+
+Impact:
+
+Scheduled, manual, or public-triggered syncs can overlap against the same SQLite rows and Plaid cursors, risking duplicate work, lock errors, stale cursor writes, or inconsistent results.
+
+Acceptance checks:
+
+- One coordination mechanism covers all sync entry points across production workers.
+- Contention is explicit and cannot perform partial database work.
+- Cursor writes remain monotonic and coupled to durable event application under concurrent attempts.
+- Public throttling is atomic at the required deployment scope.
+
+Why not fixed now:
+
+Cross-worker coordination is a design and implementation change outside the audit block.
+
+## Public Background Sync Advances Past Removed Plaid Events
+
+Status: open; discovered in work block 3H
+
+Severity: high financial-data correctness risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/kristine.py` and a temporary-database removed-event reproduction
+
+Revisit: Phase 4 Task 1 for canonical sync semantics; Phase 4 Task 2 for cursor/removal coverage
+
+Summary:
+
+The public worker processes added and modified events but ignores removed events before committing `next_cursor`. A synthetic removed transaction remained stored after the cursor advanced.
+
+Impact:
+
+Removed Plaid transactions can remain permanently in the ledger because ordinary incremental replay starts after the discarded event.
+
+Acceptance checks:
+
+- The public path uses the canonical removal and split-cleanup behavior.
+- Cursor movement occurs only after every event is durably applied.
+- Failure before removal completion withholds or rolls back the cursor.
+
+Why not fixed now:
+
+Sync behavior and regression coverage were excluded from audit-only work block 3H.
+
+## Public Background Sync Includes Vendor Plaid Items
+
+Status: open; discovered in work block 3H
+
+Severity: high workflow and data-boundary risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/kristine.py`, the `is_vendor` schema boundary, and a temporary all-entity probe
+
+Revisit: Phase 4 Task 1 for item filtering or canonical sync consolidation; Phase 4 Task 2 for vendor-boundary coverage
+
+Summary:
+
+The public worker selects every `plaid_items` row rather than filtering `is_vendor = 0`. A synthetic vendor item was consumed through the normal spending-transaction and cursor path despite having a separate vendor-transactions workflow.
+
+Impact:
+
+Vendor payment-platform data can enter the wrong table and its cursor can be advanced outside the vendor import workflow.
+
+Acceptance checks:
+
+- Normal spending sync never reads or advances vendor items.
+- Vendor items remain owned by the vendor workflow unless a new explicit architecture replaces both paths.
+- Tracked all-entity tests prove table, cursor, and item-type isolation.
+
+Why not fixed now:
+
+Filtering or consolidating the workers changes product behavior and requires separate repair scope.
+
+## One Scheduled Entity Exception Aborts Healthy Later Entities
+
+Status: open; discovered in work block 3H
+
+Severity: medium all-entity reliability risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/plaid.py` and a mocked BFM exception between Personal and Luxe Legacy
+
+Revisit: Phase 4 Task 1 for explicit entity-failure semantics; Phase 4 Task 2 for fanout coverage
+
+Summary:
+
+An uncaught BFM exception returned a generic 500 and prevented Luxe Legacy from running. The lock released and the exception marker did not leak, but the response contained no structured record of completed and skipped entities.
+
+Impact:
+
+One entity can starve healthy later entities, and operators cannot distinguish completed, failed, and unattempted entities from the response.
+
+Acceptance checks:
+
+- Per-entity continuation or deliberate fail-fast behavior is explicit.
+- Sanitized completion state identifies successful, failed, and unattempted entities.
+- Retry semantics do not duplicate or skip cursor work.
+
+Why not fixed now:
+
+Entity fanout behavior and tests require a separately confirmed repair block.
+
+## Sync-All Runs Entity Setup Before Bearer Validation
+
+Status: open; discovered in work block 3H
+
+Severity: medium authorization-side-effect risk
+
+Captured: 2026-07-18
+
+Where seen: `web/__init__.py`, `web/routes/plaid.py`, and a missing-bearer temporary-directory probe
+
+Revisit: Phase 4 Task 1 for request-hook boundary repair; Phase 4 Task 2 for unauthorized side-effect coverage
+
+Summary:
+
+The app's normal entity setup does not skip `/plaid/sync-all`, despite a nearby context comment. A missing-bearer request was rejected by the route only after the selected entity database was initialized and category synchronization ran.
+
+Impact:
+
+Unauthorized requests are not side-effect free and can trigger unnecessary database work before the endpoint's actual authorization check.
+
+Acceptance checks:
+
+- The cron endpoint bypasses browser entity setup and validates bearer authorization before database mutation.
+- Missing and invalid bearer requests leave every entity database unchanged.
+- Normal authorized all-entity iteration remains correct.
+
+Why not fixed now:
+
+Changing request-hook behavior is an authentication/public-route mutation outside audit scope.
+
+## Failed Public Worker Launch Consumes Its Throttle Window
+
+Status: open; discovered in work block 3H
+
+Severity: medium background-sync availability risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/kristine.py` and a mocked thread-start failure
+
+Revisit: Phase 4 Task 1 for launch/throttle ordering; Phase 4 Task 2 for failure coverage
+
+Summary:
+
+The `/k/` route updates `_last_sync_time` before starting its daemon thread. A synthetic start failure returned 500 but suppressed another attempt in that worker for 15 minutes.
+
+Impact:
+
+A transient local launch failure delays recovery and turns a page view into an error without any sync beginning.
+
+Acceptance checks:
+
+- Throttle state advances only after successful worker launch or rolls back on failure.
+- Launch failure produces a controlled response and remains immediately retryable under the chosen policy.
+
+Why not fixed now:
+
+Thread-launch behavior and tracked tests were excluded from work block 3H.
+
+## Background Sync Entry Points Lack Tracked Regression Coverage
+
+Status: parked for Phase 4 regression coverage
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py` and work block 3H's repeated 32-check mocked probe
+
+Revisit: Phase 4 Task 2, preferably alongside the related entry-point repairs
+
+Summary:
+
+The maintained smoke suite renders Connected Accounts but does not exercise `/plaid/sync-all` or the public `_background_sync` worker. Work block 3H's passing and failing evidence is deterministic but ephemeral.
+
+Impact:
+
+Bearer/CSRF behavior, workflow-visible partial errors, cross-path coordination, public throttling, item selection, removed events, cursor safety, and failure containment can regress without maintained detection.
+
+Acceptance checks:
+
+- Tests use fake environment values, mocked sync/downstream seams, denied outbound sockets, and temporary all-entity databases.
+- Passing request, lock-release, entity-scope, and failure-containment behavior is explicit.
+- Each repaired 3H defect has failing-before and passing-after regression coverage.
+
+Why not added now:
+
+Tracked test expansion was explicitly excluded from work block 3H.

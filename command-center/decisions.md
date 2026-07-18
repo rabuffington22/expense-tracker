@@ -164,10 +164,18 @@ The tracked smoke suite passed. A 58-check primary temporary-database probe, cor
 
 Ryan explicitly instructed Codex to commit and push the verified 3E command-center closeout to `main`. This authorizes staging only the seven 3E command-center paths, committing with the established `[skip actions]` convention, and pushing `main` without force. Product, fixture, tracked test, and demo-seed files; pre-existing untracked `scripts/sync_prod_to_local.sh`; application/workflow changes; production deployment; live access; protected data; credentials; Plaid or OpenRouter calls; Fly; and all recovery outside the exact closeout remain excluded.
 
+### 2026-07-18 — Confirm work block 3H for the mocked sync entry-point audit
+
+Ryan confirmed Task 5C as one mocked-only audit of the bearer-protected and CSRF-exempt `/plaid/sync-all` route plus the public `/k/` background-sync trigger. Codex may inspect tracked source, run the existing synthetic smoke suite, use deterministic fake environment values and temporary entity databases, deny outbound sockets, mock synchronization and thread dependencies, create a sanitized audit log, record ranked findings, and close Runway OS state. Task 5D and Tasks 6-8; all repairs from 3A-3G; product repairs or migrations; tracked test, fixture, workflow, or demo changes; real databases, financial rows, balances, transactions, credentials, or Plaid tokens; production/demo access; network calls; live Plaid, workflow, Fly, or downstream actions; authentication, CSRF, encryption, credential, or public-route changes; pre-existing `scripts/sync_prod_to_local.sh`; and all GitHub durability remain excluded.
+
+### 2026-07-18 — Accept work block 3H with seven entry-point defects and one coverage gap
+
+The tracked smoke suite passed. A 32-check mocked entry-point probe produced 22 passes, ten controlled failures representing seven functional/boundary defect clusters plus one tracked-coverage gap, and zero unexpected failures; a confirmation pass reproduced the same results and cleanup. Method and bearer rejection, secret-safe errors, CSRF separation, normal all-entity iteration, same-process lock contention/release, public reachability and one-process throttle, Personal/LL scope, normal cursor movement, item-failure containment, and cleanup passed. Scheduled partial errors return HTTP 200 and `ok: true`; scheduled/public paths have separate process-local coordination under two Gunicorn workers; the public worker ignores removed events while advancing cursors and includes vendor items; one scheduled entity exception aborts later entities without structured partial state; unauthorized requests run entity setup before bearer rejection; failed public thread start consumes the throttle; and the paths lack tracked coverage. Task 5C and work block 3H are complete, and Task 5D becomes current for separate planning. No repair, tracked product/test/workflow change, protected-data access, credential use, network call, live action, or GitHub durability occurred.
+
 ## Pending Ryan Direction
 
-- Confirm or revise work block 3H for a mocked-only scheduled and public background-sync entry-point audit in Task 5C.
-- Any 3A-3G repair, tracked regression coverage, protected-data access, live action, credential use, or external write requires a separate decision.
+- Confirm or revise the next mocked-HTTP Task 5D downstream-mirror audit block after just-in-time planning.
+- Any 3A-3H repair, tracked regression coverage, protected-data access, live action, credential use, external write, or GitHub durability requires a separate decision.
 
 ### 2026-07-18 — Confirm work block 3G for the mocked primary Plaid boundary audit
 
