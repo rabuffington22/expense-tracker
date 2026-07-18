@@ -4,7 +4,7 @@ These are known defects, risks, or rough edges. They are not active work unless 
 
 ## Daily Plaid Sync Disabled For Inactivity
 
-Status: parked pending Phase 1 approval
+Status: resolved in work block 1A; recurrence safeguard pending
 
 Severity: high operational reliability
 
@@ -12,23 +12,23 @@ Captured: 2026-07-17
 
 Where seen: GitHub Actions workflow metadata and run history
 
-Revisit: proposed Phase 1, Task 1
+Revisit: Phase 1, Task 4 for recurrence prevention or detection
 
 Summary:
 
-The `Daily Plaid Sync` workflow is currently `disabled_inactivity`. Its last listed successful scheduled run was 2026-07-15.
+The `Daily Plaid Sync` workflow was found `disabled_inactivity` after its last listed successful scheduled run on 2026-07-15. Work block 1A re-enabled it and verified controlled run `29627530457` successfully.
 
 Impact:
 
-The intended automated financial-data refresh is not currently scheduled, even though recent runs had been successful.
+Immediate sync scheduling is restored. A future quiet period could still allow the workflow to become inactive again unless Phase 1 Task 4 defines a detection or prevention safeguard.
 
-Why not now:
+Why not fully closed:
 
-Enabling or triggering a workflow is an external mutation excluded from the Runway OS bootstrap.
+Choosing and implementing a recurring safeguard is a separate project-control and automation decision outside work block 1A.
 
 Promotion trigger:
 
-Ryan confirms a Phase 1 operational-reliability work block with exact enable, verification, and stop conditions.
+Ryan confirms a safeguard-definition block, then separately approves any implementation that creates a monitor, automation, external service, or recurring cost.
 
 ## Project Documentation Contradicts Current Architecture
 

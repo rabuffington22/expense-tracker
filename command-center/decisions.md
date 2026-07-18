@@ -38,6 +38,10 @@ Ryan authorized staging only `PROJECT_STRUCTURE.md` and `command-center/`, commi
 
 Ryan authorized enabling Daily Plaid Sync and dispatching one controlled workflow run after target durability. The run may insert newly available transactions into the configured production entities and invoke the existing Luxe Legacy bridge for qualifying data. Source-code, secret, Fly, database-transfer, authentication, PR, merge, and parent-repo changes remain excluded.
 
+### 2026-07-17 — Accept work block 1A as successfully verified
+
+The workflow changed from `disabled_inactivity` to `active`. Controlled run `29627530457` completed successfully with every job step passing, the workflow remained active, and production/demo roots returned HTTP 200. Only job/step status was inspected; no response-body, financial-row, or credential output was opened.
+
 ## Pending Ryan Direction
 
 - Decide in Phase 2 whether `AGENTS.md` becomes tracked and which legacy documentation is archived or replaced.

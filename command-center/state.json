@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-17 9:42 PM CST",
+    "lastUpdated": "2026-07-17 9:47 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,21 +22,21 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "committed-and-pushed: e9a8e5e89f54d82e749ac553a6fef147cd5af588 on origin/codex/runway-os-full-install"
+    "durabilityStatus": "committed-and-pushed branch: baseline e9a8e5e and Phase 1 activation 8ab8745; work block 1A closeout pending final push"
   },
   "phase": {
     "name": "Operational Reliability Recovery",
     "status": "active",
-    "summary": "Restore and prove the automated financial-data pipeline before broader feature work.",
-    "progress": 5
+    "summary": "Daily Plaid Sync is active and proven; Ryan reviews how to prevent or detect future silent workflow inactivity.",
+    "progress": 75
   },
   "currentTask": {
-    "title": "Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization",
-    "owner": "Codex",
+    "title": "Task 4: Define recurring operational checks",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "GitHub Actions via the authenticated GitHub CLI",
-    "nextAction": "Record the reviewed workflow state, enable it, verify active state, and dispatch one controlled run.",
-    "blocker": "None inside confirmed work block 1A"
+    "supportingAgent": "Codex proposes a bounded safeguard-definition block",
+    "nextAction": "Confirm or revise proposed work block 1B: Define Recurring Sync Safeguards.",
+    "blocker": "No live safeguard implementation is authorized"
   },
   "routerHealth": {
     "status": "healthy",
@@ -61,11 +61,11 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Restore and prove Daily Plaid Sync",
-    "status": "in-progress",
-    "owner": "Codex",
-    "why": "The verified Runway OS baseline is pushed and the scheduled sync remains the first known operational reliability issue.",
-    "action": "Execute confirmed work block 1A Tasks 1-3 and stop on any workflow, production, downstream, or sensitive-output anomaly.",
+    "title": "Define the recurring sync safeguard",
+    "status": "recommended",
+    "owner": "Ryan",
+    "why": "Immediate scheduling is restored and proven, but the project still needs a deliberate way to detect or prevent another silent inactivity disablement.",
+    "action": "Confirm or revise proposed 1B, which compares safe options and recommends an implementation block without changing live state.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
@@ -74,7 +74,7 @@
     "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Ryan will confirm, add, remove, or rename proposed phases after work block 0A.",
+    "phaseQuestions": "Ryan reviews the next proposed work block or direction choice after the current verified block closes.",
     "decisionQueue": "Only intentionally deferred Ryan decisions belong here; none block the current bootstrap.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -179,7 +179,7 @@
       "phaseId": "phase-1",
       "label": "1A",
       "name": "Restore Daily Sync And Operational Baseline",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1",
         "Task 2",
@@ -207,7 +207,8 @@
         "Verify production and demo root HTTP status",
         "Refresh and health-check Runway OS"
       ],
-      "reportBack": "Report exact workflow state change, sanitized controlled-run outcome, HTTP health baseline, stop conditions, Runway OS closeout, and target durability."
+      "reportBack": "Reported exact workflow state change, sanitized controlled-run outcome, HTTP health baseline, stop conditions, Runway OS closeout, and target durability.",
+      "result": "Changed the workflow from disabled_inactivity to active; controlled run 29627530457 and all steps passed; production and demo roots returned HTTP 200."
     },
     {
       "id": "phase-0-block-b",
@@ -241,6 +242,35 @@
       ],
       "reportBack": "Transitioned to active Phase 1 work block 1A after the verified baseline was committed and pushed.",
       "result": "Committed and pushed the verified Runway OS baseline as e9a8e5e on origin/codex/runway-os-full-install."
+    },
+    {
+      "id": "phase-1-block-b",
+      "phaseId": "phase-1",
+      "label": "1B",
+      "name": "Define Recurring Sync Safeguards",
+      "status": "proposed",
+      "includedTasks": [
+        "Task 4"
+      ],
+      "excludedTasks": [
+        "Live safeguard implementation",
+        "Workflow mutation or additional sync"
+      ],
+      "owner": "Codex",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block is sanitized platform research, option comparison, recommendation, and Runway OS planning work.",
+      "stopConditions": [
+        "Recommendation requires credential, financial, production, or row-level data",
+        "A new external service, recurring cost, or write-capable automation would be selected without Ryan direction",
+        "Platform behavior cannot be verified authoritatively"
+      ],
+      "verification": [
+        "Cite authoritative platform behavior in the project log",
+        "Compare at least two viable safeguards",
+        "Recommend one implementation-ready path",
+        "Refresh and health-check Runway OS without live mutation"
+      ],
+      "reportBack": "Report the verified platform behavior, option tradeoffs, recommendation, and an implementation-ready next block for Ryan confirmation."
     }
   ],
   "phaseTasks": [
@@ -318,34 +348,38 @@
       "phaseId": "phase-1",
       "taskId": "P1-T1",
       "title": "Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization",
-      "status": "current",
+      "status": "done",
       "owner": "Codex",
       "summary": "Restore the intended schedule through an explicitly approved external GitHub mutation.",
-      "nextAction": "Record the exact state, enable the workflow, confirm active state, and dispatch one controlled run."
+      "result": "Changed workflow ID 256886458 from disabled_inactivity to active."
     },
     {
       "phaseId": "phase-1",
       "taskId": "P1-T2",
       "title": "Task 2: Verify one controlled sync execution",
-      "status": "planned",
+      "status": "done",
       "owner": "Codex",
-      "summary": "Verify all-entity results and failure reporting without exposing financial row data."
+      "summary": "Verify all-entity results and failure reporting without exposing financial row data.",
+      "result": "Controlled workflow-dispatch run 29627530457 completed successfully; the sync job and all job steps passed without opening response-body logs."
     },
     {
       "phaseId": "phase-1",
       "taskId": "P1-T3",
       "title": "Task 3: Establish production and demo health baselines",
-      "status": "planned",
+      "status": "done",
       "owner": "Codex",
-      "summary": "Capture safe HTTP, deploy, and workflow health checks in Runway OS."
+      "summary": "Capture safe HTTP, deploy, and workflow health checks in Runway OS.",
+      "result": "Daily Plaid Sync and Fly Deploy are active; production and demo roots returned HTTP 200."
     },
     {
       "phaseId": "phase-1",
       "taskId": "P1-T4",
       "title": "Task 4: Define recurring operational checks",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "Decide what remains manual and what later becomes a monitored automation."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Decide what remains manual and what later becomes a monitored automation.",
+      "nextAction": "Confirm or revise proposed work block 1B.",
+      "blocker": "No safeguard implementation is authorized"
     },
     {
       "phaseId": "phase-2",
@@ -609,10 +643,14 @@
     {
       "time": "2026-07-17",
       "text": "Committed and pushed the verified full Runway OS baseline as e9a8e5e on origin/codex/runway-os-full-install."
+    },
+    {
+      "time": "2026-07-17",
+      "text": "Completed work block 1A: Daily Plaid Sync is active, controlled run 29627530457 passed, and production/demo returned HTTP 200."
     }
   ],
   "openQuestions": [
-    "What recurring check should prevent or detect future scheduled-workflow inactivity after 1A?"
+    "Which recurring safeguard should prevent or detect future scheduled-workflow inactivity?"
   ],
   "projectQuestions": [
     "Should AGENTS.md become a tracked instruction source during Phase 2?",
@@ -621,10 +659,10 @@
   "ideas": [],
   "issues": [
     {
-      "title": "Daily Plaid Sync disabled for inactivity",
-      "summary": "The scheduled workflow is disabled after successful runs through 2026-07-15; restoring it requires a separately confirmed external-action block.",
+      "title": "Recurring workflow inactivity safeguard not defined",
+      "summary": "Daily Plaid Sync is active and proven, but Phase 1 Task 4 still needs a deliberate detection or prevention mechanism for a future quiet period.",
       "status": "parked",
-      "severity": "high",
+      "severity": "medium",
       "source": "command-center/issues.md"
     },
     {
@@ -637,14 +675,17 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Daily Plaid Sync restored and proven",
-    "description": "The workflow is active, one controlled run completes successfully, production and demo health baselines pass, and sanitized evidence is durable in Runway OS."
+    "name": "Recurring sync safeguard selected",
+    "description": "Ryan confirms a definition block, authoritative platform behavior and viable options are compared, and one implementation-ready safeguard is recommended."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
     "browserSmoke": "pass; generated dashboard visually inspected at 1600x1400",
     "applicationSmoke": "pass; synthetic temp DATA_DIR suite",
-    "gitDiffCheck": "pass; tracked diff and new-file whitespace checks"
+    "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
+    "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
+    "workflowState": "pass; Daily Plaid Sync active after controlled run",
+    "httpHealth": "pass; production and demo roots returned HTTP 200"
   }
 }

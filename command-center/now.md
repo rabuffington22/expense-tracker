@@ -2,36 +2,38 @@
 
 ## Active Objective
 
-Execute confirmed work block 1A to restore Daily Plaid Sync and establish a sanitized operational health baseline.
+Review the successful Daily Plaid Sync recovery and decide how Phase 1 should prevent or detect future silent workflow inactivity.
 
 ## Current Phase
 
-Phase 1: Operational Reliability Recovery.
+Phase 1: Operational Reliability Recovery — Tasks 1-3 complete.
 
-## Current Work Block
+## Completed Work Block
 
-1A: Restore Daily Sync And Operational Baseline — confirmed and active. It includes Phase 1 Tasks 1-3 and excludes Task 4.
+1A: Restore Daily Sync And Operational Baseline — complete and verified.
 
 ## Current Task
 
-Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization.
+Task 4: Define recurring operational checks, currently at the proposed work block 1B confirmation gate.
 
 ## Owner
 
-Codex owns the confirmed live-action block, including stop judgment, sanitized evidence intake, Runway OS closeout, and target-branch durability.
+Ryan owns confirmation of the next decision block. Codex owns the 1A closeout, sanitized evidence, target-branch durability, and any later confirmed safeguard analysis.
 
 ## Status
 
-Phase 0 is complete. Work block 0B committed and pushed the verified full Runway OS baseline as `e9a8e5e` on `origin/codex/runway-os-full-install`. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain untouched.
+Daily Plaid Sync changed from `disabled_inactivity` to `active`. Controlled workflow-dispatch run `29627530457` completed successfully; its sync job and all three job steps passed. The workflow remained active afterward. Production and demo roots both returned HTTP 200.
 
-The reviewed Daily Plaid Sync workflow is still expected to be `disabled_inactivity`. Work block 1A is authorized to enable it and dispatch one controlled run. That run may insert newly available transactions and invoke the existing Luxe Legacy bridge.
+No workflow logs containing response bodies, financial rows, or credentials were opened. No source-code, secret, Fly, database-transfer, authentication, documentation, PR, merge, or parent-repo change occurred.
 
-## Next Action
+The verified Runway OS branch remains `codex/runway-os-full-install`. The 1A closeout is being committed and pushed. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain untouched.
 
-Record the exact workflow state and definition, enable it through GitHub, confirm it becomes active, dispatch one controlled run, and stop on any failed job, unexpected target, sensitive output, or requirement for excluded changes.
+## Recommended Next Action
 
-## Locked Boundaries
+Confirm or revise proposed work block 1B: Define Recurring Sync Safeguards. It compares safe prevention/detection options and recommends an implementation block without changing live state.
 
-- No source-code, secret, Fly, database-transfer, authentication, CSRF, encryption, documentation, PR, merge, or parent-repo changes.
-- No row-level financial or credential output in Runway OS or chat.
-- Task 4 recurring monitoring design remains outside 1A.
+## Locked Boundaries Until Confirmation
+
+- No new monitor, automation, external service, or recurring cost.
+- No workflow mutation or additional Plaid sync.
+- No application, credential, ignored-data, Fly, database, authentication, PR, merge, or parent-repo action.

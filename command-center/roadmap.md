@@ -74,14 +74,14 @@ Status: active
 
 Goal: restore and prove the automated financial-data pipeline before broader feature work.
 
-- **Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization.** Treat this as an external GitHub mutation and preserve the exact before/after state.
-- **Task 2: Verify one controlled sync execution.** Confirm authentication, all-entity results, downstream Luxe Legacy isolation, and failure reporting without exposing financial row data.
-- **Task 3: Establish production and demo health baselines.** Capture safe HTTP health, latest deploy status, workflow state, and restartable checks in Runway OS.
-- **Task 4: Define recurring operational checks.** Decide what belongs in manual re-entry, dashboard status, GitHub Actions, or a later monitored automation.
+- **Task 1: Re-enable the disabled Daily Plaid Sync workflow with Ryan authorization.** Treat this as an external GitHub mutation and preserve the exact before/after state. Status: done; workflow is active.
+- **Task 2: Verify one controlled sync execution.** Confirm authentication, all-entity results, downstream Luxe Legacy isolation, and failure reporting without exposing financial row data. Status: done; controlled run `29627530457` completed successfully.
+- **Task 3: Establish production and demo health baselines.** Capture safe HTTP health, latest deploy status, workflow state, and restartable checks in Runway OS. Status: done; both roots returned HTTP 200 and both workflows are active.
+- **Task 4: Define recurring operational checks.** Decide what belongs in manual re-entry, dashboard status, GitHub Actions, or a later monitored automation. Status: current at the work-block confirmation gate.
 
 ### Proposed Work Block 1A: Restore Daily Sync And Operational Baseline
 
-Status: active
+Status: done
 
 Included: Tasks 1-3.
 
@@ -112,6 +112,34 @@ Verification:
 - update Runway OS sources and state;
 - refresh and health-check the dashboard;
 - report target durability separately.
+
+Result: the remote workflow definition matched the reviewed local file, the workflow changed from `disabled_inactivity` to `active`, controlled workflow-dispatch run `29627530457` completed successfully in about 20 seconds, all job steps passed, the workflow remained active, and production/demo roots returned HTTP 200. Row-level logs were not opened.
+
+### Proposed Work Block 1B: Define Recurring Sync Safeguards
+
+Status: proposed; awaiting Ryan confirmation
+
+Included: Task 4.
+
+Excluded: implementation of a monitor or automation; workflow enable/disable/dispatch; additional Plaid sync; application, workflow, secret, Fly, database, authentication, documentation, PR, merge, or parent-repo changes.
+
+Outcome: compare the safe options for detecting or preventing future scheduled-workflow inactivity, recommend one with explicit tradeoffs, and write an implementation-ready follow-up task without changing live state.
+
+Owner and recommended agent: Codex Desktop. The block is project-control research and recommendation work using sanitized GitHub metadata and official platform behavior.
+
+Stop conditions:
+
+- The recommendation requires credential, financial, production, or row-level data access.
+- The right mechanism would create a new external service, recurring cost, or write-capable automation without Ryan direction.
+- Platform behavior cannot be verified from authoritative documentation or current repo metadata.
+
+Verification:
+
+- authoritative platform behavior cited in the project log;
+- at least two viable safeguard options compared;
+- one recommended path with implementation and stop boundaries;
+- roadmap/state updated without live mutation;
+- dashboard refresh and health check pass.
 
 ## Phase 2: Project Truth And Documentation Recovery
 
