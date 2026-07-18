@@ -4,7 +4,7 @@ These are known defects, risks, or rough edges. They are not active work unless 
 
 ## Daily Plaid Sync Disabled For Inactivity
 
-Status: recurrence cause defined in 1B; monitor implementation pending
+Status: monitored; work block 1C complete
 
 Severity: high operational reliability
 
@@ -20,15 +20,15 @@ The `Daily Plaid Sync` workflow was found `disabled_inactivity` after its last l
 
 Impact:
 
-Immediate sync scheduling is restored. Work block 1B found that the public repository's more-than-60-day commit gap closely matches GitHub's documented automatic-disable rule. A future quiet period could still allow recurrence until Task 5 adds independent alert-only monitoring.
+Immediate sync scheduling is restored. Work block 1B found that the public repository's more-than-60-day commit gap closely matches GitHub's documented automatic-disable rule. Work block 1C added independent alert-only monitoring for disabled state, missing scheduled runs, unsuccessful runs, and runs incomplete beyond the delay window.
 
 Why not fully closed:
 
-The safeguard is now defined but not implemented. Proposed work block 1C creates a local Codex monitor that checks public workflow state and scheduled-run freshness without enabling or dispatching the workflow.
+The underlying GitHub inactivity behavior still exists, but active automation `expense-tracker-daily-plaid-sync-monitor` now detects recurrence without enabling or dispatching the workflow. Recovery remains Ryan-gated.
 
 Promotion trigger:
 
-Ryan confirms proposed work block 1C.
+The monitor reports a defined failure condition or Task 6 reveals a better control.
 
 ## Daily Plaid Sync Runs At The Start Of The Hour
 

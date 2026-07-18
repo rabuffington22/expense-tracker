@@ -54,8 +54,15 @@ Before 1B research began, repository state showed `codex/runway-os-full-install`
 
 Ryan authorized committing and pushing the completed work block 1B command-center changes directly to `main`. The pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded.
 
+### 2026-07-18 — Confirm work block 1C for an independent read-only monitor
+
+Ryan authorized one project-local recurring Codex automation that checks unauthenticated public GitHub workflow metadata daily at 7:00 AM America/Chicago. It may alert on a non-active workflow, no scheduled run within 36 hours, an unsuccessful latest scheduled run, or a scheduled run that remains incomplete beyond the delay window. Manual dispatches do not satisfy freshness. The automation must never enable, dispatch, rerun, or edit the workflow and must not access credentials, financial data, Plaid, Fly, databases, application state, or paid external services.
+
+### 2026-07-18 — Publish the 1C closeout directly to main
+
+Ryan authorized committing and pushing the completed work block 1C command-center changes directly to `main`. Publication remains limited to the 1C Runway OS sources, generated dashboard, and closeout log. Pre-existing untracked `AGENTS.md` and `scripts/sync_prod_to_local.sh` remain excluded.
+
 ## Pending Ryan Direction
 
 - Decide in Phase 2 whether `AGENTS.md` becomes tracked and which legacy documentation is archived or replaced.
-- Confirm or revise proposed work block 1C, which creates an independent alert-only Codex monitor using public workflow metadata and never enables or dispatches Daily Plaid Sync.
 - Decide later whether Task 6 should move the cron trigger away from minute zero through a separate source-and-release block.

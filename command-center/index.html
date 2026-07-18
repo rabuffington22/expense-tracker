@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 7:22 AM CST",
+    "lastUpdated": "2026-07-18 7:39 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1624,16 +1624,16 @@
   "phase": {
     "name": "Operational Reliability Recovery",
     "status": "active",
-    "summary": "Daily Plaid Sync is active and proven; work block 1B defined an independent alert-only monitor, now awaiting 1C confirmation.",
-    "progress": 67
+    "summary": "Daily Plaid Sync is active and proven; work block 1C installed and verified an independent alert-only monitor, leaving only Task 6 cron hardening.",
+    "progress": 83
   },
   "currentTask": {
-    "title": "Task 5: Add an independent read-only Daily Plaid Sync monitor",
+    "title": "Task 6: Move the daily trigger away from the start of the hour",
     "owner": "Ryan",
     "status": "awaiting confirmation",
-    "supportingAgent": "Codex Desktop proposes work block 1C and owns any later confirmed automation setup",
-    "nextAction": "Confirm or revise proposed work block 1C: Independent Daily Sync Monitor.",
-    "blocker": "No recurring automation is authorized until Ryan confirms 1C"
+    "supportingAgent": "Codex Desktop owns the completed 1C evidence and will propose a separate source-and-release block 1D",
+    "nextAction": "Review a separate work block 1D proposal before any workflow source edit or release action.",
+    "blocker": "No workflow schedule change is authorized until Ryan confirms a separate 1D block"
   },
   "routerHealth": {
     "status": "healthy",
@@ -1658,18 +1658,18 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Confirm the independent Daily Sync monitor",
+    "title": "Define the separate minute-zero cron hardening block",
     "status": "recommended",
     "owner": "Ryan",
-    "why": "The recurrence cause is defined and an independent alert-only monitor can detect disabled state or missing scheduled runs without financial-data access or workflow writes.",
-    "action": "Confirm or revise proposed 1C; Task 6 cron hardening remains a separate later block.",
+    "why": "The independent monitor is active and verified; Task 6 is the only remaining Phase 1 task and changes workflow source through a separate release boundary.",
+    "action": "Review a proposed work block 1D before any schedule edit, branch, merge, or deployment action.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews proposed work block 1C before any recurring automation is created.",
+    "summary": "Ryan reviews a future work block 1D before Daily Plaid Sync source or release work begins.",
     "items": [
-      "Confirm or revise 1C: Independent Daily Sync Monitor"
+      "Confirm or revise a separate Task 6 minute-zero cron hardening block"
     ]
   },
   "questionBoundaries": {
@@ -1878,7 +1878,7 @@
       "phaseId": "phase-1",
       "label": "1C",
       "name": "Independent Daily Sync Monitor",
-      "status": "proposed",
+      "status": "done",
       "includedTasks": [
         "Task 5"
       ],
@@ -1891,10 +1891,18 @@
       "owner": "Codex",
       "recommendedAgent": "Codex Desktop",
       "whyThisAgent": "The block requires project-local automation setup, exact sensitive-action boundaries, read-only validation, and Runway OS closeout.",
-      "expectedLiveEffect": "Create one local recurring Codex automation that reads public GitHub metadata and may notify Ryan without mutating the workflow or financial system.",
+      "expectedLiveEffect": "Create one local recurring Codex automation that reads unauthenticated public GitHub metadata daily at 7:00 AM America/Chicago and may notify Ryan without mutating the workflow or financial system.",
+      "cadence": "Daily at 7:00 AM America/Chicago",
+      "alertConditions": [
+        "Workflow state is not active",
+        "No schedule event exists within the preceding 36 hours",
+        "Latest scheduled run completed with a conclusion other than success",
+        "Latest scheduled run remains incomplete beyond the conservative delay window"
+      ],
       "stopConditions": [
         "The automation requires credentials, private data, or a paid external service",
         "It cannot distinguish scheduled runs from manual dispatches",
+        "Healthy checks would create unavoidable noisy daily alerts",
         "It would enable, dispatch, rerun, or edit the workflow",
         "A read-only test cannot verify current workflow state and scheduled-run freshness"
       ],
@@ -1905,7 +1913,8 @@
         "Verify no workflow, application, or production state changed",
         "Refresh and health-check Runway OS"
       ],
-      "reportBack": "Report automation identity, cadence, alert thresholds, read-only test result, limitations, and the separate Task 6 boundary."
+      "reportBack": "Reported automation identity, cadence, alert thresholds, read-only test result, limitations, and the separate Task 6 boundary.",
+      "result": "Created active automation expense-tracker-daily-plaid-sync-monitor; its unauthenticated public-metadata test identified active workflow 256886458 and successful scheduled run 29640666471 with no alert conditions, while excluding manual dispatch 29627530457."
     }
   ],
   "phaseTasks": [
@@ -2019,20 +2028,20 @@
       "phaseId": "phase-1",
       "taskId": "P1-T5",
       "title": "Task 5: Add an independent read-only Daily Plaid Sync monitor",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex",
       "summary": "Create a project-local recurring Codex automation that alerts on disabled state, missing scheduled runs, or a non-successful latest scheduled run without workflow writes.",
-      "nextAction": "Confirm or revise proposed work block 1C.",
-      "blocker": "No recurring automation is authorized until Ryan confirms 1C"
+      "result": "Created and activated expense-tracker-daily-plaid-sync-monitor on a daily 7:00 AM local schedule; read-only scheduled-event validation passed with no alert conditions."
     },
     {
       "phaseId": "phase-1",
       "taskId": "P1-T6",
       "title": "Task 6: Move the daily trigger away from the start of the hour",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Reduce GitHub's documented top-of-hour delay/drop exposure through a separate source-and-release block.",
-      "nextAction": "Revisit after Task 5; do not combine with the alert-only automation block."
+      "nextAction": "Propose and confirm a separate work block 1D before source or release work.",
+      "blocker": "No workflow schedule change is authorized until Ryan confirms a separate 1D block"
     },
     {
       "phaseId": "phase-2",
@@ -2236,6 +2245,10 @@
       "path": "command-center/logs/2026-07-18-recurring-sync-safeguards.md"
     },
     {
+      "name": "Independent Daily Sync Monitor Closeout",
+      "path": "command-center/logs/2026-07-18-independent-daily-sync-monitor.md"
+    },
+    {
       "name": "Agent Selection",
       "path": "command-center/agent-selection.md"
     },
@@ -2316,10 +2329,18 @@
     {
       "time": "2026-07-18",
       "text": "Ryan authorized committing and pushing the completed 1B command-center closeout directly to main while preserving pre-existing untracked files."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 1C for a daily project-local read-only monitor with failure-only alerts and no workflow or financial-system mutation."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 1C: active automation expense-tracker-daily-plaid-sync-monitor passed its public scheduled-run metadata test without workflow or financial-system mutation."
     }
   ],
   "openQuestions": [
-    "Should proposed work block 1C create the independent alert-only Daily Plaid Sync monitor?"
+    "Should work block 1D move the Daily Plaid Sync trigger away from minute zero through a separate source-and-release boundary?"
   ],
   "projectQuestions": [
     "Should AGENTS.md become a tracked instruction source during Phase 2?",
@@ -2328,10 +2349,10 @@
   "ideas": [],
   "issues": [
     {
-      "title": "Recurring workflow inactivity monitor not implemented",
-      "summary": "Work block 1B defined an independent alert-only monitor; proposed 1C still requires Ryan confirmation before automation creation.",
-      "status": "awaiting-confirmation",
-      "severity": "medium",
+      "title": "Recurring workflow inactivity remains possible but monitored",
+      "summary": "Active automation expense-tracker-daily-plaid-sync-monitor now detects disabled state, stale scheduled runs, unsuccessful runs, and runs incomplete beyond the delay window without automatic recovery.",
+      "status": "monitored",
+      "severity": "low",
       "source": "command-center/issues.md"
     },
     {
@@ -2351,8 +2372,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Independent Daily Sync monitor active",
-    "description": "Ryan confirms 1C, a read-only local Codex monitor is created, and current workflow state plus scheduled-run freshness are verified without live financial mutation."
+    "name": "Minute-zero cron hardening decision",
+    "description": "Ryan reviews a separate work block 1D for moving the Daily Plaid Sync schedule away from minute zero through an explicit source-and-release boundary."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -2361,8 +2382,9 @@
     "applicationSmoke": "pass; synthetic temp DATA_DIR suite",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
-    "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 currently active",
+    "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 active and latest scheduled run 29640666471 succeeded",
     "safeguardResearch": "pass; authoritative GitHub behavior cited, five options compared, and one implementation-ready path recommended",
+    "independentMonitor": "pass; expense-tracker-daily-plaid-sync-monitor active on a daily 7:00 AM local schedule; public schedule-event test returned healthy with manual dispatch excluded",
     "httpHealth": "pass; production and demo roots returned HTTP 200"
   }
 }
