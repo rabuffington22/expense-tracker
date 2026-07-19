@@ -1032,9 +1032,9 @@ Result: the written contract and implementation replace new file natural-key col
 
 Evidence: `command-center/transaction-identity-contract.md`, `command-center/logs/2026-07-19-transaction-identity-foundation-4c.md`, `core/imports.py`, `web/routes/plaid.py`, and `scripts/smoke_test.py`.
 
-### Active 4C-R Durability And Release
+### Work Block 4C-R: Durability And Release
 
-Status: active under Ryan's 2026-07-19 direct instruction to commit and push the completed work to `main`.
+Status: done under Ryan's 2026-07-19 direct instruction to commit and push the completed work to `main`.
 
 Included: exact intended Task 8/4C source, maintained test, contract, second-opinion, closeout, and command-center artifacts; explicit staging; one source commit; fast-forward local `main`; direct push to `origin/main`; read-only observation of the automatic Fly workflow; credential-free `/health`; and one command-center-only `[skip actions]` closeout commit and push.
 
@@ -1043,6 +1043,10 @@ Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; real databases
 Stop conditions: unexpected publish paths or sensitive content; remote divergence; failed verification or deployment; credential/protected-data requirements; or any recovery outside the authorized path.
 
 Report point: return both commits, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the next separately planned 4D gate.
+
+Result: source commit `4a84f49` was pushed directly to `main`. Automatic Fly Deploy run `29689659579` and deploy job `88200026060` passed every reported step for that exact SHA. Production `/health` returned HTTP 200 without credentials. The pre-existing untracked sync script remained excluded, and this command-center-only closeout uses `[skip actions]` so it does not trigger a second deployment.
+
+Evidence: `command-center/logs/2026-07-19-transaction-identity-release-4c-r.md`, source commit `4a84f49`, and GitHub Actions run `29689659579`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish the completed 4C transaction-identity foundation directly to `main`, observe the automatic Fly workflow, and close project state without a second deployment.
+Plan the next bounded Phase 4 boundary/truthfulness repair after the durable, released completion of transaction identity work block 4C.
 
 ## Current Phase
 
@@ -10,7 +10,7 @@ Phase 4: Core Repairs And Regression Coverage — active after the verified loca
 
 ## Current Work Block
 
-4C-R: Transaction Identity Durability — active under Ryan's direct `Commit and push to main` authorization.
+None. Work blocks 4C and 4C-R are complete, durable on `main`, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
@@ -18,7 +18,7 @@ Phase 4 Task 1B: continue remaining prioritized repairs through separately confi
 
 ## Owner
 
-Codex Desktop owns the exact-path commit, direct-main push, automatic Fly observation, credential-free health check, and `[skip actions]` command-center closeout. Ryan retains all recovery, credential, protected-data, and unrelated-action gates.
+Ryan owns the next work-block decision. Codex Desktop completed the 4C implementation, exact-path durability, automatic Fly observation, credential-free production health check, and sanitized closeout.
 
 ## Phase 3 And 3L Result
 
@@ -44,23 +44,22 @@ Codex Desktop owns the exact-path commit, direct-main push, automatic Fly observ
 
 ## Current Action
 
-Stage only the intended Task 8 and 4C artifacts, excluding `scripts/sync_prod_to_local.sh`; commit, fast-forward local `main`, push `main`, observe the resulting Fly workflow, run credential-free health verification, and publish a sanitized `[skip actions]` closeout.
+Separately define and confirm work block 4D, provisionally beginning with `P3-3F-01` BFM-only payroll route enforcement and paired boundary coverage. Do not begin product edits from the roadmap alone.
 
-## Release Stop Conditions
+## Remaining Gates
 
-- The exact publish set contains an unexpected path, protected data, secret, or unrelated user change.
-- `origin/main` advances or the local branch cannot fast-forward cleanly.
-- Maintained checks, the automatic Fly workflow, credential-free health, or the command-center closeout checks fail.
-- Recovery requires credentials, protected data, production database access, workflow dispatch, force push, or unrelated repair.
-- 4D and every other Phase 3 repair remain outside this release.
+- 4D requires a complete proposed work block and Ryan confirmation before implementation.
+- Plaid cursor atomicity, reconciliation, concurrency, `/k/`, and every other Phase 3 finding remain separately gated.
+- Protected data, credentials, real databases, and live actions remain closed unless a future exact block authorizes them.
 
 ## Verification
 
 - Baseline and final `.venv/bin/python scripts/smoke_test.py`: pass.
 - Focused all-entity identity, redelivery, populated-reference, reporting, and socket-denied Plaid checks: pass.
-- Re-run Python compilation, smoke, sensitive-string scan, JSON validation, dashboard refresh, health check, and `git diff --check` before commit.
-- Confirm the direct-main push, automatic Fly run and job result, credential-free production `/health`, final `main`/`origin/main` alignment, and `[skip actions]` closeout durability.
+- Source commit `4a84f49` is on `main`; automatic Fly Deploy run `29689659579` and every job step passed.
+- Credential-free production `/health` returned HTTP 200; local `main` matched `origin/main` before this closeout.
+- The command-center-only closeout is published with `[skip actions]` to avoid a second deployment.
 
 ## Next Report Point
 
-Return the source and closeout commits, direct-main push, automatic Fly result, credential-free health status, final branch alignment, preserved exclusions, and provisional 4D recommendation.
+Return the source and closeout commits, automatic Fly result, production health, final alignment, preserved exclusions, and provisional 4D recommendation.

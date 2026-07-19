@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 8:50 AM CST",
+    "lastUpdated": "2026-07-19 8:55 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,31 +1619,23 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks 3A-3I are published on main; 3J/4A source and evidence were released through PR 86 as f4cd686, Fly Deploy run 29670793359 passed, and 4B has a direct-main skip-actions closeout"
+    "durabilityStatus": "Work blocks through 4C are published on main; 4C source commit 4a84f49 deployed successfully in Fly run 29689659579, with this command-center-only skip-actions closeout"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4C is locally complete and 4C-R is active for exact-path direct-main durability, automatic Fly observation, and sanitized closeout.",
+    "summary": "Work blocks 4C and 4C-R are complete: transaction identity is durable on main, automatic Fly deployment passed, and production health returned 200.",
     "progress": 55
   },
   "currentTask": {
     "title": "Task 1B: Repair remaining prioritized reliability and correctness defects",
-    "owner": "Codex Desktop",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns the authorized exact-path 4C durability, automatic Fly observation, credential-free health check, and sanitized closeout",
-    "nextAction": "Stage the exact intended 4C set, commit, fast-forward and push main, observe automatic Fly, verify health, then publish a skip-actions closeout.",
-    "blocker": "Protected data, credentials, workflow dispatch, non-automatic Fly changes, 4D, unrelated repairs, force push, and out-of-path recovery remain unauthorized"
+    "supportingAgent": "Codex Desktop completed 4C implementation, direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout",
+    "nextAction": "Separately define and confirm work block 4D, provisionally beginning with P3-3F-01 BFM-only payroll route enforcement.",
+    "blocker": "No 4D implementation, protected-data access, credential use, or other live action is authorized"
   },
-  "currentWorkBlock": {
-    "id": "phase-4-block-c-release",
-    "label": "4C-R",
-    "name": "Transaction Identity Durability And Release",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "scope": "Exact intended Task 8 and 4C commit, fast-forward main, direct push, automatic Fly observation, credential-free health, and skip-actions closeout",
-    "nextAction": "Complete exact-path scope, sensitive, sync, and verification checks before explicit staging."
-  },
+  "currentWorkBlock": null,
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -1667,21 +1659,25 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish and verify work block 4C",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan explicitly authorized committing and pushing the locally verified 4C work to main.",
-    "action": "Publish the exact intended paths, observe the automatic release, verify health, and close with skip actions.",
+    "title": "Separately plan boundary/truthfulness work block 4D",
+    "status": "awaiting Ryan",
+    "owner": "Ryan",
+    "why": "4C is durable, deployed, and health verified; the confirmed repair order places an early boundary/truthfulness block next.",
+    "action": "Ask Codex to define 4D, provisionally beginning with BFM-only payroll route enforcement and paired coverage, then confirm before implementation.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    "Ask Codex to define and then confirm work block 4D before the next implementation."
+  ],
   "waitingOnRyan": {
-    "summary": "No Ryan input is required inside the authorized 4C-R exact release path.",
-    "items": []
+    "summary": "Work block 4C-R is complete and the next Phase 4 implementation needs a separate Ryan request and confirmation.",
+    "items": [
+      "Ask Codex to define work block 4D when ready."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "4C-R authorizes only exact durability, automatic release observation, health verification, and sanitized closeout. Public k behavior, later repairs, and other live access remain outside authorization.",
-    "decisionQueue": "No decision is pending inside 4C-R; 4D remains a later separate planning and confirmation gate.",
+    "phaseQuestions": "4C and 4C-R are complete. Public k behavior, later repairs, protected data, credentials, and other live access remain outside authorization.",
+    "decisionQueue": "The next decision is a separately proposed and confirmed 4D scope.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2862,15 +2858,16 @@
         "Disposable cleanup, jq empty state, dashboard refresh, health check, git diff check, generated-dashboard inspection, and final worktree review"
       ],
       "reportBack": "Return the written identity contract, exact source/migration/test changes, full and focused synthetic results, populated-upgrade evidence, cleanup, preserved boundaries, branch state, remaining release gate, and the recommended first separate boundary/truthfulness block.",
-      "durability": "Local-only; no commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action occurred.",
+      "durability": "Source commit 4a84f49 is on main; automatic Fly run 29689659579 passed; production health returned 200; this command-center-only closeout uses skip actions.",
       "evidence": [
         "command-center/transaction-identity-contract.md",
         "command-center/logs/2026-07-19-transaction-identity-foundation-4c.md",
+        "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
         "core/imports.py",
         "web/routes/plaid.py",
         "scripts/smoke_test.py"
       ],
-      "result": "Versioned source, account, occurrence, and authoritative-external identities are implemented without a migration. Maintained all-entity, exact-redelivery, populated-reference, effective-reporting, empty-ID, legacy-Plaid-binding, socket-denied call-site, full smoke, compile, cleanup, and command-center checks pass."
+      "result": "Versioned source, account, occurrence, and authoritative-external identities are implemented without a migration. Source commit 4a84f49 is durable on main, automatic Fly run 29689659579 passed every reported step, production health returned 200, and the maintained local checks remain green."
     }
   ],
   "phaseTasks": [
@@ -3260,8 +3257,8 @@
       "title": "Task 1B: Repair remaining prioritized reliability and correctness defects",
       "status": "current",
       "owner": "Ryan",
-      "summary": "Work block 4C completed P3-3A-01 locally; implement remaining evidence-backed repairs only through separately confirmed blocks.",
-      "nextAction": "Choose 4C durability/release or separately plan 4D beginning provisionally with P3-3F-01.",
+      "summary": "Work blocks 4C and 4C-R completed, released, and health verified P3-3A-01; implement remaining repairs only through separately confirmed blocks.",
+      "nextAction": "Separately plan 4D beginning provisionally with P3-3F-01.",
       "blocker": "No next implementation or GitHub/live action is authorized."
     },
     {
@@ -3522,9 +3519,17 @@
     {
       "name": "Work Block 4C Transaction Identity Foundation Closeout",
       "path": "command-center/logs/2026-07-19-transaction-identity-foundation-4c.md"
+    },
+    {
+      "name": "Work Block 4C-R Transaction Identity Release Closeout",
+      "path": "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-19",
+      "text": "Published 4C source commit 4a84f49 to main; automatic Fly run 29689659579 passed every reported step and credential-free production health returned 200."
+    },
     {
       "time": "2026-07-19",
       "text": "Completed work block 4C locally: versioned source-aware file and authoritative Plaid identity now pass all-entity, exact-redelivery, populated-reference, no-migration, cleanup, and command-center checks."
@@ -4199,8 +4204,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Choose 4C durability or separately plan work block 4D",
-    "description": "Review the locally verified transaction-identity closeout, then authorize an exact release path or define the next bounded boundary/truthfulness repair."
+    "name": "Separately plan work block 4D",
+    "description": "Define and confirm the next bounded boundary/truthfulness repair, provisionally beginning with BFM-only payroll route enforcement and paired coverage."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -4261,7 +4266,9 @@
     "phase3Task8DecisionCloseout": "pass; Ryan confirmed all four post-review decisions, every catalog ID remains ordered or gated, work block 3L and Phase 3 are done, and Phase 4 is active",
     "phase4TransactionIdentityRepair": "pass; versioned source, account, occurrence, and authoritative Plaid identity is implemented without rewriting existing keys or adding a migration",
     "phase4TransactionIdentityCoverage": "pass; maintained all-entity duplicates, exact redelivery, populated legacy IDs and references, negative debits, edits, aliases, effective reporting, empty external IDs, legacy Plaid bindings, and socket-denied call-site checks pass",
-    "phase4TransactionIdentityBoundaries": "pass; temporary synthetic data only, disposable cleanup proven, no real data or credentials, no network or live Plaid action, no cursor or reconciliation change, no GitHub durability, and the pre-existing untracked sync script remained untouched"
+    "phase4TransactionIdentityBoundaries": "pass; temporary synthetic data only, disposable cleanup proven, no real data or credentials, no network or live Plaid action, no cursor or reconciliation change, and the pre-existing untracked sync script remained untouched",
+    "phase4TransactionIdentityRelease": "pass; source commit 4a84f49 is on main, automatic Fly run 29689659579 and deploy job 88200026060 passed every reported step, and credential-free production health returned 200",
+    "phase4TransactionIdentityDurability": "pass; local main matched origin/main at 4a84f49 before this command-center-only skip-actions closeout"
   }
 }
 </script>
