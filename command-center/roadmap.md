@@ -1249,7 +1249,7 @@ Evidence: `core/luxury_bridge.py`, `scripts/smoke_test.py`, `command-center/issu
 
 ### Work Block 4F-R: Durability And Release
 
-Status: active under Ryan's 2026-07-19 direct instruction to commit and push the completed work to `main`
+Status: done, durable, automatically deployed, and credential-free health verified on 2026-07-19
 
 Included: exact intended 4F application, maintained-test, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/luxe-legacy-downstream-selection`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -1262,6 +1262,10 @@ Stop conditions: the exact diff includes an unexpected path, sensitive value, pr
 Verification: exact path and sensitive-string review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final main/origin alignment; and sanitized `[skip actions]` closeout publication.
 
 Report point: return source and closeout commits, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separately planned Task 1F gate.
+
+Result: the exact nine-path 4F source set was committed as `ce0c1b6`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29695007172` and job `88214137931` passed every reported step for that exact source SHA. Production `/health` returned HTTP 200 without credentials, and local `main` matched `origin/main`. The untracked sync script and unrelated `command-center/now 2.md` remained excluded, no protected data or credentials were used, and no manual workflow, non-automatic Fly, Plaid, or downstream action occurred. This command-center-only closeout is published separately with `[skip actions]` to avoid a second deployment.
+
+Evidence: `command-center/logs/2026-07-19-luxe-legacy-downstream-selection-release-4f-r.md`, source commit `ce0c1b6`, and GitHub Actions run `29695007172`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

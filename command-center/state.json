@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 11:30 AM CST",
+    "lastUpdated": "2026-07-19 11:33 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,35 +22,23 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4E-R are published on main; 4E source commit 1a277b0 deployed successfully in Fly run 29694423318, with this command-center-only skip-actions closeout"
+    "durabilityStatus": "Work blocks through 4F-R are published on main; 4F source commit ce0c1b6 deployed successfully in Fly run 29695007172, with this command-center-only skip-actions closeout"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4F-R is active for exact-path direct-main durability, automatic Fly observation, credential-free production health, and sanitized closeout.",
+    "summary": "Work block 4F-R is complete: source commit ce0c1b6 is durable on main, automatic Fly deployment passed, and credential-free production health returned 200.",
     "progress": 67
   },
   "currentTask": {
-    "title": "Task 4: Publish and verify explicitly approved repairs",
-    "owner": "Codex Desktop",
+    "title": "Task 1F: Authenticate scheduled sync before entity setup",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Ryan directly authorized commit and push to main for the completed 4F work",
-    "nextAction": "Verify exact scope and remote alignment, commit the 4F source set, fast-forward and push main, observe automatic deployment, verify health, and publish sanitized closeout.",
-    "blocker": "Recovery beyond the exact fast-forward publish path remains unauthorized"
+    "supportingAgent": "Codex Desktop completed 4F-R direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout",
+    "nextAction": "Separately define and confirm a bounded Task 1F work block before implementation.",
+    "blocker": "No Task 1F implementation or additional release/live action is authorized"
   },
-  "currentWorkBlock": {
-    "id": "phase-4-block-f-release",
-    "label": "4F-R",
-    "name": "Durability And Release",
-    "status": "active",
-    "includedTasks": [
-      "Task 1E release durability",
-      "Task 4"
-    ],
-    "owner": "Codex Desktop",
-    "currentTask": "Verify, commit, fast-forward main, push, observe automatic Fly deployment, verify credential-free health, and publish sanitized closeout",
-    "nextReportPoint": "Return source and closeout commits, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the Task 1F planning point."
-  },
+  "currentWorkBlock": null,
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -74,21 +62,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish and verify work block 4F-R",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized commit and push to main for the completed, locally verified 4F scope.",
-    "action": "Publish the exact 4F source set by fast-forward, observe the attributable automatic Fly deployment, verify credential-free health, and publish the sanitized closeout.",
+    "title": "Separately plan Task 1F scheduled-sync authentication boundary",
+    "status": "awaiting Ryan",
+    "owner": "Ryan",
+    "why": "4F-R is durable, deployed, and health verified; the accepted Phase 4 sequence places P3-3H-01 next as a separate early truthfulness boundary.",
+    "action": "Ask Codex to define Task 1F, then confirm before implementation or any further live action.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No current decision blocks the exact authorized 4F-R release path.",
-    "items": []
+    "summary": "Work block 4F-R is complete; the next implementation requires a separate Ryan decision.",
+    "items": [
+      "Ask Codex to define the Task 1F work block when ready."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Only the exact 4F-R fast-forward release path is authorized. Task 1F-1P implementation, downstream idempotency, empty-ID handling, authenticated production access, and unrelated repairs remain outside authorization.",
-    "decisionQueue": "After 4F-R closeout, Task 1F returns as the next separately planned work block.",
+    "phaseQuestions": "Work block 4F-R is complete. Task 1F-1P implementation, downstream idempotency, empty-ID handling, authenticated production access, further releases, and unrelated repairs remain outside authorization.",
+    "decisionQueue": "The next Ryan decision is a separately proposed and confirmed Task 1F scope.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1546,7 +1536,7 @@
       "phaseId": "phase-4",
       "label": "4F-R",
       "name": "Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1E release durability",
         "Task 4"
@@ -1582,7 +1572,14 @@
         "Final main and origin alignment and sanitized skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the Task 1F planning point.",
-      "durability": "Active release block; final durable result is pending source publication, automatic deployment, credential-free health, and sanitized closeout."
+      "durability": "Source commit ce0c1b6 is durable on main; automatic Fly run 29695007172 and deploy job 88214137931 passed, credential-free production health returned 200, and the sanitized command-center closeout is published separately with skip actions.",
+      "evidence": [
+        "command-center/logs/2026-07-19-luxe-legacy-downstream-selection-4f.md",
+        "command-center/logs/2026-07-19-luxe-legacy-downstream-selection-release-4f-r.md",
+        "GitHub Actions run 29695007172",
+        "Fly deploy job 88214137931"
+      ],
+      "result": "Published source commit ce0c1b6 directly to main by exact-path fast-forward, observed successful automatic Fly run 29695007172 and job 88214137931, verified credential-free production health at HTTP 200, preserved both unrelated untracked files, and prepared the sanitized skip-actions closeout."
     }
   ],
   "phaseTasks": [
@@ -2034,11 +2031,11 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1F",
       "title": "Task 1F: Authenticate scheduled sync before entity setup",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Repair P3-3H-01 independently before the broader sync-entry family.",
-      "nextAction": "Return as the current task after 4F-R closes.",
-      "blocker": "No Task 1F implementation is authorized while the separate 4F-R release block is active."
+      "nextAction": "Define and confirm a separate Task 1F work block before implementation.",
+      "blocker": "No Task 1F implementation is authorized."
     },
     {
       "phaseId": "phase-4",
@@ -2140,18 +2137,19 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Publish only exact verified repair scopes through separately authorized release blocks.",
-      "result": "Releases 4B, 4C-R, 4D-R, and 4E-R completed successfully; 4E source commit 1a277b0 is on main, Fly run 29694423318 and job 88212585378 succeeded, and credential-free production health returned 200.",
+      "result": "Releases 4B, 4C-R, 4D-R, 4E-R, and 4F-R completed successfully; 4F source commit ce0c1b6 is on main, Fly run 29695007172 and job 88214137931 succeeded, and credential-free production health returned 200.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
         "command-center/logs/2026-07-19-bfm-only-payroll-boundary-release-4d-r.md",
-        "command-center/logs/2026-07-19-luxe-legacy-planning-boundary-release-4e-r.md"
+        "command-center/logs/2026-07-19-luxe-legacy-planning-boundary-release-4e-r.md",
+        "command-center/logs/2026-07-19-luxe-legacy-downstream-selection-release-4f-r.md"
       ],
-      "nextAction": "Complete the exact 4F-R source publication, automatic deployment observation, credential-free health verification, and sanitized closeout.",
-      "blocker": "Recovery outside the authorized fast-forward path remains closed."
+      "nextAction": "Require separate approval for each future release block.",
+      "blocker": "No additional release or live action is authorized."
     },
     {
       "phaseId": "phase-5",
@@ -3102,8 +3100,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete 4F-R durability and release",
-    "description": "Publish the exact verified 4F source set, observe automatic Fly deployment, verify credential-free health, and publish sanitized closeout."
+    "name": "Separately plan Task 1F",
+    "description": "Define and confirm the scheduled-sync authentication-before-entity-setup boundary before implementation."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -3171,6 +3169,8 @@
     "phase4DownstreamSelectionRepair": "pass locally; the mirror excludes maintained LL Owner Draw instead of nonexistent LL Owner Contribution while valid Cost of Goods and Income remain eligible",
     "phase4DownstreamSelectionCoverage": "pass; maintained failing-before and passing-after synthetic coverage proves LL-only direct reads, unchanged all-entity databases, scheduled and public LL-only invocation, mocked HTTP, and denied outbound sockets",
     "phase4DownstreamSelectionCleanup": "pass; disposable smoke roots were removed, no external call occurred, and both pre-existing untracked exclusions remained untouched",
+    "phase4DownstreamSelectionRelease": "pass; source commit ce0c1b6 is on main, automatic Fly run 29695007172 and deploy job 88214137931 passed every reported step, and credential-free production health returned HTTP 200",
+    "phase4DownstreamSelectionDurability": "pass; local main matched origin/main at ce0c1b6 before this command-center-only skip-actions closeout",
     "phase4TransactionIdentityRelease": "pass; source commit 4a84f49 is on main, automatic Fly run 29689659579 and deploy job 88200026060 passed every reported step, and credential-free production health returned 200",
     "phase4TransactionIdentityDurability": "pass; local main matched origin/main at 4a84f49 before this command-center-only skip-actions closeout",
     "phase4PayrollBoundaryRelease": "pass; source commit 7f7f71e is on main, automatic Fly run 29691622134 and deploy job 88205268889 passed every reported step, and credential-free production health returned HTTP 200",
