@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish and verify the completed work block 4G through the separately authorized exact-path 4G-R release.
+Plan the next bounded Phase 4 repair after the durable, deployed, and health-verified completion of work block 4G-R.
 
 ## Current Phase
 
@@ -10,30 +10,32 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4G-R: Durability And Release — active.
+None. Work blocks 4G and 4G-R are complete; source commit `d206737` is on `main`, automatic Fly deployment passed, and production health returned HTTP 200.
 
 ## Current Task
 
-Phase 4 Task 4: publish and verify the explicitly approved 4G repair only.
+Phase 4 Task 1G: separately define the Recurring Charges report query repair for `P3-3C-01` with focused reporting coverage.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, commit, main fast-forward/push, automatic deployment observation, credential-free health verification, sanitized closeout, and final intake. Ryan directly authorized commit and push to `main`.
+Ryan owns the next Task 1G work-block decision. Codex Desktop completed exact-path 4G-R durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
 
-## Authorized Release Path
+## Work Block 4G-R Result
 
-- Stage only the exact 4G application, maintained-test, issue, evidence, and command-center paths.
-- Commit on `codex/scheduled-sync-result-truthfulness`, fast-forward local `main`, and push `origin/main` without force.
-- Observe the automatic Fly deployment attributable to the exact source SHA and verify credential-free production `/health`.
-- Publish one sanitized command-center-only `[skip actions]` closeout without starting a second deployment.
+- Exact source commit `d206737` is on local `main` and `origin/main`.
+- Automatic Fly Deploy run `29695920703` and deploy job `88216548891` passed every reported step for that exact source SHA.
+- Production `/health` returned HTTP 200 without credentials.
+- The exact nine-path 4G source set was published; the high-confidence sensitive-addition scan returned zero.
+- Untracked `scripts/sync_prod_to_local.sh` and unrelated `command-center/now 2.md` remained untouched and unstaged.
+- No real data, credentials, authenticated production page, Plaid call, manual workflow action, non-automatic Fly mutation, downstream access/write, workflow edit, broader repair, force push, or unrelated recovery occurred.
 
 ## Current Action
 
-Verify exact scope, remote alignment, authentication, and sensitive boundaries; publish only if every gate passes; then observe the automatic deployment, verify health, and publish the sanitized closeout.
+Separately define and confirm the Task 1G work block before implementation. Do not infer further release, reporting repair, sync-entry, downstream, or live authorization from this closeout.
 
 ## Remaining Gates
 
-- Recovery beyond the exact fast-forward publish path remains unauthorized.
+- Task 1G and every future release require separate work-block confirmation or direct authorization.
 - Authorization-before-entity-setup (`P3-3H-06`) and all broader sync-entry findings remain later.
 - Entity exception isolation, coordination, persistence, public-worker behavior, and workflow edits remain excluded.
 - Empty Plaid-ID handling and the broader local mirror contract remain for Task 1O.
@@ -42,12 +44,11 @@ Verify exact scope, remote alignment, authentication, and sensitive boundaries; 
 
 ## Verification
 
-- Re-run maintained smoke, Python compilation, JSON, dashboard, health, whitespace, exact-path, and sensitive-pattern checks before staging.
-- Verify staged paths and diff match the intended 4G scope exactly.
-- Verify source commit ancestry and `main`/`origin/main` alignment before and after push.
-- Verify the attributable automatic Fly run/job and credential-free production `/health`.
-- Verify the `[skip actions]` closeout causes no second deployment.
+- Exact path, staged-set, sensitive-pattern, branch ancestry, GitHub authentication, and remote-alignment review: pass.
+- Maintained synthetic smoke suite, Python compilation, `jq empty`, `git diff --check`, dashboard refresh, and health check: pass.
+- Source commit `d206737`, automatic Fly run `29695920703`, and job `88216548891`: pass.
+- Credential-free production `/health`: HTTP 200; local `main` and `origin/main`: aligned before this closeout.
 
 ## Next Report Point
 
-Return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the separately planned Task 1G point.
+Return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separately planned Task 1G point.
