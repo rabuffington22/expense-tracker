@@ -109,7 +109,7 @@ Tracked test and demo-seed expansion were explicitly excluded from audit work bl
 
 ## Locked Payoff Schedules Ignore Stored Account APRs
 
-Status: resolved locally by work block 4E; release not authorized
+Status: open; discovered in work block 3D
 
 Severity: high financial-planning correctness risk
 
@@ -140,7 +140,7 @@ Work block 3D is audit-only. Product repair and tracked tests require a separate
 
 ## Luxe Legacy Planning Denial Is Enforced Only On Page Entry
 
-Status: open; discovered in work block 3D
+Status: resolved and released through work block 4E-R
 
 Severity: high entity-boundary and hidden-data risk
 
@@ -148,7 +148,7 @@ Captured: 2026-07-18
 
 Where seen: Long-Term and Short-Term Planning routes plus temporary Luxe Legacy and Personal databases
 
-Revisit: separately authorized 4E-R release only
+Revisit: none unless the boundary contract changes
 
 Summary:
 
@@ -167,7 +167,7 @@ Acceptance checks:
 
 Resolution:
 
-Work block 4E added one early Luxe Legacy denial guard to each planning blueprint. Maintained coverage enumerates all 21 registered Long-Term and Short-Term Planning route rules, proves no denied request reaches its handler, leaves all three temporary entity databases logically unchanged, exposes no Personal/BFM account names, and preserves Personal/BFM Long-Term sharing plus ordinary planning availability. Baseline and final smoke suites, compilation, cleanup, whitespace, dashboard refresh, and health checks passed. Release remains separately gated.
+Work block 4E added one early Luxe Legacy denial guard to each planning blueprint. Maintained coverage enumerates all 21 registered Long-Term and Short-Term Planning route rules, proves no denied request reaches its handler, leaves all three temporary entity databases logically unchanged, exposes no Personal/BFM account names, and preserves Personal/BFM Long-Term sharing plus ordinary planning availability. Baseline and final smoke suites, compilation, cleanup, whitespace, dashboard refresh, and health checks passed. Work block 4E-R published source commit `1a277b0` to `main`; automatic Fly run `29694423318` and deploy job `88212585378` passed, and credential-free production health returned HTTP 200.
 
 ## Automatic Goal Snapshots Erase Same-Day Review Notes
 
