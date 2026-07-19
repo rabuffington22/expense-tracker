@@ -1325,6 +1325,265 @@ def main() -> None:
 
         print("   ✅ All CSV export tests passed")
 
+        # ── 8f. Recurring Charges report repair ────────────────────
+        print("\n8f. Recurring Charges report repair…")
+        from core.reporting import get_recurring_charges
+        from web.routes.reports import _prepare_report
+
+        recurring_start = "2026-01-01"
+        recurring_end = "2026-03-31"
+        recurring_empty_start = "2031-01-01"
+        recurring_empty_end = "2031-01-31"
+        recurring_entities = {
+            "personal": {
+                "display": "Personal",
+                "allowed_category": "Food",
+                "allowed_merchant": "Personal Recurring 4H",
+                "excluded_categories": (
+                    "Credit Card Payment",
+                    "Income",
+                    "Internal Transfer",
+                ),
+            },
+            "company": {
+                "display": "BFM",
+                "allowed_category": "Software",
+                "allowed_merchant": "BFM Recurring 4H",
+                "excluded_categories": (
+                    "Credit Card Payment",
+                    "Income",
+                    "Internal Transfer",
+                    "Owner Contribution",
+                    "Partner Buyout",
+                ),
+            },
+            "luxelegacy": {
+                "display": "LL",
+                "allowed_category": "Owner Draw",
+                "allowed_merchant": "LL Owner Draw Recurring 4H",
+                "excluded_categories": (
+                    "Income",
+                    "Internal Transfer",
+                ),
+            },
+        }
+        recurring_before_seed = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in recurring_entities
+        }
+
+        for entity_key, contract in recurring_entities.items():
+            recurring_conn = get_connection(entity_key)
+            allowed_rows = (
+                ("2026-01-05", -10.00),
+                ("2026-02-05", -14.00),
+            )
+            for row_index, (txn_date, amount) in enumerate(allowed_rows, start=1):
+                recurring_conn.execute(
+                    "INSERT INTO transactions "
+                    "(transaction_id, date, description_raw, merchant_canonical, amount, "
+                    "amount_cents, currency, account, category, source_filename, imported_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, 'USD', 'Synthetic 4H', ?, 'recurring-4h.csv', "
+                    "'2026-07-19T00:00:00+00:00')",
+                    (
+                        f"recurring-4h-{entity_key}-allowed-{row_index}",
+                        txn_date,
+                        contract["allowed_merchant"],
+                        contract["allowed_merchant"],
+                        amount,
+                        int(round(amount * 100)),
+                        contract["allowed_category"],
+                    ),
+                )
+            for excluded_index, excluded_category in enumerate(
+                contract["excluded_categories"], start=1
+            ):
+                excluded_merchant = f"{entity_key} excluded {excluded_category} 4H"
+                for occurrence, txn_date in enumerate(
+                    ("2026-01-10", "2026-02-10"), start=1
+                ):
+                    recurring_conn.execute(
+                        "INSERT INTO transactions "
+                        "(transaction_id, date, description_raw, merchant_canonical, amount, "
+                        "amount_cents, currency, account, category, source_filename, imported_at) "
+                        "VALUES (?, ?, ?, ?, -20.00, -2000, 'USD', 'Synthetic 4H', ?, "
+                        "'recurring-4h.csv', '2026-07-19T00:00:00+00:00')",
+                        (
+                            f"recurring-4h-{entity_key}-excluded-{excluded_index}-{occurrence}",
+                            txn_date,
+                            excluded_merchant,
+                            excluded_merchant,
+                            excluded_category,
+                        ),
+                    )
+            recurring_conn.commit()
+            recurring_conn.close()
+
+        recurring_seeded = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in recurring_entities
+        }
+
+        with app.test_client() as recurring_client:
+            for entity_key, contract in recurring_entities.items():
+                direct_df = get_recurring_charges(
+                    entity_key, recurring_start, recurring_end
+                )
+                _check(
+                    list(direct_df["merchant"]) == [contract["allowed_merchant"]],
+                    f"recurring {entity_key}: direct query should return only the eligible merchant",
+                )
+                direct_row = direct_df.iloc[0]
+                _check(
+                    int(direct_row["count"]) == 2,
+                    f"recurring {entity_key}: expected two eligible charges",
+                )
+                _check(
+                    abs(float(direct_row["avg_amount"]) - 12.00) < 0.001
+                    and abs(float(direct_row["min_amount"]) - 10.00) < 0.001
+                    and abs(float(direct_row["max_amount"]) - 14.00) < 0.001,
+                    f"recurring {entity_key}: amount summary should be avg 12, min 10, max 14",
+                )
+                _check(
+                    direct_row["first_date"] == "2026-01-05"
+                    and direct_row["last_date"] == "2026-02-05"
+                    and direct_row["category"] == contract["allowed_category"],
+                    f"recurring {entity_key}: date and category summary should be preserved",
+                )
+
+                prepared = _prepare_report(
+                    entity_key, "recurring", recurring_start, recurring_end
+                )
+                _check(
+                    prepared is not None and prepared[0] == "recurring_charges",
+                    f"recurring {entity_key}: prepared report should be available",
+                )
+                prepared_out = prepared[2]
+                _check(
+                    list(prepared_out.columns)
+                    == [
+                        "Merchant",
+                        "Charges",
+                        "Avg Amount",
+                        "Min Amount",
+                        "Max Amount",
+                        "First Date",
+                        "Last Date",
+                        "Category",
+                    ],
+                    f"recurring {entity_key}: prepared report columns should remain stable",
+                )
+
+                recurring_client.set_cookie("entity", contract["display"])
+                query = (
+                    f"report_type=recurring&start={recurring_start}&end={recurring_end}"
+                )
+                rendered = recurring_client.get(f"/reports/view?{query}")
+                rendered_body = rendered.get_data(as_text=True)
+                _check(
+                    rendered.status_code == 200
+                    and contract["allowed_merchant"] in rendered_body,
+                    f"recurring {entity_key}: rendered view should contain the eligible merchant",
+                )
+                for excluded_category in contract["excluded_categories"]:
+                    _check(
+                        f"{entity_key} excluded {excluded_category} 4H" not in rendered_body,
+                        f"recurring {entity_key}: rendered view should exclude {excluded_category}",
+                    )
+
+                recurring_csv = recurring_client.get(
+                    f"/reports/export?{query}&format=csv"
+                )
+                recurring_csv_body = recurring_csv.get_data(as_text=True)
+                _check(
+                    recurring_csv.status_code == 200
+                    and recurring_csv.content_type.startswith("text/csv")
+                    and "Merchant,Charges,Avg Amount,Min Amount,Max Amount,First Date,Last Date,Category"
+                    in recurring_csv_body
+                    and contract["allowed_merchant"] in recurring_csv_body,
+                    f"recurring {entity_key}: CSV export should preserve the report contract",
+                )
+
+                recurring_pdf = recurring_client.get(
+                    f"/reports/export?{query}&format=pdf"
+                )
+                pdf_disposition = recurring_pdf.headers.get("Content-Disposition", "")
+                _check(
+                    recurring_pdf.status_code == 200
+                    and recurring_pdf.content_type.startswith("application/pdf")
+                    and recurring_pdf.data.startswith(b"%PDF")
+                    and f"{entity_key}_recurring_charges_{recurring_start}_{recurring_end}.pdf"
+                    in pdf_disposition,
+                    f"recurring {entity_key}: PDF export should be valid with the stable filename",
+                )
+
+                _check(
+                    get_recurring_charges(
+                        entity_key, recurring_empty_start, recurring_empty_end
+                    ).empty,
+                    f"recurring {entity_key}: out-of-range direct query should be empty",
+                )
+                empty_query = (
+                    f"report_type=recurring&start={recurring_empty_start}"
+                    f"&end={recurring_empty_end}"
+                )
+                empty_view = recurring_client.get(f"/reports/view?{empty_query}")
+                _check(
+                    empty_view.status_code == 200
+                    and "No data found for this date range." in empty_view.get_data(as_text=True),
+                    f"recurring {entity_key}: empty view should not raise a server error",
+                )
+                _check(
+                    recurring_client.get(
+                        f"/reports/export?{empty_query}&format=csv"
+                    ).status_code
+                    == 404,
+                    f"recurring {entity_key}: empty export should return not found",
+                )
+
+            missing_view = recurring_client.get(
+                "/reports/view?report_type=recurring"
+            )
+            _check(
+                missing_view.status_code == 200
+                and "Please select a date range." in missing_view.get_data(as_text=True),
+                "recurring missing range: view should request a date range",
+            )
+            _check(
+                recurring_client.get(
+                    "/reports/export?report_type=recurring&format=csv"
+                ).status_code
+                == 400,
+                "recurring missing range: export should return bad request",
+            )
+
+        recurring_after_reads = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in recurring_entities
+        }
+        _check(
+            recurring_after_reads == recurring_seeded,
+            "recurring report paths must not mutate any entity database",
+        )
+        for entity_key in recurring_entities:
+            recurring_conn = get_connection(entity_key)
+            recurring_conn.execute(
+                "DELETE FROM transactions WHERE transaction_id LIKE 'recurring-4h-%'"
+            )
+            recurring_conn.commit()
+            recurring_conn.close()
+        recurring_after_cleanup = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in recurring_entities
+        }
+        _check(
+            recurring_after_cleanup == recurring_before_seed,
+            "recurring report synthetic rows should be removed exactly",
+        )
+        print(
+            "   ✅ All-entity direct, view, CSV, PDF, exclusions, empty ranges, and cleanup passed"
+        )
+
         # ── 9. Saved Views CRUD ──────────────────────────────────────
         print("\n9. Saved Views CRUD tests…")
         import json as _json

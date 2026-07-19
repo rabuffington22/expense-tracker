@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after the durable, deployed, and credential-free health-verified completion of work block 4G-R; Task 1G is next for separate planning
+Status: active after the locally verified completion of work block 4H; 4H-R release or Task 1H planning requires a separate Ryan decision
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -901,8 +901,8 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1D: Enforce the Luxe Legacy denial boundary across planning routes.** Status: done, released, and credential-free production health verified through work blocks 4E-4E-R for `P3-3D-02` plus the boundary slice of `P3-3D-C01`.
 - **Task 1E: Enforce Luxe Legacy-only downstream source selection.** Status: done, released, and credential-free production health verified through work blocks 4F-4F-R for `P3-3I-01` plus the focused selection slice of `P3-3I-C01`; remote idempotency remains parked.
 - **Task 1F: Report scheduled sync partial failures truthfully.** Status: done, released, and credential-free production health verified through work blocks 4G-4G-R for `P3-3H-01` plus the workflow-visible result slice of `P3-3H-C01`; authorization-before-entity-setup (`P3-3H-06`) remains later.
-- **Task 1G: Restore the Recurring Charges report query.** Status: current for separate work-block planning for `P3-3C-01` after the early boundary repairs.
-- **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: planned as the first primary-Plaid block.
+- **Task 1G: Restore the Recurring Charges report query.** Status: done and verified locally through work block 4H for `P3-3C-01` plus the recurring-report slice of `P3-3C-C01`; release remains separate.
+- **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: next for separate planning as the first primary-Plaid block after the 4H release decision.
 - **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: planned as the second primary-Plaid block.
 - **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: planned as the third primary-Plaid block.
 - **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: planned after Tasks 1H-1J.
@@ -911,7 +911,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
-- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, and 4G completed the workflow-visible result slice of `P3-3H-C01`.
+- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, and 4H completed the recurring-report slice of `P3-3C-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
 - **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B, 4C-R, 4D-R, 4E-R, 4F-R, and 4G-R; every future release remains separately gated.
 
@@ -1343,6 +1343,77 @@ Report point: return source and closeout commits, exact published paths, automat
 Result: the exact nine-path 4G source set was committed as `d206737`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29695920703` and deploy job `88216548891` passed every reported step for that exact source SHA. Production `/health` returned HTTP 200 without credentials, and local `main` matched `origin/main`. The untracked sync script and unrelated `command-center/now 2.md` remained excluded; the staged sensitive-addition scan returned zero; and no protected data, credentials, authenticated production page, manual workflow, non-automatic Fly, Plaid, downstream, workflow-edit, broader repair, or unrelated action occurred. This command-center-only closeout is published separately with `[skip actions]` to avoid a second deployment.
 
 Evidence: `command-center/logs/2026-07-19-scheduled-sync-result-truthfulness-release-4g-r.md`, source commit `d206737`, GitHub Actions run `29695920703`, and Fly deploy job `88216548891`.
+
+### Work Block 4H: Recurring Charges Report Repair
+
+Status: done; confirmed and completed locally on 2026-07-19
+
+Parent tasks: Phase 4 Task 1G and only the recurring-report slice of Task 2.
+
+Included findings: `P3-3C-01` and the matching recurring-report slice of `P3-3C-C01` only.
+
+Outcome: construct the Recurring Charges query with the maintained entity-specific exclusion contract; preserve raw bank-level grouping and existing merchant, amount, date, presentation, and filename semantics; restore direct, prepared, rendered, CSV, and PDF paths in Personal, BFM, and Luxe Legacy; return normal empty or not-found responses for empty and out-of-range requests; and add focused maintained synthetic regression coverage.
+
+Why this grouping: the query correction and focused regression proof share one reporting helper, the same recurring-only route and export surfaces, one temporary all-entity dataset, and one verification path. Broader financial read-model coverage and the primary-Plaid sequence use materially different scope, risk, and verification paths.
+
+Excluded: completed Tasks 1A-1F; Tasks 1H-1P; Tasks 3-4; the remainder of Task 2 and `P3-3C-C01`; changes to the broad reporting model, split-transaction behavior, category definitions, templates, database schema, subscription detection, or cash-flow recurrence; real databases or financial/payroll/HR rows, uploads, credentials, production/demo, Plaid, workflows, Fly, downstream access/writes, or other live actions; commit, push, PR, merge, deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Owner and recommended agent: Codex Desktop in the current task. This is a small, acceptance-check-driven repair tightly coupled to synthetic verification and command-center closeout, so the current central policy favors Codex and no delegation or second opinion is needed.
+
+Runner path: current Codex task on local branch `codex/recurring-charges-report-repair` after the active-block dashboard is verified.
+
+Blocking questions: none.
+
+Non-blocking defaults: keep recurring detection on raw bank transactions rather than split allocations; use the current entity-specific `categories.md` exclusion contract; preserve grouping, statistics, dates, UI shape, and filenames; keep Luxe Legacy `Owner Draw` eligible because it is not marked excluded while BFM `Owner Contribution` and `Partner Buyout` remain excluded; use temporary synthetic all-entity databases only; and remain local-only.
+
+Expected surfaces: `core/reporting.py`; focused maintained checks in `scripts/smoke_test.py`; conditional recurring-only handling in `web/routes/reports.py` if required; read-only reference to `categories.md` and the recurring report template; `command-center/issues.md`; one sanitized 4H closeout log; and Runway OS roadmap, now, decisions, state, and dashboard files. No migration or template change is expected.
+
+Stop conditions:
+
+- Correct behavior requires changing the broader reporting model, transaction splits, category definitions, templates, schema, subscription detection, cash-flow recurrence, or another Phase 4 task.
+- A product decision is needed about recurring grouping, category eligibility, presentation, or the definition of done.
+- Verification requires real data, credentials, external access, production/demo, Plaid, workflow execution, Fly, downstream access/write, or another live action.
+- Baseline or focused verification fails in a plan-changing way, disposable cleanup cannot be proven, or command-center refresh/health fails.
+- Scope reaches GitHub durability, deployment, either preserved untracked file, or another excluded task.
+
+Verification:
+
+- baseline and final `.venv/bin/python scripts/smoke_test.py`;
+- focused direct helper, prepared report, rendered HTMX view, CSV, and PDF checks across temporary Personal, BFM, and Luxe Legacy databases;
+- repeated-merchant count, average, minimum, maximum, first-date, last-date, category, entity-specific exclusion, empty-range, out-of-range, missing-input, and unchanged-database assertions;
+- Python compilation, `jq empty command-center/state.json`, disposable cleanup, dashboard refresh, health check, `git diff --check`, generated-dashboard inspection, and final explicit-path worktree review.
+
+Dashboard closeout: update source files first, align `state.json`, refresh and health-check the dashboard, and mark 4H done only after every required check passes.
+
+Durability: local-only. Commit, push, PR, merge, deployment, protected data, credentials, real databases, live systems, Plaid, workflows, Fly, downstream access/write, and other live actions remain excluded.
+
+Report point: return the exact query contract; all-entity direct, view, CSV, and PDF results; exclusion and empty-range behavior; full smoke result; cleanup evidence; changed paths; local branch state; preserved exclusions; and the separate release gate.
+
+Suggested next block: separately plan 4H-R Durability And Release if Ryan wants the verified repair published; otherwise stop locally before planning Task 1H.
+
+Result: the Recurring Charges query now interpolates the maintained entity-specific exclusion clause instead of sending a literal helper token to SQLite. Negative debit summaries now report the smaller absolute charge as minimum and the larger as maximum. Maintained synthetic coverage reproduced the failing-before error and now passes direct, prepared, rendered, CSV, PDF, summary, exclusion, empty, out-of-range, missing-input, unchanged-database, and exact-cleanup checks across Personal, BFM, and Luxe Legacy. The baseline and final smoke suites, Python compilation, JSON validation, disposable cleanup, whitespace checks, dashboard refresh, and health check pass. No real data, credentials, external access, live action, migration, category/template change, GitHub durability, or deployment occurred.
+
+Evidence: `core/reporting.py`, `scripts/smoke_test.py`, `command-center/issues.md`, and `command-center/logs/2026-07-19-recurring-charges-report-repair-4h.md`.
+
+### Work Block 4H-R: Durability And Release
+
+Status: active; directly authorized by Ryan on 2026-07-19
+
+Included: explicit staging of the exact intended 4H application, maintained-test, issue, evidence, and command-center paths; one source commit on `codex/recurring-charges-report-repair`; fast-forward alignment of local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real databases or financial/payroll/HR rows; uploads; credentials; authenticated production pages; Plaid calls; manual workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream access or writes; workflow-file changes; broader reporting, Task 1H, and unrelated repairs; force push; and recovery outside the exact fast-forward publish path.
+
+Owner and recommended agent: Codex Desktop. The release requires exact-path Git and sensitive-addition review, direct-main durability, attributable automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.
+
+Blocking questions: none. Ryan directly instructed Codex to commit and push the completed 4H work to `main`.
+
+Non-blocking defaults: use the exact nine intended paths; preserve both unrelated untracked files; commit first on the feature branch; require local `main`, `origin/main`, and the feature-branch base to align before fast-forwarding; push without force; inspect the automatic deploy result without opening protected logs unless failure diagnosis is necessary; verify only credential-free `/health`; and publish the post-release command-center closeout with `[skip actions]` to prevent a second deployment.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; staging includes either excluded untracked file; maintained verification fails; the source commit cannot be fast-forwarded safely; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; the closeout push starts another deploy; or recovery would exceed the authorized path.
+
+Verification: exact path, staged-set, sensitive-pattern, branch-ancestry, GitHub-authentication, and remote-alignment review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; source commit and direct-main fast-forward push; automatic Fly run/job result for the exact source SHA; credential-free production `/health`; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separate Task 1H planning gate.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

@@ -450,7 +450,7 @@ User-facing wording or destructive reversal behavior is implementation and UX sc
 
 ## Recurring Charges Report Executes An Uninterpolated SQL Helper
 
-Status: open; discovered in work block 3C
+Status: resolved locally through work block 4H; release not authorized
 
 Severity: medium functional-availability risk
 
@@ -476,9 +476,9 @@ Acceptance checks:
 - Empty and out-of-range requests return an empty/not-found response rather than a server error.
 - A tracked synthetic regression fails before and passes after the repair.
 
-Why not fixed now:
+Resolution:
 
-Work block 3C is audit-only. Product repair and tracked regression coverage require a separately confirmed Phase 4 block.
+Work block 4H constructs the SQL with the maintained entity-specific exclusion clause instead of sending a literal helper token to SQLite. It also corrects debit minimum/maximum ordering and adds maintained temporary all-entity coverage for the direct helper, prepared report, rendered view, CSV, PDF, entity exclusions, empty and out-of-range behavior, read-only execution, and exact synthetic cleanup. The baseline and final smoke suites and local verification pass; commit, push, deployment, and live verification remain separately gated.
 
 ## Task 3 Financial Read-Model Paths Lack Tracked Regression Coverage
 

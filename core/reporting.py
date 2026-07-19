@@ -437,20 +437,21 @@ def get_recurring_charges(entity: str, start_date: str, end_date: str) -> pd.Dat
     NOTE: Uses raw transactions table (not CTE) — recurring detection should
     operate on bank-level charges, not split budget allocations.
     """
-    sql = """
+    exclusion_clause = exclude_sql("category", entity_key=entity)
+    sql = f"""
         SELECT
             COALESCE(NULLIF(merchant_canonical,''), description_raw) AS merchant,
             COUNT(*) AS count,
             ABS(AVG(amount)) AS avg_amount,
-            ABS(MIN(amount)) AS min_amount,
-            ABS(MAX(amount)) AS max_amount,
+            ABS(MAX(amount)) AS min_amount,
+            ABS(MIN(amount)) AS max_amount,
             MIN(date) AS first_date,
             MAX(date) AS last_date,
             COALESCE(category, '') AS category
         FROM transactions
         WHERE date BETWEEN ? AND ?
           AND amount < 0
-          AND {exclude_sql('category')}
+          AND {exclusion_clause}
         GROUP BY merchant
         HAVING COUNT(*) >= 2
         ORDER BY count DESC, avg_amount DESC

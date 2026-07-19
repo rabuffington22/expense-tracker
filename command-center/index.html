@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 12:01 PM CST",
+    "lastUpdated": "2026-07-19 12:21 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,23 +1619,43 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4G-R are published on main; 4G source commit d206737 deployed successfully in Fly run 29695920703, with this command-center-only skip-actions closeout"
+    "durabilityStatus": "Work blocks through 4G-R are published on main; work block 4H-R is active for exact-path direct-main durability and automatic release"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4G-R is complete: source commit d206737 is durable on main, automatic Fly deployment passed, and credential-free production health returned 200.",
-    "progress": 67
+    "summary": "Work block 4H-R is active to publish and verify the exact locally completed Recurring Charges repair.",
+    "progress": 69
   },
   "currentTask": {
     "title": "Task 1G: Restore the Recurring Charges report query",
-    "owner": "Ryan",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop completed 4G-R direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout",
-    "nextAction": "Separately define and confirm a bounded Task 1G work block before implementation.",
-    "blocker": "No Task 1G implementation or additional release/live action is authorized"
+    "supportingAgent": "Ryan directly authorized exact-path commit and push to main; Codex Desktop owns release verification and closeout",
+    "nextAction": "Verify exact paths, sensitive additions, authentication, branch ancestry, remote alignment, and maintained checks before explicit staging.",
+    "blocker": "No blocker; stop on divergence, unexpected scope, sensitive content, failed verification, or recovery beyond the exact path"
   },
-  "currentWorkBlock": null,
+  "currentWorkBlock": {
+    "id": "phase-4-block-h-release",
+    "phaseId": "phase-4",
+    "label": "4H-R",
+    "name": "Durability And Release",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "includedTasks": [
+      {
+        "taskId": "P4-T1G",
+        "title": "Task 1G release durability"
+      },
+      {
+        "taskId": "P4-T4",
+        "title": "Task 4 approved release"
+      }
+    ],
+    "stopConditions": "Stop for unexpected scope, sensitive content, remote divergence, excluded staging, failed maintained checks, non-fast-forward recovery, unattributable or failed automatic deployment, failed credential-free health, or any action beyond the authorized path.",
+    "verification": "Exact paths, sensitive additions, staged set, auth, ancestry, remote alignment, maintained smoke, compilation, JSON, dashboard, diff check, source commit, direct-main push, automatic Fly result, credential-free health, final alignment, and skip-actions closeout.",
+    "nextReportPoint": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the Task 1H planning gate."
+  },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -1659,23 +1679,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Separately plan Task 1G Recurring Charges query repair",
-    "status": "awaiting Ryan",
-    "owner": "Ryan",
-    "why": "4G-R is durable, deployed, and health verified; the accepted Phase 4 sequence places P3-3C-01 next with its separate financial read-model verification path.",
-    "action": "Ask Codex to define Task 1G, then confirm before implementation or any further release/live action.",
+    "title": "Publish and verify work block 4H-R",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized commit and push of the locally verified 4H repair to main.",
+    "action": "Complete exact-path publication, automatic deployment observation, credential-free health verification, and sanitized closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Work block 4G-R is complete; the next implementation or release requires a separate Ryan decision.",
-    "items": [
-      "Ask Codex to define the Task 1G work block when ready."
-    ]
+    "summary": "No Ryan input is currently required; 4H-R is active within the exact release path.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4G-R is complete. Task 1G-1P implementation, P3-3H-06, broader sync-entry work, protected data, further releases, and unrelated live actions remain outside authorization.",
-    "decisionQueue": "The next Ryan decision is a separately proposed and confirmed Task 1G scope.",
+    "phaseQuestions": "Work block 4H-R authorizes only the exact 4H release path. Task 1H-1P implementation, broader Task 2, protected data, manual live actions, and unrelated work remain outside authorization.",
+    "decisionQueue": "No current Ryan decision unless a 4H-R stop condition is hit; Task 1H planning remains separate after closeout.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -3281,6 +3299,104 @@
         "Fly deploy job 88216548891"
       ],
       "result": "Published source commit d206737 directly to main by exact-path fast-forward, observed successful automatic Fly run 29695920703 and job 88216548891, verified credential-free production health at HTTP 200, preserved both unrelated untracked files, and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-h",
+      "phaseId": "phase-4",
+      "label": "4H",
+      "name": "Recurring Charges Report Repair",
+      "status": "done",
+      "includedTasks": [
+        "Task 1G",
+        "Task 2 paired only for the recurring-report P3-3C-C01 slice"
+      ],
+      "includedFindings": [
+        "P3-3C-01",
+        "P3-3C-C01 recurring-report slice"
+      ],
+      "excludedTasks": [
+        "Completed Tasks 1A-1F; Tasks 1H-1P and Tasks 3-4",
+        "The remainder of Task 2 and P3-3C-C01 plus broader reporting, split, category, template, schema, subscription, and cash-flow recurrence behavior",
+        "Real data, credentials, production/demo, Plaid, workflows, Fly, downstream access/writes, GitHub durability, deployment, pre-existing untracked scripts/sync_prod_to_local.sh, and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The small acceptance-check-driven repair couples the reporting helper, maintained synthetic coverage, protected-data boundaries, cleanup, Runway OS stewardship, and final intake, matching the central Codex-manager policy.",
+      "runnerPath": "Current Codex task on local branch codex/recurring-charges-report-repair without delegation or second opinion.",
+      "expectedFiles": [
+        "core/reporting.py",
+        "scripts/smoke_test.py",
+        "Conditional recurring-only handling in web/routes/reports.py",
+        "Read-only categories.md and recurring report template",
+        "command-center roadmap, now, decisions, issues, state, dashboard, and sanitized 4H closeout log"
+      ],
+      "stopConditions": [
+        "Correct behavior requires broader reporting, split, category, template, schema, subscription, cash-flow, or other Phase 4 changes",
+        "A product decision is needed about grouping, category eligibility, presentation, or definition of done",
+        "Verification requires real data, credentials, external access, production/demo, Plaid, workflows, Fly, downstream access/write, or another live action",
+        "Baseline or focused verification changes the plan, cleanup cannot be proven, or command-center checks fail",
+        "Scope reaches GitHub durability, deployment, either preserved untracked file, or another excluded task"
+      ],
+      "verification": [
+        "Baseline and final .venv/bin/python scripts/smoke_test.py",
+        "Maintained all-entity direct, prepared, rendered, CSV, PDF, summary, exclusion, empty, out-of-range, missing-input, and unchanged-database checks",
+        "Temporary synthetic databases and disposable cleanup",
+        "Python compilation, JSON validation, dashboard refresh, health check, git diff check, dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Return the exact query contract, all-entity direct/view/CSV/PDF results, exclusion and empty-range behavior, full smoke result, cleanup evidence, changed paths, branch state, preserved exclusions, and the separate release gate.",
+      "durability": "Complete and verified locally on codex/recurring-charges-report-repair; commit, push, PR, merge, deployment, protected data, credentials, real databases, live systems, Plaid, workflows, Fly, downstream access/write, and other live actions remain excluded.",
+      "evidence": [
+        "core/reporting.py",
+        "scripts/smoke_test.py",
+        "command-center/issues.md",
+        "command-center/logs/2026-07-19-recurring-charges-report-repair-4h.md"
+      ],
+      "result": "The query now uses the entity-specific exclusion clause and correct debit min/max ordering; maintained all-entity direct, prepared, rendered, CSV, PDF, exclusion, empty, missing-input, unchanged-database, and exact-cleanup checks pass with no live action."
+    },
+    {
+      "id": "phase-4-block-h-release",
+      "phaseId": "phase-4",
+      "label": "4H-R",
+      "name": "Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1G release durability",
+        "Task 4"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real databases or financial, payroll, or HR rows, uploads, credentials, and authenticated production pages",
+        "Plaid calls, manual workflow dispatch or rerun, non-automatic Fly mutation, downstream access or writes, workflow edits, broader reporting, Task 1H, and unrelated work",
+        "Force push and recovery beyond the exact fast-forward publish path"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git and sensitive-addition review, direct-main durability, automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.",
+      "runnerPath": "Current Codex task using local git and gh without a PR because Ryan explicitly requested commit and push to main.",
+      "expectedFiles": [
+        "Exact nine intended 4H application, maintained-test, issue, evidence, and command-center paths",
+        "Source commit on codex/recurring-charges-report-repair and fast-forward local main",
+        "Automatic Fly Deploy workflow from the main push",
+        "Sanitized 4H-R closeout log and command-center-only skip-actions commit"
+      ],
+      "stopConditions": [
+        "Exact diff contains an unexpected path, sensitive value, protected data, or unrelated user change",
+        "Local or remote main diverges or cannot be fast-forwarded safely",
+        "Maintained verification fails or staging includes an excluded path",
+        "Automatic deployment fails or cannot be attributed to the source SHA",
+        "Credential-free health fails, a second deploy starts, or recovery exceeds the authorized path"
+      ],
+      "verification": [
+        "Exact path, staged-set, sensitive-pattern, branch-ancestry, GitHub-authentication, and remote-alignment review",
+        "Maintained synthetic suite, Python compilation, JSON validation, dashboard refresh, health check, and git diff check",
+        "Explicit staging review, source commit, and direct-main fast-forward push",
+        "Automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment, preserved exclusions, and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the Task 1H planning gate.",
+      "durability": "Active; exact-path publication and automatic release verification are authorized, while broader work and recovery remain excluded.",
+      "evidence": [],
+      "result": null
     }
   ],
   "phaseTasks": [
@@ -3749,10 +3865,16 @@
       "taskId": "P4-T1G",
       "title": "Task 1G: Restore the Recurring Charges report query",
       "status": "current",
-      "owner": "Ryan",
-      "summary": "Repair P3-3C-01 after the early boundary tasks using the financial read-model verification path.",
-      "nextAction": "Define and confirm a separate Task 1G work block before implementation.",
-      "blocker": "No Task 1G implementation is authorized."
+      "owner": "Codex Desktop",
+      "summary": "Work block 4H completed P3-3C-01 plus only the focused recurring-report slice of P3-3C-C01 locally.",
+      "result": "The entity-specific query, correct debit min/max ordering, and maintained all-entity direct/view/CSV/PDF, exclusion, empty, read-only, and exact-cleanup checks pass.",
+      "evidence": [
+        "core/reporting.py",
+        "scripts/smoke_test.py",
+        "command-center/logs/2026-07-19-recurring-charges-report-repair-4h.md"
+      ],
+      "nextAction": null,
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -3760,7 +3882,9 @@
       "title": "Task 1H: Make Plaid page application and cursor advancement atomic",
       "status": "planned",
       "owner": "Codex Desktop",
-      "summary": "Run the first primary-Plaid block after the early boundary and truthfulness tranche."
+      "summary": "Separately plan the first primary-Plaid block after 4H-R closes.",
+      "nextAction": "Wait for 4H-R closeout, then request a separate Task 1H work-block proposal when ready.",
+      "blocker": "No Task 1H implementation is authorized."
     },
     {
       "phaseId": "phase-4",
@@ -3832,7 +3956,7 @@
       "title": "Task 2: Expand regression coverage",
       "status": "active",
       "owner": "Codex Desktop",
-      "summary": "Pair focused synthetic coverage with each repair family; 4C completed P3-3A-C01, 4D completed the P3-3F-C01 payroll-boundary slice, and 4E completed the P3-3D-C01 planning-boundary slice."
+      "summary": "Pair focused synthetic coverage with each repair family; 4C completed P3-3A-C01, 4D the P3-3F-C01 payroll-boundary slice, 4E the P3-3D-C01 planning-boundary slice, 4F the P3-3I-C01 selection slice, 4G the P3-3H-C01 result slice, and 4H the P3-3C-C01 recurring-report slice."
     },
     {
       "phaseId": "phase-4",
@@ -4480,8 +4604,8 @@
     },
     {
       "title": "Recurring Charges report executes an uninterpolated SQL helper",
-      "summary": "Fresh Personal, BFM, and Luxe Legacy databases all failed the direct, prepared, and rendered recurring-report paths because core/reporting.py sends a literal exclude_sql helper token to SQLite.",
-      "status": "open",
+      "summary": "Resolved locally through work block 4H: the query uses the entity-specific exclusion contract, debit min/max ordering is correct, and maintained all-entity direct, view, CSV, PDF, exclusion, empty, read-only, and cleanup coverage passes; release remains separate.",
+      "status": "resolved locally",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
@@ -4810,8 +4934,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Separately plan Task 1G",
-    "description": "Define and confirm the Recurring Charges report query repair and focused financial read-model coverage before implementation."
+    "name": "Complete 4H-R durability and release",
+    "description": "Publish the exact 4H source set to main, verify the automatic Fly deployment and credential-free health, then publish a sanitized skip-actions closeout."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -4894,7 +5018,10 @@
     "phase4SyncResultCoverage": "pass; maintained success, skip, partial and total failure, bearer, configuration, contention, exception, lock-release, entity-order, result-preservation, secret-safe, and actual localhost curl-fail exit-22 checks pass",
     "phase4SyncResultCleanup": "pass; baseline and final smoke suites, Python compilation, disposable root removal, JSON validation, dashboard refresh, health check, git diff check, and preserved untracked exclusions pass",
     "phase4SyncResultRelease": "pass; source commit d206737 is on main, automatic Fly run 29695920703 and deploy job 88216548891 passed every reported step, and credential-free production health returned HTTP 200",
-    "phase4SyncResultDurability": "pass; local main matched origin/main at d206737 before this command-center-only skip-actions closeout"
+    "phase4SyncResultDurability": "pass; local main matched origin/main at d206737 before this command-center-only skip-actions closeout",
+    "phase4RecurringReportRepair": "pass locally; the query uses the maintained entity-specific exclusion clause and reports negative-debit minimum and maximum by absolute charge size correctly",
+    "phase4RecurringReportCoverage": "pass; maintained Personal, BFM, and Luxe Legacy direct, prepared, rendered, CSV, PDF, summary, exclusion, empty, out-of-range, missing-input, unchanged-database, and exact-cleanup checks pass",
+    "phase4RecurringReportCleanup": "pass; baseline and final smoke suites, Python compilation, disposable smoke-root removal, JSON validation, git diff check, dashboard refresh, health check, and preserved untracked exclusions pass"
   }
 }
 </script>
