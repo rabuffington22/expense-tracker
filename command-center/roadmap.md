@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after durable, deployed, and health-verified completion of work block 4I-R; Task 1I is next for separate planning
+Status: active after local completion of work block 4J; Task 1J is next for separate planning and 4J release remains separately gated
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -903,15 +903,15 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1F: Report scheduled sync partial failures truthfully.** Status: done, released, and credential-free production health verified through work blocks 4G-4G-R for `P3-3H-01` plus the workflow-visible result slice of `P3-3H-C01`; authorization-before-entity-setup (`P3-3H-06`) remains later.
 - **Task 1G: Restore the Recurring Charges report query.** Status: done, released, and credential-free production health verified through work blocks 4H-4H-R for `P3-3C-01` plus the recurring-report slice of `P3-3C-C01`.
 - **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: done, released, and credential-free production health verified through work blocks 4I-4I-R for `P3-3G-01` plus the focused atomicity slice of `P3-3G-C01`.
-- **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: current for separate planning as the second primary-Plaid block.
-- **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: planned as the third primary-Plaid block.
+- **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: done and locally verified through work block 4J for `P3-3G-02` through `P3-3G-05` plus the matching focused `P3-3G-C01` coverage slice; release remains separately gated.
+- **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: current for separate planning as the third primary-Plaid block.
 - **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: planned after Tasks 1H-1J.
 - **Task 1L: Repair vendor import-to-categorization integrity.** Status: planned after the Plaid and sync-entry foundations.
 - **Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention.** Status: planned after Task 1C; separate hourly and salary cohorts per Ryan's confirmed default.
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
-- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, and 4H completed the recurring-report slice of `P3-3C-C01`.
+- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice of `P3-3G-C01`, and 4J completed its reconciliation, link, liability, and freshness slice.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
 - **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4I-R; every future release remains separately gated.
 
@@ -1503,6 +1503,88 @@ Report point: return source and closeout commits, exact published paths, automat
 Result: the exact ten-path 4I source set was committed as `46f8286`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29697681136` and deploy job `88221144959` passed every reported step for exact source SHA `46f82863d5f15cc4a68f06cbc98f443a65dbf4b7`. Production `/health` returned HTTP 200 without credentials, and local `main` matched `origin/main`. The staged high-confidence sensitive-addition scan returned zero; the untracked sync script and unrelated `command-center/now 2.md` remained excluded; and no protected data, credentials, authenticated production page, manual workflow, non-automatic Fly, live Plaid, downstream, workflow-edit, Task 1I, force-push, or unrelated action occurred. This command-center-only closeout is published separately with `[skip actions]` to avoid a second deployment.
 
 Evidence: `command-center/logs/2026-07-19-plaid-sync-atomicity-release-4i-r.md`, source commit `46f8286`, GitHub Actions run `29697681136`, and Fly deploy job `88221144959`.
+
+### Confirmed Work Block 4J: Plaid Reconciliation, Liability, And Freshness Truthfulness
+
+Status: done and locally verified on 2026-07-19; release not authorized
+
+Parent tasks: Phase 4 Task 1I and only the matching primary-Plaid slice of Task 2.
+
+Included findings: `P3-3G-02`, `P3-3G-03`, `P3-3G-04`, `P3-3G-05`, and the matching focused slice of `P3-3G-C01`.
+
+Outcome: make Plaid account-state refresh truthful and preservation-safe by reconciling cached Plaid balances only within each successfully fetched item, preserving failed-item and manual account state, removing the unsafe first-word manual-account deletion heuristic from link exchange, fetching and caching liabilities independently from balance freshness, and preventing one fresh account or partial failure from making stale siblings appear current.
+
+Why this grouping: per-item reconciliation, manual-account preservation, liability refresh, and freshness share the Plaid account lifecycle, `plaid_items` / `plaid_accounts` / `account_balances` state, Cash Flow refresh path, state-preservation risk, and one mocked all-entity verification model. Task 1J changes transaction-update observability and corrupt-token isolation inside the sync worker, while Task 1K changes scheduled/public entry points; both use different contracts and remain later.
+
+Included: Task 1I and only the matching `P3-3G-C01` portion of Task 2.
+
+Excluded: completed Tasks 1A-1H; Tasks 1J-1P and Tasks 3-4; the remainder of Task 2 and `P3-3G-C01`; `P3-3G-06`, `P3-3G-07`, and every remaining `P3-3H` finding; missing-modification observability, corrupt-token isolation, scheduled/public coordination, downstream behavior, and unrelated repairs; destructive migration or rewriting an applied migration; real databases or financial/payroll/HR rows, uploads, credentials, authenticated production pages, production/demo access, live Plaid, workflows, Fly, downstream access/writes, or external actions; commit, push, PR, merge, deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Autonomous owner and recommended agent: Codex Desktop in the current task. This sensitive financial-integrity block couples contract design, cross-file implementation, additive-schema judgment, synthetic all-entity verification, protected-data boundaries, Runway OS stewardship, and final intake. The prior independent review already endorsed this second primary-Plaid sub-block, so no delegation or additional second opinion is needed.
+
+Runner path: current Codex task on local branch `codex/plaid-account-truthfulness` without delegation.
+
+Blocking questions: none.
+
+Non-blocking defaults:
+
+- Preserve every manual account during Plaid linking unless an explicit stable placeholder identity exists; remove the first-word name deletion heuristic rather than inventing a new match.
+- Reconcile cached Plaid accounts per successfully fetched item. An item failure is not authoritative evidence that its prior rows disappeared.
+- Keep balance freshness distinct from liability freshness so one successful fetch cannot suppress the other.
+- Use an additive, ordered migration only if source inspection proves separate freshness state requires it; never rewrite an applied migration.
+- Preserve last-known-good account and liability values when the relevant Plaid call fails.
+- Use temporary all-entity databases, fake tokens, mocked Plaid responses, denied outbound sockets, and exact cleanup; remain local-only.
+
+Expected surfaces: a sanitized Plaid account-state contract under `command-center/`; `web/routes/cashflow.py`; `web/routes/plaid.py`; `core/db.py` only if an additive freshness migration is necessary; focused checks in `scripts/smoke_test.py`; `command-center/issues.md`; one sanitized 4J closeout log; and Runway OS roadmap, now, decisions, state, and dashboard files.
+
+Stop conditions:
+
+- Correctness requires protected data, credentials, live Plaid, production inspection, or another external action.
+- A safe design requires destructive migration, rewriting an applied migration, or guessing existing production state.
+- Manual-account cleanup needs a product rule beyond preserving all unmatched manual rows.
+- Work expands into Task 1J, sync-entry coordination, downstream behavior, or another repair family.
+- Entity isolation, last-known-good account state, or failure preservation cannot be maintained.
+- Baseline or focused verification changes the plan, cleanup cannot be proven, command-center checks fail, or scope reaches GitHub durability, deployment, or either preserved untracked file.
+
+Verification:
+
+- baseline and final `.venv/bin/python scripts/smoke_test.py`;
+- maintained Personal, BFM, and Luxe Legacy cases proving per-item reconciliation, partial-item failure preservation, authoritative disabled/removed-account cleanup, and manual-row preservation;
+- normal stale loads fetching both balances and liabilities, mixed freshness not hiding stale siblings, liability failure remaining distinguishable while preserving last-known-good values, and similar-name manual accounts surviving link exchange;
+- mocked Plaid responses, fake tokens, denied outbound sockets, populated synthetic upgrade-path coverage if a migration is required, unchanged failure snapshots, and exact disposable cleanup;
+- Python compilation, `jq empty command-center/state.json`, dashboard refresh, health check, `git diff --check`, generated-dashboard inspection, and final explicit-path worktree review.
+
+Dashboard closeout: update human-readable sources first, align `state.json`, refresh and health-check the dashboard, and mark 4J done only after every required check passes.
+
+Durability: complete and verified locally on `codex/plaid-account-truthfulness`. Commit, push, PR, merge, deployment, protected data, credentials, real databases, live systems, Plaid, workflows, Fly, downstream access/write, and other external actions remain excluded.
+
+Report point: return the exact account-state contract, changed paths, whether a migration was needed, focused and full synthetic results, failure-preservation and cleanup evidence, local branch state, preserved exclusions, and the separate release gate.
+
+Suggested next block: separately plan 4K Plaid Item Isolation And Truthful Observability for Task 1J plus only its matching Task 2 slice after 4J evidence is complete.
+
+Result: additive migration 58 now stores separate nullable per-item account and liability freshness markers. Cash Flow reconciles only successfully fetched items, preserves failed siblings and every manual row, removes authoritative disabled/investment/removed rows even with an empty keep set, fetches liabilities independently from balances, preserves last-known-good fields and markers on failure, distinguishes successful empty liability responses, and invalidates both markers on account toggle. Plaid Link no longer deletes manual rows by first-word name matching. The baseline and final smoke suites, Python compilation, populated upgrade path, 28 focused all-entity assertions, denied networking, exact cleanup, JSON validation, whitespace checks, dashboard refresh, and health check pass without protected data or live action.
+
+Evidence: `command-center/plaid-account-state-contract.md`, `core/db.py`, `web/routes/cashflow.py`, `web/routes/plaid.py`, `scripts/smoke_test.py`, `command-center/issues.md`, and `command-center/logs/2026-07-19-plaid-account-state-truthfulness-4j.md`.
+
+### Work Block 4J-R: Durability And Release
+
+Status: active on 2026-07-19 under Ryan's direct commit-and-push-to-main authorization
+
+Included: the exact twelve intended 4J application, additive migration, maintained-test, contract, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/plaid-account-truthfulness`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Exact source set: `core/db.py`; `web/routes/cashflow.py`; `web/routes/plaid.py`; `scripts/smoke_test.py`; `command-center/plaid-account-state-contract.md`; `command-center/logs/2026-07-19-plaid-account-state-truthfulness-4j.md`; `command-center/issues.md`; `command-center/decisions.md`; `command-center/now.md`; `command-center/roadmap.md`; `command-center/state.json`; and `command-center/index.html`.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real databases or financial/payroll/HR rows; uploads; credentials; authenticated production pages; live Plaid calls; manual workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream access or writes; workflow-file changes; Task 1J, broader Plaid work, and unrelated repairs; force push; and recovery outside the exact fast-forward publish path.
+
+Owner and recommended agent: Codex Desktop. The release requires exact-path Git and sensitive-addition review, direct-main durability, automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.
+
+Defaults: no PR because Ryan directly requested commit and push to `main`; preserve the verified 4J contract, migration, implementation, and tests; use only credential-free production `/health`; inspect workflow metadata and open logs only if failure requires diagnosis; publish the post-deploy closeout with `[skip actions]` to prevent a second deployment.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the authorized path.
+
+Verification: exact path and sensitive-string review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separate Task 1J / 4K planning gate.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

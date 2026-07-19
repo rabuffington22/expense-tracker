@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 12:54 PM CST",
+    "lastUpdated": "2026-07-19 1:39 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,18 +27,24 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4I-R is complete: source commit 46f8286 is durable on main, automatic Fly deployment passed, and credential-free production health returned 200.",
-    "progress": 75
+    "summary": "Work block 4J-R is actively publishing the exact verified 4J account-state repair to main, observing the automatic Fly deploy, and recording credential-free health evidence.",
+    "progress": 80
   },
   "currentTask": {
-    "title": "Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness",
+    "title": "Task 1J: Isolate Plaid item failures and add truthful observability",
     "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Codex Desktop completed 4I implementation and verification plus 4I-R direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout",
-    "nextAction": "Separately define and confirm a bounded Task 1I work block before implementation.",
-    "blocker": "No Task 1I implementation or additional release/live action is authorized"
+    "supportingAgent": "Codex Desktop is completing the separately authorized 4J-R release before Task 1J planning resumes",
+    "nextAction": "Reverify and stage the exact twelve-path 4J set, commit it on the feature branch, fast-forward main, push, observe automatic deployment, verify credential-free health, and publish the skip-actions closeout.",
+    "blocker": "No Task 1J implementation is authorized; 4J-R stops if scope, alignment, verification, deployment attribution, or credential-free health fails"
   },
-  "currentWorkBlock": null,
+  "currentWorkBlock": {
+    "id": "phase-4-block-j-release",
+    "label": "4J-R",
+    "name": "Durability And Release",
+    "status": "active",
+    "owner": "Codex Desktop"
+  },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -62,23 +68,18 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Separately plan Task 1I Plaid reconciliation and freshness repair",
-    "status": "awaiting Ryan",
-    "owner": "Ryan",
-    "why": "4I-R is durable, deployed, and health verified; reconciliation, liabilities, and freshness use a separate contract and verification path.",
-    "action": "Ask Codex to define Task 1I, then confirm before implementation or any further release/live action.",
+    "title": "Complete exact 4J-R direct-main release",
+    "status": "in progress",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized committing and pushing the verified 4J scope to main, which triggers the established automatic Fly deployment path.",
+    "action": "Publish only the exact verified 4J set, verify the automatic deployment and credential-free health, then record the skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
-  "waitingOnRyan": {
-    "summary": "Work block 4I-R is complete; the next implementation or release requires a separate Ryan decision.",
-    "items": [
-      "Ask Codex to define the Task 1I work block when ready."
-    ]
-  },
+  "waitingOnRyan": null,
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4I-R is complete. Task 1I-1P implementation, broader Task 2, Task 3, protected data, further releases, and unrelated live actions remain outside authorization.",
-    "decisionQueue": "The next Ryan decision is a separately proposed and confirmed Task 1I scope.",
+    "phaseQuestions": "Work block 4J-R authorizes only exact 4J durability, the automatic main-push Fly deploy, credential-free health, and sanitized closeout. Task 1J-1P implementation, broader Task 2, Task 3, protected data, and other live actions remain outside authorization.",
+    "decisionQueue": "After 4J-R closes, the next Ryan decision is whether to define and confirm work block 4K for Task 1J.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1892,6 +1893,114 @@
         "Fly deploy job 88221144959"
       ],
       "result": "Published source commit 46f8286 directly to main by exact-path fast-forward, observed successful automatic Fly run 29697681136 and job 88221144959, verified credential-free production health at HTTP 200, preserved both unrelated untracked files, and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-j",
+      "phaseId": "phase-4",
+      "label": "4J",
+      "name": "Plaid Reconciliation, Liability, And Freshness Truthfulness",
+      "status": "done",
+      "includedTasks": [
+        "Task 1I",
+        "Task 2 paired only for the matching primary-Plaid P3-3G-C01 slice"
+      ],
+      "includedFindings": [
+        "P3-3G-02",
+        "P3-3G-03",
+        "P3-3G-04",
+        "P3-3G-05",
+        "P3-3G-C01 matching reconciliation, link, liability, and freshness slice"
+      ],
+      "excludedTasks": [
+        "Completed Tasks 1A-1H; Tasks 1J-1P and Tasks 3-4",
+        "The remainder of Task 2 and P3-3G-C01 plus P3-3G-06, P3-3G-07, and every remaining P3-3H finding",
+        "Missing-modification observability, corrupt-token isolation, scheduled/public coordination, downstream behavior, destructive migration, and unrelated repairs",
+        "Real data, credentials, production/demo, live Plaid, workflows, Fly, downstream access/writes, GitHub durability, deployment, pre-existing untracked scripts/sync_prod_to_local.sh, and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive financial-integrity repair couples contract design, cross-file implementation, additive-schema judgment, all-entity synthetic verification, protected-data boundaries, cleanup, Runway OS stewardship, and final intake; the prior independent review already endorsed this second Plaid sub-block.",
+      "runnerPath": "Current Codex task on local branch codex/plaid-account-truthfulness without delegation or second opinion.",
+      "expectedFiles": [
+        "A sanitized Plaid account-state contract under command-center",
+        "web/routes/cashflow.py and web/routes/plaid.py",
+        "core/db.py only if an additive freshness migration is necessary",
+        "scripts/smoke_test.py",
+        "command-center issues, roadmap, now, decisions, state, dashboard, and sanitized 4J closeout log"
+      ],
+      "stopConditions": [
+        "Correctness requires protected data, credentials, live Plaid, production inspection, or another external action",
+        "A safe design requires destructive migration, rewriting an applied migration, or guessing production state",
+        "Manual-account cleanup needs a product rule beyond preserving unmatched manual rows",
+        "Work expands into Task 1J, sync-entry coordination, downstream behavior, or another repair family",
+        "Entity isolation, last-known-good account state, or failure preservation cannot be maintained",
+        "Verification changes the plan, cleanup cannot be proven, command-center checks fail, or scope reaches GitHub durability, deployment, or either preserved untracked file"
+      ],
+      "verification": [
+        "Baseline and final .venv/bin/python scripts/smoke_test.py",
+        "Maintained all-entity per-item reconciliation, disabled and removed cleanup, manual preservation, balance and liability freshness, mixed-freshness, failure-preservation, and similar-name link checks",
+        "Mocked Plaid responses, fake tokens, denied outbound sockets, populated synthetic migration proof if required, and exact disposable cleanup",
+        "Python compilation, JSON validation, dashboard refresh, health check, git diff check, dashboard inspection, and final explicit-path worktree review"
+      ],
+      "reportBack": "Return the exact account-state contract, changed paths, migration disposition, focused and full synthetic results, failure-preservation and cleanup evidence, local branch state, preserved exclusions, and the separate release gate.",
+      "durability": "Complete and verified locally on codex/plaid-account-truthfulness; commit, push, PR, merge, deployment, protected data, credentials, real databases, live systems, Plaid, workflows, Fly, downstream access/write, and other external actions remain excluded.",
+      "evidence": [
+        "command-center/plaid-account-state-contract.md",
+        "core/db.py",
+        "web/routes/cashflow.py",
+        "web/routes/plaid.py",
+        "scripts/smoke_test.py",
+        "command-center/issues.md",
+        "command-center/logs/2026-07-19-plaid-account-state-truthfulness-4j.md"
+      ],
+      "result": "Added separate nullable per-item account and liability freshness markers; made reconciliation item-scoped and failure-preserving; removed unsafe manual-account name cleanup; separated liability freshness; invalidated both markers on toggle; and passed baseline/final smoke, populated upgrade, 28 focused all-entity assertions, denied-network, and exact-cleanup checks without protected data or live action."
+    },
+    {
+      "id": "phase-4-block-j-release",
+      "phaseId": "phase-4",
+      "label": "4J-R",
+      "name": "Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1I release durability",
+        "Task 4"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real databases or financial, payroll, or HR rows, uploads, credentials, and authenticated production pages",
+        "Live Plaid calls, manual workflow actions, non-automatic Fly mutation, downstream access or writes, workflow edits, Task 1J, broader Plaid work, and unrelated repairs",
+        "Force push and recovery beyond the exact fast-forward publish path"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git and sensitive-addition review, direct-main durability, automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.",
+      "runnerPath": "Current Codex task using local git and gh without a PR because Ryan explicitly requested commit and push to main.",
+      "expectedFiles": [
+        "Exact twelve intended 4J application, additive migration, maintained-test, contract, issue, evidence, and command-center paths",
+        "Source commit on codex/plaid-account-truthfulness and fast-forward local main",
+        "Automatic Fly Deploy workflow from the main push",
+        "Sanitized 4J-R closeout log and command-center-only skip-actions commit"
+      ],
+      "stopConditions": [
+        "Exact diff contains an unexpected path, sensitive value, protected data, or unrelated user change",
+        "Local or remote main diverges or cannot be fast-forwarded safely",
+        "Maintained verification fails or staging includes an excluded path",
+        "Automatic deployment fails or cannot be attributed to the source SHA",
+        "Credential-free health fails, a second deploy starts, or recovery exceeds the authorized path"
+      ],
+      "verification": [
+        "Exact path, staged-set, sensitive-pattern, branch-ancestry, GitHub-authentication, and remote-alignment review",
+        "Maintained synthetic suite, Python compilation, JSON validation, dashboard refresh, health check, and git diff check",
+        "Explicit staging review, source commit, and direct-main fast-forward push",
+        "Automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment, preserved exclusions, and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the Task 1J planning gate.",
+      "durability": "Active; exact verified 4J source is approved for a direct-main fast-forward push, automatic Fly observation, credential-free health, and a separate command-center-only skip-actions closeout.",
+      "evidence": [
+        "command-center/logs/2026-07-19-plaid-account-state-truthfulness-4j.md"
+      ],
+      "result": "In progress."
     }
   ],
   "phaseTasks": [
@@ -2394,19 +2503,30 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1I",
       "title": "Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness",
-      "status": "current",
-      "owner": "Ryan",
-      "summary": "Separately plan the second primary-Plaid block after the durable and deployed 4I-R closeout.",
-      "nextAction": "Request a bounded Task 1I work-block proposal when ready.",
-      "blocker": "No Task 1I implementation is authorized."
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Work block 4J completed P3-3G-02 through P3-3G-05 and only the matching P3-3G-C01 coverage slice with additive migration 58.",
+      "result": "Per-item account reconciliation, manual-account preservation, separate liability freshness, mixed-freshness truthfulness, toggle invalidation, populated migration, all-entity synthetic verification, denied networking, and cleanup pass locally.",
+      "evidence": [
+        "command-center/plaid-account-state-contract.md",
+        "core/db.py",
+        "web/routes/cashflow.py",
+        "web/routes/plaid.py",
+        "scripts/smoke_test.py",
+        "command-center/logs/2026-07-19-plaid-account-state-truthfulness-4j.md"
+      ],
+      "nextAction": "Await a separately authorized 4J release decision.",
+      "blocker": "GitHub durability and deployment remain unauthorized."
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1J",
       "title": "Task 1J: Isolate Plaid item failures and add truthful observability",
-      "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Run the third primary-Plaid block after persistence and reconciliation behavior are truthful."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Separately plan the third primary-Plaid block after persistence and account-state behavior are truthful.",
+      "nextAction": "Request a bounded 4K Task 1J work-block proposal when ready.",
+      "blocker": "No Task 1J implementation is authorized."
     },
     {
       "phaseId": "phase-4",
@@ -2462,7 +2582,7 @@
       "title": "Task 2: Expand regression coverage",
       "status": "active",
       "owner": "Codex Desktop",
-      "summary": "Pair focused synthetic coverage with each repair family; 4C completed P3-3A-C01, 4D the P3-3F-C01 payroll-boundary slice, 4E the P3-3D-C01 planning-boundary slice, 4F the P3-3I-C01 selection slice, 4G the P3-3H-C01 result slice, and 4H the P3-3C-C01 recurring-report slice."
+      "summary": "Pair focused synthetic coverage with each repair family; 4C completed P3-3A-C01, 4D the P3-3F-C01 payroll-boundary slice, 4E the P3-3D-C01 planning-boundary slice, 4F the P3-3I-C01 selection slice, 4G the P3-3H-C01 result slice, 4H the P3-3C-C01 recurring-report slice, 4I the P3-3G-C01 atomicity slice, and 4J its reconciliation, link, liability, and freshness slice."
     },
     {
       "phaseId": "phase-4",
@@ -2742,6 +2862,14 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-19",
+      "text": "Completed work block 4J locally: additive per-item account and liability freshness, item-scoped reconciliation, manual-account preservation, toggle invalidation, similar-name link safety, and 28 focused all-entity checks pass without protected data or live action."
+    },
+    {
+      "time": "2026-07-19",
+      "text": "Ryan confirmed local-only work block 4J for P3-3G-02 through P3-3G-05 and focused P3-3G-C01 coverage; Task 1J, release, live Plaid, and broader repairs remained excluded."
+    },
     {
       "time": "2026-07-19",
       "text": "Published 4I source commit 46f8286 to main; automatic Fly run 29697681136 and deploy job 88221144959 succeeded, and credential-free production health returned 200."
@@ -3468,8 +3596,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Define the bounded Task 1I work block",
-    "description": "Separately plan reconciliation, liability, and freshness truthfulness after the durable atomic persistence boundary."
+    "name": "Choose 4J release or define bounded work block 4K",
+    "description": "Keep the verified 4J implementation local until release is authorized, or separately plan Task 1J item isolation and observability."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -3562,6 +3690,9 @@
     "phase4PlaidAtomicityCoverage": "pass; maintained two-page aggregation, all-entity success, redelivery, enabled-account filtering, signed amounts, removal and split behavior, twelve forced add modify remove and cursor rollback-and-retry paths, and unrelated-row preservation checks pass",
     "phase4PlaidAtomicityCleanup": "pass; baseline and final smoke suites, Python compilation, temporary all-entity roots, upload backup WAL and SHM cleanup, denied outbound sockets, JSON validation, dashboard refresh, health check, git diff check, and preserved untracked exclusions pass",
     "phase4PlaidAtomicityRelease": "pass; source commit 46f8286 is on main, automatic Fly run 29697681136 and deploy job 88221144959 passed every reported step, and credential-free production health returned HTTP 200",
-    "phase4PlaidAtomicityDurability": "pass; local main matched origin/main at source commit 46f8286 before this command-center-only skip-actions closeout"
+    "phase4PlaidAtomicityDurability": "pass; local main matched origin/main at source commit 46f8286 before this command-center-only skip-actions closeout",
+    "phase4PlaidAccountStateRepair": "pass locally; migration 58 separates per-item account and liability freshness, reconciliation is item-scoped and failure-preserving, manual link cleanup no longer guesses by name, and account toggle invalidates both markers",
+    "phase4PlaidAccountStateCoverage": "pass; populated schema-57 upgrade plus 28 focused Personal BFM and Luxe Legacy assertions cover success, partial failure, empty keep sets, manual preservation, liabilities, successful empty responses, mixed freshness, toggle invalidation, successful and failed link exchange, denied networking, isolation, and cleanup",
+    "phase4PlaidAccountStateCleanup": "pass; baseline and final smoke suites, Python compilation, disposable upgrade and all-entity roots, denied outbound sockets, exact synthetic cleanup, JSON validation, dashboard refresh, health check, git diff check, and preserved untracked exclusions pass"
   }
 }

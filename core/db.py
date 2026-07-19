@@ -803,6 +803,12 @@ CREATE TABLE IF NOT EXISTS cut_list (
 );
 """
 
+_MIGRATION_58 = """
+-- Keep account/balance and liability freshness independent per Plaid item.
+ALTER TABLE plaid_items ADD COLUMN accounts_last_synced TEXT;
+ALTER TABLE plaid_items ADD COLUMN liabilities_last_synced TEXT;
+"""
+
 _MIGRATIONS: list[tuple[int, str]] = [
     (1, _MIGRATION_1),
     (2, _MIGRATION_2),
@@ -861,6 +867,7 @@ _MIGRATIONS: list[tuple[int, str]] = [
     (55, _MIGRATION_55),
     (56, _MIGRATION_56),
     (57, _MIGRATION_57),
+    (58, _MIGRATION_58),
 ]
 
 

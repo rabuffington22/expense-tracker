@@ -32,6 +32,18 @@ _ENTITY_DISPLAY = None  # lazy-init
 _BALANCE_CACHE_SECONDS = 3600  # Re-fetch Plaid balances every hour
 
 
+def _is_plaid_cache_fresh(value: str | None) -> bool:
+    """Return whether a per-item Plaid refresh marker is still fresh."""
+    if not value:
+        return False
+    try:
+        last = datetime.datetime.fromisoformat(value)
+    except (ValueError, TypeError):
+        return False
+    now = datetime.datetime.now(last.tzinfo) if last.tzinfo else datetime.datetime.now()
+    return (now - last).total_seconds() < _BALANCE_CACHE_SECONDS
+
+
 def _parse_dollar_to_cents(dollar_str: str) -> int:
     """Parse '$1,234.56' or '1234.56' into cents (123456)."""
     try:
@@ -44,28 +56,16 @@ def _parse_dollar_to_cents(dollar_str: str) -> int:
 def _sync_plaid_accounts(conn, entity_key: str):
     """Sync Plaid accounts to account_balances table with current balances.
 
-    Creates/updates account_balances rows from connected Plaid accounts.
-    Skips API call if balances were refreshed within _BALANCE_CACHE_SECONDS.
-    Preserves manually-created accounts (plaid_account_id IS NULL).
+    Each successfully fetched item reconciles only its own cached rows. Failed
+    items and manually-created accounts remain untouched.
     """
     import os
     if not os.environ.get("PLAID_CLIENT_ID") or not os.environ.get("PLAID_SECRET"):
         return
 
-    # Check staleness — skip if recently refreshed
-    latest = conn.execute(
-        "SELECT MAX(updated_at) FROM account_balances WHERE balance_source='plaid'"
-    ).fetchone()[0]
-    if latest:
-        try:
-            last = datetime.datetime.fromisoformat(latest)
-            if (datetime.datetime.now() - last).total_seconds() < _BALANCE_CACHE_SECONDS:
-                return
-        except (ValueError, TypeError):
-            pass
-
     items = conn.execute(
-        "SELECT item_id, access_token, institution_name FROM plaid_items "
+        "SELECT item_id, access_token, institution_name, accounts_last_synced "
+        "FROM plaid_items "
         "WHERE is_vendor = 0"
     ).fetchall()
     if not items:
@@ -78,106 +78,108 @@ def _sync_plaid_accounts(conn, entity_key: str):
 
     bank_sort = 0
     card_sort = 100
-    synced_plaid_ids = set()  # Track which accounts we actually want on Cash Flow
-
     from core.crypto import decrypt_token
     for item in items:
+        if _is_plaid_cache_fresh(item["accounts_last_synced"]):
+            continue
+
         try:
             accounts = get_accounts(decrypt_token(item["access_token"]))
         except Exception as e:
             log.warning("Failed to fetch accounts for %s: %s", item["institution_name"], e)
             continue
 
-        for acct in accounts:
-            # Skip investment/retirement accounts (IRA, 529, etc.) — those go to Planning
-            if acct["type"] == "investment":
-                continue
+        configured_rows = conn.execute(
+            "SELECT account_id, enabled, display_name FROM plaid_accounts "
+            "WHERE item_id=?",
+            (item["item_id"],),
+        ).fetchall()
+        configured = {row["account_id"]: row for row in configured_rows}
+        upstream_ids = {acct["account_id"] for acct in accounts}
+        synced_plaid_ids = set()
+        refreshed_at = datetime.datetime.now().isoformat()
 
-            # Skip accounts not in plaid_accounts or disabled — if the row was
-            # deleted (e.g. Quicksilver removed from BFM), treat it as disabled
-            # so it doesn't get re-created on every sync.
-            pa_row = conn.execute(
-                "SELECT enabled, display_name FROM plaid_accounts WHERE account_id=?",
-                (acct["account_id"],),
-            ).fetchone()
-            if not pa_row or not pa_row["enabled"]:
-                continue
+        try:
+            with conn:
+                for acct in accounts:
+                    pa_row = configured.get(acct["account_id"])
+                    if acct["type"] == "investment" or not pa_row or not pa_row["enabled"]:
+                        continue
 
-            synced_plaid_ids.add(acct["account_id"])
+                    synced_plaid_ids.add(acct["account_id"])
+                    acct_type = "credit_card" if acct["type"] == "credit" else "bank"
+                    if acct_type == "bank":
+                        sort = bank_sort
+                        bank_sort += 1
+                    else:
+                        sort = card_sort
+                        card_sort += 1
 
-            acct_type = "credit_card" if acct["type"] == "credit" else "bank"
-            if acct_type == "bank":
-                sort = bank_sort
-                bank_sort += 1
-            else:
-                sort = card_sort
-                card_sort += 1
-
-            # Display name: user alias > Plaid name
-            display_name = (pa_row["display_name"] if pa_row and pa_row["display_name"]
-                            else acct["name"])
-
-            balance_cents = int(round(acct["balance_current"] * 100)) if acct["balance_current"] is not None else 0
-            limit_cents = int(round(acct["balance_limit"] * 100)) if acct["balance_limit"] is not None else 0
-            now = datetime.datetime.now().isoformat()
-
-            # UPSERT by plaid_account_id
-            existing = conn.execute(
-                "SELECT id FROM account_balances WHERE plaid_account_id=?",
-                (acct["account_id"],),
-            ).fetchone()
-
-            if existing:
-                # Preserve manually-set credit limit when Plaid doesn't provide one
-                if limit_cents == 0:
-                    conn.execute(
-                        "UPDATE account_balances SET account_name=?, balance_cents=?, "
-                        "balance_source='plaid', account_type=?, "
-                        "sort_order=?, updated_at=? WHERE id=?",
-                        (display_name, balance_cents, acct_type, sort,
-                         now, existing["id"]),
+                    display_name = pa_row["display_name"] or acct["name"]
+                    balance_cents = (
+                        int(round(acct["balance_current"] * 100))
+                        if acct["balance_current"] is not None else 0
                     )
-                else:
-                    conn.execute(
-                        "UPDATE account_balances SET account_name=?, balance_cents=?, "
-                        "credit_limit_cents=?, balance_source='plaid', account_type=?, "
-                        "sort_order=?, updated_at=? WHERE id=?",
-                        (display_name, balance_cents, limit_cents, acct_type, sort,
-                         now, existing["id"]),
+                    limit_cents = (
+                        int(round(acct["balance_limit"] * 100))
+                        if acct["balance_limit"] is not None else 0
                     )
-            else:
-                # Disambiguate if another account already has this name
-                name_conflict = conn.execute(
-                    "SELECT id FROM account_balances WHERE account_name=?",
-                    (display_name,),
-                ).fetchone()
-                if name_conflict:
-                    mask = acct.get("mask") or ""
-                    inst = item["institution_name"] or ""
-                    suffix = f" ({inst} ••{mask})" if mask else f" ({inst})"
-                    display_name = f"{display_name}{suffix}"
+                    existing = conn.execute(
+                        "SELECT id FROM account_balances WHERE plaid_account_id=?",
+                        (acct["account_id"],),
+                    ).fetchone()
 
+                    if existing:
+                        if limit_cents == 0:
+                            conn.execute(
+                                "UPDATE account_balances SET account_name=?, balance_cents=?, "
+                                "balance_source='plaid', account_type=?, sort_order=?, "
+                                "updated_at=? WHERE id=?",
+                                (display_name, balance_cents, acct_type, sort,
+                                 refreshed_at, existing["id"]),
+                            )
+                        else:
+                            conn.execute(
+                                "UPDATE account_balances SET account_name=?, balance_cents=?, "
+                                "credit_limit_cents=?, balance_source='plaid', account_type=?, "
+                                "sort_order=?, updated_at=? WHERE id=?",
+                                (display_name, balance_cents, limit_cents, acct_type, sort,
+                                 refreshed_at, existing["id"]),
+                            )
+                    else:
+                        name_conflict = conn.execute(
+                            "SELECT id FROM account_balances WHERE account_name=?",
+                            (display_name,),
+                        ).fetchone()
+                        if name_conflict:
+                            mask = acct.get("mask") or ""
+                            inst = item["institution_name"] or ""
+                            suffix = f" ({inst} ••{mask})" if mask else f" ({inst})"
+                            display_name = f"{display_name}{suffix}"
+
+                        conn.execute(
+                            "INSERT INTO account_balances "
+                            "(account_name, balance_cents, balance_source, plaid_account_id, "
+                            "account_type, credit_limit_cents, sort_order, updated_at) "
+                            "VALUES (?,?,?,?,?,?,?,?)",
+                            (display_name, balance_cents, "plaid", acct["account_id"],
+                             acct_type, limit_cents, sort, refreshed_at),
+                        )
+
+                # The successful item response is authoritative only for account IDs
+                # belonging to this item. Manual rows and sibling items are untouched.
+                known_item_ids = set(configured) | upstream_ids
+                for stale_id in known_item_ids - synced_plaid_ids:
+                    conn.execute(
+                        "DELETE FROM account_balances WHERE plaid_account_id=?",
+                        (stale_id,),
+                    )
                 conn.execute(
-                    "INSERT INTO account_balances "
-                    "(account_name, balance_cents, balance_source, plaid_account_id, "
-                    "account_type, credit_limit_cents, sort_order, updated_at) "
-                    "VALUES (?,?,?,?,?,?,?,?)",
-                    (display_name, balance_cents, "plaid", acct["account_id"],
-                     acct_type, limit_cents, sort, now),
+                    "UPDATE plaid_items SET accounts_last_synced=? WHERE item_id=?",
+                    (refreshed_at, item["item_id"]),
                 )
-
-    # Remove stale Plaid-linked accounts that are no longer synced
-    # (e.g. investment/disabled accounts synced before filters were added).
-    # Preserve manually-added accounts (plaid_account_id IS NULL).
-    if synced_plaid_ids:
-        placeholders = ",".join("?" for _ in synced_plaid_ids)
-        conn.execute(
-            f"DELETE FROM account_balances WHERE plaid_account_id IS NOT NULL "
-            f"AND plaid_account_id NOT IN ({placeholders})",
-            list(synced_plaid_ids),
-        )
-
-    conn.commit()
+        except Exception as e:
+            log.warning("Failed to apply accounts for %s: %s", item["institution_name"], e)
 
 
 def _get_account_names_for_plaid_id(conn, plaid_account_id: str) -> list:
@@ -348,114 +350,116 @@ def _get_manual_recurring(conn, account_id: int) -> list:
     return items
 
 
-def _fetch_plaid_liabilities(conn) -> dict:
-    """Fetch Plaid liabilities for all connected credit card accounts.
+def _fetch_plaid_liabilities(conn) -> dict[str, dict]:
+    """Fetch stale liability data keyed by Plaid item ID.
 
-    Returns dict keyed by plaid_account_id with credit card details.
-    Skips API call if liabilities were refreshed within _BALANCE_CACHE_SECONDS.
-    Silently returns empty dict if Plaid is not configured or fails.
+    Failed items are omitted so their cached values and freshness markers remain
+    untouched. A successful empty response is retained as an authoritative item
+    result and advances freshness when applied.
     """
     import os
-    # Skip entirely if Plaid env vars aren't set — avoids hanging on API calls
     if not os.environ.get("PLAID_CLIENT_ID") or not os.environ.get("PLAID_SECRET"):
         return {}
-
-    # Check staleness — skip if recently refreshed (uses same cache window as accounts)
-    latest = conn.execute(
-        "SELECT MAX(updated_at) FROM account_balances "
-        "WHERE balance_source='plaid' AND account_type='credit_card'"
-    ).fetchone()[0]
-    if latest:
-        try:
-            last = datetime.datetime.fromisoformat(latest)
-            if (datetime.datetime.now() - last).total_seconds() < _BALANCE_CACHE_SECONDS:
-                return {}
-        except (ValueError, TypeError):
-            pass
 
     try:
         from core.plaid_client import get_liabilities
     except (ImportError, RuntimeError):
         return {}
 
-    # Find all spending Plaid items (skip vendor accounts)
     items = conn.execute(
-        "SELECT item_id, access_token FROM plaid_items WHERE is_vendor = 0"
+        "SELECT item_id, access_token, liabilities_last_synced FROM plaid_items "
+        "WHERE is_vendor = 0"
     ).fetchall()
     if not items:
         return {}
 
     from core.crypto import decrypt_token
-    all_liabilities = {}
+    item_liabilities = {}
     for item in items:
+        if _is_plaid_cache_fresh(item["liabilities_last_synced"]):
+            continue
         try:
-            liab = get_liabilities(decrypt_token(item["access_token"]))
-            all_liabilities.update(liab)
+            item_liabilities[item["item_id"]] = get_liabilities(
+                decrypt_token(item["access_token"])
+            )
         except Exception as e:
             log.warning("Failed to fetch liabilities for item %s: %s", item["item_id"], e)
-    return all_liabilities
+    return item_liabilities
 
 
-def _apply_plaid_liabilities(accts: dict, liabilities: dict, conn):
-    """Update account data with Plaid liabilities where linked.
-
-    For credit cards with a plaid_account_id that matches a liabilities entry:
-    - Updates balance_cents, credit_limit_cents from Plaid
-    - Sets payment_due_day and payment_amount_cents from Plaid's next_payment_due_date
-      and minimum_payment_amount
-    - Sets balance_source to 'plaid'
-    """
-    if not liabilities:
+def _apply_plaid_liabilities(accts: dict, item_liabilities: dict[str, dict], conn):
+    """Apply each successful item's liabilities and freshness atomically."""
+    if not item_liabilities:
         return
 
-    for acct in accts["banks"] + accts["cards"]:
-        plaid_id = acct.get("plaid_account_id")
-        if not plaid_id or plaid_id not in liabilities:
+    accounts_by_plaid_id = {
+        acct["plaid_account_id"]: acct
+        for acct in accts["banks"] + accts["cards"]
+        if acct.get("plaid_account_id")
+    }
+
+    for item_id, liabilities in item_liabilities.items():
+        item_account_ids = {
+            row["account_id"] for row in conn.execute(
+                "SELECT account_id FROM plaid_accounts WHERE item_id=?",
+                (item_id,),
+            ).fetchall()
+        }
+        refreshed_at = datetime.datetime.now().isoformat()
+        pending_updates = []
+
+        try:
+            for plaid_id, liab in liabilities.items():
+                if plaid_id not in item_account_ids or plaid_id not in accounts_by_plaid_id:
+                    continue
+                acct = accounts_by_plaid_id[plaid_id]
+                updated = dict(acct)
+                updated["balance_source"] = "plaid"
+                if liab.get("balance") is not None:
+                    updated["balance_cents"] = int(round(liab["balance"] * 100))
+                if liab.get("credit_limit"):
+                    updated["credit_limit_cents"] = int(round(liab["credit_limit"] * 100))
+                if liab.get("next_payment_due_date"):
+                    updated["payment_due_date"] = liab["next_payment_due_date"]
+                    try:
+                        due_date = datetime.datetime.strptime(
+                            liab["next_payment_due_date"], "%Y-%m-%d"
+                        ).date()
+                        updated["payment_due_day"] = due_date.day
+                    except (ValueError, TypeError):
+                        pass
+                if liab.get("minimum_payment_amount") is not None:
+                    updated["payment_amount_cents"] = int(
+                        round(liab["minimum_payment_amount"] * 100)
+                    )
+                pending_updates.append((acct, updated))
+
+            with conn:
+                for _acct, updated in pending_updates:
+                    conn.execute(
+                        "UPDATE account_balances SET balance_cents=?, credit_limit_cents=?, "
+                        "payment_due_day=?, payment_due_date=?, payment_amount_cents=?, "
+                        "balance_source='plaid', updated_at=? WHERE id=?",
+                        (
+                            updated["balance_cents"],
+                            updated.get("credit_limit_cents", 0),
+                            updated.get("payment_due_day"),
+                            updated.get("payment_due_date"),
+                            updated.get("payment_amount_cents", 0),
+                            refreshed_at,
+                            updated["id"],
+                        ),
+                    )
+                conn.execute(
+                    "UPDATE plaid_items SET liabilities_last_synced=? WHERE item_id=?",
+                    (refreshed_at, item_id),
+                )
+        except Exception as e:
+            log.warning("Failed to apply liabilities for item %s: %s", item_id, e)
             continue
 
-        liab = liabilities[plaid_id]
-        now = datetime.datetime.now().isoformat()
-
-        # Update balance from Plaid (Plaid returns positive for credit cards)
-        balance_cents = int(round(liab["balance"] * 100))
-        acct["balance_cents"] = balance_cents
-        acct["balance_source"] = "plaid"
-
-        # Credit limit
-        if liab["credit_limit"]:
-            limit_cents = int(round(liab["credit_limit"] * 100))
-            acct["credit_limit_cents"] = limit_cents
-
-        # Payment info from Plaid — store full date
-        if liab["next_payment_due_date"]:
-            acct["payment_due_date"] = liab["next_payment_due_date"]
-            try:
-                due_date = datetime.datetime.strptime(
-                    liab["next_payment_due_date"], "%Y-%m-%d"
-                ).date()
-                acct["payment_due_day"] = due_date.day
-            except (ValueError, TypeError):
-                pass
-
-        if liab["minimum_payment_amount"] is not None:
-            acct["payment_amount_cents"] = int(round(liab["minimum_payment_amount"] * 100))
-
-        # Persist to DB so values are cached between Plaid refreshes
-        conn.execute(
-            "UPDATE account_balances SET balance_cents=?, credit_limit_cents=?, "
-            "payment_due_day=?, payment_due_date=?, payment_amount_cents=?, "
-            "balance_source='plaid', updated_at=? WHERE id=?",
-            (
-                acct["balance_cents"],
-                acct.get("credit_limit_cents", 0),
-                acct.get("payment_due_day"),
-                acct.get("payment_due_date"),
-                acct.get("payment_amount_cents", 0),
-                now,
-                acct["id"],
-            ),
-        )
-        conn.commit()
+        for acct, updated in pending_updates:
+            acct.update(updated)
 
 
 def _load_entity_section(entity_key: str) -> dict:

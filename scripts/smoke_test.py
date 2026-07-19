@@ -1703,8 +1703,472 @@ def main() -> None:
             conn_atomic.close()
         print("   ✅ All-entity pagination, atomic commit, rollback, retry, idempotency, filtering, and cleanup passed")
 
-        # ── 8f. CSV export tests ────────────────────────────────────
-        print("\n8f. CSV export tests…")
+        # ── 8f. Plaid account-state truthfulness ───────────────────
+        print("\n8f. Plaid account-state truthfulness…")
+        import datetime as account_datetime
+        import sqlite3
+
+        from core.db import _MIGRATIONS
+        from web.routes import cashflow as account_state_routes
+
+        # Prove the additive populated upgrade path from schema 57 to 58.
+        upgrade_root = Path(tmpdir) / "plaid-account-state-upgrade"
+        upgrade_root.mkdir()
+        upgrade_db = upgrade_root / "personal.sqlite"
+        upgrade_conn = sqlite3.connect(upgrade_db)
+        upgrade_conn.execute(
+            "CREATE TABLE schema_version (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)"
+        )
+        for version, migration_sql in _MIGRATIONS:
+            if version > 57:
+                break
+            upgrade_conn.executescript(migration_sql)
+            upgrade_conn.execute(
+                "INSERT INTO schema_version (version, applied_at) VALUES (?, 'synthetic')",
+                (version,),
+            )
+        upgrade_conn.execute(
+            "INSERT INTO plaid_items "
+            "(item_id, access_token, institution_name, created_at) "
+            "VALUES ('acctstate-upgrade-item', 'synthetic-token', "
+            "'Synthetic Upgrade Bank', '2026-07-01T00:00:00')"
+        )
+        upgrade_conn.commit()
+        upgrade_conn.close()
+        original_data_dir = os.environ["DATA_DIR"]
+        os.environ["DATA_DIR"] = str(upgrade_root)
+        try:
+            init_db("personal")
+            upgrade_conn = get_connection("personal")
+            upgrade_columns = {
+                row["name"] for row in upgrade_conn.execute(
+                    "PRAGMA table_info(plaid_items)"
+                ).fetchall()
+            }
+            upgrade_item = upgrade_conn.execute(
+                "SELECT item_id, accounts_last_synced, liabilities_last_synced "
+                "FROM plaid_items WHERE item_id='acctstate-upgrade-item'"
+            ).fetchone()
+            upgrade_version = upgrade_conn.execute(
+                "SELECT MAX(version) FROM schema_version"
+            ).fetchone()[0]
+            upgrade_conn.close()
+        finally:
+            os.environ["DATA_DIR"] = original_data_dir
+        _check(
+            {"accounts_last_synced", "liabilities_last_synced"} <= upgrade_columns
+            and upgrade_item is not None
+            and upgrade_item["accounts_last_synced"] is None
+            and upgrade_item["liabilities_last_synced"] is None
+            and upgrade_version == 58,
+            "Plaid account state: populated schema-57 upgrade should preserve the item and add null freshness markers",
+        )
+
+        fresh_marker = account_datetime.datetime.now().isoformat()
+
+        def _seed_account_state(entity_key):
+            prefix = f"acctstate-{entity_key}"
+            conn_state = get_connection(entity_key)
+            items = {
+                "success": f"{prefix}-success",
+                "failure": f"{prefix}-failure",
+                "fresh": f"{prefix}-fresh",
+                "empty": f"{prefix}-empty",
+                "liability_empty": f"{prefix}-liability-empty",
+            }
+            for role, item_id in items.items():
+                account_marker = fresh_marker if role in ("fresh", "liability_empty") else None
+                liability_marker = fresh_marker if role == "fresh" else None
+                conn_state.execute(
+                    "INSERT INTO plaid_items "
+                    "(item_id, access_token, institution_name, created_at, "
+                    "accounts_last_synced, liabilities_last_synced) "
+                    "VALUES (?,?,?,?,?,?)",
+                    (
+                        item_id,
+                        f"{prefix}-token-{role}",
+                        f"AcctState {role.title()} Bank",
+                        "2026-07-01T00:00:00",
+                        account_marker,
+                        liability_marker,
+                    ),
+                )
+
+            account_ids = {
+                "enabled": f"{prefix}-enabled-card",
+                "disabled": f"{prefix}-disabled-card",
+                "removed": f"{prefix}-removed-card",
+                "investment": f"{prefix}-investment",
+                "failure": f"{prefix}-failure-card",
+                "fresh": f"{prefix}-fresh-card",
+                "empty": f"{prefix}-empty-card",
+                "liability_empty": f"{prefix}-liability-empty-card",
+            }
+            account_specs = [
+                (items["success"], account_ids["enabled"], "Enabled Card", "credit", 1),
+                (items["success"], account_ids["disabled"], "Disabled Card", "credit", 0),
+                (items["success"], account_ids["removed"], "Removed Card", "credit", 1),
+                (items["success"], account_ids["investment"], "Investment", "investment", 1),
+                (items["failure"], account_ids["failure"], "Failure Card", "credit", 1),
+                (items["fresh"], account_ids["fresh"], "Fresh Card", "credit", 1),
+                (items["empty"], account_ids["empty"], "Empty Disabled Card", "credit", 0),
+                (items["liability_empty"], account_ids["liability_empty"], "Empty Liability Card", "credit", 1),
+            ]
+            for item_id, account_id, name, acct_type, enabled in account_specs:
+                conn_state.execute(
+                    "INSERT INTO plaid_accounts "
+                    "(item_id, account_id, name, type, enabled) VALUES (?,?,?,?,?)",
+                    (item_id, account_id, name, acct_type, enabled),
+                )
+                conn_state.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, plaid_account_id, "
+                    "account_type, payment_amount_cents, payment_due_day, updated_at) "
+                    "VALUES (?,?,?,?,?,?,?,?)",
+                    (
+                        f"AcctState {name} {entity_key}",
+                        10000,
+                        "plaid",
+                        account_id,
+                        "credit_card" if acct_type == "credit" else "bank",
+                        2500,
+                        15,
+                        "2026-07-01T00:00:00",
+                    ),
+                )
+            manual_name = f"Chase Emergency Reserve AcctState {entity_key}"
+            conn_state.execute(
+                "INSERT INTO account_balances "
+                "(account_name, balance_cents, balance_source, account_type, updated_at) "
+                "VALUES (?, 77700, 'manual', 'bank', '2026-07-01T00:00:00')",
+                (manual_name,),
+            )
+            conn_state.commit()
+            conn_state.close()
+            return items, account_ids, manual_name
+
+        def _account_payload(account_id, name, *, acct_type="credit", balance=321.0):
+            return {
+                "account_id": account_id,
+                "name": name,
+                "mask": "4242",
+                "type": acct_type,
+                "subtype": "credit card" if acct_type == "credit" else "brokerage",
+                "balance_current": balance,
+                "balance_limit": 5000.0 if acct_type == "credit" else None,
+            }
+
+        entity_labels = {"personal": "Personal", "company": "BFM", "luxelegacy": "LL"}
+        for entity_key in ("personal", "company", "luxelegacy"):
+            items, account_ids, manual_name = _seed_account_state(entity_key)
+            account_calls = []
+
+            def _mock_accounts(token):
+                account_calls.append(token)
+                if token.endswith("token-failure"):
+                    raise RuntimeError("synthetic account fetch failure")
+                if token.endswith("token-success"):
+                    return [
+                        _account_payload(account_ids["enabled"], "Enabled Card", balance=432.1),
+                        _account_payload(account_ids["disabled"], "Disabled Card"),
+                        _account_payload(
+                            account_ids["investment"], "Investment", acct_type="investment"
+                        ),
+                    ]
+                if token.endswith("token-empty"):
+                    return [_account_payload(account_ids["empty"], "Empty Disabled Card")]
+                raise AssertionError(f"unexpected account refresh for {token}")
+
+            conn_state = get_connection(entity_key)
+            with patch.dict(
+                os.environ,
+                {"PLAID_CLIENT_ID": "synthetic-client", "PLAID_SECRET": "synthetic-secret"},
+                clear=False,
+            ), patch(
+                "core.crypto.decrypt_token", side_effect=lambda token: token
+            ), patch(
+                "core.plaid_client.get_accounts", side_effect=_mock_accounts
+            ), patch.object(
+                account_state_routes.log, "warning"
+            ), patch(
+                "socket.socket",
+                side_effect=AssertionError("Plaid account-state smoke forbids outbound networking"),
+            ):
+                account_state_routes._sync_plaid_accounts(conn_state, entity_key)
+            success_marker = conn_state.execute(
+                "SELECT accounts_last_synced FROM plaid_items WHERE item_id=?",
+                (items["success"],),
+            ).fetchone()[0]
+            failure_marker = conn_state.execute(
+                "SELECT accounts_last_synced FROM plaid_items WHERE item_id=?",
+                (items["failure"],),
+            ).fetchone()[0]
+            empty_marker = conn_state.execute(
+                "SELECT accounts_last_synced FROM plaid_items WHERE item_id=?",
+                (items["empty"],),
+            ).fetchone()[0]
+            balances = {
+                row["plaid_account_id"]: dict(row) for row in conn_state.execute(
+                    "SELECT * FROM account_balances WHERE plaid_account_id LIKE ?",
+                    (f"acctstate-{entity_key}-%",),
+                ).fetchall()
+            }
+            manual_row = conn_state.execute(
+                "SELECT id, balance_cents FROM account_balances WHERE account_name=?",
+                (manual_name,),
+            ).fetchone()
+            _check(
+                success_marker is not None
+                and empty_marker is not None
+                and failure_marker is None
+                and balances[account_ids["enabled"]]["balance_cents"] == 43210,
+                f"Plaid account state {entity_key}: successful items should refresh and failed items should retain stale markers",
+            )
+            _check(
+                account_ids["disabled"] not in balances
+                and account_ids["removed"] not in balances
+                and account_ids["investment"] not in balances
+                and account_ids["empty"] not in balances
+                and account_ids["failure"] in balances,
+                f"Plaid account state {entity_key}: authoritative cleanup must stay per item and support an empty keep set",
+            )
+            _check(
+                manual_row is not None
+                and manual_row["balance_cents"] == 77700
+                and f"acctstate-{entity_key}-token-fresh" not in account_calls
+                and f"acctstate-{entity_key}-token-liability_empty" not in account_calls,
+                f"Plaid account state {entity_key}: manual rows and fresh sibling items must remain untouched",
+            )
+
+            liability_calls = []
+
+            def _mock_liabilities(token):
+                liability_calls.append(token)
+                if token.endswith("token-failure"):
+                    raise RuntimeError("synthetic liability fetch failure")
+                if token.endswith("token-success"):
+                    return {
+                        account_ids["enabled"]: {
+                            "balance": 654.32,
+                            "credit_limit": 6000.0,
+                            "next_payment_due_date": "2026-08-22",
+                            "minimum_payment_amount": 45.67,
+                        }
+                    }
+                return {}
+
+            account_rows = [dict(row) for row in conn_state.execute(
+                "SELECT * FROM account_balances ORDER BY id"
+            ).fetchall()]
+            accts = {
+                "banks": [row for row in account_rows if row["account_type"] != "credit_card"],
+                "cards": [row for row in account_rows if row["account_type"] == "credit_card"],
+            }
+            with patch.dict(
+                os.environ,
+                {"PLAID_CLIENT_ID": "synthetic-client", "PLAID_SECRET": "synthetic-secret"},
+                clear=False,
+            ), patch(
+                "core.crypto.decrypt_token", side_effect=lambda token: token
+            ), patch(
+                "core.plaid_client.get_liabilities", side_effect=_mock_liabilities
+            ), patch.object(
+                account_state_routes.log, "warning"
+            ), patch(
+                "socket.socket",
+                side_effect=AssertionError("Plaid liability smoke forbids outbound networking"),
+            ):
+                fetched_liabilities = account_state_routes._fetch_plaid_liabilities(conn_state)
+                account_state_routes._apply_plaid_liabilities(
+                    accts, fetched_liabilities, conn_state
+                )
+
+            success_liability = conn_state.execute(
+                "SELECT balance_cents, credit_limit_cents, payment_amount_cents, "
+                "payment_due_day FROM account_balances WHERE plaid_account_id=?",
+                (account_ids["enabled"],),
+            ).fetchone()
+            failure_liability = conn_state.execute(
+                "SELECT balance_cents, payment_amount_cents, payment_due_day "
+                "FROM account_balances WHERE plaid_account_id=?",
+                (account_ids["failure"],),
+            ).fetchone()
+            empty_liability = conn_state.execute(
+                "SELECT balance_cents, payment_amount_cents, payment_due_day "
+                "FROM account_balances WHERE plaid_account_id=?",
+                (account_ids["liability_empty"],),
+            ).fetchone()
+            item_markers = {
+                row["item_id"]: row["liabilities_last_synced"]
+                for row in conn_state.execute(
+                    "SELECT item_id, liabilities_last_synced FROM plaid_items "
+                    "WHERE item_id LIKE ?",
+                    (f"acctstate-{entity_key}-%",),
+                ).fetchall()
+            }
+            conn_state.close()
+            _check(
+                success_liability["balance_cents"] == 65432
+                and success_liability["credit_limit_cents"] == 600000
+                and success_liability["payment_amount_cents"] == 4567
+                and success_liability["payment_due_day"] == 22
+                and item_markers[items["success"]] is not None,
+                f"Plaid account state {entity_key}: normal stale load should apply liabilities independently from balances",
+            )
+            _check(
+                failure_liability["balance_cents"] == 10000
+                and failure_liability["payment_amount_cents"] == 2500
+                and failure_liability["payment_due_day"] == 15
+                and item_markers[items["failure"]] is None,
+                f"Plaid account state {entity_key}: liability failure should preserve last-known-good values and freshness",
+            )
+            _check(
+                empty_liability["balance_cents"] == 10000
+                and empty_liability["payment_amount_cents"] == 2500
+                and empty_liability["payment_due_day"] == 15
+                and item_markers[items["liability_empty"]] is not None
+                and f"acctstate-{entity_key}-token-fresh" not in liability_calls,
+                f"Plaid account state {entity_key}: successful empty liability response must be distinguishable from failure",
+            )
+
+            with app.test_client() as toggle_client:
+                toggle_client.set_cookie("entity", entity_labels[entity_key])
+                with toggle_client.session_transaction() as toggle_session:
+                    toggle_session["_csrf_token"] = f"acctstate-toggle-csrf-{entity_key}"
+                toggle_response = toggle_client.post(
+                    f"/plaid/toggle-account/{account_ids['fresh']}",
+                    headers={"X-CSRF-Token": f"acctstate-toggle-csrf-{entity_key}"},
+                )
+            conn_state = get_connection(entity_key)
+            toggled = conn_state.execute(
+                "SELECT pa.enabled, pi.accounts_last_synced, pi.liabilities_last_synced "
+                "FROM plaid_accounts pa JOIN plaid_items pi ON pi.item_id=pa.item_id "
+                "WHERE pa.account_id=?",
+                (account_ids["fresh"],),
+            ).fetchone()
+            conn_state.close()
+            _check(
+                toggle_response.status_code == 302
+                and toggled["enabled"] == 0
+                and toggled["accounts_last_synced"] is None
+                and toggled["liabilities_last_synced"] is None,
+                f"Plaid account state {entity_key}: account toggle should invalidate both item freshness markers",
+            )
+
+            link_item_id = f"acctstate-{entity_key}-link"
+            failed_link_item_id = f"acctstate-{entity_key}-failed-link"
+            link_account_id = f"acctstate-{entity_key}-link-card"
+            with app.test_client() as link_client:
+                link_client.set_cookie("entity", entity_labels[entity_key])
+                with link_client.session_transaction() as link_session:
+                    link_session["_csrf_token"] = f"acctstate-csrf-{entity_key}"
+                with patch.dict(
+                    os.environ,
+                    {"PLAID_CLIENT_ID": "synthetic-client", "PLAID_SECRET": "synthetic-secret"},
+                    clear=False,
+                ), patch(
+                    "core.plaid_client.exchange_public_token",
+                    return_value={"access_token": "acctstate-link-token", "item_id": link_item_id},
+                ), patch(
+                    "core.plaid_client.get_accounts",
+                    return_value=[_account_payload(link_account_id, "Chase Preferred")],
+                ), patch(
+                    "core.crypto.encrypt_token", return_value="acctstate-encrypted-link-token"
+                ), patch(
+                    "socket.socket",
+                    side_effect=AssertionError("Plaid link smoke forbids outbound networking"),
+                ):
+                    link_response = link_client.post(
+                        "/plaid/exchange-token",
+                        json={
+                            "public_token": "acctstate-public-token",
+                            "institution_name": "Chase",
+                            "institution_id": "acctstate-chase",
+                        },
+                        headers={"X-CSRF-Token": f"acctstate-csrf-{entity_key}"},
+                    )
+                with patch.dict(
+                    os.environ,
+                    {"PLAID_CLIENT_ID": "synthetic-client", "PLAID_SECRET": "synthetic-secret"},
+                    clear=False,
+                ), patch(
+                    "core.plaid_client.exchange_public_token",
+                    return_value={
+                        "access_token": "acctstate-failed-link-token",
+                        "item_id": failed_link_item_id,
+                    },
+                ), patch(
+                    "core.plaid_client.get_accounts",
+                    side_effect=RuntimeError("synthetic failed account fetch"),
+                ), patch.object(
+                    atomic_plaid_routes.log, "exception"
+                ):
+                    failed_link_response = link_client.post(
+                        "/plaid/exchange-token",
+                        json={
+                            "public_token": "acctstate-failed-public-token",
+                            "institution_name": "Chase",
+                            "institution_id": "acctstate-chase",
+                        },
+                        headers={"X-CSRF-Token": f"acctstate-csrf-{entity_key}"},
+                    )
+            conn_state = get_connection(entity_key)
+            preserved_manual = conn_state.execute(
+                "SELECT id, balance_cents FROM account_balances WHERE account_name=?",
+                (manual_name,),
+            ).fetchone()
+            stored_link = conn_state.execute(
+                "SELECT item_id FROM plaid_items WHERE item_id=?", (link_item_id,)
+            ).fetchone()
+            failed_link = conn_state.execute(
+                "SELECT item_id FROM plaid_items WHERE item_id=?", (failed_link_item_id,)
+            ).fetchone()
+            _check(
+                link_response.status_code == 200
+                and failed_link_response.status_code == 500
+                and preserved_manual is not None
+                and preserved_manual["balance_cents"] == 77700
+                and stored_link is not None
+                and failed_link is None,
+                f"Plaid account state {entity_key}: similar-name manual rows must survive successful and failed link exchange",
+            )
+
+            conn_state.execute(
+                "DELETE FROM account_balances WHERE plaid_account_id LIKE ? "
+                "OR account_name LIKE ?",
+                (f"acctstate-{entity_key}-%", f"%AcctState {entity_key}"),
+            )
+            conn_state.execute(
+                "DELETE FROM plaid_accounts WHERE item_id LIKE ?",
+                (f"acctstate-{entity_key}-%",),
+            )
+            conn_state.execute(
+                "DELETE FROM plaid_items WHERE item_id LIKE ?",
+                (f"acctstate-{entity_key}-%",),
+            )
+            conn_state.commit()
+            _check(
+                conn_state.execute(
+                    "SELECT COUNT(*) FROM plaid_items WHERE item_id LIKE ?",
+                    (f"acctstate-{entity_key}-%",),
+                ).fetchone()[0] == 0
+                and conn_state.execute(
+                    "SELECT COUNT(*) FROM plaid_accounts WHERE item_id LIKE ?",
+                    (f"acctstate-{entity_key}-%",),
+                ).fetchone()[0] == 0
+                and conn_state.execute(
+                    "SELECT COUNT(*) FROM account_balances WHERE plaid_account_id LIKE ? "
+                    "OR account_name LIKE ?",
+                    (f"acctstate-{entity_key}-%", f"%AcctState {entity_key}"),
+                ).fetchone()[0] == 0,
+                f"Plaid account state {entity_key}: synthetic state should be cleaned exactly",
+            )
+            conn_state.close()
+
+        print("   ✅ Additive migration, per-item reconciliation, manual preservation, liability freshness, link safety, isolation, and cleanup passed")
+
+        # ── 8g. CSV export tests ────────────────────────────────────
+        print("\n8g. CSV export tests…")
         with app.test_client() as csv_client:
             csv_client.set_cookie("entity", "Personal")
 
@@ -1756,8 +2220,8 @@ def main() -> None:
 
         print("   ✅ All CSV export tests passed")
 
-        # ── 8g. Recurring Charges report repair ────────────────────
-        print("\n8g. Recurring Charges report repair…")
+        # ── 8h. Recurring Charges report repair ────────────────────
+        print("\n8h. Recurring Charges report repair…")
         from core.reporting import get_recurring_charges
         from web.routes.reports import _prepare_report
 

@@ -156,27 +156,9 @@ def exchange_token():
                     (item_id, acc["account_id"], acc["name"], acc["mask"],
                      acc["type"], acc["subtype"]),
                 )
-            # Auto-remove manual placeholder accounts that match this institution.
-            # Match: manual account name starts with the first word of the institution
-            # name or any connected Plaid account name (e.g. "Apple Card Ryan" when
-            # institution is "Apple Card", "Chase Sapphire" when inst is "Chase").
-            inst_first = institution_name.split()[0].lower() if institution_name else ""
-            plaid_first_words = {
-                (acc.get("name") or "").split()[0].lower()
-                for acc in accounts if acc.get("name")
-            }
-            keywords = {w for w in ({inst_first} | plaid_first_words) if w}
-            if keywords:
-                manual_rows = conn.execute(
-                    "SELECT id, account_name FROM account_balances "
-                    "WHERE plaid_account_id IS NULL AND balance_source='manual'"
-                ).fetchall()
-                for manual in manual_rows:
-                    first_word = manual["account_name"].split()[0].lower()
-                    if first_word in keywords:
-                        conn.execute(
-                            "DELETE FROM account_balances WHERE id=?", (manual["id"],)
-                        )
+
+            # Manual accounts do not carry stable placeholder identity. Preserve
+            # them until an explicit user-confirmed merge contract exists.
 
             conn.commit()
         finally:
@@ -371,13 +353,19 @@ def toggle_account(account_id):
     conn = get_connection(g.entity_key)
     try:
         row = conn.execute(
-            "SELECT enabled FROM plaid_accounts WHERE account_id=?", (account_id,)
+            "SELECT item_id, enabled FROM plaid_accounts WHERE account_id=?",
+            (account_id,),
         ).fetchone()
         if row:
             new_val = 0 if row["enabled"] else 1
             conn.execute(
                 "UPDATE plaid_accounts SET enabled=? WHERE account_id=?",
                 (new_val, account_id),
+            )
+            conn.execute(
+                "UPDATE plaid_items SET accounts_last_synced=NULL, "
+                "liabilities_last_synced=NULL WHERE item_id=?",
+                (row["item_id"],),
             )
             conn.commit()
     finally:

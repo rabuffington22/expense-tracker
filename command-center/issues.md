@@ -976,7 +976,7 @@ Work block 4I now applies each item's accepted additions, modifications, removal
 
 ## Plaid Balance Reconciliation Is Unsafe On Disabled Or Partially Failed Items
 
-Status: open; discovered in work block 3G
+Status: resolved locally in work block 4J; release not authorized
 
 Severity: high account-state integrity risk
 
@@ -1000,13 +1000,13 @@ Acceptance checks:
 - Disabled or removed accounts are consistently removed after an authoritative response.
 - Manual accounts remain untouched in every success, empty, disabled, and failure case.
 
-Why not fixed now:
+Resolution:
 
-Balance reconciliation behavior and tracked tests were excluded from work block 3G.
+Work block 4J now records account freshness per Plaid item and reconciles cached rows only after that item's successful mocked response. Enabled non-investment accounts are retained, authoritative disabled, investment, and removed accounts are cleaned even when the keep set is empty, a failed sibling preserves its rows and marker, and manual rows are never candidates. Maintained Personal, BFM, and Luxe Legacy coverage proves partial failure, empty keep-set cleanup, fresh-sibling isolation, denied networking, and exact cleanup. Publication remains separately gated.
 
 ## Normal Cash Flow Refresh Skips Plaid Liabilities
 
-Status: open; discovered in work block 3G
+Status: resolved locally in work block 4J; release not authorized
 
 Severity: high cash-flow and payment accuracy risk
 
@@ -1030,13 +1030,13 @@ Acceptance checks:
 - A normal stale load fetches and applies both data sets without unnecessary repeat calls.
 - Liability unavailability and API errors remain distinguishable.
 
-Why not fixed now:
+Resolution:
 
-Freshness schema/logic and regression changes require separate implementation scope.
+Work block 4J adds separate nullable per-item account and liability refresh markers through additive migration 58. A normal stale load now fetches and applies both data sets; an account refresh cannot suppress liabilities; successful empty liability responses advance only the liability marker without clearing last-known-good fields; and failures preserve both fields and the prior marker. Maintained all-entity coverage proves populated upgrade, normal application, failure preservation, successful empty response, and denied networking. Publication remains separately gated.
 
 ## Linking A Plaid Institution Can Delete Unrelated Manual Accounts
 
-Status: open; discovered in work block 3G
+Status: resolved locally in work block 4J; release not authorized
 
 Severity: high destructive account-state risk
 
@@ -1059,13 +1059,13 @@ Acceptance checks:
 - Manual rows are removed only through explicit stable placeholder identity or user confirmation.
 - Similar names do not delete distinct state, and failed exchange paths leave every row unchanged.
 
-Why not fixed now:
+Resolution:
 
-Changing the link cleanup contract is product behavior and requires separate repair scope.
+Work block 4J removes the first-word institution/account-name deletion heuristic. Plaid Link now persists only stable Plaid item/account state and preserves every manual account until an explicit stable placeholder identity or user-confirmed merge exists. Maintained Personal, BFM, and Luxe Legacy route coverage proves a similar-name `Chase Emergency Reserve` row survives successful linking and a later failed account fetch rolls back the attempted item while preserving the manual row. Publication remains separately gated.
 
 ## Plaid Balance Freshness Uses An Entity-Wide Maximum
 
-Status: open; discovered in work block 3G
+Status: resolved locally in work block 4J; release not authorized
 
 Severity: medium account-freshness risk
 
@@ -1088,9 +1088,9 @@ Acceptance checks:
 - Freshness is evaluated per item/account or by a complete successful refresh marker.
 - One fresh row or a partial failure cannot mark stale siblings current.
 
-Why not fixed now:
+Resolution:
 
-Freshness behavior and tracked tests were outside the audit-only block.
+Work block 4J replaces the entity-wide row maximum with separate successful-refresh markers on each Plaid item. One fresh item now skips only its own account or liability call, while stale siblings refresh independently and failed items remain stale. Account toggles invalidate both markers so newly disabled or re-enabled state cannot be hidden behind the prior cache window. Maintained all-entity coverage proves mixed freshness, marker invalidation, failure preservation, denied networking, and cleanup. Publication remains separately gated.
 
 ## Missing Plaid Modified Rows Are Reported As Updated
 
@@ -1151,7 +1151,7 @@ Failure-isolation changes and regression coverage were excluded from work block 
 
 ## Primary Plaid Paths Lack Tracked Regression Coverage
 
-Status: partially addressed in work block 4I; remaining primary Plaid coverage stays parked
+Status: partially addressed in work blocks 4I and 4J; remaining primary Plaid coverage stays parked
 
 Severity: medium regression-confidence risk
 
@@ -1177,7 +1177,7 @@ Acceptance checks:
 
 Remaining gap:
 
-Work block 4I adds the maintained transaction-pagination, cursor, rollback, exact-redelivery, enabled-account, three-entity, denied-network, and cleanup slice. Connection lifecycle, balance reconciliation, liability refresh, freshness, link cleanup, missing-modification observability, corrupt-token isolation, and the remaining primary Plaid paths stay parked with Tasks 1I-1J.
+Work block 4I adds the maintained transaction-pagination, cursor, rollback, exact-redelivery, enabled-account, three-entity, denied-network, and cleanup slice. Work block 4J adds populated freshness migration, per-item reconciliation, disabled/removed cleanup, manual-account preservation, normal and empty liability refresh, failure preservation, mixed freshness, account-toggle invalidation, similar-name link safety, denied-network, all-entity isolation, and cleanup coverage. Missing-modification observability, corrupt-token isolation, and the remaining primary Plaid paths stay parked with Task 1J.
 
 ## Scheduled Plaid Sync Can Report Partial Failure As Success
 
