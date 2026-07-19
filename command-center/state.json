@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 12:52 PM CST",
+    "lastUpdated": "2026-07-19 12:54 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,33 +22,23 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4H-R are published on main; 4H source commit 166bbd9 deployed successfully in Fly run 29696691569, with this command-center-only skip-actions closeout"
+    "durabilityStatus": "Work blocks through 4I-R are published on main; 4I source commit 46f8286 deployed successfully in Fly run 29697681136, with this command-center-only skip-actions closeout"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4I-R is actively publishing the exact verified Plaid transaction-sync atomicity repair to main with automatic Fly observation and credential-free health verification.",
+    "summary": "Work block 4I-R is complete: source commit 46f8286 is durable on main, automatic Fly deployment passed, and credential-free production health returned 200.",
     "progress": 75
   },
   "currentTask": {
-    "title": "Task 1H: Make Plaid page application and cursor advancement atomic",
-    "owner": "Codex Desktop",
+    "title": "Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns exact-scope review, source publication, automatic-deploy observation, credential-free health, and sanitized closeout",
-    "nextAction": "Verify and publish the exact ten-path 4I source set to main, observe the automatic Fly run, verify production health, and publish a skip-actions closeout.",
-    "blocker": "Stop on unexpected scope, remote divergence, failed verification, failed deployment or health, or any need to exceed the exact fast-forward path"
+    "supportingAgent": "Codex Desktop completed 4I implementation and verification plus 4I-R direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout",
+    "nextAction": "Separately define and confirm a bounded Task 1I work block before implementation.",
+    "blocker": "No Task 1I implementation or additional release/live action is authorized"
   },
-  "currentWorkBlock": {
-    "label": "4I-R",
-    "name": "Durability And Release",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "includedTasks": [
-      "Task 1H release durability",
-      "Task 4"
-    ],
-    "nextAction": "Publish the exact verified 4I source set to main, observe automatic deployment, verify credential-free health, and record the sanitized closeout."
-  },
+  "currentWorkBlock": null,
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -72,21 +62,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute 4I-R durability and release",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized publishing the exact verified 4I repair to main and observing its automatic release.",
-    "action": "Complete exact-scope preflight, commit and fast-forward main, push without force, verify the automatic Fly run and credential-free health, then publish a skip-actions closeout.",
+    "title": "Separately plan Task 1I Plaid reconciliation and freshness repair",
+    "status": "awaiting Ryan",
+    "owner": "Ryan",
+    "why": "4I-R is durable, deployed, and health verified; reconciliation, liabilities, and freshness use a separate contract and verification path.",
+    "action": "Ask Codex to define Task 1I, then confirm before implementation or any further release/live action.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No Ryan response is currently required; work block 4I-R is active.",
-    "items": []
+    "summary": "Work block 4I-R is complete; the next implementation or release requires a separate Ryan decision.",
+    "items": [
+      "Ask Codex to define the Task 1I work block when ready."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4I-R authorizes only the exact verified 4I release path. Task 1I-1P implementation, broader Task 2, Task 3, protected data, and other live actions remain outside authorization.",
-    "decisionQueue": "After 4I-R closes, the next Ryan decision is whether to define and confirm a bounded Task 1I scope.",
+    "phaseQuestions": "Work block 4I-R is complete. Task 1I-1P implementation, broader Task 2, Task 3, protected data, further releases, and unrelated live actions remain outside authorization.",
+    "decisionQueue": "The next Ryan decision is a separately proposed and confirmed Task 1I scope.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1856,7 +1848,7 @@
       "phaseId": "phase-4",
       "label": "4I-R",
       "name": "Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1H release durability",
         "Task 4"
@@ -1892,7 +1884,14 @@
         "Final main and origin alignment, preserved exclusions, and sanitized skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the Task 1I planning gate.",
-      "durability": "Active under Ryan's direct commit-and-push-to-main authorization."
+      "durability": "Source commit 46f8286 is durable on main; automatic Fly run 29697681136 and deploy job 88221144959 passed, credential-free production health returned 200, and the sanitized command-center closeout is published separately with skip actions.",
+      "evidence": [
+        "command-center/logs/2026-07-19-plaid-sync-atomicity-4i.md",
+        "command-center/logs/2026-07-19-plaid-sync-atomicity-release-4i-r.md",
+        "GitHub Actions run 29697681136",
+        "Fly deploy job 88221144959"
+      ],
+      "result": "Published source commit 46f8286 directly to main by exact-path fast-forward, observed successful automatic Fly run 29697681136 and job 88221144959, verified credential-free production health at HTTP 200, preserved both unrelated untracked files, and prepared the sanitized skip-actions closeout."
     }
   ],
   "phaseTasks": [
@@ -2377,26 +2376,27 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1H",
       "title": "Task 1H: Make Plaid page application and cursor advancement atomic",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Work block 4I completed P3-3G-01 and only the cursor-safety and rollback slice of P3-3G-C01 without a migration.",
-      "result": "Per-item accepted transaction changes, final cursor, and timestamp now commit atomically; multi-page, success, redelivery, filtering, twelve all-entity forced rollback-and-retry paths, denied-network, and cleanup checks pass.",
+      "result": "Per-item accepted transaction changes, final cursor, and timestamp commit atomically; source commit 46f8286 is durable on main, automatic Fly run 29697681136 passed, and credential-free production health returned 200.",
       "evidence": [
         "command-center/plaid-sync-atomicity-contract.md",
         "web/routes/plaid.py",
         "scripts/smoke_test.py",
-        "command-center/logs/2026-07-19-plaid-sync-atomicity-4i.md"
+        "command-center/logs/2026-07-19-plaid-sync-atomicity-4i.md",
+        "command-center/logs/2026-07-19-plaid-sync-atomicity-release-4i-r.md"
       ],
-      "nextAction": "Complete work block 4I-R exact-scope publication, automatic-deploy observation, credential-free health verification, and sanitized closeout.",
-      "blocker": "Stop on unexpected scope, divergence, failed verification, failed deployment or health, or any need to exceed the exact fast-forward path."
+      "nextAction": null,
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1I",
       "title": "Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
-      "summary": "Separately plan the second primary-Plaid block after 4I-R closes.",
+      "summary": "Separately plan the second primary-Plaid block after the durable and deployed 4I-R closeout.",
       "nextAction": "Request a bounded Task 1I work-block proposal when ready.",
       "blocker": "No Task 1I implementation is authorized."
     },
@@ -2742,6 +2742,14 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-19",
+      "text": "Published 4I source commit 46f8286 to main; automatic Fly run 29697681136 and deploy job 88221144959 succeeded, and credential-free production health returned 200."
+    },
+    {
+      "time": "2026-07-19",
+      "text": "Completed work block 4I-R with exact-path staging, zero high-confidence sensitive additions, main alignment, preservation of scripts/sync_prod_to_local.sh and command-center/now 2.md, and a command-center-only skip-actions closeout."
+    },
     {
       "time": "2026-07-19",
       "text": "Ryan directly authorized work block 4I-R to commit and push the exact verified 4I scope to main, observe the automatic Fly deployment, verify credential-free health, and publish a sanitized skip-actions closeout."
@@ -3460,8 +3468,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete 4I-R durability and release",
-    "description": "Publish the exact verified atomicity repair, verify its automatic deployment and credential-free health, and durably close the release."
+    "name": "Define the bounded Task 1I work block",
+    "description": "Separately plan reconciliation, liability, and freshness truthfulness after the durable atomic persistence boundary."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -3552,6 +3560,8 @@
     "phase4RecurringReportDurability": "pass; local main matched origin/main at 166bbd9 before this command-center-only skip-actions closeout",
     "phase4PlaidAtomicityRepair": "pass locally; each item's accepted additions, modifications, removals, final cursor, and last_synced commit in one explicit SQLite transaction, exact redelivery remains idempotent, persistence failures propagate, and rolled-back counters are withheld",
     "phase4PlaidAtomicityCoverage": "pass; maintained two-page aggregation, all-entity success, redelivery, enabled-account filtering, signed amounts, removal and split behavior, twelve forced add modify remove and cursor rollback-and-retry paths, and unrelated-row preservation checks pass",
-    "phase4PlaidAtomicityCleanup": "pass; baseline and final smoke suites, Python compilation, temporary all-entity roots, upload backup WAL and SHM cleanup, denied outbound sockets, JSON validation, dashboard refresh, health check, git diff check, and preserved untracked exclusions pass"
+    "phase4PlaidAtomicityCleanup": "pass; baseline and final smoke suites, Python compilation, temporary all-entity roots, upload backup WAL and SHM cleanup, denied outbound sockets, JSON validation, dashboard refresh, health check, git diff check, and preserved untracked exclusions pass",
+    "phase4PlaidAtomicityRelease": "pass; source commit 46f8286 is on main, automatic Fly run 29697681136 and deploy job 88221144959 passed every reported step, and credential-free production health returned HTTP 200",
+    "phase4PlaidAtomicityDurability": "pass; local main matched origin/main at source commit 46f8286 before this command-center-only skip-actions closeout"
   }
 }

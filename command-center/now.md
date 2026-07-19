@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish the exact verified 4I Plaid transaction-sync atomicity repair to `main`, observe its automatic Fly deployment, verify credential-free production health, and record a sanitized durable closeout.
+Plan the next bounded primary-Plaid repair after durable release and production verification of transaction-update and cursor atomicity through work blocks 4I and 4I-R.
 
 ## Current Phase
 
@@ -10,47 +10,42 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4I-R: Durability And Release — active under Ryan's direct instruction to commit and push to `main`.
+None. Work block 4I-R is complete: source commit `46f8286` is on `main`, automatic Fly Deploy run `29697681136` and job `88221144959` succeeded, and production `/health` returned HTTP 200.
 
 ## Current Task
 
-Phase 4 Task 1H release durability plus Task 4 publication and verification. Task 1I remains separately gated.
+Phase 4 Task 1I: separately define the Plaid reconciliation, liability, and freshness repair after 4I established and 4I-R released the atomic persistence boundary.
 
 ## Owner
 
-Codex Desktop owns exact-scope review, source commit, fast-forward publication, automatic-deploy observation, credential-free health verification, and sanitized Runway OS closeout.
+Ryan owns the next Task 1I work-block decision. Codex Desktop completed 4I implementation and verification plus 4I-R publication, deploy observation, health verification, and durable closeout.
 
 ## Current Action
 
-Verify the exact ten-path 4I source set, remote alignment, GitHub authentication, maintained checks, and sensitive-addition safety; stage only those paths; commit on `codex/plaid-sync-atomicity`; fast-forward local `main`; push `origin/main` without force; observe the exact automatic Fly run; verify production `/health`; then publish a command-center-only `[skip actions]` closeout.
+Stop at the completed 4I-R durability gate. Separately define and confirm Task 1I before implementation; do not infer live Plaid, GitHub, deployment, reconciliation, or other broader authorization.
 
-## Authorized Source Set
+## Work Block 4I-R Result
 
-- `web/routes/plaid.py`
-- `scripts/smoke_test.py`
-- `command-center/plaid-sync-atomicity-contract.md`
-- `command-center/logs/2026-07-19-plaid-sync-atomicity-4i.md`
-- `command-center/issues.md`
-- `command-center/decisions.md`
-- `command-center/now.md`
-- `command-center/roadmap.md`
-- `command-center/state.json`
-- `command-center/index.html`
+- The exact ten-path 4I source set was committed as `46f8286`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force.
+- Automatic Fly Deploy run `29697681136` and deploy job `88221144959` passed for the exact source SHA `46f82863d5f15cc4a68f06cbc98f443a65dbf4b7`.
+- Credential-free production `/health` returned HTTP 200 after deployment.
+- The staged high-confidence sensitive-addition scan returned zero; local and remote ancestry were aligned; both unrelated untracked files remained excluded.
+- This command-center-only closeout uses `[skip actions]` to avoid a second deployment.
 
 ## Remaining Gates
 
-- Stop if the exact diff contains an unexpected path, sensitive value, protected data, or unrelated user change.
-- Stop if local or remote `main` diverges, the feature branch cannot fast-forward `main`, or publication would require force or recovery outside the exact path.
-- Stop if maintained verification, explicit staging review, the automatic deploy, or credential-free production health fails.
-- Preserve untracked `scripts/sync_prod_to_local.sh` and unrelated `command-center/now 2.md` untouched and unstaged.
-- Real databases, protected financial/payroll/HR rows, uploads, credentials, authenticated production pages, live Plaid, manual workflow actions, non-automatic Fly mutations, downstream access/writes, workflow edits, Task 1I, and unrelated repairs remain excluded.
+- Task 1I-1P implementation, broader Task 2, Task 3, and every later release require separate authorization.
+- Reconciliation, liabilities, freshness, link cleanup, missing-modification observability, item isolation, scheduled/public coordination, and downstream behavior remain excluded.
+- Real databases, protected rows, credentials, authenticated production pages, live Plaid, manual workflow actions, non-automatic Fly changes, and downstream access/writes remain closed.
+- Untracked `scripts/sync_prod_to_local.sh` and unrelated `command-center/now 2.md` remain untouched and unstaged.
 
 ## Verification
 
-- Exact path, staged-set, high-confidence sensitive-addition, branch-ancestry, GitHub-authentication, and remote-alignment review.
-- Maintained synthetic smoke suite, Python compilation, JSON validation, dashboard refresh, health check, `git diff --check`, and generated-dashboard inspection.
-- Source commit and direct-main fast-forward push, exact automatic Fly run/job result, credential-free production `/health`, final `main`/`origin/main` alignment, and a command-center-only `[skip actions]` closeout.
+- Full maintained synthetic suite, Python compilation, JSON validation, dashboard refresh, health check, and `git diff --check`: pass.
+- Exact ten-path staging, high-confidence sensitive-addition scan, branch ancestry, GitHub authentication, and remote alignment: pass.
+- Automatic Fly run `29697681136` and deploy job `88221144959`: success.
+- Credential-free production `/health`: HTTP 200.
 
 ## Next Report Point
 
-Return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separate Task 1I planning gate.
+Return the source and closeout commits, exact published scope, automatic deployment and health evidence, final main alignment, preserved exclusions, and the separate Task 1I planning gate.
