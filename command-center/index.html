@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 6:47 PM CST",
+    "lastUpdated": "2026-07-18 9:47 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,23 +1619,29 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks 3A-3I are published on main through command-center-only skip-actions durability records"
+    "durabilityStatus": "Work blocks 3A-3I are published on main; completed work blocks 3J and 4A are local-only and confirmed work block 4B authorizes their exact reviewed PR, merge-triggered deployment, and skip-actions closeout durability"
   },
   "phase": {
-    "name": "Functional Audit And Prioritization",
+    "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Tasks 1-3, 4A-4D, and 5A-5D plus work blocks 3A-3I are done; Task 6 is current awaiting a separately confirmed audit block.",
-    "progress": 79
+    "summary": "Work block 4B is active to publish the verified Task 1A repair through a reviewed PR, merge-triggered Fly deployment, credential-free production verification, and skip-actions closeout.",
+    "progress": 20
   },
   "currentTask": {
-    "title": "Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries",
-    "owner": "Ryan",
+    "title": "Task 4: Deploy and verify the approved authentication repair",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns the verified 3I evidence, Task 6 just-in-time planning pass, protected-data and no-live-auth boundaries, and dashboard currency",
-    "nextAction": "Define and return one bounded Task 6 audit block before inspecting or exercising authentication and public-route behavior.",
-    "blocker": "No Task 6 execution, 3A-3I repair, tracked test expansion, credential use, authentication or public-route change, live action, or GitHub durability is authorized yet"
+    "supportingAgent": "Codex Desktop owns exact-path review, branch push, PR and check handling, merge-triggered Fly observation, credential-free production verification, closeout durability, and dashboard currency",
+    "nextAction": "Validate and publish the exact 4A diff, merge only after required checks pass, verify the public and pre-auth production boundary, and publish the sanitized closeout with skip actions.",
+    "blocker": "Stop on unexpected or sensitive diff content, conflict, failed check/deployment, protected pre-auth content, need for a real credential or protected data, or recovery beyond the approved release path"
   },
-  "currentWorkBlock": null,
+  "currentWorkBlock": {
+    "label": "4B",
+    "name": "Publish And Verify Auth Repair",
+    "status": "active",
+    "scope": "Task 1A release durability and Task 4: exact-path commit, branch push, reviewed PR, required checks, merge-triggered Fly deployment, credential-free production boundary checks, and skip-actions closeout",
+    "durability": "Reviewed source/test/docs/evidence PR merged to main plus one command-center-only direct-main closeout with skip actions; no force push, credential mutation, manual workflow action, or second deployment"
+  },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -1659,23 +1665,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define the Task 6 PWA and authentication-boundary audit block",
-    "status": "awaiting planning",
-    "owner": "Ryan",
-    "why": "Work block 3I completed the final integration audit slice and preserved Task 6 as a separate judgment and verification boundary around PWA, responsive navigation, the public dashboard, and authentication behavior.",
-    "action": "Run a just-in-time Task 6 planning pass and return one bounded audit block for separate confirmation.",
+    "title": "Execute work block 4B",
+    "status": "in progress",
+    "owner": "Codex Desktop",
+    "why": "Ryan approved the bounded release of the already verified server-authentication and protected-cache repair.",
+    "action": "Review, commit, push, open and merge the PR after checks, observe Fly, verify credential-free production boundaries, and publish the skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Task 6 audit block.",
-    "items": [
-      "Confirm or revise the next Task 6 PWA, navigation, public-dashboard, and authentication-boundary audit block after just-in-time planning."
-    ]
+    "summary": "No current input is required while Codex executes confirmed work block 4B.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 3I is complete; Task 6 execution, all 3A-3I repairs, tracked tests, credential use, authentication or public-route changes, protected data, and live actions remain outside authorization.",
-    "decisionQueue": "The next decision is confirmation or revision of the Task 6 audit block; repairs, remote schema proof, and GitHub durability remain later separately scoped choices.",
+    "phaseQuestions": "Work block 4B authorizes only the exact verified repair release and credential-free checks; public k policy, credential modernization, mobile navigation, cookie/CSP hardening, and unrelated findings remain unchanged.",
+    "decisionQueue": "After 4B closes, resume Phase 3 Task 7 and later decide the public k data contract.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1718,13 +1722,13 @@
       "id": "phase-3",
       "name": "Phase 3",
       "label": "Functional Audit And Prioritization",
-      "status": "active"
+      "status": "paused"
     },
     {
       "id": "phase-4",
       "name": "Phase 4",
       "label": "Core Repairs And Regression Coverage",
-      "status": "upcoming"
+      "status": "active"
     },
     {
       "id": "phase-5",
@@ -2564,6 +2568,141 @@
         "command-center/issues.md"
       ],
       "result": "The tracked smoke suite passed. A deterministic mocked probe produced 44 passes, three controlled failures, two contract and coverage gaps, one intentionally unverified remote boundary, and complete cleanup; a confirmation pass reproduced the classifications. Configuration and empty-row no-ops, LL-only invocation and storage, request/auth/payload/timeout shape, standard exclusions, stable repeats, failure isolation, upstream preservation, Personal/BFM non-mutation, socket denial, and cleanup passed. Owner Draw eligibility, empty Plaid IDs, duplicate and implicit conflict keys, and tracked coverage failed or remained gaps; actual remote idempotency remains unverified."
+    },
+    {
+      "id": "phase-3-block-j",
+      "phaseId": "phase-3",
+      "label": "3J",
+      "name": "Local PWA, Navigation, And Public-Auth Boundary Audit",
+      "status": "done",
+      "includedTasks": [
+        "Task 6"
+      ],
+      "excludedTasks": [
+        "Tasks 7-8 plus all repairs from work blocks 3A-3I",
+        "Product repairs, migrations, and tracked test, fixture, workflow, authentication, public-route, or demo-seed changes",
+        "Real databases, financial rows, credentials, passwords, existing browser authentication, production or demo access, and external network calls",
+        "Plaid, Fly, GitHub Actions, downstream writes, commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive-retrofit audit couples security judgment, synthetic verification, isolated browser behavior, finding classification, cleanup, and command-center stewardship.",
+      "expectedFiles": [
+        "Read-only web/__init__.py, web/routes/kristine.py, base/sidebar/public/offline templates, web/static/sw.js, web/static/manifest.json, responsive CSS, and scripts/smoke_test.py",
+        "Disposable local request and browser probes using fake secrets, temporary all-entity databases, isolated browser state, and outbound-network denial",
+        "command-center/logs/2026-07-18-local-pwa-navigation-public-auth-audit-3j.md",
+        "command-center/issues.md only if findings require it",
+        "command-center/roadmap.md, now.md, decisions.md, state.json, and index.html"
+      ],
+      "stopConditions": [
+        "Verification requires a real password, credential, financial row, production or demo access, external call, or Ryan's browser profile, local storage, or authenticated session",
+        "Public or authentication behavior cannot be assessed safely using temporary synthetic state and isolated local behavior",
+        "A serious exposure appears with synthetic data; record it and stop short of live confirmation or repair",
+        "A finding requires repair, migration, tracked regression coverage, or a product-direction decision",
+        "Scope expands beyond Task 6, cleanup cannot be proven, or command-center refresh or health check cannot pass"
+      ],
+      "verification": [
+        ".venv/bin/python scripts/smoke_test.py",
+        "Temporary Flask test-client matrix for protected, public, exempt, authenticated, HTMX and JSON, and CSRF cases",
+        "Manifest, root-scoped service worker, cache, offline, update, and security-header contract checks",
+        "Isolated localhost phone, tablet, and desktop browser checks for navigation, scrim, Escape, focus, ARIA state, route preservation, public rendering, and offline fallback",
+        "Outbound-network denial, disposable cleanup, git diff --check, dashboard refresh, health check, dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Returned the sanitized PWA, navigation, public, authentication, CSRF, and security-header matrix; seven ranked finding clusters with acceptance checks; repeated local verification; cleanup; preserved boundaries; and Task 7 readiness.",
+      "durability": "Local-only; no commit, push, PR, merge, workflow, deployment, or live action is part of work block 3J.",
+      "evidence": [
+        "command-center/logs/2026-07-18-local-pwa-navigation-public-auth-audit-3j.md",
+        "command-center/issues.md"
+      ],
+      "result": "The maintained smoke suite passed. Repeated temporary request probes produced 31 expected passes and 12 controlled findings; repeated isolated Chromium probes produced 23 expected passes and six controlled findings with zero external requests. Manifest/icons, service-worker installation, offline fallback, responsive overflow, basic drawer state, public Personal/LL versus BFM isolation, CSRF, exempt routes, and basic security headers passed. Seven clusters were recorded across the main authentication boundary, cross-entity PWA caching, public financial-detail exposure, auth-mode coherence, mobile accessibility, browser/session hardening, and tracked coverage."
+    },
+    {
+      "id": "phase-4-block-a",
+      "phaseId": "phase-4",
+      "label": "4A",
+      "name": "Server-Side Auth And Protected-Cache Repair",
+      "status": "done",
+      "includedTasks": [
+        "Task 1A"
+      ],
+      "excludedTasks": [
+        "Public k access or content changes, mobile drawer behavior, session-cookie or CSP hardening, and unrelated Phase 3 findings",
+        "Real credentials or credential rotation, real databases or financial rows, existing browser state, production or demo access, and external calls",
+        "Plaid, Fly, workflows, downstream writes, commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The bounded sensitive repair couples the Flask request boundary, session flow, base template, service worker, synthetic regression coverage, isolated-browser verification, cleanup, and Runway OS stewardship.",
+      "expectedFiles": [
+        "web/__init__.py and a focused login template",
+        "web/templates/base.html and web/static/sw.js",
+        "scripts/smoke_test.py focused synthetic coverage",
+        "command-center/roadmap.md, now.md, decisions.md, issues.md, state.json, index.html, and a sanitized 4A closeout log"
+      ],
+      "stopConditions": [
+        "Compatibility cannot be preserved without reading or changing a real password or credential",
+        "Verification requires protected data, an existing browser profile, production or demo access, an external call, or another live action",
+        "Repair requires changing the public k contract, navigation, unrelated browser hardening, database schema, Plaid, workflows, or deployment behavior",
+        "Maintained or focused verification cannot pass, cleanup cannot be proven, or command-center health fails"
+      ],
+      "verification": [
+        ".venv/bin/python scripts/smoke_test.py with focused configured-auth, no-password, CSRF, exempt-route, and password-hash coverage",
+        "Isolated localhost browser checks for pre-auth HTML, login behavior, old-route denial, no-password coherence, static/offline-only caching, old-cache cleanup, cross-entity offline isolation, unchanged public k behavior, zero external requests, and cleanup",
+        "git diff --check, dashboard refresh, health check, visual dashboard inspection, and final explicit-path worktree review"
+      ],
+      "reportBack": "Return the exact auth and caching behavior changed, compatibility path, tracked and browser verification, unchanged public k boundary, cleanup, remaining release gate, and next Phase 3 step.",
+      "durability": "Local-only; no commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action is included.",
+      "evidence": [
+        "command-center/logs/2026-07-18-server-auth-protected-cache-repair-4a.md",
+        "scripts/smoke_test.py",
+        "web/__init__.py",
+        "web/templates/auth/login.html",
+        "web/templates/base.html",
+        "web/static/sw.js",
+        "README.md"
+      ],
+      "result": "The local repair now blocks protected rendering before auth, uses server-only password verification with legacy and Werkzeug hash support, removes client digest replay, makes no-password mode coherent, marks dynamic responses no-store, and limits service-worker caching to static/offline assets while purging older caches. Maintained and focused checks, 19 configured-auth browser checks, two no-password browser checks, visual inspection, zero-external-request controls, and disposable cleanup passed; public k remained unchanged and release was not authorized."
+    },
+    {
+      "id": "phase-4-block-b",
+      "phaseId": "phase-4",
+      "label": "4B",
+      "name": "Publish And Verify Auth Repair",
+      "status": "active",
+      "includedTasks": [
+        "Task 1A release durability",
+        "Task 4"
+      ],
+      "excludedTasks": [
+        "Task 1B and Tasks 2-3; credential modernization; public k policy; mobile navigation; cookie and CSP hardening; unrelated findings",
+        "Real password or credential inspection, Fly secret changes, authenticated financial-page verification, real databases or financial rows, existing browser state",
+        "Plaid actions, manual workflow dispatch, downstream writes, force push, recovery outside the exact branch/PR/deploy path, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release couples exact-path Git review, GitHub PR and required-check handling, merge-triggered Fly observation, credential-free HTTP verification, and Runway OS closeout; no second opinion is needed after deterministic 4A verification.",
+      "expectedFiles": [
+        "The exact intended 3J/4A application, tracked-test, documentation, evidence, and command-center paths already present on codex/server-side-auth-boundary",
+        "GitHub branch and reviewed pull request targeting main",
+        "Automatic Fly Deploy workflow created by the merge",
+        "Sanitized 4B closeout log plus roadmap, now, decisions, issues, state, and generated dashboard"
+      ],
+      "stopConditions": [
+        "Exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change",
+        "Branch is conflicted or cannot be safely synchronized without rewriting history",
+        "Required PR check or Fly deployment fails, is cancelled, or cannot be attributed to the merge",
+        "Production returns protected HTML before authentication, exposes a reusable digest, or does not serve service-worker v4",
+        "Verification requires a real password, authenticated financial page, database, protected data, secret change, manual workflow dispatch, or recovery beyond the approved release path",
+        "Final dashboard refresh, health check, whitespace check, or main/origin alignment cannot pass"
+      ],
+      "verification": [
+        "Exact status/diff/path and sensitive-string review, maintained synthetic suite, Python and service-worker syntax, git diff check, dashboard refresh, health check, and dashboard inspection",
+        "Required PR checks, merge commit, and automatic Fly deployment run/result",
+        "Credential-free production health, protected-root redirect, login-content, and service-worker v4/static-only contract checks",
+        "Final main/origin alignment, intended tracked state, preserved untracked sync script, sanitized closeout, dashboard refresh/health, and skip-actions closeout publication"
+      ],
+      "reportBack": "Return source commit, PR and merge, required checks, Fly deployment run/result, credential-free production verification, final main/origin state, closeout commit, preserved boundaries, and the next Phase 3 Task 7 planning point.",
+      "durability": "Reviewed source/test/docs/evidence PR merged to main plus one command-center-only direct-main closeout with skip actions; no force push, credential mutation, manual workflow action, or second deployment."
     }
   ],
   "phaseTasks": [
@@ -2624,7 +2763,7 @@
       "taskId": "P0-T6",
       "title": "Task 6: Review the proposed roadmap and authorize the first operational block",
       "status": "done",
-      "owner": "Ryan",
+      "owner": "Codex Desktop",
       "summary": "Confirm or change the proposed phases and approve the exact Phase 1 work block before any external or production mutation.",
       "result": "Ryan accepted Phases 1-5, target-branch durability, and work block 1A with its documented live effects."
     },
@@ -2893,19 +3032,24 @@
       "phaseId": "phase-3",
       "taskId": "P3-T6",
       "title": "Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Use tracked source and synthetic or local behavior first without changing authentication, CSRF, credential, encryption, or public-route behavior.",
-      "nextAction": "Confirm or revise a separately proposed Task 6 audit block after just-in-time planning.",
-      "blocker": "Task 6 execution is not authorized until its PWA, navigation, public-route, authentication, stop, and verification boundaries are confirmed."
+      "result": "Work block 3J passed the maintained smoke suite, 31 expected request controls, 23 expected isolated-browser controls, manifest/icon/installability checks, responsive overflow, CSRF, public entity scope, and offline fallback. It recorded seven finding clusters led by the main authentication boundary and cross-entity PWA cache without repair, protected-data access, external calls, or live action.",
+      "evidence": [
+        "command-center/logs/2026-07-18-local-pwa-navigation-public-auth-audit-3j.md",
+        "command-center/issues.md"
+      ]
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T7",
       "title": "Task 7: Consolidate audit findings into severity-ranked issues",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary."
+      "status": "paused",
+      "owner": "Ryan",
+      "summary": "Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.",
+      "nextAction": "Resume just-in-time planning after the verified 4A repair is released or explicitly deferred.",
+      "blocker": "Paused while Ryan decides the local repair's exact durability and release path."
     },
     {
       "phaseId": "phase-3",
@@ -2917,11 +3061,28 @@
     },
     {
       "phaseId": "phase-4",
-      "taskId": "P4-T1",
-      "title": "Task 1: Repair confirmed reliability and correctness defects",
+      "taskId": "P4-T1A",
+      "title": "Task 1A: Repair the server-authentication and protected-cache boundaries",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "The bounded implementation, local verification, and release decision are complete; work block 4B owns publication and deployment.",
+      "result": "Work block 4A implemented the bounded server login and static/offline-only cache boundary. Maintained and focused tracked checks passed; configured-auth Chromium passed 19/19 and no-password Chromium passed 2/2 with zero external requests; visual inspection and disposable cleanup passed.",
+      "evidence": [
+        "command-center/logs/2026-07-18-server-auth-protected-cache-repair-4a.md",
+        "scripts/smoke_test.py",
+        "web/__init__.py",
+        "web/static/sw.js"
+      ],
+      "nextAction": "Publish through confirmed work block 4B.",
+      "blocker": "None; exact release authority is recorded in work block 4B."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1B",
+      "title": "Task 1B: Repair remaining prioritized reliability and correctness defects",
       "status": "planned",
       "owner": "Codex",
-      "summary": "Implement prioritized fixes in bounded verified work blocks."
+      "summary": "Implement the remaining evidence-backed fixes after Phase 3 Tasks 7-8 establish the broader order."
     },
     {
       "phaseId": "phase-4",
@@ -2942,10 +3103,12 @@
     {
       "phaseId": "phase-4",
       "taskId": "P4-T4",
-      "title": "Task 4: Deploy an explicitly approved release",
-      "status": "planned",
-      "owner": "Ryan and Codex",
-      "summary": "Deploy only after local and CI verification plus a release approval gate."
+      "title": "Task 4: Deploy and verify the approved authentication repair",
+      "status": "current",
+      "owner": "Codex Desktop",
+      "summary": "Publish the exact verified 4A repair through a reviewed PR, merge-triggered Fly deployment, credential-free production checks, and skip-actions command-center closeout.",
+      "nextAction": "Review and publish the branch, wait for checks, merge, observe deployment, verify public and pre-auth boundaries, and close 4B.",
+      "blocker": "Stop on unexpected diff content, conflict, failed check or deployment, protected pre-auth content, credential or protected-data need, or recovery outside 4B."
     },
     {
       "phaseId": "phase-5",
@@ -3143,6 +3306,10 @@
     {
       "name": "Work Block 3I Mocked Luxe Legacy Downstream-Mirror Audit",
       "path": "command-center/logs/2026-07-18-mocked-luxe-legacy-downstream-mirror-audit-3i.md"
+    },
+    {
+      "name": "Work Block 3J Local PWA, Navigation, And Public-Auth Boundary Audit",
+      "path": "command-center/logs/2026-07-18-local-pwa-navigation-public-auth-audit-3j.md"
     }
   ],
   "recentActivity": [
@@ -3349,12 +3516,30 @@
     {
       "time": "2026-07-18",
       "text": "Ryan separately authorized committing and pushing the exact eight-path 3I command-center closeout directly to main with skip actions while preserving product files and pre-existing untracked scripts/sync_prod_to_local.sh."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 3J for a local synthetic Task 6 audit of PWA, responsive navigation, the public dashboard, authentication, CSRF, exempt routes, and security headers; repairs, tracked tests, real credentials or browser sessions, live actions, product changes, and GitHub durability remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 3J: repeated request probes produced 31 expected passes and 12 controlled findings; repeated isolated Chromium probes produced 23 expected passes and six controlled findings with zero external requests; seven issue clusters were recorded without repair, protected-data access, live action, or GitHub durability."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan directly prioritized and confirmed urgent local work block 4A to stop pre-auth protected HTML and protected cross-entity service-worker caching; public k behavior, real credentials and data, live systems, and GitHub durability remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 4A locally: maintained and focused checks passed, configured-auth Chromium passed 19/19, no-password Chromium passed 2/2, both with zero external requests, visual review and disposable cleanup passed, public k remained unchanged, and production release remains unauthorized."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed work block 4B for exact reviewed PR durability, required checks, merge-triggered Fly deployment, credential-free production auth and service-worker verification, and a skip-actions command-center closeout; credentials, protected data, public k changes, unrelated repairs, and the untracked sync script remain excluded."
     }
   ],
   "openQuestions": [],
-  "projectQuestions": [
-    "What is the smallest coherent Task 6 audit block for PWA, responsive navigation, the public dashboard, and authentication boundaries?"
-  ],
+  "projectQuestions": [],
   "ideas": [],
   "issues": [
     {
@@ -3713,18 +3898,67 @@
       "status": "parked",
       "severity": "medium",
       "source": "command-center/issues.md"
+    },
+    {
+      "title": "Main authentication boundary returns protected HTML and accepts a client-exposed digest",
+      "summary": "Resolved locally in work block 4A by redirecting before protected rendering, moving password verification entirely server-side, removing the digest client and replay route, and adding tracked and browser checks; production release remains unauthorized.",
+      "status": "resolved-local",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "PWA cache can serve protected content across entity and session state",
+      "summary": "Resolved locally in work block 4A by cache v4 old-cache purge plus static/offline-only caching; the browser probe proved offline Personal cannot replay online BFM content; production release remains unauthorized.",
+      "status": "resolved-local",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Public dashboard exposes detailed Personal and Luxe Legacy financial information",
+      "summary": "The intentionally unauthenticated route excludes BFM but includes transaction names, dates, amounts, categories, budget progress, and selected balances for Personal and Luxe Legacy.",
+      "status": "decision-needed",
+      "severity": "high",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Client and server authentication modes can drift",
+      "summary": "Resolved locally in work block 4A by eliminating independent client auth state and covering legacy, Werkzeug, invalid, and no-password modes; production release remains unauthorized.",
+      "status": "resolved-local",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Mobile sidebar lacks complete keyboard, focus, and scroll handling",
+      "summary": "The drawer opens and closes from its scrim but does not move focus, lock background scrolling, or close on Escape.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "Session cookie and browser security policy need explicit hardening",
+      "summary": "Synthetic HTTPS responses used an HttpOnly session cookie without explicit Secure or SameSite attributes, and protected HTML lacked CSP.",
+      "status": "open",
+      "severity": "medium",
+      "source": "command-center/issues.md"
+    },
+    {
+      "title": "PWA, public, auth, and responsive boundaries lack tracked regression coverage",
+      "summary": "Work block 4A added tracked auth, CSRF, safe-redirect, no-store, public/exempt route, and service-worker source contracts; maintained browser, manifest, exact public-field, and responsive-navigation coverage remains.",
+      "status": "partly-addressed",
+      "severity": "medium",
+      "source": "command-center/issues.md"
     }
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Bounded Task 6 PWA and authentication audit decision",
-    "description": "Define and confirm the PWA, responsive-navigation, public-dashboard, and authentication-boundary audit before execution."
+    "name": "Released and verified work block 4B",
+    "description": "Merge the reviewed repair, pass the automatic Fly deployment, prove the credential-free production boundary, and publish the skip-actions closeout."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
-    "browserSmoke": "pass; generated dashboard shows Phase 3 at 79 percent, work blocks 3A-3I done, Task 6 behind a separate confirmation gate, Ryan on the current action, and the protected audit boundary",
-    "applicationSmoke": "pass; existing synthetic temporary-DATA_DIR suite initialized all three entities, verified import and exact re-import deduplication, and passed route, export, saved-view, and To Do checks",
+    "browserSmoke": "pass; configured-auth Chromium passed 19/19, no-password Chromium passed 2/2, both with zero external requests; login and generic offline views passed visual inspection; generated dashboard shows the local-complete 4A repair at the release gate",
+    "applicationSmoke": "pass; maintained synthetic suite and focused auth/cache contracts passed legacy and Werkzeug hashes, wrong/correct login, CSRF, safe redirect, protected/full/HTMX/no-password/public/exempt behavior, no-store, and static-only cache rules",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
     "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; first natural minute-17 run remains under the independent monitor",
@@ -3767,7 +4001,10 @@
     "phase3DownstreamMirrorAudit": "pass with findings; tracked smoke passed, 44 mocked checks passed, and three controlled failures plus two contract or coverage gaps and one remote-unverified boundary were reproduced with complete cleanup",
     "phase3DownstreamMirrorConfirmation": "pass; the deterministic confirmation pass reproduced the same 44 passes, three controlled failures, two gaps, one remote-unverified boundary, and complete cleanup",
     "phase3DownstreamMirrorBoundaries": "pass; fake configuration, mocked HTTP and sync dependencies, blocked outbound sockets, temporary all-entity databases, complete cleanup, no product or tracked test changes, no real financial data or credentials, and no production/demo/Plaid/Fly/workflow/downstream/authentication action",
-    "phase3DownstreamMirrorDurability": "pass; this exact eight-path 3I command-center closeout is the separately authorized direct-main skip-actions durability record, excluding product changes, deployment, live integration actions, downstream writes, and the pre-existing untracked sync script"
+    "phase3DownstreamMirrorDurability": "pass; this exact eight-path 3I command-center closeout is the separately authorized direct-main skip-actions durability record, excluding product changes, deployment, live integration actions, downstream writes, and the pre-existing untracked sync script",
+    "phase4AuthCacheRepair": "pass locally; protected full pages redirect before rendering, server-only login supports legacy and Werkzeug hashes, digest replay is removed, no-password mode is coherent, dynamic responses are no-store, and service-worker v4 caches only static/offline assets while purging old caches",
+    "phase4AuthCacheBrowser": "pass; configured-auth Chromium 19/19 and no-password Chromium 2/2 with zero external requests, old-cache deletion, cross-entity offline isolation, unchanged public k entity scope, and clean phone-sized login/offline visuals",
+    "phase4AuthCacheBoundaries": "pass; fake secrets, temporary synthetic all-entity databases, isolated browser state, localhost only, all disposable files removed, no real credentials or financial data, no external calls or live systems, and no GitHub durability or deployment"
   }
 }
 </script>

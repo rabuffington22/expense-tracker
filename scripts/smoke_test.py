@@ -125,7 +125,8 @@ def main() -> None:
 
         # ── 8. Route regression tests ────────────────────────────────
         print("\n8. Route regression tests…")
-        os.environ.setdefault("FLASK_SECRET", "smoke-test-secret-key")
+        os.environ["FLASK_SECRET"] = "smoke-test-secret-key"
+        os.environ["APP_PASSWORD_HASH"] = ""
         from web import create_app
         app = create_app()
         app.config["TESTING"] = True
@@ -804,6 +805,107 @@ def main() -> None:
         conn_fix.close()
 
         print("   ✅ All To Do tests passed (queues + isolation)")
+
+        # ── 11. Authentication and protected-cache boundaries ───────
+        print("\n11. Authentication and protected-cache boundaries…")
+
+        import hashlib as _hashlib
+        import re as _re
+        from werkzeug.security import generate_password_hash
+
+        def _csrf_from(body: str) -> str:
+            match = _re.search(r'name="_csrf_token" value="([^"]+)"', body)
+            _check(match is not None, "auth login: missing CSRF token")
+            return match.group(1)
+
+        legacy_password = "synthetic-legacy-password"
+        legacy_hash = _hashlib.sha256(legacy_password.encode("utf-8")).hexdigest()
+        os.environ["APP_PASSWORD_HASH"] = legacy_hash
+        auth_app = create_app()
+
+        with auth_app.test_client() as auth_client:
+            resp = auth_client.get("/", follow_redirects=False)
+            _check(resp.status_code == 302, "auth: protected root should redirect before rendering")
+            _check("/auth/login?next=/" in resp.headers.get("Location", ""), "auth: redirect should preserve a safe next path")
+            _check("The Ledger Dashboard" not in resp.get_data(as_text=True), "auth: redirect body must not contain protected dashboard HTML")
+            _check(resp.headers.get("Cache-Control") == "no-store", "auth: protected redirect should be no-store")
+
+            htmx_resp = auth_client.get("/transactions/", headers={"HX-Request": "true"})
+            _check(htmx_resp.status_code == 401, "auth: unauthenticated HTMX request should return 401")
+
+            login_resp = auth_client.get("/auth/login?next=/transactions/")
+            login_body = login_resp.get_data(as_text=True)
+            _check(login_resp.status_code == 200, "auth: login page should render")
+            _check(login_resp.headers.get("Cache-Control") == "no-store", "auth: login page should be no-store")
+            _check(legacy_hash not in login_body, "auth: configured digest must not appear in login HTML")
+            _check("/auth/verify" not in login_body and "atlas-auth" not in login_body, "auth: legacy digest replay client must be absent")
+            csrf_token = _csrf_from(login_body)
+
+            no_csrf = auth_client.post("/auth/login", data={"password": legacy_password, "next": "/"})
+            _check(no_csrf.status_code == 403, "auth: login POST should require CSRF")
+
+            wrong = auth_client.post("/auth/login", data={
+                "_csrf_token": csrf_token,
+                "password": "wrong-password",
+                "next": "/transactions/",
+            })
+            _check(wrong.status_code == 401, "auth: wrong password should return 401")
+            _check("Incorrect password" in wrong.get_data(as_text=True), "auth: wrong password should show a controlled error")
+
+            correct = auth_client.post("/auth/login", data={
+                "_csrf_token": csrf_token,
+                "password": legacy_password,
+                "next": "/transactions/",
+            }, follow_redirects=False)
+            _check(correct.status_code == 302 and correct.headers.get("Location", "").endswith("/transactions/"), "auth: correct plaintext password should establish a server session")
+            _check(auth_client.get("/transactions/").status_code == 200, "auth: authenticated protected request should succeed")
+
+            with auth_client.session_transaction() as auth_session:
+                replay_csrf = auth_session.setdefault("_csrf_token", "synthetic-replay-csrf")
+            old_route = auth_client.post(
+                "/auth/verify",
+                json={"hash": legacy_hash},
+                headers={"X-CSRF-Token": replay_csrf},
+            )
+            _check(old_route.status_code == 404, "auth: legacy digest replay route should not exist")
+
+            _check(auth_client.get("/health").status_code == 200, "auth: health route should remain exempt")
+            _check(auth_client.get("/sw.js").status_code == 200, "auth: service worker should remain exempt")
+            _check(auth_client.get("/offline").status_code == 200, "auth: offline page should remain exempt")
+            _check(auth_client.get("/k/").status_code == 200, "auth: public k route should remain unchanged")
+
+        modern_password = "synthetic-modern-password"
+        os.environ["APP_PASSWORD_HASH"] = generate_password_hash(modern_password)
+        modern_app = create_app()
+        with modern_app.test_client() as modern_client:
+            login_body = modern_client.get("/auth/login?next=//example.invalid").get_data(as_text=True)
+            csrf_token = _csrf_from(login_body)
+            correct = modern_client.post("/auth/login", data={
+                "_csrf_token": csrf_token,
+                "password": modern_password,
+                "next": "//example.invalid",
+            })
+            _check(correct.status_code == 302 and correct.headers.get("Location") == "/", "auth: Werkzeug password hash should authenticate without allowing an external redirect")
+
+        os.environ["APP_PASSWORD_HASH"] = ""
+        no_auth_app = create_app()
+        no_auth_app.config["TESTING"] = True
+        with no_auth_app.test_client() as no_auth_client:
+            root = no_auth_client.get("/")
+            root_body = root.get_data(as_text=True)
+            _check(root.status_code == 200, "auth: no-password mode should render protected app directly")
+            _check("authOverlay" not in root_body and "atlas-auth" not in root_body, "auth: no-password mode should not render a blocking client gate")
+            _check(no_auth_client.get("/auth/login").status_code == 302, "auth: no-password login route should redirect to the app")
+
+        sw_source = (PROJECT_ROOT / "web" / "static" / "sw.js").read_text()
+        precache = sw_source.split("const PRECACHE_URLS = [", 1)[1].split("];", 1)[0]
+        _check("'/'" not in precache, "service worker: protected root must not be precached")
+        _check("the-ledger-v4" in sw_source, "service worker: cache version should invalidate old dynamic caches")
+        _check("networkFirst" not in sw_source, "service worker: dynamic cache fallback should be removed")
+        _check(sw_source.count("caches.match(request)") == 1, "service worker: only static cache-first may match the request URL")
+        _check(sw_source.count("cache.put(request") == 1, "service worker: only static assets may be cached at runtime")
+
+        print("   ✅ Server auth, legacy/modern compatibility, no-password mode, public exemptions, CSRF, and protected-cache contracts passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

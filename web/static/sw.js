@@ -3,16 +3,16 @@
  *
  * Strategy:
  *   - Static assets (CSS, JS, icons, images): Cache-first, fall back to network
- *   - HTML / API routes: Network-first, fall back to cache, then offline page
+ *   - HTML navigations: Network-only, fall back to the generic offline page
+ *   - Dynamic/HTMX/API routes: Network-only; never retain protected content
  *   - Offline fallback: Simple branded page when nothing is available
  */
 
-const CACHE_NAME = 'the-ledger-v3';
+const CACHE_NAME = 'the-ledger-v4';
 const OFFLINE_URL = '/offline';
 
 // App shell and static assets to pre-cache on install
 const PRECACHE_URLS = [
-  '/',
   '/offline',
   '/static/style.css',
   '/static/htmx.min.js',
@@ -60,20 +60,23 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
+  // Do not intercept or retain cross-origin requests.
+  if (url.origin !== self.location.origin) return;
+
   // Static assets: cache-first
   if (url.pathname.startsWith('/static/')) {
     event.respondWith(cacheFirst(request));
     return;
   }
 
-  // HTML navigation requests: network-first with offline fallback
+  // HTML navigation requests: network-only with generic offline fallback.
   if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
-    event.respondWith(networkFirstWithOfflineFallback(request));
+    event.respondWith(networkOnlyWithOfflineFallback(request));
     return;
   }
 
-  // Everything else (HTMX partials, API calls): network-first, cache fallback
-  event.respondWith(networkFirst(request));
+  // Everything else (HTMX partials, API calls): network-only.
+  event.respondWith(fetch(request));
 });
 
 // ── Cache-first (static assets) ─────────────────────────────────────────────
@@ -93,36 +96,12 @@ async function cacheFirst(request) {
   }
 }
 
-// ── Network-first (dynamic content) ─────────────────────────────────────────
-async function networkFirst(request) {
+// ── Network-only with offline fallback (navigation) ─────────────────────────
+async function networkOnlyWithOfflineFallback(request) {
   try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-    return response;
+    return await fetch(request);
   } catch {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-    return new Response('', { status: 503, statusText: 'Offline' });
-  }
-}
-
-// ── Network-first with offline fallback (navigation) ────────────────────────
-async function networkFirstWithOfflineFallback(request) {
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-
-    // Last resort: show offline page
+    // The only cached HTML is the generic, data-free offline page.
     const offlinePage = await caches.match(OFFLINE_URL);
     if (offlinePage) return offlinePage;
 
