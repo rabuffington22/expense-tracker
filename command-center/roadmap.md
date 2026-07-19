@@ -412,7 +412,7 @@ Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is pu
 
 ## Phase 3: Functional Audit And Prioritization
 
-Status: active after Tasks 1-7 and work blocks 3A-3K; Task 8 is current for separately confirmed repair-order planning
+Status: complete; Tasks 1-8 and work blocks 3A-3L are done
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
@@ -429,7 +429,7 @@ Goal: determine what “working properly” means across the live product, then 
 - **Task 5D: Audit the Luxe Legacy downstream-mirror boundary.** Status: done through work block 3I. Configuration/no-op, LL-only scheduled/public invocation and storage, request/auth/payload/timeout shape, standard exclusions, repeat stability, failure isolation, entity non-mutation, and cleanup passed; Owner Draw eligibility, empty Plaid IDs, duplicate/implicit conflict keys, tracked coverage, and remote-idempotency proof were recorded without repair or live access.
 - **Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries.** Status: done through work block 3J. Manifest/installability, icons, desktop/tablet/phone layout, basic mobile drawer state, CSRF, exempt routes, security headers, and branded offline fallback passed; seven finding clusters were recorded across the main authentication boundary, cross-entity PWA caching, public financial-detail exposure, auth-mode coherence, mobile accessibility, browser/session hardening, and tracked coverage.
 - **Task 7: Consolidate audit findings into severity-ranked issues.** Status: done through work block 3K. The 55 Phase 3-derived entries now have stable IDs, explicit status, severity, confidence, affected boundaries, sanitized reproductions, observed-versus-expected behavior, impact, acceptance-check ownership, evidence, and dependency tags in one verified catalog.
-- **Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks with Ryan.** Status: current; awaiting a separately confirmed just-in-time decision block. Prioritize only evidence-backed findings from the verified 3K catalog.
+- **Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks with Ryan.** Status: done through work block 3L. Ryan confirmed 4C first, the revised early-boundary and pre-split Plaid sequence, authenticated `/k/`, paired coverage, and the deferred payroll, cookie/CSP, and downstream-idempotency defaults.
 
 ### Confirmed Work Block 3A: Synthetic Transaction Foundation Audit
 
@@ -840,15 +840,64 @@ Report point: return the severity/status counts, stable issue catalog, resolved 
 
 Result: all 55 Phase 3-derived issue headings reconcile one-to-one to stable IDs in `command-center/phase-3-findings-consolidation.md`. The catalog contains 42 unresolved behavioral or policy findings, ten regression-coverage items, and three resolved findings; severity totals are 25 high, 29 medium, and one low. It preserves the public `/k/` contract as a Ryan decision, the downstream idempotency behavior as remotely unverified, the 4A-4B findings as resolved, and technical dependencies as sequencing evidence rather than a repair ranking. No product, test, migration, protected-data, credential, live-system, or GitHub action occurred. Task 7 and work block 3K are complete; Task 8 becomes current for a separately confirmed decision block.
 
+### Confirmed Work Block 3L: Repair Order Decision And Phase 4 Sequencing
+
+Status: done; the direct `claude-fable-5` / `max` review completed successfully, Codex intaked it, and Ryan confirmed all four post-review decisions on 2026-07-19
+
+Included: Task 8 only. Assign every unresolved 3K finding to an ordered repair tier, explicit Ryan decision gate, or parked category; recommend the public `/k/` contract, first dependency cluster, paired regression coverage, and disposition of payroll compensation-unit and cookie/CSP questions; pressure-test the proposed order through one sanitized read-only Claude CLI run using `claude-fable-5` at `max` effort; and return one bounded first Phase 4 implementation block for Ryan confirmation.
+
+Excluded: completed Tasks 1-7; completed Phase 4 Task 1A; Phase 4 Tasks 1B-4 implementation; product, migration, tracked-test, fixture, workflow, authentication, security-header, credential, or public-route changes; real databases, financial or payroll rows, uploads, credentials, production or demo access, Plaid, Fly, workflows, downstream writes, or other live actions; commit, push, PR, merge, deployment; and pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Outcome: give Ryan an evidence-backed repair order, explicit policy choices, and a coherent first Phase 4 block without pre-authorizing implementation or inferring production occurrence from synthetic and mocked evidence.
+
+Why this grouping: the public `/k/` policy, first technical dependency cluster, paired coverage, and deferred product-contract questions jointly determine which repair family is safe to implement first. Code scope cannot be trustworthy until these decisions are reconciled against the same 55-entry catalog.
+
+Owner and recommended agent: Ryan is the final decision owner. Codex Desktop is the autonomous packet owner and command-center steward. The central policy keeps orchestration, cross-file prioritization, dashboard currency, critique intake, and final recommendation with Codex.
+
+Reviewer route: one direct sanitized Claude CLI run using model `claude-fable-5` at effort `max`. Ryan explicitly selected this one-off route after initially confirming a manual handoff. Codex must use read-only tools, plan permission mode, and no session persistence; save the response under `command-center/logs/second-opinion/`; and stop rather than substitute a different model or effort if the requested run fails.
+
+Provisional defaults: prioritize data integrity and entity isolation before UX polish; pressure-test transaction identity and ingestion atomicity as the first cluster; pair regression coverage with every selected repair; do not accept the current detailed-public `/k/` exposure unchanged; keep payroll compensation units and cookie/CSP policy out of the first implementation block unless their cluster is selected; preserve resolved 4A-4B findings outside the repair pool; and remain local-only.
+
+Blocking questions: none before preparing the decision and review packet. Ryan must later decide the public `/k/` contract, first dependency cluster, paired-coverage rule, and any medium product-contract gate before Task 8 closes.
+
+Expected surfaces: read `command-center/phase-3-findings-consolidation.md`, supporting audit logs, `command-center/issues.md`, current source and synthetic tests as needed for dependency truth, and the agent-selection policy; create a sanitized Task 8 repair-order artifact and Claude CLI prompt; save the returned critique under `command-center/logs/second-opinion/`; update `command-center/roadmap.md`, `now.md`, `decisions.md`, `state.json`, and generated `index.html`. No product or tracked-test file should change.
+
+Stop conditions:
+
+- Prioritization requires real data, credentials, production inspection, or another live action.
+- A migration, `/k/`, payroll compensation-unit, cookie/CSP, or other product contract cannot be safely recommended from verified evidence.
+- Scope crosses into product implementation, GitHub durability, or a live-system mutation.
+- Review reveals an evidence conflict that changes issue identity, severity, or the 3K catalog contract.
+- Dashboard refresh or command-center health check cannot pass.
+
+Verification:
+
+- assign every unresolved finding to an ordered tier, decision gate, or explicit parked category;
+- keep all three resolved findings outside the repair pool;
+- reconcile dependency order to all seven Task 8 clusters and pair or explicitly park every coverage item;
+- record reviewer agreements, disagreements, alternatives, confidence, and missing information without silently adopting product decisions;
+- `jq empty command-center/state.json`;
+- `node command-center/scripts/refresh-dashboard.js`;
+- `node command-center/scripts/health-check.js`;
+- `git diff --check`, generated-dashboard inspection, and final worktree review.
+
+Durability: local-only. No commit, push, PR, merge, workflow, deployment, credential, protected-data, product, or live action is part of work block 3L.
+
+Report point: after the direct Claude CLI critique is saved and intaken, report the ordered repair queue, accepted and rejected reviewer recommendations, exact Ryan decisions, and one fully bounded first Phase 4 implementation block. Task 8 remains current and no implementation begins until Ryan separately confirms those decisions and the later block.
+
+Second-opinion result: Fable 5 endorsed `P3-3A-01` plus `P3-3A-C01` as the first block with high confidence. Codex accepted the requested written per-source identity specification, populated synthetic upgrade path, same-source duplicate and empty-ID semantics, identity-only call-site boundary, early boundary/truthfulness tranche, pre-split Plaid family, `/k/` decide-by point, cookie/CSP split, focused-versus-broad read-model coverage split, and corrected vendor migration rationale. The early tranche remains several separately scoped blocks rather than one cross-subsystem implementation block. Source inspection confirmed query-side primary-key deduplication, same-dataframe duplicate dropping, stored but non-unique Plaid IDs, and the current natural-key hash at both import and Plaid call sites. The review intake moved 3L to awaiting confirmation; Ryan then confirmed all four decisions, while implementation remained unauthorized.
+
+Result: Ryan confirmed all four post-review decisions. Transaction identity and paired coverage are first through proposed work block 4C; the next tranche uses separate boundary/truthfulness blocks before three pre-split Plaid blocks and remaining sync-entry work; `/k/` is intended to use the existing server-side authentication gate; coverage remains paired; hourly and salary payroll comparisons remain separate; cookie flags stay separate from later CSP compatibility; and downstream idempotency remains parked pending an explicitly authorized read-only remote-contract check. Task 8, work block 3L, and Phase 3 are complete without product, test, migration, protected-data, live-system, or GitHub action.
+
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: paused after successful work blocks 4A-4B; remaining repairs await Phase 3 Tasks 7-8 prioritization
+Status: active for proposed work block 4C after Phase 3 completed the repair order
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
 - **Task 1A: Repair the confirmed server-authentication and protected-cache boundaries.** Status: done, released, and credential-free production verified through work blocks 4A-4B and PR #86.
-- **Task 1B: Repair remaining confirmed reliability and correctness defects in prioritized work blocks.** Status: planned after Phase 3 Tasks 7-8 establish the broader order.
-- **Task 2: Expand regression tests around repaired workflows and entity isolation.**
+- **Task 1B: Repair remaining confirmed reliability and correctness defects in prioritized work blocks.** Status: current; proposed work block 4C covers only `P3-3A-01`.
+- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: planned; proposed 4C pairs only `P3-3A-C01` coverage with the identity repair.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
 - **Task 4: Deploy only after a verified, explicitly approved release block.** Status: done for the Task 1A release through work block 4B; future releases require their own approval.
 
@@ -920,6 +969,80 @@ Durability: source/test/docs/4A evidence through a reviewed PR merged to `main`,
 Report point: return source commit, PR and merge, required checks, Fly deployment run/result, credential-free production verification, final `main`/`origin/main` state, closeout commit, preserved boundaries, and the next Phase 3 Task 7 planning point.
 
 Result: source commit `fe1ec2e` was published through PR #86 and merged as `f4cd686`. GitHub reported no PR checks configured and a clean merge state. Automatic Fly Deploy run `29670793359` passed every step for the merge commit. Production `/health` returned 200; protected root returned a no-store 302 to `/auth/login?next=/`; the standalone login contained no protected shell or reusable digest client; and `/sw.js` served cache v4 with the static/offline-only contract. No password, protected data, authenticated financial page, credential/secret change, `/k/` access, manual workflow dispatch, or unrelated repair occurred. The exact command-center closeout is published separately with `[skip actions]` to avoid a second deployment.
+
+### Work Block 4C: Transaction Identity Foundation
+
+Status: done; confirmed and completed locally on 2026-07-19
+
+Parent tasks: Phase 4 Tasks 1B and 2.
+
+Included findings: `P3-3A-01` and paired coverage item `P3-3A-C01` only.
+
+Outcome: document and implement a source-aware deterministic transaction-identity contract that lets legitimate source-distinct and same-source duplicate transactions coexist while exact source-payload redelivery remains idempotent; preserve entity isolation, existing transaction primary keys and references, negative-debit semantics, edits, splits, order matches, imports, and effective reporting; and add focused maintained synthetic coverage.
+
+Why this grouping: identity computation, additive upgrade safety, import/Plaid identity call sites, and focused regression coverage share one foundational contract and one temporary all-entity verification path. Plaid cursor atomicity and every downstream repair consume this contract but introduce different persistence, coordination, and risk boundaries, so they remain later blocks.
+
+Excluded: completed Task 1A; Tasks 3-4; every finding except `P3-3A-01` and `P3-3A-C01`; Plaid cursor atomicity, reconciliation, liability, freshness, failure isolation, observability, entry-point behavior, and live sync; vendor, payroll, planning, reporting, downstream, `/k/`, cookie/CSP, mobile, and unrelated repairs; real databases, financial or payroll rows, uploads, credentials, production/demo access, Plaid, Fly, workflows, downstream writes, or other live actions; commit, push, PR, merge, deployment; and pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Identity defaults confirmed by Ryan:
+
+- A non-empty authoritative external transaction ID, such as a Plaid transaction ID, is the source identity and is not replaced by the current date/amount/description hash.
+- File imports use a documented stable source/batch fingerprint plus occurrence ordinal among otherwise identical normalized rows, so legitimate duplicates within one payload coexist and exact payload re-import remains idempotent.
+- Empty external IDs are never shared identity keys. If safe behavior requires Plaid persistence or cursor changes, stop and leave that work to the later Plaid atomicity block.
+- Existing transaction primary keys and their split/order references must survive the populated synthetic upgrade path; no destructive regeneration is allowed.
+- Import and Plaid call-site scope is identity computation only. Persistence ordering, cursor commits, reconciliation, and concurrency remain excluded.
+
+Autonomous owner and recommended agent: Codex Desktop in the current task. The block tightly couples source-contract documentation, additive migration judgment, import and Plaid call-site integration, synthetic upgrade verification, cleanup, Runway OS stewardship, and final intake. The independent Fable 5 review already endorsed this block with high confidence, so another second opinion is not recommended before implementation.
+
+Runner path: completed in the current Codex task on `codex/transaction-identity-foundation` without delegation.
+
+Blocking questions: none. Ryan confirmed the source-aware duplicate, authoritative-ID, upgrade-preservation, and empty-ID boundaries through Task 8.
+
+Non-blocking defaults: write `command-center/transaction-identity-contract.md` before code changes; use an additive ordered migration only if needed; pin maintained coverage to `scripts/smoke_test.py`; run all verification with temporary synthetic Personal, BFM, and Luxe Legacy databases; deny outbound networking; remain local-only.
+
+Expected surfaces: `command-center/transaction-identity-contract.md`; `core/imports.py`; additive migration logic in `core/db.py` only if required; the identity-computation call site in `web/routes/plaid.py`; focused checks in `scripts/smoke_test.py`; and Runway OS source/state/dashboard/closeout artifacts. Other product surfaces are read-only unless an unexpected dependency triggers a stop.
+
+Stop conditions:
+
+- The identity contract requires real transaction rows, credentials, production inspection, or another live action.
+- An additive upgrade cannot preserve existing primary keys, splits, order matches, aliases, and exact-redelivery behavior in populated synthetic tests.
+- The repair would rewrite an applied migration or destructively regenerate existing transaction IDs.
+- Manual, file-import, and Plaid identity semantics cannot share a safe explicit contract without another Ryan decision.
+- Empty external-ID handling requires changing Plaid persistence, cursor behavior, reconciliation, or entry-point semantics.
+- Import or Plaid call-site changes expand beyond identity computation.
+- Baseline or focused verification fails in a way that changes the plan, disposable cleanup cannot be proven, or the command center cannot refresh and pass health checks.
+
+Verification:
+
+- baseline and final `.venv/bin/python scripts/smoke_test.py`;
+- focused all-entity checks for same-natural-key transactions from distinct accounts or sources, legitimate same-source duplicates, exact payload re-import, non-empty authoritative external IDs, empty-ID non-aliasing, and deterministic behavior;
+- populated pre-change synthetic migration coverage preserving transaction IDs, splits, order matches, aliases, edits, negative-debit convention, and effective reporting;
+- import and mocked Plaid identity call-site checks with outbound networking denied;
+- disposable cleanup, `jq empty command-center/state.json`, dashboard refresh, command-center health check, `git diff --check`, generated-dashboard inspection, and final worktree review.
+
+Dashboard closeout: update source files first; align `state.json`; refresh and health-check the dashboard; record 4C as done only if every required check passes. If a stop condition is hit, record the exact restart point and leave Phase 4 current.
+
+Durability: local-only. No commit, push, PR, merge, deployment, workflow, credential, protected-data, or live action occurred.
+
+Report point: return the written identity contract, exact source/migration/test changes, focused and full synthetic results, populated-upgrade evidence, disposable cleanup, preserved boundaries, branch/worktree state, remaining release gate, and the recommended first separate boundary/truthfulness block.
+
+Suggested next block after completion: a separately planned 4D boundary/truthfulness repair, provisionally starting with `P3-3F-01` BFM-only payroll route enforcement plus focused payroll boundary coverage. Final 4D sizing waits for 4C closeout evidence.
+
+Result: the written contract and implementation replace new file natural-key collisions with versioned source/account/occurrence identity, make non-empty Plaid transaction IDs authoritative for newly issued keys, preserve populated legacy Plaid bindings, and require no schema migration. The maintained suite passes across all entities, including exact redelivery, same-source duplicates, populated legacy IDs, edits, negative debits, splits, order matches, aliases, effective reporting, empty-ID rejection, and a socket-denied Plaid seam. The disposable test root was removed and all command-center checks passed.
+
+Evidence: `command-center/transaction-identity-contract.md`, `command-center/logs/2026-07-19-transaction-identity-foundation-4c.md`, `core/imports.py`, `web/routes/plaid.py`, and `scripts/smoke_test.py`.
+
+### Active 4C-R Durability And Release
+
+Status: active under Ryan's 2026-07-19 direct instruction to commit and push the completed work to `main`.
+
+Included: exact intended Task 8/4C source, maintained test, contract, second-opinion, closeout, and command-center artifacts; explicit staging; one source commit; fast-forward local `main`; direct push to `origin/main`; read-only observation of the automatic Fly workflow; credential-free `/health`; and one command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; real databases or financial/payroll rows; credentials; authenticated production pages; Plaid calls or cursor changes; workflow dispatch; Fly mutation outside the automatic main-push workflow; downstream writes; `/k/`; 4D or unrelated repairs; force push; and recovery beyond the exact path.
+
+Stop conditions: unexpected publish paths or sensitive content; remote divergence; failed verification or deployment; credential/protected-data requirements; or any recovery outside the authorized path.
+
+Report point: return both commits, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the next separately planned 4D gate.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

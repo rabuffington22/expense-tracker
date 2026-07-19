@@ -1,6 +1,5 @@
 """Plaid integration routes — connect banks, sync transactions."""
 
-import hashlib
 import logging
 import threading
 from datetime import datetime, timezone
@@ -10,7 +9,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 log = logging.getLogger(__name__)
 
 from core.db import get_connection
-from core.imports import compute_transaction_id, commit_transactions
+from core.imports import compute_external_transaction_id
 from core.categorize import _get_active_aliases, _match_alias, _keyword_suggest, _strip_platform_prefix
 
 bp = Blueprint("plaid", __name__, url_prefix="/plaid")
@@ -514,7 +513,18 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
     ).fetchone()
     account_name = acct_row["name"] if acct_row else None
 
-    txn_id = compute_transaction_id(date, amount, description)
+    plaid_transaction_id = txn["plaid_transaction_id"]
+    candidate_txn_id = compute_external_transaction_id("plaid", plaid_transaction_id)
+
+    # Preserve an already-issued legacy primary key when this authoritative
+    # Plaid ID was bound before the v2 identity contract.  New rows use the
+    # namespaced candidate; no populated key is rewritten.
+    existing_binding = conn.execute(
+        "SELECT transaction_id FROM transactions "
+        "WHERE plaid_transaction_id=? ORDER BY imported_at, transaction_id LIMIT 1",
+        (plaid_transaction_id,),
+    ).fetchone()
+    txn_id = existing_binding["transaction_id"] if existing_binding else candidate_txn_id
 
     now = datetime.now(timezone.utc).isoformat()
     try:
@@ -526,7 +536,7 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
                VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
             (txn_id, date, description, description, amount,
              amount_cents, "USD", account_name, "plaid-sync", now, item_id,
-             txn["plaid_transaction_id"]),
+             plaid_transaction_id),
         )
         if cur.rowcount > 0:
             # Auto-categorize using alias rules + keyword heuristics
@@ -566,7 +576,7 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
                 "plaid_transaction_id=COALESCE(plaid_transaction_id, ?), "
                 "account=COALESCE(NULLIF(account, ''), ?) "
                 "WHERE transaction_id=?",
-                (item_id, txn["plaid_transaction_id"], account_name, txn_id),
+                (item_id, plaid_transaction_id, account_name, txn_id),
             )
             return 0
     except Exception:

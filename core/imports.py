@@ -15,9 +15,58 @@ from core.db import get_connection, get_data_dir
 # ── Transaction ID ────────────────────────────────────────────────────────────
 
 def compute_transaction_id(date: str, amount: float, description_raw: str) -> str:
-    """Stable 24-char SHA-256 hash of (date, amount, description_raw)."""
+    """Return the legacy natural-key hash used by already-issued IDs.
+
+    New file and authoritative-external import paths use the explicitly
+    namespaced helpers below.  This compatibility helper remains so existing
+    callers and synthetic fixtures do not reinterpret an issued key.
+    """
     key = f"{date}|{amount:.6f}|{description_raw.strip().lower()}"
     return hashlib.sha256(key.encode()).hexdigest()[:24]
+
+
+def _identity_digest(*parts: object) -> str:
+    """Hash unambiguous, versioned identity components to the DB key shape."""
+    encoded = []
+    for part in parts:
+        value = str(part)
+        encoded.append(f"{len(value)}:{value}")
+    return hashlib.sha256("|".join(encoded).encode("utf-8")).hexdigest()[:24]
+
+
+def compute_external_transaction_id(source: str | None, external_id: str | None) -> str:
+    """Return an opaque ID for a non-empty authoritative external ID."""
+    if source is None:
+        raise ValueError("External transaction source must be non-empty")
+    if external_id is None:
+        raise ValueError("Authoritative external transaction ID must be non-empty")
+    source = str(source).strip().casefold()
+    external_id = str(external_id).strip()
+    if not source:
+        raise ValueError("External transaction source must be non-empty")
+    if not external_id:
+        raise ValueError("Authoritative external transaction ID must be non-empty")
+    return _identity_digest("transaction-identity-v2", "external", source, external_id)
+
+
+def _file_row_identity_key(row: pd.Series) -> str:
+    """Return the normalized source-row key used for occurrence numbering."""
+    return "\x1f".join(
+        (
+            str(row["date"]),
+            f"{float(row['amount']):.6f}",
+            str(row["description_raw"]).strip().casefold(),
+            str(row["account"]).strip().casefold(),
+            str(row["currency"]).strip().upper(),
+        )
+    )
+
+
+def _file_transaction_id(source_fingerprint: str, row_key: str, occurrence: int) -> str:
+    """Return one deterministic file-row ID within a source/batch boundary."""
+    return _identity_digest(
+        "transaction-identity-v2", "file", source_fingerprint, row_key, occurrence
+    )
 
 
 # ── CSV helpers ───────────────────────────────────────────────────────────────
@@ -581,6 +630,7 @@ def normalize_transactions(
     df: pd.DataFrame,
     source_filename: str = "",
     profile: Optional[dict] = None,
+    source_key: str = "",
 ) -> pd.DataFrame:
     """
     Convert a raw parsed DataFrame into the canonical transaction schema.
@@ -611,15 +661,31 @@ def normalize_transactions(
     out["source_filename"]    = source_filename
     out["imported_at"]        = now_iso
 
-    out["transaction_id"] = out.apply(
-        lambda r: compute_transaction_id(r["date"] or "", r["amount"] or 0.0, r["description_raw"]),
-        axis=1,
-    )
-
     # Drop rows where core fields couldn't be parsed
     out = out.dropna(subset=["date", "amount"])
     out = out[out["amount"].apply(lambda x: isinstance(x, (int, float)))]
-    return out.reset_index(drop=True)
+    out = out.reset_index(drop=True)
+    if out.empty:
+        out["transaction_id"] = pd.Series(dtype=str)
+        return out
+
+    identity_source = "" if source_key is None else str(source_key).strip()
+    if not identity_source:
+        source_name = "" if source_filename is None else str(source_filename)
+        identity_source = Path(source_name).name.strip()
+    if not identity_source:
+        raise ValueError("File transaction source key must be non-empty")
+    source_fingerprint = _identity_digest(
+        "transaction-identity-v2", "file-source", identity_source.casefold()
+    )
+
+    row_keys = out.apply(_file_row_identity_key, axis=1)
+    occurrences = row_keys.groupby(row_keys, sort=False).cumcount()
+    out["transaction_id"] = [
+        _file_transaction_id(source_fingerprint, row_key, int(occurrence))
+        for row_key, occurrence in zip(row_keys, occurrences)
+    ]
+    return out
 
 
 def _parse_date(value: str, fmt: Optional[str] = None) -> Optional[str]:

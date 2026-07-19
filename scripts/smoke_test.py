@@ -41,7 +41,13 @@ def main() -> None:
 
         # Late imports so DATA_DIR env var is already set
         from core.db import init_db, get_connection
-        from core.imports import parse_csv, normalize_transactions, commit_transactions
+        from core.imports import (
+            commit_transactions,
+            compute_external_transaction_id,
+            compute_transaction_id,
+            normalize_transactions,
+            parse_csv,
+        )
 
         # ── 1. Initialize DBs ──────────────────────────────────────────────
         print("1. Initialising databases…")
@@ -122,6 +128,284 @@ def main() -> None:
         conn3.close()
         _check(count3 == 0, f"luxelegacy.sqlite should be empty, has {count3} rows")
         print(f"   ✅ company.sqlite and luxelegacy.sqlite isolated (0 rows)")
+
+        # ── 7b. Source-aware transaction identity ────────────────────────
+        print("\n7b. Source-aware transaction identity tests…")
+        import pandas as pd
+        import socket
+
+        identity_raw = pd.DataFrame(
+            [
+                {
+                    "date": "2026-07-01",
+                    "description_raw": "IDENTICAL DEBIT",
+                    "amount": "-12.34",
+                    "account": "Checking",
+                },
+                {
+                    "date": "2026-07-01",
+                    "description_raw": "IDENTICAL DEBIT",
+                    "amount": "-12.34",
+                    "account": "Checking",
+                },
+            ]
+        )
+        source_a = normalize_transactions(identity_raw, source_filename="source-a.csv")
+        source_a_again = normalize_transactions(identity_raw, source_filename="source-a.csv")
+        source_b = normalize_transactions(identity_raw, source_filename="source-b.csv")
+        account_b_raw = identity_raw.copy()
+        account_b_raw["account"] = "Savings"
+        account_b = normalize_transactions(account_b_raw, source_filename="source-a.csv")
+
+        _check(source_a["transaction_id"].nunique() == 2,
+               "identity: legitimate same-source duplicates should have distinct IDs")
+        _check(source_a["transaction_id"].tolist() == source_a_again["transaction_id"].tolist(),
+               "identity: exact payload redelivery should be deterministic")
+        _check(set(source_a["transaction_id"]).isdisjoint(source_b["transaction_id"]),
+               "identity: distinct sources should not collide")
+        _check(set(source_a["transaction_id"]).isdisjoint(account_b["transaction_id"]),
+               "identity: distinct accounts should not collide")
+
+        try:
+            normalize_transactions(identity_raw)
+            _check(False, "identity: empty file source should be rejected")
+        except ValueError:
+            pass
+
+        plaid_id = compute_external_transaction_id("plaid", "plaid-identity-001")
+        _check(plaid_id == compute_external_transaction_id("plaid", "plaid-identity-001"),
+               "identity: authoritative external IDs should be deterministic")
+        _check(plaid_id != compute_transaction_id("2026-07-01", -12.34, "IDENTICAL DEBIT"),
+               "identity: Plaid IDs should not reuse the legacy natural-key namespace")
+        for invalid_external_id in (None, "", "   "):
+            try:
+                compute_external_transaction_id("plaid", invalid_external_id)
+                _check(False, "identity: empty authoritative external ID should be rejected")
+            except ValueError:
+                pass
+
+        # Prove the same duplicate/redelivery contract in every isolated DB.
+        for identity_entity in ("personal", "company", "luxelegacy"):
+            entity_source = f"identity-{identity_entity}.csv"
+            entity_df = normalize_transactions(identity_raw, source_filename=entity_source)
+            first_inserted, first_skipped = commit_transactions(entity_df, identity_entity)
+            redelivery_df = normalize_transactions(identity_raw, source_filename=entity_source)
+            second_inserted, second_skipped = commit_transactions(redelivery_df, identity_entity)
+            _check((first_inserted, first_skipped) == (2, 0),
+                   f"identity {identity_entity}: expected both identical occurrences to insert")
+            _check((second_inserted, second_skipped) == (0, 2),
+                   f"identity {identity_entity}: exact redelivery should fully skip")
+            conn_identity = get_connection(identity_entity)
+            placeholders = ",".join("?" for _ in entity_df["transaction_id"])
+            identity_count = conn_identity.execute(
+                f"SELECT COUNT(*) FROM transactions WHERE transaction_id IN ({placeholders})",
+                entity_df["transaction_id"].tolist(),
+            ).fetchone()[0]
+            _check(identity_count == 2,
+                   f"identity {identity_entity}: expected two persisted duplicate occurrences")
+            conn_identity.execute(
+                f"DELETE FROM transactions WHERE transaction_id IN ({placeholders})",
+                entity_df["transaction_id"].tolist(),
+            )
+            conn_identity.commit()
+            conn_identity.close()
+
+        # Populate legacy references, re-enter initialization, and then append
+        # new file/Plaid identities without rewriting the legacy key.
+        legacy_id = compute_transaction_id("2026-06-30", -45.67, "LEGACY EDITED DEBIT")
+        conn_identity = get_connection("personal")
+        alias_count_before = conn_identity.execute(
+            "SELECT COUNT(*) FROM merchant_aliases"
+        ).fetchone()[0]
+        conn_identity.execute(
+            "INSERT INTO transactions "
+            "(transaction_id, date, description_raw, merchant_canonical, amount, amount_cents, "
+            "currency, account, category, notes, source_filename, imported_at) "
+            "VALUES (?, '2026-06-30', 'LEGACY EDITED DEBIT', 'Edited Merchant', -45.67, -4567, "
+            "'USD', 'Checking', 'Food', 'edited note', 'legacy.csv', '2026-07-01T00:00:00+00:00')",
+            (legacy_id,),
+        )
+        conn_identity.execute(
+            "INSERT INTO transaction_splits "
+            "(transaction_id, description, amount_cents, category, subcategory, sort_order) "
+            "VALUES (?, 'first piece', -3000, 'Food', 'General', 0), "
+            "(?, 'second piece', -1567, 'Household', 'General', 1)",
+            (legacy_id, legacy_id),
+        )
+        conn_identity.execute(
+            "INSERT INTO amazon_orders "
+            "(order_id, order_date, product_summary, order_total, order_total_cents, "
+            "matched_transaction_id, imported_at) "
+            "VALUES ('identity-order', '2026-06-30', 'synthetic item', 45.67, 4567, ?, "
+            "'2026-07-01T00:00:00+00:00')",
+            (legacy_id,),
+        )
+        conn_identity.commit()
+        conn_identity.close()
+
+        init_db("personal")
+        conn_identity = get_connection("personal")
+        preserved = conn_identity.execute(
+            "SELECT transaction_id, amount_cents, merchant_canonical, category, notes "
+            "FROM transactions WHERE transaction_id=?",
+            (legacy_id,),
+        ).fetchone()
+        _check(preserved is not None and preserved["transaction_id"] == legacy_id,
+               "identity upgrade: legacy primary key should be preserved")
+        _check((preserved["amount_cents"], preserved["merchant_canonical"],
+                preserved["category"], preserved["notes"])
+               == (-4567, "Edited Merchant", "Food", "edited note"),
+               "identity upgrade: signed debit and edits should be preserved")
+        split_summary = conn_identity.execute(
+            "SELECT COUNT(*), SUM(amount_cents) FROM transaction_splits WHERE transaction_id=?",
+            (legacy_id,),
+        ).fetchone()
+        _check(tuple(split_summary) == (2, -4567),
+               "identity upgrade: split references and signed total should be preserved")
+        matched_id = conn_identity.execute(
+            "SELECT matched_transaction_id FROM amazon_orders WHERE order_id='identity-order'"
+        ).fetchone()[0]
+        _check(matched_id == legacy_id,
+               "identity upgrade: order match reference should be preserved")
+        alias_count_after = conn_identity.execute(
+            "SELECT COUNT(*) FROM merchant_aliases"
+        ).fetchone()[0]
+        _check(alias_count_after == alias_count_before,
+               "identity upgrade: alias rows should be preserved")
+        from core.reporting import effective_txns_cte
+        effective_rows = conn_identity.execute(
+            f"WITH {effective_txns_cte('eff')} "
+            "SELECT transaction_id, amount_cents, is_split_piece FROM eff "
+            "WHERE transaction_id=? ORDER BY split_id",
+            (legacy_id,),
+        ).fetchall()
+        _check(len(effective_rows) == 2
+               and sum(row["amount_cents"] for row in effective_rows) == -4567
+               and all(row["is_split_piece"] == 1 for row in effective_rows),
+               "identity upgrade: effective reporting should retain split replacement")
+        conn_identity.close()
+
+        same_natural_raw = pd.DataFrame([{
+            "date": "2026-06-30",
+            "description_raw": "LEGACY EDITED DEBIT",
+            "amount": "-45.67",
+            "account": "Checking",
+        }])
+        same_natural_df = normalize_transactions(
+            same_natural_raw, source_filename="new-source.csv"
+        )
+        _check(same_natural_df.iloc[0]["transaction_id"] != legacy_id,
+               "identity upgrade: new file identity should not alias a legacy natural key")
+        appended, append_skipped = commit_transactions(same_natural_df, "personal")
+        _check((appended, append_skipped) == (1, 0),
+               "identity upgrade: source-distinct new row should coexist with legacy row")
+
+        # Exercise the primary Plaid insert seam with sockets denied.  This is
+        # identity-call-site coverage only; no Plaid client is invoked.
+        from web.routes.plaid import _upsert_plaid_transaction
+        conn_identity = get_connection("personal")
+        conn_identity.execute(
+            "INSERT INTO plaid_items (item_id, access_token, institution_name, created_at) "
+            "VALUES ('identity-item', 'synthetic-token', 'Synthetic Bank', "
+            "'2026-07-01T00:00:00+00:00')"
+        )
+        conn_identity.execute(
+            "INSERT INTO plaid_accounts (item_id, account_id, name) "
+            "VALUES ('identity-item', 'identity-account', 'Checking')"
+        )
+        conn_identity.commit()
+        plaid_txn = {
+            "plaid_transaction_id": "plaid-identity-001",
+            "account_id": "identity-account",
+            "date": "2026-06-30",
+            "amount": 45.67,
+            "name": "LEGACY EDITED DEBIT",
+        }
+        bound_legacy_id = compute_transaction_id(
+            "2026-06-29", -10.00, "BOUND LEGACY PLAID"
+        )
+        conn_identity.execute(
+            "INSERT INTO transactions "
+            "(transaction_id, date, description_raw, amount, amount_cents, account, "
+            "source_filename, imported_at, plaid_item_id, plaid_transaction_id) "
+            "VALUES (?, '2026-06-29', 'BOUND LEGACY PLAID', -10.00, -1000, 'Checking', "
+            "'plaid-sync', '2026-06-29T00:00:00+00:00', 'identity-item', "
+            "'plaid-bound-legacy')",
+            (bound_legacy_id,),
+        )
+        conn_identity.commit()
+        bound_plaid_txn = {
+            "plaid_transaction_id": "plaid-bound-legacy",
+            "account_id": "identity-account",
+            "date": "2026-06-29",
+            "amount": 10.00,
+            "name": "BOUND LEGACY PLAID",
+        }
+        original_socket = socket.socket
+        socket.socket = lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("identity smoke forbids outbound networking")
+        )
+        try:
+            plaid_inserted = _upsert_plaid_transaction(
+                conn_identity, "personal", "identity-item", plaid_txn
+            )
+            conn_identity.commit()
+            plaid_repeated = _upsert_plaid_transaction(
+                conn_identity, "personal", "identity-item", plaid_txn
+            )
+            conn_identity.commit()
+            bound_repeated = _upsert_plaid_transaction(
+                conn_identity, "personal", "identity-item", bound_plaid_txn
+            )
+            conn_identity.commit()
+            invalid_plaid_txn = dict(plaid_txn, plaid_transaction_id="")
+            try:
+                _upsert_plaid_transaction(
+                    conn_identity, "personal", "identity-item", invalid_plaid_txn
+                )
+                _check(False, "Plaid identity call site should reject an empty external ID")
+            except ValueError:
+                pass
+        finally:
+            socket.socket = original_socket
+        _check((plaid_inserted, plaid_repeated) == (1, 0),
+               "Plaid identity call site should insert once and redeliver idempotently")
+        _check(bound_repeated == 0,
+               "Plaid identity call site should reuse a populated legacy binding")
+        plaid_row = conn_identity.execute(
+            "SELECT transaction_id FROM transactions WHERE plaid_transaction_id=?",
+            (plaid_txn["plaid_transaction_id"],),
+        ).fetchone()
+        _check(plaid_row is not None and plaid_row["transaction_id"] == plaid_id,
+               "Plaid identity call site should use the authoritative external-ID hash")
+        _check(plaid_row["transaction_id"] not in {legacy_id, same_natural_df.iloc[0]["transaction_id"]},
+               "Plaid identity should coexist with matching legacy and file natural fields")
+        bound_rows = conn_identity.execute(
+            "SELECT transaction_id FROM transactions WHERE plaid_transaction_id='plaid-bound-legacy'"
+        ).fetchall()
+        _check(len(bound_rows) == 1 and bound_rows[0]["transaction_id"] == bound_legacy_id,
+               "Plaid redelivery should preserve the existing bound legacy primary key")
+
+        conn_identity.execute(
+            "DELETE FROM transaction_splits WHERE transaction_id=?", (legacy_id,)
+        )
+        conn_identity.execute(
+            "DELETE FROM amazon_orders WHERE order_id='identity-order'"
+        )
+        conn_identity.execute(
+            "DELETE FROM transactions WHERE transaction_id IN (?, ?, ?, ?)",
+            (legacy_id, same_natural_df.iloc[0]["transaction_id"], plaid_id,
+             bound_legacy_id),
+        )
+        conn_identity.execute(
+            "DELETE FROM plaid_accounts WHERE item_id='identity-item'"
+        )
+        conn_identity.execute(
+            "DELETE FROM plaid_items WHERE item_id='identity-item'"
+        )
+        conn_identity.commit()
+        conn_identity.close()
+        print("   ✅ Source/account separation, duplicates, redelivery, Plaid IDs, and populated references passed")
 
         # ── 8. Route regression tests ────────────────────────────────
         print("\n8. Route regression tests…")

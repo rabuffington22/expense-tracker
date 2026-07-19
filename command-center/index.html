@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 10:28 PM CST",
+    "lastUpdated": "2026-07-19 8:50 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1622,24 +1622,32 @@
     "durabilityStatus": "Work blocks 3A-3I are published on main; 3J/4A source and evidence were released through PR 86 as f4cd686, Fly Deploy run 29670793359 passed, and 4B has a direct-main skip-actions closeout"
   },
   "phase": {
-    "name": "Functional Audit And Prioritization",
+    "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Tasks 1-7 and work blocks 3A-3K are complete; the verified findings catalog is ready and Task 8 is current for separately confirmed repair-order planning.",
-    "progress": 93
+    "summary": "Work block 4C is locally complete and 4C-R is active for exact-path direct-main durability, automatic Fly observation, and sanitized closeout.",
+    "progress": 55
   },
   "currentTask": {
-    "title": "Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks",
-    "owner": "Ryan",
+    "title": "Task 1B: Repair remaining prioritized reliability and correctness defects",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns the verified 3K catalog, protected boundaries, just-in-time Task 8 planning, and dashboard currency",
-    "nextAction": "Define and return one bounded Task 8 repair-order decision block before selecting or implementing the first broader Phase 4 repair family.",
-    "blocker": "Task 8 execution, public k policy, product implementation, live access, and GitHub durability require separate confirmation"
+    "supportingAgent": "Codex Desktop owns the authorized exact-path 4C durability, automatic Fly observation, credential-free health check, and sanitized closeout",
+    "nextAction": "Stage the exact intended 4C set, commit, fast-forward and push main, observe automatic Fly, verify health, then publish a skip-actions closeout.",
+    "blocker": "Protected data, credentials, workflow dispatch, non-automatic Fly changes, 4D, unrelated repairs, force push, and out-of-path recovery remain unauthorized"
   },
-  "currentWorkBlock": null,
+  "currentWorkBlock": {
+    "id": "phase-4-block-c-release",
+    "label": "4C-R",
+    "name": "Transaction Identity Durability And Release",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "scope": "Exact intended Task 8 and 4C commit, fast-forward main, direct push, automatic Fly observation, credential-free health, and skip-actions closeout",
+    "nextAction": "Complete exact-path scope, sensitive, sync, and verification checks before explicit staging."
+  },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
-    "lastChecked": "2026-07-18",
+    "lastChecked": "2026-07-19",
     "command": "node command-center/agent-router/scripts/queue-summary.js",
     "healthCommand": "node command-center/scripts/health-check.js",
     "counts": {
@@ -1659,23 +1667,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define the Task 8 repair-order decision block",
-    "status": "awaiting planning",
-    "owner": "Ryan",
-    "why": "Work block 3K completed a verified 55-entry catalog with explicit severity, confidence, boundaries, evidence, acceptance ownership, and technical dependencies.",
-    "action": "Run a just-in-time Task 8 planning pass and return one bounded decision block before selecting the first broader Phase 4 repair family.",
+    "title": "Publish and verify work block 4C",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan explicitly authorized committing and pushing the locally verified 4C work to main.",
+    "action": "Publish the exact intended paths, observe the automatic release, verify health, and close with skip actions.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Task 8 repair-order decision block.",
-    "items": [
-      "Confirm or revise the Task 8 decision block; the public k contract and first broader Phase 4 repair family remain Ryan decisions."
-    ]
+    "summary": "No Ryan input is required inside the authorized 4C-R exact release path.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 3K is complete; Task 8 prioritization, public k policy, compensation-unit policy, cookie/CSP policy, implementation, live access, and GitHub durability remain outside authorization.",
-    "decisionQueue": "The next decision is confirmation or revision of a Task 8 repair-order block; public k policy and the first broader Phase 4 repair family remain Ryan choices.",
+    "phaseQuestions": "4C-R authorizes only exact durability, automatic release observation, health verification, and sanitized closeout. Public k behavior, later repairs, and other live access remain outside authorization.",
+    "decisionQueue": "No decision is pending inside 4C-R; 4D remains a later separate planning and confirmation gate.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1690,8 +1696,8 @@
       "active": true
     },
     {
-      "name": "Claude Desktop",
-      "role": "Optional specialist reviewer through sanitized handoff packets",
+      "name": "Claude CLI",
+      "role": "Completed the read-only 3L prioritization review using claude-fable-5 at max effort",
       "active": false
     }
   ],
@@ -1718,13 +1724,13 @@
       "id": "phase-3",
       "name": "Phase 3",
       "label": "Functional Audit And Prioritization",
-      "status": "active"
+      "status": "done"
     },
     {
       "id": "phase-4",
       "name": "Phase 4",
       "label": "Core Repairs And Regression Coverage",
-      "status": "paused"
+      "status": "active"
     },
     {
       "id": "phase-5",
@@ -2660,6 +2666,58 @@
       "result": "All 55 Phase 3-derived issue headings reconcile one-to-one to stable IDs. The catalog contains 42 unresolved behavioral or policy findings, ten regression-coverage items, and three resolved findings across 25 high, 29 medium, and one low severity; public k remains a Ryan decision, downstream idempotency remains remotely unverified, and dependency tags do not preselect the repair order."
     },
     {
+      "id": "phase-3-block-l",
+      "phaseId": "phase-3",
+      "label": "3L",
+      "name": "Repair Order Decision And Phase 4 Sequencing",
+      "status": "done",
+      "includedTasks": [
+        "Task 8"
+      ],
+      "excludedTasks": [
+        "Completed Tasks 1-7 and completed Phase 4 Task 1A",
+        "Phase 4 Tasks 1B-4 implementation and all product, migration, tracked-test, fixture, workflow, authentication, security-header, credential, or public-route changes",
+        "Real databases, financial or payroll rows, uploads, credentials, production or demo access, Plaid, Fly, workflows, downstream writes, and other live actions",
+        "Commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Ryan",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The central policy keeps command-center stewardship, cross-file prioritization, sanitized review preparation, critique intake, dashboard currency, and the final recommendation with Codex while Ryan retains product and priority decisions.",
+      "reviewerRoute": "Direct sanitized Claude CLI run using claude-fable-5 at max effort, explicitly selected by Ryan after the initial manual route; read-only tools, plan permission mode, and no session persistence.",
+      "expectedFiles": [
+        "Read-only command-center/phase-3-findings-consolidation.md, issues.md, supporting audit logs, current source, synthetic tests, and agent-selection policy",
+        "command-center/phase-3-task-8-repair-order.md",
+        "command-center/handoffs/second-opinion/2026-07-18-phase-3-task-8-repair-order.md",
+        "command-center/logs/second-opinion/2026-07-18-phase-3-task-8-fable-5-max.md",
+        "command-center/roadmap.md, now.md, decisions.md, state.json, and index.html"
+      ],
+      "stopConditions": [
+        "Prioritization requires real data, credentials, production inspection, or another live action",
+        "A migration, public k, payroll compensation-unit, cookie or CSP, or other product contract cannot be safely recommended from verified evidence",
+        "Scope crosses into product implementation, GitHub durability, or a live-system mutation",
+        "Review reveals an evidence conflict that changes issue identity, severity, or the 3K catalog contract",
+        "The dashboard refresh or command-center health check cannot pass"
+      ],
+      "verification": [
+        "Assign every unresolved finding to an ordered tier, decision gate, or explicit parked category and keep all three resolved findings outside the repair pool",
+        "Reconcile dependency order to all seven Task 8 clusters and pair or explicitly park every coverage item",
+        "Record reviewer agreements, disagreements, alternatives, confidence, and missing information without silently adopting product decisions",
+        "jq empty command-center/state.json",
+        "node command-center/scripts/refresh-dashboard.js",
+        "node command-center/scripts/health-check.js",
+        "git diff --check, generated-dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Returned the revised repair queue, accepted and bounded reviewer recommendations, four final Ryan decisions, and one separately confirmable proposed 4C implementation block.",
+      "durability": "Local-only; no commit, push, PR, merge, workflow, deployment, credential, protected-data, product, or live action occurred in work block 3L.",
+      "evidence": [
+        "command-center/phase-3-task-8-repair-order.md",
+        "command-center/handoffs/second-opinion/2026-07-18-phase-3-task-8-repair-order.md",
+        "command-center/logs/second-opinion/2026-07-18-phase-3-task-8-fable-5-max.md",
+        "command-center/decisions.md"
+      ],
+      "result": "Fable 5 endorsed transaction identity first with high confidence; Codex bounded and intaked its sequence and acceptance recommendations; source inspection resolved the dedup and Plaid-ID facts; and Ryan confirmed all four decisions, including authenticated public k and paired/deferred policy defaults. Phase 3 Task 8 and work block 3L are complete without implementation."
+    },
+    {
       "id": "phase-4-block-a",
       "phaseId": "phase-4",
       "label": "4A",
@@ -2752,6 +2810,67 @@
         "https://github.com/rabuffington22/expense-tracker/actions/runs/29670793359"
       ],
       "result": "Source commit fe1ec2e merged through PR 86 as f4cd686. GitHub reported no PR checks configured and clean merge state. Fly Deploy run 29670793359 passed every step. Production health returned 200; protected root redirected no-store to the standalone login; login exposed no protected shell or legacy digest flow; and service-worker v4 served the static/offline-only contract without password or protected-data use."
+    },
+    {
+      "id": "phase-4-block-c",
+      "phaseId": "phase-4",
+      "label": "4C",
+      "name": "Transaction Identity Foundation",
+      "status": "done",
+      "includedTasks": [
+        "Task 1B",
+        "Task 2 paired only for P3-3A-C01"
+      ],
+      "includedFindings": [
+        "P3-3A-01",
+        "P3-3A-C01"
+      ],
+      "excludedTasks": [
+        "Completed Task 1A and Tasks 3-4",
+        "Every finding except P3-3A-01 and P3-3A-C01",
+        "Plaid cursor atomicity, reconciliation, liability, freshness, failure isolation, observability, entry-point behavior, and live sync",
+        "Vendor, payroll, planning, reporting, downstream, public k, cookie or CSP, mobile, and unrelated repairs",
+        "Real databases, financial or payroll rows, uploads, credentials, production or demo access, Plaid, Fly, workflows, downstream writes, and other live actions",
+        "Commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block tightly couples source-contract documentation, additive migration judgment, import and Plaid identity call-site integration, synthetic upgrade verification, cleanup, Runway OS stewardship, and final intake; Fable 5 already endorsed the scope with high confidence.",
+      "runnerPath": "Completed in the current Codex task on codex/transaction-identity-foundation without delegation.",
+      "expectedFiles": [
+        "command-center/transaction-identity-contract.md",
+        "core/imports.py",
+        "core/db.py only if an additive migration is required",
+        "web/routes/plaid.py identity-computation call site only",
+        "scripts/smoke_test.py focused synthetic coverage",
+        "command-center roadmap, now, decisions, state, dashboard, and 4C closeout artifacts"
+      ],
+      "stopConditions": [
+        "The identity contract requires real transaction rows, credentials, production inspection, or another live action",
+        "An additive upgrade cannot preserve existing primary keys, splits, order matches, aliases, and exact-redelivery behavior in populated synthetic tests",
+        "The repair would rewrite an applied migration or destructively regenerate existing transaction IDs",
+        "Manual, file-import, and Plaid identity semantics cannot share a safe explicit contract without another Ryan decision",
+        "Empty external-ID handling requires changing Plaid persistence, cursor behavior, reconciliation, or entry-point semantics",
+        "Import or Plaid call-site changes expand beyond identity computation",
+        "Baseline or focused verification changes the plan, cleanup cannot be proven, or command-center checks fail"
+      ],
+      "verification": [
+        "Baseline and final .venv/bin/python scripts/smoke_test.py",
+        "Focused all-entity checks for distinct-source collisions, same-source duplicates, exact payload re-import, authoritative external IDs, empty-ID non-aliasing, and determinism",
+        "Populated pre-change synthetic migration checks preserving transaction IDs, splits, order matches, aliases, edits, negative-debit convention, and effective reporting",
+        "Import and mocked Plaid identity call-site checks with outbound networking denied",
+        "Disposable cleanup, jq empty state, dashboard refresh, health check, git diff check, generated-dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Return the written identity contract, exact source/migration/test changes, full and focused synthetic results, populated-upgrade evidence, cleanup, preserved boundaries, branch state, remaining release gate, and the recommended first separate boundary/truthfulness block.",
+      "durability": "Local-only; no commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action occurred.",
+      "evidence": [
+        "command-center/transaction-identity-contract.md",
+        "command-center/logs/2026-07-19-transaction-identity-foundation-4c.md",
+        "core/imports.py",
+        "web/routes/plaid.py",
+        "scripts/smoke_test.py"
+      ],
+      "result": "Versioned source, account, occurrence, and authoritative-external identities are implemented without a migration. Maintained all-entity, exact-redelivery, populated-reference, effective-reporting, empty-ID, legacy-Plaid-binding, socket-denied call-site, full smoke, compile, cleanup, and command-center checks pass."
     }
   ],
   "phaseTasks": [
@@ -3108,11 +3227,15 @@
       "phaseId": "phase-3",
       "taskId": "P3-T8",
       "title": "Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks",
-      "status": "current",
+      "status": "done",
       "owner": "Ryan",
-      "summary": "Prioritize only evidence-backed findings from the verified 3K catalog.",
-      "nextAction": "Confirm or revise a separately proposed Task 8 repair-order decision block after just-in-time planning.",
-      "blocker": "Task 8 decisions and any Phase 4 implementation require a separately confirmed work block."
+      "summary": "Work block 3L completed a direct sanitized claude-fable-5 max-effort review and Codex intake; Ryan confirmed all four post-review decisions and selected transaction identity as the first separately confirmable repair block.",
+      "result": "Ryan confirmed 4C first with the source-aware duplicate contract; separate early boundary and truthfulness blocks before three pre-split Plaid blocks and remaining sync-entry work; authenticated public k; paired coverage; separated payroll cohorts; cookie flags separate from later CSP; and downstream idempotency parked behind a read-only contract gate.",
+      "evidence": [
+        "command-center/phase-3-task-8-repair-order.md",
+        "command-center/logs/second-opinion/2026-07-18-phase-3-task-8-fable-5-max.md",
+        "command-center/decisions.md"
+      ]
     },
     {
       "phaseId": "phase-4",
@@ -3135,17 +3258,19 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1B",
       "title": "Task 1B: Repair remaining prioritized reliability and correctness defects",
-      "status": "planned",
-      "owner": "Codex",
-      "summary": "Implement the remaining evidence-backed fixes after Phase 3 Tasks 7-8 establish the broader order."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Work block 4C completed P3-3A-01 locally; implement remaining evidence-backed repairs only through separately confirmed blocks.",
+      "nextAction": "Choose 4C durability/release or separately plan 4D beginning provisionally with P3-3F-01.",
+      "blocker": "No next implementation or GitHub/live action is authorized."
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T2",
       "title": "Task 2: Expand regression coverage",
       "status": "planned",
-      "owner": "Codex",
-      "summary": "Add synthetic tests around repaired workflows and entity isolation."
+      "owner": "Codex Desktop",
+      "summary": "Pair focused synthetic coverage with each repair family; 4C completed P3-3A-C01 for transaction identity."
     },
     {
       "phaseId": "phase-4",
@@ -3377,9 +3502,37 @@
     {
       "name": "Work Block 3K Findings Consolidation Closeout",
       "path": "command-center/logs/2026-07-18-findings-consolidation-3k.md"
+    },
+    {
+      "name": "Phase 3 Task 8 Provisional Repair Order",
+      "path": "command-center/phase-3-task-8-repair-order.md"
+    },
+    {
+      "name": "Phase 3 Task 8 Claude CLI Second-Opinion Prompt",
+      "path": "command-center/handoffs/second-opinion/2026-07-18-phase-3-task-8-repair-order.md"
+    },
+    {
+      "name": "Phase 3 Task 8 Fable 5 Max-Effort Review",
+      "path": "command-center/logs/second-opinion/2026-07-18-phase-3-task-8-fable-5-max.md"
+    },
+    {
+      "name": "Transaction Identity Contract",
+      "path": "command-center/transaction-identity-contract.md"
+    },
+    {
+      "name": "Work Block 4C Transaction Identity Foundation Closeout",
+      "path": "command-center/logs/2026-07-19-transaction-identity-foundation-4c.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-19",
+      "text": "Completed work block 4C locally: versioned source-aware file and authoritative Plaid identity now pass all-entity, exact-redelivery, populated-reference, no-migration, cleanup, and command-center checks."
+    },
+    {
+      "time": "2026-07-19",
+      "text": "Ryan confirmed work block 4C Transaction Identity Foundation for local-only contract, implementation, focused synthetic coverage, and Runway OS closeout."
+    },
     {
       "time": "2026-07-17",
       "text": "Completed read-only existing-project intake and identified a disabled Daily Plaid Sync workflow."
@@ -3615,6 +3768,22 @@
     {
       "time": "2026-07-18",
       "text": "Completed work block 3K: all 55 Phase 3-derived issues map one-to-one to stable IDs across 42 unresolved behavior or policy findings, ten coverage items, and three resolved findings; Task 8 is current without a preselected repair order."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed local-only work block 3L for Task 8 repair ordering, one sanitized manual Claude Desktop second opinion, critique intake, four final Ryan decisions, and one proposed first Phase 4 block; implementation, live action, protected data, GitHub durability, and the untracked sync script remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan replaced the 3L manual reviewer route with one direct sanitized Claude CLI run using claude-fable-5 at max effort; read-only tools, plan mode, no session persistence, no model fallback, and all existing protected boundaries remain required."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "The exact claude-fable-5 max-effort review completed successfully and endorsed 4C first with high confidence; Codex intaked its scope and sequence changes, resolved source-level questions locally, and moved 3L to awaiting-confirmation for four Ryan decisions without implementation."
+    },
+    {
+      "time": "2026-07-19",
+      "text": "Ryan confirmed all four post-review Task 8 decisions; work block 3L and Phase 3 closed, Phase 4 activated for planning, and 4C Transaction Identity Foundation was recorded as proposed without implementation authorization."
     }
   ],
   "openQuestions": [],
@@ -4030,8 +4199,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Bounded Task 8 repair-order decision",
-    "description": "Define and confirm the decision block before selecting the public k contract or the first broader Phase 4 repair family."
+    "name": "Choose 4C durability or separately plan work block 4D",
+    "description": "Review the locally verified transaction-identity closeout, then authorize an exact release path or define the next bounded boundary/truthfulness repair."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -4086,7 +4255,13 @@
     "phase4AuthCacheBoundaries": "pass; fake secrets and temporary synthetic data for functional verification, credential-free production HTTP only, no real password or protected financial data, no public k access, no secret change, and no manual workflow or unrelated action",
     "phase4AuthCacheRelease": "pass; source commit fe1ec2e merged through PR 86 as f4cd686, GitHub reported clean merge state with no PR checks configured, Fly Deploy run 29670793359 passed every step, and production health, pre-auth redirect/login content, and service-worker v4 checks passed",
     "phase4AuthCacheDurability": "pass; source/test/docs/evidence are on main through PR 86 and this exact command-center closeout is the direct-main skip-actions record that causes no second deployment",
-    "phase3FindingsConsolidation": "pass; 55 catalog rows, 55 stable ID mappings, and 55 Phase 3 issue headings reconcile exactly across 42 unresolved behavior or policy findings, ten coverage items, and three resolved findings with no repair ordering or product action"
+    "phase3FindingsConsolidation": "pass; 55 catalog rows, 55 stable ID mappings, and 55 Phase 3 issue headings reconcile exactly across 42 unresolved behavior or policy findings, ten coverage items, and three resolved findings with no repair ordering or product action",
+    "phase3Task8SecondOpinionPacket": "pass; the provisional repair order references all 55 catalog IDs exactly with no missing or extra IDs, all ten coverage entries are paired, all three resolved findings remain excluded, and the direct Claude CLI prompt is sanitized for claude-fable-5 at max effort",
+    "phase3Task8SecondOpinionRun": "pass; claude-fable-5 at max effort completed with exit status zero using read-only tools, plan mode, safe mode, no session persistence, and no fallback; the full sanitized critique is saved and intaken",
+    "phase3Task8DecisionCloseout": "pass; Ryan confirmed all four post-review decisions, every catalog ID remains ordered or gated, work block 3L and Phase 3 are done, and Phase 4 is active",
+    "phase4TransactionIdentityRepair": "pass; versioned source, account, occurrence, and authoritative Plaid identity is implemented without rewriting existing keys or adding a migration",
+    "phase4TransactionIdentityCoverage": "pass; maintained all-entity duplicates, exact redelivery, populated legacy IDs and references, negative debits, edits, aliases, effective reporting, empty external IDs, legacy Plaid bindings, and socket-denied call-site checks pass",
+    "phase4TransactionIdentityBoundaries": "pass; temporary synthetic data only, disposable cleanup proven, no real data or credentials, no network or live Plaid action, no cursor or reconciliation change, no GitHub durability, and the pre-existing untracked sync script remained untouched"
   }
 }
 </script>

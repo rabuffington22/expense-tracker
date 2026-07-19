@@ -2,51 +2,65 @@
 
 ## Active Objective
 
-Prepare the Phase 3 Task 8 repair-order decision from the verified work block 3K findings catalog.
+Publish the completed 4C transaction-identity foundation directly to `main`, observe the automatic Fly workflow, and close project state without a second deployment.
 
 ## Current Phase
 
-Phase 3: Functional Audit And Prioritization — active; Tasks 1-7 are complete and Task 8 is current.
+Phase 4: Core Repairs And Regression Coverage — active after the verified local completion of work block 4C.
 
-## Completed Work Block
+## Current Work Block
 
-3K: Findings Consolidation And Decision Readiness — complete and verified locally.
+4C-R: Transaction Identity Durability — active under Ryan's direct `Commit and push to main` authorization.
 
 ## Current Task
 
-Phase 3 Task 8: confirm the repair order and bounded Phase 4 implementation work blocks — awaiting a separately confirmed just-in-time decision block.
+Phase 4 Task 1B: continue remaining prioritized repairs through separately confirmed blocks. Task 2 coverage remains paired with each repair family.
 
 ## Owner
 
-Ryan owns repair-order, public `/k/`, and product-contract decisions. Codex Desktop owns the verified 3K catalog, protected boundaries, next-block planning, and dashboard currency.
+Codex Desktop owns the exact-path commit, direct-main push, automatic Fly observation, credential-free health check, and `[skip actions]` command-center closeout. Ryan retains all recovery, credential, protected-data, and unrelated-action gates.
 
-## Work Block 3K Result
+## Phase 3 And 3L Result
 
-- All 55 Phase 3-derived issue entries map one-to-one to stable IDs in `command-center/phase-3-findings-consolidation.md`.
-- The catalog records severity, status, confidence, affected boundary, sanitized reproduction, observed versus expected behavior, impact, evidence, acceptance-check ownership, and dependency tags.
-- Classification: 42 unresolved behavioral or policy findings, 10 regression-coverage items, and three findings resolved and released through work blocks 4A-4B.
-- Severity: 25 high, 29 medium, and one low. Of the unresolved behavior/policy set, 23 are high, 18 medium, and one low.
-- `P3-3J-03`, the deliberately public `/k/` financial-data contract, is the explicit Ryan policy decision before any related code scope.
-- Technical dependency clusters are recorded for Task 8 but do not preselect the repair order.
+- Ryan confirmed all four post-review decisions: 4C first with the source-aware duplicate contract; the revised early-boundary and pre-split Plaid sequence; authenticated `/k/`; and paired coverage with the deferred payroll, cookie/CSP, and downstream-idempotency defaults.
+- Phase 3 Tasks 1-8 and work blocks 3A-3L are complete.
+- The full Fable 5 review and final ordered 55-finding catalog remain the evidence base; no implementation occurred during 3L.
+
+## Work Block 4C Result
+
+- `command-center/transaction-identity-contract.md` defines versioned file and authoritative-external namespaces while preserving every issued key.
+- File imports now distinguish sources, accounts, and legitimate identical occurrences while exact same-source payload redelivery remains idempotent.
+- Newly issued Plaid keys derive from a non-empty authoritative Plaid transaction ID; empty IDs are rejected, and an existing legacy key already bound to that ID is preserved.
+- No database migration was required and no populated transaction ID, split reference, order match, edit, alias, or reporting behavior was rewritten.
+- Maintained synthetic coverage passes across Personal, BFM, and Luxe Legacy, including populated legacy references and a socket-denied Plaid insert seam.
+
+## Excluded Scope
+
+- Completed Phase 4 Task 1A; Tasks 3-4; every finding other than `P3-3A-01` and `P3-3A-C01`.
+- Plaid cursor atomicity, reconciliation, liability, freshness, failure isolation, observability, entry-point behavior, and live sync.
+- Vendor, payroll, planning, reporting, downstream, `/k/`, cookie/CSP, mobile, and unrelated repairs.
+- Real databases, financial/payroll rows, uploads, credentials, production/demo access, Plaid, Fly, workflows, downstream writes, or other live actions.
+- Commit, push, PR, merge, deployment, and pre-existing untracked `scripts/sync_prod_to_local.sh`.
 
 ## Current Action
 
-Run a just-in-time planning pass over Task 8 and propose one bounded repair-order decision block before selecting or implementing the first broader Phase 4 repair family.
+Stage only the intended Task 8 and 4C artifacts, excluding `scripts/sync_prod_to_local.sh`; commit, fast-forward local `main`, push `main`, observe the resulting Fly workflow, run credential-free health verification, and publish a sanitized `[skip actions]` closeout.
 
-## Durability And Boundaries
+## Release Stop Conditions
 
-- Work block 3K is local-only. No commit, push, PR, merge, workflow, deployment, product, migration, tracked-test, credential, protected-data, or live-system action occurred.
-- Actual production occurrence remains unknown for most findings because no real financial, payroll, upload, database, or authenticated production data was opened.
-- The downstream behavior for `P3-3I-02` remains remotely unverified; only the local duplicate-key and implicit-conflict contract is proven.
-- The authentication, protected-cache, and auth-mode findings remain resolved through PR #86 and are excluded from the open repair pool absent new evidence.
-- Preserved user file: untracked `scripts/sync_prod_to_local.sh`, untouched and unstaged.
+- The exact publish set contains an unexpected path, protected data, secret, or unrelated user change.
+- `origin/main` advances or the local branch cannot fast-forward cleanly.
+- Maintained checks, the automatic Fly workflow, credential-free health, or the command-center closeout checks fail.
+- Recovery requires credentials, protected data, production database access, workflow dispatch, force push, or unrelated repair.
+- 4D and every other Phase 3 repair remain outside this release.
 
 ## Verification
 
-- Catalog rows: 55; stable ID map: 55; Phase 3 issue headings: 55; exact heading reconciliation passed.
-- Catalog classification and severity counts reconcile to the issue ledger.
-- `jq empty command-center/state.json`, dashboard refresh, command-center health check, `git diff --check`, generated-dashboard inspection, and final worktree review are the closeout gate.
+- Baseline and final `.venv/bin/python scripts/smoke_test.py`: pass.
+- Focused all-entity identity, redelivery, populated-reference, reporting, and socket-denied Plaid checks: pass.
+- Re-run Python compilation, smoke, sensitive-string scan, JSON validation, dashboard refresh, health check, and `git diff --check` before commit.
+- Confirm the direct-main push, automatic Fly run and job result, credential-free production `/health`, final `main`/`origin/main` alignment, and `[skip actions]` closeout durability.
 
 ## Next Report Point
 
-Return one bounded Task 8 decision block with real issue IDs, included and excluded dependency clusters, Ryan decisions, stop conditions, verification, and the proposed first broader Phase 4 repair block.
+Return the source and closeout commits, direct-main push, automatic Fly result, credential-free health status, final branch alignment, preserved exclusions, and provisional 4D recommendation.
