@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after the durable, deployed, and credential-free health-verified completion of work block 4H-R; Task 1H is next for separate planning
+Status: active during separately authorized work block 4I-R publication; Task 1I remains next for separate planning
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -902,8 +902,8 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1E: Enforce Luxe Legacy-only downstream source selection.** Status: done, released, and credential-free production health verified through work blocks 4F-4F-R for `P3-3I-01` plus the focused selection slice of `P3-3I-C01`; remote idempotency remains parked.
 - **Task 1F: Report scheduled sync partial failures truthfully.** Status: done, released, and credential-free production health verified through work blocks 4G-4G-R for `P3-3H-01` plus the workflow-visible result slice of `P3-3H-C01`; authorization-before-entity-setup (`P3-3H-06`) remains later.
 - **Task 1G: Restore the Recurring Charges report query.** Status: done, released, and credential-free production health verified through work blocks 4H-4H-R for `P3-3C-01` plus the recurring-report slice of `P3-3C-C01`.
-- **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: current for separate planning as the first primary-Plaid block.
-- **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: planned as the second primary-Plaid block.
+- **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: current for release durability through work block 4I-R after local verification through 4I for `P3-3G-01` plus the focused atomicity slice of `P3-3G-C01`.
+- **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: planned for separate planning after 4I-R as the second primary-Plaid block.
 - **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: planned as the third primary-Plaid block.
 - **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: planned after Tasks 1H-1J.
 - **Task 1L: Repair vendor import-to-categorization integrity.** Status: planned after the Plaid and sync-entry foundations.
@@ -1418,6 +1418,87 @@ Report point: return source and closeout commits, exact published paths, automat
 Result: the exact nine-path 4H source set was committed as `166bbd9`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29696691569` and deploy job `88218551351` passed every reported step for that exact source SHA. Production `/health` returned HTTP 200 without credentials, and local `main` matched `origin/main`. The untracked sync script and unrelated `command-center/now 2.md` remained excluded; the staged high-confidence sensitive-addition scan returned zero; and no protected data, credentials, authenticated production page, manual workflow, non-automatic Fly, Plaid, downstream, workflow-edit, broader repair, or unrelated action occurred. This command-center-only closeout is published separately with `[skip actions]` to avoid a second deployment.
 
 Evidence: `command-center/logs/2026-07-19-recurring-charges-report-release-4h-r.md`, source commit `166bbd9`, GitHub Actions run `29696691569`, and Fly deploy job `88218551351`.
+
+### Work Block 4I: Plaid Transaction Sync Atomicity
+
+Status: done and locally verified on 2026-07-19; release not authorized
+
+Parent tasks: Phase 4 Task 1H and only the cursor-safety and rollback slice of Task 2.
+
+Included findings: `P3-3G-01` and the matching focused slice of `P3-3G-C01` only.
+
+Outcome: apply every fetched addition, modification, removal, final cursor, and `last_synced` update atomically for each Plaid item; distinguish exact-redelivery no-ops from genuine persistence errors; roll back all item mutations and preserve the stored cursor and timestamp when any persistence or cursor write fails; and add focused maintained synthetic coverage across Personal, BFM, and Luxe Legacy with mocked Plaid responses and denied outbound networking.
+
+Why this grouping: transaction mutations and final cursor advancement share one per-item SQLite transaction, one failure boundary, and one all-entity mocked verification path. Reconciliation, liabilities, freshness, missing-modification observability, item isolation, and scheduled/public coordination use different contracts and remain later tasks.
+
+Excluded: completed Tasks 1A-1G; Tasks 1I-1P and 3-4; the remainder of Task 2 and `P3-3G-C01`; `P3-3G-02` through `P3-3G-07`; `P3-3H-02` through `P3-3H-07`; reconciliation, cached-balance preservation, liabilities, freshness, link cleanup, missing-modification observability, item failure isolation, scheduled/public concurrency, public removed-event behavior, automatic Plaid retries, and downstream behavior; migrations unless an unexpected dependency triggers a stop; real databases or financial/payroll/HR rows, uploads, credentials, production/demo, live Plaid, workflows, Fly, downstream access/writes, or other live actions; commit, push, PR, merge, deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Atomicity defaults:
+
+- Fetch every available page from the stored starting cursor before local persistence, then apply the accepted transaction events and the final cursor in one per-item SQLite transaction.
+- Treat exact redelivery as an explicit idempotent no-op, but allow genuine insert, update, delete, or cursor-write errors to abort the transaction.
+- On any persistence failure, roll back all mutations from that item and leave both its stored cursor and `last_synced` unchanged.
+- Do not add automatic network retries. A pagination failure remains visible; because no local cursor moves, a later attempt begins from the original stored cursor as required by the Plaid pagination contract.
+- Preserve enabled-account filtering, source-aware transaction identity, negative-debit semantics, splits, exact redelivery, entity isolation, and current successful result counts.
+
+Autonomous owner and recommended agent: Codex Desktop in the current task. This block couples financial-integrity semantics, mocked integration behavior, cross-file implementation, synthetic verification, protected-data boundaries, and Runway OS stewardship. The previous independent review already pre-split the Plaid family into atomicity, reconciliation, and isolation/observability, so no additional delegation or second opinion is needed.
+
+Runner path: current Codex task on local branch `codex/plaid-sync-atomicity` without delegation.
+
+Blocking questions: none.
+
+Non-blocking defaults: write a concise Plaid sync atomicity contract before code changes; keep the existing aggregate-pages-before-persist architecture unless source verification proves a smaller safe seam; pin maintained coverage to `scripts/smoke_test.py`; use temporary synthetic all-entity databases, fake tokens, mocked Plaid responses, and denied outbound sockets; and remain local-only.
+
+Expected surfaces: `command-center/plaid-sync-atomicity-contract.md`; `web/routes/plaid.py`; `core/plaid_client.py` only if the pagination seam requires adjustment; focused checks in `scripts/smoke_test.py`; `command-center/issues.md`; one sanitized 4I closeout log; and Runway OS roadmap, now, decisions, state, and dashboard files. No migration is expected.
+
+Stop conditions:
+
+- Correctness requires a migration, real transaction inspection, credentials, a live Plaid call, or another external action.
+- The repair expands into reconciliation, liabilities, freshness, link cleanup, missing-modification observability, item isolation, entry-point coordination, public-worker behavior, downstream behavior, or another Phase 4 task.
+- Existing transaction identities, splits, exact-redelivery behavior, enabled-account filtering, or entity isolation cannot be preserved.
+- Plaid pagination cannot be handled safely without a new automatic retry or product-contract decision.
+- Baseline or focused verification fails in a plan-changing way, disposable cleanup cannot be proven, or command-center refresh/health fails.
+- Scope reaches GitHub durability, deployment, either preserved untracked file, or another excluded action.
+
+Verification:
+
+- baseline and final `.venv/bin/python scripts/smoke_test.py`;
+- maintained all-entity success and multi-page final-cursor checks;
+- forced failures during additions, modifications, removals, and cursor update proving full rollback, unchanged starting cursor and timestamp, and unchanged unrelated rows;
+- exact-redelivery idempotency, successful retry from the preserved starting cursor, enabled-account filtering, signed-amount and split preservation, mocked Plaid responses, and denied outbound sockets;
+- Python compilation, `jq empty command-center/state.json`, disposable cleanup, dashboard refresh, health check, `git diff --check`, generated-dashboard inspection, and final explicit-path worktree review.
+
+Dashboard closeout: update source files first, align `state.json`, refresh and health-check the dashboard, and mark 4I done only after every required check passes.
+
+Durability: complete and verified locally on `codex/plaid-sync-atomicity`. Commit, push, PR, merge, deployment, protected data, credentials, real databases, live systems, Plaid, workflows, Fly, downstream access/write, and other live actions remain excluded.
+
+Report point: return the exact transaction/cursor contract, changed paths, focused and full synthetic results, rollback and cleanup evidence, local branch state, preserved exclusions, and the separate release gate.
+
+Suggested next block: separately plan 4J Plaid Reconciliation, Liability, And Freshness Truthfulness for Task 1I after 4I evidence is complete.
+
+Result: the sync path now applies each item's accepted additions, modifications, removals, final cursor, and `last_synced` inside one explicit SQLite transaction. Exact Plaid redelivery remains an idempotent no-op; genuine persistence errors propagate to the existing item error path; rolled-back counters are not reported; and a failed attempt leaves the starting cursor, timestamp, prior rows, and splits intact. Maintained coverage passes two-page aggregation, success, redelivery, enabled-account filtering, signed amounts, removal, twelve forced all-entity add/modify/remove/cursor failures, retry from the original cursor, denied outbound sockets, and exact cleanup. Baseline and final smoke suites, Python compilation, JSON validation, whitespace checks, dashboard refresh, and health check pass with no migration or live action.
+
+Evidence: `command-center/plaid-sync-atomicity-contract.md`, `web/routes/plaid.py`, `scripts/smoke_test.py`, `command-center/issues.md`, and `command-center/logs/2026-07-19-plaid-sync-atomicity-4i.md`.
+
+### Work Block 4I-R: Durability And Release
+
+Status: active; directly authorized by Ryan on 2026-07-19
+
+Included: the exact ten intended 4I application, maintained-test, contract, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/plaid-sync-atomicity`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Exact source set: `web/routes/plaid.py`; `scripts/smoke_test.py`; `command-center/plaid-sync-atomicity-contract.md`; `command-center/logs/2026-07-19-plaid-sync-atomicity-4i.md`; `command-center/issues.md`; `command-center/decisions.md`; `command-center/now.md`; `command-center/roadmap.md`; `command-center/state.json`; and `command-center/index.html`.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real databases or financial/payroll/HR rows; uploads; credentials; authenticated production pages; live Plaid calls; manual workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream access or writes; workflow-file changes; reconciliation, liabilities, freshness, Task 1I, broader Plaid work, and unrelated repairs; force push; and recovery outside the exact fast-forward publish path.
+
+Owner and recommended agent: Codex Desktop. The release requires exact-path Git and sensitive-addition review, direct-main durability, automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.
+
+Defaults: no PR because Ryan directly requested commit and push to `main`; preserve the prior 4I test and contract; use only credential-free production `/health`; inspect workflow metadata and open logs only if failure requires diagnosis; publish the post-deploy closeout with `[skip actions]` to prevent a second deployment.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the authorized path.
+
+Verification: exact path and sensitive-string review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separate Task 1I planning gate.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

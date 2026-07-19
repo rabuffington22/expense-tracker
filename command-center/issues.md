@@ -946,7 +946,7 @@ The boundary slice is now tracked. Every other `P3-3F-C01` acceptance area remai
 
 ## Plaid Persistence Errors Can Advance The Cursor Past Missing Data
 
-Status: open; discovered in work block 3G
+Status: resolved locally in work block 4I; release not authorized
 
 Severity: high financial-data completeness risk
 
@@ -970,9 +970,9 @@ Acceptance checks:
 - Any transaction persistence error rolls back or withholds the item cursor and returns a sanitized item error.
 - A later retry can ingest the missed transaction without manual cursor repair.
 
-Why not fixed now:
+Resolution:
 
-Transaction and cursor semantics require separately confirmed repair and regression scope.
+Work block 4I now applies each item's accepted additions, modifications, removals, final cursor, and `last_synced` in one SQLite transaction. Exact redelivery remains an explicit no-op, while genuine persistence failures propagate to the existing item error path, roll back prior mutations, preserve the starting cursor and timestamp, and report no rolled-back counters. Maintained Personal, BFM, and Luxe Legacy checks cover multi-page aggregation, success, exact redelivery, enabled-account filtering, forced add/modify/remove/cursor-write failure, retry from the original cursor, split preservation, denied outbound sockets, and exact cleanup. Publication remains separately gated.
 
 ## Plaid Balance Reconciliation Is Unsafe On Disabled Or Partially Failed Items
 
@@ -1151,7 +1151,7 @@ Failure-isolation changes and regression coverage were excluded from work block 
 
 ## Primary Plaid Paths Lack Tracked Regression Coverage
 
-Status: parked for Phase 4 regression coverage
+Status: partially addressed in work block 4I; remaining primary Plaid coverage stays parked
 
 Severity: medium regression-confidence risk
 
@@ -1175,9 +1175,9 @@ Acceptance checks:
 - Passing connection, account, balance, liability, transaction, pagination, deduplication, cursor, and isolation paths are explicit.
 - Every repaired 3G defect has a failing-before and passing-after regression case.
 
-Why not added now:
+Remaining gap:
 
-Tracked test expansion was explicitly excluded from audit work block 3G.
+Work block 4I adds the maintained transaction-pagination, cursor, rollback, exact-redelivery, enabled-account, three-entity, denied-network, and cleanup slice. Connection lifecycle, balance reconciliation, liability refresh, freshness, link cleanup, missing-modification observability, corrupt-token isolation, and the remaining primary Plaid paths stay parked with Tasks 1I-1J.
 
 ## Scheduled Plaid Sync Can Report Partial Failure As Success
 

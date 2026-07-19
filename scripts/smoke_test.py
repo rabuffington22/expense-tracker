@@ -1272,8 +1272,439 @@ def main() -> None:
                "scheduled result: workflow should retain the curl --fail contract")
         print("   ✅ Partial and total failures are workflow-visible; success and skip behavior remain truthful")
 
-        # ── 8e. CSV export tests ────────────────────────────────────
-        print("\n8e. CSV export tests…")
+        # ── 8e. Plaid transaction and cursor atomicity ──────────────
+        print("\n8e. Plaid transaction and cursor atomicity…")
+        from core.plaid_client import get_transactions as fetch_plaid_transactions
+        from web.routes import plaid as atomic_plaid_routes
+
+        page_one_txn = Mock(
+            transaction_id="atomic-page-one",
+            date="2026-07-18",
+            amount=10.0,
+            name="Atomic Page One",
+            merchant_name=None,
+            account_id="atomic-page-account",
+        )
+        page_two_txn = Mock(
+            transaction_id="atomic-page-two",
+            date="2026-07-19",
+            amount=20.0,
+            name="Atomic Page Two",
+            merchant_name="Atomic Merchant",
+            account_id="atomic-page-account",
+        )
+        page_one = Mock(
+            added=[page_one_txn],
+            modified=[],
+            removed=[],
+            next_cursor="atomic-page-cursor-1",
+            has_more=True,
+        )
+        page_two = Mock(
+            added=[page_two_txn],
+            modified=[],
+            removed=[],
+            next_cursor="atomic-page-cursor-final",
+            has_more=False,
+        )
+        paginated_client = Mock()
+        paginated_client.transactions_sync.side_effect = [page_one, page_two]
+        with patch(
+            "core.plaid_client._get_client", return_value=paginated_client
+        ), patch(
+            "socket.socket",
+            side_effect=AssertionError("Plaid atomicity smoke forbids outbound networking"),
+        ):
+            paginated_result = fetch_plaid_transactions(
+                "synthetic-access-token", cursor="atomic-page-cursor-start"
+            )
+        _check(paginated_client.transactions_sync.call_count == 2,
+               "Plaid atomicity: all available mocked pages should be fetched")
+        _check(
+            [txn["plaid_transaction_id"] for txn in paginated_result["added"]]
+            == ["atomic-page-one", "atomic-page-two"]
+            and paginated_result["next_cursor"] == "atomic-page-cursor-final",
+            "Plaid atomicity: pagination should aggregate updates and return only the final cursor",
+        )
+
+        atomic_start_cursor = "atomic-cursor-start"
+        atomic_start_synced = "2026-07-01T00:00:00+00:00"
+
+        def _seed_atomic_item(entity_key, item_id, *, with_existing=True):
+            enabled_account = f"{item_id}-enabled"
+            disabled_account = f"{item_id}-disabled"
+            conn_atomic = get_connection(entity_key)
+            conn_atomic.execute(
+                "INSERT INTO plaid_items "
+                "(item_id, access_token, institution_name, created_at, cursor, last_synced) "
+                "VALUES (?, 'synthetic-encrypted-token', 'Synthetic Atomic Bank', "
+                "'2026-07-01T00:00:00+00:00', ?, ?)",
+                (item_id, atomic_start_cursor, atomic_start_synced),
+            )
+            conn_atomic.execute(
+                "INSERT INTO plaid_accounts "
+                "(item_id, account_id, name, enabled) VALUES (?, ?, 'Enabled Checking', 1)",
+                (item_id, enabled_account),
+            )
+            conn_atomic.execute(
+                "INSERT INTO plaid_accounts "
+                "(item_id, account_id, name, enabled) VALUES (?, ?, 'Disabled Checking', 0)",
+                (item_id, disabled_account),
+            )
+            existing = {}
+            if with_existing:
+                for role in ("modify", "remove", "unrelated"):
+                    transaction_id = f"{item_id}-{role}-row"
+                    plaid_transaction_id = f"{item_id}-{role}-plaid"
+                    conn_atomic.execute(
+                        "INSERT INTO transactions "
+                        "(transaction_id, date, description_raw, amount, amount_cents, "
+                        "account, category, source_filename, imported_at, plaid_item_id, "
+                        "plaid_transaction_id) VALUES (?, '2026-07-01', ?, -10.0, -1000, "
+                        "'Enabled Checking', 'Food', 'atomicity-smoke', "
+                        "'2026-07-01T00:00:00+00:00', ?, ?)",
+                        (transaction_id, f"ORIGINAL {role.upper()}", item_id,
+                         plaid_transaction_id),
+                    )
+                    existing[role] = (transaction_id, plaid_transaction_id)
+                conn_atomic.execute(
+                    "INSERT INTO transaction_splits "
+                    "(transaction_id, description, amount_cents, category, subcategory) "
+                    "VALUES (?, 'atomic split', -1000, 'Food', 'General')",
+                    (existing["remove"][0],),
+                )
+            conn_atomic.commit()
+            conn_atomic.close()
+            return enabled_account, disabled_account, existing
+
+        def _clean_atomic_item(entity_key, item_id):
+            conn_atomic = get_connection(entity_key)
+            conn_atomic.execute(
+                "DELETE FROM transaction_splits WHERE transaction_id IN "
+                "(SELECT transaction_id FROM transactions WHERE plaid_item_id=?)",
+                (item_id,),
+            )
+            conn_atomic.execute(
+                "DELETE FROM transactions WHERE plaid_item_id=?", (item_id,)
+            )
+            conn_atomic.execute(
+                "DELETE FROM plaid_accounts WHERE item_id=?", (item_id,)
+            )
+            conn_atomic.execute("DELETE FROM plaid_items WHERE item_id=?", (item_id,))
+            conn_atomic.commit()
+            conn_atomic.close()
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            item_id = f"atomic-success-{entity_key}"
+            enabled_account, disabled_account, existing = _seed_atomic_item(
+                entity_key, item_id
+            )
+            accepted_added_id = f"{item_id}-accepted-add"
+            disabled_added_id = f"{item_id}-disabled-add"
+            successful_sync = {
+                "added": [
+                    {
+                        "plaid_transaction_id": accepted_added_id,
+                        "account_id": enabled_account,
+                        "date": "2026-07-19",
+                        "amount": 12.34,
+                        "name": "ATOMIC ACCEPTED ADD",
+                    },
+                    {
+                        "plaid_transaction_id": disabled_added_id,
+                        "account_id": disabled_account,
+                        "date": "2026-07-19",
+                        "amount": 99.99,
+                        "name": "ATOMIC DISABLED ADD",
+                    },
+                ],
+                "modified": [{
+                    "plaid_transaction_id": existing["modify"][1],
+                    "account_id": enabled_account,
+                    "date": "2026-07-19",
+                    "amount": 22.22,
+                    "name": "ATOMIC MODIFIED",
+                }],
+                "removed": [existing["remove"][1]],
+                "next_cursor": f"atomic-cursor-final-{entity_key}",
+            }
+            with patch(
+                "core.crypto.decrypt_token", return_value="synthetic-decrypted-token"
+            ), patch(
+                "core.plaid_client.get_transactions", return_value=successful_sync
+            ) as successful_fetch, patch(
+                "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+            ), patch(
+                "socket.socket",
+                side_effect=AssertionError("Plaid atomicity smoke forbids outbound networking"),
+            ):
+                successful_result = atomic_plaid_routes._sync_entity(entity_key)
+
+            successful_fetch.assert_called_once_with(
+                "synthetic-decrypted-token", cursor=atomic_start_cursor
+            )
+            _check(
+                successful_result["new"] == 1
+                and successful_result["modified"] == 1
+                and successful_result["removed"] == 1
+                and successful_result["errors"] == [],
+                f"Plaid atomicity {entity_key}: committed counters should match accepted changes",
+            )
+            conn_atomic = get_connection(entity_key)
+            item_row = conn_atomic.execute(
+                "SELECT cursor, last_synced FROM plaid_items WHERE item_id=?", (item_id,)
+            ).fetchone()
+            accepted_row = conn_atomic.execute(
+                "SELECT amount_cents, account FROM transactions "
+                "WHERE plaid_transaction_id=?", (accepted_added_id,)
+            ).fetchone()
+            disabled_row = conn_atomic.execute(
+                "SELECT transaction_id FROM transactions WHERE plaid_transaction_id=?",
+                (disabled_added_id,),
+            ).fetchone()
+            modified_row = conn_atomic.execute(
+                "SELECT description_raw, amount_cents FROM transactions "
+                "WHERE plaid_transaction_id=?", (existing["modify"][1],)
+            ).fetchone()
+            removed_row = conn_atomic.execute(
+                "SELECT transaction_id FROM transactions WHERE plaid_transaction_id=?",
+                (existing["remove"][1],),
+            ).fetchone()
+            removed_split = conn_atomic.execute(
+                "SELECT id FROM transaction_splits WHERE transaction_id=?",
+                (existing["remove"][0],),
+            ).fetchone()
+            unrelated_row = conn_atomic.execute(
+                "SELECT description_raw FROM transactions WHERE transaction_id=?",
+                (existing["unrelated"][0],),
+            ).fetchone()
+            conn_atomic.close()
+            _check(
+                item_row["cursor"] == f"atomic-cursor-final-{entity_key}"
+                and item_row["last_synced"] != atomic_start_synced,
+                f"Plaid atomicity {entity_key}: final cursor and timestamp should commit together",
+            )
+            _check(
+                accepted_row is not None
+                and accepted_row["amount_cents"] == -1234
+                and accepted_row["account"] == "Enabled Checking"
+                and disabled_row is None,
+                f"Plaid atomicity {entity_key}: signs and enabled-account filtering should remain intact",
+            )
+            _check(
+                modified_row["description_raw"] == "ATOMIC MODIFIED"
+                and modified_row["amount_cents"] == -2222
+                and removed_row is None
+                and removed_split is None
+                and unrelated_row["description_raw"] == "ORIGINAL UNRELATED",
+                f"Plaid atomicity {entity_key}: modify, remove, split, and unrelated-row behavior should remain correct",
+            )
+
+            redelivery_sync = {
+                "added": [successful_sync["added"][0]],
+                "modified": [],
+                "removed": [],
+                "next_cursor": f"atomic-cursor-redelivery-{entity_key}",
+            }
+            with patch(
+                "core.crypto.decrypt_token", return_value="synthetic-decrypted-token"
+            ), patch(
+                "core.plaid_client.get_transactions", return_value=redelivery_sync
+            ), patch(
+                "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+            ), patch(
+                "socket.socket",
+                side_effect=AssertionError("Plaid atomicity smoke forbids outbound networking"),
+            ):
+                redelivery_result = atomic_plaid_routes._sync_entity(entity_key)
+            conn_atomic = get_connection(entity_key)
+            redelivery_count = conn_atomic.execute(
+                "SELECT COUNT(*) FROM transactions WHERE plaid_transaction_id=?",
+                (accepted_added_id,),
+            ).fetchone()[0]
+            redelivery_cursor = conn_atomic.execute(
+                "SELECT cursor FROM plaid_items WHERE item_id=?", (item_id,)
+            ).fetchone()[0]
+            conn_atomic.close()
+            _check(
+                redelivery_result["new"] == 0
+                and redelivery_result["errors"] == []
+                and redelivery_count == 1
+                and redelivery_cursor == f"atomic-cursor-redelivery-{entity_key}",
+                f"Plaid atomicity {entity_key}: exact redelivery should be idempotent while advancing the cursor",
+            )
+            _clean_atomic_item(entity_key, item_id)
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            for failure_mode in ("add", "modify", "remove", "cursor"):
+                item_id = f"atomic-{failure_mode}-{entity_key}"
+                enabled_account, _, existing = _seed_atomic_item(entity_key, item_id)
+                prior_add_id = f"{item_id}-prior-add"
+                failing_add_id = f"{item_id}-failing-add"
+                failure_result = {
+                    "added": [{
+                        "plaid_transaction_id": prior_add_id,
+                        "account_id": enabled_account,
+                        "date": "2026-07-19",
+                        "amount": 1.11,
+                        "name": "ATOMIC PRIOR ADD",
+                    }],
+                    "modified": [],
+                    "removed": [],
+                    "next_cursor": f"atomic-{failure_mode}-cursor-final",
+                }
+                trigger_name = f"atomic_{failure_mode}_failure"
+                conn_atomic = get_connection(entity_key)
+                if failure_mode == "add":
+                    failure_result["added"].append({
+                        "plaid_transaction_id": failing_add_id,
+                        "account_id": enabled_account,
+                        "date": "2026-07-19",
+                        "amount": 2.22,
+                        "name": "ATOMIC FAILING ADD",
+                    })
+                    conn_atomic.execute(
+                        f"CREATE TRIGGER {trigger_name} BEFORE INSERT ON transactions "
+                        f"WHEN NEW.plaid_transaction_id='{failing_add_id}' "
+                        "BEGIN SELECT RAISE(ABORT, 'synthetic add failure'); END"
+                    )
+                elif failure_mode == "modify":
+                    failure_result["modified"] = [{
+                        "plaid_transaction_id": existing["modify"][1],
+                        "account_id": enabled_account,
+                        "date": "2026-07-19",
+                        "amount": 3.33,
+                        "name": "ATOMIC FAILING MODIFY",
+                    }]
+                    conn_atomic.execute(
+                        f"CREATE TRIGGER {trigger_name} BEFORE UPDATE OF description_raw "
+                        "ON transactions "
+                        f"WHEN OLD.plaid_transaction_id='{existing['modify'][1]}' "
+                        "BEGIN SELECT RAISE(ABORT, 'synthetic modify failure'); END"
+                    )
+                elif failure_mode == "remove":
+                    failure_result["removed"] = [existing["remove"][1]]
+                    conn_atomic.execute(
+                        f"CREATE TRIGGER {trigger_name} BEFORE DELETE ON transactions "
+                        f"WHEN OLD.plaid_transaction_id='{existing['remove'][1]}' "
+                        "BEGIN SELECT RAISE(ABORT, 'synthetic remove failure'); END"
+                    )
+                else:
+                    conn_atomic.execute(
+                        f"CREATE TRIGGER {trigger_name} BEFORE UPDATE OF cursor ON plaid_items "
+                        f"WHEN OLD.item_id='{item_id}' "
+                        "BEGIN SELECT RAISE(ABORT, 'synthetic cursor failure'); END"
+                    )
+                conn_atomic.commit()
+                conn_atomic.close()
+
+                with patch(
+                    "core.crypto.decrypt_token", return_value="synthetic-decrypted-token"
+                ), patch(
+                    "core.plaid_client.get_transactions", return_value=failure_result
+                ) as failed_fetch, patch(
+                    "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+                ), patch(
+                    "socket.socket",
+                    side_effect=AssertionError("Plaid atomicity smoke forbids outbound networking"),
+                ):
+                    failed_result = atomic_plaid_routes._sync_entity(entity_key)
+                failed_fetch.assert_called_once_with(
+                    "synthetic-decrypted-token", cursor=atomic_start_cursor
+                )
+                _check(
+                    failed_result["new"] == 0
+                    and failed_result["modified"] == 0
+                    and failed_result["removed"] == 0
+                    and len(failed_result["errors"]) == 1
+                    and f"synthetic {failure_mode} failure"
+                    not in failed_result["errors"][0]
+                    and "transaction persistence failed; cursor unchanged"
+                    in failed_result["errors"][0],
+                    f"Plaid atomicity {entity_key}/{failure_mode}: rolled-back counters must not be reported",
+                )
+                conn_atomic = get_connection(entity_key)
+                failed_item = conn_atomic.execute(
+                    "SELECT cursor, last_synced FROM plaid_items WHERE item_id=?", (item_id,)
+                ).fetchone()
+                prior_add = conn_atomic.execute(
+                    "SELECT transaction_id FROM transactions WHERE plaid_transaction_id=?",
+                    (prior_add_id,),
+                ).fetchone()
+                target_row = conn_atomic.execute(
+                    "SELECT description_raw FROM transactions WHERE transaction_id=?",
+                    (existing["modify"][0] if failure_mode == "modify" else existing["remove"][0],),
+                ).fetchone()
+                remove_split = conn_atomic.execute(
+                    "SELECT id FROM transaction_splits WHERE transaction_id=?",
+                    (existing["remove"][0],),
+                ).fetchone()
+                unrelated_row = conn_atomic.execute(
+                    "SELECT description_raw FROM transactions WHERE transaction_id=?",
+                    (existing["unrelated"][0],),
+                ).fetchone()
+                conn_atomic.execute(f"DROP TRIGGER {trigger_name}")
+                conn_atomic.commit()
+                conn_atomic.close()
+                _check(
+                    failed_item["cursor"] == atomic_start_cursor
+                    and failed_item["last_synced"] == atomic_start_synced
+                    and prior_add is None,
+                    f"Plaid atomicity {entity_key}/{failure_mode}: partial writes and cursor movement must roll back",
+                )
+                _check(
+                    target_row is not None
+                    and target_row["description_raw"].startswith("ORIGINAL")
+                    and remove_split is not None
+                    and unrelated_row["description_raw"] == "ORIGINAL UNRELATED",
+                    f"Plaid atomicity {entity_key}/{failure_mode}: existing rows and splits must remain intact",
+                )
+
+                with patch(
+                    "core.crypto.decrypt_token", return_value="synthetic-decrypted-token"
+                ), patch(
+                    "core.plaid_client.get_transactions", return_value=failure_result
+                ) as retry_fetch, patch(
+                    "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+                ), patch(
+                    "socket.socket",
+                    side_effect=AssertionError("Plaid atomicity smoke forbids outbound networking"),
+                ):
+                    retry_result = atomic_plaid_routes._sync_entity(entity_key)
+                retry_fetch.assert_called_once_with(
+                    "synthetic-decrypted-token", cursor=atomic_start_cursor
+                )
+                conn_atomic = get_connection(entity_key)
+                retry_cursor = conn_atomic.execute(
+                    "SELECT cursor FROM plaid_items WHERE item_id=?", (item_id,)
+                ).fetchone()[0]
+                conn_atomic.close()
+                _check(
+                    retry_result["errors"] == []
+                    and retry_cursor == f"atomic-{failure_mode}-cursor-final",
+                    f"Plaid atomicity {entity_key}/{failure_mode}: retry from the original cursor should succeed",
+                )
+                _clean_atomic_item(entity_key, item_id)
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            conn_atomic = get_connection(entity_key)
+            _check(
+                conn_atomic.execute(
+                    "SELECT COUNT(*) FROM plaid_items WHERE item_id LIKE 'atomic-%'"
+                ).fetchone()[0] == 0
+                and conn_atomic.execute(
+                    "SELECT COUNT(*) FROM plaid_accounts WHERE item_id LIKE 'atomic-%'"
+                ).fetchone()[0] == 0
+                and conn_atomic.execute(
+                    "SELECT COUNT(*) FROM transactions WHERE plaid_item_id LIKE 'atomic-%'"
+                ).fetchone()[0] == 0,
+                f"Plaid atomicity {entity_key}: synthetic item state should be cleaned exactly",
+            )
+            conn_atomic.close()
+        print("   ✅ All-entity pagination, atomic commit, rollback, retry, idempotency, filtering, and cleanup passed")
+
+        # ── 8f. CSV export tests ────────────────────────────────────
+        print("\n8f. CSV export tests…")
         with app.test_client() as csv_client:
             csv_client.set_cookie("entity", "Personal")
 
@@ -1325,8 +1756,8 @@ def main() -> None:
 
         print("   ✅ All CSV export tests passed")
 
-        # ── 8f. Recurring Charges report repair ────────────────────
-        print("\n8f. Recurring Charges report repair…")
+        # ── 8g. Recurring Charges report repair ────────────────────
+        print("\n8g. Recurring Charges report repair…")
         from core.reporting import get_recurring_charges
         from web.routes.reports import _prepare_report
 

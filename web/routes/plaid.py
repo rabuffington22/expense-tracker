@@ -315,55 +315,18 @@ def _sync_entity(entity_key: str, target_item_id: str | None = None) -> dict:
 
             conn = get_connection(entity_key)
             try:
-                for t in result["added"]:
-                    if t["account_id"] not in enabled_accounts:
-                        continue
-                    total_new += _upsert_plaid_transaction(conn, entity_key, item["item_id"], t)
-
-                for t in result["modified"]:
-                    if t["account_id"] not in enabled_accounts:
-                        continue
-                    description = t.get("merchant_name") or t.get("name") or ""
-                    amount = -t["amount"]
-                    amount_cents = round(amount * 100)
-                    acct_row = conn.execute(
-                        "SELECT name FROM plaid_accounts WHERE account_id=?",
-                        (t["account_id"],),
-                    ).fetchone()
-                    account_name = acct_row["name"] if acct_row else None
-                    conn.execute(
-                        """UPDATE transactions
-                           SET description_raw=?, merchant_raw=?, amount=?,
-                               amount_cents=?, account=COALESCE(?, account),
-                               plaid_item_id=COALESCE(plaid_item_id, ?)
-                           WHERE plaid_transaction_id=?""",
-                        (description, description, amount, amount_cents,
-                         account_name, item["item_id"], t["plaid_transaction_id"]),
-                    )
-                    total_modified += 1
-
-                for plaid_txn_id in result["removed"]:
-                    conn.execute(
-                        "DELETE FROM transaction_splits"
-                        " WHERE transaction_id = ("
-                        "   SELECT transaction_id FROM transactions"
-                        "   WHERE plaid_transaction_id=?)",
-                        (plaid_txn_id,),
-                    )
-                    conn.execute(
-                        "DELETE FROM transactions WHERE plaid_transaction_id=?",
-                        (plaid_txn_id,),
-                    )
-                    total_removed += 1
-
-                now = datetime.now(timezone.utc).isoformat()
-                conn.execute(
-                    "UPDATE plaid_items SET cursor=?, last_synced=? WHERE item_id=?",
-                    (result["next_cursor"], now, item["item_id"]),
+                item_counts = _apply_plaid_transaction_updates(
+                    conn,
+                    entity_key,
+                    item["item_id"],
+                    enabled_accounts,
+                    result,
                 )
-                conn.commit()
             finally:
                 conn.close()
+            total_new += item_counts["new"]
+            total_modified += item_counts["modified"]
+            total_removed += item_counts["removed"]
 
         except Exception as exc:
             errors.append(f"{item.get('institution_name', item['item_id'])}: {exc}")
@@ -504,6 +467,87 @@ def disconnect(item_id):
 
 # ── Internal helpers ─────────────────────────────────────────────────────────
 
+class PlaidTransactionPersistenceError(RuntimeError):
+    """Stable caller-facing error for a rolled-back item transaction."""
+
+
+def _apply_plaid_transaction_updates(
+    conn,
+    entity_key: str,
+    item_id: str,
+    enabled_accounts: set[str],
+    result: dict,
+) -> dict[str, int]:
+    """Apply one item's fetched updates and final cursor as one transaction."""
+    counts = {"new": 0, "modified": 0, "removed": 0}
+
+    try:
+        with conn:
+            for txn in result["added"]:
+                if txn["account_id"] not in enabled_accounts:
+                    continue
+                counts["new"] += _upsert_plaid_transaction(
+                    conn, entity_key, item_id, txn
+                )
+
+            for txn in result["modified"]:
+                if txn["account_id"] not in enabled_accounts:
+                    continue
+                description = txn.get("merchant_name") or txn.get("name") or ""
+                amount = -txn["amount"]
+                amount_cents = round(amount * 100)
+                acct_row = conn.execute(
+                    "SELECT name FROM plaid_accounts WHERE account_id=?",
+                    (txn["account_id"],),
+                ).fetchone()
+                account_name = acct_row["name"] if acct_row else None
+                conn.execute(
+                    """UPDATE transactions
+                       SET description_raw=?, merchant_raw=?, amount=?,
+                           amount_cents=?, account=COALESCE(?, account),
+                           plaid_item_id=COALESCE(plaid_item_id, ?)
+                       WHERE plaid_transaction_id=?""",
+                    (
+                        description,
+                        description,
+                        amount,
+                        amount_cents,
+                        account_name,
+                        item_id,
+                        txn["plaid_transaction_id"],
+                    ),
+                )
+                counts["modified"] += 1
+
+            for plaid_txn_id in result["removed"]:
+                conn.execute(
+                    "DELETE FROM transaction_splits"
+                    " WHERE transaction_id = ("
+                    "   SELECT transaction_id FROM transactions"
+                    "   WHERE plaid_transaction_id=?)",
+                    (plaid_txn_id,),
+                )
+                conn.execute(
+                    "DELETE FROM transactions WHERE plaid_transaction_id=?",
+                    (plaid_txn_id,),
+                )
+                counts["removed"] += 1
+
+            now = datetime.now(timezone.utc).isoformat()
+            cursor_update = conn.execute(
+                "UPDATE plaid_items SET cursor=?, last_synced=? WHERE item_id=?",
+                (result["next_cursor"], now, item_id),
+            )
+            if cursor_update.rowcount != 1:
+                raise RuntimeError("Plaid item disappeared before cursor commit")
+    except Exception as exc:
+        raise PlaidTransactionPersistenceError(
+            "transaction persistence failed; cursor unchanged"
+        ) from exc
+
+    return counts
+
+
 def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) -> int:
     """
     Insert a Plaid transaction into the transactions table.
@@ -537,60 +581,55 @@ def _upsert_plaid_transaction(conn, entity_key: str, item_id: str, txn: dict) ->
         "WHERE plaid_transaction_id=? ORDER BY imported_at, transaction_id LIMIT 1",
         (plaid_transaction_id,),
     ).fetchone()
-    txn_id = existing_binding["transaction_id"] if existing_binding else candidate_txn_id
+    if existing_binding:
+        conn.execute(
+            "UPDATE transactions SET plaid_item_id=COALESCE(plaid_item_id, ?), "
+            "plaid_transaction_id=COALESCE(plaid_transaction_id, ?), "
+            "account=COALESCE(NULLIF(account, ''), ?) "
+            "WHERE transaction_id=?",
+            (item_id, plaid_transaction_id, account_name,
+             existing_binding["transaction_id"]),
+        )
+        return 0
 
     now = datetime.now(timezone.utc).isoformat()
-    try:
-        cur = conn.execute(
-            """INSERT OR IGNORE INTO transactions
-               (transaction_id, date, description_raw, merchant_raw, amount,
-                amount_cents, currency, account, source_filename, imported_at,
-                plaid_item_id, plaid_transaction_id)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (txn_id, date, description, description, amount,
-             amount_cents, "USD", account_name, "plaid-sync", now, item_id,
-             plaid_transaction_id),
+    conn.execute(
+        """INSERT INTO transactions
+           (transaction_id, date, description_raw, merchant_raw, amount,
+            amount_cents, currency, account, source_filename, imported_at,
+            plaid_item_id, plaid_transaction_id)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+        (candidate_txn_id, date, description, description, amount,
+         amount_cents, "USD", account_name, "plaid-sync", now, item_id,
+         plaid_transaction_id),
+    )
+
+    # Auto-categorize using alias rules + keyword heuristics
+    aliases = _get_active_aliases(entity_key)
+    stripped = _strip_platform_prefix(description)
+    alias = _match_alias(description, aliases) or _match_alias(stripped, aliases)
+    if alias:
+        merchant_canonical = alias["merchant_canonical"]
+        cat = alias.get("default_category")
+        conn.execute(
+            "UPDATE transactions SET merchant_canonical=?, category=?, "
+            "confidence=? WHERE transaction_id=?",
+            (merchant_canonical, cat, 0.95 if cat else None, candidate_txn_id),
         )
-        if cur.rowcount > 0:
-            # Auto-categorize using alias rules + keyword heuristics
-            aliases = _get_active_aliases(entity_key)
-            stripped = _strip_platform_prefix(description)
-            alias = _match_alias(description, aliases) or _match_alias(stripped, aliases)
-            if alias:
-                merchant_canonical = alias["merchant_canonical"]
-                cat = alias.get("default_category")
-                conn.execute(
-                    "UPDATE transactions SET merchant_canonical=?, category=?, "
-                    "confidence=? WHERE transaction_id=?",
-                    (merchant_canonical, cat, 0.95 if cat else None, txn_id),
-                )
-            else:
-                cat, subcat, confidence = _keyword_suggest(description)
-                if cat:
-                    conn.execute(
-                        "UPDATE transactions SET category=?, subcategory=?, "
-                        "confidence=? WHERE transaction_id=?",
-                        (cat, subcat, confidence, txn_id),
-                    )
-                else:
-                    # No alias or keyword match — mark for manual review
-                    conn.execute(
-                        "UPDATE transactions SET category='Needs Review', "
-                        "subcategory='General', confidence=0.1 "
-                        "WHERE transaction_id=?",
-                        (txn_id,),
-                    )
-            return 1
-        else:
-            # Transaction already existed (e.g. from CSV import).
-            # Backfill Plaid fields and account name if missing.
+    else:
+        cat, subcat, confidence = _keyword_suggest(description)
+        if cat:
             conn.execute(
-                "UPDATE transactions SET plaid_item_id=COALESCE(plaid_item_id, ?), "
-                "plaid_transaction_id=COALESCE(plaid_transaction_id, ?), "
-                "account=COALESCE(NULLIF(account, ''), ?) "
-                "WHERE transaction_id=?",
-                (item_id, plaid_transaction_id, account_name, txn_id),
+                "UPDATE transactions SET category=?, subcategory=?, "
+                "confidence=? WHERE transaction_id=?",
+                (cat, subcat, confidence, candidate_txn_id),
             )
-            return 0
-    except Exception:
-        return 0
+        else:
+            # No alias or keyword match — mark for manual review
+            conn.execute(
+                "UPDATE transactions SET category='Needs Review', "
+                "subcategory='General', confidence=0.1 "
+                "WHERE transaction_id=?",
+                (candidate_txn_id,),
+            )
+    return 1
