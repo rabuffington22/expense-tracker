@@ -412,7 +412,7 @@ Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is pu
 
 ## Phase 3: Functional Audit And Prioritization
 
-Status: active after Tasks 1-6 and work blocks 3A-3J; Task 7 resumes after the successful 4A/4B urgent repair and release
+Status: active after Tasks 1-7 and work blocks 3A-3K; Task 8 is current for separately confirmed repair-order planning
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
@@ -428,8 +428,8 @@ Goal: determine what “working properly” means across the live product, then 
 - **Task 5C: Audit scheduled and public background-sync entry points.** Status: done through work block 3H. Method/bearer/CSRF separation, normal all-entity iteration, same-process lock release/contention, public reachability/throttle, Personal/LL scope, cursor success, item failure containment, and cleanup passed; seven functional/boundary defects plus one tracked-coverage gap were recorded without repair.
 - **Task 5D: Audit the Luxe Legacy downstream-mirror boundary.** Status: done through work block 3I. Configuration/no-op, LL-only scheduled/public invocation and storage, request/auth/payload/timeout shape, standard exclusions, repeat stability, failure isolation, entity non-mutation, and cleanup passed; Owner Draw eligibility, empty Plaid IDs, duplicate/implicit conflict keys, tracked coverage, and remote-idempotency proof were recorded without repair or live access.
 - **Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries.** Status: done through work block 3J. Manifest/installability, icons, desktop/tablet/phone layout, basic mobile drawer state, CSRF, exempt routes, security headers, and branded offline fallback passed; seven finding clusters were recorded across the main authentication boundary, cross-entity PWA caching, public financial-detail exposure, auth-mode coherence, mobile accessibility, browser/session hardening, and tracked coverage.
-- **Task 7: Consolidate audit findings into severity-ranked issues.** Status: current; awaiting a separately confirmed just-in-time consolidation block. Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.
-- **Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks with Ryan.** Status: planned. Prioritize only evidence-backed findings after the relevant audit slices are complete.
+- **Task 7: Consolidate audit findings into severity-ranked issues.** Status: done through work block 3K. The 55 Phase 3-derived entries now have stable IDs, explicit status, severity, confidence, affected boundaries, sanitized reproductions, observed-versus-expected behavior, impact, acceptance-check ownership, evidence, and dependency tags in one verified catalog.
+- **Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks with Ryan.** Status: current; awaiting a separately confirmed just-in-time decision block. Prioritize only evidence-backed findings from the verified 3K catalog.
 
 ### Confirmed Work Block 3A: Synthetic Transaction Foundation Audit
 
@@ -797,6 +797,48 @@ Durability: local-only. No commit, push, PR, merge, workflow, or deployment acti
 Report point: returned a sanitized PWA/navigation/public/auth matrix, seven ranked finding clusters with acceptance checks, repeated synthetic and viewport verification, cleanup, preserved boundaries, and Task 7 readiness.
 
 Result: the maintained smoke suite passed. A repeated temporary request probe produced 31 expected passes and 12 controlled findings; a repeated isolated Chromium probe produced 23 expected passes and six controlled findings with zero external requests. Manifest and icon validation, root service-worker installation, desktop/tablet/phone overflow, basic mobile drawer state, public Personal/LL versus BFM isolation, CSRF, exempt routes, branded offline fallback, HSTS-on-HTTPS, and basic security headers passed. Seven finding clusters were recorded: protected full-page HTML and a reusable client digest bypass the intended authentication boundary; URL-only offline caching crossed BFM content into a Personal request; `/k/` publicly exposes detailed Personal and LL financial information by design; client/server/no-password auth modes drift; the mobile drawer lacks focus transfer, scroll lock, and Escape close; cookie/CSP hardening is incomplete; and no tracked PWA/public/auth/responsive coverage exists. No repair, product/test change, credential use, protected-data access, existing browser state, external call, live action, or GitHub durability occurred.
+
+### Confirmed Work Block 3K: Findings Consolidation And Decision Readiness
+
+Status: done; confirmed and completed on 2026-07-18
+
+Included: Task 7 only. Consolidate the 55 Phase 3-derived entries from work blocks 3A-3J and the 4A-4B resolution evidence into one sanitized, decision-ready catalog with stable IDs, evidence sources, status, severity, confidence, affected entity or boundary, observed versus expected behavior, sanitized reproduction, impact, acceptance checks, dependency tags, and Ryan-decision tags.
+
+Excluded: completed Tasks 1-6; Task 8 repair ordering; Phase 4 Tasks 1B-4; product repairs, migrations, tracked test implementation, `/k/` policy or behavior changes, credentials, protected data, real databases, production/demo access, Plaid, Fly, workflows, downstream writes, GitHub durability, and pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Outcome: make the completed audit evidence complete, cross-linked, deduplicated, and ready for Ryan's Task 8 prioritization without selecting the repair order or changing product behavior.
+
+Why this grouping: every included action uses the same sanitized audit logs, issue ledger, evidence-classification rules, and command-center verification path. Task 8 is a separate Ryan-owned product and priority decision, while implementation requires subsystem-specific Phase 4 blocks.
+
+Owner and recommended agent: Codex Desktop in the current task. The central policy assigns command-center stewardship, cross-file reconciliation, dashboard currency, and final intake to Codex; no external worker or second opinion is needed.
+
+Blocking questions: none.
+
+Non-blocking defaults: preserve current severity unless the recorded evidence supports a correction; distinguish functional defects, product-policy decisions, resolved findings, regression-coverage gaps, and remote-unverified boundaries; cross-link shared findings rather than duplicating them; keep historical operational/documentation issues outside the Phase 3 catalog; remain local-only.
+
+Expected surfaces: read `command-center/issues.md`, work-block logs 3A-3J, and 4A-4B repair/release evidence; create `command-center/phase-3-findings-consolidation.md`; update the issue ledger and Runway OS source/state/dashboard surfaces. No product or tracked test file should change.
+
+Stop conditions:
+
+- Evidence conflicts enough to change severity or issue identity without a defensible source-backed answer.
+- Consolidation requires protected data, credentials, production inspection, or another live action.
+- A product-policy decision, repair-order choice, or implementation change is needed.
+- Scope expands beyond Task 7, or the dashboard refresh or health check cannot pass.
+
+Verification:
+
+- cross-reference every Phase 3 finding and 4A-4B resolution against the consolidated catalog
+- completeness checks for IDs, evidence, confidence, affected boundary, observed/expected behavior, sanitized reproduction, impact, acceptance checks, dependencies, status, duplicates, and orphaned entries
+- `jq empty command-center/state.json`
+- `node command-center/scripts/refresh-dashboard.js`
+- `node command-center/scripts/health-check.js`
+- `git diff --check`, generated-dashboard inspection, and final worktree review
+
+Durability: local-only. No commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action is part of work block 3K.
+
+Report point: return the severity/status counts, stable issue catalog, resolved and decision-needed findings, dependency clusters, evidence limits, preserved boundaries, and the exact choices Ryan must make in Task 8.
+
+Result: all 55 Phase 3-derived issue headings reconcile one-to-one to stable IDs in `command-center/phase-3-findings-consolidation.md`. The catalog contains 42 unresolved behavioral or policy findings, ten regression-coverage items, and three resolved findings; severity totals are 25 high, 29 medium, and one low. It preserves the public `/k/` contract as a Ryan decision, the downstream idempotency behavior as remotely unverified, the 4A-4B findings as resolved, and technical dependencies as sequencing evidence rather than a repair ranking. No product, test, migration, protected-data, credential, live-system, or GitHub action occurred. Task 7 and work block 3K are complete; Task 8 becomes current for a separately confirmed decision block.
 
 ## Phase 4: Core Repairs And Regression Coverage
 

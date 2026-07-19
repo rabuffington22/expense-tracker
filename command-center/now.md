@@ -2,53 +2,51 @@
 
 ## Active Objective
 
-Prepare the next bounded Phase 3 findings-consolidation block after releasing and verifying the urgent authentication and protected-cache repair.
+Prepare the Phase 3 Task 8 repair-order decision from the verified work block 3K findings catalog.
 
 ## Current Phase
 
-Phase 3: Functional Audit And Prioritization — active again; Task 7 resumes after successful work block 4B release.
+Phase 3: Functional Audit And Prioritization — active; Tasks 1-7 are complete and Task 8 is current.
 
 ## Completed Work Block
 
-4B: Publish And Verify Auth Repair — released through PR #86 and merge commit `f4cd686`; Fly Deploy run `29670793359` and credential-free production auth/cache checks passed.
+3K: Findings Consolidation And Decision Readiness — complete and verified locally.
 
 ## Current Task
 
-Phase 3 Task 7: consolidate completed audit findings into severity-ranked issues — awaiting a separately confirmed just-in-time block.
+Phase 3 Task 8: confirm the repair order and bounded Phase 4 implementation work blocks — awaiting a separately confirmed just-in-time decision block.
 
 ## Owner
 
-Ryan owns confirmation or revision of the next Task 7 consolidation block. Codex Desktop owns the released 4B evidence, protected-data boundaries, Task 7 just-in-time planning pass, and dashboard currency.
+Ryan owns repair-order, public `/k/`, and product-contract decisions. Codex Desktop owns the verified 3K catalog, protected boundaries, next-block planning, and dashboard currency.
 
-## Audit Result
+## Work Block 3K Result
 
-The tracked synthetic smoke suite passed. The repeated temporary request probe produced 31 expected passes and 12 controlled findings. The repeated isolated Chromium probe produced 23 expected passes and six controlled findings with zero external requests, zero manifest errors, correct icon dimensions, and complete disposable cleanup.
-
-Manifest/installability, icons, root service-worker registration, branded offline fallback, desktop/tablet/phone overflow, basic drawer state, public Personal/LL versus BFM isolation, CSRF, exempt routes, HSTS-on-HTTPS, and basic security headers passed.
-
-Seven finding clusters were recorded: the main authentication boundary exposes full protected HTML and a reusable client digest; service-worker caching crossed BFM content into an offline Personal request; `/k/` intentionally exposes detailed Personal and LL financial data; auth configuration/no-password mode drifts; the mobile drawer lacks focus/Escape/scroll handling; cookie/CSP hardening is incomplete; and tracked regression coverage is absent.
+- All 55 Phase 3-derived issue entries map one-to-one to stable IDs in `command-center/phase-3-findings-consolidation.md`.
+- The catalog records severity, status, confidence, affected boundary, sanitized reproduction, observed versus expected behavior, impact, evidence, acceptance-check ownership, and dependency tags.
+- Classification: 42 unresolved behavioral or policy findings, 10 regression-coverage items, and three findings resolved and released through work blocks 4A-4B.
+- Severity: 25 high, 29 medium, and one low. Of the unresolved behavior/policy set, 23 are high, 18 medium, and one low.
+- `P3-3J-03`, the deliberately public `/k/` financial-data contract, is the explicit Ryan policy decision before any related code scope.
+- Technical dependency clusters are recorded for Task 8 but do not preselect the repair order.
 
 ## Current Action
 
-Run a just-in-time planning pass over Task 7 and propose one bounded findings-consolidation block before changing the remaining issue priority or repair order.
+Run a just-in-time planning pass over Task 8 and propose one bounded repair-order decision block before selecting or implementing the first broader Phase 4 repair family.
 
-## Durability
+## Durability And Boundaries
 
-- Source commit `fe1ec2e` merged through PR #86 as `f4cd686`; Fly Deploy run `29670793359` passed every step.
-- Production health returned 200; protected root returned a no-store 302 to the standalone login; the login exposed no protected shell or reusable digest; service-worker v4 served the static/offline-only contract.
-- No real password, credential rotation, Fly secret change, authenticated production page, financial row, database, Plaid action, manual workflow dispatch, downstream write, or `/k/` content/access change occurred.
+- Work block 3K is local-only. No commit, push, PR, merge, workflow, deployment, product, migration, tracked-test, credential, protected-data, or live-system action occurred.
+- Actual production occurrence remains unknown for most findings because no real financial, payroll, upload, database, or authenticated production data was opened.
+- The downstream behavior for `P3-3I-02` remains remotely unverified; only the local duplicate-key and implicit-conflict contract is proven.
+- The authentication, protected-cache, and auth-mode findings remain resolved through PR #86 and are excluded from the open repair pool absent new evidence.
 - Preserved user file: untracked `scripts/sync_prod_to_local.sh`, untouched and unstaged.
 
-## Work Block 4B Result
+## Verification
 
-- Task 1A release durability and Task 4 are complete and verified in production.
-- The authentication, protected cross-entity PWA cache, and client/server auth-mode findings are resolved and released.
-- PR #86 had no configured checks; GitHub reported a clean merge state, and the maintained suite plus 4A browser verification remained the pre-merge test gate.
-- Credential modernization, public `/k/` policy, mobile navigation, cookie/CSP hardening, maintained browser coverage, Task 1B, Tasks 2-3, and unrelated findings remain separate.
+- Catalog rows: 55; stable ID map: 55; Phase 3 issue headings: 55; exact heading reconciliation passed.
+- Catalog classification and severity counts reconcile to the issue ledger.
+- `jq empty command-center/state.json`, dashboard refresh, command-center health check, `git diff --check`, generated-dashboard inspection, and final worktree review are the closeout gate.
 
-## Work Block 4A Result And Boundary
+## Next Report Point
 
-- Completed locally: server-side login enforcement, removal of client digest replay, coherent no-password mode, static/offline-only service-worker caching, old-cache cleanup, focused synthetic regression coverage, isolated-browser verification, visual inspection, and disposable cleanup.
-- Excluded: `/k/` access or content changes; mobile drawer behavior; cookie or CSP hardening; real credentials or credential rotation; real databases or financial rows; production/demo/external calls; Plaid, Fly, workflows, or downstream writes; commit, push, PR, merge, deployment; unrelated audit findings; and pre-existing untracked `scripts/sync_prod_to_local.sh`.
-- Verification: maintained smoke and focused request contracts passed; configured-auth Chromium passed 19/19, no-password Chromium passed 2/2, zero external requests occurred, the visual login/offline review passed, and all 3J/4A disposable files were removed.
-- Release gate: production behavior remains unchanged until separately authorized GitHub durability and deployment.
+Return one bounded Task 8 decision block with real issue IDs, included and excluded dependency clusters, Ryan decisions, stop conditions, verification, and the proposed first broader Phase 4 repair block.

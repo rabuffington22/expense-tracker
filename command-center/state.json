@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 9:54 PM CST",
+    "lastUpdated": "2026-07-18 10:28 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,16 +27,16 @@
   "phase": {
     "name": "Functional Audit And Prioritization",
     "status": "active",
-    "summary": "Tasks 1-6 and work blocks 3A-3J are complete; urgent work blocks 4A-4B repaired and released the leading auth/cache findings, and Task 7 resumes for a separately confirmed consolidation block.",
-    "progress": 86
+    "summary": "Tasks 1-7 and work blocks 3A-3K are complete; the verified findings catalog is ready and Task 8 is current for separately confirmed repair-order planning.",
+    "progress": 93
   },
   "currentTask": {
-    "title": "Task 7: Consolidate audit findings into severity-ranked issues",
+    "title": "Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks",
     "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns the released 4B evidence, protected-data boundaries, Task 7 just-in-time planning pass, and dashboard currency",
-    "nextAction": "Define and return one bounded Task 7 findings-consolidation block before changing remaining issue priority, dependency order, or repair sequencing.",
-    "blocker": "Task 7 execution and Task 8 prioritization require a separately confirmed work block; public k policy and unrelated repairs remain outside authorization"
+    "supportingAgent": "Codex Desktop owns the verified 3K catalog, protected boundaries, just-in-time Task 8 planning, and dashboard currency",
+    "nextAction": "Define and return one bounded Task 8 repair-order decision block before selecting or implementing the first broader Phase 4 repair family.",
+    "blocker": "Task 8 execution, public k policy, product implementation, live access, and GitHub durability require separate confirmation"
   },
   "currentWorkBlock": null,
   "routerHealth": {
@@ -62,23 +62,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define the Task 7 findings-consolidation block",
+    "title": "Define the Task 8 repair-order decision block",
     "status": "awaiting planning",
     "owner": "Ryan",
-    "why": "Work block 4B released and verified the leading auth/cache findings; the remaining completed audit evidence now needs one bounded consolidation pass before broader repair ordering.",
-    "action": "Run a just-in-time Task 7 planning pass and return one bounded consolidation block for separate confirmation.",
+    "why": "Work block 3K completed a verified 55-entry catalog with explicit severity, confidence, boundaries, evidence, acceptance ownership, and technical dependencies.",
+    "action": "Run a just-in-time Task 8 planning pass and return one bounded decision block before selecting the first broader Phase 4 repair family.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan reviews the next separately proposed Task 7 findings-consolidation block.",
+    "summary": "Ryan reviews the next separately proposed Task 8 repair-order decision block.",
     "items": [
-      "Confirm or revise the next Task 7 block after just-in-time planning; Task 8 repair ordering and public k policy remain later decisions."
+      "Confirm or revise the Task 8 decision block; the public k contract and first broader Phase 4 repair family remain Ryan decisions."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4B is complete; Task 7 consolidation, Task 8 prioritization, public k policy, credential modernization, mobile navigation, cookie/CSP hardening, and unrelated repairs remain outside authorization.",
-    "decisionQueue": "The next decision is confirmation or revision of a Task 7 consolidation block; public k policy and the broader repair order remain later choices.",
+    "phaseQuestions": "Work block 3K is complete; Task 8 prioritization, public k policy, compensation-unit policy, cookie/CSP policy, implementation, live access, and GitHub durability remain outside authorization.",
+    "decisionQueue": "The next decision is confirmation or revision of a Task 8 repair-order block; public k policy and the first broader Phase 4 repair family remain Ryan choices.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1016,6 +1016,53 @@
       "result": "The maintained smoke suite passed. Repeated temporary request probes produced 31 expected passes and 12 controlled findings; repeated isolated Chromium probes produced 23 expected passes and six controlled findings with zero external requests. Manifest/icons, service-worker installation, offline fallback, responsive overflow, basic drawer state, public Personal/LL versus BFM isolation, CSRF, exempt routes, and basic security headers passed. Seven clusters were recorded across the main authentication boundary, cross-entity PWA caching, public financial-detail exposure, auth-mode coherence, mobile accessibility, browser/session hardening, and tracked coverage."
     },
     {
+      "id": "phase-3-block-k",
+      "phaseId": "phase-3",
+      "label": "3K",
+      "name": "Findings Consolidation And Decision Readiness",
+      "status": "done",
+      "includedTasks": [
+        "Task 7"
+      ],
+      "excludedTasks": [
+        "Completed Tasks 1-6 and Task 8 repair ordering",
+        "Phase 4 Tasks 1B-4 and all product, migration, or tracked-test implementation",
+        "Public k policy or behavior changes, credentials, protected data, real databases, production or demo access, and live Plaid, Fly, workflow, or downstream actions",
+        "Commit, push, PR, merge, deployment, and pre-existing untracked scripts/sync_prod_to_local.sh"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The central policy assigns command-center stewardship, cross-file evidence reconciliation, dashboard currency, verification, and final intake to Codex.",
+      "expectedFiles": [
+        "Read-only command-center/issues.md, work-block logs 3A-3J, and 4A-4B repair and release evidence",
+        "command-center/phase-3-findings-consolidation.md",
+        "command-center/issues.md",
+        "command-center/roadmap.md, now.md, decisions.md, state.json, and index.html"
+      ],
+      "stopConditions": [
+        "Evidence conflicts enough to change severity or issue identity without a defensible source-backed answer",
+        "Consolidation requires protected data, credentials, production inspection, or another live action",
+        "A product-policy decision, repair-order choice, or implementation change is needed",
+        "Scope expands beyond Task 7, or the dashboard refresh or health check cannot pass"
+      ],
+      "verification": [
+        "Cross-reference all 55 Phase 3-derived issue entries against work blocks 3A-3J and 4A-4B evidence",
+        "Check IDs, evidence, confidence, affected boundaries, observed and expected behavior, sanitized reproduction, impact, acceptance checks, dependencies, status, duplicates, and orphaned entries",
+        "jq empty command-center/state.json",
+        "node command-center/scripts/refresh-dashboard.js",
+        "node command-center/scripts/health-check.js",
+        "git diff --check, generated-dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Return severity and status counts, the stable issue catalog, resolved and decision-needed findings, dependency clusters, evidence limits, preserved boundaries, and the exact Task 8 decision gate.",
+      "durability": "Local-only; no commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action is part of work block 3K.",
+      "evidence": [
+        "command-center/phase-3-findings-consolidation.md",
+        "command-center/issues.md",
+        "command-center/logs/2026-07-18-findings-consolidation-3k.md"
+      ],
+      "result": "All 55 Phase 3-derived issue headings reconcile one-to-one to stable IDs. The catalog contains 42 unresolved behavioral or policy findings, ten regression-coverage items, and three resolved findings across 25 high, 29 medium, and one low severity; public k remains a Ryan decision, downstream idempotency remains remotely unverified, and dependency tags do not preselect the repair order."
+    },
+    {
       "id": "phase-4-block-a",
       "phaseId": "phase-4",
       "label": "4A",
@@ -1450,19 +1497,25 @@
       "phaseId": "phase-3",
       "taskId": "P3-T7",
       "title": "Task 7: Consolidate audit findings into severity-ranked issues",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.",
-      "nextAction": "Confirm or revise a separately proposed Task 7 findings-consolidation block after just-in-time planning.",
-      "blocker": "Task 7 consolidation and any broader repair-order change remain unauthorized until the next work block is confirmed."
+      "result": "Work block 3K mapped all 55 Phase 3-derived issue headings to stable IDs with explicit severity, status, confidence, affected boundary, sanitized reproduction, observed-versus-expected behavior, impact, evidence, acceptance ownership, and dependency tags without selecting the repair order.",
+      "evidence": [
+        "command-center/phase-3-findings-consolidation.md",
+        "command-center/issues.md",
+        "command-center/logs/2026-07-18-findings-consolidation-3k.md"
+      ]
     },
     {
       "phaseId": "phase-3",
       "taskId": "P3-T8",
       "title": "Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
-      "summary": "Prioritize only evidence-backed findings after the relevant audit slices are complete."
+      "summary": "Prioritize only evidence-backed findings from the verified 3K catalog.",
+      "nextAction": "Confirm or revise a separately proposed Task 8 repair-order decision block after just-in-time planning.",
+      "blocker": "Task 8 decisions and any Phase 4 implementation require a separately confirmed work block."
     },
     {
       "phaseId": "phase-4",
@@ -1719,6 +1772,14 @@
     {
       "name": "Work Block 3J Local PWA, Navigation, And Public-Auth Boundary Audit",
       "path": "command-center/logs/2026-07-18-local-pwa-navigation-public-auth-audit-3j.md"
+    },
+    {
+      "name": "Phase 3 Findings Consolidation",
+      "path": "command-center/phase-3-findings-consolidation.md"
+    },
+    {
+      "name": "Work Block 3K Findings Consolidation Closeout",
+      "path": "command-center/logs/2026-07-18-findings-consolidation-3k.md"
     }
   ],
   "recentActivity": [
@@ -1949,6 +2010,14 @@
     {
       "time": "2026-07-18",
       "text": "Completed work block 4B: source commit fe1ec2e merged through PR 86 as f4cd686, Fly Deploy run 29670793359 passed, credential-free production auth/cache checks passed, and Phase 3 Task 7 resumed without password, protected-data, public k, credential, or unrelated repair action."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Ryan confirmed local-only work block 3K for Task 7 findings consolidation; Task 8 prioritization, product changes, protected data, live systems, GitHub durability, and the untracked sync script remained excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 3K: all 55 Phase 3-derived issues map one-to-one to stable IDs across 42 unresolved behavior or policy findings, ten coverage items, and three resolved findings; Task 8 is current without a preselected repair order."
     }
   ],
   "openQuestions": [],
@@ -2364,8 +2433,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Bounded Task 7 findings-consolidation decision",
-    "description": "Define and confirm the findings-consolidation block before changing remaining priority, dependency order, or repair sequencing."
+    "name": "Bounded Task 8 repair-order decision",
+    "description": "Define and confirm the decision block before selecting the public k contract or the first broader Phase 4 repair family."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -2419,6 +2488,7 @@
     "phase4AuthCacheBrowser": "pass; configured-auth Chromium 19/19 and no-password Chromium 2/2 with zero external requests, old-cache deletion, cross-entity offline isolation, unchanged public k entity scope, and clean phone-sized login/offline visuals",
     "phase4AuthCacheBoundaries": "pass; fake secrets and temporary synthetic data for functional verification, credential-free production HTTP only, no real password or protected financial data, no public k access, no secret change, and no manual workflow or unrelated action",
     "phase4AuthCacheRelease": "pass; source commit fe1ec2e merged through PR 86 as f4cd686, GitHub reported clean merge state with no PR checks configured, Fly Deploy run 29670793359 passed every step, and production health, pre-auth redirect/login content, and service-worker v4 checks passed",
-    "phase4AuthCacheDurability": "pass; source/test/docs/evidence are on main through PR 86 and this exact command-center closeout is the direct-main skip-actions record that causes no second deployment"
+    "phase4AuthCacheDurability": "pass; source/test/docs/evidence are on main through PR 86 and this exact command-center closeout is the direct-main skip-actions record that causes no second deployment",
+    "phase3FindingsConsolidation": "pass; 55 catalog rows, 55 stable ID mappings, and 55 Phase 3 issue headings reconcile exactly across 42 unresolved behavior or policy findings, ten coverage items, and three resolved findings with no repair ordering or product action"
   }
 }

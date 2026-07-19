@@ -2,6 +2,10 @@
 
 These are known defects, risks, or rough edges. They are not active work unless promoted into a phase task and confirmed work block.
 
+Phase 3 Task 7 is consolidated in `command-center/phase-3-findings-consolidation.md`. That catalog assigns stable IDs, explicit confidence, affected boundaries, sanitized reproductions, observed-versus-expected behavior, impacts, evidence sources, and dependency tags to the 55 Phase 3-derived entries below. The detailed acceptance checks remain authoritative in each matching issue section here.
+
+The Task 7 snapshot contains 42 unresolved behavioral or policy findings, 10 regression-coverage items, and three findings resolved and released through work blocks 4A-4B. The catalog's dependency tags support Task 8 sequencing but do not authorize or preselect a repair order.
+
 ## Daily Plaid Sync Disabled For Inactivity
 
 Status: monitored; work block 1C complete
