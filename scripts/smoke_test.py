@@ -9,10 +9,12 @@ Usage:
     python scripts/smoke_test.py
 """
 
+import io
 import os
 import sys
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 # Ensure project root is importable regardless of cwd
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -502,6 +504,220 @@ def main() -> None:
         _get_ok("/plaid/", "connected accounts")
 
         print("   ✅ All route regression tests passed")
+
+        # ── 8a. BFM-only payroll route boundary ─────────────────────
+        print("\n8a. BFM-only payroll route boundary…")
+        from web.routes import payroll as payroll_routes
+
+        expected_payroll_rules = {
+            "/payroll/",
+            "/payroll/employees/create",
+            "/payroll/employees/update/<int:emp_id>",
+            "/payroll/employees/delete/<int:emp_id>",
+            "/payroll/employees/detail/<int:emp_id>",
+            "/payroll/import/parse",
+            "/payroll/import/save",
+            "/payroll/spending",
+        }
+        registered_payroll_rules = {
+            rule.rule
+            for rule in app.url_map.iter_rules()
+            if rule.endpoint.startswith("payroll.")
+        }
+        _check(
+            registered_payroll_rules == expected_payroll_rules,
+            "payroll boundary coverage must enumerate every registered payroll route",
+        )
+
+        denied_routes = (
+            ("get", "/payroll/", {}),
+            ("post", "/payroll/employees/create", {
+                "data": {
+                    "name": "Denied New Employee",
+                    "role": "Nurses",
+                    "pay_type": "hourly",
+                    "pay_rate": "20",
+                },
+            }),
+            ("post", "/payroll/employees/update/{employee_id}", {
+                "data": {
+                    "name": "Denied Updated Employee",
+                    "role": "Providers",
+                    "pay_type": "hourly",
+                    "pay_rate": "99",
+                },
+            }),
+            ("post", "/payroll/employees/delete/{employee_id}", {}),
+            ("get", "/payroll/employees/detail/{employee_id}", {}),
+            ("post", "/payroll/import/parse", {
+                "content_type": "multipart/form-data",
+            }),
+            ("post", "/payroll/import/save", {
+                "data": {"temp_key": "replaced-per-entity"},
+            }),
+            ("get", "/payroll/spending?spending_period=2026-07-01", {}),
+        )
+
+        with app.test_client() as payroll_client:
+            for entity_display, entity_key in (("Personal", "personal"), ("LL", "luxelegacy")):
+                conn_payroll = get_connection(entity_key)
+                cur = conn_payroll.execute(
+                    "INSERT INTO employees (name, role, pay_type, pay_rate_cents) "
+                    "VALUES (?, 'Nurses', 'hourly', 2000)",
+                    (f"{entity_display} Boundary Sentinel",),
+                )
+                sentinel_id = cur.lastrowid
+                conn_payroll.execute(
+                    "INSERT INTO employee_pay_changes "
+                    "(employee_id, effective_date, old_rate_cents, new_rate_cents, notes) "
+                    "VALUES (?, '2026-07-01', 1800, 2000, 'synthetic boundary baseline')",
+                    (sentinel_id,),
+                )
+                conn_payroll.execute(
+                    "INSERT INTO payroll_entries "
+                    "(employee_id, paycheck_date, amount_cents, source_filename) "
+                    "VALUES (?, '2026-07-01', 12345, 'synthetic-boundary.xlsx')",
+                    (sentinel_id,),
+                )
+                conn_payroll.commit()
+                baseline_counts = tuple(
+                    conn_payroll.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                    for table in ("employees", "employee_pay_changes", "payroll_entries")
+                )
+                baseline_employee = tuple(conn_payroll.execute(
+                    "SELECT name, role, pay_type, pay_rate_cents FROM employees WHERE id = ?",
+                    (sentinel_id,),
+                ).fetchone())
+                conn_payroll.close()
+
+                temp_key = f"payroll_boundary_{entity_key}_{os.getpid()}"
+                temp_path = Path(payroll_routes._TEMP_DIR) / f"{temp_key}.json"
+                payroll_routes._save_temp(temp_key, {
+                    "entries": [],
+                    "filename": "synthetic-boundary.xlsx",
+                })
+
+                try:
+                    payroll_client.set_cookie("entity", entity_display)
+                    with patch(
+                        "web.routes.payroll.get_connection",
+                        side_effect=AssertionError("denied payroll route reached storage"),
+                    ), patch(
+                        "web.routes.payroll.parse_phoenix_per_payroll_costs",
+                        side_effect=AssertionError("denied payroll route parsed an upload"),
+                    ):
+                        for method, path, kwargs in denied_routes:
+                            path = path.format(employee_id=sentinel_id)
+                            request_kwargs = dict(kwargs)
+                            if path == "/payroll/import/parse":
+                                request_kwargs["data"] = {
+                                    "payroll_file": (io.BytesIO(b"not parsed"), "denied.xlsx"),
+                                }
+                            elif path == "/payroll/import/save":
+                                request_kwargs = {"data": {"temp_key": temp_key}}
+                            resp = getattr(payroll_client, method)(path, **request_kwargs)
+                            _check(
+                                resp.status_code == 302 and resp.headers.get("Location", "").endswith("/"),
+                                f"payroll {entity_display} {method.upper()} {path}: expected dashboard redirect",
+                            )
+
+                    conn_payroll = get_connection(entity_key)
+                    final_counts = tuple(
+                        conn_payroll.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                        for table in ("employees", "employee_pay_changes", "payroll_entries")
+                    )
+                    final_employee = tuple(conn_payroll.execute(
+                        "SELECT name, role, pay_type, pay_rate_cents FROM employees WHERE id = ?",
+                        (sentinel_id,),
+                    ).fetchone())
+                    _check(
+                        final_counts == baseline_counts and final_employee == baseline_employee,
+                        f"payroll {entity_display}: denied requests changed payroll rows",
+                    )
+                    _check(temp_path.exists(), f"payroll {entity_display}: denied save consumed temp payload")
+                    conn_payroll.execute("DELETE FROM employees WHERE id = ?", (sentinel_id,))
+                    conn_payroll.commit()
+                    conn_payroll.close()
+                finally:
+                    temp_path.unlink(missing_ok=True)
+
+            payroll_client.set_cookie("entity", "BFM")
+            _check(payroll_client.get("/payroll/").status_code == 200, "payroll BFM: index should render")
+            create_resp = payroll_client.post("/payroll/employees/create", data={
+                "name": "BFM Boundary Employee",
+                "role": "Nurses",
+                "pay_type": "hourly",
+                "pay_rate": "20",
+            })
+            _check(create_resp.status_code == 302, "payroll BFM: create should remain available")
+
+            conn_payroll = get_connection("company")
+            bfm_employee = conn_payroll.execute(
+                "SELECT id FROM employees WHERE name = 'BFM Boundary Employee'"
+            ).fetchone()
+            _check(bfm_employee is not None, "payroll BFM: create should persist the employee")
+            bfm_employee_id = bfm_employee["id"]
+            conn_payroll.close()
+
+            _check(
+                payroll_client.get(f"/payroll/employees/detail/{bfm_employee_id}").status_code == 200,
+                "payroll BFM: employee detail should remain available",
+            )
+            update_resp = payroll_client.post(
+                f"/payroll/employees/update/{bfm_employee_id}",
+                data={
+                    "name": "BFM Boundary Employee",
+                    "role": "Nurses",
+                    "pay_type": "hourly",
+                    "pay_rate": "21",
+                    "status": "active",
+                },
+            )
+            _check(update_resp.status_code == 302, "payroll BFM: update should remain available")
+            _check(
+                payroll_client.get("/payroll/spending?spending_period=2026-07-01").status_code == 200,
+                "payroll BFM: spending partial should remain available",
+            )
+
+            with patch(
+                "web.routes.payroll.parse_phoenix_per_payroll_costs",
+                return_value=([], ["synthetic controlled empty workbook"]),
+            ):
+                parse_resp = payroll_client.post(
+                    "/payroll/import/parse",
+                    data={"payroll_file": (io.BytesIO(b"synthetic"), "synthetic.xlsx")},
+                    content_type="multipart/form-data",
+                )
+            _check(parse_resp.status_code == 200, "payroll BFM: import parse should reach its handler")
+
+            bfm_temp_key = f"payroll_boundary_company_{os.getpid()}"
+            bfm_temp_path = Path(payroll_routes._TEMP_DIR) / f"{bfm_temp_key}.json"
+            payroll_routes._save_temp(bfm_temp_key, {
+                "entries": [],
+                "filename": "synthetic-boundary.xlsx",
+            })
+            try:
+                save_resp = payroll_client.post(
+                    "/payroll/import/save",
+                    data={"temp_key": bfm_temp_key},
+                )
+                _check(save_resp.status_code == 302, "payroll BFM: import save should remain available")
+                _check(not bfm_temp_path.exists(), "payroll BFM: import save should consume its temp payload")
+            finally:
+                bfm_temp_path.unlink(missing_ok=True)
+
+            delete_resp = payroll_client.post(f"/payroll/employees/delete/{bfm_employee_id}")
+            _check(delete_resp.status_code == 302, "payroll BFM: delete should remain available")
+            conn_payroll = get_connection("company")
+            _check(
+                conn_payroll.execute(
+                    "SELECT COUNT(*) FROM employees WHERE id = ?", (bfm_employee_id,)
+                ).fetchone()[0] == 0,
+                "payroll BFM: delete should remove the synthetic employee",
+            )
+            conn_payroll.close()
+
+        print("   ✅ All payroll routes enforce BFM-only access before storage or parsing")
 
         # ── 8b. CSV export tests ────────────────────────────────────
         print("\n8b. CSV export tests…")

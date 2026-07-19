@@ -891,15 +891,29 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active for proposed work block 4C after Phase 3 completed the repair order
+Status: active after the locally verified completion of work block 4D; Task 1D is current for a separately confirmable 4E proposal
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
 - **Task 1A: Repair the confirmed server-authentication and protected-cache boundaries.** Status: done, released, and credential-free production verified through work blocks 4A-4B and PR #86.
-- **Task 1B: Repair remaining confirmed reliability and correctness defects in prioritized work blocks.** Status: current; proposed work block 4C covers only `P3-3A-01`.
-- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: planned; proposed 4C pairs only `P3-3A-C01` coverage with the identity repair.
+- **Task 1B: Establish source-aware transaction identity.** Status: done, released, and credential-free production health verified through work blocks 4C-4C-R for `P3-3A-01`.
+- **Task 1C: Enforce the BFM-only payroll route boundary.** Status: done and locally verified through work block 4D for `P3-3F-01` plus the boundary slice of `P3-3F-C01`; release remains separate.
+- **Task 1D: Enforce the Luxe Legacy denial boundary across planning routes.** Status: current for a separately confirmable 4E proposal covering `P3-3D-02`.
+- **Task 1E: Enforce Luxe Legacy-only downstream source selection.** Status: planned for `P3-3I-01`; remote idempotency remains separately parked.
+- **Task 1F: Authenticate scheduled sync before entity setup.** Status: planned for `P3-3H-01`; broader sync-entry work remains later.
+- **Task 1G: Restore the Recurring Charges report query.** Status: planned for `P3-3C-01` after the early boundary repairs.
+- **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: planned as the first primary-Plaid block.
+- **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: planned as the second primary-Plaid block.
+- **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: planned as the third primary-Plaid block.
+- **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: planned after Tasks 1H-1J.
+- **Task 1L: Repair vendor import-to-categorization integrity.** Status: planned after the Plaid and sync-entry foundations.
+- **Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention.** Status: planned after Task 1C; separate hourly and salary cohorts per Ryan's confirmed default.
+- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
+- **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
+- **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
+- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, and each later Task 1 repair includes only its matching coverage slice.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Deploy only after a verified, explicitly approved release block.** Status: done for the Task 1A release through work block 4B; future releases require their own approval.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: current for directly authorized work block 4D-R; prior Task 1A and 1B releases remain done through 4B and 4C-R.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -1047,6 +1061,68 @@ Report point: return both commits, automatic workflow result, credential-free he
 Result: source commit `4a84f49` was pushed directly to `main`. Automatic Fly Deploy run `29689659579` and deploy job `88200026060` passed every reported step for that exact SHA. Production `/health` returned HTTP 200 without credentials. The pre-existing untracked sync script remained excluded, and this command-center-only closeout uses `[skip actions]` so it does not trigger a second deployment.
 
 Evidence: `command-center/logs/2026-07-19-transaction-identity-release-4c-r.md`, source commit `4a84f49`, and GitHub Actions run `29689659579`.
+
+### Confirmed Work Block 4D: BFM-Only Payroll Boundary
+
+Status: done and locally verified on 2026-07-19; release not authorized
+
+Parent tasks: Phase 4 Task 1C and the focused payroll-boundary slice of Task 2.
+
+Included findings: `P3-3F-01` and only the boundary-focused portion of `P3-3F-C01`.
+
+Outcome: every `/payroll/` read and mutation enforces the maintained BFM-only boundary before a payroll route parses an upload, opens payroll tables, or changes data. Personal and Luxe Legacy direct requests leave payroll rows and temporary import payloads unchanged, while normal BFM behavior remains intact.
+
+Why this grouping: the route guard and focused regression coverage share the payroll blueprint, entity boundary, temporary all-entity databases, and request-level verification. The remaining payroll findings use broader employee-matching, compensation, validation, XLSX-parser, and temporary-retention contracts and stay in Task 1M.
+
+Excluded: completed Tasks 1A-1B and 4; Tasks 1D-1P and 3; every finding except `P3-3F-01` and the focused `P3-3F-C01` slice; remaining payroll matching, compensation, validation, malformed-workbook, and temporary-payload repairs; migrations and template changes unless a verified boundary dependency requires stopping for Ryan; real databases, payroll/HR/financial rows, uploads, credentials, production/demo access, Plaid, Fly, workflows, downstream writes, or other live actions; commit, push, PR, merge, deployment; and pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Owner and recommended agent: Codex Desktop in the current task. This small sensitive-boundary repair couples Flask blueprint behavior, synthetic all-route verification, cleanup, Runway OS stewardship, and final intake; no delegation or second opinion is needed.
+
+Runner path: current Codex task on local branch `codex/bfm-payroll-boundary` after this active block is durable and dashboard-verified.
+
+Non-blocking defaults: use one payroll-blueprint guard before route handlers; redirect non-BFM payroll requests to the dashboard, matching existing entity-denial conventions; preserve all eight payroll route behaviors for BFM; use temporary synthetic Personal, BFM, and Luxe Legacy databases only; make no migration, template, network, or real-upload change.
+
+Stop conditions:
+
+- Enforcement cannot occur before payroll table or upload access without expanding beyond the payroll blueprint.
+- A conflicting route type requires a new user-facing denial contract or other Ryan decision.
+- Work expands into Task 1M or another subsystem.
+- Verification requires real payroll/financial data, credentials, production/demo access, or another live action.
+- Baseline or focused verification fails in a way that changes the plan, disposable cleanup cannot be proven, or command-center refresh/health fails.
+
+Verification:
+
+- baseline and final `.venv/bin/python scripts/smoke_test.py`;
+- focused Personal, BFM, and Luxe Legacy coverage for all payroll GET/POST routes;
+- prove denied requests create no employees, pay changes, payroll entries, or temporary import payloads;
+- confirm normal BFM roster, detail, import, and spending behavior remains intact;
+- Python compilation, disposable cleanup, `jq empty command-center/state.json`, dashboard refresh, health check, `git diff --check`, generated-dashboard inspection, and final explicit-path worktree review.
+
+Dashboard closeout: update source files first, align `state.json`, refresh and health-check the dashboard, and mark 4D done only after every required check passes.
+
+Durability: local-only. No commit, push, PR, merge, deployment, workflow, credential, protected-data, or live action is included.
+
+Report point: return the exact guard behavior, all-route and all-entity evidence, unchanged-data and temporary-payload evidence, full and focused test results, files changed, cleanup, preserved exclusions, branch state, and the separate release gate.
+
+Suggested next block: separately plan 4E for Task 1D, the Luxe Legacy planning-route boundary with its focused `P3-3D-C01` coverage slice.
+
+Result: one payroll-blueprint `before_request` guard now redirects every non-BFM payroll request to the dashboard before any payroll handler reaches storage or upload parsing. The maintained smoke suite enumerates all eight registered payroll routes, verifies sixteen Personal/Luxe Legacy denial outcomes with unchanged employee, pay-change, payroll-entry, and temporary-payload state, and confirms all eight BFM route paths remain available. Baseline and final smoke runs, Python compilation, exact temporary-payload cleanup, whitespace checks, dashboard refresh, and command-center health passed. No migration, template, real data, credential, external call, live action, or GitHub durability occurred.
+
+Evidence: `web/routes/payroll.py`, `scripts/smoke_test.py`, and `command-center/logs/2026-07-19-bfm-only-payroll-boundary-4d.md`.
+
+### Work Block 4D-R: Durability And Release
+
+Status: active under Ryan's direct 2026-07-19 instruction to commit and push 4D to `main`
+
+Included: exact intended 4D application, maintained-test, evidence, and command-center paths; explicit staging; one source commit on `codex/bfm-payroll-boundary`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly workflow; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; real databases or payroll/HR/financial rows; uploads; credentials; authenticated production pages; Plaid calls; workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream writes; 4E and unrelated repairs; force push; and recovery beyond the exact fast-forward publish path.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; or recovery would exceed the authorized path.
+
+Verification: exact path and sensitive-string review; baseline/final maintained synthetic suite; Python compilation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final main/origin alignment; and sanitized `[skip actions]` closeout publication.
+
+Report point: return both commits, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separately planned 4E gate.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

@@ -2,23 +2,31 @@
 
 ## Active Objective
 
-Plan the next bounded Phase 4 boundary/truthfulness repair after the durable, released completion of transaction identity work block 4C.
+Publish and verify the completed work block 4D through the directly authorized main-push release path.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active after the verified local completion of work block 4C.
+Phase 4: Core Repairs And Regression Coverage — active after the verified local completion of work block 4D.
 
 ## Current Work Block
 
-None. Work blocks 4C and 4C-R are complete, durable on `main`, automatically deployed, and credential-free health verified.
+Work Block 4D-R: Durability And Release — active under Ryan's direct instruction to commit and push 4D to `main`.
 
 ## Current Task
 
-Phase 4 Task 1B: continue remaining prioritized repairs through separately confirmed blocks. Task 2 coverage remains paired with each repair family.
+Phase 4 Task 4: publish the exact verified 4D scope to `main`, observe the automatic deployment, run credential-free health verification, and publish a sanitized skip-actions closeout.
 
 ## Owner
 
-Ryan owns the next work-block decision. Codex Desktop completed the 4C implementation, exact-path durability, automatic Fly observation, credential-free production health check, and sanitized closeout.
+Codex Desktop owns exact-path review, Git durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan retains every recovery, protected-data, credential, and 4E decision.
+
+## Work Block 4D Result
+
+- One payroll-blueprint guard redirects Personal and Luxe Legacy to the dashboard before any payroll handler reaches payroll storage or upload parsing.
+- Maintained coverage enumerates all eight registered payroll routes and verifies sixteen denied route outcomes across Personal and Luxe Legacy.
+- Employee, pay-change, payroll-entry, sentinel-value, and denied temporary-payload state remained unchanged.
+- All eight BFM route paths remained available, including roster, detail, import, and spending behavior.
+- Baseline and final smoke runs, Python compilation, exact temporary cleanup, whitespace checks, dashboard refresh, and command-center health passed.
 
 ## Phase 3 And 3L Result
 
@@ -36,30 +44,32 @@ Ryan owns the next work-block decision. Codex Desktop completed the 4C implement
 
 ## Excluded Scope
 
-- Completed Phase 4 Task 1A; Tasks 3-4; every finding other than `P3-3A-01` and `P3-3A-C01`.
-- Plaid cursor atomicity, reconciliation, liability, freshness, failure isolation, observability, entry-point behavior, and live sync.
-- Vendor, payroll, planning, reporting, downstream, `/k/`, cookie/CSP, mobile, and unrelated repairs.
-- Real databases, financial/payroll rows, uploads, credentials, production/demo access, Plaid, Fly, workflows, downstream writes, or other live actions.
+- Phase 4 Tasks 1E-1P and 3-4; Task 1M's remaining payroll integrity, validation, parser, and retention repairs.
+- Every finding except the next proposed `P3-3D-02` planning boundary and its focused `P3-3D-C01` coverage slice.
+- Real databases, financial/payroll/HR rows, uploads, credentials, production/demo access, Plaid, Fly, workflows, downstream writes, or other live actions.
 - Commit, push, PR, merge, deployment, and pre-existing untracked `scripts/sync_prod_to_local.sh`.
 
 ## Current Action
 
-Separately define and confirm work block 4D, provisionally beginning with `P3-3F-01` BFM-only payroll route enforcement and paired boundary coverage. Do not begin product edits from the roadmap alone.
+Verify the exact nine-path 4D publish set and sensitive boundaries, commit on `codex/bfm-payroll-boundary`, fast-forward local `main`, push `main` without force, observe the automatic Fly deployment, verify `/health` without credentials, and publish one command-center-only `[skip actions]` closeout.
+
+The former umbrella Task 1B is now decomposed into visible Tasks 1B-1P. Task 1B records the completed transaction-identity foundation; Tasks 1C-1G expose the accepted early boundary/truthfulness tranche; Tasks 1H-1P preserve the already-confirmed downstream repair-family sequence.
 
 ## Remaining Gates
 
-- 4D requires a complete proposed work block and Ryan confirmation before implementation.
+- Any unexpected path, remote divergence, failed check/deployment, credential requirement, or recovery outside the exact fast-forward route requires a stop.
+- 4E requires a complete proposed work block and Ryan confirmation before implementation.
 - Plaid cursor atomicity, reconciliation, concurrency, `/k/`, and every other Phase 3 finding remain separately gated.
 - Protected data, credentials, real databases, and live actions remain closed unless a future exact block authorizes them.
 
 ## Verification
 
 - Baseline and final `.venv/bin/python scripts/smoke_test.py`: pass.
-- Focused all-entity identity, redelivery, populated-reference, reporting, and socket-denied Plaid checks: pass.
-- Source commit `4a84f49` is on `main`; automatic Fly Deploy run `29689659579` and every job step passed.
-- Credential-free production `/health` returned HTTP 200; local `main` matched `origin/main` before this closeout.
-- The command-center-only closeout is published with `[skip actions]` to avoid a second deployment.
+- Python compilation for `web/routes/payroll.py` and `scripts/smoke_test.py`: pass.
+- Eight registered payroll routes, sixteen non-BFM denial outcomes, unchanged denied state, denied temp-payload preservation, and all eight BFM paths: pass.
+- Exact synthetic payload cleanup, `git diff --check`, dashboard refresh, and command-center health: pass.
+- Branch is local-only; no commit, push, deployment, protected-data access, credential use, or live action occurred.
 
 ## Next Report Point
 
-Return the source and closeout commits, automatic Fly result, production health, final alignment, preserved exclusions, and provisional 4D recommendation.
+Return the 4D source and closeout commits, automatic Fly result, credential-free production health, final main alignment, preserved exclusions, and separately gated 4E planning point.

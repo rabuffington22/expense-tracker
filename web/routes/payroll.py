@@ -25,6 +25,13 @@ bp = Blueprint("payroll", __name__, url_prefix="/payroll")
 _TEMP_DIR = os.path.join(tempfile.gettempdir(), "expense-tracker-uploads")
 os.makedirs(_TEMP_DIR, exist_ok=True)
 
+
+@bp.before_request
+def _require_bfm_entity():
+    """Keep every payroll read and mutation inside the BFM entity."""
+    if g.entity_key != "company":
+        return redirect(url_for("dashboard.index"))
+
 # ── Role colors for badges ───────────────────────────────────────────────────
 
 ROLE_COLORS: dict[str, str] = {

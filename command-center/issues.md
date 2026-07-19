@@ -729,7 +729,7 @@ Tracked test expansion was explicitly excluded from audit work block 3E.
 
 ## Non-BFM Entities Can Directly Access And Mutate Payroll
 
-Status: open; discovered in work block 3F
+Status: resolved locally in work block 4D; release not authorized
 
 Severity: high payroll/HR boundary risk
 
@@ -741,7 +741,7 @@ Revisit: Phase 4 Task 1 for route-level BFM enforcement; Phase 4 Task 2 for trac
 
 Summary:
 
-Navigation and maintained documentation treat Payroll as BFM-only, but the payroll blueprint has no entity guard. Direct Personal and Luxe Legacy page requests returned 200, and direct employee creates persisted rows in those entity-local payroll tables.
+Work block 4D added one payroll-blueprint guard that redirects Personal and Luxe Legacy before any payroll handler reaches storage or upload parsing. Maintained synthetic coverage enumerates all eight registered payroll routes, verifies both denied entities, preserves employee/pay-change/payroll-entry and temporary-payload state, and confirms the BFM paths remain available.
 
 Impact:
 
@@ -754,9 +754,9 @@ Acceptance checks:
 - BFM roster, import, detail, spending, and HTMX behavior remain intact.
 - Tracked tests cover page and mutation denial for both non-BFM entities.
 
-Why not fixed now:
+Resolution evidence:
 
-Route enforcement and tracked tests require a separately confirmed Phase 4 implementation block.
+`web/routes/payroll.py`, `scripts/smoke_test.py`, and `command-center/logs/2026-07-19-bfm-only-payroll-boundary-4d.md`. GitHub durability and release remain a separate gate.
 
 ## Payroll Preview Duplicates An Exact Existing Employee
 
@@ -915,7 +915,7 @@ Parser and route error-handling changes require separately confirmed Phase 4 sco
 
 ## Payroll Lifecycle Paths Lack Tracked Regression Coverage
 
-Status: parked for Phase 4 regression coverage
+Status: partly addressed in work block 4D; remaining payroll coverage parked for Task 1M
 
 Severity: medium regression-confidence risk
 
@@ -927,7 +927,7 @@ Revisit: Phase 4 Task 2, preferably alongside the related payroll repairs
 
 Summary:
 
-Work block 3F verified parser dates and totals, roster CRUD and history, explicit import persistence, deduplication, role-spending reconciliation, delete cascades, storage isolation, and successful-save cleanup. The tracked suite has no dedicated payroll cases and does not reproduce the six boundary, integrity, validation, retention, or malformed-input defects.
+Work block 4D added maintained coverage for all eight payroll routes, the Personal/Luxe Legacy denial boundary, unchanged denied-state snapshots, temporary-payload preservation, and normal BFM roster/detail/import/spending availability. Dedicated parser, preview matching, compensation, validation, malformed-input, retention, and full lifecycle coverage remains paired with Task 1M.
 
 Impact:
 
@@ -940,9 +940,9 @@ Acceptance checks:
 - Every repaired 3F defect has a failing-before and passing-after regression case.
 - Tests require no real payroll/HR data, credentials, production access, or external calls.
 
-Why not added now:
+Remaining gap:
 
-Tracked test expansion was explicitly excluded from audit work block 3F.
+The boundary slice is now tracked. Every other `P3-3F-C01` acceptance area remains intentionally excluded from 4D and must accompany its related Task 1M repair.
 
 ## Plaid Persistence Errors Can Advance The Cursor Past Missing Data
 
