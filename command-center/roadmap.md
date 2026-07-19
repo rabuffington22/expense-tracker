@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after the locally verified completion of work block 4H; 4H-R release or Task 1H planning requires a separate Ryan decision
+Status: active after the durable, deployed, and credential-free health-verified completion of work block 4H-R; Task 1H is next for separate planning
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -901,8 +901,8 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1D: Enforce the Luxe Legacy denial boundary across planning routes.** Status: done, released, and credential-free production health verified through work blocks 4E-4E-R for `P3-3D-02` plus the boundary slice of `P3-3D-C01`.
 - **Task 1E: Enforce Luxe Legacy-only downstream source selection.** Status: done, released, and credential-free production health verified through work blocks 4F-4F-R for `P3-3I-01` plus the focused selection slice of `P3-3I-C01`; remote idempotency remains parked.
 - **Task 1F: Report scheduled sync partial failures truthfully.** Status: done, released, and credential-free production health verified through work blocks 4G-4G-R for `P3-3H-01` plus the workflow-visible result slice of `P3-3H-C01`; authorization-before-entity-setup (`P3-3H-06`) remains later.
-- **Task 1G: Restore the Recurring Charges report query.** Status: done and verified locally through work block 4H for `P3-3C-01` plus the recurring-report slice of `P3-3C-C01`; release remains separate.
-- **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: next for separate planning as the first primary-Plaid block after the 4H release decision.
+- **Task 1G: Restore the Recurring Charges report query.** Status: done, released, and credential-free production health verified through work blocks 4H-4H-R for `P3-3C-01` plus the recurring-report slice of `P3-3C-C01`.
+- **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: current for separate planning as the first primary-Plaid block.
 - **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: planned as the second primary-Plaid block.
 - **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: planned as the third primary-Plaid block.
 - **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: planned after Tasks 1H-1J.
@@ -913,7 +913,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, and 4H completed the recurring-report slice of `P3-3C-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B, 4C-R, 4D-R, 4E-R, 4F-R, and 4G-R; every future release remains separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B, 4C-R, 4D-R, 4E-R, 4F-R, 4G-R, and 4H-R; every future release remains separately gated.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -1397,7 +1397,7 @@ Evidence: `core/reporting.py`, `scripts/smoke_test.py`, `command-center/issues.m
 
 ### Work Block 4H-R: Durability And Release
 
-Status: active; directly authorized by Ryan on 2026-07-19
+Status: done, durable, automatically deployed, and credential-free health verified on 2026-07-19
 
 Included: explicit staging of the exact intended 4H application, maintained-test, issue, evidence, and command-center paths; one source commit on `codex/recurring-charges-report-repair`; fast-forward alignment of local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -1414,6 +1414,10 @@ Stop conditions: the exact diff includes an unexpected path, sensitive value, pr
 Verification: exact path, staged-set, sensitive-pattern, branch-ancestry, GitHub-authentication, and remote-alignment review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; source commit and direct-main fast-forward push; automatic Fly run/job result for the exact source SHA; credential-free production `/health`; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separate Task 1H planning gate.
+
+Result: the exact nine-path 4H source set was committed as `166bbd9`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29696691569` and deploy job `88218551351` passed every reported step for that exact source SHA. Production `/health` returned HTTP 200 without credentials, and local `main` matched `origin/main`. The untracked sync script and unrelated `command-center/now 2.md` remained excluded; the staged high-confidence sensitive-addition scan returned zero; and no protected data, credentials, authenticated production page, manual workflow, non-automatic Fly, Plaid, downstream, workflow-edit, broader repair, or unrelated action occurred. This command-center-only closeout is published separately with `[skip actions]` to avoid a second deployment.
+
+Evidence: `command-center/logs/2026-07-19-recurring-charges-report-release-4h-r.md`, source commit `166bbd9`, GitHub Actions run `29696691569`, and Fly deploy job `88218551351`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

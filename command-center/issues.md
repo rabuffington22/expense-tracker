@@ -450,7 +450,7 @@ User-facing wording or destructive reversal behavior is implementation and UX sc
 
 ## Recurring Charges Report Executes An Uninterpolated SQL Helper
 
-Status: resolved locally through work block 4H; release not authorized
+Status: resolved and released through work blocks 4H-4H-R
 
 Severity: medium functional-availability risk
 
@@ -478,7 +478,7 @@ Acceptance checks:
 
 Resolution:
 
-Work block 4H constructs the SQL with the maintained entity-specific exclusion clause instead of sending a literal helper token to SQLite. It also corrects debit minimum/maximum ordering and adds maintained temporary all-entity coverage for the direct helper, prepared report, rendered view, CSV, PDF, entity exclusions, empty and out-of-range behavior, read-only execution, and exact synthetic cleanup. The baseline and final smoke suites and local verification pass; commit, push, deployment, and live verification remain separately gated.
+Work block 4H constructs the SQL with the maintained entity-specific exclusion clause instead of sending a literal helper token to SQLite. It also corrects debit minimum/maximum ordering and adds maintained temporary all-entity coverage for the direct helper, prepared report, rendered view, CSV, PDF, entity exclusions, empty and out-of-range behavior, read-only execution, and exact synthetic cleanup. Work block 4H-R published source commit `166bbd9`; automatic Fly run `29696691569` and deploy job `88218551351` passed, and credential-free production health returned HTTP 200.
 
 ## Task 3 Financial Read-Model Paths Lack Tracked Regression Coverage
 

@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish and verify the exact locally completed 4H Recurring Charges repair through the directly authorized work block 4H-R.
+Plan the first bounded primary-Plaid repair after the durable, deployed, and credential-free health-verified completion of work block 4H-R.
 
 ## Current Phase
 
@@ -10,40 +10,45 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-4H-R Durability And Release — active after Ryan's direct 2026-07-19 instruction to commit and push 4H to `main`.
+None. Work blocks 4H and 4H-R are complete; source commit `166bbd9` is on `main`, automatic Fly deployment passed, and production health returned HTTP 200.
 
 ## Current Task
 
-Phase 4 Task 1G release durability: verify, explicitly stage, commit, fast-forward, push, observe the automatic Fly deployment, verify credential-free health, and publish a sanitized skip-actions closeout.
+Phase 4 Task 1H: separately define the first primary-Plaid atomic page-application and cursor-advancement repair.
 
 ## Owner
 
-Codex Desktop owns exact-path publication, deployment observation, credential-free health verification, and Runway OS closeout. Ryan retains every recovery or scope-expansion decision.
+Ryan owns the next Task 1H work-block decision. Codex Desktop completed exact-path 4H-R durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
 
-## Work Block 4H-R Scope
+## Work Block 4H-R Result
 
-- Publish the exact nine intended 4H application, maintained-test, issue, evidence, and command-center paths.
-- Commit first on `codex/recurring-charges-report-repair`, then require exact fast-forward alignment with local and remote `main`.
-- Push directly to `origin/main` without force, observe the automatic Fly deployment for the exact source SHA, and verify only credential-free `/health`.
-- Publish one sanitized command-center-only `[skip actions]` closeout after successful deployment and health verification.
-- Preserve untracked `scripts/sync_prod_to_local.sh` and unrelated `command-center/now 2.md` untouched and unstaged.
+- Exact source commit `166bbd9` is on local `main` and `origin/main`.
+- Automatic Fly Deploy run `29696691569` and deploy job `88218551351` passed every reported step for that exact source SHA.
+- Production `/health` returned HTTP 200 without credentials.
+- The exact nine-path 4H source set was published; the staged high-confidence sensitive-addition scan returned zero.
+- Untracked `scripts/sync_prod_to_local.sh` and unrelated `command-center/now 2.md` remained untouched and unstaged.
+- No real data, credentials, authenticated production page, Plaid call, manual workflow action, non-automatic Fly mutation, downstream access/write, workflow edit, broader repair, force push, or unrelated recovery occurred.
 
 ## Current Action
 
-Refresh and health-check the active release state, verify GitHub authentication and remote alignment, inspect the exact diff and sensitive additions, rerun maintained checks, then stage only the intended nine paths.
+Stop after publishing this sanitized command-center-only `[skip actions]` closeout. Separately define and confirm Task 1H before implementation; do not infer further release, Plaid, sync-entry, downstream, or live authorization.
 
 ## Remaining Gates
 
-- Stop if local or remote `main` diverges, the intended diff changes, sensitive or protected data appears, staging includes an excluded path, or force/recovery would be required.
-- Manual workflow actions, non-automatic Fly mutations, authenticated production pages, credentials, real databases, Plaid, downstream access/writes, workflow edits, broader reporting, Task 1H, and unrelated work remain excluded.
-- Task 1H and every later repair require separate work-block planning and confirmation after this release closes.
+- Task 1H and every future release require separate work-block confirmation or direct authorization.
+- Authorization-before-entity-setup (`P3-3H-06`) and all broader sync-entry findings remain later.
+- Entity exception isolation, coordination, persistence, public-worker behavior, and workflow edits remain excluded.
+- Empty Plaid-ID handling and the broader local mirror contract remain for Task 1O.
+- Downstream idempotency remains parked behind a separately authorized read-only remote-contract check.
+- Commit, push, PR, merge, deployment, protected data, credentials, real databases, production/demo, Plaid, workflow actions, downstream access/writes, Fly actions, and other live actions remain closed.
 
 ## Verification
 
-- Exact path, sensitive-addition, staged-set, branch-ancestry, GitHub-authentication, and remote-alignment review.
-- Maintained synthetic smoke suite, Python compilation, JSON validation, `git diff --check`, dashboard refresh, health check, and generated-dashboard inspection.
-- Source commit, direct-main fast-forward push, attributable automatic Fly run/job success, credential-free production `/health`, final main/origin alignment, and preserved exclusions.
+- Exact path, staged-set, sensitive-addition, branch-ancestry, GitHub-authentication, and remote-alignment review: pass.
+- Maintained synthetic smoke suite, Python compilation, `jq empty`, `git diff --check`, dashboard refresh, and health check: pass.
+- Source commit `166bbd9`, automatic Fly run `29696691569`, and job `88218551351`: pass.
+- Credential-free production `/health`: HTTP 200; local `main` and `origin/main`: aligned before this closeout.
 
 ## Next Report Point
 
-Return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separate Task 1H planning gate.
+Return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separately planned Task 1H point.
