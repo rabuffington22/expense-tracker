@@ -2,23 +2,23 @@
 
 ## Active Objective
 
-Publish and verify the approved server-authentication and protected-cache repair through one bounded production release block.
+Prepare the next bounded Phase 3 findings-consolidation block after releasing and verifying the urgent authentication and protected-cache repair.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1A is verified locally and work block 4B is authorized for exact GitHub durability, merge-triggered Fly deployment, and credential-free production verification.
+Phase 3: Functional Audit And Prioritization — active again; Task 7 resumes after successful work block 4B release.
 
-## Active Work Block
+## Completed Work Block
 
-4B: Publish And Verify Auth Repair — confirmed by Ryan; publish `codex/server-side-auth-boundary` through a reviewed PR, merge to `main`, monitor the resulting Fly deployment, verify only public/pre-auth boundaries, and publish the sanitized closeout.
+4B: Publish And Verify Auth Repair — released through PR #86 and merge commit `f4cd686`; Fly Deploy run `29670793359` and credential-free production auth/cache checks passed.
 
 ## Current Task
 
-Phase 4 Task 4: deploy the explicitly approved 4A repair and verify the production boundary without credentials or protected data.
+Phase 3 Task 7: consolidate completed audit findings into severity-ranked issues — awaiting a separately confirmed just-in-time block.
 
 ## Owner
 
-Codex Desktop owns pre-release review, exact-path staging, branch push, PR/check/merge handling, Fly deployment monitoring, credential-free production verification, closeout durability, and dashboard currency. Ryan remains the final decision-maker for any scope expansion, credential use, or recovery outside 4B.
+Ryan owns confirmation or revision of the next Task 7 consolidation block. Codex Desktop owns the released 4B evidence, protected-data boundaries, Task 7 just-in-time planning pass, and dashboard currency.
 
 ## Audit Result
 
@@ -30,20 +30,21 @@ Seven finding clusters were recorded: the main authentication boundary exposes f
 
 ## Current Action
 
-Validate and publish the exact 4A diff, merge only after required checks pass, monitor the merge-triggered Fly deployment, verify `/health`, pre-auth root/login behavior, and service-worker v4 without signing in, then publish a command-center-only closeout with `[skip actions]`.
+Run a just-in-time planning pass over Task 7 and propose one bounded findings-consolidation block before changing the remaining issue priority or repair order.
 
 ## Durability
 
-- Work block 4B authorizes staging and committing only the intended 3J/4A application, tracked-test, documentation, and command-center paths; pushing `codex/server-side-auth-boundary`; opening and merging a reviewed PR after checks; observing the automatic Fly deployment; public/pre-auth HTTP verification; and one sanitized command-center-only `[skip actions]` closeout.
-- No real password, credential rotation, Fly secret change, authenticated production page, financial row, database, Plaid action, manual workflow dispatch, downstream write, or `/k/` content/access change is authorized.
+- Source commit `fe1ec2e` merged through PR #86 as `f4cd686`; Fly Deploy run `29670793359` passed every step.
+- Production health returned 200; protected root returned a no-store 302 to the standalone login; the login exposed no protected shell or reusable digest; service-worker v4 served the static/offline-only contract.
+- No real password, credential rotation, Fly secret change, authenticated production page, financial row, database, Plaid action, manual workflow dispatch, downstream write, or `/k/` content/access change occurred.
 - Preserved user file: untracked `scripts/sync_prod_to_local.sh`, untouched and unstaged.
 
-## Work Block 4B Boundary
+## Work Block 4B Result
 
-- Included tasks: Task 1A release durability and Task 4 explicitly approved deployment.
-- Verification: exact diff and sensitive-string review; maintained synthetic suite; command-center refresh/health; required PR checks; Fly deployment result; production `/health` 200; protected root redirect to `/auth/login`; login response contains no protected HTML or reusable digest; `/sw.js` reports cache v4/static-only behavior; final main/origin alignment.
-- Stop on unexpected or sensitive diff content, branch conflict, failed required check or deployment, protected pre-auth content, need for a real credential or protected data, or any change beyond the approved repair and closeout.
-- Excluded tasks: Task 1B and Tasks 2-3; credential modernization; public `/k/` policy; mobile navigation; cookie/CSP hardening; unrelated findings and recovery outside the exact release path.
+- Task 1A release durability and Task 4 are complete and verified in production.
+- The authentication, protected cross-entity PWA cache, and client/server auth-mode findings are resolved and released.
+- PR #86 had no configured checks; GitHub reported a clean merge state, and the maintained suite plus 4A browser verification remained the pre-merge test gate.
+- Credential modernization, public `/k/` policy, mobile navigation, cookie/CSP hardening, maintained browser coverage, Task 1B, Tasks 2-3, and unrelated findings remain separate.
 
 ## Work Block 4A Result And Boundary
 

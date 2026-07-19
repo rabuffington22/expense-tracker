@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-18 9:47 PM CST",
+    "lastUpdated": "2026-07-18 9:54 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,29 +1619,23 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks 3A-3I are published on main; completed work blocks 3J and 4A are local-only and confirmed work block 4B authorizes their exact reviewed PR, merge-triggered deployment, and skip-actions closeout durability"
+    "durabilityStatus": "Work blocks 3A-3I are published on main; 3J/4A source and evidence were released through PR 86 as f4cd686, Fly Deploy run 29670793359 passed, and 4B has a direct-main skip-actions closeout"
   },
   "phase": {
-    "name": "Core Repairs And Regression Coverage",
+    "name": "Functional Audit And Prioritization",
     "status": "active",
-    "summary": "Work block 4B is active to publish the verified Task 1A repair through a reviewed PR, merge-triggered Fly deployment, credential-free production verification, and skip-actions closeout.",
-    "progress": 20
+    "summary": "Tasks 1-6 and work blocks 3A-3J are complete; urgent work blocks 4A-4B repaired and released the leading auth/cache findings, and Task 7 resumes for a separately confirmed consolidation block.",
+    "progress": 86
   },
   "currentTask": {
-    "title": "Task 4: Deploy and verify the approved authentication repair",
-    "owner": "Codex Desktop",
+    "title": "Task 7: Consolidate audit findings into severity-ranked issues",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns exact-path review, branch push, PR and check handling, merge-triggered Fly observation, credential-free production verification, closeout durability, and dashboard currency",
-    "nextAction": "Validate and publish the exact 4A diff, merge only after required checks pass, verify the public and pre-auth production boundary, and publish the sanitized closeout with skip actions.",
-    "blocker": "Stop on unexpected or sensitive diff content, conflict, failed check/deployment, protected pre-auth content, need for a real credential or protected data, or recovery beyond the approved release path"
+    "supportingAgent": "Codex Desktop owns the released 4B evidence, protected-data boundaries, Task 7 just-in-time planning pass, and dashboard currency",
+    "nextAction": "Define and return one bounded Task 7 findings-consolidation block before changing remaining issue priority, dependency order, or repair sequencing.",
+    "blocker": "Task 7 execution and Task 8 prioritization require a separately confirmed work block; public k policy and unrelated repairs remain outside authorization"
   },
-  "currentWorkBlock": {
-    "label": "4B",
-    "name": "Publish And Verify Auth Repair",
-    "status": "active",
-    "scope": "Task 1A release durability and Task 4: exact-path commit, branch push, reviewed PR, required checks, merge-triggered Fly deployment, credential-free production boundary checks, and skip-actions closeout",
-    "durability": "Reviewed source/test/docs/evidence PR merged to main plus one command-center-only direct-main closeout with skip actions; no force push, credential mutation, manual workflow action, or second deployment"
-  },
+  "currentWorkBlock": null,
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -1665,21 +1659,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute work block 4B",
-    "status": "in progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan approved the bounded release of the already verified server-authentication and protected-cache repair.",
-    "action": "Review, commit, push, open and merge the PR after checks, observe Fly, verify credential-free production boundaries, and publish the skip-actions closeout.",
+    "title": "Define the Task 7 findings-consolidation block",
+    "status": "awaiting planning",
+    "owner": "Ryan",
+    "why": "Work block 4B released and verified the leading auth/cache findings; the remaining completed audit evidence now needs one bounded consolidation pass before broader repair ordering.",
+    "action": "Run a just-in-time Task 7 planning pass and return one bounded consolidation block for separate confirmation.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No current input is required while Codex executes confirmed work block 4B.",
-    "items": []
+    "summary": "Ryan reviews the next separately proposed Task 7 findings-consolidation block.",
+    "items": [
+      "Confirm or revise the next Task 7 block after just-in-time planning; Task 8 repair ordering and public k policy remain later decisions."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4B authorizes only the exact verified repair release and credential-free checks; public k policy, credential modernization, mobile navigation, cookie/CSP hardening, and unrelated findings remain unchanged.",
-    "decisionQueue": "After 4B closes, resume Phase 3 Task 7 and later decide the public k data contract.",
+    "phaseQuestions": "Work block 4B is complete; Task 7 consolidation, Task 8 prioritization, public k policy, credential modernization, mobile navigation, cookie/CSP hardening, and unrelated repairs remain outside authorization.",
+    "decisionQueue": "The next decision is confirmation or revision of a Task 7 consolidation block; public k policy and the broader repair order remain later choices.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1722,13 +1718,13 @@
       "id": "phase-3",
       "name": "Phase 3",
       "label": "Functional Audit And Prioritization",
-      "status": "paused"
+      "status": "active"
     },
     {
       "id": "phase-4",
       "name": "Phase 4",
       "label": "Core Repairs And Regression Coverage",
-      "status": "active"
+      "status": "paused"
     },
     {
       "id": "phase-5",
@@ -2668,7 +2664,7 @@
       "phaseId": "phase-4",
       "label": "4B",
       "name": "Publish And Verify Auth Repair",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1A release durability",
         "Task 4"
@@ -2702,7 +2698,13 @@
         "Final main/origin alignment, intended tracked state, preserved untracked sync script, sanitized closeout, dashboard refresh/health, and skip-actions closeout publication"
       ],
       "reportBack": "Return source commit, PR and merge, required checks, Fly deployment run/result, credential-free production verification, final main/origin state, closeout commit, preserved boundaries, and the next Phase 3 Task 7 planning point.",
-      "durability": "Reviewed source/test/docs/evidence PR merged to main plus one command-center-only direct-main closeout with skip actions; no force push, credential mutation, manual workflow action, or second deployment."
+      "durability": "Source commit fe1ec2e merged through PR 86 as f4cd686 and deployed once; this exact command-center closeout is the direct-main skip-actions durability record.",
+      "evidence": [
+        "command-center/logs/2026-07-18-auth-repair-release-4b.md",
+        "https://github.com/rabuffington22/expense-tracker/pull/86",
+        "https://github.com/rabuffington22/expense-tracker/actions/runs/29670793359"
+      ],
+      "result": "Source commit fe1ec2e merged through PR 86 as f4cd686. GitHub reported no PR checks configured and clean merge state. Fly Deploy run 29670793359 passed every step. Production health returned 200; protected root redirected no-store to the standalone login; login exposed no protected shell or legacy digest flow; and service-worker v4 served the static/offline-only contract without password or protected-data use."
     }
   ],
   "phaseTasks": [
@@ -3045,11 +3047,11 @@
       "phaseId": "phase-3",
       "taskId": "P3-T7",
       "title": "Task 7: Consolidate audit findings into severity-ranked issues",
-      "status": "paused",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.",
-      "nextAction": "Resume just-in-time planning after the verified 4A repair is released or explicitly deferred.",
-      "blocker": "Paused while Ryan decides the local repair's exact durability and release path."
+      "nextAction": "Confirm or revise a separately proposed Task 7 findings-consolidation block after just-in-time planning.",
+      "blocker": "Task 7 consolidation and any broader repair-order change remain unauthorized until the next work block is confirmed."
     },
     {
       "phaseId": "phase-3",
@@ -3104,11 +3106,15 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Deploy and verify the approved authentication repair",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Publish the exact verified 4A repair through a reviewed PR, merge-triggered Fly deployment, credential-free production checks, and skip-actions command-center closeout.",
-      "nextAction": "Review and publish the branch, wait for checks, merge, observe deployment, verify public and pre-auth boundaries, and close 4B.",
-      "blocker": "Stop on unexpected diff content, conflict, failed check or deployment, protected pre-auth content, credential or protected-data need, or recovery outside 4B."
+      "result": "PR 86 merged as f4cd686; Fly Deploy run 29670793359 succeeded; credential-free production health, protected-root redirect, standalone-login content, and service-worker v4 checks passed.",
+      "evidence": [
+        "command-center/logs/2026-07-18-auth-repair-release-4b.md"
+      ],
+      "nextAction": "Future releases require their own explicit approval.",
+      "blocker": "None for the completed Task 1A release."
     },
     {
       "phaseId": "phase-5",
@@ -3536,6 +3542,10 @@
     {
       "time": "2026-07-18",
       "text": "Ryan confirmed work block 4B for exact reviewed PR durability, required checks, merge-triggered Fly deployment, credential-free production auth and service-worker verification, and a skip-actions command-center closeout; credentials, protected data, public k changes, unrelated repairs, and the untracked sync script remain excluded."
+    },
+    {
+      "time": "2026-07-18",
+      "text": "Completed work block 4B: source commit fe1ec2e merged through PR 86 as f4cd686, Fly Deploy run 29670793359 passed, credential-free production auth/cache checks passed, and Phase 3 Task 7 resumed without password, protected-data, public k, credential, or unrelated repair action."
     }
   ],
   "openQuestions": [],
@@ -3901,15 +3911,15 @@
     },
     {
       "title": "Main authentication boundary returns protected HTML and accepts a client-exposed digest",
-      "summary": "Resolved locally in work block 4A by redirecting before protected rendering, moving password verification entirely server-side, removing the digest client and replay route, and adding tracked and browser checks; production release remains unauthorized.",
-      "status": "resolved-local",
+      "summary": "Resolved and released through work blocks 4A-4B and PR 86; production protected root now redirects before rendering and the standalone login contains no legacy digest flow.",
+      "status": "resolved",
       "severity": "high",
       "source": "command-center/issues.md"
     },
     {
       "title": "PWA cache can serve protected content across entity and session state",
-      "summary": "Resolved locally in work block 4A by cache v4 old-cache purge plus static/offline-only caching; the browser probe proved offline Personal cannot replay online BFM content; production release remains unauthorized.",
-      "status": "resolved-local",
+      "summary": "Resolved and released through work blocks 4A-4B and PR 86; production service-worker v4 matches the static/offline-only contract and the browser probe proved old-cache deletion and offline entity isolation.",
+      "status": "resolved",
       "severity": "high",
       "source": "command-center/issues.md"
     },
@@ -3922,8 +3932,8 @@
     },
     {
       "title": "Client and server authentication modes can drift",
-      "summary": "Resolved locally in work block 4A by eliminating independent client auth state and covering legacy, Werkzeug, invalid, and no-password modes; production release remains unauthorized.",
-      "status": "resolved-local",
+      "summary": "Resolved and released through work blocks 4A-4B and PR 86 by eliminating independent client auth state and covering legacy, Werkzeug, invalid, and no-password modes.",
+      "status": "resolved",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
@@ -3951,13 +3961,13 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Released and verified work block 4B",
-    "description": "Merge the reviewed repair, pass the automatic Fly deployment, prove the credential-free production boundary, and publish the skip-actions closeout."
+    "name": "Bounded Task 7 findings-consolidation decision",
+    "description": "Define and confirm the findings-consolidation block before changing remaining priority, dependency order, or repair sequencing."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
-    "browserSmoke": "pass; configured-auth Chromium passed 19/19, no-password Chromium passed 2/2, both with zero external requests; login and generic offline views passed visual inspection; generated dashboard shows the local-complete 4A repair at the release gate",
+    "browserSmoke": "pass; configured-auth Chromium passed 19/19 and no-password Chromium 2/2 with zero external requests; production credential-free root/login and service-worker v4 checks passed after deployment",
     "applicationSmoke": "pass; maintained synthetic suite and focused auth/cache contracts passed legacy and Werkzeug hashes, wrong/correct login, CSRF, safe redirect, protected/full/HTMX/no-password/public/exempt behavior, no-store, and static-only cache rules",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
@@ -3967,7 +3977,7 @@
     "preRelease": "pass; exact minute-17 workflow diff, YAML parse, synthetic smoke suite, dashboard refresh, health check, whitespace check, and visual dashboard inspection",
     "cronHardening": "pass; ready PR 83 merged as 96af7dc and Fly Deploy run 29645346441 plus every job step succeeded",
     "gitDurability": "pass; 1D source is merged to main and the verified Phase 1 closeout is committed and pushed directly to main with skip actions",
-    "httpHealth": "pass; production and demo roots returned HTTP 200",
+    "httpHealth": "pass; production health returned HTTP 200 after Fly Deploy run 29670793359; protected root returned the expected no-store authentication redirect",
     "documentationGovernance": "pass; canonical authority, stale-guidance, sensitive-content, path, Git-object, and exact-scope checks passed for work block 2B",
     "phase2DraftDurability": "pass; source commit 912c9bb was published through PR 85",
     "phase2GovernanceRelease": "pass; ready PR 85 merged as 216a992, Fly Deploy run 29647452643 and every step passed, and production root plus health returned HTTP 200",
@@ -4002,9 +4012,11 @@
     "phase3DownstreamMirrorConfirmation": "pass; the deterministic confirmation pass reproduced the same 44 passes, three controlled failures, two gaps, one remote-unverified boundary, and complete cleanup",
     "phase3DownstreamMirrorBoundaries": "pass; fake configuration, mocked HTTP and sync dependencies, blocked outbound sockets, temporary all-entity databases, complete cleanup, no product or tracked test changes, no real financial data or credentials, and no production/demo/Plaid/Fly/workflow/downstream/authentication action",
     "phase3DownstreamMirrorDurability": "pass; this exact eight-path 3I command-center closeout is the separately authorized direct-main skip-actions durability record, excluding product changes, deployment, live integration actions, downstream writes, and the pre-existing untracked sync script",
-    "phase4AuthCacheRepair": "pass locally; protected full pages redirect before rendering, server-only login supports legacy and Werkzeug hashes, digest replay is removed, no-password mode is coherent, dynamic responses are no-store, and service-worker v4 caches only static/offline assets while purging old caches",
+    "phase4AuthCacheRepair": "pass and released through PR 86; protected full pages redirect before rendering, server-only login supports legacy and Werkzeug hashes, digest replay is removed, no-password mode is coherent, dynamic responses are no-store, and service-worker v4 caches only static/offline assets while purging old caches",
     "phase4AuthCacheBrowser": "pass; configured-auth Chromium 19/19 and no-password Chromium 2/2 with zero external requests, old-cache deletion, cross-entity offline isolation, unchanged public k entity scope, and clean phone-sized login/offline visuals",
-    "phase4AuthCacheBoundaries": "pass; fake secrets, temporary synthetic all-entity databases, isolated browser state, localhost only, all disposable files removed, no real credentials or financial data, no external calls or live systems, and no GitHub durability or deployment"
+    "phase4AuthCacheBoundaries": "pass; fake secrets and temporary synthetic data for functional verification, credential-free production HTTP only, no real password or protected financial data, no public k access, no secret change, and no manual workflow or unrelated action",
+    "phase4AuthCacheRelease": "pass; source commit fe1ec2e merged through PR 86 as f4cd686, GitHub reported clean merge state with no PR checks configured, Fly Deploy run 29670793359 passed every step, and production health, pre-auth redirect/login content, and service-worker v4 checks passed",
+    "phase4AuthCacheDurability": "pass; source/test/docs/evidence are on main through PR 86 and this exact command-center closeout is the direct-main skip-actions record that causes no second deployment"
   }
 }
 </script>

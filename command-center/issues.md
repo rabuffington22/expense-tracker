@@ -1538,7 +1538,7 @@ Tracked test expansion was explicitly excluded from work block 3I.
 
 ## Main Authentication Boundary Returns Protected HTML And Accepts A Client-Exposed Digest
 
-Status: resolved locally in work block 4A; release not authorized
+Status: resolved and released through work blocks 4A-4B and PR #86
 
 Severity: high authentication and financial-confidentiality risk
 
@@ -1565,11 +1565,11 @@ Acceptance checks:
 
 Resolution:
 
-Work block 4A now redirects full-page requests to a standalone login before entity setup or protected rendering, keeps unauthenticated HTMX/JSON at 401, verifies plaintext only on the server, removes the published digest and `/auth/verify`, and marks dynamic responses no-store. Tracked synthetic checks and a 19-check isolated-browser probe passed with fake secrets and zero external requests. Production remains unchanged until a separate release authorization.
+Work block 4A redirected full-page requests to a standalone login before entity setup or protected rendering, kept unauthenticated HTMX/JSON at 401, moved password verification entirely server-side, removed the published digest and `/auth/verify`, and marked dynamic responses no-store. Work block 4B released the repair through PR #86; Fly Deploy and credential-free production redirect/login checks passed.
 
 ## PWA Cache Can Serve Protected Content Across Entity And Session State
 
-Status: resolved locally in work block 4A; release not authorized
+Status: resolved and released through work blocks 4A-4B and PR #86
 
 Severity: high cross-entity financial-confidentiality risk
 
@@ -1596,7 +1596,7 @@ Acceptance checks:
 
 Resolution:
 
-Work block 4A moved to service-worker cache v4, removed protected root and all dynamic responses from caching, retained only static assets and the data-free offline page, and deletes older caches on activation. A browser probe seeded an old protected v3 cache, proved its deletion, and proved that an offline Personal request after online BFM use receives only the generic offline page. Production remains unchanged until a separate release authorization.
+Work block 4A moved to service-worker cache v4, removed protected root and all dynamic responses from caching, retained only static assets and the data-free offline page, and deleted older caches on activation. A browser probe proved old-cache deletion and offline entity isolation. Work block 4B released v4 through PR #86; Fly Deploy passed and production `/sw.js` matched the static/offline-only contract.
 
 ## Public Dashboard Exposes Detailed Personal And Luxe Legacy Financial Information
 
@@ -1630,7 +1630,7 @@ Public-route behavior changes and product-direction decisions were excluded from
 
 ## Client And Server Authentication Modes Can Drift
 
-Status: resolved locally in work block 4A; release not authorized
+Status: resolved and released through work blocks 4A-4B and PR #86
 
 Severity: medium authentication-availability and configuration risk
 
@@ -1656,7 +1656,7 @@ Acceptance checks:
 
 Resolution:
 
-Work block 4A removed independent client auth state. Configured legacy and Werkzeug hashes, invalid passwords, safe redirect targets, and unset/no-password mode now derive from the server configuration and passed tracked synthetic coverage plus isolated-browser checks. Production remains unchanged until a separate release authorization.
+Work block 4A removed independent client auth state. Configured legacy and Werkzeug hashes, invalid passwords, safe redirect targets, and unset/no-password mode derive from the server configuration and passed tracked synthetic plus browser checks. Work block 4B released the repair through PR #86 and verified the production login contains no legacy client state.
 
 ## Mobile Sidebar Lacks Complete Keyboard Focus And Scroll Handling
 

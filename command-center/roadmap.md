@@ -412,7 +412,7 @@ Target durability: PR #85 is merged on `main`; the sanitized 2B-R closeout is pu
 
 ## Phase 3: Functional Audit And Prioritization
 
-Status: paused after Tasks 1-6 and work blocks 3A-3J while Ryan decides the verified 4A release path; Task 7 resumes after release or explicit deferral
+Status: active after Tasks 1-6 and work blocks 3A-3J; Task 7 resumes after the successful 4A/4B urgent repair and release
 
 Goal: determine what “working properly” means across the live product, then rank evidence-backed defects and gaps.
 
@@ -428,7 +428,7 @@ Goal: determine what “working properly” means across the live product, then 
 - **Task 5C: Audit scheduled and public background-sync entry points.** Status: done through work block 3H. Method/bearer/CSRF separation, normal all-entity iteration, same-process lock release/contention, public reachability/throttle, Personal/LL scope, cursor success, item failure containment, and cleanup passed; seven functional/boundary defects plus one tracked-coverage gap were recorded without repair.
 - **Task 5D: Audit the Luxe Legacy downstream-mirror boundary.** Status: done through work block 3I. Configuration/no-op, LL-only scheduled/public invocation and storage, request/auth/payload/timeout shape, standard exclusions, repeat stability, failure isolation, entity non-mutation, and cleanup passed; Owner Draw eligibility, empty Plaid IDs, duplicate/implicit conflict keys, tracked coverage, and remote-idempotency proof were recorded without repair or live access.
 - **Task 6: Audit PWA, responsive navigation, public dashboard, and authentication boundaries.** Status: done through work block 3J. Manifest/installability, icons, desktop/tablet/phone layout, basic mobile drawer state, CSRF, exempt routes, security headers, and branded offline fallback passed; seven finding clusters were recorded across the main authentication boundary, cross-entity PWA caching, public financial-detail exposure, auth-mode coherence, mobile accessibility, browser/session hardening, and tracked coverage.
-- **Task 7: Consolidate audit findings into severity-ranked issues.** Status: paused during the 4A release decision; then return to just-in-time planning after release or explicit deferral. Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.
+- **Task 7: Consolidate audit findings into severity-ranked issues.** Status: current; awaiting a separately confirmed just-in-time consolidation block. Record sanitized reproduction steps, observed versus expected behavior, impact, confidence, acceptance checks, and the affected entity or boundary.
 - **Task 8: Confirm the repair order and bounded Phase 4 implementation work blocks with Ryan.** Status: planned. Prioritize only evidence-backed findings after the relevant audit slices are complete.
 
 ### Confirmed Work Block 3A: Synthetic Transaction Foundation Audit
@@ -800,15 +800,15 @@ Result: the maintained smoke suite passed. A repeated temporary request probe pr
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active for confirmed work block 4B release
+Status: paused after successful work blocks 4A-4B; remaining repairs await Phase 3 Tasks 7-8 prioritization
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
-- **Task 1A: Repair the confirmed server-authentication and protected-cache boundaries.** Status: complete and verified locally through work block 4A; release authorized through work block 4B.
+- **Task 1A: Repair the confirmed server-authentication and protected-cache boundaries.** Status: done, released, and credential-free production verified through work blocks 4A-4B and PR #86.
 - **Task 1B: Repair remaining confirmed reliability and correctness defects in prioritized work blocks.** Status: planned after Phase 3 Tasks 7-8 establish the broader order.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.**
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Deploy only after a verified, explicitly approved release block.** Status: current through confirmed work block 4B.
+- **Task 4: Deploy only after a verified, explicitly approved release block.** Status: done for the Task 1A release through work block 4B; future releases require their own approval.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -843,7 +843,7 @@ Result: configured full-page requests now redirect to a standalone CSRF-protecte
 
 ### Confirmed Work Block 4B: Publish And Verify Auth Repair
 
-Status: active; confirmed by Ryan on 2026-07-18
+Status: done, released, and verified on 2026-07-18
 
 Included: Task 1A release durability and Task 4. Re-review the exact verified 4A diff and sensitive boundaries; stage and commit only intended application, tracked-test, documentation, and command-center paths; preserve the pre-existing untracked sync script; push `codex/server-side-auth-boundary`; open a PR; wait for required checks; merge to `main`; monitor the automatic Fly deployment; verify public and pre-auth production behavior without signing in; and publish the sanitized command-center-only closeout with `[skip actions]`.
 
@@ -876,6 +876,8 @@ Verification:
 Durability: source/test/docs/4A evidence through a reviewed PR merged to `main`, followed only by a command-center closeout commit with `[skip actions]`. No force push, credential mutation, manual workflow action, or second deployment is included.
 
 Report point: return source commit, PR and merge, required checks, Fly deployment run/result, credential-free production verification, final `main`/`origin/main` state, closeout commit, preserved boundaries, and the next Phase 3 Task 7 planning point.
+
+Result: source commit `fe1ec2e` was published through PR #86 and merged as `f4cd686`. GitHub reported no PR checks configured and a clean merge state. Automatic Fly Deploy run `29670793359` passed every step for the merge commit. Production `/health` returned 200; protected root returned a no-store 302 to `/auth/login?next=/`; the standalone login contained no protected shell or reusable digest client; and `/sw.js` served cache v4 with the static/offline-only contract. No password, protected data, authenticated financial page, credential/secret change, `/k/` access, manual workflow dispatch, or unrelated repair occurred. The exact command-center closeout is published separately with `[skip actions]` to avoid a second deployment.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
