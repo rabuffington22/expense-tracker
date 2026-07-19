@@ -1590,6 +1590,87 @@ Result: the exact twelve-path 4J source set was committed as `74ad56d`, fast-for
 
 Evidence: `command-center/logs/2026-07-19-plaid-account-state-truthfulness-release-4j-r.md`, source commit `74ad56d`, GitHub Actions run `29699120063`, and Fly deploy job `88225014833`.
 
+### Confirmed Work Block 4K: Plaid Item Isolation And Truthful Observability
+
+Status: done and locally verified on 2026-07-19; release not authorized
+
+Parent tasks: Phase 4 Task 1J and only the matching primary-Plaid slice of Task 2.
+
+Included findings: `P3-3G-06`, `P3-3G-07`, and the matching item-isolation and observability slice of `P3-3G-C01`.
+
+Outcome: isolate access-token decryption and transaction-update failures per Plaid item so healthy sibling items continue; make modified and removed counts reflect actual affected rows; treat a missing modified target as a safe item failure that rolls back the item and preserves its cursor and `last_synced`; preserve already-absent removals as idempotent zero-row events; return only sanitized item-level errors; and add focused maintained all-entity synthetic coverage.
+
+Why this grouping: token isolation, missing-modification truthfulness, affected-row counts, item-level error reporting, cursor preservation, and focused coverage all share the primary `_sync_entity()` item loop, `_apply_plaid_transaction_updates()` transaction boundary, one result contract, and one mocked all-entity verification model. Task 1K changes scheduled/public orchestration and cross-process coordination and therefore remains separate.
+
+Included: Task 1J and only the matching `P3-3G-C01` portion of Task 2.
+
+Excluded: completed Tasks 1A-1I; Tasks 1K-1P and Tasks 3-4; the remainder of Task 2 and `P3-3G-C01`; every remaining `P3-3H` finding; scheduled/public sync coordination, `/k/`, cross-process locking, entity-level entry-point recovery, automatic retries, downstream behavior, and unrelated repairs; schema migration or rewriting an applied migration; real databases or financial/payroll/HR rows, uploads, credentials, authenticated production pages, production/demo access, live Plaid, workflows, Fly, downstream access/writes, or other external actions; commit, push, PR, merge, deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Autonomous owner and recommended agent: Codex Desktop in the current task. This sensitive financial-integrity block couples contract design, primary sync implementation, maintained all-entity verification, protected-data boundaries, exact cleanup, Runway OS stewardship, and final intake. The prior independent Task 8 review already endorsed a separate isolation/observability block, so no delegation or additional second opinion is needed.
+
+Runner path: current Codex task on local branch `codex/plaid-item-isolation-observability` without delegation.
+
+Blocking questions: none.
+
+Non-blocking defaults:
+
+- Decrypt each token inside its item-level exception boundary. A corrupt item produces one sanitized error and no Plaid request, while healthy sibling items continue.
+- A missing modified target raises the existing stable item persistence failure, rolls back all work for that item, and preserves its cursor and timestamp for retry. Do not implicitly reconstruct or upsert a missing modified row.
+- Modified and removed counts use actual affected transaction rows. An already-absent removal is an idempotent zero-row event and does not fail the item.
+- Preserve existing transaction identity, cursor atomicity, exact-redelivery behavior, enabled-account filtering, signs, splits, entity isolation, and successful sibling counts.
+- Use temporary Personal, BFM, and Luxe Legacy databases, fake tokens, mocked Plaid responses, denied outbound sockets, and exact cleanup; remain local-only.
+
+Expected surfaces: a sanitized Plaid item-isolation and observability contract under `command-center/`; `web/routes/plaid.py`; focused checks in `scripts/smoke_test.py`; `command-center/issues.md`; one sanitized 4K closeout log; and Runway OS roadmap, now, decisions, state, and dashboard files. `core/crypto.py` and prior Plaid contracts are read-only unless an unexpected dependency triggers a stop. No migration is expected.
+
+Stop conditions:
+
+- Correctness requires protected data, credentials, live Plaid, production inspection, a migration, or another external action.
+- Safe missing-modification behavior requires implicit recovery or upsert semantics beyond the confirmed conservative error-and-retry default.
+- Sanitized reporting cannot avoid exposing token, ciphertext, financial, or protected detail.
+- Work expands into Task 1K, scheduled/public coordination, downstream behavior, or another repair family.
+- Entity isolation, per-item cursor preservation, healthy-sibling continuation, exact redelivery, or cleanup cannot be maintained.
+- Baseline or focused verification changes the plan, Runway OS cannot refresh and pass health checks, or scope reaches GitHub durability, deployment, or either preserved untracked file.
+
+Verification:
+
+- baseline and final `.venv/bin/python scripts/smoke_test.py`;
+- maintained Personal, BFM, and Luxe Legacy cases with corrupt-first and corrupt-last sibling items proving only the failed item errors, no Plaid request occurs for its bad token, healthy siblings commit, and error text contains no token or ciphertext;
+- missing-modification cases proving the item rolls back, its starting cursor and `last_synced` remain unchanged, successful siblings still commit, and retry remains available;
+- modified and removed counts based on actual affected rows, including idempotent already-absent removals, plus unchanged exact-redelivery, enabled-account filtering, signed amounts, splits, and entity isolation;
+- mocked Plaid responses, fake tokens, denied outbound sockets, exact disposable cleanup, Python compilation, `jq empty command-center/state.json`, dashboard refresh, health check, `git diff --check`, generated-dashboard inspection, and final explicit-path worktree review.
+
+Dashboard closeout: update human-readable sources first, align `state.json`, refresh and health-check the dashboard, and mark 4K done only after every required check passes.
+
+Durability: local-only. Commit, push, PR, merge, deployment, protected data, credentials, real databases, live systems, Plaid, workflows, Fly, downstream access/write, and other external actions remain excluded.
+
+Report point: return the exact item-isolation and observability contract, changed paths, focused and full synthetic results, cursor-preservation and healthy-sibling evidence, sanitized-error proof, cleanup, local branch state, preserved exclusions, and the separate release gate.
+
+Suggested next block: separately decide 4K-R Durability And Release. After any authorized release, separately plan Task 1K.
+
+Result: access-token decryption now runs inside each primary Plaid item's exception boundary, corrupt items return stable sanitized errors without making a Plaid request, and healthy siblings continue regardless of whether the failed item is ordered before or after them. Missing modified targets now fail atomically, roll back any earlier item mutations, preserve the starting cursor and `last_synced`, and report no rolled-back counters. Modified and removed totals use actual SQLite affected rows; removal split cleanup covers all matching transactions; and already-absent removals remain zero-count idempotent successes. The baseline and final smoke suites, Python compilation, 36 focused all-entity assertions, denied networking, exact cleanup, JSON validation, whitespace checks, dashboard refresh, and health check pass without a migration, protected data, credential, live action, GitHub durability, or deployment.
+
+Evidence: `command-center/plaid-item-isolation-observability-contract.md`, `web/routes/plaid.py`, `scripts/smoke_test.py`, `command-center/issues.md`, and `command-center/logs/2026-07-19-plaid-item-isolation-observability-4k.md`.
+
+### Work Block 4K-R: Durability And Release
+
+Status: active; directly authorized by Ryan on 2026-07-19
+
+Included: the exact ten intended 4K application, maintained-test, contract, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/plaid-item-isolation-observability`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Exact source set: `web/routes/plaid.py`; `scripts/smoke_test.py`; `command-center/plaid-item-isolation-observability-contract.md`; `command-center/logs/2026-07-19-plaid-item-isolation-observability-4k.md`; `command-center/issues.md`; `command-center/decisions.md`; `command-center/now.md`; `command-center/roadmap.md`; `command-center/state.json`; and `command-center/index.html`.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real databases or financial/payroll/HR rows; uploads; credentials; authenticated production pages; live Plaid calls; manual workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream access or writes; workflow-file changes; Task 1K, broader sync-entry work, and unrelated repairs; force push; and recovery outside the exact fast-forward publish path.
+
+Owner and recommended agent: Codex Desktop. The release requires exact-path Git and sensitive-addition review, direct-main durability, automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.
+
+Defaults: no PR because Ryan directly requested commit and push to `main`; preserve the verified 4K contract, implementation, tests, and evidence; use only credential-free production `/health`; inspect workflow metadata and open logs only if failure requires diagnosis; publish the post-deploy closeout with `[skip actions]` to prevent a second deployment.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the authorized path.
+
+Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separate Task 1K planning gate.
+
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
 Status: planned

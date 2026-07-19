@@ -250,6 +250,23 @@ def _do_sync():
     return redirect(url_for("plaid.index"))
 
 
+class PlaidItemAccessError(RuntimeError):
+    """Stable caller-facing error for an unusable encrypted item token."""
+
+
+class PlaidTransactionPersistenceError(RuntimeError):
+    """Stable caller-facing error for a rolled-back item transaction."""
+
+
+def _safe_plaid_item_error(exc: Exception) -> str:
+    """Return a stable item error without credential or row-level detail."""
+    if isinstance(exc, PlaidItemAccessError):
+        return "access token unavailable"
+    if isinstance(exc, PlaidTransactionPersistenceError):
+        return str(exc)
+    return "item sync failed"
+
+
 def _sync_entity(entity_key: str, target_item_id: str | None = None) -> dict:
     """Core Plaid sync for one entity. Returns result dict (no Flask side-effects)."""
     conn = get_connection(entity_key)
@@ -261,7 +278,8 @@ def _sync_entity(entity_key: str, target_item_id: str | None = None) -> dict:
             ).fetchall()
         else:
             rows = conn.execute(
-                "SELECT * FROM plaid_items WHERE is_vendor = 0"
+                "SELECT * FROM plaid_items WHERE is_vendor = 0 "
+                "ORDER BY created_at, item_id"
             ).fetchall()
         items = [dict(r) for r in rows]
     finally:
@@ -270,19 +288,21 @@ def _sync_entity(entity_key: str, target_item_id: str | None = None) -> dict:
     if not items:
         return {"new": 0, "modified": 0, "removed": 0, "backfilled": 0, "errors": [], "skipped": True}
 
-    from core.crypto import decrypt_token
-    for item in items:
-        item["access_token"] = decrypt_token(item["access_token"])
-
     total_new = 0
     total_modified = 0
     total_removed = 0
     errors = []
 
     from core.plaid_client import get_transactions as plaid_get_transactions
+    from core.crypto import decrypt_token
 
     for item in items:
         try:
+            try:
+                access_token = decrypt_token(item["access_token"])
+            except Exception as exc:
+                raise PlaidItemAccessError("access token unavailable") from exc
+
             conn = get_connection(entity_key)
             try:
                 acct_rows = conn.execute(
@@ -293,7 +313,7 @@ def _sync_entity(entity_key: str, target_item_id: str | None = None) -> dict:
             finally:
                 conn.close()
 
-            result = plaid_get_transactions(item["access_token"], cursor=item.get("cursor"))
+            result = plaid_get_transactions(access_token, cursor=item.get("cursor"))
 
             conn = get_connection(entity_key)
             try:
@@ -311,7 +331,8 @@ def _sync_entity(entity_key: str, target_item_id: str | None = None) -> dict:
             total_removed += item_counts["removed"]
 
         except Exception as exc:
-            errors.append(f"{item.get('institution_name', item['item_id'])}: {exc}")
+            item_label = item.get("institution_name") or item["item_id"]
+            errors.append(f"{item_label}: {_safe_plaid_item_error(exc)}")
 
     # Backfill account column for single-account Plaid items
     backfilled = 0
@@ -455,10 +476,6 @@ def disconnect(item_id):
 
 # ── Internal helpers ─────────────────────────────────────────────────────────
 
-class PlaidTransactionPersistenceError(RuntimeError):
-    """Stable caller-facing error for a rolled-back item transaction."""
-
-
 def _apply_plaid_transaction_updates(
     conn,
     entity_key: str,
@@ -489,7 +506,7 @@ def _apply_plaid_transaction_updates(
                     (txn["account_id"],),
                 ).fetchone()
                 account_name = acct_row["name"] if acct_row else None
-                conn.execute(
+                modified_update = conn.execute(
                     """UPDATE transactions
                        SET description_raw=?, merchant_raw=?, amount=?,
                            amount_cents=?, account=COALESCE(?, account),
@@ -505,21 +522,25 @@ def _apply_plaid_transaction_updates(
                         txn["plaid_transaction_id"],
                     ),
                 )
-                counts["modified"] += 1
+                if modified_update.rowcount != 1:
+                    raise RuntimeError(
+                        "modified Plaid transaction target is missing or ambiguous"
+                    )
+                counts["modified"] += modified_update.rowcount
 
             for plaid_txn_id in result["removed"]:
                 conn.execute(
                     "DELETE FROM transaction_splits"
-                    " WHERE transaction_id = ("
+                    " WHERE transaction_id IN ("
                     "   SELECT transaction_id FROM transactions"
                     "   WHERE plaid_transaction_id=?)",
                     (plaid_txn_id,),
                 )
-                conn.execute(
+                removed_delete = conn.execute(
                     "DELETE FROM transactions WHERE plaid_transaction_id=?",
                     (plaid_txn_id,),
                 )
-                counts["removed"] += 1
+                counts["removed"] += removed_delete.rowcount
 
             now = datetime.now(timezone.utc).isoformat()
             cursor_update = conn.execute(

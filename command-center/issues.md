@@ -1094,7 +1094,7 @@ Work block 4J replaces the entity-wide row maximum with separate successful-refr
 
 ## Missing Plaid Modified Rows Are Reported As Updated
 
-Status: open; discovered in work block 3G
+Status: resolved locally in work block 4K; release not authorized
 
 Severity: medium sync-observability risk
 
@@ -1117,13 +1117,13 @@ Acceptance checks:
 - Modified and removed counts reflect actual affected rows.
 - A missing target becomes an explicit safe recovery/error path before cursor advancement.
 
-Why not fixed now:
+Resolution:
 
-Sync semantics and tracked regression changes require a separate repair block.
+Work block 4K uses the SQLite update row count and requires exactly one stored target for every modified Plaid event. A missing or ambiguous target now fails through the stable per-item persistence path, rolls back that item's earlier mutations, and preserves its cursor and `last_synced` for retry. Removal counts use actual deleted transaction rows, while already-absent removals remain zero-count idempotent successes. Maintained all-entity coverage proves truthful counters, missing-target rollback, healthy-sibling continuation, cursor preservation, split cleanup, absent-removal redelivery, denied networking, and exact cleanup. Publication remains separately gated.
 
 ## One Corrupt Plaid Token Aborts Valid Sibling Items
 
-Status: open; discovered in work block 3G
+Status: resolved locally in work block 4K; release not authorized
 
 Severity: medium item-isolation and reliability risk
 
@@ -1145,13 +1145,13 @@ Acceptance checks:
 
 - Decryption happens inside the per-item boundary, healthy siblings continue, and failed item reporting exposes no token material.
 
-Why not fixed now:
+Resolution:
 
-Failure-isolation changes and regression coverage were excluded from work block 3G.
+Work block 4K moves access-token decryption inside the per-item exception boundary and returns only stable sanitized item errors. A corrupt item makes no Plaid request, keeps its cursor and timestamp, and cannot prevent healthy siblings before or after it from committing. Maintained Personal, BFM, and Luxe Legacy cases cover corrupt-first and corrupt-last order, sanitized output without token or ciphertext material, successful sibling counters and persistence, denied networking, and exact cleanup. Publication remains separately gated.
 
 ## Primary Plaid Paths Lack Tracked Regression Coverage
 
-Status: partially addressed in work blocks 4I and 4J; remaining primary Plaid coverage stays parked
+Status: partially addressed through work block 4K; remaining broad primary Plaid coverage stays parked
 
 Severity: medium regression-confidence risk
 
@@ -1177,7 +1177,7 @@ Acceptance checks:
 
 Remaining gap:
 
-Work block 4I adds the maintained transaction-pagination, cursor, rollback, exact-redelivery, enabled-account, three-entity, denied-network, and cleanup slice. Work block 4J adds populated freshness migration, per-item reconciliation, disabled/removed cleanup, manual-account preservation, normal and empty liability refresh, failure preservation, mixed freshness, account-toggle invalidation, similar-name link safety, denied-network, all-entity isolation, and cleanup coverage. Missing-modification observability, corrupt-token isolation, and the remaining primary Plaid paths stay parked with Task 1J.
+Work block 4I adds the maintained transaction-pagination, cursor, rollback, exact-redelivery, enabled-account, three-entity, denied-network, and cleanup slice. Work block 4J adds populated freshness migration, per-item reconciliation, disabled/removed cleanup, manual-account preservation, normal and empty liability refresh, failure preservation, mixed freshness, account-toggle invalidation, similar-name link safety, denied-network, all-entity isolation, and cleanup coverage. Work block 4K adds corrupt-first and corrupt-last token isolation, sanitized errors, missing-modification rollback and cursor preservation, successful sibling continuation, actual modified/removed counts, absent-removal idempotency, denied networking, and exact cleanup. Broader connection and operator-path coverage not tied to these repaired defects remains parked for future paired work rather than widening Task 1J.
 
 ## Scheduled Plaid Sync Can Report Partial Failure As Success
 

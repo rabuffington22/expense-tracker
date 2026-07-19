@@ -2167,8 +2167,445 @@ def main() -> None:
 
         print("   ✅ Additive migration, per-item reconciliation, manual preservation, liability freshness, link safety, isolation, and cleanup passed")
 
-        # ── 8g. CSV export tests ────────────────────────────────────
-        print("\n8g. CSV export tests…")
+        # ── 8g. Plaid item isolation and truthful observability ────
+        print("\n8g. Plaid item isolation and truthful observability…")
+        from web.routes import plaid as isolation_plaid_routes
+
+        isolation_start_cursor = "isolation-cursor-start"
+        isolation_start_synced = "2026-07-01T00:00:00+00:00"
+
+        def _seed_isolation_item(
+            entity_key, item_id, encrypted_token, created_at, institution_name
+        ):
+            account_id = f"{item_id}-account"
+            conn_isolation = get_connection(entity_key)
+            conn_isolation.execute(
+                "INSERT INTO plaid_items "
+                "(item_id, access_token, institution_name, created_at, cursor, last_synced) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    item_id,
+                    encrypted_token,
+                    institution_name,
+                    created_at,
+                    isolation_start_cursor,
+                    isolation_start_synced,
+                ),
+            )
+            conn_isolation.execute(
+                "INSERT INTO plaid_accounts "
+                "(item_id, account_id, name, enabled) "
+                "VALUES (?, ?, 'Isolation Checking', 1)",
+                (item_id, account_id),
+            )
+            conn_isolation.commit()
+            conn_isolation.close()
+            return account_id
+
+        def _seed_isolation_transaction(
+            entity_key, item_id, plaid_transaction_id, role
+        ):
+            transaction_id = f"{item_id}-{role}-row"
+            conn_isolation = get_connection(entity_key)
+            conn_isolation.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, amount, amount_cents, "
+                "account, category, source_filename, imported_at, plaid_item_id, "
+                "plaid_transaction_id) VALUES (?, '2026-07-01', ?, -10.0, -1000, "
+                "'Isolation Checking', 'Food', 'isolation-smoke', "
+                "'2026-07-01T00:00:00+00:00', ?, ?)",
+                (
+                    transaction_id,
+                    f"ISOLATION ORIGINAL {role.upper()}",
+                    item_id,
+                    plaid_transaction_id,
+                ),
+            )
+            conn_isolation.commit()
+            conn_isolation.close()
+            return transaction_id
+
+        def _clean_isolation_state(entity_key):
+            conn_isolation = get_connection(entity_key)
+            conn_isolation.execute(
+                "DELETE FROM transaction_splits WHERE transaction_id IN "
+                "(SELECT transaction_id FROM transactions "
+                "WHERE plaid_item_id LIKE 'isolation-%')"
+            )
+            conn_isolation.execute(
+                "DELETE FROM transactions WHERE plaid_item_id LIKE 'isolation-%'"
+            )
+            conn_isolation.execute(
+                "DELETE FROM plaid_accounts WHERE item_id LIKE 'isolation-%'"
+            )
+            conn_isolation.execute(
+                "DELETE FROM plaid_items WHERE item_id LIKE 'isolation-%'"
+            )
+            conn_isolation.commit()
+            conn_isolation.close()
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            for corrupt_first in (True, False):
+                order_label = "corrupt-first" if corrupt_first else "corrupt-last"
+                corrupt_item = f"isolation-{order_label}-corrupt-{entity_key}"
+                healthy_item = f"isolation-{order_label}-healthy-{entity_key}"
+                corrupt_token = f"synthetic-corrupt-ciphertext-{order_label}-{entity_key}"
+                healthy_token = f"synthetic-healthy-ciphertext-{order_label}-{entity_key}"
+                healthy_decrypted = f"synthetic-healthy-token-{order_label}-{entity_key}"
+                corrupt_created = (
+                    "2026-07-01T00:00:00+00:00"
+                    if corrupt_first
+                    else "2026-07-01T00:01:00+00:00"
+                )
+                healthy_created = (
+                    "2026-07-01T00:01:00+00:00"
+                    if corrupt_first
+                    else "2026-07-01T00:00:00+00:00"
+                )
+                _seed_isolation_item(
+                    entity_key,
+                    corrupt_item,
+                    corrupt_token,
+                    corrupt_created,
+                    "Synthetic Corrupt Bank",
+                )
+                healthy_account = _seed_isolation_item(
+                    entity_key,
+                    healthy_item,
+                    healthy_token,
+                    healthy_created,
+                    "Synthetic Healthy Bank",
+                )
+                healthy_plaid_id = f"{healthy_item}-added"
+
+                def _decrypt_isolation_token(token):
+                    if token == corrupt_token:
+                        raise ValueError(f"cannot decrypt {token}")
+                    if token == healthy_token:
+                        return healthy_decrypted
+                    raise AssertionError("unexpected synthetic token")
+
+                healthy_result = {
+                    "added": [{
+                        "plaid_transaction_id": healthy_plaid_id,
+                        "account_id": healthy_account,
+                        "date": "2026-07-19",
+                        "amount": 4.56,
+                        "name": "ISOLATION HEALTHY ADD",
+                    }],
+                    "modified": [],
+                    "removed": [],
+                    "next_cursor": f"isolation-{order_label}-healthy-final-{entity_key}",
+                }
+                with patch(
+                    "core.crypto.decrypt_token",
+                    side_effect=_decrypt_isolation_token,
+                ), patch(
+                    "core.plaid_client.get_transactions", return_value=healthy_result
+                ) as isolation_fetch, patch(
+                    "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+                ), patch(
+                    "socket.socket",
+                    side_effect=AssertionError(
+                        "Plaid item isolation smoke forbids outbound networking"
+                    ),
+                ):
+                    isolation_result = isolation_plaid_routes._sync_entity(entity_key)
+
+                isolation_fetch.assert_called_once_with(
+                    healthy_decrypted, cursor=isolation_start_cursor
+                )
+                _check(
+                    isolation_result["new"] == 1
+                    and isolation_result["modified"] == 0
+                    and isolation_result["removed"] == 0
+                    and len(isolation_result["errors"]) == 1
+                    and "Synthetic Corrupt Bank: access token unavailable"
+                    == isolation_result["errors"][0]
+                    and corrupt_token not in isolation_result["errors"][0]
+                    and healthy_token not in isolation_result["errors"][0]
+                    and healthy_decrypted not in isolation_result["errors"][0],
+                    f"Plaid item isolation {entity_key}/{order_label}: corrupt tokens must be isolated and sanitized",
+                )
+                conn_isolation = get_connection(entity_key)
+                corrupt_state = conn_isolation.execute(
+                    "SELECT cursor, last_synced FROM plaid_items WHERE item_id=?",
+                    (corrupt_item,),
+                ).fetchone()
+                healthy_state = conn_isolation.execute(
+                    "SELECT cursor, last_synced FROM plaid_items WHERE item_id=?",
+                    (healthy_item,),
+                ).fetchone()
+                healthy_row = conn_isolation.execute(
+                    "SELECT amount_cents FROM transactions WHERE plaid_transaction_id=?",
+                    (healthy_plaid_id,),
+                ).fetchone()
+                conn_isolation.close()
+                _check(
+                    corrupt_state["cursor"] == isolation_start_cursor
+                    and corrupt_state["last_synced"] == isolation_start_synced
+                    and healthy_state["cursor"]
+                    == f"isolation-{order_label}-healthy-final-{entity_key}"
+                    and healthy_state["last_synced"] != isolation_start_synced
+                    and healthy_row is not None
+                    and healthy_row["amount_cents"] == -456,
+                    f"Plaid item isolation {entity_key}/{order_label}: healthy siblings must commit while failed item state is preserved",
+                )
+                _clean_isolation_state(entity_key)
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            missing_item = f"isolation-missing-modified-{entity_key}"
+            healthy_item = f"isolation-missing-healthy-{entity_key}"
+            missing_token = f"synthetic-missing-token-{entity_key}"
+            healthy_token = f"synthetic-missing-healthy-token-{entity_key}"
+            missing_account = _seed_isolation_item(
+                entity_key,
+                missing_item,
+                missing_token,
+                "2026-07-01T00:00:00+00:00",
+                "Synthetic Missing Bank",
+            )
+            healthy_account = _seed_isolation_item(
+                entity_key,
+                healthy_item,
+                healthy_token,
+                "2026-07-01T00:01:00+00:00",
+                "Synthetic Healthy Sibling",
+            )
+            rolled_back_add = f"{missing_item}-rolled-back-add"
+            healthy_add = f"{healthy_item}-committed-add"
+            missing_result = {
+                "added": [{
+                    "plaid_transaction_id": rolled_back_add,
+                    "account_id": missing_account,
+                    "date": "2026-07-19",
+                    "amount": 1.23,
+                    "name": "ISOLATION ROLLED BACK ADD",
+                }],
+                "modified": [{
+                    "plaid_transaction_id": f"{missing_item}-absent-target",
+                    "account_id": missing_account,
+                    "date": "2026-07-19",
+                    "amount": 9.87,
+                    "name": "ISOLATION MISSING MODIFY",
+                }],
+                "removed": [],
+                "next_cursor": f"isolation-missing-final-{entity_key}",
+            }
+            healthy_result = {
+                "added": [{
+                    "plaid_transaction_id": healthy_add,
+                    "account_id": healthy_account,
+                    "date": "2026-07-19",
+                    "amount": 2.34,
+                    "name": "ISOLATION HEALTHY SIBLING ADD",
+                }],
+                "modified": [],
+                "removed": [],
+                "next_cursor": f"isolation-missing-healthy-final-{entity_key}",
+            }
+
+            def _missing_result_for_token(access_token, cursor):
+                _check(
+                    cursor == isolation_start_cursor,
+                    f"Plaid observability {entity_key}: each sibling must start from its stored cursor",
+                )
+                if access_token == f"decrypted-{missing_token}":
+                    return missing_result
+                if access_token == f"decrypted-{healthy_token}":
+                    return healthy_result
+                raise AssertionError("unexpected synthetic decrypted token")
+
+            with patch(
+                "core.crypto.decrypt_token", side_effect=lambda token: f"decrypted-{token}"
+            ), patch(
+                "core.plaid_client.get_transactions",
+                side_effect=_missing_result_for_token,
+            ) as missing_fetch, patch(
+                "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+            ), patch(
+                "socket.socket",
+                side_effect=AssertionError(
+                    "Plaid observability smoke forbids outbound networking"
+                ),
+            ):
+                missing_sync = isolation_plaid_routes._sync_entity(entity_key)
+
+            _check(
+                missing_fetch.call_count == 2
+                and missing_sync["new"] == 1
+                and missing_sync["modified"] == 0
+                and missing_sync["removed"] == 0
+                and len(missing_sync["errors"]) == 1
+                and "Synthetic Missing Bank: transaction persistence failed; cursor unchanged"
+                == missing_sync["errors"][0]
+                and "absent-target" not in missing_sync["errors"][0],
+                f"Plaid observability {entity_key}: missing modifications must fail only their item without false counters",
+            )
+            conn_isolation = get_connection(entity_key)
+            missing_state = conn_isolation.execute(
+                "SELECT cursor, last_synced FROM plaid_items WHERE item_id=?",
+                (missing_item,),
+            ).fetchone()
+            healthy_state = conn_isolation.execute(
+                "SELECT cursor, last_synced FROM plaid_items WHERE item_id=?",
+                (healthy_item,),
+            ).fetchone()
+            rolled_back_row = conn_isolation.execute(
+                "SELECT transaction_id FROM transactions WHERE plaid_transaction_id=?",
+                (rolled_back_add,),
+            ).fetchone()
+            healthy_row = conn_isolation.execute(
+                "SELECT amount_cents FROM transactions WHERE plaid_transaction_id=?",
+                (healthy_add,),
+            ).fetchone()
+            conn_isolation.close()
+            _check(
+                missing_state["cursor"] == isolation_start_cursor
+                and missing_state["last_synced"] == isolation_start_synced
+                and healthy_state["cursor"]
+                == f"isolation-missing-healthy-final-{entity_key}"
+                and rolled_back_row is None
+                and healthy_row is not None
+                and healthy_row["amount_cents"] == -234,
+                f"Plaid observability {entity_key}: missing-target rollback and healthy-sibling commit must remain independent",
+            )
+            _clean_isolation_state(entity_key)
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            truth_item = f"isolation-truth-counts-{entity_key}"
+            truth_token = f"synthetic-truth-token-{entity_key}"
+            truth_account = _seed_isolation_item(
+                entity_key,
+                truth_item,
+                truth_token,
+                "2026-07-01T00:00:00+00:00",
+                "Synthetic Truth Bank",
+            )
+            modified_plaid_id = f"{truth_item}-modified"
+            removed_plaid_id = f"{truth_item}-removed"
+            absent_removed_id = f"{truth_item}-already-absent"
+            _seed_isolation_transaction(
+                entity_key, truth_item, modified_plaid_id, "modified"
+            )
+            removed_transaction_id = _seed_isolation_transaction(
+                entity_key, truth_item, removed_plaid_id, "removed"
+            )
+            conn_isolation = get_connection(entity_key)
+            conn_isolation.execute(
+                "INSERT INTO transaction_splits "
+                "(transaction_id, description, amount_cents, category, subcategory) "
+                "VALUES (?, 'isolation truth split', -1000, 'Food', 'General')",
+                (removed_transaction_id,),
+            )
+            conn_isolation.commit()
+            conn_isolation.close()
+            truth_result = {
+                "added": [],
+                "modified": [{
+                    "plaid_transaction_id": modified_plaid_id,
+                    "account_id": truth_account,
+                    "date": "2026-07-19",
+                    "amount": 3.45,
+                    "name": "ISOLATION TRUTHFUL MODIFY",
+                }],
+                "removed": [removed_plaid_id, absent_removed_id],
+                "next_cursor": f"isolation-truth-final-{entity_key}",
+            }
+            with patch(
+                "core.crypto.decrypt_token", return_value=f"decrypted-{truth_token}"
+            ), patch(
+                "core.plaid_client.get_transactions", return_value=truth_result
+            ), patch(
+                "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+            ), patch(
+                "socket.socket",
+                side_effect=AssertionError(
+                    "Plaid truth-count smoke forbids outbound networking"
+                ),
+            ):
+                truthful_sync = isolation_plaid_routes._sync_entity(entity_key)
+            _check(
+                truthful_sync["new"] == 0
+                and truthful_sync["modified"] == 1
+                and truthful_sync["removed"] == 1
+                and truthful_sync["errors"] == [],
+                f"Plaid observability {entity_key}: counters must reflect actual affected rows",
+            )
+            conn_isolation = get_connection(entity_key)
+            modified_row = conn_isolation.execute(
+                "SELECT description_raw, amount_cents FROM transactions "
+                "WHERE plaid_transaction_id=?",
+                (modified_plaid_id,),
+            ).fetchone()
+            removed_row = conn_isolation.execute(
+                "SELECT transaction_id FROM transactions WHERE plaid_transaction_id=?",
+                (removed_plaid_id,),
+            ).fetchone()
+            removed_split = conn_isolation.execute(
+                "SELECT id FROM transaction_splits WHERE transaction_id=?",
+                (removed_transaction_id,),
+            ).fetchone()
+            conn_isolation.close()
+            _check(
+                modified_row["description_raw"] == "ISOLATION TRUTHFUL MODIFY"
+                and modified_row["amount_cents"] == -345
+                and removed_row is None
+                and removed_split is None,
+                f"Plaid observability {entity_key}: truthful counts must preserve modification and split-cleanup behavior",
+            )
+
+            absent_redelivery = {
+                "added": [],
+                "modified": [],
+                "removed": [removed_plaid_id, absent_removed_id],
+                "next_cursor": f"isolation-truth-redelivery-{entity_key}",
+            }
+            with patch(
+                "core.crypto.decrypt_token", return_value=f"decrypted-{truth_token}"
+            ), patch(
+                "core.plaid_client.get_transactions", return_value=absent_redelivery
+            ), patch(
+                "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+            ), patch(
+                "socket.socket",
+                side_effect=AssertionError(
+                    "Plaid truth-count smoke forbids outbound networking"
+                ),
+            ):
+                redelivered_removal = isolation_plaid_routes._sync_entity(entity_key)
+            conn_isolation = get_connection(entity_key)
+            redelivery_cursor = conn_isolation.execute(
+                "SELECT cursor FROM plaid_items WHERE item_id=?", (truth_item,)
+            ).fetchone()[0]
+            conn_isolation.close()
+            _check(
+                redelivered_removal["removed"] == 0
+                and redelivered_removal["errors"] == []
+                and redelivery_cursor == f"isolation-truth-redelivery-{entity_key}",
+                f"Plaid observability {entity_key}: already-absent removals must remain zero-count idempotent successes",
+            )
+            _clean_isolation_state(entity_key)
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            conn_isolation = get_connection(entity_key)
+            _check(
+                conn_isolation.execute(
+                    "SELECT COUNT(*) FROM plaid_items WHERE item_id LIKE 'isolation-%'"
+                ).fetchone()[0] == 0
+                and conn_isolation.execute(
+                    "SELECT COUNT(*) FROM plaid_accounts WHERE item_id LIKE 'isolation-%'"
+                ).fetchone()[0] == 0
+                and conn_isolation.execute(
+                    "SELECT COUNT(*) FROM transactions WHERE plaid_item_id LIKE 'isolation-%'"
+                ).fetchone()[0] == 0,
+                f"Plaid item isolation {entity_key}: synthetic state should be cleaned exactly",
+            )
+            conn_isolation.close()
+        print("   ✅ All-entity token isolation, missing-modification rollback, truthful counts, idempotent removals, and cleanup passed")
+
+        # ── 8h. CSV export tests ────────────────────────────────────
+        print("\n8h. CSV export tests…")
         with app.test_client() as csv_client:
             csv_client.set_cookie("entity", "Personal")
 
@@ -2220,8 +2657,8 @@ def main() -> None:
 
         print("   ✅ All CSV export tests passed")
 
-        # ── 8h. Recurring Charges report repair ────────────────────
-        print("\n8h. Recurring Charges report repair…")
+        # ── 8i. Recurring Charges report repair ────────────────────
+        print("\n8i. Recurring Charges report repair…")
         from core.reporting import get_recurring_charges
         from web.routes.reports import _prepare_report
 
