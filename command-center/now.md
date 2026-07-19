@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish the exact locally verified 4J Plaid account-state repair to `main`, observe its automatic Fly deployment, verify credential-free production health, and record the sanitized release closeout.
+Choose the next bounded primary-Plaid step after durable release of account reconciliation, manual-account preservation, liability refresh, and freshness truthfulness through work blocks 4J and 4J-R.
 
 ## Current Phase
 
@@ -10,56 +10,42 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4J-R: Durability And Release — active under Ryan's direct instruction to commit and push 4J to `main`.
+None active. Work block 4J-R is complete: source commit `74ad56d` is on `main`, automatic Fly Deploy run `29699120063` and job `88225014833` passed, and credential-free production `/health` returned HTTP 200.
 
 ## Current Task
 
-Phase 4 Task 1I release durability plus Task 4 for only the exact verified 4J scope.
+Phase 4 Task 1J: separately define Plaid item-failure isolation and truthful missing-modification observability after 4J established and released the account-state contract.
 
 ## Owner
 
-Codex Desktop owns the exact-path source commit, fast-forward direct-main push, automatic deployment observation, credential-free health check, and sanitized `[skip actions]` closeout.
+Ryan owns the next Task 1J work-block decision. Codex Desktop completed 4J-R durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
 
 ## Current Action
 
-Reverify and explicitly stage only the twelve intended 4J paths; commit on `codex/plaid-account-truthfulness`; require local `main`, `origin/main`, and the feature base to align; fast-forward local `main`; push without force; observe the attributable automatic Fly deploy; verify only credential-free `/health`; then publish the command-center-only closeout with `[skip actions]`.
+Stop at the completed 4J-R release gate. Separately define and confirm a bounded 4K Task 1J block; do not infer live Plaid, observability, isolation, broader repair, or additional release authority.
 
-## Exact Source Set
+## Work Block 4J-R Result
 
-- `core/db.py`
-- `web/routes/cashflow.py`
-- `web/routes/plaid.py`
-- `scripts/smoke_test.py`
-- `command-center/plaid-account-state-contract.md`
-- `command-center/logs/2026-07-19-plaid-account-state-truthfulness-4j.md`
-- `command-center/issues.md`
-- `command-center/decisions.md`
-- `command-center/now.md`
-- `command-center/roadmap.md`
-- `command-center/state.json`
-- `command-center/index.html`
+- The exact twelve intended 4J paths were committed as `74ad56d`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force.
+- Automatic Fly Deploy run `29699120063` and job `88225014833` completed successfully for exact source SHA `74ad56d1caf7e5c03b9863354ee61a9f11421604`.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200.
+- Exact-path staging, high-confidence sensitive-addition scan, full smoke, compilation, JSON, dashboard, health, whitespace, alignment, and exclusion checks passed.
+- This sanitized command-center-only closeout uses `[skip actions]` to prevent a second deployment.
 
-## Preserved Boundaries
+## Remaining Gates
 
+- Task 1J, broader Task 2, Task 3, and every later repair or release require separate confirmation.
+- Missing-modification observability, corrupt-token isolation, scheduled/public coordination, downstream behavior, and unrelated repair families remain excluded.
+- Real databases or financial/payroll/HR rows, uploads, credentials, authenticated production pages, live Plaid, manual workflow actions, non-automatic Fly changes, downstream access/writes, and other external actions remain closed.
 - Untracked `scripts/sync_prod_to_local.sh` and unrelated `command-center/now 2.md` remain untouched and unstaged.
-- No real databases or financial/payroll/HR rows, uploads, credentials, authenticated production pages, or live Plaid calls.
-- No manual workflow action, non-automatic Fly mutation, downstream access/write, workflow edit, Task 1J implementation, broader repair, force push, or recovery outside the exact fast-forward path.
-
-## Stop Conditions
-
-- The exact diff or staged set includes an unexpected path, sensitive value, protected data, or unrelated user change.
-- Local or remote `main` diverges or cannot be fast-forwarded safely.
-- Maintained verification fails.
-- The automatic deployment fails or cannot be attributed to the source SHA.
-- Credential-free `/health` fails, a second deployment starts for the closeout, or recovery exceeds the authorized path.
 
 ## Verification
 
-- Full maintained synthetic smoke suite, Python compilation, JSON validation, dashboard refresh and health, and `git diff --check`.
-- Exact path, staged-set, high-confidence sensitive-addition, ancestry, GitHub authentication, and remote-alignment review.
-- Automatic Fly workflow and job attribution plus credential-free production `/health`.
-- Final local `main` and `origin/main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
+- Source commit `74ad56d1caf7e5c03b9863354ee61a9f11421604` matches local `main`, `origin/main`, and the successful automatic workflow head SHA before this closeout.
+- Fly Deploy run `29699120063` and deploy job `88225014833`: success with every reported step passing.
+- Credential-free production `/health`: HTTP 200.
+- Command-center dashboard refresh, health check, JSON validation, whitespace checks, final main/origin alignment, and preserved exclusions: required before closeout publication.
 
 ## Next Report Point
 
-Return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the separate Task 1J / 4K planning gate.
+Return the source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the separate 4K Task 1J planning gate.
