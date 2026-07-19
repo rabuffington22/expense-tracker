@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 9:49 AM CST",
+    "lastUpdated": "2026-07-19 9:53 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,34 +22,23 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4C are published on main; 4C source commit 4a84f49 deployed successfully in Fly run 29689659579, with this command-center-only skip-actions closeout"
+    "durabilityStatus": "Work blocks through 4D-R are published on main; 4D source commit 7f7f71e deployed successfully in Fly run 29691622134, with this command-center-only skip-actions closeout"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4D is complete and locally verified: all payroll routes now enforce BFM-only access with maintained all-entity boundary coverage; release remains separate.",
+    "summary": "Work blocks 4D and 4D-R are complete: the BFM-only payroll boundary is durable on main, automatic Fly deployment passed, and production health returned 200.",
     "progress": 58
   },
   "currentTask": {
-    "title": "Task 4: Publish and verify explicitly approved repairs",
-    "owner": "Codex Desktop",
+    "title": "Task 1D: Enforce the Luxe Legacy denial boundary across planning routes",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Ryan directly authorized exact-path 4D commit, main push, automatic deployment observation, credential-free health, and sanitized closeout",
-    "nextAction": "Verify and stage the exact nine-path 4D set, commit, fast-forward main, push without force, observe automatic Fly, verify health, and publish a skip-actions closeout.",
-    "blocker": "Unexpected scope, remote divergence, failed verification or deployment, credential needs, and recovery beyond the exact path require a stop"
+    "supportingAgent": "Codex Desktop completed 4D-R direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout",
+    "nextAction": "Separately define and confirm work block 4E for P3-3D-02 and the focused P3-3D-C01 planning-boundary slice.",
+    "blocker": "No 4E implementation, protected-data access, credential use, or other live action is authorized"
   },
-  "currentWorkBlock": {
-    "id": "phase-4-block-d-release",
-    "label": "4D-R",
-    "name": "Durability And Release",
-    "status": "active",
-    "includedTasks": [
-      "Task 1C release durability",
-      "Task 4"
-    ],
-    "owner": "Codex Desktop",
-    "nextReportPoint": "Return source and closeout commits, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and the separate 4E gate."
-  },
+  "currentWorkBlock": null,
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -73,21 +62,25 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish and verify work block 4D",
-    "status": "in progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized commit and push to main for the locally verified 4D repair.",
-    "action": "Commit the exact verified scope, fast-forward main, push without force, observe automatic deployment, verify health, and publish the sanitized closeout.",
+    "title": "Separately plan work block 4E planning-route boundary",
+    "status": "awaiting Ryan",
+    "owner": "Ryan",
+    "why": "4D-R is durable, deployed, and health verified; the visible Phase 4 sequence places the Luxe Legacy planning-route boundary next.",
+    "action": "Ask Codex to define 4E for Task 1D and the focused P3-3D-C01 boundary slice, then confirm before implementation.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    "Ask Codex to define and then confirm work block 4E before the next implementation."
+  ],
   "waitingOnRyan": {
-    "summary": "No Ryan input is currently required; 4D-R is active within the exact authorized publish path.",
-    "items": []
+    "summary": "Work block 4D-R is complete and the next Phase 4 implementation needs a separate Ryan request and confirmation.",
+    "items": [
+      "Ask Codex to define work block 4E when ready."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "4D-R is active. 4E, protected data, credentials, manual workflow actions, unrelated repairs, and recovery beyond the exact publish path remain outside authorization.",
-    "decisionQueue": "The next Ryan decision follows 4D-R closeout and concerns separately planning 4E.",
+    "phaseQuestions": "4D-R is complete. 4E, protected data, credentials, manual workflow actions, unrelated repairs, and other live access remain outside authorization.",
+    "decisionQueue": "The next Ryan decision is a separately proposed and confirmed 4E scope.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1337,7 +1330,7 @@
       "phaseId": "phase-4",
       "label": "4D-R",
       "name": "Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1C release durability",
         "Task 4"
@@ -1373,7 +1366,12 @@
         "Final main and origin alignment and sanitized skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and separate 4E gate.",
-      "durability": "Pending direct-main source push, automatic deployment verification, and command-center-only skip-actions closeout."
+      "durability": "Source commit 7f7f71e is on local main and origin/main; automatic Fly run 29691622134 and deploy job 88205268889 succeeded, production health returned 200, and this command-center-only closeout is the skip-actions durability record.",
+      "evidence": [
+        "command-center/logs/2026-07-19-bfm-only-payroll-boundary-release-4d-r.md",
+        "https://github.com/rabuffington22/expense-tracker/actions/runs/29691622134"
+      ],
+      "result": "Published 4D source commit 7f7f71e directly to main, observed successful automatic Fly run 29691622134 and job 88205268889, verified credential-free production health at HTTP 200, and preserved the separate 4E authorization gate."
     }
   ],
   "phaseTasks": [
@@ -1791,7 +1789,7 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1D",
       "title": "Task 1D: Enforce the Luxe Legacy denial boundary across planning routes",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Repair P3-3D-02 as a separate planning-boundary block after 4D.",
       "nextAction": "Define and confirm work block 4E with its focused P3-3D-C01 coverage slice.",
@@ -1913,15 +1911,17 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Publish only exact verified repair scopes through separately authorized release blocks; 4D-R is currently authorized for direct-main durability and automatic deployment verification.",
-      "result": "Prior releases 4B and 4C-R completed successfully; 4D-R is active.",
+      "summary": "Publish only exact verified repair scopes through separately authorized release blocks.",
+      "result": "Releases 4B, 4C-R, and 4D-R completed successfully; 4D source commit 7f7f71e is on main, Fly run 29691622134 and job 88205268889 succeeded, and credential-free production health returned 200.",
       "evidence": [
-        "command-center/logs/2026-07-18-auth-repair-release-4b.md"
+        "command-center/logs/2026-07-18-auth-repair-release-4b.md",
+        "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
+        "command-center/logs/2026-07-19-bfm-only-payroll-boundary-release-4d-r.md"
       ],
-      "nextAction": "Complete and verify the exact 4D-R direct-main release path.",
-      "blocker": "Unexpected scope, divergence, failed checks or deployment, credentials, and recovery beyond the exact path require a stop."
+      "nextAction": "Require separate approval for each future release block.",
+      "blocker": "No additional release or live action is authorized."
     },
     {
       "phaseId": "phase-5",
@@ -2158,6 +2158,14 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-19",
+      "text": "Published 4D source commit 7f7f71e to main; automatic Fly run 29691622134 and deploy job 88205268889 succeeded, and credential-free production health returned 200."
+    },
+    {
+      "time": "2026-07-19",
+      "text": "Completed work block 4D-R with exact-path staging, sensitive-string review, main alignment, protected untracked-file preservation, and a command-center-only skip-actions closeout."
+    },
     {
       "time": "2026-07-19",
       "text": "Published 4C source commit 4a84f49 to main; automatic Fly run 29689659579 passed every reported step and credential-free production health returned 200."
@@ -2836,8 +2844,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete and verify work block 4D-R",
-    "description": "Publish the exact verified 4D scope to main, observe automatic Fly deployment, verify production health without credentials, and publish a sanitized skip-actions closeout."
+    "name": "Separately plan work block 4E",
+    "description": "Define and confirm the Luxe Legacy planning-route denial boundary and focused P3-3D-C01 regression slice before implementation."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -2903,6 +2911,8 @@
     "phase4PayrollBoundaryCoverage": "pass; maintained coverage enumerates all eight payroll routes, verifies sixteen non-BFM redirects, unchanged employee pay-change and payroll-entry state, denied temp-payload preservation, and BFM route availability",
     "phase4PayrollBoundaryCleanup": "pass; smoke database roots were disposable, exact synthetic payroll temp payloads were removed, and pre-existing untracked scripts/sync_prod_to_local.sh remained untouched",
     "phase4TransactionIdentityRelease": "pass; source commit 4a84f49 is on main, automatic Fly run 29689659579 and deploy job 88200026060 passed every reported step, and credential-free production health returned 200",
-    "phase4TransactionIdentityDurability": "pass; local main matched origin/main at 4a84f49 before this command-center-only skip-actions closeout"
+    "phase4TransactionIdentityDurability": "pass; local main matched origin/main at 4a84f49 before this command-center-only skip-actions closeout",
+    "phase4PayrollBoundaryRelease": "pass; source commit 7f7f71e is on main, automatic Fly run 29691622134 and deploy job 88205268889 passed every reported step, and credential-free production health returned HTTP 200",
+    "phase4PayrollBoundaryDurability": "pass; local main and origin/main aligned at source commit 7f7f71e before this command-center-only skip-actions closeout, with the pre-existing untracked sync script excluded"
   }
 }

@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish and verify the completed work block 4D through the directly authorized main-push release path.
+Plan the next bounded Phase 4 boundary repair after the durable, deployed, and health-verified completion of work block 4D-R.
 
 ## Current Phase
 
@@ -10,15 +10,15 @@ Phase 4: Core Repairs And Regression Coverage — active after the verified loca
 
 ## Current Work Block
 
-Work Block 4D-R: Durability And Release — active under Ryan's direct instruction to commit and push 4D to `main`.
+None. Work blocks 4D and 4D-R are complete; source commit `7f7f71e` is on `main`, automatic Fly deployment passed, and production health returned 200.
 
 ## Current Task
 
-Phase 4 Task 4: publish the exact verified 4D scope to `main`, observe the automatic deployment, run credential-free health verification, and publish a sanitized skip-actions closeout.
+Phase 4 Task 1D: separately define the Luxe Legacy planning-route boundary as work block 4E. Task 2 coverage should remain limited to the matching `P3-3D-C01` boundary slice.
 
 ## Owner
 
-Codex Desktop owns exact-path review, Git durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan retains every recovery, protected-data, credential, and 4E decision.
+Ryan owns the next 4E work-block decision. Codex Desktop completed exact-path 4D durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
 
 ## Work Block 4D Result
 
@@ -51,13 +51,13 @@ Codex Desktop owns exact-path review, Git durability, automatic deployment obser
 
 ## Current Action
 
-Verify the exact nine-path 4D publish set and sensitive boundaries, commit on `codex/bfm-payroll-boundary`, fast-forward local `main`, push `main` without force, observe the automatic Fly deployment, verify `/health` without credentials, and publish one command-center-only `[skip actions]` closeout.
+Separately define and confirm work block 4E for `P3-3D-02`, the Luxe Legacy planning-route denial boundary, plus only its focused `P3-3D-C01` coverage slice. Do not begin implementation from the roadmap alone.
 
 The former umbrella Task 1B is now decomposed into visible Tasks 1B-1P. Task 1B records the completed transaction-identity foundation; Tasks 1C-1G expose the accepted early boundary/truthfulness tranche; Tasks 1H-1P preserve the already-confirmed downstream repair-family sequence.
 
 ## Remaining Gates
 
-- Any unexpected path, remote divergence, failed check/deployment, credential requirement, or recovery outside the exact fast-forward route requires a stop.
+- Any future release, protected-data access, credential use, or live action requires separate authorization.
 - 4E requires a complete proposed work block and Ryan confirmation before implementation.
 - Plaid cursor atomicity, reconciliation, concurrency, `/k/`, and every other Phase 3 finding remain separately gated.
 - Protected data, credentials, real databases, and live actions remain closed unless a future exact block authorizes them.
@@ -68,8 +68,10 @@ The former umbrella Task 1B is now decomposed into visible Tasks 1B-1P. Task 1B 
 - Python compilation for `web/routes/payroll.py` and `scripts/smoke_test.py`: pass.
 - Eight registered payroll routes, sixteen non-BFM denial outcomes, unchanged denied state, denied temp-payload preservation, and all eight BFM paths: pass.
 - Exact synthetic payload cleanup, `git diff --check`, dashboard refresh, and command-center health: pass.
-- Branch is local-only; no commit, push, deployment, protected-data access, credential use, or live action occurred.
+- Source commit `7f7f71e` is on `main`; automatic Fly run `29691622134` and job `88205268889` passed every step.
+- Production `/health` returned HTTP 200 without credentials; local `main` matched `origin/main` before this closeout.
+- The untracked sync script remained excluded, and this closeout uses `[skip actions]` to avoid a second deployment.
 
 ## Next Report Point
 
-Return the 4D source and closeout commits, automatic Fly result, credential-free production health, final main alignment, preserved exclusions, and separately gated 4E planning point.
+Return both 4D commits, automatic Fly result, credential-free production health, final main alignment, preserved exclusions, and the separately gated 4E planning point.
