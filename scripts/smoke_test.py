@@ -505,8 +505,199 @@ def main() -> None:
 
         print("   ✅ All route regression tests passed")
 
+        # ── 8a. Luxe Legacy planning route boundary ────────────────
+        print("\n8a. Luxe Legacy planning route boundary…")
+
+        expected_planning_rules = {
+            "/planning/",
+            "/planning/settings",
+            "/planning/items/add",
+            "/planning/items/update/<int:item_id>",
+            "/planning/items/delete/<int:item_id>",
+            "/planning/cashflow-accounts/<entity_key>",
+            "/planning/short-term/",
+            "/planning/short-term/goals/create",
+            "/planning/short-term/goals/<int:goal_id>/update",
+            "/planning/short-term/goals/<int:goal_id>/delete",
+            "/planning/short-term/goals/<int:goal_id>/snapshot",
+            "/planning/short-term/goals/<int:goal_id>/lock-plan",
+            "/planning/short-term/goals/<int:goal_id>/progress",
+            "/planning/short-term/budget/save",
+            "/planning/short-term/budget/status",
+            "/planning/short-term/actions/create",
+            "/planning/short-term/actions/<int:item_id>/toggle",
+            "/planning/short-term/actions/<int:item_id>/delete",
+            "/planning/short-term/budget/transactions",
+            "/planning/short-term/budget/update-txn/<txn_id>",
+            "/planning/short-term/budget/subcategories",
+        }
+        registered_planning_rules = {
+            rule.rule
+            for rule in app.url_map.iter_rules()
+            if rule.endpoint.startswith(("planning.", "short_term_planning."))
+        }
+        _check(
+            registered_planning_rules == expected_planning_rules,
+            "planning boundary coverage must enumerate every registered planning route",
+        )
+
+        denied_planning_routes = (
+            ("get", "/planning/", {}),
+            ("post", "/planning/settings", {
+                "data": {"inflation_rate": "9.90", "birth_date": "1977-06-21"},
+            }),
+            ("post", "/planning/items/add", {
+                "data": {"item_type": "asset", "name": "Denied LL Item", "current_value": "999"},
+            }),
+            ("post", "/planning/items/update/999999", {
+                "data": {"name": "Denied LL Update", "current_value": "999"},
+            }),
+            ("post", "/planning/items/delete/999999", {}),
+            ("get", "/planning/cashflow-accounts/personal", {}),
+            ("get", "/planning/short-term/", {}),
+            ("post", "/planning/short-term/goals/create", {
+                "data": {"name": "Denied LL Goal", "goal_type": "savings", "target_amount": "999"},
+            }),
+            ("post", "/planning/short-term/goals/999999/update", {
+                "data": {"name": "Denied LL Goal Update", "target_amount": "999"},
+            }),
+            ("post", "/planning/short-term/goals/999999/delete", {}),
+            ("post", "/planning/short-term/goals/999999/snapshot", {
+                "data": {"balance": "999", "note": "denied"},
+            }),
+            ("post", "/planning/short-term/goals/999999/lock-plan", {}),
+            ("get", "/planning/short-term/goals/999999/progress", {}),
+            ("post", "/planning/short-term/budget/save", {
+                "data": {"budget_Food": "999"},
+            }),
+            ("get", "/planning/short-term/budget/status?month=2026-07", {}),
+            ("post", "/planning/short-term/actions/create", {
+                "data": {"title": "Denied LL Action"},
+            }),
+            ("post", "/planning/short-term/actions/999999/toggle", {}),
+            ("post", "/planning/short-term/actions/999999/delete", {}),
+            ("get", "/planning/short-term/budget/transactions?category=Food&month=2026-07", {}),
+            ("post", "/planning/short-term/budget/update-txn/denied-ll-txn", {
+                "data": {"category": "Food", "subcategory": "Groceries"},
+            }),
+            ("get", "/planning/short-term/budget/subcategories?category=Food&month=2026-07", {}),
+        )
+
+        def _database_snapshot(entity_key):
+            snapshot_conn = get_connection(entity_key)
+            try:
+                return tuple(snapshot_conn.iterdump())
+            finally:
+                snapshot_conn.close()
+
+        with app.test_client() as planning_client:
+            # Warm global entity setup before taking the denied-request baseline.
+            for entity_display in ("Personal", "BFM", "LL"):
+                planning_client.set_cookie("entity", entity_display)
+                _check(
+                    planning_client.get("/").status_code == 200,
+                    f"planning boundary warmup: {entity_display} dashboard should render",
+                )
+
+            personal_account = "Personal Planning Boundary Account"
+            bfm_account = "BFM Planning Boundary Account"
+            personal_item = "Personal-4E-Asset"
+            bfm_item = "BFM-4E-Asset"
+            for entity_key, account_name, item_name in (
+                ("personal", personal_account, personal_item),
+                ("company", bfm_account, bfm_item),
+            ):
+                conn_planning = get_connection(entity_key)
+                conn_planning.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type) "
+                    "VALUES (?, 12345, 'manual', 'bank')",
+                    (account_name,),
+                )
+                conn_planning.execute(
+                    "INSERT INTO planning_items "
+                    "(item_type, name, current_value_cents, annual_rate_bps, source, sort_order) "
+                    "VALUES ('asset', ?, 12345, 0, 'manual', 999)",
+                    (item_name,),
+                )
+                conn_planning.commit()
+                conn_planning.close()
+
+            for entity_display in ("Personal", "BFM"):
+                planning_client.set_cookie("entity", entity_display)
+                long_term = planning_client.get("/planning/")
+                _check(
+                    long_term.status_code == 200,
+                    f"planning {entity_display}: long-term page should remain available",
+                )
+                long_term_body = long_term.get_data(as_text=True)
+                _check(
+                    personal_item in long_term_body and bfm_item in long_term_body,
+                    f"planning {entity_display}: long-term Personal/BFM sharing should remain visible",
+                )
+                _check(
+                    planning_client.get("/planning/short-term/").status_code == 200,
+                    f"planning {entity_display}: short-term page should remain available",
+                )
+
+            planning_client.set_cookie("entity", "Personal")
+            personal_accounts = planning_client.get("/planning/cashflow-accounts/personal")
+            _check(
+                personal_accounts.status_code == 200
+                and personal_account in personal_accounts.get_data(as_text=True),
+                "planning Personal: account helper should remain available",
+            )
+            planning_client.set_cookie("entity", "BFM")
+            bfm_accounts = planning_client.get("/planning/cashflow-accounts/company")
+            _check(
+                bfm_accounts.status_code == 200 and bfm_account in bfm_accounts.get_data(as_text=True),
+                "planning BFM: account helper should remain available",
+            )
+
+            baseline_databases = {
+                entity_key: _database_snapshot(entity_key)
+                for entity_key in ("personal", "company", "luxelegacy")
+            }
+            planning_endpoints = {
+                rule.endpoint
+                for rule in app.url_map.iter_rules()
+                if rule.endpoint.startswith(("planning.", "short_term_planning."))
+            }
+
+            def _denied_planning_handler(*_args, **_kwargs):
+                raise AssertionError("denied planning request reached a route handler")
+
+            planning_client.set_cookie("entity", "LL")
+            with patch.dict(
+                app.view_functions,
+                {endpoint: _denied_planning_handler for endpoint in planning_endpoints},
+                clear=False,
+            ):
+                for method, path, kwargs in denied_planning_routes:
+                    resp = getattr(planning_client, method)(path, **kwargs)
+                    body = resp.get_data(as_text=True)
+                    _check(
+                        resp.status_code == 302 and resp.headers.get("Location", "").endswith("/"),
+                        f"planning LL {method.upper()} {path}: expected dashboard redirect",
+                    )
+                    _check(
+                        personal_account not in body and bfm_account not in body,
+                        f"planning LL {method.upper()} {path}: response revealed another entity's account",
+                    )
+
+            final_databases = {
+                entity_key: _database_snapshot(entity_key)
+                for entity_key in ("personal", "company", "luxelegacy")
+            }
+            _check(
+                final_databases == baseline_databases,
+                "planning LL: denied requests changed one or more entity databases",
+            )
+
+        print("   ✅ All planning routes deny LL before handlers and preserve Personal/BFM sharing")
+
         # ── 8a. BFM-only payroll route boundary ─────────────────────
-        print("\n8a. BFM-only payroll route boundary…")
+        print("\n8b. BFM-only payroll route boundary…")
         from web.routes import payroll as payroll_routes
 
         expected_payroll_rules = {
@@ -720,7 +911,7 @@ def main() -> None:
         print("   ✅ All payroll routes enforce BFM-only access before storage or parsing")
 
         # ── 8b. CSV export tests ────────────────────────────────────
-        print("\n8b. CSV export tests…")
+        print("\n8c. CSV export tests…")
         with app.test_client() as csv_client:
             csv_client.set_cookie("entity", "Personal")
 

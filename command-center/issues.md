@@ -76,7 +76,7 @@ Work block 2B added a concise tracked `AGENTS.md` as canonical, reduced `CLAUDE.
 
 ## Planning Foundations Lack Tracked Regression And Demo Goal Evidence
 
-Status: confirmed by work block 3D; parked for Phase 4 regression coverage and Phase 5 demo review
+Status: boundary slice covered by work block 4E; remaining coverage parked for Phase 4 and demo review for Phase 5
 
 Severity: medium regression-confidence risk
 
@@ -84,11 +84,11 @@ Captured: 2026-07-18
 
 Where seen: retired `plan.md`, `scripts/smoke_test.py`, `scripts/seed_demo_data.py`, and work block 3D's 58-check temporary-database probe
 
-Revisit: Phase 4 Task 2 for tracked coverage; Phase 5 for demo fidelity if still useful
+Revisit: Phase 4 Task 2 for remaining broad coverage; Phase 5 for demo fidelity if still useful
 
 Summary:
 
-The legacy Short-Term Planning plan proposed dedicated goal CRUD, snapshot, budget, payoff, entity-isolation, and cross-entity smoke cases plus seeded goals and snapshots. Work block 3D confirmed that goal CRUD/status/delete, budget and subcategory persistence, effective split accounting, three-month averages, per-payroll budgets, action items, payoff engines when supplied correct rates, and entity-local Personal/BFM account choices work against temporary synthetic data. The tracked smoke suite still contains no dedicated long- or short-term planning cases, and demo seeding still omits goals and snapshots.
+The legacy Short-Term Planning plan proposed dedicated goal CRUD, snapshot, budget, payoff, entity-isolation, and cross-entity smoke cases plus seeded goals and snapshots. Work block 3D confirmed that goal CRUD/status/delete, budget and subcategory persistence, effective split accounting, three-month averages, per-payroll budgets, action items, payoff engines when supplied correct rates, and entity-local Personal/BFM account choices work against temporary synthetic data. Work block 4E added maintained all-route Luxe Legacy denial, unchanged-database, account-name non-disclosure, and Personal/BFM boundary coverage. The tracked smoke suite still lacks broad dedicated planning calculation and lifecycle cases, and demo seeding still omits goals and snapshots.
 
 The audit treats goal CRUD, snapshot persistence, budget behavior, payoff correctness, and entity isolation as valid current expectations. It treats Short-Term Planning cross-entity account linking and the retired custom-allocation strategy as superseded: current repository rules require explicit cross-entity behavior, the live short-term UI is entity-local, and only avalanche and snowball are exposed. Personal/BFM sharing remains an explicit Long-Term Planning behavior and passed.
 
@@ -109,7 +109,7 @@ Tracked test and demo-seed expansion were explicitly excluded from audit work bl
 
 ## Locked Payoff Schedules Ignore Stored Account APRs
 
-Status: open; discovered in work block 3D
+Status: resolved locally by work block 4E; release not authorized
 
 Severity: high financial-planning correctness risk
 
@@ -148,7 +148,7 @@ Captured: 2026-07-18
 
 Where seen: Long-Term and Short-Term Planning routes plus temporary Luxe Legacy and Personal databases
 
-Revisit: Phase 4 Task 1 for route-boundary repair; Phase 4 Task 2 for direct-route coverage
+Revisit: separately authorized 4E-R release only
 
 Summary:
 
@@ -165,9 +165,9 @@ Acceptance checks:
 - Personal/BFM Long-Term Planning sharing remains read-only for the secondary section and continues to work.
 - Tracked tests exercise page and direct-route denial for item, settings, goal, snapshot, budget, action, and helper endpoints.
 
-Why not fixed now:
+Resolution:
 
-Adding authorization guards changes route behavior and requires separate repair and regression scope.
+Work block 4E added one early Luxe Legacy denial guard to each planning blueprint. Maintained coverage enumerates all 21 registered Long-Term and Short-Term Planning route rules, proves no denied request reaches its handler, leaves all three temporary entity databases logically unchanged, exposes no Personal/BFM account names, and preserves Personal/BFM Long-Term sharing plus ordinary planning availability. Baseline and final smoke suites, compilation, cleanup, whitespace, dashboard refresh, and health checks passed. Release remains separately gated.
 
 ## Automatic Goal Snapshots Erase Same-Day Review Notes
 

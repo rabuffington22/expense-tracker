@@ -17,6 +17,14 @@ log = logging.getLogger(__name__)
 
 bp = Blueprint("short_term_planning", __name__, url_prefix="/planning/short-term")
 
+
+@bp.before_request
+def _deny_luxe_legacy():
+    """Keep every short-term planning read and mutation unavailable to LL."""
+    if g.entity_key == "luxelegacy":
+        return redirect(url_for("dashboard.index"))
+
+
 # Transfer/income categories to exclude from budget actuals (from single source of truth)
 _EXCLUDE_CATS = EXCLUDE_CATS
 
@@ -590,9 +598,6 @@ def _get_cc_due_items(conn) -> list[dict]:
 @bp.route("/")
 def index():
     """Main Short-Term Planning page."""
-    if g.entity_key == "luxelegacy":
-        return redirect(url_for("dashboard.index"))
-
     conn = get_connection(g.entity_key)
     try:
         goals = _get_goals(conn)

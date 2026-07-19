@@ -891,14 +891,14 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after the locally verified completion of work block 4D; Task 1D is current for a separately confirmable 4E proposal
+Status: active with directly authorized work block 4E-R publishing and verifying the completed Task 1D planning-boundary repair
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
 - **Task 1A: Repair the confirmed server-authentication and protected-cache boundaries.** Status: done, released, and credential-free production verified through work blocks 4A-4B and PR #86.
 - **Task 1B: Establish source-aware transaction identity.** Status: done, released, and credential-free production health verified through work blocks 4C-4C-R for `P3-3A-01`.
 - **Task 1C: Enforce the BFM-only payroll route boundary.** Status: done and locally verified through work block 4D for `P3-3F-01` plus the boundary slice of `P3-3F-C01`; release remains separate.
-- **Task 1D: Enforce the Luxe Legacy denial boundary across planning routes.** Status: current for a separately confirmable 4E proposal covering `P3-3D-02`.
+- **Task 1D: Enforce the Luxe Legacy denial boundary across planning routes.** Status: done and locally verified through work block 4E for `P3-3D-02` plus the boundary slice of `P3-3D-C01`; release remains separate.
 - **Task 1E: Enforce Luxe Legacy-only downstream source selection.** Status: planned for `P3-3I-01`; remote idempotency remains separately parked.
 - **Task 1F: Authenticate scheduled sync before entity setup.** Status: planned for `P3-3H-01`; broader sync-entry work remains later.
 - **Task 1G: Restore the Recurring Charges report query.** Status: planned for `P3-3C-01` after the early boundary repairs.
@@ -911,9 +911,9 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
-- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, and each later Task 1 repair includes only its matching coverage slice.
+- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, and 4E completed the planning-boundary slice of `P3-3D-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: current for directly authorized work block 4D-R; prior Task 1A and 1B releases remain done through 4B and 4C-R.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: active through directly authorized work block 4E-R; prior releases remain done through 4B, 4C-R, and 4D-R.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -1127,6 +1127,71 @@ Report point: return both commits, automatic workflow result, credential-free pr
 Result: the exact nine-path 4D source set was committed as `7f7f71e`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29691622134` and job `88205268889` passed every reported step for that exact source SHA. Production `/health` returned HTTP 200 without credentials, and local `main` matched `origin/main`. The untracked sync script remained excluded, no protected data or credentials were used, and no manual workflow or Fly action occurred. This command-center-only closeout is published separately with `[skip actions]` to avoid a second deployment.
 
 Evidence: `command-center/logs/2026-07-19-bfm-only-payroll-boundary-release-4d-r.md`, source commit `7f7f71e`, and GitHub Actions run `29691622134`.
+
+### Confirmed Work Block 4E: Luxe Legacy Planning Boundary
+
+Status: done and locally verified on 2026-07-19; release not authorized
+
+Parent tasks: Phase 4 Task 1D and the focused planning-boundary slice of Task 2.
+
+Included findings: `P3-3D-02` and only the boundary-focused portion of `P3-3D-C01`.
+
+Outcome: every Long-Term and Short-Term Planning request denies Luxe Legacy at the blueprint boundary before a route handler can read account names or mutate planning, transaction, budget, goal, snapshot, action, or Personal singleton state. Personal and BFM planning behavior, including read-only Long-Term Planning sharing, remains intact.
+
+Why this grouping: both planning blueprints need the same early entity guard and can be verified through one temporary three-entity database harness. The route repair and focused coverage share one outcome, implementation seam, verification path, and risk class.
+
+Excluded: completed Tasks 1A-1C and 4; Tasks 1E-1P and 3; every finding except `P3-3D-02` and the focused `P3-3D-C01` boundary slice; remaining broad planning coverage and demo goal/snapshot seeding; APR, snapshot, depreciation, Weekly, and Waterfall calculation repairs; templates and migrations unless an unexpected boundary dependency triggers a stop; real databases, financial/payroll/HR rows, uploads, credentials, production/demo access, Plaid, Fly, workflows, downstream writes, or other live actions; commit, push, PR, merge, deployment; and pre-existing untracked `scripts/sync_prod_to_local.sh`.
+
+Owner and recommended agent: Codex Desktop in the current task. This deterministic boundary repair couples two Flask blueprints, all-route synthetic verification, cleanup, Runway OS stewardship, and final intake; no delegation or second opinion is needed.
+
+Runner path: current Codex task on local branch `codex/luxe-legacy-planning-boundary` after this active block is dashboard-verified.
+
+Blocking questions: none.
+
+Non-blocking defaults: add one `before_request` Luxe Legacy guard to each planning blueprint; redirect denied requests to the dashboard; remove redundant index-only checks if safely superseded; enumerate all 21 registered route rules; use temporary synthetic Personal, BFM, and Luxe Legacy databases only; preserve Personal/BFM planning and Long-Term read-only sharing; remain local-only.
+
+Stop conditions:
+
+- Enforcement cannot occur before every planning handler without changing another subsystem.
+- An endpoint requires a new user-facing denial contract or Ryan product decision.
+- Personal/BFM sharing or ordinary planning behavior cannot be preserved.
+- Work expands into calculation repairs, demo seeding, templates, migrations, Task 1E-1P, Task 3, or another subsystem.
+- Verification requires protected data, credentials, external access, or another live action.
+- Baseline or focused verification fails in a way that changes the plan, cleanup cannot be proven, or command-center refresh/health fails.
+
+Verification:
+
+- Baseline and final `.venv/bin/python scripts/smoke_test.py`.
+- Maintained Luxe Legacy denial coverage across all 21 registered Long-Term and Short-Term Planning route rules.
+- Before/after snapshots proving denied requests leave all three entity databases unchanged and reveal no Personal/BFM account names.
+- Personal/BFM Long-Term sharing and ordinary planning route behavior remain available.
+- Python compilation, disposable cleanup, `jq empty command-center/state.json`, dashboard refresh, health check, `git diff --check`, generated-dashboard inspection, and final explicit-path worktree review.
+
+Dashboard closeout: update source files first, align `state.json`, refresh and health-check the dashboard, and mark 4E done only after every required check passes.
+
+Durability: local-only. No commit, push, PR, merge, deployment, workflow, credential, protected-data, or live action is included.
+
+Report point: return exact guard behavior, all-route denial evidence, unchanged-database and no-account-name evidence, preserved Personal/BFM behavior, full and focused test results, cleanup, changed files, branch state, and the separate release gate.
+
+Suggested next block: separately propose 4E-R for durability, automatic deployment observation, credential-free production health, and sanitized closeout. Task 1E remains the next implementation block after any separately authorized release decision.
+
+Result: one `before_request` guard on each planning blueprint now redirects Luxe Legacy to the dashboard before any of the 21 registered Long-Term or Short-Term Planning route handlers can run. Maintained coverage enumerates every route rule, replaces every planning view with a fail-fast sentinel during denied requests, proves all three temporary entity databases remain logically unchanged, verifies denied responses expose neither Personal nor BFM account names, and confirms Personal/BFM Long-Term sharing, account helpers, and Short-Term page availability remain intact. Baseline and final smoke runs, Python compilation, temporary-directory cleanup, `git diff --check`, dashboard refresh, and command-center health passed. No template, migration, real data, credential, external call, live action, or GitHub durability occurred.
+
+Evidence: `web/routes/planning.py`, `web/routes/short_term_planning.py`, `scripts/smoke_test.py`, and `command-center/logs/2026-07-19-luxe-legacy-planning-boundary-4e.md`.
+
+### Work Block 4E-R: Durability And Release
+
+Status: active under Ryan's 2026-07-19 direct instruction to commit and push the completed 4E work to `main`
+
+Included: exact intended 4E application, maintained-test, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/luxe-legacy-planning-boundary`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly workflow; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real databases or financial/payroll/HR rows; uploads; credentials; authenticated production pages; Plaid calls; workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream writes; Task 1E or unrelated repairs; force push; and recovery beyond the exact fast-forward publish path.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; or recovery would exceed the authorized path.
+
+Verification: exact path and sensitive-string review; baseline/final maintained synthetic suite; Python compilation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final main/origin alignment; and sanitized `[skip actions]` closeout publication.
+
+Report point: return source and closeout commits, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separately planned Task 1E gate.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

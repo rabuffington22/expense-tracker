@@ -2,76 +2,62 @@
 
 ## Active Objective
 
-Plan the next bounded Phase 4 boundary repair after the durable, deployed, and health-verified completion of work block 4D-R.
+Publish the completed and locally verified work block 4E to `main`, observe the automatic Fly deployment, verify credential-free production health, and record the sanitized release closeout.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active after the verified local completion of work block 4D.
+Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-None. Work blocks 4D and 4D-R are complete; source commit `7f7f71e` is on `main`, automatic Fly deployment passed, and production health returned 200.
+4E-R — Durability And Release — active under Ryan's direct 2026-07-19 instruction to commit and push to `main`.
 
 ## Current Task
 
-Phase 4 Task 1D: separately define the Luxe Legacy planning-route boundary as work block 4E. Task 2 coverage should remain limited to the matching `P3-3D-C01` boundary slice.
+Phase 4 Task 4 for the exact completed Task 1D / 4E source, test, issue, evidence, and command-center set.
 
 ## Owner
 
-Ryan owns the next 4E work-block decision. Codex Desktop completed exact-path 4D durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
+Codex Desktop owns exact-path staging, source commit, fast-forward publication to `main`, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan retains every recovery or scope-expansion decision.
 
-## Work Block 4D Result
+## Included Scope
 
-- One payroll-blueprint guard redirects Personal and Luxe Legacy to the dashboard before any payroll handler reaches payroll storage or upload parsing.
-- Maintained coverage enumerates all eight registered payroll routes and verifies sixteen denied route outcomes across Personal and Luxe Legacy.
-- Employee, pay-change, payroll-entry, sentinel-value, and denied temporary-payload state remained unchanged.
-- All eight BFM route paths remained available, including roster, detail, import, and spending behavior.
-- Baseline and final smoke runs, Python compilation, exact temporary cleanup, whitespace checks, dashboard refresh, and command-center health passed.
-
-## Phase 3 And 3L Result
-
-- Ryan confirmed all four post-review decisions: 4C first with the source-aware duplicate contract; the revised early-boundary and pre-split Plaid sequence; authenticated `/k/`; and paired coverage with the deferred payroll, cookie/CSP, and downstream-idempotency defaults.
-- Phase 3 Tasks 1-8 and work blocks 3A-3L are complete.
-- The full Fable 5 review and final ordered 55-finding catalog remain the evidence base; no implementation occurred during 3L.
-
-## Work Block 4C Result
-
-- `command-center/transaction-identity-contract.md` defines versioned file and authoritative-external namespaces while preserving every issued key.
-- File imports now distinguish sources, accounts, and legitimate identical occurrences while exact same-source payload redelivery remains idempotent.
-- Newly issued Plaid keys derive from a non-empty authoritative Plaid transaction ID; empty IDs are rejected, and an existing legacy key already bound to that ID is preserved.
-- No database migration was required and no populated transaction ID, split reference, order match, edit, alias, or reporting behavior was rewritten.
-- Maintained synthetic coverage passes across Personal, BFM, and Luxe Legacy, including populated legacy references and a socket-denied Plaid insert seam.
+- The exact 4E planning guards in `web/routes/planning.py` and `web/routes/short_term_planning.py`.
+- Focused maintained coverage in `scripts/smoke_test.py`.
+- The 4E issue resolution, verification log, and Runway OS sources plus generated dashboard.
+- One source commit, fast-forward local `main`, direct push to `origin/main`, automatic Fly observation, credential-free `/health`, and one command-center-only `[skip actions]` closeout commit and push.
 
 ## Excluded Scope
 
-- Phase 4 Tasks 1E-1P and 3-4; Task 1M's remaining payroll integrity, validation, parser, and retention repairs.
-- Every finding except the next proposed `P3-3D-02` planning boundary and its focused `P3-3D-C01` coverage slice.
-- Real databases, financial/payroll/HR rows, uploads, credentials, production/demo access, Plaid, Fly, workflows, downstream writes, or other live actions.
-- Commit, push, PR, merge, deployment, and pre-existing untracked `scripts/sync_prod_to_local.sh`.
+- Pre-existing untracked `scripts/sync_prod_to_local.sh`.
+- Unrelated untracked `command-center/now 2.md`.
+- Real databases, financial/payroll/HR rows, uploads, credentials, authenticated production pages, Plaid, downstream writes, or manual workflow actions.
+- Fly mutation outside the automatic main-push workflow.
+- Task 1E, unrelated repairs, force push, and recovery beyond the exact fast-forward path.
 
 ## Current Action
 
-Separately define and confirm work block 4E for `P3-3D-02`, the Luxe Legacy planning-route denial boundary, plus only its focused `P3-3D-C01` coverage slice. Do not begin implementation from the roadmap alone.
+Refresh and verify this active release state, stage only the exact intended paths, commit on `codex/luxe-legacy-planning-boundary`, fast-forward local `main`, push `origin/main`, observe the automatic Fly run, verify `/health`, then publish a sanitized `[skip actions]` closeout.
 
-The former umbrella Task 1B is now decomposed into visible Tasks 1B-1P. Task 1B records the completed transaction-identity foundation; Tasks 1C-1G expose the accepted early boundary/truthfulness tranche; Tasks 1H-1P preserve the already-confirmed downstream repair-family sequence.
+## Stop Conditions
 
-## Remaining Gates
-
-- Any future release, protected-data access, credential use, or live action requires separate authorization.
-- 4E requires a complete proposed work block and Ryan confirmation before implementation.
-- Plaid cursor atomicity, reconciliation, concurrency, `/k/`, and every other Phase 3 finding remain separately gated.
-- Protected data, credentials, real databases, and live actions remain closed unless a future exact block authorizes them.
+- The exact diff or staged set includes an unexpected path, sensitive value, protected data, or unrelated user change.
+- Local or remote `main` diverges or cannot be fast-forwarded safely.
+- Maintained verification, compilation, whitespace, dashboard, or health checks fail.
+- The automatic deployment fails or cannot be attributed to the source commit.
+- Credential-free production health fails.
+- Recovery would require credentials, protected data, force push, manual workflow action, or another unapproved step.
 
 ## Verification
 
-- Baseline and final `.venv/bin/python scripts/smoke_test.py`: pass.
-- Python compilation for `web/routes/payroll.py` and `scripts/smoke_test.py`: pass.
-- Eight registered payroll routes, sixteen non-BFM denial outcomes, unchanged denied state, denied temp-payload preservation, and all eight BFM paths: pass.
-- Exact synthetic payload cleanup, `git diff --check`, dashboard refresh, and command-center health: pass.
-- Source commit `7f7f71e` is on `main`; automatic Fly run `29691622134` and job `88205268889` passed every step.
-- Production `/health` returned HTTP 200 without credentials; local `main` matched `origin/main` before this closeout.
-- The untracked sync script remained excluded, and this closeout uses `[skip actions]` to avoid a second deployment.
+- Exact path, diff, and sensitive-pattern review.
+- Final `.venv/bin/python scripts/smoke_test.py` and Python compilation.
+- `jq empty`, `git diff --check`, dashboard refresh, health check, and staged-diff inspection.
+- Source commit and fast-forward `main` publication without force.
+- Automatic Fly workflow run/job success for the exact source SHA.
+- Credential-free production `/health` HTTP 200.
+- Final `main`/`origin/main` alignment and command-center-only `[skip actions]` closeout publication.
 
 ## Next Report Point
 
-Return both 4D commits, automatic Fly result, credential-free production health, final main alignment, preserved exclusions, and the separately gated 4E planning point.
+Return the source and closeout commits, exact staged paths, automatic Fly run/job result, production health, final branch alignment, preserved untracked exclusions, and the separately gated Task 1E planning point.

@@ -12,6 +12,14 @@ log = logging.getLogger(__name__)
 
 bp = Blueprint("planning", __name__, url_prefix="/planning")
 
+
+@bp.before_request
+def _deny_luxe_legacy():
+    """Keep every long-term planning read and mutation unavailable to LL."""
+    if g.entity_key == "luxelegacy":
+        return redirect(url_for("dashboard.index"))
+
+
 # Cross-entity visibility: Personal ↔ BFM share view, LL excluded.
 _CROSS_ENTITY = {
     "personal": ["company"],
@@ -223,10 +231,6 @@ def _get_cashflow_accounts(entity_key: str) -> list[str]:
 
 @bp.route("/")
 def index():
-    # LL guard — redirect to home
-    if g.entity_key == "luxelegacy":
-        return redirect(url_for("dashboard.index"))
-
     settings = _get_settings()
     milestones = _get_milestones(settings)
 
