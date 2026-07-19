@@ -1535,3 +1535,216 @@ Acceptance checks:
 Why not added now:
 
 Tracked test expansion was explicitly excluded from work block 3I.
+
+## Main Authentication Boundary Returns Protected HTML And Accepts A Client-Exposed Digest
+
+Status: resolved locally in work block 4A; release not authorized
+
+Severity: high authentication and financial-confidentiality risk
+
+Captured: 2026-07-18
+
+Where seen: `web/__init__.py`, `web/templates/base.html`, and the repeated fake-secret 3J request probe
+
+Revisit: Phase 4 Task 1 before ordinary product repairs; Phase 4 Task 2 for request-class coverage
+
+Summary:
+
+Unauthenticated full-page requests receive complete protected server-rendered HTML behind a client overlay, while HTMX and JSON requests correctly receive 401. The rendered page publishes the digest used by the client gate, and a local app configured with that digest accepted the extracted value directly at `/auth/verify`.
+
+Impact:
+
+The overlay is not a confidentiality boundary. Protected financial HTML can be read without completing server authentication, and the published digest can act as a reusable credential when client and server configuration match.
+
+Acceptance checks:
+
+- Unauthenticated full-page, HTMX, and JSON requests cannot receive protected data.
+- Password verification occurs server-side without publishing a reusable credential equivalent.
+- Successful authentication establishes a secure session and failed authentication cannot dismiss the protection layer.
+- Synthetic tests cover configured and unauthenticated request classes without real credentials.
+
+Resolution:
+
+Work block 4A now redirects full-page requests to a standalone login before entity setup or protected rendering, keeps unauthenticated HTMX/JSON at 401, verifies plaintext only on the server, removes the published digest and `/auth/verify`, and marks dynamic responses no-store. Tracked synthetic checks and a 19-check isolated-browser probe passed with fake secrets and zero external requests. Production remains unchanged until a separate release authorization.
+
+## PWA Cache Can Serve Protected Content Across Entity And Session State
+
+Status: resolved locally in work block 4A; release not authorized
+
+Severity: high cross-entity financial-confidentiality risk
+
+Captured: 2026-07-18
+
+Where seen: `web/static/sw.js` and the repeated isolated Chromium offline probe
+
+Revisit: Phase 4 Task 1 before relying on installed/offline operation; Phase 4 Task 2 for browser coverage
+
+Summary:
+
+The service worker precaches `/` and caches arbitrary successful dynamic GET responses by URL. Entity cookies and authenticated sessions are not part of cache identity. After caching a BFM transactions page, an offline request with the Personal cookie received the BFM page.
+
+Impact:
+
+An installed or previously used browser can show stale protected content from the wrong entity or authentication state while offline.
+
+Acceptance checks:
+
+- Protected and entity-specific HTML/API responses are not stored under shared URL-only cache keys.
+- Entity and authentication transitions clear or isolate sensitive cache entries.
+- Offline fallback never exposes another entity's or prior session's financial content.
+- Browser tests reproduce Personal/BFM/LL and authenticated/unauthenticated transitions with synthetic markers.
+
+Resolution:
+
+Work block 4A moved to service-worker cache v4, removed protected root and all dynamic responses from caching, retained only static assets and the data-free offline page, and deletes older caches on activation. A browser probe seeded an old protected v3 cache, proved its deletion, and proved that an offline Personal request after online BFM use receives only the generic offline page. Production remains unchanged until a separate release authorization.
+
+## Public Dashboard Exposes Detailed Personal And Luxe Legacy Financial Information
+
+Status: open product-policy decision; confirmed in work block 3J
+
+Severity: high public financial-data exposure risk
+
+Captured: 2026-07-18
+
+Where seen: `web/routes/kristine.py`, `web/templates/kristine.html`, and the repeated synthetic public-route probe
+
+Revisit: Phase 3 Task 8 for the intended public-data contract before any Phase 4 repair
+
+Summary:
+
+The deliberately unauthenticated `/k/` route correctly includes Personal and Luxe Legacy while excluding BFM, but it renders transaction names, dates, amounts, categories, budget progress, and selected balances.
+
+Impact:
+
+Anyone who can reach the URL can view detailed financial information. The existing documentation identifies the route as public but does not establish whether this exact row-level exposure is an accepted product decision.
+
+Acceptance checks:
+
+- Ryan explicitly selects the intended public data contract.
+- The route authenticates, minimizes to approved aggregates, or documents and enforces the accepted exposure.
+- BFM remains excluded and tests prove the exact allowed fields for Personal and Luxe Legacy.
+
+Why not changed now:
+
+Public-route behavior changes and product-direction decisions were excluded from work block 3J.
+
+## Client And Server Authentication Modes Can Drift
+
+Status: resolved locally in work block 4A; release not authorized
+
+Severity: medium authentication-availability and configuration risk
+
+Captured: 2026-07-18
+
+Where seen: `web/__init__.py`, `web/templates/base.html`, and configured/no-password local probes
+
+Revisit: Phase 4 Task 1 with the main authentication repair
+
+Summary:
+
+The client gate uses a hard-coded digest independent of `APP_PASSWORD_HASH`. Changing the server hash can make the client and server disagree, and no-password server mode still renders a blocking password overlay.
+
+Impact:
+
+Credential rotation or demo/unconfigured operation can lock out the browser UI or create inconsistent client/server authentication state.
+
+Acceptance checks:
+
+- Client and server behavior derive from one runtime configuration contract.
+- Configured, invalid, changed, and no-password/demo modes behave deterministically.
+- The client never unlocks before the server confirms the session.
+
+Resolution:
+
+Work block 4A removed independent client auth state. Configured legacy and Werkzeug hashes, invalid passwords, safe redirect targets, and unset/no-password mode now derive from the server configuration and passed tracked synthetic coverage plus isolated-browser checks. Production remains unchanged until a separate release authorization.
+
+## Mobile Sidebar Lacks Complete Keyboard Focus And Scroll Handling
+
+Status: open; discovered in work block 3J
+
+Severity: medium navigation-accessibility risk
+
+Captured: 2026-07-18
+
+Where seen: `web/templates/base.html`, `web/static/style.css`, and the repeated 390px isolated Chromium probe
+
+Revisit: Phase 4 Task 1 if paired with security work, otherwise Phase 5 Task 2
+
+Summary:
+
+The phone sidebar opens, updates `aria-expanded`, shows its scrim, and closes from the scrim. It does not move focus into navigation, lock background scrolling, or close on Escape.
+
+Impact:
+
+Keyboard and assistive-technology users can lose navigation context, and touch users can scroll the obscured page behind the open drawer.
+
+Acceptance checks:
+
+- Opening moves focus into navigation and closing restores focus to the hamburger.
+- Escape and the scrim close the drawer.
+- Background scrolling is locked only while open.
+- Keyboard, touch, ARIA state, and route-click behavior remain consistent.
+
+Why not fixed now:
+
+Product changes were excluded from work block 3J.
+
+## Session Cookie And Browser Security Policy Need Explicit Hardening
+
+Status: open; discovered in work block 3J
+
+Severity: medium defense-in-depth risk
+
+Captured: 2026-07-18
+
+Where seen: `web/__init__.py` and the repeated synthetic HTTPS response probe
+
+Revisit: Phase 4 Task 1 with the authentication repair; verify before release
+
+Summary:
+
+The session cookie was HttpOnly but did not include explicit Secure or SameSite attributes, and protected HTML did not emit Content-Security-Policy. Existing MIME, frame, referrer, XSS, and HTTPS HSTS headers passed.
+
+Impact:
+
+The application relies on browser defaults and transport behavior for controls that should be explicit around an authenticated financial application.
+
+Acceptance checks:
+
+- Production session cookies have explicit Secure, HttpOnly, and SameSite policy.
+- Local/test behavior remains usable without weakening production configuration.
+- A tested CSP permits required HTMX and local assets while blocking unintended script/content sources.
+
+Why not fixed now:
+
+Authentication, cookie, and security-header changes were excluded from work block 3J.
+
+## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
+
+Status: partly addressed in work block 4A; browser/public/navigation coverage remains
+
+Severity: medium regression-confidence risk
+
+Captured: 2026-07-18
+
+Where seen: `scripts/smoke_test.py` and the repeated 3J request/browser probes
+
+Revisit: Phase 4 Task 2 alongside the selected authentication, cache, public-route, and navigation repairs
+
+Summary:
+
+Work block 4A added maintained configured/no-password authentication, CSRF, safe redirect, exempt/public route, no-store, and service-worker source-contract coverage. Disposable isolated-browser probes also verified installation, old-cache deletion, offline cross-entity isolation, and public entity scope, but those browser, manifest, and responsive-navigation checks are not yet tracked.
+
+Impact:
+
+The highest-risk 3J boundaries can regress without repeatable detection; the audit evidence is deterministic but ephemeral.
+
+Acceptance checks:
+
+- Request tests use fake secrets and temporary all-entity databases.
+- Browser tests use disposable storage, representative viewports, and denied outbound networking.
+- Tests cover protected/public/exempt request classes, entity cache isolation, offline fallback, and keyboard navigation.
+
+Remaining work:
+
+Add a maintained isolated-browser layer for service-worker installation/offline isolation, exact public `/k/` fields after Ryan decides its contract, manifest/icons, and responsive keyboard/navigation state. Do not treat the new request-level coverage as closing those browser and product-policy boundaries.

@@ -30,7 +30,7 @@ The demo overrides this map with `ENTITIES=Personal:personal,Business:company` a
 - Long-term planning, short-term goals and budgets, weekly check-ins, and BFM-to-Personal waterfall planning
 - BFM employee roster and Phoenix/CyberPayroll import
 - Optional OpenRouter-powered chat, category suggestions, subscription tips, and dashboard analysis
-- PWA manifest, service worker, offline fallback, mobile navigation, and dark/light themes
+- PWA manifest, static/offline-only service-worker caching, data-free offline fallback, mobile navigation, and dark/light themes
 - Public mobile-oriented dashboard at `/k/`; this route intentionally bypasses the main app password gate
 
 ## Architecture
@@ -98,7 +98,7 @@ Never place real secret values in tracked files, documentation, test fixtures, c
 | `DATA_DIR` | No | Database, upload, and backup root; defaults to `./local_state` and is `/data` on Fly |
 | `FLASK_DEBUG` | No | Enables local Flask debug mode when truthy |
 | `ENTITIES` | No | Overrides the display-name/database map, primarily for the demo app |
-| `APP_PASSWORD_HASH` | Production gate | Enables server-side session verification backing the main UI password overlay; unset disables the server-side gate |
+| `APP_PASSWORD_HASH` | Production gate | Enables the server-rendered login and authenticated session; accepts the legacy raw SHA-256 digest or a Werkzeug password hash, while unset disables the gate |
 | `PLAID_CLIENT_ID` | Plaid only | Plaid application identifier |
 | `PLAID_SECRET` | Plaid only | Plaid environment secret |
 | `PLAID_ENV` | Plaid only | `sandbox` or `production`; defaults to `sandbox` |
@@ -107,7 +107,7 @@ Never place real secret values in tracked files, documentation, test fixtures, c
 | `LUXURY_SUPABASE_URL` | LL mirror only | Optional downstream Luxe Legacy endpoint |
 | `LUXURY_SUPABASE_SERVICE_KEY` | LL mirror only | Optional downstream Luxe Legacy service credential |
 
-The main UI uses a client-side password overlay plus a server-side authenticated session when `APP_PASSWORD_HASH` is configured. Static assets, health/offline surfaces, and `/k/` follow explicit exemptions in `web/__init__.py`. Authentication changes are controlled work and should not be treated as a routine documentation or deployment edit.
+When `APP_PASSWORD_HASH` is configured, Flask redirects unauthenticated full-page requests to a standalone login before entity setup or protected-page rendering. Password verification occurs only on the server; the browser receives an authenticated session, not the configured digest. Static assets, health/offline surfaces, and `/k/` follow explicit exemptions in `web/__init__.py`. The service worker caches only static assets and the data-free offline page, never protected or entity-specific responses. Authentication changes remain controlled work and should not be treated as a routine documentation or deployment edit.
 
 ## Data layout and handling
 

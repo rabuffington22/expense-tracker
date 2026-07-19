@@ -1,6 +1,7 @@
 """Flask app factory for The Ledger."""
 from __future__ import annotations
 
+import hashlib
 import os
 import secrets
 import sys
@@ -24,6 +25,7 @@ if str(_ROOT) not in sys.path:
 
 from flask import Flask, request, g, redirect, url_for, send_from_directory, render_template, session, abort, flash
 from markupsafe import Markup
+from werkzeug.security import check_password_hash
 
 from core.db import init_db, get_connection
 from core.categories import load_categories
@@ -278,10 +280,35 @@ def create_app():
         logging.getLogger(__name__).warning(warning)
     app.config["MAX_CONTENT_LENGTH"] = 64 * 1024 * 1024  # 64MB upload limit
 
-    # ── Auth: client-side password gate (see base.html) ─────────────────────
-    # HTTP Basic Auth removed — it breaks PWA installs and service workers.
-    # Auth is now handled by a client-side SHA-256 hash check in base.html
-    # with localStorage persistence (shared across apps on same domain).
+    # ── Server-side auth configuration ────────────────────────────────────
+    _AUTH_HASH = os.environ.get("APP_PASSWORD_HASH", "").strip()
+    _AUTH_EXEMPT = frozenset(("/sw.js", "/offline", "/health", "/auth/login"))
+
+    def _is_public_or_static_path(path: str) -> bool:
+        return (
+            path in _AUTH_EXEMPT
+            or path == "/k"
+            or path.startswith("/k/")
+            or path.startswith("/static/")
+        )
+
+    def _safe_next_path(value: str | None) -> str:
+        if not value or not value.startswith("/") or value.startswith("//"):
+            return "/"
+        return value
+
+    def _password_matches(password: str) -> bool:
+        """Verify modern Werkzeug hashes and the deployed legacy SHA-256 form."""
+        if not _AUTH_HASH:
+            return True
+        normalized = _AUTH_HASH.lower()
+        if len(normalized) == 64 and all(c in "0123456789abcdef" for c in normalized):
+            submitted = hashlib.sha256(password.encode("utf-8")).hexdigest()
+            return secrets.compare_digest(submitted, normalized)
+        try:
+            return check_password_hash(_AUTH_HASH, password)
+        except (TypeError, ValueError):
+            return False
 
     # ── Security headers ─────────────────────────────────────────────────
     @app.after_request
@@ -294,13 +321,15 @@ def create_app():
             response.headers["Strict-Transport-Security"] = (
                 "max-age=31536000; includeSubDomains"
             )
+        if not request.path.startswith("/static/") and request.path != "/sw.js":
+            response.headers["Cache-Control"] = "no-store"
         return response
 
     # ── CSRF protection ──────────────────────────────────────────────────
     _CSRF_SAFE_METHODS = frozenset(("GET", "HEAD", "OPTIONS"))
     # /plaid/sync-all is the daily cron endpoint and is guarded by SYNC_SECRET
     # bearer auth — CSRF doesn't apply (no session, no browser).
-    _CSRF_EXEMPT_PATHS = ("/sw.js", "/offline", "/auth/verify", "/plaid/sync-all")
+    _CSRF_EXEMPT_PATHS = ("/sw.js", "/offline", "/plaid/sync-all")
 
     def _get_csrf_token():
         """Return the CSRF token for the current session, creating one if needed."""
@@ -325,47 +354,39 @@ def create_app():
 
     app.jinja_env.globals["csrf_token"] = _get_csrf_token
 
-    # ── Server-side auth ─────────────────────────────────────────────────
-    _AUTH_HASH = os.environ.get("APP_PASSWORD_HASH", "").lower().strip()
-    _AUTH_EXEMPT = frozenset(("/sw.js", "/offline", "/health", "/auth/verify"))
-
-    @app.route("/auth/verify", methods=["POST"])
-    def _auth_verify():
-        """Verify password hash from client-side auth overlay."""
-        from flask import jsonify as _jsonify
-        submitted = (request.get_json(silent=True) or {}).get("hash", "")
-        if not _AUTH_HASH:
-            # No password configured (demo mode) — auto-authenticate
-            session["authenticated"] = True
-            return _jsonify({"ok": True})
-        if submitted.lower().strip() == _AUTH_HASH:
-            session["authenticated"] = True
-            return _jsonify({"ok": True})
-        return _jsonify({"ok": False, "error": "Invalid password"}), 401
+    @app.route("/auth/login", methods=["GET", "POST"])
+    def _auth_login():
+        next_path = _safe_next_path(request.values.get("next"))
+        if not _AUTH_HASH or session.get("authenticated"):
+            return redirect(next_path)
+        error = None
+        if request.method == "POST":
+            if _password_matches(request.form.get("password", "")):
+                session.clear()
+                session["authenticated"] = True
+                return redirect(next_path)
+            error = "Incorrect password"
+        return render_template("auth/login.html", error=error, next_path=next_path), (401 if error else 200)
 
     @app.before_request
     def _check_auth():
         if not _AUTH_HASH:
             return  # No password configured (demo mode) — skip auth
-        if request.path in _AUTH_EXEMPT:
+        if _is_public_or_static_path(request.path):
             return
-        if request.path.startswith("/k/") or request.path == "/k":
-            return  # Kristine's page — public
-        if request.path.startswith("/static/"):
-            return  # Static assets — always accessible
         if session.get("authenticated"):
             return
-        # For HTMX/fetch requests, return 401 so the client can show the overlay
+        # Partial and JSON clients receive a clear auth failure; full pages go
+        # to a standalone login response that contains no protected page data.
         if request.headers.get("HX-Request") or request.is_json:
             abort(401)
-        # For full page requests, the client-side overlay handles the UI —
-        # but we still return the page so the overlay JS can run
-        return
+        next_path = _safe_next_path(request.full_path.rstrip("?"))
+        return redirect(url_for("_auth_login", next=next_path))
 
     # ── Before-request: init DB, set entity context ──────────────────────────
     @app.before_request
     def _setup_entity():
-        if request.path.startswith("/k/") or request.path == "/k" or request.path in ("/sw.js", "/offline", "/health"):
+        if _is_public_or_static_path(request.path) or request.path.startswith("/auth/"):
             return  # Kristine's page, SW, offline, health — manage own context
         g.entity_display, g.entity_key = get_entity()
         g.accent = get_accent()
@@ -390,7 +411,7 @@ def create_app():
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor
     def _inject_globals():
-        if request.path.startswith("/k/") or request.path == "/k" or request.path in ("/sw.js", "/offline", "/health"):
+        if _is_public_or_static_path(request.path) or request.path.startswith("/auth/"):
             return {}  # These pages don't use entity context
         # API/cron endpoints (e.g. /plaid/sync-all) skip _setup_entity context;
         # if an exception triggers the default error template, fall through safely.
