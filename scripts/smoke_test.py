@@ -11,8 +11,10 @@ Usage:
 
 import io
 import os
+import subprocess
 import sys
 import tempfile
+import threading
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -1069,8 +1071,209 @@ def main() -> None:
             sys.modules.pop("requests", None)
         print("   ✅ Owner Draw stays local, valid LL rows remain eligible, and both sync seams are LL-only")
 
-        # ── 8d. CSV export tests ────────────────────────────────────
-        print("\n8d. CSV export tests…")
+        # ── 8d. Scheduled sync result truthfulness ──────────────────
+        print("\n8d. Scheduled sync result truthfulness…")
+
+        def _scheduled_result(*, errors=None, skipped=False):
+            result = {
+                "new": 0,
+                "modified": 0,
+                "removed": 0,
+                "backfilled": 0,
+                "errors": list(errors or []),
+            }
+            if skipped:
+                result["skipped"] = True
+            return result
+
+        scheduled_secret = "synthetic-sync-secret"
+        scheduled_headers = {"Authorization": f"Bearer {scheduled_secret}"}
+        complete_results = {
+            "personal": _scheduled_result(),
+            "company": _scheduled_result(skipped=True),
+            "luxelegacy": _scheduled_result(),
+        }
+        partial_results = {
+            "personal": _scheduled_result(),
+            "company": _scheduled_result(errors=["synthetic item failure"]),
+            "luxelegacy": _scheduled_result(skipped=True),
+        }
+        failed_results = {
+            entity_key: _scheduled_result(errors=[f"synthetic {entity_key} failure"])
+            for entity_key in ("personal", "company", "luxelegacy")
+        }
+
+        def _result_side_effect(result_map):
+            return lambda entity_key: result_map[entity_key]
+
+        scheduled_env = {
+            "SYNC_SECRET": scheduled_secret,
+            "PLAID_CLIENT_ID": "synthetic-client",
+            "PLAID_SECRET": "synthetic-secret",
+        }
+        with app.test_client() as scheduled_client, patch.dict(
+            os.environ, scheduled_env, clear=False
+        ), patch(
+            "socket.socket",
+            side_effect=AssertionError("scheduled result smoke forbids outbound networking"),
+        ):
+            missing_bearer = scheduled_client.post("/plaid/sync-all")
+            _check(missing_bearer.status_code == 401,
+                   "scheduled result: missing bearer should remain 401")
+            wrong_bearer = scheduled_client.post(
+                "/plaid/sync-all",
+                headers={"Authorization": "Bearer wrong-synthetic-secret"},
+            )
+            _check(wrong_bearer.status_code == 401,
+                   "scheduled result: wrong bearer should remain 401")
+            _check(scheduled_secret not in wrong_bearer.get_data(as_text=True),
+                   "scheduled result: configured bearer secret must not be echoed")
+
+            with patch("web.routes.plaid._sync_entity",
+                       side_effect=_result_side_effect(complete_results)) as complete_sync:
+                complete_response = scheduled_client.post(
+                    "/plaid/sync-all", headers=scheduled_headers
+                )
+            complete_body = complete_response.get_json()
+            _check(complete_response.status_code == 200,
+                   "scheduled result: complete success should return 200")
+            _check(complete_body["ok"] is True and complete_body["status"] == "success",
+                   "scheduled result: complete success should be top-level success")
+            _check(complete_body["results"] == complete_results,
+                   "scheduled result: complete per-entity results should be preserved")
+            _check(
+                [call.args[0] for call in complete_sync.call_args_list]
+                == ["personal", "company", "luxelegacy"],
+                "scheduled result: entity order should remain Personal, BFM, Luxe Legacy",
+            )
+
+            with patch("web.routes.plaid._sync_entity",
+                       side_effect=_result_side_effect(partial_results)):
+                partial_response = scheduled_client.post(
+                    "/plaid/sync-all", headers=scheduled_headers
+                )
+            partial_body = partial_response.get_json()
+            _check(partial_response.status_code == 502,
+                   "scheduled result: partial failure should return 502")
+            _check(
+                partial_body["ok"] is False
+                and partial_body["status"] == "partial_failure",
+                "scheduled result: one failed entity should be top-level partial failure",
+            )
+            _check(partial_body["results"] == partial_results,
+                   "scheduled result: partial per-entity results should be preserved")
+
+            with patch("web.routes.plaid._sync_entity",
+                       side_effect=_result_side_effect(failed_results)):
+                failed_response = scheduled_client.post(
+                    "/plaid/sync-all", headers=scheduled_headers
+                )
+            failed_body = failed_response.get_json()
+            _check(failed_response.status_code == 502,
+                   "scheduled result: all-entity failure should return 502")
+            _check(
+                failed_body["ok"] is False and failed_body["status"] == "failure",
+                "scheduled result: all failed entities should be top-level failure",
+            )
+            _check(failed_body["results"] == failed_results,
+                   "scheduled result: failed per-entity results should be preserved")
+
+            from web.routes import plaid as scheduled_plaid_routes
+            _check(scheduled_plaid_routes._sync_lock.acquire(blocking=False),
+                   "scheduled result: smoke test should acquire an idle sync lock")
+            try:
+                contention_response = scheduled_client.post(
+                    "/plaid/sync-all", headers=scheduled_headers
+                )
+            finally:
+                scheduled_plaid_routes._sync_lock.release()
+            _check(contention_response.status_code == 429,
+                   "scheduled result: lock contention should remain 429")
+
+            original_propagate = app.config.get("PROPAGATE_EXCEPTIONS")
+            app.config["PROPAGATE_EXCEPTIONS"] = False
+            try:
+                with patch.object(app.logger, "error"), patch(
+                    "web.routes.plaid._sync_entity",
+                    side_effect=RuntimeError("synthetic route exception"),
+                ):
+                    exception_response = scheduled_client.post(
+                        "/plaid/sync-all", headers=scheduled_headers
+                    )
+            finally:
+                app.config["PROPAGATE_EXCEPTIONS"] = original_propagate
+            _check(exception_response.status_code == 500,
+                   "scheduled result: uncaught entity exception should remain 500")
+            _check(scheduled_plaid_routes._sync_lock.acquire(blocking=False),
+                   "scheduled result: uncaught exception should release the sync lock")
+            scheduled_plaid_routes._sync_lock.release()
+
+        with patch.dict(os.environ, {"SYNC_SECRET": ""}, clear=False):
+            with app.test_client() as scheduled_client:
+                missing_config = scheduled_client.post("/plaid/sync-all")
+        _check(missing_config.status_code == 500,
+               "scheduled result: missing SYNC_SECRET should remain 500")
+
+        with patch.dict(os.environ, {
+            "SYNC_SECRET": scheduled_secret,
+            "PLAID_CLIENT_ID": "",
+            "PLAID_SECRET": "",
+        }, clear=False):
+            with app.test_client() as scheduled_client:
+                missing_plaid_config = scheduled_client.post(
+                    "/plaid/sync-all", headers=scheduled_headers
+                )
+        _check(missing_plaid_config.status_code == 500,
+               "scheduled result: missing Plaid configuration should remain 500")
+
+        from werkzeug.serving import WSGIRequestHandler, make_server
+
+        class _SilentLocalRequestHandler(WSGIRequestHandler):
+            def log(self, log_type, message, *args):
+                pass
+
+        local_server = make_server(
+            "127.0.0.1", 0, app, request_handler=_SilentLocalRequestHandler
+        )
+        local_thread = threading.Thread(target=local_server.serve_forever, daemon=True)
+        local_thread.start()
+        try:
+            with patch.dict(os.environ, scheduled_env, clear=False), patch(
+                "web.routes.plaid._sync_entity",
+                side_effect=_result_side_effect(partial_results),
+            ):
+                curl_result = subprocess.run(
+                    [
+                        "curl",
+                        "--fail",
+                        "--noproxy",
+                        "127.0.0.1",
+                        "--max-time",
+                        "5",
+                        "-X",
+                        "POST",
+                        f"http://127.0.0.1:{local_server.server_port}/plaid/sync-all",
+                        "-H",
+                        f"Authorization: Bearer {scheduled_secret}",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+        finally:
+            local_server.shutdown()
+            local_thread.join(timeout=5)
+            local_server.server_close()
+        _check(curl_result.returncode == 22,
+               "scheduled result: curl --fail should reject partial failure with exit 22")
+        _check(scheduled_secret not in curl_result.stdout + curl_result.stderr,
+               "scheduled result: curl output must not echo the bearer secret")
+        _check("curl --fail" in (PROJECT_ROOT / ".github/workflows/daily-plaid-sync.yml").read_text(),
+               "scheduled result: workflow should retain the curl --fail contract")
+        print("   ✅ Partial and total failures are workflow-visible; success and skip behavior remain truthful")
+
+        # ── 8e. CSV export tests ────────────────────────────────────
+        print("\n8e. CSV export tests…")
         with app.test_client() as csv_client:
             csv_client.set_cookie("entity", "Personal")
 

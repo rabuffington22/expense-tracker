@@ -224,7 +224,20 @@ def sync_all():
         results = {}
         for entity_key in _ENTITY_MAP.values():
             results[entity_key] = _sync_entity(entity_key)
-        return jsonify({"ok": True, "results": results})
+        failed_entities = [
+            entity_key
+            for entity_key, result in results.items()
+            if result.get("errors")
+        ]
+        if not failed_entities:
+            return jsonify({"ok": True, "status": "success", "results": results})
+
+        status = (
+            "failure"
+            if len(failed_entities) == len(results)
+            else "partial_failure"
+        )
+        return jsonify({"ok": False, "status": status, "results": results}), 502
     finally:
         _sync_lock.release()
 

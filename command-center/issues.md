@@ -1181,7 +1181,7 @@ Tracked test expansion was explicitly excluded from audit work block 3G.
 
 ## Scheduled Plaid Sync Can Report Partial Failure As Success
 
-Status: open; discovered in work block 3H
+Status: resolved locally in work block 4G; release not authorized
 
 Severity: high operational reliability risk
 
@@ -1191,13 +1191,13 @@ Where seen: `web/routes/plaid.py`, `.github/workflows/daily-plaid-sync.yml`, and
 
 Revisit: Phase 4 Task 1 for response-contract repair; Phase 4 Task 2 for workflow-visible regression coverage
 
-Summary:
+Result:
 
-`/plaid/sync-all` returns HTTP 200 and top-level `ok: true` when an entity result contains errors. The daily workflow uses `curl --fail`, so a partial entity/item failure can leave the GitHub run green.
+`/plaid/sync-all` now returns HTTP 200 with `ok: true` and `status: success` only when every entity result is error-free. One or more nested errors return HTTP 502 with `ok: false` and either `partial_failure` or `failure`; error-free skipped entities remain successful, and the existing per-entity results are preserved without wider error detail.
 
 Impact:
 
-Monitoring can report a healthy scheduled sync while one or more entities did not complete cleanly.
+The existing scheduled workflow's `curl --fail` contract now receives a failing HTTP result when any entity reports errors.
 
 Acceptance checks:
 
@@ -1205,9 +1205,9 @@ Acceptance checks:
 - Sanitized per-entity results remain available without secret or financial-row output.
 - A mocked workflow-visible regression test proves `curl --fail` receives failure for partial sync errors.
 
-Why not fixed now:
+Verification:
 
-Work block 3H was audit-only; response behavior and tracked tests require a separate repair block.
+Maintained synthetic coverage uses fake secrets and mocked entity results to verify complete success, harmless skips, partial and total failure, bearer/configuration/contention behavior, unchanged exception and lock release semantics, entity order, preserved sanitized results, denied outbound networking, and an actual localhost-only `curl --fail` exit 22. Release remains separately gated.
 
 ## Scheduled And Public Sync Paths Lack Shared Cross-Process Coordination
 
@@ -1391,7 +1391,7 @@ Thread-launch behavior and tracked tests were excluded from work block 3H.
 
 ## Background Sync Entry Points Lack Tracked Regression Coverage
 
-Status: parked for Phase 4 regression coverage
+Status: partly addressed in work block 4G; remaining entry-point coverage parked for Phase 4
 
 Severity: medium regression-confidence risk
 
@@ -1403,7 +1403,7 @@ Revisit: Phase 4 Task 2, preferably alongside the related entry-point repairs
 
 Summary:
 
-The maintained smoke suite renders Connected Accounts but does not exercise `/plaid/sync-all` or the public `_background_sync` worker. Work block 3H's passing and failing evidence is deterministic but ephemeral.
+Work block 4G adds maintained `/plaid/sync-all` coverage for bearer, configuration, configured entity order, complete success, harmless skip, partial and total error results, contention, exception/lock release, sanitized per-entity results, and workflow-visible `curl --fail` behavior. Public `_background_sync`, cross-path coordination, persistence/cursor, vendor scope, launch throttling, and remaining entry-point behavior stay parked.
 
 Impact:
 
@@ -1415,9 +1415,9 @@ Acceptance checks:
 - Passing request, lock-release, entity-scope, and failure-containment behavior is explicit.
 - Each repaired 3H defect has failing-before and passing-after regression coverage.
 
-Why not added now:
+Remaining boundary:
 
-Tracked test expansion was explicitly excluded from work block 3H.
+Only the `P3-3H-01` result slice is addressed. Each later 3H repair should add its own paired failing-before and passing-after coverage.
 
 ## Luxe Legacy Owner Draw Is Mirrored Despite The Exclusion Intent
 

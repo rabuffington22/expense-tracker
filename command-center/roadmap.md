@@ -891,17 +891,17 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after the locally verified completion of work block 4F; Task 1F is next for separate planning and 4F release remains separately gated
+Status: active with work block 4G-R authorized for exact-path durability, automatic Fly deployment observation, credential-free health verification, and sanitized closeout
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
 - **Task 1A: Repair the confirmed server-authentication and protected-cache boundaries.** Status: done, released, and credential-free production verified through work blocks 4A-4B and PR #86.
 - **Task 1B: Establish source-aware transaction identity.** Status: done, released, and credential-free production health verified through work blocks 4C-4C-R for `P3-3A-01`.
-- **Task 1C: Enforce the BFM-only payroll route boundary.** Status: done and locally verified through work block 4D for `P3-3F-01` plus the boundary slice of `P3-3F-C01`; release remains separate.
+- **Task 1C: Enforce the BFM-only payroll route boundary.** Status: done, released, and credential-free production health verified through work blocks 4D-4D-R for `P3-3F-01` plus the boundary slice of `P3-3F-C01`.
 - **Task 1D: Enforce the Luxe Legacy denial boundary across planning routes.** Status: done, released, and credential-free production health verified through work blocks 4E-4E-R for `P3-3D-02` plus the boundary slice of `P3-3D-C01`.
-- **Task 1E: Enforce Luxe Legacy-only downstream source selection.** Status: done and locally verified through work block 4F for `P3-3I-01` plus the focused selection slice of `P3-3I-C01`; release remains separate and remote idempotency remains parked.
-- **Task 1F: Authenticate scheduled sync before entity setup.** Status: current for separate work-block planning for `P3-3H-01`; broader sync-entry work remains later.
-- **Task 1G: Restore the Recurring Charges report query.** Status: planned for `P3-3C-01` after the early boundary repairs.
+- **Task 1E: Enforce Luxe Legacy-only downstream source selection.** Status: done, released, and credential-free production health verified through work blocks 4F-4F-R for `P3-3I-01` plus the focused selection slice of `P3-3I-C01`; remote idempotency remains parked.
+- **Task 1F: Report scheduled sync partial failures truthfully.** Status: done and locally verified through work block 4G for `P3-3H-01` plus the workflow-visible result slice of `P3-3H-C01`; release remains separate, and authorization-before-entity-setup (`P3-3H-06`) remains later.
+- **Task 1G: Restore the Recurring Charges report query.** Status: current for separate work-block planning for `P3-3C-01` after the early boundary repairs.
 - **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: planned as the first primary-Plaid block.
 - **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: planned as the second primary-Plaid block.
 - **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: planned as the third primary-Plaid block.
@@ -911,9 +911,9 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
-- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, and 4E completed the planning-boundary slice of `P3-3D-C01`.
+- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, and 4G completed the workflow-visible result slice of `P3-3H-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B, 4C-R, 4D-R, and 4E-R; every future release remains separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: active for the separately authorized 4G-R release after completed 4B, 4C-R, 4D-R, 4E-R, and 4F-R.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -1241,7 +1241,7 @@ Durability: local-only. No commit, push, PR, merge, deployment, workflow, creden
 
 Report point: return the exact selection behavior changed; focused and full synthetic results; preserved valid categories and LL-only invocation; unchanged-database and no-network evidence; cleanup; changed paths; branch state; remaining idempotency and release gates; and the separately planned Task 1F point.
 
-Suggested next block: separately plan 4G for Task 1F, authenticating scheduled sync before entity setup.
+Suggested next block: separately plan 4G for Task 1F, making partial sync failures machine-detectable to the scheduled workflow.
 
 Result: the mirror-specific exclusion set now uses the maintained Luxe Legacy `Owner Draw` category while preserving `Internal Transfer` and `Credit Card Payment`. Maintained synthetic coverage reproduced the original leak before the repair and now proves Owner Draw stays local, valid Cost of Goods and Income rows remain eligible, direct bridge execution reads only Luxe Legacy without changing any entity database, and scheduled/public sync seams invoke the mirror only for Luxe Legacy. Fake configuration, mocked HTTP, and denied sockets prevented external calls. Baseline and final smoke, Python compilation, disposable cleanup, JSON validation, dashboard refresh, health check, and whitespace checks passed. Empty-ID handling, duplicate conflict keys, downstream idempotency, live access, GitHub durability, and deployment remained excluded.
 
@@ -1266,6 +1266,79 @@ Report point: return source and closeout commits, automatic workflow result, cre
 Result: the exact nine-path 4F source set was committed as `ce0c1b6`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29695007172` and job `88214137931` passed every reported step for that exact source SHA. Production `/health` returned HTTP 200 without credentials, and local `main` matched `origin/main`. The untracked sync script and unrelated `command-center/now 2.md` remained excluded, no protected data or credentials were used, and no manual workflow, non-automatic Fly, Plaid, or downstream action occurred. This command-center-only closeout is published separately with `[skip actions]` to avoid a second deployment.
 
 Evidence: `command-center/logs/2026-07-19-luxe-legacy-downstream-selection-release-4f-r.md`, source commit `ce0c1b6`, and GitHub Actions run `29695007172`.
+
+### Work Block 4G: Scheduled Sync Result Truthfulness
+
+Status: done; confirmed and completed locally on 2026-07-19
+
+Parent tasks: Phase 4 Task 1F and only the scheduled-result slice of Task 2.
+
+Included findings: `P3-3H-01` and the matching workflow-visible result slice of `P3-3H-C01` only.
+
+Outcome: make `/plaid/sync-all` return HTTP 200 and top-level success only when every entity result is error-free; make any nested entity error machine-detectable to the existing `curl --fail` workflow while preserving a sanitized per-entity result; distinguish partial from all-entity failure; treat an error-free skipped entity as successful; and add focused maintained synthetic coverage.
+
+Why this grouping: route-level result aggregation and the exact workflow-visible regression proof share one HTTP contract, one mocked entity-result seam, and one temporary synthetic verification path. Authorization-before-entity-setup, exception isolation, coordination, persistence, public-worker behavior, and workflow release use different risk and verification paths and remain later.
+
+Excluded: completed Tasks 1A-1E; Tasks 1G-1P and Tasks 3-4 except the focused Task 2 slice; `P3-3H-02` through `P3-3H-07`, including authorization-before-entity-setup (`P3-3H-06`); entity exception isolation, cross-process coordination, public `/k/` synchronization, cursor/removal behavior, vendor-item scope, thread-launch throttling, Plaid persistence, and workflow edits; real databases or financial rows, uploads, credentials, production/demo access, Plaid calls, workflow dispatch/rerun, Fly, downstream access/writes, or other live actions; commit, push, PR, merge, deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Owner and recommended agent: Codex Desktop in the current task. The deterministic repair couples route behavior, workflow-visible status semantics, maintained synthetic coverage, protected-data boundaries, cleanup, Runway OS stewardship, and final intake. The independent Fable 5 review already recommended this exact early micro-fix, so no additional second opinion or delegation is needed.
+
+Runner path: current Codex task on local branch `codex/scheduled-sync-result-truthfulness` after this active block is dashboard-verified.
+
+Blocking questions: none.
+
+Non-blocking defaults: preserve the existing per-entity result shape without widening error detail; return `ok: true` only when every `errors` list is empty; keep error-free `skipped: true` results successful; return `ok: false` and a failure-class HTTP status for any nested error; distinguish partial from all-entity failure in a top-level status; preserve current missing/wrong bearer, missing configuration, contention, uncaught-exception, lock-release, and entity-order behavior; leave `.github/workflows/daily-plaid-sync.yml` unchanged; use fake secrets, mocked entity results, temporary all-entity databases, and denied outbound networking; remain local-only.
+
+Expected surfaces: `web/routes/plaid.py`; focused maintained checks in `scripts/smoke_test.py`; read-only reference to `.github/workflows/daily-plaid-sync.yml`; `command-center/issues.md`; one sanitized 4G closeout log; and Runway OS roadmap, now, decisions, state, and dashboard files. No migration, workflow edit, or live-system surface is expected.
+
+Stop conditions:
+
+- Correct behavior requires changing entity failure isolation, Plaid persistence, cursor handling, coordination, workflow configuration, authentication/setup ordering, or another task.
+- A response would expose a credential, secret, financial row, or newly widened error detail.
+- Verification requires real data, credentials, Plaid, downstream networking, workflow execution, production/demo access, or another live action.
+- Existing consumers require a product decision about a materially different response contract.
+- Baseline or focused verification fails in a plan-changing way, disposable cleanup cannot be proven, or command-center refresh/health fails.
+- Scope reaches GitHub durability, deployment, `P3-3H-06`, or another Phase 4 task.
+
+Verification:
+
+- baseline and final `.venv/bin/python scripts/smoke_test.py`;
+- focused complete-success, harmless-skip, one-entity partial-failure, all-entity failure, absent/wrong bearer, missing configuration, contention, unchanged exception, lock-release, entity-order, and secret-safe response checks;
+- deterministic localhost-only or equivalent proof that the partial-failure HTTP response is rejected by the existing `curl --fail` contract;
+- mocked entity results, denied outbound networking, temporary all-entity databases, and disposable cleanup;
+- Python compilation, `jq empty command-center/state.json`, dashboard refresh, health check, `git diff --check`, generated-dashboard inspection, and final explicit-path worktree review.
+
+Dashboard closeout: update source files first, align `state.json`, refresh and health-check the dashboard, and mark 4G done only after every required check passes.
+
+Durability: local-only. Commit, push, PR, merge, deployment, workflow mutation/execution, credential access, protected data, Plaid, downstream access/write, and other live actions remain excluded.
+
+Report point: return the exact top-level and HTTP result contract; focused and full synthetic results; workflow-visible failure proof; preserved bearer, contention, exception, entity-order, and error-detail behavior; no-network and cleanup evidence; changed paths; branch state; and the separate release gate.
+
+Suggested next block: separately plan 4H for Task 1G, restoring the Recurring Charges report query with focused reporting coverage.
+
+Result: `/plaid/sync-all` now returns HTTP 200 with `ok: true` and `status: success` only when every entity result is error-free. One or more nested errors return HTTP 502 with `ok: false` and `status: partial_failure`, while errors in every entity return `status: failure`; error-free skipped entities remain successful and the existing per-entity results are preserved without wider error detail. Maintained synthetic coverage proves success, skips, partial and total errors, bearer/configuration/contention behavior, unchanged exception and lock release semantics, entity order, secret-safe output, and an actual localhost-only `curl --fail` exit 22. Baseline and final smoke suites, Python compilation, disposable cleanup, JSON validation, dashboard refresh, health check, and whitespace checks passed. No workflow edit/execution, real data, credential, Plaid, downstream, production/demo, GitHub durability, deployment, or other live action occurred.
+
+Evidence: `web/routes/plaid.py`, `scripts/smoke_test.py`, `command-center/issues.md`, and `command-center/logs/2026-07-19-scheduled-sync-result-truthfulness-4g.md`.
+
+### Work Block 4G-R: Durability And Release
+
+Status: active; directly authorized by Ryan on 2026-07-19
+
+Included: exact intended 4G application, maintained-test, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/scheduled-sync-result-truthfulness`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real databases or financial/payroll/HR rows; uploads; credentials; authenticated production pages; Plaid calls; manual workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream access or writes; workflow-file changes; `P3-3H-06`; broader sync-entry repairs; Task 1G or unrelated work; force push; and recovery outside the exact fast-forward publish path.
+
+Owner and recommended agent: Codex Desktop. The release requires exact-path Git and sensitive-string review, direct-main durability, attributable automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.
+
+Blocking questions: none. Ryan directly authorized commit and push to `main` for the completed 4G scope.
+
+Non-blocking defaults: use explicit intended paths; preserve both unrelated untracked files; commit first on the feature branch; require local `main`, `origin/main`, and the feature-branch base to align before fast-forwarding; push without force; inspect the automatic deploy result without opening protected logs unless failure diagnosis is necessary; verify only credential-free `/health`; publish the post-release command-center closeout with `[skip actions]` to prevent a second deployment.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; staging includes either excluded untracked file; maintained verification fails; the source commit cannot be fast-forwarded safely; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; the closeout push starts another deploy; or recovery would exceed the authorized path.
+
+Verification: exact path, staged-set, sensitive-pattern, branch ancestry, and remote-alignment review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; source commit and direct-main fast-forward push; automatic Fly run/job result for the exact source SHA; credential-free production `/health`; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separately planned Task 1G point.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

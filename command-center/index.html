@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 11:33 AM CST",
+    "lastUpdated": "2026-07-19 11:58 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1624,18 +1624,30 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4F-R is complete: source commit ce0c1b6 is durable on main, automatic Fly deployment passed, and credential-free production health returned 200.",
+    "summary": "Work block 4G-R is active for exact-path direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout.",
     "progress": 67
   },
   "currentTask": {
-    "title": "Task 1F: Authenticate scheduled sync before entity setup",
-    "owner": "Ryan",
+    "title": "Task 4: Publish and verify explicitly approved repairs",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop completed 4F-R direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout",
-    "nextAction": "Separately define and confirm a bounded Task 1F work block before implementation.",
-    "blocker": "No Task 1F implementation or additional release/live action is authorized"
+    "supportingAgent": "Ryan directly authorized commit and push to main for the completed 4G work",
+    "nextAction": "Verify exact scope and remote alignment, commit the 4G source set, fast-forward and push main, observe automatic deployment, verify health, and publish sanitized closeout.",
+    "blocker": "Recovery beyond the exact fast-forward publish path remains unauthorized"
   },
-  "currentWorkBlock": null,
+  "currentWorkBlock": {
+    "id": "phase-4-block-g-release",
+    "label": "4G-R",
+    "name": "Durability And Release",
+    "status": "active",
+    "includedTasks": [
+      "Task 1F release durability",
+      "Task 4"
+    ],
+    "owner": "Codex Desktop",
+    "currentTask": "Verify, commit, fast-forward main, push, observe automatic Fly deployment, verify credential-free health, and publish sanitized closeout",
+    "nextReportPoint": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the Task 1G planning point."
+  },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -1659,23 +1671,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Separately plan Task 1F scheduled-sync authentication boundary",
-    "status": "awaiting Ryan",
-    "owner": "Ryan",
-    "why": "4F-R is durable, deployed, and health verified; the accepted Phase 4 sequence places P3-3H-01 next as a separate early truthfulness boundary.",
-    "action": "Ask Codex to define Task 1F, then confirm before implementation or any further live action.",
+    "title": "Publish and verify work block 4G-R",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized commit and push to main for the completed, locally verified 4G scope.",
+    "action": "Publish the exact 4G source set by fast-forward, observe the attributable automatic Fly deployment, verify credential-free health, and publish the sanitized closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Work block 4F-R is complete; the next implementation requires a separate Ryan decision.",
-    "items": [
-      "Ask Codex to define the Task 1F work block when ready."
-    ]
+    "summary": "No current Ryan decision blocks the exact authorized 4G-R release path.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4F-R is complete. Task 1F-1P implementation, downstream idempotency, empty-ID handling, authenticated production access, further releases, and unrelated repairs remain outside authorization.",
-    "decisionQueue": "The next Ryan decision is a separately proposed and confirmed Task 1F scope.",
+    "phaseQuestions": "Only the exact 4G-R fast-forward release path is authorized. Task 1G-1P implementation, P3-3H-06, broader sync-entry work, protected data, and unrelated live actions remain outside authorization.",
+    "decisionQueue": "After 4G-R closeout, Task 1G returns as the next separately planned work block.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -3177,6 +3187,103 @@
         "Fly deploy job 88214137931"
       ],
       "result": "Published source commit ce0c1b6 directly to main by exact-path fast-forward, observed successful automatic Fly run 29695007172 and job 88214137931, verified credential-free production health at HTTP 200, preserved both unrelated untracked files, and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-g",
+      "phaseId": "phase-4",
+      "label": "4G",
+      "name": "Scheduled Sync Result Truthfulness",
+      "status": "done",
+      "includedTasks": [
+        "Task 1F",
+        "Task 2 paired only for the workflow-visible P3-3H-C01 result slice"
+      ],
+      "includedFindings": [
+        "P3-3H-01",
+        "P3-3H-C01 workflow-visible result slice"
+      ],
+      "excludedTasks": [
+        "Completed Tasks 1A-1E; Tasks 1G-1P and Tasks 3-4 except the focused Task 2 slice",
+        "P3-3H-02 through P3-3H-07, including authorization-before-entity-setup P3-3H-06",
+        "Entity exception isolation, coordination, persistence, public-worker behavior, and workflow edits",
+        "Real data, credentials, production/demo, Plaid, workflow actions, Fly, downstream access/writes, GitHub durability, deployment, pre-existing untracked scripts/sync_prod_to_local.sh, and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The deterministic repair couples route behavior, workflow-visible status semantics, maintained synthetic coverage, protected-data boundaries, cleanup, Runway OS stewardship, and final intake; the prior independent review already endorsed this micro-fix.",
+      "runnerPath": "Current Codex task on local branch codex/scheduled-sync-result-truthfulness without delegation.",
+      "expectedFiles": [
+        "web/routes/plaid.py",
+        "scripts/smoke_test.py",
+        "Read-only .github/workflows/daily-plaid-sync.yml",
+        "command-center roadmap, now, decisions, issues, state, dashboard, and sanitized 4G closeout log"
+      ],
+      "stopConditions": [
+        "Correct behavior requires changing exception isolation, Plaid persistence, cursor handling, coordination, workflow configuration, authentication/setup ordering, or another task",
+        "A response would expose protected data, secrets, credentials, or widened error detail",
+        "Verification requires real data, credentials, Plaid, external networking, production/demo, workflow execution, or another live action",
+        "Existing consumers require a materially different product contract",
+        "Baseline or focused verification changes the plan, cleanup cannot be proven, or command-center checks fail"
+      ],
+      "verification": [
+        "Baseline and final .venv/bin/python scripts/smoke_test.py",
+        "Maintained complete-success, skip, partial-failure, all-entity-failure, bearer, configuration, contention, exception, lock-release, entity-order, and secret-safe checks",
+        "Deterministic localhost-only or equivalent curl --fail rejection proof",
+        "Mocked entity results, denied outbound networking, temporary all-entity databases, and disposable cleanup",
+        "Python compilation, JSON validation, dashboard refresh, health check, git diff check, dashboard inspection, and final worktree review"
+      ],
+      "reportBack": "Return the exact result contract, focused and full synthetic results, workflow-visible failure proof, preserved behavior and boundaries, no-network and cleanup evidence, changed paths, branch state, and the separate release gate.",
+      "durability": "Complete and verified locally; commit, push, PR, merge, deployment, workflow mutation/execution, credential access, protected data, Plaid, downstream access/write, and other live actions remain excluded.",
+      "evidence": [
+        "web/routes/plaid.py",
+        "scripts/smoke_test.py",
+        "command-center/issues.md",
+        "command-center/logs/2026-07-19-scheduled-sync-result-truthfulness-4g.md"
+      ],
+      "result": "The route now returns 200 and top-level success only for all-error-free entity results, returns 502 with partial_failure or failure for nested errors, preserves successful skips and existing per-entity results, and passes maintained route plus actual localhost curl-fail verification without live action."
+    },
+    {
+      "id": "phase-4-block-g-release",
+      "phaseId": "phase-4",
+      "label": "4G-R",
+      "name": "Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1F release durability",
+        "Task 4"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real databases or financial, payroll, or HR rows, uploads, credentials, and authenticated production pages",
+        "Plaid calls, manual workflow dispatch or rerun, non-automatic Fly mutation, downstream access or writes, workflow edits, P3-3H-06, Task 1G, and unrelated work",
+        "Force push and recovery beyond the exact fast-forward publish path"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git and sensitive-string review, direct-main durability, automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.",
+      "runnerPath": "Current Codex task using local git and gh without a PR because Ryan explicitly requested commit and push to main.",
+      "expectedFiles": [
+        "Exact intended 4G application, maintained-test, issue, evidence, and command-center paths",
+        "Source commit on codex/scheduled-sync-result-truthfulness and fast-forward local main",
+        "Automatic Fly Deploy workflow from the main push",
+        "Sanitized 4G-R closeout log and command-center-only skip-actions commit"
+      ],
+      "stopConditions": [
+        "Exact diff contains an unexpected path, sensitive value, protected data, or unrelated user change",
+        "Local or remote main diverges or cannot be fast-forwarded safely",
+        "Maintained verification fails or staging includes an excluded path",
+        "Automatic deployment fails or cannot be attributed to the source SHA",
+        "Credential-free health fails, a second deploy starts, or recovery exceeds the authorized path"
+      ],
+      "verification": [
+        "Exact path, staged-set, sensitive-pattern, branch ancestry, and remote-alignment review",
+        "Maintained synthetic suite, Python compilation, JSON validation, dashboard refresh, health check, and git diff check",
+        "Explicit staging review, source commit, and direct-main fast-forward push",
+        "Automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment, preserved exclusions, and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the Task 1G planning point.",
+      "durability": "Active release block; final durable result is pending source publication, automatic deployment, credential-free health, and sanitized closeout."
     }
   ],
   "phaseTasks": [
@@ -3627,20 +3734,28 @@
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1F",
-      "title": "Task 1F: Authenticate scheduled sync before entity setup",
-      "status": "current",
-      "owner": "Ryan",
-      "summary": "Repair P3-3H-01 independently before the broader sync-entry family.",
-      "nextAction": "Define and confirm a separate Task 1F work block before implementation.",
-      "blocker": "No Task 1F implementation is authorized."
+      "title": "Task 1F: Report scheduled sync partial failures truthfully",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Work block 4G completed P3-3H-01 and the focused workflow-visible P3-3H-C01 result slice locally; P3-3H-06 remains later.",
+      "result": "Scheduled sync now returns HTTP 502 and top-level failure for nested entity errors, distinguishes partial from all-entity failure, preserves successful skips and per-entity results, and passes actual localhost curl-fail verification.",
+      "evidence": [
+        "web/routes/plaid.py",
+        "scripts/smoke_test.py",
+        "command-center/logs/2026-07-19-scheduled-sync-result-truthfulness-4g.md"
+      ],
+      "nextAction": null,
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1G",
       "title": "Task 1G: Restore the Recurring Charges report query",
       "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Repair P3-3C-01 after the early boundary tasks using the financial read-model verification path."
+      "owner": "Ryan",
+      "summary": "Repair P3-3C-01 after the early boundary tasks using the financial read-model verification path.",
+      "nextAction": "Return as current after 4G-R closeout, then define and confirm a separate work block before implementation.",
+      "blocker": "4G-R is the only active work block; no Task 1G implementation is authorized."
     },
     {
       "phaseId": "phase-4",
@@ -3734,9 +3849,9 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "done",
+      "status": "current",
       "owner": "Codex Desktop",
-      "summary": "Publish only exact verified repair scopes through separately authorized release blocks.",
+      "summary": "Work block 4G-R is active for exact-path direct-main durability, automatic Fly observation, credential-free health verification, and sanitized closeout.",
       "result": "Releases 4B, 4C-R, 4D-R, 4E-R, and 4F-R completed successfully; 4F source commit ce0c1b6 is on main, Fly run 29695007172 and job 88214137931 succeeded, and credential-free production health returned 200.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
@@ -3745,8 +3860,8 @@
         "command-center/logs/2026-07-19-luxe-legacy-planning-boundary-release-4e-r.md",
         "command-center/logs/2026-07-19-luxe-legacy-downstream-selection-release-4f-r.md"
       ],
-      "nextAction": "Require separate approval for each future release block.",
-      "blocker": "No additional release or live action is authorized."
+      "nextAction": "Publish and verify only the exact authorized 4G-R scope.",
+      "blocker": "Recovery beyond the exact fast-forward 4G-R path remains unauthorized."
     },
     {
       "phaseId": "phase-5",
@@ -4563,8 +4678,8 @@
     },
     {
       "title": "Scheduled Plaid sync can report partial failure as success",
-      "summary": "An entity result containing errors still produced HTTP 200 and top-level ok true, so the current curl-fail workflow can remain green during a partial sync failure.",
-      "status": "open",
+      "summary": "Resolved locally in 4G: nested entity errors now return HTTP 502 with truthful partial or total failure status, successful skips remain successful, per-entity results are preserved, and actual localhost curl-fail verification exits 22.",
+      "status": "resolved-locally",
       "severity": "high",
       "source": "command-center/issues.md"
     },
@@ -4612,8 +4727,8 @@
     },
     {
       "title": "Background sync entry points lack tracked regression coverage",
-      "summary": "The repeated 3H probe verified entry-point behavior and reproduced seven defect clusters, but the maintained smoke suite does not exercise sync-all or the public background worker.",
-      "status": "parked",
+      "summary": "Work block 4G added maintained sync-all result, bearer, configuration, contention, exception, lock-release, entity-order, result-preservation, secret-safe, and curl-fail coverage; public worker and remaining entry-point coverage stay parked.",
+      "status": "partly-addressed",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
@@ -4697,8 +4812,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Separately plan Task 1F",
-    "description": "Define and confirm the scheduled-sync authentication-before-entity-setup boundary before implementation."
+    "name": "Complete 4G-R durability and release",
+    "description": "Publish the exact verified 4G source set, observe automatic Fly deployment, verify credential-free health, and publish sanitized closeout."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -4776,7 +4891,10 @@
     "phase4PlanningBoundaryCoverage": "pass; maintained all-route enumeration, fail-fast handler sentinels, unchanged Personal BFM and Luxe Legacy logical database snapshots, account-name non-disclosure, and preserved Personal/BFM planning behavior",
     "phase4PlanningBoundaryCleanup": "pass; baseline and final smoke suites, Python compilation, disposable smoke-root removal, jq state validation, git diff check, dashboard refresh, and health check passed with the untracked sync script untouched",
     "phase4PlanningBoundaryRelease": "pass; source commit 1a277b0 is on main, automatic Fly run 29694423318 and deploy job 88212585378 passed, and credential-free production health returned HTTP 200",
-    "phase4PlanningBoundaryDurability": "pass; local main and origin/main aligned at source commit 1a277b0 before this command-center-only skip-actions closeout, with scripts/sync_prod_to_local.sh and command-center/now 2.md excluded"
+    "phase4PlanningBoundaryDurability": "pass; local main and origin/main aligned at source commit 1a277b0 before this command-center-only skip-actions closeout, with scripts/sync_prod_to_local.sh and command-center/now 2.md excluded",
+    "phase4SyncResultRepair": "pass locally; sync-all returns 200 and success only for error-free entity results and returns 502 with partial or total failure for nested errors while preserving successful skips and per-entity results",
+    "phase4SyncResultCoverage": "pass; maintained success, skip, partial and total failure, bearer, configuration, contention, exception, lock-release, entity-order, result-preservation, secret-safe, and actual localhost curl-fail exit-22 checks pass",
+    "phase4SyncResultCleanup": "pass; baseline and final smoke suites, Python compilation, disposable root removal, JSON validation, dashboard refresh, health check, git diff check, and preserved untracked exclusions pass"
   }
 }
 </script>
