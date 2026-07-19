@@ -1421,7 +1421,7 @@ Tracked test expansion was explicitly excluded from work block 3H.
 
 ## Luxe Legacy Owner Draw Is Mirrored Despite The Exclusion Intent
 
-Status: open; discovered in work block 3I
+Status: resolved locally in work block 4F; release not authorized
 
 Severity: high downstream-data boundary risk
 
@@ -1429,7 +1429,7 @@ Captured: 2026-07-18
 
 Where seen: `core/luxury_bridge.py`, `categories.md`, and the repeated mocked 3I payload probe
 
-Revisit: Phase 4 Task 1 for eligibility-contract repair; Phase 4 Task 2 for exclusion coverage
+Revisit: a separately authorized release block if Ryan wants this local repair published
 
 Summary:
 
@@ -1445,9 +1445,9 @@ Acceptance checks:
 - `Owner Draw` is omitted without suppressing valid LL sale or purchase categories.
 - Scheduled and public bridge seams preserve the same corrected selection behavior.
 
-Why not fixed now:
+Resolution:
 
-Product repair and tracked-test expansion were excluded from work block 3I.
+Work block 4F replaced the nonexistent LL `Owner Contribution` mirror exclusion with the maintained `Owner Draw` category. Maintained synthetic coverage reproduced the original leak before the repair and now proves Owner Draw, Internal Transfer, and Credit Card Payment stay out while valid Cost of Goods and Income rows remain eligible. The direct bridge reads only Luxe Legacy and leaves all three temporary databases unchanged; scheduled and public sync seams invoke the mirror only for Luxe Legacy; fake configuration, mocked HTTP, and denied sockets prevent any live request. The repair remains local-only pending separate durability authorization.
 
 ## Luxe Legacy Mirror Idempotency Contract Permits Duplicate Conflict Keys
 
@@ -1512,7 +1512,7 @@ Product repair and tracked coverage were excluded from work block 3I.
 
 ## Luxe Legacy Downstream Mirror Lacks Tracked Regression Coverage
 
-Status: parked for Phase 4 regression coverage
+Status: partly addressed by the focused work block 4F selection-boundary slice
 
 Severity: medium regression-confidence risk
 
@@ -1524,7 +1524,7 @@ Revisit: Phase 4 Task 2, preferably alongside mirror eligibility and idempotency
 
 Summary:
 
-The maintained smoke suite does not exercise `core/luxury_bridge.py` or its scheduled and public invocation seams. Work block 3I's 44 passing checks, three controlled failures, two gaps, and remote-unverified classification are deterministic but ephemeral.
+The maintained smoke suite now exercises the Owner Draw selection boundary, valid LL eligibility, LL-only storage access, unchanged entity databases, and scheduled/public LL-only invocation with fake configuration, mocked HTTP, and denied outbound sockets. Broader no-op, request-shape, failure-isolation, empty-ID, duplicate-key, and downstream-contract coverage remains for Task 1O or later separately gated work.
 
 Impact:
 
@@ -1536,9 +1536,9 @@ Acceptance checks:
 - Passing no-op, request-shape, failure-isolation, and entity-boundary behavior is explicit.
 - Every repaired 3I finding has failing-before and passing-after coverage.
 
-Why not added now:
+Remaining coverage:
 
-Tracked test expansion was explicitly excluded from work block 3I.
+Work block 4F intentionally added only the focused `P3-3I-01` selection slice. The remaining bridge contract and idempotency coverage stays parked with the corresponding unrepaired findings.
 
 ## Main Authentication Boundary Returns Protected HTML And Accepts A Client-Exposed Digest
 

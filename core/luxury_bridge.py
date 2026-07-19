@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 # Transfers / payments / owner draws aren't sale or purchase activity — exclude them
 # from the mirror so the matching UI in luxurious-luxury isn't cluttered.
-EXCLUDE_CATS = ("Internal Transfer", "Credit Card Payment", "Owner Contribution")
+EXCLUDE_CATS = ("Internal Transfer", "Credit Card Payment", "Owner Draw")
 
 
 def push_luxelegacy_to_supabase() -> int:

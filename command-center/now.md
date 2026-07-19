@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Plan the next bounded Phase 4 repair after the durable, deployed, and health-verified completion of work block 4E-R.
+Publish and verify the exact locally completed 4F repair under Ryan's direct-main instruction.
 
 ## Current Phase
 
@@ -10,44 +10,43 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-None. Work blocks 4E and 4E-R are complete; source commit `1a277b0` is on `main`, automatic Fly deployment passed, and production health returned HTTP 200.
+Work block 4F-R: Durability And Release — active under Ryan's direct instruction to commit and push the completed 4F work to `main`.
 
 ## Current Task
 
-Phase 4 Task 1E: separately define the Luxe Legacy-only downstream source-selection boundary for `P3-3I-01`. Downstream idempotency remains parked behind a separately authorized read-only contract check.
+Phase 4 Task 4: publish and verify only the exact approved 4F repair. Task 1F remains next for separate planning after release closeout.
 
 ## Owner
 
-Ryan owns the next Task 1E work-block decision. Codex Desktop completed exact-path 4E-R durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
+Codex Desktop owns exact-path staging, source commit, direct-main fast-forward push, automatic Fly observation, credential-free production health, and sanitized release closeout.
 
-## Work Block 4E-R Result
+## Work Block 4F-R Scope
 
-- Exact source commit `1a277b0` is on local `main` and `origin/main`.
-- Automatic Fly Deploy run `29694423318` and deploy job `88212585378` passed every reported step for that exact source SHA.
-- Production `/health` returned HTTP 200 without credentials.
-- The exact ten-path 4E source set was published; untracked `scripts/sync_prod_to_local.sh` and unrelated `command-center/now 2.md` remained untouched and unstaged.
-- No real data, credentials, authenticated production page, Plaid call, manual workflow action, non-automatic Fly mutation, downstream write, force push, or unrelated repair occurred.
+- Re-review and stage only the exact 4F application, maintained-test, issue, evidence, and command-center paths.
+- Commit on `codex/luxe-legacy-downstream-selection`, fast-forward local `main`, and push `main` to `origin` without force.
+- Observe only the automatic Fly deployment attributable to the source commit and verify credential-free production `/health`.
+- Publish one sanitized command-center-only `[skip actions]` closeout commit so no second deployment runs.
+- Preserve untracked `scripts/sync_prod_to_local.sh` and unrelated untracked `command-center/now 2.md` untouched and unstaged.
 
 ## Current Action
 
-Separately define and confirm the Task 1E work block before implementation. Do not infer implementation or downstream authorization from roadmap placement.
+Fetch and verify remote alignment, rerun required checks, scan the exact source set for sensitive content, stage explicit paths, commit, fast-forward `main`, push without force, and observe the automatic release through credential-free health.
 
 ## Remaining Gates
 
-- Task 1E requires a complete proposed work block and Ryan confirmation before implementation.
+- Recovery outside the exact fast-forward release path requires a new Ryan decision.
+- Empty Plaid-ID handling and the broader local mirror contract remain for Task 1O.
 - Downstream idempotency remains parked behind a separately authorized read-only remote-contract check.
-- Protected data, credentials, real databases, manual workflow actions, downstream writes, and other live actions remain closed unless a future exact block authorizes them.
+- Task 1F and broader sync-entry work require separate work-block confirmation.
+- Protected data, credentials, real databases, authenticated production pages, manual workflow actions, downstream writes, non-automatic Fly actions, and other live actions remain closed.
 
 ## Verification
 
-- Exact path and staged-set review: pass.
-- Sensitive-pattern scan: pass.
-- Final `.venv/bin/python scripts/smoke_test.py`, Python compilation, `jq empty`, and `git diff --check`: pass.
-- Dashboard refresh and command-center health: pass.
-- Source commit `1a277b0`, automatic Fly run `29694423318`, and deploy job `88212585378`: pass.
-- Credential-free production `/health`: HTTP 200.
-- Local `main` and `origin/main`: aligned before this closeout.
+- Exact path, staged-set, sensitive-pattern, branch ancestry, and remote-alignment review.
+- Maintained synthetic smoke suite, Python compilation, `jq empty`, `git diff --check`, dashboard refresh, and health check.
+- Source commit, local-main fast-forward, direct non-force push, and automatic Fly workflow result.
+- Credential-free production `/health`, final local/remote main alignment, preserved untracked exclusions, and sanitized `[skip actions]` closeout publication.
 
 ## Next Report Point
 
-Return both 4E commits, automatic Fly result, credential-free production health, final main alignment, preserved untracked exclusions, and the separately gated Task 1E planning point.
+Return source and closeout commits, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the separately gated Task 1F planning point.

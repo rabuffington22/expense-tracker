@@ -14,7 +14,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 # Ensure project root is importable regardless of cwd
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -910,8 +910,167 @@ def main() -> None:
 
         print("   ✅ All payroll routes enforce BFM-only access before storage or parsing")
 
-        # ── 8b. CSV export tests ────────────────────────────────────
-        print("\n8c. CSV export tests…")
+        # ── 8c. Luxe Legacy downstream selection boundary ──────────
+        print("\n8c. Luxe Legacy downstream selection boundary…")
+        # The maintained requirements include requests, but keep this synthetic
+        # suite runnable even when the local venv has not installed that optional
+        # bridge dependency. The module-level stand-in is always patched below.
+        bridge_requests_stub = None
+        try:
+            import requests as _bridge_requests  # noqa: F401
+        except ModuleNotFoundError:
+            bridge_requests_stub = Mock()
+            sys.modules["requests"] = bridge_requests_stub
+        from core.luxury_bridge import push_luxelegacy_to_supabase
+        from web.routes import kristine as kristine_routes
+        from web.routes import plaid as plaid_routes
+
+        bridge_rows = (
+            ("bridge-owner-draw", "bridge-plaid-owner-draw", "Owner Draw"),
+            ("bridge-transfer", "bridge-plaid-transfer", "Internal Transfer"),
+            ("bridge-card-payment", "bridge-plaid-card-payment", "Credit Card Payment"),
+            ("bridge-valid-cogs", "bridge-plaid-valid-cogs", "Cost of Goods"),
+            ("bridge-valid-income", "bridge-plaid-valid-income", "Income"),
+        )
+        conn_bridge = get_connection("luxelegacy")
+        for transaction_id, plaid_transaction_id, category in bridge_rows:
+            conn_bridge.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, merchant_canonical, amount, "
+                "amount_cents, account, category, source_filename, imported_at, "
+                "plaid_item_id, plaid_transaction_id) "
+                "VALUES (?, '2026-07-19', ?, ?, -12.34, -1234, 'Synthetic LL', ?, "
+                "'synthetic-bridge', '2026-07-19T00:00:00+00:00', 'bridge-item', ?)",
+                (transaction_id, category, category, category, plaid_transaction_id),
+            )
+        conn_bridge.commit()
+        conn_bridge.close()
+
+        bridge_baseline = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in ("personal", "company", "luxelegacy")
+        }
+        opened_bridge_entities = []
+        bridge_response = Mock()
+        bridge_response.raise_for_status.return_value = None
+
+        def _tracked_bridge_connection(entity_key):
+            opened_bridge_entities.append(entity_key)
+            return get_connection(entity_key)
+
+        with patch.dict(os.environ, {
+            "LUXURY_SUPABASE_URL": "https://synthetic.invalid",
+            "LUXURY_SUPABASE_SERVICE_KEY": "synthetic-service-key",
+        }, clear=False), patch(
+            "core.luxury_bridge.get_connection",
+            side_effect=_tracked_bridge_connection,
+        ), patch(
+            "core.luxury_bridge.requests.post",
+            return_value=bridge_response,
+        ) as bridge_post, patch(
+            "socket.socket",
+            side_effect=AssertionError("bridge smoke forbids outbound networking"),
+        ):
+            pushed_count = push_luxelegacy_to_supabase()
+
+        _check(opened_bridge_entities == ["luxelegacy"],
+               "bridge selection: direct execution must read only Luxe Legacy")
+        _check(bridge_post.call_count == 1,
+               "bridge selection: eligible LL rows should produce one mocked request")
+        bridge_payload = bridge_post.call_args.kwargs["json"]
+        payload_categories = {row["category"] for row in bridge_payload}
+        _check(pushed_count == 2 and len(bridge_payload) == 2,
+               "bridge selection: expected only the two valid LL rows")
+        _check(payload_categories == {"Cost of Goods", "Income"},
+               "bridge selection: Owner Draw, transfers, and card payments must be omitted")
+        _check(all(
+            _database_snapshot(entity_key) == bridge_baseline[entity_key]
+            for entity_key in ("personal", "company", "luxelegacy")
+        ), "bridge selection: mirror reads must not mutate any entity database")
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            conn_bridge = get_connection(entity_key)
+            conn_bridge.execute(
+                "INSERT INTO plaid_items "
+                "(item_id, access_token, institution_name, created_at) "
+                "VALUES (?, 'synthetic-token', 'Synthetic Bridge Bank', "
+                "'2026-07-19T00:00:00+00:00')",
+                (f"bridge-item-{entity_key}",),
+            )
+            conn_bridge.commit()
+            conn_bridge.close()
+
+        empty_sync_result = {
+            "added": [],
+            "modified": [],
+            "removed": [],
+            "next_cursor": "synthetic-bridge-cursor",
+        }
+        with patch.dict(os.environ, {
+            "PLAID_CLIENT_ID": "synthetic-client",
+            "PLAID_SECRET": "synthetic-secret",
+        }, clear=False), patch(
+            "core.crypto.decrypt_token",
+            return_value="synthetic-decrypted-token",
+        ), patch(
+            "core.plaid_client.get_transactions",
+            return_value=empty_sync_result,
+        ), patch(
+            "core.luxury_bridge.push_luxelegacy_to_supabase",
+            return_value=0,
+        ) as scheduled_bridge, patch(
+            "socket.socket",
+            side_effect=AssertionError("scheduled bridge smoke forbids outbound networking"),
+        ):
+            plaid_routes._sync_entity("personal")
+            plaid_routes._sync_entity("company")
+            _check(scheduled_bridge.call_count == 0,
+                   "scheduled bridge: Personal and BFM must not invoke the LL mirror")
+            plaid_routes._sync_entity("luxelegacy")
+            _check(scheduled_bridge.call_count == 1,
+                   "scheduled bridge: Luxe Legacy must invoke the mirror exactly once")
+
+        with patch.dict(os.environ, {
+            "PLAID_CLIENT_ID": "synthetic-client",
+            "PLAID_SECRET": "synthetic-secret",
+        }, clear=False), patch(
+            "core.crypto.decrypt_token",
+            return_value="synthetic-decrypted-token",
+        ), patch(
+            "core.plaid_client.get_transactions",
+            return_value=empty_sync_result,
+        ), patch(
+            "core.luxury_bridge.push_luxelegacy_to_supabase",
+            return_value=0,
+        ) as public_bridge, patch(
+            "socket.socket",
+            side_effect=AssertionError("public bridge smoke forbids outbound networking"),
+        ):
+            kristine_routes._background_sync()
+            _check(public_bridge.call_count == 1,
+                   "public bridge: Personal plus LL worker must invoke the mirror once")
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            conn_bridge = get_connection(entity_key)
+            conn_bridge.execute(
+                "DELETE FROM plaid_items WHERE item_id=?",
+                (f"bridge-item-{entity_key}",),
+            )
+            conn_bridge.commit()
+            conn_bridge.close()
+        conn_bridge = get_connection("luxelegacy")
+        conn_bridge.executemany(
+            "DELETE FROM transactions WHERE transaction_id=?",
+            [(transaction_id,) for transaction_id, _, _ in bridge_rows],
+        )
+        conn_bridge.commit()
+        conn_bridge.close()
+        if bridge_requests_stub is not None:
+            sys.modules.pop("requests", None)
+        print("   ✅ Owner Draw stays local, valid LL rows remain eligible, and both sync seams are LL-only")
+
+        # ── 8d. CSV export tests ────────────────────────────────────
+        print("\n8d. CSV export tests…")
         with app.test_client() as csv_client:
             csv_client.set_cookie("entity", "Personal")
 
