@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 2:24 PM CST",
+    "lastUpdated": "2026-07-19 2:28 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,33 +22,23 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4J-R are published on main; 4J source commit 74ad56d deployed successfully in Fly run 29699120063, with this command-center-only skip-actions closeout"
+    "durabilityStatus": "Work blocks through 4K-R are published on main; 4K source commit 72d2bba deployed successfully in Fly run 29700530131, with this command-center-only skip-actions closeout"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4K-R is active for exact-path durability, direct-main publication, automatic Fly observation, credential-free health, and sanitized closeout.",
-    "progress": 82
+    "summary": "Work block 4K-R is complete, durable on main, automatically deployed, and credential-free health verified; Task 1K is next for separate planning.",
+    "progress": 84
   },
   "currentTask": {
-    "title": "Task 1J: Isolate Plaid item failures and add truthful observability",
-    "owner": "Codex Desktop",
+    "title": "Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Ryan directly authorized commit and push to main; Codex Desktop owns the bounded 4K-R release path and final intake",
-    "nextAction": "Reverify and stage the exact ten 4K paths, commit, fast-forward main, push origin/main, observe automatic Fly deployment, verify credential-free health, and publish the skip-actions closeout.",
-    "blocker": "No current blocker; Task 1K, live Plaid, manual workflow actions, non-automatic Fly changes, and unrelated recovery remain excluded"
+    "supportingAgent": "Codex Desktop completed 4K-R source durability, automatic deployment observation, credential-free health verification, and Runway OS closeout",
+    "nextAction": "Separately define and confirm a bounded 4L Task 1K work block.",
+    "blocker": "No Task 1K implementation or additional live action is authorized"
   },
-  "currentWorkBlock": {
-    "label": "4K-R",
-    "name": "Durability And Release",
-    "status": "active",
-    "includedTasks": [
-      "Task 1J release durability",
-      "Task 4"
-    ],
-    "owner": "Codex Desktop",
-    "nextReportPoint": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free production health, final main alignment, preserved exclusions, and the Task 1K planning gate."
-  },
+  "currentWorkBlock": null,
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -72,21 +62,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute authorized 4K-R release",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized commit and push to main for the locally verified 4K repair.",
-    "action": "Publish only the exact verified ten-path source set, observe the automatic deployment, verify credential-free health, and close out without starting a second deploy.",
+    "title": "Plan Task 1K as bounded work block 4L",
+    "status": "awaiting Ryan",
+    "owner": "Ryan",
+    "why": "4K-R is durable, automatically deployed, and credential-free health verified; the remaining scheduled/public sync-entry family uses a separate coordination and verification contract.",
+    "action": "Ask Codex to define and confirm bounded work block 4L for Task 1K when ready.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No Ryan decision is pending during the authorized 4K-R release path.",
-    "items": []
+    "summary": "Work block 4K-R is complete; Task 1K planning requires a separate Ryan decision.",
+    "items": [
+      "Choose whether to define and confirm work block 4L for Task 1K."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Only 4K-R exact-path durability and automatic release verification is active. Task 1K-1P, broader Task 2, Task 3, protected data, and unrelated live actions remain outside authorization.",
-    "decisionQueue": "No additional Ryan decision is required unless the release path hits a stop condition.",
+    "phaseQuestions": "Work block 4K-R is complete. Task 1K-1P implementation, broader Task 2, Task 3, protected data, and additional live actions remain outside authorization.",
+    "decisionQueue": "The next Ryan decision is whether to define and confirm work block 4L for Task 1K.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2073,7 +2065,7 @@
       "phaseId": "phase-4",
       "label": "4K-R",
       "name": "Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1J release durability",
         "Task 4"
@@ -2109,7 +2101,14 @@
         "Final main and origin alignment, preserved exclusions, and sanitized skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the Task 1K planning gate.",
-      "durability": "Active under direct Ryan authorization; source commit, main push, automatic deploy verification, health check, and sanitized closeout remain in progress."
+      "durability": "Source commit 72d2bba is durable on main; automatic Fly run 29700530131 and deploy job 88228726512 passed, credential-free production health returned 200, and the sanitized command-center closeout is published separately with skip actions.",
+      "evidence": [
+        "command-center/logs/2026-07-19-plaid-item-isolation-observability-4k.md",
+        "command-center/logs/2026-07-19-plaid-item-isolation-observability-release-4k-r.md",
+        "GitHub Actions run 29700530131",
+        "Fly deploy job 88228726512"
+      ],
+      "result": "Published source commit 72d2bba directly to main by exact-path fast-forward, observed successful automatic Fly run 29700530131 and job 88228726512, verified credential-free production health at HTTP 200, preserved both unrelated untracked files, and prepared the sanitized skip-actions closeout."
     }
   ],
   "phaseTasks": [
@@ -2631,7 +2630,7 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1J",
       "title": "Task 1J: Isolate Plaid item failures and add truthful observability",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Work block 4K completed P3-3G-06, P3-3G-07, and only the matching P3-3G-C01 item-isolation and observability coverage slice locally.",
       "result": "Per-item token isolation, sanitized errors, missing-modification rollback, cursor preservation, successful sibling continuation, actual affected-row counts, idempotent absent removals, 36 focused all-entity assertions, denied networking, and exact cleanup pass locally.",
@@ -2641,16 +2640,18 @@
         "scripts/smoke_test.py",
         "command-center/logs/2026-07-19-plaid-item-isolation-observability-4k.md"
       ],
-      "nextAction": "Execute the authorized exact-path 4K-R release and stop at any defined release failure.",
-      "blocker": "No current blocker; Task 1K and unrelated live actions remain excluded."
+      "nextAction": null,
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1K",
       "title": "Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness",
-      "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Repair the remaining P3-3H entry-point family after Tasks 1H-1J."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Separately plan the remaining P3-3H scheduled/public sync-entry family after Tasks 1H-1J established trustworthy primary item behavior.",
+      "nextAction": "Request a bounded 4L Task 1K work-block proposal when ready.",
+      "blocker": "No Task 1K implementation is authorized."
     },
     {
       "phaseId": "phase-4",
@@ -2715,14 +2716,18 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "Publish only exact verified repair scopes through separately authorized release blocks.",
-      "result": "Releases through 4J-R completed successfully; 4J source commit 74ad56d is on main, Fly run 29699120063 and job 88225014833 succeeded, and credential-free production health returned 200. Every later release remains separately gated.",
+      "result": "Releases through 4K-R completed successfully; 4K source commit 72d2bba is on main, Fly run 29700530131 and job 88228726512 succeeded, and credential-free production health returned 200. Every later release remains separately gated.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
         "command-center/logs/2026-07-19-bfm-only-payroll-boundary-release-4d-r.md",
         "command-center/logs/2026-07-19-luxe-legacy-planning-boundary-release-4e-r.md",
         "command-center/logs/2026-07-19-luxe-legacy-downstream-selection-release-4f-r.md",
-        "command-center/logs/2026-07-19-scheduled-sync-result-truthfulness-release-4g-r.md"
+        "command-center/logs/2026-07-19-scheduled-sync-result-truthfulness-release-4g-r.md",
+        "command-center/logs/2026-07-19-recurring-charges-report-release-4h-r.md",
+        "command-center/logs/2026-07-19-plaid-sync-atomicity-release-4i-r.md",
+        "command-center/logs/2026-07-19-plaid-account-state-truthfulness-release-4j-r.md",
+        "command-center/logs/2026-07-19-plaid-item-isolation-observability-release-4k-r.md"
       ],
       "nextAction": "Require separate approval for each future release block.",
       "blocker": "No additional release or live action is authorized."
@@ -3712,8 +3717,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete 4K-R durability and release",
-    "description": "Publish the exact verified 4K source set to main, observe the automatic Fly deployment, verify credential-free production health, and publish the sanitized skip-actions closeout."
+    "name": "Define bounded work block 4L",
+    "description": "Separately plan Task 1K scheduled/public sync-entry coordination and result truthfulness after the durable 4K-R release."
   },
   "verification": {
     "dashboardRefresh": "pass",
