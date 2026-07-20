@@ -1893,6 +1893,7 @@ def main() -> None:
             "/payroll/employees/delete/<int:emp_id>",
             "/payroll/employees/detail/<int:emp_id>",
             "/payroll/import/parse",
+            "/payroll/import/cancel",
             "/payroll/import/save",
             "/payroll/spending",
         }
@@ -1928,6 +1929,9 @@ def main() -> None:
             ("get", "/payroll/employees/detail/{employee_id}", {}),
             ("post", "/payroll/import/parse", {
                 "content_type": "multipart/form-data",
+            }),
+            ("post", "/payroll/import/cancel", {
+                "data": {"temp_key": "replaced-per-entity"},
             }),
             ("post", "/payroll/import/save", {
                 "data": {"temp_key": "replaced-per-entity"},
@@ -1990,7 +1994,7 @@ def main() -> None:
                                 request_kwargs["data"] = {
                                     "payroll_file": (io.BytesIO(b"not parsed"), "denied.xlsx"),
                                 }
-                            elif path == "/payroll/import/save":
+                            elif path in ("/payroll/import/cancel", "/payroll/import/save"):
                                 request_kwargs = {"data": {"temp_key": temp_key}}
                             resp = getattr(payroll_client, method)(path, **request_kwargs)
                             _check(
@@ -2095,6 +2099,425 @@ def main() -> None:
             conn_payroll.close()
 
         print("   ✅ All payroll routes enforce BFM-only access before storage or parsing")
+
+        # ── 8b2. Payroll import integrity and payload lifecycle ─────
+        print("\n8b2. Payroll import integrity and payload lifecycle…")
+        import re as payroll_re
+        import stat as payroll_stat
+        import time as payroll_time
+
+        def _payroll_workbook_bytes(rows, *, include_header=True, second_section=False):
+            workbook = Workbook()
+            sheet = workbook.active
+            sheet.title = "Per Payroll Costs"
+            sheet.append(["Synthetic Payroll Export"])
+            sheet.append([])
+            if include_header:
+                sheet.append(["2026 Paycheck Dates", "Job Code", "Location", "07/01/2026"])
+                for employee_name, job_code, amount in rows:
+                    sheet.append([employee_name, job_code, "Main", amount])
+            if second_section:
+                sheet.append([])
+                sheet.append(["2025 Paycheck Dates", "Job Code", "Location", "07/02/2025"])
+                for employee_name, job_code, amount in rows:
+                    sheet.append([employee_name, job_code, "Main", amount + 1])
+            payload = io.BytesIO()
+            workbook.save(payload)
+            return payload.getvalue()
+
+        def _payroll_preview(client, payload, filename="synthetic-payroll.xlsx"):
+            response = client.post(
+                "/payroll/import/parse",
+                data={"payroll_file": (io.BytesIO(payload), filename)},
+                content_type="multipart/form-data",
+            )
+            _check(response.status_code == 200,
+                   f"payroll 4P preview {filename}: expected 200")
+            body = response.get_data(as_text=True)
+            key_match = payroll_re.search(
+                r'name="temp_key" value="([^"]+)"', body
+            )
+            _check(key_match is not None,
+                   f"payroll 4P preview {filename}: missing temporary key")
+            return response, body, key_match.group(1)
+
+        payroll_4p_names = (
+            "Existing Payroll Employee",
+            "Reassignment Target",
+            "Reassignment Source",
+            "New Payroll Employee",
+            "Canceled Payroll Employee",
+            "Expired Payroll Employee",
+            "Multi Section Employee",
+        )
+        payroll_entity_baseline = {}
+        for entity_key in ("personal", "luxelegacy"):
+            conn_payroll = get_connection(entity_key)
+            payroll_entity_baseline[entity_key] = tuple(
+                conn_payroll.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                for table in ("employees", "employee_pay_changes", "payroll_entries")
+            )
+            conn_payroll.close()
+
+        conn_payroll = get_connection("company")
+        conn_payroll.execute(
+            "DELETE FROM employees WHERE name IN ({})".format(
+                ",".join("?" for _ in payroll_4p_names)
+            ),
+            payroll_4p_names,
+        )
+        existing_employee_id = conn_payroll.execute(
+            "INSERT INTO employees (name, role, pay_type, pay_rate_cents) "
+            "VALUES (?, 'Nurses', 'hourly', 2500)",
+            ("Existing Payroll Employee",),
+        ).lastrowid
+        reassignment_target_id = conn_payroll.execute(
+            "INSERT INTO employees (name, role, pay_type, pay_rate_cents) "
+            "VALUES (?, 'Nurses', 'hourly', 2600)",
+            ("Reassignment Target",),
+        ).lastrowid
+        conn_payroll.commit()
+        conn_payroll.close()
+
+        existing_workbook = _payroll_workbook_bytes([
+            ("Existing Payroll Employee", "600 Nurse /MA", 1234.56),
+        ])
+        reassignment_workbook = _payroll_workbook_bytes([
+            ("Reassignment Source", "600 Nurse /MA", 2345.67),
+        ])
+        new_employee_workbook = _payroll_workbook_bytes([
+            ("New Payroll Employee", "600 Nurse /MA", 3456.78),
+        ])
+        cancel_workbook = _payroll_workbook_bytes([
+            ("Canceled Payroll Employee", "600 Nurse /MA", 4567.89),
+        ])
+
+        with tempfile.TemporaryDirectory(prefix="payroll_4p_") as payroll_payload_dir, patch.object(
+            payroll_routes, "_TEMP_DIR", payroll_payload_dir
+        ):
+            original_socket = socket.socket
+
+            def _deny_payroll_network(*_args, **_kwargs):
+                raise AssertionError("payroll 4P attempted outbound networking")
+
+            socket.socket = _deny_payroll_network
+            try:
+                with app.test_client() as payroll_4p_client:
+                    payroll_4p_client.set_cookie("entity", "BFM")
+
+                    # Exact preview defaults to the one existing employee, and
+                    # save-time enforcement rejects a forged "new" assignment.
+                    _, existing_body, existing_key = _payroll_preview(
+                        payroll_4p_client, existing_workbook
+                    )
+                    _check(
+                        f'value="{existing_employee_id}" selected' in existing_body,
+                        "payroll 4P exact match: preview did not select existing employee",
+                    )
+                    _check(
+                        "Create new employee" not in existing_body,
+                        "payroll 4P exact match: preview still offered duplicate creation",
+                    )
+                    existing_path = Path(payroll_payload_dir) / f"{existing_key}.json"
+                    _check(existing_path.exists(),
+                           "payroll 4P exact match: preview payload missing")
+                    _check(
+                        payroll_stat.S_IMODE(existing_path.stat().st_mode) == 0o600,
+                        "payroll 4P payload: expected mode 0600",
+                    )
+                    existing_save = payroll_4p_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": existing_key,
+                            "assign_Existing Payroll Employee": "new",
+                            "new_role_Existing Payroll Employee": "Nurses",
+                        },
+                    )
+                    _check(existing_save.status_code == 302,
+                           "payroll 4P exact match: save should redirect")
+                    conn_payroll = get_connection("company")
+                    exact_counts = conn_payroll.execute(
+                        "SELECT COUNT(*), "
+                        "(SELECT COUNT(*) FROM payroll_entries WHERE employee_id=?) "
+                        "FROM employees WHERE lower(trim(name))=lower(trim(?))",
+                        (existing_employee_id, "Existing Payroll Employee"),
+                    ).fetchone()
+                    _check(tuple(exact_counts) == (1, 1),
+                           "payroll 4P exact match: save created a duplicate or missed entry")
+                    conn_payroll.close()
+                    _check(not existing_path.exists(),
+                           "payroll 4P exact match: save retained payload")
+                    reused_save = payroll_4p_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": existing_key,
+                            "assign_Existing Payroll Employee": "new",
+                            "new_role_Existing Payroll Employee": "Nurses",
+                        },
+                    )
+                    missing_save = payroll_4p_client.post(
+                        "/payroll/import/save",
+                        data={"temp_key": "payroll_import_missing_4p"},
+                    )
+                    _check(
+                        reused_save.status_code == 302
+                        and missing_save.status_code == 302,
+                        "payroll 4P missing or reused save was not deterministic",
+                    )
+
+                    # A genuinely unmatched row can be reassigned explicitly to
+                    # another existing employee without creating a roster row.
+                    _, _, reassignment_key = _payroll_preview(
+                        payroll_4p_client, reassignment_workbook
+                    )
+                    reassignment_save = payroll_4p_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": reassignment_key,
+                            "assign_Reassignment Source": str(reassignment_target_id),
+                        },
+                    )
+                    _check(reassignment_save.status_code == 302,
+                           "payroll 4P reassignment: save should redirect")
+                    conn_payroll = get_connection("company")
+                    reassignment_counts = conn_payroll.execute(
+                        "SELECT "
+                        "(SELECT COUNT(*) FROM employees WHERE name=?), "
+                        "(SELECT COUNT(*) FROM payroll_entries WHERE employee_id=?)",
+                        ("Reassignment Source", reassignment_target_id),
+                    ).fetchone()
+                    _check(tuple(reassignment_counts) == (0, 1),
+                           "payroll 4P reassignment: wrong employee or duplicate roster row")
+                    conn_payroll.close()
+
+                    # New creation remains available only for a genuinely
+                    # unmatched employee, and exact re-import stays stable.
+                    _, new_body, new_key = _payroll_preview(
+                        payroll_4p_client, new_employee_workbook
+                    )
+                    _check("Create new employee" in new_body,
+                           "payroll 4P unmatched: new employee option missing")
+                    new_save = payroll_4p_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": new_key,
+                            "assign_New Payroll Employee": "new",
+                            "new_role_New Payroll Employee": "Nurses",
+                        },
+                    )
+                    _check(new_save.status_code == 302,
+                           "payroll 4P unmatched: save should redirect")
+                    conn_payroll = get_connection("company")
+                    new_employee = conn_payroll.execute(
+                        "SELECT id FROM employees WHERE name=?",
+                        ("New Payroll Employee",),
+                    ).fetchone()
+                    _check(new_employee is not None,
+                           "payroll 4P unmatched: employee was not created")
+                    new_employee_id = new_employee["id"]
+                    conn_payroll.close()
+
+                    _, reimport_body, reimport_key = _payroll_preview(
+                        payroll_4p_client, new_employee_workbook
+                    )
+                    _check(
+                        f'value="{new_employee_id}" selected' in reimport_body,
+                        "payroll 4P reimport: created employee was not selected",
+                    )
+                    reimport_save = payroll_4p_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": reimport_key,
+                            "assign_New Payroll Employee": "new",
+                            "new_role_New Payroll Employee": "Nurses",
+                        },
+                    )
+                    _check(reimport_save.status_code == 302,
+                           "payroll 4P reimport: save should redirect")
+                    conn_payroll = get_connection("company")
+                    reimport_counts = conn_payroll.execute(
+                        "SELECT "
+                        "(SELECT COUNT(*) FROM employees WHERE name=?), "
+                        "(SELECT COUNT(*) FROM payroll_entries WHERE employee_id=?)",
+                        ("New Payroll Employee", new_employee_id),
+                    ).fetchone()
+                    _check(tuple(reimport_counts) == (1, 1),
+                           "payroll 4P reimport: employee or payroll counts changed")
+                    conn_payroll.close()
+
+                    # Cancel is explicit, idempotent, exact-key only, and does
+                    # not consume an unrelated payload.
+                    _, _, cancel_key = _payroll_preview(
+                        payroll_4p_client, cancel_workbook
+                    )
+                    cancel_path = Path(payroll_payload_dir) / f"{cancel_key}.json"
+                    unrelated_key = "payroll_import_unrelated_4p"
+                    payroll_routes._save_temp(unrelated_key, {
+                        "entries": [],
+                        "filename": "unrelated.xlsx",
+                    })
+                    unrelated_path = Path(payroll_payload_dir) / f"{unrelated_key}.json"
+                    cancel_response = payroll_4p_client.post(
+                        "/payroll/import/cancel", data={"temp_key": cancel_key}
+                    )
+                    _check(cancel_response.status_code == 302,
+                           "payroll 4P cancel: expected redirect")
+                    _check(not cancel_path.exists() and unrelated_path.exists(),
+                           "payroll 4P cancel: exact or unrelated cleanup failed")
+                    repeated_cancel = payroll_4p_client.post(
+                        "/payroll/import/cancel", data={"temp_key": cancel_key}
+                    )
+                    malformed_cancel = payroll_4p_client.post(
+                        "/payroll/import/cancel",
+                        data={"temp_key": f"../{unrelated_key}"},
+                    )
+                    _check(
+                        repeated_cancel.status_code == 302
+                        and malformed_cancel.status_code == 302
+                        and unrelated_path.exists(),
+                        "payroll 4P cancel: reused or malformed key changed unrelated payload",
+                    )
+
+                    # Expired and malformed payloads are consumed safely and
+                    # never create an employee.
+                    expired_key = "payroll_import_expired_4p"
+                    expired_path = Path(payroll_payload_dir) / f"{expired_key}.json"
+                    payroll_routes._save_temp(expired_key, {
+                        "entries": [{
+                            "name": "Expired Payroll Employee",
+                            "phoenix_job_code": "600 Nurse /MA",
+                            "paycheck_date": "2026-07-01",
+                            "amount": 10.0,
+                        }],
+                        "filename": "expired.xlsx",
+                    })
+                    expired_mtime = (
+                        payroll_time.time()
+                        - payroll_routes._TEMP_MAX_AGE_SECONDS
+                        - 10
+                    )
+                    os.utime(expired_path, (expired_mtime, expired_mtime))
+                    expired_save = payroll_4p_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": expired_key,
+                            "assign_Expired Payroll Employee": "new",
+                            "new_role_Expired Payroll Employee": "Nurses",
+                        },
+                    )
+                    _check(expired_save.status_code == 302 and not expired_path.exists(),
+                           "payroll 4P expired payload: expected safe consumption")
+
+                    malformed_key = "payroll_import_malformed_4p"
+                    malformed_path = Path(payroll_payload_dir) / f"{malformed_key}.json"
+                    malformed_path.write_bytes(b"{not-json")
+                    malformed_save = payroll_4p_client.post(
+                        "/payroll/import/save", data={"temp_key": malformed_key}
+                    )
+                    _check(
+                        malformed_save.status_code == 302 and not malformed_path.exists(),
+                        "payroll 4P malformed payload: expected safe consumption",
+                    )
+
+                    # Corrupt, empty, unsupported, and headerless workbooks are
+                    # controlled outcomes and retain no new payload.
+                    invalid_cases = (
+                        (b"not-an-xlsx", "corrupt.xlsx", "valid Phoenix payroll workbook"),
+                        (b"", "empty.xlsx", "valid Phoenix payroll workbook"),
+                        (b"name,amount\nA,1\n", "unsupported.csv", ".xlsx format"),
+                        (
+                            _payroll_workbook_bytes([], include_header=False),
+                            "headerless.xlsx",
+                            "No payroll entries found",
+                        ),
+                    )
+                    for invalid_payload, invalid_name, expected_message in invalid_cases:
+                        before_files = set(Path(payroll_payload_dir).iterdir())
+                        invalid_response = payroll_4p_client.post(
+                            "/payroll/import/parse",
+                            data={
+                                "payroll_file": (
+                                    io.BytesIO(invalid_payload), invalid_name
+                                )
+                            },
+                            content_type="multipart/form-data",
+                        )
+                        invalid_body = invalid_response.get_data(as_text=True)
+                        _check(
+                            invalid_response.status_code == 200
+                            and expected_message in invalid_body,
+                            f"payroll 4P invalid workbook {invalid_name}: uncontrolled outcome",
+                        )
+                        _check(
+                            set(Path(payroll_payload_dir).iterdir()) == before_files,
+                            f"payroll 4P invalid workbook {invalid_name}: retained payload",
+                        )
+
+                    # A valid multi-section workbook still previews both dates
+                    # and its preview can be canceled cleanly.
+                    multi_workbook = _payroll_workbook_bytes(
+                        [("Multi Section Employee", "600 Nurse /MA", 100.0)],
+                        second_section=True,
+                    )
+                    _, multi_body, multi_key = _payroll_preview(
+                        payroll_4p_client, multi_workbook, "multi-section.xlsx"
+                    )
+                    _check("Parsed <strong>2</strong> payroll entries" in multi_body,
+                           "payroll 4P multi-section: expected two parsed entries")
+                    multi_path = Path(payroll_payload_dir) / f"{multi_key}.json"
+                    payroll_4p_client.post(
+                        "/payroll/import/cancel", data={"temp_key": multi_key}
+                    )
+                    _check(not multi_path.exists(),
+                           "payroll 4P multi-section: cancel retained payload")
+
+                    conn_payroll = get_connection("company")
+                    expired_employee_count = conn_payroll.execute(
+                        "SELECT COUNT(*) FROM employees WHERE name=?",
+                        ("Expired Payroll Employee",),
+                    ).fetchone()[0]
+                    _check(expired_employee_count == 0,
+                           "payroll 4P expired payload created an employee")
+                    conn_payroll.close()
+
+                    unrelated_path.unlink(missing_ok=True)
+                    _check(not any(Path(payroll_payload_dir).iterdir()),
+                           "payroll 4P payload directory was not empty after cleanup")
+            finally:
+                socket.socket = original_socket
+
+        for entity_key in ("personal", "luxelegacy"):
+            conn_payroll = get_connection(entity_key)
+            final_counts = tuple(
+                conn_payroll.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                for table in ("employees", "employee_pay_changes", "payroll_entries")
+            )
+            _check(
+                final_counts == payroll_entity_baseline[entity_key],
+                f"payroll 4P {entity_key}: non-BFM payroll state changed",
+            )
+            conn_payroll.close()
+
+        conn_payroll = get_connection("company")
+        conn_payroll.execute(
+            "DELETE FROM employees WHERE name IN ({})".format(
+                ",".join("?" for _ in payroll_4p_names)
+            ),
+            payroll_4p_names,
+        )
+        conn_payroll.commit()
+        remaining_4p_rows = conn_payroll.execute(
+            "SELECT "
+            "(SELECT COUNT(*) FROM employees WHERE name IN ({})), "
+            "(SELECT COUNT(*) FROM payroll_entries WHERE source_filename LIKE 'synthetic-payroll%')".format(
+                ",".join("?" for _ in payroll_4p_names)
+            ),
+            payroll_4p_names,
+        ).fetchone()
+        _check(tuple(remaining_4p_rows) == (0, 0),
+               "payroll 4P exact database cleanup failed")
+        conn_payroll.close()
+        print("   ✅ Matching, reassignment, new creation, reimport, payload lifecycle, malformed workbooks, isolation, denied-network, and cleanup passed")
 
         # ── 8c. Luxe Legacy downstream selection boundary ──────────
         print("\n8c. Luxe Legacy downstream selection boundary…")

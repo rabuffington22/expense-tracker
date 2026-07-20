@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-20 8:59 AM CST",
+    "lastUpdated": "2026-07-20 10:01 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,31 +1619,31 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4O-R and 4M-R are published on main; source commit ffd42dd deployed successfully with credential-free production health at 200"
+    "durabilityStatus": "Work blocks through 4O-R and 4M-R are published on main; verified work block 4P is in active direct-main durability and automatic release block 4P-R"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work blocks 4M and 4M-R are complete durable automatically deployed and credential-free health verified; Task 1M is current for a separate planning pass.",
+    "summary": "Work block 4P completed Tasks 1M.1 through 1M.3 locally and 4P-R is active for exact-path direct-main durability automatic Fly observation credential-free health and sanitized closeout.",
     "progress": 95
   },
   "currentTask": {
-    "title": "Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention",
+    "title": "Task 1M.4: Validate employee roster writes atomically",
     "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns just-in-time work-block planning and later confirmed execution",
-    "nextAction": "Define and confirm one bounded Task 1M work block before implementation.",
-    "blocker": "No Task 1M implementation work block is confirmed."
+    "supportingAgent": "Codex Desktop owns active 4P-R publication before returning this task to just-in-time planning",
+    "nextAction": "Hold Task 1M.4 at its separate planning gate while 4P-R publishes and verifies the completed Tasks 1M.1 through 1M.3 work.",
+    "blocker": "No Task 1M.4 implementation work block is confirmed; 4P-R publication is active."
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-m-release",
-    "label": "4M-R",
-    "name": "Vendor Payment Matching Durability And Release",
-    "status": "done",
+    "id": "phase-4-block-p-release",
+    "label": "4P-R",
+    "name": "Payroll Import Integrity Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Source publication automatic deployment credential-free health and sanitized closeout complete",
+    "currentTask": "Commit the exact verified 4P set fast-forward and push main observe the automatic Fly deployment verify credential-free health and publish the sanitized closeout",
     "includedTasks": [
-      "Task 1L.1 durability and automatic release",
+      "Tasks 1M.1 through 1M.3 durability and automatic release",
       "Credential-free production health verification",
       "Sanitized command-center closeout"
     ],
@@ -1661,7 +1661,7 @@
       "Automatic Fly run and job result plus credential-free production health",
       "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
-    "nextReportPoint": "Propose and confirm one bounded Task 1M work block before implementation."
+    "nextReportPoint": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and Task 1M.4 planning gate."
   },
   "routerHealth": {
     "status": "healthy",
@@ -1686,23 +1686,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define the next Task 1M work block",
-    "status": "planning",
-    "owner": "Ryan",
-    "why": "The Task 1L vendor repair family is durable and health verified; Task 1M is the next planned repair family but requires just-in-time bounded scope before implementation.",
-    "action": "Review a recommended Task 1M work block with exact findings payroll and payload boundaries stop conditions and synthetic verification before confirmation.",
+    "title": "Publish and verify work block 4P",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized commit and push of the verified 4P work to main including the resulting automatic Fly deployment and safe closeout.",
+    "action": "Stage the exact verified set commit fast-forward main push observe the attributable automatic Fly run verify credential-free health and publish the skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Work block 4M-R is complete; Task 1M needs a separately proposed and confirmed work block before implementation.",
-    "items": [
-      "Confirm or adjust the next bounded Task 1M work block after Codex proposes it."
-    ]
+    "summary": "No Ryan decision is currently required; 4P-R is active under the direct commit-and-push instruction.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work blocks 4M and 4M-R are complete and durable. Task 1M is current for planning only; Tasks 1N-1P broader Task 2 protected payroll or HR data publication and live actions remain outside authorization.",
-    "decisionQueue": "Define and confirm one bounded Task 1M work block before implementation.",
+    "phaseQuestions": "Work block 4P is complete locally and 4P-R owns only its exact durability release and safe verification. Task 1M.4 implementation Task 1M.5 broader Task 2 protected payroll or HR data and unrelated live actions remain outside authorization.",
+    "decisionQueue": "No current Ryan decision; stop if exact-path publication deployment attribution credential-free health or fast-forward safety fails.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -4178,6 +4176,113 @@
         "Fly deploy job 88362414145"
       ],
       "result": "Published source commit 5529912 directly to main by exact-path fast-forward observed successful automatic Fly run 29745531202 and job 88362414145 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-p",
+      "phaseId": "phase-4",
+      "label": "4P",
+      "name": "Payroll Import Integrity And Payload Lifecycle",
+      "status": "done",
+      "includedTasks": [
+        "Task 1M.1",
+        "Task 1M.2",
+        "Task 1M.3",
+        "Task 2 focused payroll import and payload regression slice"
+      ],
+      "excludedTasks": [
+        "Tasks 1M.4 and 1M.5 Tasks 1N-1P the remainder of Task 2 and Tasks 3-4",
+        "Real payroll HR or financial rows retained user uploads credentials migrations authentication CSRF encryption or public-route policy changes",
+        "Production demo external calls live systems GitHub durability deployment and unrelated repairs",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive-retrofit block couples payroll handling templates maintained synthetic tests exact temporary cleanup and Runway OS stewardship while external workers remain inactive.",
+      "runnerPath": "Current Codex task on local branch codex/payroll-import-integrity without delegation or second opinion.",
+      "expectedFiles": [
+        "core/payroll_parser.py web/routes/payroll.py and web/templates/payroll.html",
+        "Focused additions to scripts/smoke_test.py",
+        "A payroll-import contract sanitized 4P closeout log issue dispositions and Runway OS state"
+      ],
+      "defaults": [
+        "Exact normalized-name matches use the existing employee by default and ordinary save cannot create a duplicate",
+        "Explicit reassignment may select another existing employee and genuinely unmatched employees may be created",
+        "Cancel uses an explicit BFM-only POST and consumes only its exact payload",
+        "Malformed workbook failures are sanitized and retain no payload",
+        "Tests generate workbooks isolate temporary payloads deny networking and use temporary all-entity databases",
+        "Commit push release and live verification remain separately gated"
+      ],
+      "stopConditions": [
+        "Implementation needs protected data retained uploads credentials migration policy change production demo external access or another live action",
+        "Multiple existing employees share one normalized identity or safe cancellation cannot avoid unrelated-payload deletion",
+        "Work expands into Tasks 1M.4 or 1M.5 or another repair family",
+        "Verification materially changes the plan command-center checks fail or either preserved untracked file would be touched"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "Generated matching reassignment unmatched duplicate prevention reimport and malformed-workbook checks",
+        "Isolated save cancel missing reused expired malformed unrelated-payload and exact-cleanup checks",
+        "BFM-only all-entity denied-network compilation JSON dashboard health whitespace visual and worktree checks"
+      ],
+      "reportBack": "Return the payroll-import contract exact changed paths matching and creation behavior payload cleanup and malformed-workbook matrix full verification cleanup local branch state preserved exclusions and recommended next block.",
+      "nextBlock": "4Q Atomic Payroll Roster Validation for Task 1M.4 plus focused Task 2 coverage after separate confirmation.",
+      "durability": "Complete and verified locally on codex/payroll-import-integrity; commit push PR merge deployment protected data retained user uploads migrations live systems and external access remain excluded.",
+      "evidence": [
+        "command-center/payroll-import-integrity-contract.md",
+        "command-center/logs/2026-07-20-payroll-import-integrity-4p.md",
+        "core/payroll_parser.py",
+        "web/routes/payroll.py",
+        "web/templates/payroll.html",
+        "scripts/smoke_test.py"
+      ],
+      "result": "Stabilized exact existing-employee assignment and save-time duplicate prevention preserved explicit reassignment and genuinely unmatched creation added BFM-only exact-key cancel and mode-0600 deterministic payload lifecycle normalized invalid workbook outcomes and passed full generated-XLSX all-entity denied-network cleanup compilation dashboard and health verification without migration protected data live action or GitHub durability."
+    },
+    {
+      "id": "phase-4-block-p-release",
+      "phaseId": "phase-4",
+      "label": "4P-R",
+      "name": "Payroll Import Integrity Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Tasks 1M.1 through 1M.3 durability and automatic release",
+        "Credential-free production health verification",
+        "Sanitized command-center closeout"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real payroll HR or financial rows retained uploads credentials authenticated production pages external calls manual workflow actions and downstream access or writes",
+        "Workflow edits non-automatic Fly changes migrations force push and recovery outside the exact fast-forward path",
+        "Tasks 1M.4 and 1M.5 broader Task 2 Tasks 3-4 and unrelated repairs"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git stewardship sensitive-addition review direct-main fast-forward safety automatic Fly observation credential-free health verification and final Runway OS closeout.",
+      "runnerPath": "Current Codex task using local git and gh without a PR because Ryan directly instructed commit and push to main.",
+      "expectedLiveEffect": "Push one verified source commit to main triggering one automatic Fly deployment verify only credential-free health then push one skip-actions command-center closeout without a second deployment.",
+      "expectedFiles": [
+        "Exact verified twelve-path 4P application maintained-test contract issue evidence and Runway OS source set",
+        "A sanitized 4P-R closeout log and command-center-only skip-actions commit"
+      ],
+      "defaults": [
+        "No PR because Ryan directly instructed commit and push to main",
+        "Observe only the automatic Fly deployment caused by the source push",
+        "Use only credential-free production health verification",
+        "Publish closeout with skip actions to prevent a second deployment"
+      ],
+      "stopConditions": [
+        "Unexpected staged path sensitive addition protected data or unrelated user change",
+        "Local or remote main divergence or required force push",
+        "Maintained verification automatic deployment or credential-free health failure",
+        "Closeout starts a second Fly deployment or recovery exceeds authorization"
+      ],
+      "verification": [
+        "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
+        "Maintained synthetic suite Python compilation JSON validation dashboard refresh health check and git diff check",
+        "Explicit staging source commit and direct-main fast-forward push",
+        "Exact automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and Task 1M.4 planning gate."
     }
   ],
   "phaseTasks": [
@@ -4786,11 +4891,70 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1M",
       "title": "Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention",
+      "status": "active",
+      "owner": "Ryan",
+      "summary": "Umbrella decomposed into Tasks 1M.1 through 1M.5 for import matching payload cleanup malformed-workbook handling roster validation and compensation-cohort truthfulness.",
+      "nextAction": "Define and confirm one bounded Task 1M.4 work block before implementation.",
+      "blocker": "No Task 1M.4 implementation work block is confirmed."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1M1",
+      "title": "Task 1M.1: Prevent duplicate employees during payroll import",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Stabilize exact existing-employee assignment across preview and save while preserving explicit reassignment and genuinely unmatched creation for P3-3F-02 with focused P3-3F-C01 coverage.",
+      "result": "Exact normalized-name matches select the existing employee in preview and save cannot create a duplicate while explicit reassignment genuinely unmatched creation and stable reimport pass in maintained coverage.",
+      "evidence": [
+        "command-center/payroll-import-integrity-contract.md",
+        "command-center/logs/2026-07-20-payroll-import-integrity-4p.md"
+      ],
+      "nextAction": null,
+      "blocker": null
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1M2",
+      "title": "Task 1M.2: End abandoned payroll-preview payload retention",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Consume only the exact abandoned preview payload and prove deterministic save cancel missing reused expired malformed unrelated-payload and cleanup behavior for P3-3F-05 with focused coverage.",
+      "result": "BFM-only POST cancel exact opaque keys mode-0600 writes expiration structural validation idempotency unrelated-payload preservation and empty final cleanup pass locally.",
+      "evidence": [
+        "command-center/payroll-import-integrity-contract.md",
+        "command-center/logs/2026-07-20-payroll-import-integrity-4p.md"
+      ]
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1M3",
+      "title": "Task 1M.3: Normalize malformed payroll-workbook failures",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Return sanitized controlled outcomes for corrupt mislabeled empty unsupported and headerless uploads without retaining payloads while preserving valid multi-section behavior for P3-3F-06 with focused coverage.",
+      "result": "Unsupported extensions and workbook-engine failures return sanitized controlled outcomes without payload retention while headerless and valid multi-section behavior remains explicit.",
+      "evidence": [
+        "command-center/payroll-import-integrity-contract.md",
+        "command-center/logs/2026-07-20-payroll-import-integrity-4p.md"
+      ]
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1M4",
+      "title": "Task 1M.4: Validate employee roster writes atomically",
       "status": "current",
       "owner": "Ryan",
-      "summary": "Repair P3-3F-02 through P3-3F-06 after Task 1C; separate hourly and salary cohorts per Ryan's confirmed default.",
-      "nextAction": "Review and confirm one bounded just-in-time Task 1M work block before implementation.",
-      "blocker": "No Task 1M implementation work block is confirmed."
+      "summary": "Validate maintained role pay-type status date identifier and finite non-negative rate domains before create or update mutation for P3-3F-04 with focused coverage.",
+      "nextAction": "Define and confirm one bounded Task 1M.4 work block before implementation.",
+      "blocker": "No Task 1M.4 implementation work block is confirmed."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1M5",
+      "title": "Task 1M.5: Separate payroll peer comparisons by compensation unit",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Compute and display like-for-like hourly and salary cohorts under Ryan's confirmed no-annualization default for P3-3F-03 with focused coverage."
     },
     {
       "phaseId": "phase-4",
@@ -5143,9 +5307,33 @@
     {
       "name": "Work Block 4O-R Deterministic Category-Domain Enforcement Release Closeout",
       "path": "command-center/logs/2026-07-20-category-domain-enforcement-release-4o-r.md"
+    },
+    {
+      "name": "Payroll Import Integrity And Payload Lifecycle Contract",
+      "path": "command-center/payroll-import-integrity-contract.md"
+    },
+    {
+      "name": "Work Block 4P Payroll Import Integrity Closeout",
+      "path": "command-center/logs/2026-07-20-payroll-import-integrity-4p.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-20",
+      "text": "Ryan directly authorized work block 4P-R to commit and push the exact verified twelve-path 4P set to main observe the resulting automatic Fly deployment verify credential-free health and publish a sanitized skip-actions closeout."
+    },
+    {
+      "time": "2026-07-20",
+      "text": "Completed work block 4P locally: exact payroll employee assignment duplicate prevention explicit reassignment new creation reimport cancel mode-0600 payload lifecycle malformed workbook outcomes all-entity isolation denied networking and exact cleanup pass without migration protected data live action or GitHub durability."
+    },
+    {
+      "time": "2026-07-20",
+      "text": "Ryan confirmed local-only work block 4P for Tasks 1M.1 through 1M.3 and only their focused Task 2 slice; protected data retained uploads migrations live systems GitHub durability deployment Tasks 1M.4 and 1M.5 and both preserved untracked files remain excluded."
+    },
+    {
+      "time": "2026-07-20",
+      "text": "Decomposed Task 1M into five durable payroll tasks and made Task 1M.1 current for planning; Tasks 1M.1 through 1M.3 share the recommended 4P import preview payload and generated-workbook boundary while implementation remains unauthorized."
+    },
     {
       "time": "2026-07-20",
       "text": "Published 4M source commit ffd42dd to main automatic Fly run 29748373589 and deploy job 88372068257 succeeded credential-free production health returned 200 and the sanitized skip-actions closeout was prepared."
@@ -5924,8 +6112,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Define the next Task 1M work block",
-    "description": "Propose one bounded payroll-integrity and temporary-payload repair block with exact findings exclusions stop conditions and synthetic verification before implementation."
+    "name": "Define the next Task 1M.4 work block",
+    "description": "Propose one bounded atomic payroll roster validation block with exact domains zero-mutation checks exclusions stop conditions and synthetic verification before implementation."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -5937,6 +6125,10 @@
     "phase4VendorPaymentMatchingBoundaries": "pass; temporary synthetic databases denied outbound networking exact cleanup no protected data credentials live systems application-integration requests migration backfill or preserved untracked-file changes",
     "phase4VendorPaymentMatchingRelease": "pass; source commit ffd42dd is on main automatic Fly run 29748373589 and deploy job 88372068257 passed every reported step and credential-free production health returned HTTP 200",
     "phase4VendorPaymentMatchingDurability": "pass; local main matched origin/main at source commit ffd42dd before this command-center-only skip-actions closeout with both preserved untracked files excluded",
+    "phase4PayrollImportIntegrity": "pass locally; exact existing matches preview and save safely explicit reassignment and genuinely unmatched creation remain available and reimport preserves employee and payroll-entry counts",
+    "phase4PayrollPayloadLifecycle": "pass; mode-0600 save cancel missing reused expired malformed invalid-key unrelated-payload idempotency and exact cleanup checks pass in an isolated temporary directory",
+    "phase4PayrollWorkbookOutcomes": "pass; corrupt empty mislabeled unsupported headerless and valid multi-section generated workbooks return controlled outcomes without failed-parse payload retention",
+    "phase4PayrollImportBoundaries": "pass; temporary all-entity databases generated XLSX denied outbound networking unchanged Personal and Luxe Legacy state exact cleanup no migration protected data retained user upload external call live system or GitHub durability",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
     "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; natural post-release scheduled run 29740509073 completed successfully at 2026-07-20T11:59:33Z",

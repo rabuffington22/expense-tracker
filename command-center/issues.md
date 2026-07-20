@@ -764,7 +764,7 @@ Resolution evidence:
 
 ## Payroll Preview Duplicates An Exact Existing Employee
 
-Status: open; discovered in work block 3F
+Status: resolved locally in work block 4P; release not authorized
 
 Severity: high payroll-history integrity risk
 
@@ -789,9 +789,9 @@ Acceptance checks:
 - Explicit reassignment and genuinely unmatched new-employee creation remain available.
 - Re-import preserves both employee and payroll-entry counts.
 
-Why not fixed now:
+Resolution:
 
-Template, route, and tracked-test changes were excluded from audit work block 3F.
+Work block 4P moves normalized-name assignment into explicit route data, renders the single exact existing employee as the selected default, preserves selection of another existing employee, offers creation only for genuinely unmatched names, and repeats the same rule during save so a forged `new` submission cannot create a duplicate. Generated-XLSX maintained coverage proves exact match, explicit reassignment, new creation, stable reimport counts, BFM-only behavior, denied networking, and exact cleanup.
 
 ## Payroll Peer Averages Mix Hourly And Salary Units
 
@@ -857,7 +857,7 @@ Validation and regression-test changes were excluded from audit work block 3F.
 
 ## Canceling Payroll Preview Retains The Parsed Payload
 
-Status: open; discovered in work block 3F
+Status: resolved locally in work block 4P; release not authorized
 
 Severity: medium payroll-data retention risk
 
@@ -882,13 +882,13 @@ Acceptance checks:
 - Cleanup never removes unrelated payloads and does not rely on Flask cookie storage.
 - Tracked tests use an isolated temporary directory and leave it empty.
 
-Why not fixed now:
+Resolution:
 
-Temporary-payload lifecycle changes were outside audit-only work block 3F.
+Work block 4P replaces preview's passive link with an explicit BFM-only POST cancel action, validates opaque keys without path reinterpretation, writes new payloads with mode `0600`, and consumes only the exact payload. Maintained isolated-directory coverage proves save, cancel, missing, reused, expired, malformed, unrelated-payload preservation, idempotency, and empty final cleanup.
 
 ## Malformed Payroll XLSX Raises Instead Of Returning An Import Error
 
-Status: open; discovered in work block 3F
+Status: resolved locally in work block 4P; release not authorized
 
 Severity: medium import-availability risk
 
@@ -913,13 +913,13 @@ Acceptance checks:
 - No temporary payload is retained when parsing fails.
 - Valid import preview/save and duplicate behavior remain intact.
 
-Why not fixed now:
+Resolution:
 
-Parser and route error-handling changes require separately confirmed Phase 4 scope.
+Work block 4P places one sanitized error boundary around workbook-engine loading, rejects unsupported filename types before parsing, and retains no payload for corrupt, mislabeled, empty, unsupported, or headerless outcomes. Generated valid multi-section coverage confirms normal preview behavior remains available.
 
 ## Payroll Lifecycle Paths Lack Tracked Regression Coverage
 
-Status: partly addressed in work block 4D; remaining payroll coverage parked for Task 1M
+Status: partly addressed through work blocks 4D and 4P; remaining roster-validation and compensation coverage parked for Tasks 1M.4-1M.5
 
 Severity: medium regression-confidence risk
 
@@ -931,7 +931,7 @@ Revisit: Phase 4 Task 2, preferably alongside the related payroll repairs
 
 Summary:
 
-Work block 4D added maintained coverage for all eight payroll routes, the Personal/Luxe Legacy denial boundary, unchanged denied-state snapshots, temporary-payload preservation, and normal BFM roster/detail/import/spending availability. Dedicated parser, preview matching, compensation, validation, malformed-input, retention, and full lifecycle coverage remains paired with Task 1M.
+Work block 4D added maintained coverage for the payroll routes, Personal/Luxe Legacy denial, unchanged denied-state snapshots, temporary-payload preservation, and normal BFM roster/detail/import/spending availability. Work block 4P extends that maintained matrix to exact preview/save matching, reassignment, new creation, reimport, payload permissions and lifecycle, malformed workbook outcomes, valid multi-section parsing, all-entity isolation, denied networking, and exact cleanup. Roster input validation and compensation-cohort coverage remain paired with Tasks 1M.4-1M.5.
 
 Impact:
 
@@ -946,7 +946,7 @@ Acceptance checks:
 
 Remaining gap:
 
-The boundary slice is now tracked. Every other `P3-3F-C01` acceptance area remains intentionally excluded from 4D and must accompany its related Task 1M repair.
+The BFM-only boundary and Tasks 1M.1-1M.3 slices are tracked. Employee-input normalization and hourly-versus-salary cohort behavior remain intentionally excluded and must accompany Tasks 1M.4-1M.5.
 
 ## Plaid Persistence Errors Can Advance The Cursor Past Missing Data
 

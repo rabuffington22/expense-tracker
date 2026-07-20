@@ -216,36 +216,31 @@
           </thead>
           <tbody>
             {% for ue in import_unique_employees %}
-            <tr class="{% if not ue.suggested_role and ue.name.lower() not in employees|map(attribute='name')|map('lower')|list %}pr-import-unmatched{% endif %}">
+            <tr class="{% if not ue.exact_matches %}pr-import-unmatched{% endif %}">
               <td>{{ ue.name }}</td>
               <td>{{ ue.phoenix_job_code }}</td>
               <td>
-                {% set matched_emp = none %}
-                {% for emp in employees if emp.name|lower == ue.name|lower %}
-                  {% set matched_emp = emp %}
-                {% endfor %}
-
-                {% if matched_emp %}
-                  <span class="pr-role-badge" style="background:{{ role_colors.get(matched_emp.role, '#98989d') }}">{{ matched_emp.role }}</span>
-                  {{ matched_emp.name }}
-                  <input type="hidden" name="assign_{{ ue.name }}" value="{{ matched_emp.id }}">
-                {% else %}
-                  <div class="pr-import-assign">
-                    <select name="assign_{{ ue.name }}" class="pr-input pr-select pr-select--assign"
-                            onchange="prToggleNewRole(this, '{{ ue.name|e }}')">
-                      <option value="new" selected>Create new employee</option>
-                      {% for emp in employees %}
-                      <option value="{{ emp.id }}">{{ emp.name }} ({{ emp.role }})</option>
-                      {% endfor %}
-                    </select>
-                    <select name="new_role_{{ ue.name }}" class="pr-input pr-select pr-select--role" id="pr-new-role-{{ loop.index }}">
-                      <option value="">Role...</option>
-                      {% for r in role_order %}
-                      <option value="{{ r }}" {% if r == ue.suggested_role %}selected{% endif %}>{{ r }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                {% endif %}
+                {% set matched_emp = ue.matched_employee %}
+                <div class="pr-import-assign">
+                  <select name="assign_{{ ue.name }}" class="pr-input pr-select pr-select--assign"
+                          onchange="prToggleNewRole(this, '{{ ue.name|e }}')">
+                    {% if not ue.exact_matches %}
+                    <option value="new" selected>Create new employee</option>
+                    {% elif ue.exact_matches|length > 1 %}
+                    <option value="" selected>Select existing employee...</option>
+                    {% endif %}
+                    {% for emp in employees %}
+                    <option value="{{ emp.id }}" {% if matched_emp and emp.id == matched_emp.id %}selected{% endif %}>{{ emp.name }} ({{ emp.role }})</option>
+                    {% endfor %}
+                  </select>
+                  <select name="new_role_{{ ue.name }}" class="pr-input pr-select pr-select--role" id="pr-new-role-{{ loop.index }}"
+                          {% if ue.exact_matches %}style="display:none"{% endif %}>
+                    <option value="">Role...</option>
+                    {% for r in role_order %}
+                    <option value="{{ r }}" {% if r == ue.suggested_role %}selected{% endif %}>{{ r }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
               </td>
               <td>{{ ue.entry_count }}</td>
               <td>${{ "{:,.0f}".format(ue.total_amount) }}</td>
@@ -257,7 +252,8 @@
 
       <div class="pr-import-actions">
         <button type="submit" class="btn btn-primary">Save {{ import_total_entries }} Entries</button>
-        <a href="{{ url_for('payroll.index') }}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-secondary"
+                formaction="{{ url_for('payroll.import_cancel') }}" formmethod="post">Cancel</button>
       </div>
     </form>
   </div>

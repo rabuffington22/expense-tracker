@@ -23,6 +23,10 @@ from typing import IO, Union
 import pandas as pd
 
 
+class PayrollWorkbookError(ValueError):
+    """Raised when an uploaded workbook cannot be read safely."""
+
+
 # ── Phoenix job code → role mapping ──────────────────────────────────────────
 
 PHOENIX_JOB_CODE_MAP: dict[str, str] = {
@@ -72,7 +76,14 @@ def parse_phoenix_per_payroll_costs(
             {name, phoenix_job_code, paycheck_date, amount}
         and warnings is a list of human-readable warning strings.
     """
-    df = pd.read_excel(file_or_path, header=None)
+    try:
+        df = pd.read_excel(file_or_path, header=None)
+    except Exception as exc:
+        # Workbook engines raise several implementation-specific exception
+        # types for corrupt, mislabeled, empty, and unsupported files. Keep
+        # those details out of the request response while leaving errors after
+        # workbook loading visible to normal diagnostics.
+        raise PayrollWorkbookError("Could not read the payroll workbook.") from exc
     entries: list[dict] = []
     warnings: list[str] = []
 
