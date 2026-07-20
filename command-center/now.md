@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish the exact verified 4R payroll peer-comparison set directly to `main`, observe its automatic Fly deployment, verify credential-free production health, and close without triggering a second deployment.
+Close completed work block 4R-R after exact source durability, successful automatic deployment, and credential-free production health, then return Task 1N to a separate planning gate.
 
 ## Current Phase
 
@@ -10,19 +10,19 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4R-R: Like-For-Like Payroll Peer Comparisons Durability And Release — active under Ryan's direct commit-and-push instruction.
+Work block 4R-R: Like-For-Like Payroll Peer Comparisons Durability And Release — complete, deployed, and credential-free health verified.
 
 ## Current Task
 
-Phase 4 Task 4: publish and verify explicitly approved repairs — current only for the exact verified 4R-R release scope. Task 1N remains planned and unauthorized.
+Phase 4 Task 1N: repair planning, Weekly, and Waterfall calculation truthfulness — current for a new bounded planning pass only. No Task 1N implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns the exact-path Git release, automatic-deployment observation, credential-free health check, and sanitized closeout. Ryan owns any recovery or scope expansion.
+Ryan owns confirmation of the next bounded Task 1N block. Codex Desktop owns just-in-time planning and Runway OS stewardship.
 
 ## Current Action
 
-Re-run the maintained checks, stage and commit the exact 4R source set, fast-forward and push `main`, observe the attributable automatic deployment, verify `/health`, and publish one `[skip actions]` command-center closeout.
+Refresh and verify the completed 4R-R dashboard state, publish this sanitized `[skip actions]` closeout without a second deployment, and stop before Task 1N implementation.
 
 ## Work Block 4R-R Contract
 
@@ -31,6 +31,16 @@ Re-run the maintained checks, stage and commit the exact 4R source set, fast-for
 - Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4R contract; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
 - Stop for an unexpected path, sensitive value, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
 - Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, and preserved exclusions.
+
+## Work Block 4R-R Result
+
+- Exact eleven-path source commit `edaa853` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29778504012` and deploy job `88473691178` passed every reported step for exact source SHA `edaa853d2177adb1a5a9c31d2c56e6df42a6df88`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the high-confidence staged sensitive-addition scan returned zero.
+- GitHub repeated the non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24; deployment still succeeded.
+- No protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4R Contract
 

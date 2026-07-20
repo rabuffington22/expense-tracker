@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active in confirmed work block 4R-R for exact-scope durability, automatic release observation, credential-free health verification, and sanitized closeout
+Status: active after successful 4R-R durability, automatic deployment, and credential-free health verification; Task 1N is current for a separate planning pass
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -916,12 +916,12 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4Q and 4Q-R.
   - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: done and verified locally through work block 4R; release remains separate.
-- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned for a separately confirmed planning pass after 4R-R; no implementation is authorized.
+- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: current for a separately confirmed planning pass after the planning route guard; no implementation is authorized.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice of `P3-3G-C01`, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, and 4Q completed its roster-validation slice.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: current only for confirmed work block 4R-R; releases through 4Q-R are complete and every later release remains separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4R-R; every future release remains separately gated.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -2052,7 +2052,7 @@ Result: peer compensation now uses only other active employees with the same rol
 
 ### Confirmed Work Block 4R-R: Like-For-Like Payroll Peer Comparisons Durability And Release
 
-Status: active under Ryan's direct commit-and-push instruction on 2026-07-20
+Status: done, deployed, and credential-free health verified on 2026-07-20
 
 Parent task: Phase 4 Task 4 for the exact verified 4R source set only.
 
@@ -2069,6 +2069,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and the separate Task 1N planning gate.
+
+Result: the exact eleven-path 4R source set was committed as `edaa853`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29778504012` and deploy job `88473691178` passed every reported step for exact source SHA `edaa853d2177adb1a5a9c31d2c56e6df42a6df88`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, and no protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N implementation, force push, or unrelated action occurred. Evidence: `command-center/logs/2026-07-20-payroll-peer-comparisons-release-4r-r.md`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
