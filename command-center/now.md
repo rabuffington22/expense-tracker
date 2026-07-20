@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish the exact verified work block 4Q source set through authorized work block 4Q-R, observe only its automatic Fly deployment, verify credential-free production health, and publish a sanitized closeout without starting a second deployment.
+Close completed work block 4Q-R after exact-path durability, successful automatic deployment, and credential-free production health, then return Task 1M.5 to a separate planning and confirmation gate.
 
 ## Current Phase
 
@@ -10,19 +10,19 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4Q-R: Atomic Payroll Roster Validation Durability And Release — active on `codex/atomic-payroll-roster-validation` under Ryan's direct commit-and-push-to-main authorization.
+Work block 4Q-R: Atomic Payroll Roster Validation Durability And Release — complete, durable on `main`, automatically deployed, and credential-free production health verified.
 
 ## Current Task
 
-Phase 4 Task 1M.4: validate employee roster writes atomically — complete locally through work block 4Q and now in its exact-scope 4Q-R durability and automatic-release step. Task 1M.5 remains planned and excluded.
+Phase 4 Task 1M.5: separate payroll peer comparisons by compensation unit — current for a new bounded planning pass only. No Task 1M.5 implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, fast-forward main publication, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
+Ryan owns confirmation or adjustment of the next Task 1M.5 work block. Codex Desktop owns the planning pass and Runway OS stewardship.
 
 ## Current Action
 
-Finish the 4Q-R preflight, publish one source commit directly to `main`, attribute and observe only the automatic Fly Deploy, verify credential-free `/health`, then publish a command-center-only `[skip actions]` closeout.
+Publish this sanitized command-center-only `[skip actions]` closeout, verify final `main` alignment and no second Fly deployment, then report the durable 4Q-R result and separate Task 1M.5 gate.
 
 ## Work Block 4Q-R Contract
 
@@ -31,6 +31,16 @@ Finish the 4Q-R preflight, publish one source commit directly to `main`, attribu
 - Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4Q contract; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
 - Stop for an unexpected path, sensitive value, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
 - Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, and preserved exclusions.
+
+## Work Block 4Q-R Result
+
+- Exact ten-path source commit `3f3ffb2` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29761239024` and deploy job `88416099000` passed every reported step for exact source SHA `3f3ffb2b9d487d99afd2daacb956c69c3921e1c2`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the high-confidence staged sensitive-addition scan returned zero.
+- GitHub repeated the non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24; deployment still succeeded.
+- No protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1M.5 implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4Q Contract
 
@@ -148,8 +158,9 @@ Finish the 4Q-R preflight, publish one source commit directly to `main`, attribu
 - Work block 4O source commit, automatic Fly run/job, and credential-free production `/health`: pass.
 - Work block 4M baseline and final full smoke suites, Python compilation, all-entity vendor-payment matrix, two-thread contention, rollback, denied networking, and cleanup: pass locally.
 - Work block 4Q baseline and final full smoke suites, roster-domain and decimal-rate matrices, zero-mutation snapshots, forced manual/import rollback, BFM-only isolation, denied networking, and cleanup: pass locally.
+- Work block 4Q source commit, automatic Fly run/job, and credential-free production `/health`: pass.
 - Final JSON validation, dashboard refresh, command-center health, `git diff --check`, dashboard inspection, and explicit worktree review: pass locally.
 
 ## Next Report Point
 
-Report the 4Q validation contract, changed paths, rejection and rollback matrix, preserved valid behavior, full verification, cleanup, local branch state, preserved exclusions, and separate 4Q-R publication gate.
+Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1M.5 planning gate.

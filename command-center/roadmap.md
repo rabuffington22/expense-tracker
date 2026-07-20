@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after local completion and verification of work block 4Q; 4Q durability and Task 1M.5 implementation remain separately gated
+Status: active after durable completion and verified automatic release of work block 4Q-R; Task 1M.5 is current for separate planning
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -914,8 +914,8 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.1: Prevent duplicate employees during payroll import.** Stabilize exact existing-employee assignment across preview and save, preserve explicit reassignment and genuinely unmatched creation, and pair `P3-3F-02` with its focused `P3-3F-C01` coverage slice. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.2: End abandoned payroll-preview payload retention.** Add an explicit cancel path that consumes only its exact temporary payload and prove save, cancel, missing, reused, expired, malformed, unrelated-payload, and cleanup behavior for `P3-3F-05` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
-  - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done and verified locally through work block 4Q; release remains separate.
-  - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: planned under Ryan's confirmed no-annualization default.
+  - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4Q and 4Q-R.
+  - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: current for a separately confirmed work-block planning pass under Ryan's no-annualization default.
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
@@ -1987,7 +1987,7 @@ Result: one shared pre-mutation validator now governs manual create, manual upda
 
 ### Confirmed Work Block 4Q-R: Atomic Payroll Roster Validation Durability And Release
 
-Status: active under Ryan's direct commit-and-push-to-main authorization on 2026-07-20
+Status: complete, durable, automatically deployed, and credential-free production health verified on 2026-07-20
 
 Included: the exact verified ten-path 4Q application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/atomic-payroll-roster-validation`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -2002,6 +2002,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and the separate Task 1M.5 planning gate.
+
+Result: the exact ten-path 4Q source set was committed as `3f3ffb2`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29761239024` and deploy job `88416099000` passed every reported step for exact source SHA `3f3ffb2b9d487d99afd2daacb956c69c3921e1c2`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, and no protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1M.5 implementation, force push, or unrelated action occurred. Evidence: `command-center/logs/2026-07-20-atomic-payroll-roster-validation-release-4q-r.md`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

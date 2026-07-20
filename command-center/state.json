@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-20 11:48 AM CST",
+    "lastUpdated": "2026-07-20 11:53 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,29 +22,29 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4P-R are published on main; source commit 4b2775c deployed successfully with credential-free production health at 200"
+    "durabilityStatus": "Work blocks through 4Q-R are published on main; source commit 3f3ffb2 deployed successfully with credential-free production health at 200"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4Q-R is publishing the verified Task 1M.4 repair through exact-path durability automatic Fly observation and credential-free production health; Task 1M.5 remains separate.",
-    "progress": 96
+    "summary": "Work blocks 4Q and 4Q-R completed Task 1M.4 locally and durably with automatic deployment and credential-free health; Task 1M.5 is current for separate planning.",
+    "progress": 97
   },
   "currentTask": {
-    "title": "Task 1M.4: Validate employee roster writes atomically",
-    "owner": "Codex Desktop",
+    "title": "Task 1M.5: Separate payroll peer comparisons by compensation unit",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Ryan directly authorized exact-path commit push automatic deployment observation and credential-free production health",
-    "nextAction": "Complete 4Q-R preflight publish the source commit to main observe the exact automatic Fly run verify credential-free health and publish the skip-actions closeout.",
-    "blocker": null
+    "supportingAgent": "Codex Desktop owns the next just-in-time work-block planning pass and later confirmed execution",
+    "nextAction": "Define and confirm one bounded Task 1M.5 work block before implementation.",
+    "blocker": "No Task 1M.5 implementation work block is confirmed."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-q-release",
     "label": "4Q-R",
     "name": "Atomic Payroll Roster Validation Durability And Release",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
-    "currentTask": "Preflight the exact verified source set before explicit staging and direct-main publication",
+    "currentTask": "Published the exact verified 4Q set observed the automatic Fly deployment verified credential-free health and prepared the sanitized closeout",
     "includedTasks": [
       "Task 1M.4 durability and automatic release",
       "Credential-free production health verification",
@@ -62,9 +62,9 @@
       "Explicit staging source commit and direct-main fast-forward push",
       "Exact automatic Fly run and job result credential-free production health final alignment preserved exclusions and skip-actions closeout"
     ],
-    "nextReportPoint": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and Task 1M.5 planning gate.",
-    "result": "Active under Ryan's direct commit-and-push-to-main authorization.",
-    "durability": "Pending exact-path source commit direct-main push automatic Fly result credential-free health and sanitized skip-actions closeout."
+    "nextReportPoint": "Report the durable 4Q-R result and return Task 1M.5 to a separately confirmed planning gate.",
+    "result": "Published source commit 3f3ffb2 directly to main by exact-path fast-forward observed successful automatic Fly run 29761239024 and job 88416099000 verified credential-free production health at HTTP 200 and preserved both unrelated untracked files.",
+    "durability": "Source commit 3f3ffb2 is durable on main automatic Fly run 29761239024 and deploy job 88416099000 passed credential-free production health returned 200 and the sanitized command-center closeout is published separately with skip actions."
   },
   "routerHealth": {
     "status": "healthy",
@@ -89,18 +89,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Complete authorized work block 4Q-R",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized commit and push to main for the verified Task 1M.4 repair.",
-    "action": "Publish the exact source set observe its automatic Fly deployment verify credential-free health and publish a sanitized skip-actions closeout.",
+    "title": "Define the next Task 1M.5 work block",
+    "status": "planning",
+    "owner": "Ryan",
+    "why": "Work blocks 4Q and 4Q-R are complete and durable; compensation-cohort truthfulness is the next distinct payroll contract.",
+    "action": "Review a bounded Task 1M.5 proposal for like-for-like hourly and salary cohorts under the existing no-annualization decision before implementation.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
-  "waitingOnRyan": null,
+  "waitingOnRyan": {
+    "summary": "Work block 4Q-R is complete and durable; Task 1M.5 needs a separately proposed and confirmed work block before implementation.",
+    "items": [
+      "Confirm or adjust the next bounded Task 1M.5 work block after Codex proposes it."
+    ]
+  },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4Q-R is authorized only for exact Task 1M.4 durability automatic Fly observation credential-free health and sanitized closeout; Task 1M.5 broader Task 2 and protected payroll or HR data remain outside scope.",
-    "decisionQueue": "None while 4Q-R executes inside its confirmed release boundary.",
+    "phaseQuestions": "Work blocks 4Q and 4Q-R are complete durable deployed and health verified. Task 1M.5 is current for planning only; broader Task 2 protected payroll or HR data publication and live actions remain outside authorization.",
+    "decisionQueue": "Define and confirm one bounded Task 1M.5 work block before implementation.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2754,7 +2759,7 @@
       "phaseId": "phase-4",
       "label": "4Q-R",
       "name": "Atomic Payroll Roster Validation Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1M.4 durability and automatic release",
         "Credential-free production health verification",
@@ -2769,7 +2774,7 @@
       "owner": "Codex Desktop",
       "recommendedAgent": "Codex Desktop",
       "whyThisAgent": "The release requires exact-path Git stewardship sensitive-addition review direct-main fast-forward safety automatic Fly observation credential-free health verification and final Runway OS closeout.",
-      "runnerPath": "Current Codex task on codex/atomic-payroll-roster-validation then local main after an exact fast-forward.",
+      "runnerPath": "Completed in the current Codex task on local main after fast-forwarding codex/atomic-payroll-roster-validation.",
       "expectedLiveEffect": "Push one verified source commit to main triggering one automatic Fly deployment verify only credential-free health then push one skip-actions command-center closeout without a second deployment.",
       "expectedFiles": [
         "Exact verified ten-path 4Q application maintained-test contract issue evidence and Runway OS source set",
@@ -2795,14 +2800,15 @@
         "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and Task 1M.5 planning gate.",
-      "durability": "Pending exact-path source commit direct-main push automatic Fly result credential-free health and sanitized skip-actions closeout.",
+      "durability": "Source commit 3f3ffb2 is durable on main automatic Fly run 29761239024 and deploy job 88416099000 passed credential-free production health returned 200 and the sanitized command-center closeout is published separately with skip actions.",
       "evidence": [
         "command-center/payroll-roster-validation-contract.md",
         "command-center/logs/2026-07-20-atomic-payroll-roster-validation-4q.md",
-        "web/routes/payroll.py",
-        "scripts/smoke_test.py"
+        "command-center/logs/2026-07-20-atomic-payroll-roster-validation-release-4q-r.md",
+        "GitHub Actions run 29761239024",
+        "Fly deploy job 88416099000"
       ],
-      "result": "Active under Ryan's direct commit-and-push-to-main authorization."
+      "result": "Published source commit 3f3ffb2 directly to main by exact-path fast-forward observed successful automatic Fly run 29761239024 and job 88416099000 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout."
     }
   ],
   "phaseTasks": [
@@ -3414,8 +3420,8 @@
       "status": "active",
       "owner": "Ryan",
       "summary": "Umbrella decomposed into Tasks 1M.1 through 1M.5 for import matching payload cleanup malformed-workbook handling roster validation and compensation-cohort truthfulness.",
-      "nextAction": "Define and confirm one bounded Task 1M.4 work block before implementation.",
-      "blocker": "No Task 1M.4 implementation work block is confirmed."
+      "nextAction": "Define and confirm one bounded Task 1M.5 work block before implementation.",
+      "blocker": "No Task 1M.5 implementation work block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -3462,7 +3468,7 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1M4",
       "title": "Task 1M.4: Validate employee roster writes atomically",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Validate maintained role pay-type status date identifier and finite non-negative rate domains before create or update mutation for P3-3F-04 with focused coverage.",
       "result": "Work block 4Q added shared pre-mutation validation and maintained zero-mutation valid-history and forced rollback coverage across manual and import-created roster rows.",
@@ -3470,16 +3476,18 @@
         "command-center/payroll-roster-validation-contract.md",
         "command-center/logs/2026-07-20-atomic-payroll-roster-validation-4q.md"
       ],
-      "nextAction": "Complete authorized 4Q-R exact-path durability automatic deployment observation credential-free health and sanitized closeout.",
+      "nextAction": null,
       "blocker": null
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1M5",
       "title": "Task 1M.5: Separate payroll peer comparisons by compensation unit",
-      "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Compute and display like-for-like hourly and salary cohorts under Ryan's confirmed no-annualization default for P3-3F-03 with focused coverage."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Compute and display like-for-like hourly and salary cohorts under Ryan's confirmed no-annualization default for P3-3F-03 with focused coverage.",
+      "nextAction": "Define and confirm one bounded Task 1M.5 work block before implementation.",
+      "blocker": "No Task 1M.5 implementation work block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -3852,9 +3860,17 @@
     {
       "name": "Work Block 4Q Atomic Payroll Roster Validation Closeout",
       "path": "command-center/logs/2026-07-20-atomic-payroll-roster-validation-4q.md"
+    },
+    {
+      "name": "Work Block 4Q-R Atomic Payroll Roster Validation Release Closeout",
+      "path": "command-center/logs/2026-07-20-atomic-payroll-roster-validation-release-4q-r.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-20",
+      "text": "Published 4Q source commit 3f3ffb2 to main automatic Fly run 29761239024 and deploy job 88416099000 succeeded credential-free production health returned 200 and the sanitized skip-actions closeout was prepared."
+    },
     {
       "time": "2026-07-20",
       "text": "Ryan directly authorized work block 4Q-R to commit and push the exact verified ten-path 4Q set to main observe the resulting automatic Fly deployment verify credential-free health and publish a sanitized skip-actions closeout."
@@ -4665,8 +4681,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete 4Q-R durability and release",
-    "description": "Publish the verified Task 1M.4 repair through one exact source push one automatic Fly deployment credential-free production health and one skip-actions closeout before planning Task 1M.5."
+    "name": "Define the Task 1M.5 work block",
+    "description": "Propose and confirm one bounded like-for-like hourly and salary peer-comparison block under Ryan's existing no-annualization decision before implementation."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -4687,6 +4703,8 @@
     "phase4PayrollRosterValidation": "pass locally; shared pre-mutation validation enforces maintained name role pay-type status date entity-local assignment payload-linked name optional Phoenix-code and bounded decimal-rate rules across manual and import-created rows",
     "phase4PayrollRosterAtomicity": "pass; invalid create update and import snapshots remain exact while forced post-history and post-employee persistence failures roll back whole transactions",
     "phase4PayrollRosterBoundaries": "pass; BFM-only isolation one-use rejected payload cleanup denied outbound networking exact cleanup no migration template protected data retained upload external call live system or GitHub durability",
+    "phase4PayrollRosterRelease": "pass; source commit 3f3ffb2 is on main automatic Fly run 29761239024 and deploy job 88416099000 passed every reported step and credential-free production health returned HTTP 200",
+    "phase4PayrollRosterDurability": "pass; local main matched origin/main at source commit 3f3ffb2 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
     "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; natural post-release scheduled run 29740509073 completed successfully at 2026-07-20T11:59:33Z",
