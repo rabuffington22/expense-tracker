@@ -45,7 +45,15 @@ def match_vendor_to_bank(entity_key: str) -> dict:
     """
     conn = get_connection(entity_key)
     try:
-        return _run_matching(conn, entity_key)
+        # Serialize candidate selection and exact-match application so two
+        # workers cannot claim the same bank transaction concurrently.
+        conn.execute("BEGIN IMMEDIATE")
+        result = _run_matching(conn, entity_key)
+        conn.commit()
+        return result
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 
@@ -71,25 +79,17 @@ def _run_matching(conn, entity_key: str) -> dict:
     bank_rows = conn.execute(
         "SELECT transaction_id, date, amount, amount_cents, "
         "description_raw, merchant_raw, merchant_canonical, "
-        "matched_order_id, notes "
+        "notes "
         "FROM transactions "
         "WHERE (LOWER(description_raw) LIKE '%venmo%' OR LOWER(description_raw) LIKE '%paypal%' "
         "   OR LOWER(merchant_raw) LIKE '%venmo%' OR LOWER(merchant_raw) LIKE '%paypal%') "
-        "AND matched_order_id IS NULL "
+        "AND NOT EXISTS ("
+        "  SELECT 1 FROM vendor_transactions matched_vendor "
+        "  WHERE matched_vendor.matched_transaction_id = transactions.transaction_id"
+        ") "
         "ORDER BY date"
     ).fetchall()
     bank_txns = [dict(r) for r in bank_rows]
-
-    # Filter: already matched by checking if a vendor_transaction points to this bank txn
-    already_matched_bank_ids = set()
-    existing = conn.execute(
-        "SELECT matched_transaction_id FROM vendor_transactions "
-        "WHERE matched_transaction_id IS NOT NULL"
-    ).fetchall()
-    for r in existing:
-        already_matched_bank_ids.add(r[0])
-
-    bank_txns = [b for b in bank_txns if b["transaction_id"] not in already_matched_bank_ids]
 
     if not bank_txns:
         return {
@@ -187,9 +187,6 @@ def _run_matching(conn, entity_key: str) -> dict:
                 else:
                     review_matches.append(match_info)
 
-    if auto_applied > 0:
-        conn.commit()
-
     return {
         "auto_applied": auto_applied,
         "review": review_matches,
@@ -205,18 +202,67 @@ def apply_vendor_matches(entity_key: str, matches: list[dict]) -> int:
     Returns count of matches applied.
     """
     conn = get_connection(entity_key)
-    applied = 0
     try:
-        for m in matches:
+        conn.execute("BEGIN IMMEDIATE")
+        normalized_matches = [dict(match) for match in matches]
+        _validate_match_batch(conn, normalized_matches)
+        for m in normalized_matches:
             _apply_single_match(conn, m)
-            applied += 1
         conn.commit()
     except Exception:
         conn.rollback()
         raise
     finally:
         conn.close()
-    return applied
+    return len(normalized_matches)
+
+
+def _validate_match_batch(conn, matches: list[dict]) -> None:
+    """Validate an accepted batch before any bank or vendor row is changed."""
+    vendor_ids = [match.get("vendor_id") for match in matches]
+    bank_txn_ids = [match.get("bank_txn_id") for match in matches]
+
+    if any(vendor_id is None for vendor_id in vendor_ids):
+        raise ValueError("Vendor match is missing vendor_id")
+    if any(not bank_txn_id for bank_txn_id in bank_txn_ids):
+        raise ValueError("Vendor match is missing bank_txn_id")
+    if len(set(vendor_ids)) != len(vendor_ids):
+        raise ValueError("Vendor match batch contains a duplicate vendor transaction")
+    if len(set(bank_txn_ids)) != len(bank_txn_ids):
+        raise ValueError("Vendor match batch contains a duplicate bank transaction")
+
+    for match in matches:
+        _validate_single_match(conn, match)
+
+
+def _validate_single_match(conn, match: dict) -> None:
+    """Require one unmatched vendor row and one unclaimed bank transaction."""
+    vendor_id = match["vendor_id"]
+    bank_txn_id = match["bank_txn_id"]
+
+    vendor_row = conn.execute(
+        "SELECT matched_transaction_id FROM vendor_transactions WHERE id = ?",
+        (vendor_id,),
+    ).fetchone()
+    if vendor_row is None:
+        raise ValueError("Vendor transaction no longer exists")
+    if vendor_row["matched_transaction_id"] is not None:
+        raise ValueError("Vendor transaction is already matched")
+
+    bank_row = conn.execute(
+        "SELECT transaction_id FROM transactions WHERE transaction_id = ?",
+        (bank_txn_id,),
+    ).fetchone()
+    if bank_row is None:
+        raise ValueError("Bank transaction no longer exists")
+
+    existing_vendor = conn.execute(
+        "SELECT id FROM vendor_transactions "
+        "WHERE matched_transaction_id = ? AND id != ? LIMIT 1",
+        (bank_txn_id, vendor_id),
+    ).fetchone()
+    if existing_vendor is not None:
+        raise ValueError("Bank transaction is already matched to another vendor transaction")
 
 
 def _apply_single_match(conn, match: dict):
@@ -231,23 +277,28 @@ def _apply_single_match(conn, match: dict):
     vendor_type = match.get("vendor_type", "venmo")
     confidence = match.get("confidence", 0.80)
 
+    _validate_single_match(conn, match)
+
     # Enrich bank transaction
     platform = vendor_type.title()  # "Venmo" or "Paypal"
     enriched_notes = f"{recipient} via {platform}" if recipient else f"via {platform}"
 
-    conn.execute(
-        "UPDATE transactions SET notes = ?, merchant_canonical = ?, "
-        "matched_order_id = ? "
+    bank_update = conn.execute(
+        "UPDATE transactions SET notes = ?, merchant_canonical = ? "
         "WHERE transaction_id = ?",
-        (enriched_notes, recipient or None, f"vendor:{vendor_id}", bank_txn_id),
+        (enriched_notes, recipient or None, bank_txn_id),
     )
+    if bank_update.rowcount != 1:
+        raise ValueError("Bank transaction changed before the match could be applied")
 
     # Mark vendor transaction as matched
-    conn.execute(
+    vendor_update = conn.execute(
         "UPDATE vendor_transactions SET matched_transaction_id = ?, match_confidence = ? "
-        "WHERE id = ?",
+        "WHERE id = ? AND matched_transaction_id IS NULL",
         (bank_txn_id, confidence, vendor_id),
     )
+    if vendor_update.rowcount != 1:
+        raise ValueError("Vendor transaction changed before the match could be applied")
 
 
 def get_vendor_match_stats(entity_key: str) -> dict:

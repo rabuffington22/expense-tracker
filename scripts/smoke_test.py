@@ -1090,6 +1090,434 @@ def main() -> None:
         )
         print("   ✅ Entity inference, stable ties, zero-mutation rejection, valid writes, skip sentinel, isolation, denied-network, and cleanup passed")
 
+        # ── 7e. Vendor payment matching integrity ───────────────────
+        print("\n7e. Vendor payment matching integrity tests…")
+        from core.vendor_matching import apply_vendor_matches, match_vendor_to_bank
+
+        vendor_match_entities = ("personal", "company", "luxelegacy")
+        vendor_match_prefixes = {
+            entity_key: f"vendor-match-4m-{entity_key}"
+            for entity_key in vendor_match_entities
+        }
+
+        def _insert_vendor_match_bank(conn, txn_id, date, amount, description, notes="before"):
+            conn.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, merchant_raw, merchant_canonical, "
+                "amount, amount_cents, account, notes, source_filename, imported_at) "
+                "VALUES (?, ?, ?, ?, 'Before Merchant', ?, ?, 'Synthetic 4M', ?, "
+                "'vendor-match-4m', '2026-07-20T00:00:00+00:00')",
+                (
+                    txn_id,
+                    date,
+                    description,
+                    description,
+                    amount,
+                    int(round(amount * 100)),
+                    notes,
+                ),
+            )
+
+        def _insert_vendor_match_vendor(
+            conn, plaid_txn_id, date, amount, recipient, vendor_type="venmo"
+        ):
+            cursor = conn.execute(
+                "INSERT INTO vendor_transactions "
+                "(plaid_item_id, plaid_transaction_id, plaid_account_id, date, amount, "
+                "amount_cents, name, merchant_name, recipient, vendor_type, imported_at) "
+                "VALUES (?, ?, 'account-4m', ?, ?, ?, ?, ?, ?, ?, "
+                "'2026-07-20T00:00:00+00:00')",
+                (
+                    f"item-4m-{plaid_txn_id}",
+                    plaid_txn_id,
+                    date,
+                    amount,
+                    int(round(amount * 100)),
+                    recipient,
+                    recipient,
+                    recipient,
+                    vendor_type,
+                ),
+            )
+            return cursor.lastrowid
+
+        # Seed the same acceptance matrix into every isolated entity database.
+        seeded_vendor_matches = {}
+        for entity_key in vendor_match_entities:
+            prefix = vendor_match_prefixes[entity_key]
+            conn_match = get_connection(entity_key)
+            transaction_columns = {
+                row["name"] for row in conn_match.execute("PRAGMA table_info(transactions)")
+            }
+            _check(
+                "matched_order_id" not in transaction_columns,
+                f"vendor matching {entity_key}: test requires the real migration-built schema",
+            )
+            exact_bank = f"{prefix}-bank-exact"
+            likely_bank = f"{prefix}-bank-likely"
+            unmatched_bank = f"{prefix}-bank-unmatched"
+            control_bank = f"{prefix}-bank-control"
+            _insert_vendor_match_bank(
+                conn_match, exact_bank, "2026-07-01", -40.00, "VENMO EXACT 4M"
+            )
+            _insert_vendor_match_bank(
+                conn_match, likely_bank, "2026-07-06", -50.00, "VENMO LIKELY 4M"
+            )
+            _insert_vendor_match_bank(
+                conn_match, unmatched_bank, "2026-07-01", -997.00, "PAYPAL UNMATCHED 4M"
+            )
+            _insert_vendor_match_bank(
+                conn_match, control_bank, "2026-07-01", -13.00, "CONTROL 4M", "control-before"
+            )
+            exact_vendor = _insert_vendor_match_vendor(
+                conn_match, f"{prefix}-vendor-exact", "2026-07-01", 40.00, "Exact Recipient"
+            )
+            likely_vendor = _insert_vendor_match_vendor(
+                conn_match, f"{prefix}-vendor-likely", "2026-07-01", 50.00, "Likely Recipient"
+            )
+            unmatched_vendor = _insert_vendor_match_vendor(
+                conn_match, f"{prefix}-vendor-unmatched", "2026-07-01", 61.00, "No Match"
+            )
+            conn_match.commit()
+            conn_match.close()
+            seeded_vendor_matches[entity_key] = {
+                "exact_bank": exact_bank,
+                "likely_bank": likely_bank,
+                "unmatched_bank": unmatched_bank,
+                "control_bank": control_bank,
+                "exact_vendor": exact_vendor,
+                "likely_vendor": likely_vendor,
+                "unmatched_vendor": unmatched_vendor,
+            }
+
+        original_socket = socket.socket
+
+        def _deny_vendor_match_network(*_args, **_kwargs):
+            raise AssertionError("vendor-payment matching smoke attempted outbound networking")
+
+        try:
+            socket.socket = _deny_vendor_match_network
+            for entity_key in vendor_match_entities:
+                ids = seeded_vendor_matches[entity_key]
+                result = match_vendor_to_bank(entity_key)
+                _check(
+                    result["auto_applied"] == 1
+                    and len(result["review"]) == 1
+                    and result["unmatched_vendor"] == 1
+                    and result["unmatched_bank"] == 1,
+                    f"vendor matching {entity_key}: exact/review/unmatched result was {result}",
+                )
+                review_match = result["review"][0]
+                _check(
+                    review_match["vendor_id"] == ids["likely_vendor"]
+                    and review_match["bank_txn_id"] == ids["likely_bank"]
+                    and review_match["confidence"] == 0.80,
+                    f"vendor matching {entity_key}: likely match contract changed",
+                )
+
+                conn_match = get_connection(entity_key)
+                exact_vendor_state = conn_match.execute(
+                    "SELECT matched_transaction_id, match_confidence "
+                    "FROM vendor_transactions WHERE id=?",
+                    (ids["exact_vendor"],),
+                ).fetchone()
+                exact_bank_state = conn_match.execute(
+                    "SELECT merchant_canonical, notes FROM transactions WHERE transaction_id=?",
+                    (ids["exact_bank"],),
+                ).fetchone()
+                likely_vendor_state = conn_match.execute(
+                    "SELECT matched_transaction_id FROM vendor_transactions WHERE id=?",
+                    (ids["likely_vendor"],),
+                ).fetchone()[0]
+                control_state = conn_match.execute(
+                    "SELECT merchant_canonical, notes FROM transactions WHERE transaction_id=?",
+                    (ids["control_bank"],),
+                ).fetchone()
+                _check(
+                    tuple(exact_vendor_state) == (ids["exact_bank"], 0.95)
+                    and tuple(exact_bank_state) == ("Exact Recipient", "Exact Recipient via Venmo")
+                    and likely_vendor_state is None
+                    and tuple(control_state) == ("Before Merchant", "control-before"),
+                    f"vendor matching {entity_key}: exact application changed the wrong rows",
+                )
+                conn_match.close()
+
+                applied = apply_vendor_matches(entity_key, [review_match])
+                _check(applied == 1, f"vendor matching {entity_key}: review apply count was {applied}")
+                conn_match = get_connection(entity_key)
+                accepted_state = conn_match.execute(
+                    "SELECT vt.matched_transaction_id, vt.match_confidence, "
+                    "t.merchant_canonical, t.notes "
+                    "FROM vendor_transactions vt JOIN transactions t "
+                    "ON t.transaction_id=vt.matched_transaction_id WHERE vt.id=?",
+                    (ids["likely_vendor"],),
+                ).fetchone()
+                _check(
+                    tuple(accepted_state)
+                    == (ids["likely_bank"], 0.80, "Likely Recipient", "Likely Recipient via Venmo"),
+                    f"vendor matching {entity_key}: reviewed match did not persist canonically",
+                )
+                stable_snapshot = conn_match.execute(
+                    "SELECT transaction_id, merchant_canonical, notes FROM transactions "
+                    "WHERE source_filename='vendor-match-4m' ORDER BY transaction_id"
+                ).fetchall()
+                conn_match.close()
+                try:
+                    apply_vendor_matches(entity_key, [review_match])
+                    _check(False, f"vendor matching {entity_key}: stale replay should fail")
+                except ValueError:
+                    pass
+                conn_match = get_connection(entity_key)
+                after_stale = conn_match.execute(
+                    "SELECT transaction_id, merchant_canonical, notes FROM transactions "
+                    "WHERE source_filename='vendor-match-4m' ORDER BY transaction_id"
+                ).fetchall()
+                _check(
+                    [tuple(row) for row in after_stale]
+                    == [tuple(row) for row in stable_snapshot],
+                    f"vendor matching {entity_key}: stale replay changed transaction data",
+                )
+
+                # Duplicate claims are rejected before either side changes.
+                duplicate_bank = f"{vendor_match_prefixes[entity_key]}-bank-duplicate"
+                _insert_vendor_match_bank(
+                    conn_match, duplicate_bank, "2026-07-10", -71.00, "VENMO DUPLICATE 4M"
+                )
+                duplicate_vendor_1 = _insert_vendor_match_vendor(
+                    conn_match,
+                    f"{vendor_match_prefixes[entity_key]}-vendor-duplicate-1",
+                    "2026-07-10",
+                    71.00,
+                    "Duplicate One",
+                )
+                duplicate_vendor_2 = _insert_vendor_match_vendor(
+                    conn_match,
+                    f"{vendor_match_prefixes[entity_key]}-vendor-duplicate-2",
+                    "2026-07-10",
+                    72.00,
+                    "Duplicate Two",
+                )
+                conn_match.commit()
+                conn_match.close()
+                try:
+                    apply_vendor_matches(
+                        entity_key,
+                        [
+                            {
+                                "vendor_id": duplicate_vendor_1,
+                                "bank_txn_id": duplicate_bank,
+                                "recipient": "Duplicate One",
+                                "vendor_type": "venmo",
+                                "confidence": 0.80,
+                            },
+                            {
+                                "vendor_id": duplicate_vendor_2,
+                                "bank_txn_id": duplicate_bank,
+                                "recipient": "Duplicate Two",
+                                "vendor_type": "venmo",
+                                "confidence": 0.80,
+                            },
+                        ],
+                    )
+                    _check(False, f"vendor matching {entity_key}: duplicate bank claim should fail")
+                except ValueError:
+                    pass
+                conn_match = get_connection(entity_key)
+                duplicate_state = conn_match.execute(
+                    "SELECT matched_transaction_id FROM vendor_transactions WHERE id IN (?, ?) "
+                    "ORDER BY id",
+                    (duplicate_vendor_1, duplicate_vendor_2),
+                ).fetchall()
+                duplicate_bank_state = conn_match.execute(
+                    "SELECT merchant_canonical, notes FROM transactions WHERE transaction_id=?",
+                    (duplicate_bank,),
+                ).fetchone()
+                _check(
+                    [row[0] for row in duplicate_state] == [None, None]
+                    and tuple(duplicate_bank_state) == ("Before Merchant", "before"),
+                    f"vendor matching {entity_key}: duplicate claim partially mutated data",
+                )
+
+                # Two independent writers racing for one bank transaction must
+                # serialize: exactly one wins and the other sees the durable claim.
+                race_bank = f"{vendor_match_prefixes[entity_key]}-bank-race"
+                _insert_vendor_match_bank(
+                    conn_match, race_bank, "2026-07-11", -73.00, "VENMO RACE 4M"
+                )
+                race_vendor_1 = _insert_vendor_match_vendor(
+                    conn_match,
+                    f"{vendor_match_prefixes[entity_key]}-vendor-race-1",
+                    "2026-07-11",
+                    73.00,
+                    "Race One",
+                )
+                race_vendor_2 = _insert_vendor_match_vendor(
+                    conn_match,
+                    f"{vendor_match_prefixes[entity_key]}-vendor-race-2",
+                    "2026-07-11",
+                    73.00,
+                    "Race Two",
+                )
+                conn_match.commit()
+                conn_match.close()
+                race_barrier = threading.Barrier(2)
+                race_results = []
+                race_result_lock = threading.Lock()
+
+                def _race_vendor_claim(vendor_id, recipient):
+                    race_barrier.wait()
+                    try:
+                        apply_vendor_matches(
+                            entity_key,
+                            [{
+                                "vendor_id": vendor_id,
+                                "bank_txn_id": race_bank,
+                                "recipient": recipient,
+                                "vendor_type": "venmo",
+                                "confidence": 0.80,
+                            }],
+                        )
+                        result_value = ("applied", vendor_id)
+                    except ValueError:
+                        result_value = ("rejected", vendor_id)
+                    with race_result_lock:
+                        race_results.append(result_value)
+
+                race_threads = [
+                    threading.Thread(
+                        target=_race_vendor_claim,
+                        args=(race_vendor_1, "Race One"),
+                    ),
+                    threading.Thread(
+                        target=_race_vendor_claim,
+                        args=(race_vendor_2, "Race Two"),
+                    ),
+                ]
+                for race_thread in race_threads:
+                    race_thread.start()
+                for race_thread in race_threads:
+                    race_thread.join(timeout=10)
+                _check(
+                    all(not race_thread.is_alive() for race_thread in race_threads),
+                    f"vendor matching {entity_key}: concurrent writers did not finish",
+                )
+                _check(
+                    sorted(result[0] for result in race_results) == ["applied", "rejected"],
+                    f"vendor matching {entity_key}: race result was {race_results}",
+                )
+                conn_match = get_connection(entity_key)
+                race_claims = conn_match.execute(
+                    "SELECT id, matched_transaction_id FROM vendor_transactions "
+                    "WHERE id IN (?, ?) ORDER BY id",
+                    (race_vendor_1, race_vendor_2),
+                ).fetchall()
+                _check(
+                    sum(row["matched_transaction_id"] == race_bank for row in race_claims) == 1,
+                    f"vendor matching {entity_key}: race produced more than one durable claim",
+                )
+
+                # A forced failure after the first match proves the whole batch rolls back.
+                rollback_bank_1 = f"{vendor_match_prefixes[entity_key]}-bank-rollback-1"
+                rollback_bank_2 = f"{vendor_match_prefixes[entity_key]}-bank-rollback-2"
+                _insert_vendor_match_bank(
+                    conn_match, rollback_bank_1, "2026-07-12", -81.00, "VENMO ROLLBACK ONE"
+                )
+                _insert_vendor_match_bank(
+                    conn_match, rollback_bank_2, "2026-07-12", -82.00, "VENMO ROLLBACK TWO"
+                )
+                rollback_vendor_1 = _insert_vendor_match_vendor(
+                    conn_match,
+                    f"{vendor_match_prefixes[entity_key]}-vendor-rollback-1",
+                    "2026-07-12",
+                    81.00,
+                    "Rollback One",
+                )
+                rollback_vendor_2 = _insert_vendor_match_vendor(
+                    conn_match,
+                    f"{vendor_match_prefixes[entity_key]}-vendor-rollback-2",
+                    "2026-07-12",
+                    82.00,
+                    "Rollback Two",
+                )
+                conn_match.execute(
+                    "CREATE TRIGGER vendor_match_4m_abort "
+                    "BEFORE UPDATE OF matched_transaction_id ON vendor_transactions "
+                    f"WHEN OLD.id={int(rollback_vendor_2)} "
+                    "BEGIN SELECT RAISE(ABORT, 'synthetic 4M rollback'); END"
+                )
+                conn_match.commit()
+                conn_match.close()
+                try:
+                    apply_vendor_matches(
+                        entity_key,
+                        [
+                            {
+                                "vendor_id": rollback_vendor_1,
+                                "bank_txn_id": rollback_bank_1,
+                                "recipient": "Rollback One",
+                                "vendor_type": "venmo",
+                                "confidence": 0.80,
+                            },
+                            {
+                                "vendor_id": rollback_vendor_2,
+                                "bank_txn_id": rollback_bank_2,
+                                "recipient": "Rollback Two",
+                                "vendor_type": "venmo",
+                                "confidence": 0.80,
+                            },
+                        ],
+                    )
+                    _check(False, f"vendor matching {entity_key}: forced batch failure should raise")
+                except Exception as exc:
+                    _check(
+                        "synthetic 4M rollback" in str(exc),
+                        f"vendor matching {entity_key}: unexpected rollback error {exc}",
+                    )
+                conn_match = get_connection(entity_key)
+                rollback_vendors = conn_match.execute(
+                    "SELECT matched_transaction_id FROM vendor_transactions WHERE id IN (?, ?) "
+                    "ORDER BY id",
+                    (rollback_vendor_1, rollback_vendor_2),
+                ).fetchall()
+                rollback_banks = conn_match.execute(
+                    "SELECT merchant_canonical, notes FROM transactions "
+                    "WHERE transaction_id IN (?, ?) ORDER BY transaction_id",
+                    (rollback_bank_1, rollback_bank_2),
+                ).fetchall()
+                _check(
+                    [row[0] for row in rollback_vendors] == [None, None]
+                    and [tuple(row) for row in rollback_banks]
+                    == [("Before Merchant", "before"), ("Before Merchant", "before")],
+                    f"vendor matching {entity_key}: failed batch was not rolled back",
+                )
+                conn_match.execute("DROP TRIGGER vendor_match_4m_abort")
+                conn_match.commit()
+                conn_match.close()
+        finally:
+            socket.socket = original_socket
+
+        # Exact cleanup proves the work stayed inside disposable synthetic rows.
+        for entity_key in vendor_match_entities:
+            conn_match = get_connection(entity_key)
+            conn_match.execute(
+                "DELETE FROM vendor_transactions WHERE plaid_item_id LIKE 'item-4m-%'"
+            )
+            conn_match.execute(
+                "DELETE FROM transactions WHERE source_filename='vendor-match-4m'"
+            )
+            conn_match.commit()
+            remaining_vendor_match_rows = conn_match.execute(
+                "SELECT "
+                "(SELECT COUNT(*) FROM vendor_transactions WHERE plaid_item_id LIKE 'item-4m-%'), "
+                "(SELECT COUNT(*) FROM transactions WHERE source_filename='vendor-match-4m')"
+            ).fetchone()
+            _check(
+                tuple(remaining_vendor_match_rows) == (0, 0),
+                f"vendor matching {entity_key}: exact cleanup failed",
+            )
+            conn_match.close()
+        print("   ✅ Exact, review, unmatched, stale, duplicate, concurrent claim, rollback, all-entity isolation, denied-network, and cleanup passed")
+
         # ── 8. Route regression tests ────────────────────────────────
         print("\n8. Route regression tests…")
 

@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Begin confirmed work block 4M now that the first natural scheduled run has proved the released 4L path under real schedule conditions. Work blocks 4O and 4O-R are complete, durable, deployed, and credential-free health verified.
+Publish the verified work block 4M source set directly to `main`, observe the resulting automatic Fly deployment, verify credential-free production health, and publish a sanitized skip-actions closeout.
 
 ## Current Phase
 
@@ -10,19 +10,28 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4M: Vendor Payment Matching Integrity — active and unblocked for its separately authorized local implementation. Work blocks 4O and 4O-R are complete, durable, deployed, and credential-free health verified; work blocks 4N and 4N-R remain complete and durable.
+Work block 4M-R: Vendor Payment Matching Durability And Release — active under Ryan's direct commit-and-push instruction. Work block 4M is complete locally; work blocks 4N/4N-R and 4O/4O-R remain complete and durable.
 
 ## Current Task
 
-Phase 4 Task 1L.1: restore vendor-payment matching integrity. Ryan confirmed 4M; the first successful natural scheduled run after source commit `2a12533` cleared its activation gate.
+Phase 4 Task 1L.1: publish and verify the completed local vendor-payment matching repair. Task 1M remains the next planned repair family but has no confirmed work block.
 
 ## Owner
 
-Codex Desktop owns confirmed work block 4M, its local implementation, synthetic verification, and Runway OS closeout. The existing independent read-only monitor owns scheduled-run freshness and failure alerting; Ryan owns any new product, migration, live-action, publication, or recovery decision.
+Codex Desktop owns the exact-path 4M-R commit, direct-main fast-forward push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan owns any recovery, scope expansion, protected-data, or live-integration decision.
 
 ## Current Action
 
-Create `codex/vendor-payment-matching-integrity` from updated `main` and begin the confirmed local-only Task 1L.1 implementation. Keep release, live actions, and production data access separately gated; do not manually dispatch or authenticate `/plaid/sync-all`.
+Re-run maintained verification, stage only the exact 4M set, commit on `codex/vendor-payment-matching-integrity`, fast-forward local `main`, push `origin/main`, observe the attributable automatic Fly run, verify credential-free `/health`, and publish a command-center-only `[skip actions]` closeout. Stop on any divergence or failed check.
+
+## Work Block 4M Result
+
+- `vendor_transactions.matched_transaction_id` is the canonical one-bank-to-one-vendor relationship; nonexistent `transactions.matched_order_id` is no longer queried or written.
+- Matching and accepted applications serialize through SQLite `BEGIN IMMEDIATE`; stale, duplicate, missing, and already-claimed relationships reject without unrelated mutation.
+- Exact matches still auto-apply, likely and loose candidates remain reviewable, and successful application changes only the selected bank merchant/notes plus the selected vendor relationship/confidence.
+- Fresh Personal, BFM, and Luxe Legacy databases pass exact, review, unmatched, accepted, stale, duplicate, real two-thread claim, forced rollback, entity-isolation, denied-network, and exact-cleanup checks.
+- Baseline and final maintained smoke suites and Python compilation pass. `core/db.py` is unchanged; no migration or backfill was needed.
+- No real database, financial row, credential, application-integration request, live vendor/Plaid action, workflow action, Fly action, downstream access, commit, push, PR, merge, or deployment occurred.
 
 ## Work Block 4O Result
 
@@ -91,8 +100,9 @@ Create `codex/vendor-payment-matching-integrity` from updated `main` and begin t
 - Automatic Fly run/job attribution and every reported step: pass.
 - Production `/health` HTTP 200 and missing-bearer `/plaid/sync-all` HTTP 401 with redirects disabled: pass.
 - Work block 4O source commit, automatic Fly run/job, and credential-free production `/health`: pass.
-- This command-center-only closeout must produce no second Fly run and leave local `main` aligned with `origin/main`.
+- Work block 4M baseline and final full smoke suites, Python compilation, all-entity vendor-payment matrix, two-thread contention, rollback, denied networking, and cleanup: pass locally.
+- Final JSON validation, dashboard refresh, command-center health, `git diff --check`, dashboard inspection, and explicit worktree review: pass locally.
 
 ## Next Report Point
 
-Create the confirmed 4M implementation branch from updated `main`, then complete its focused and full synthetic verification, cleanup, and local Runway OS closeout. Keep publication and live actions as separate decisions. Work blocks 4O and 4O-R are complete and durable.
+Return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and the separate Task 1M planning gate.
