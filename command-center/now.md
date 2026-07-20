@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish the verified work block 4P source set directly to `main`, observe the resulting automatic Fly deployment, verify credential-free production health, and publish a sanitized skip-actions closeout. No 4Q implementation is authorized.
+Close durable and production-health-verified work block 4P-R and prepare Task 1M.4 for a separate just-in-time planning pass. No 4Q implementation is authorized.
 
 ## Current Phase
 
@@ -10,19 +10,28 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4P-R: Payroll Import Integrity Durability And Release — active under Ryan's direct commit-and-push instruction. Work block 4P is complete and verified locally on `codex/payroll-import-integrity`.
+Work block 4P-R: Payroll Import Integrity Durability And Release — complete, durable on `main`, automatically deployed, and credential-free production health verified.
 
 ## Current Task
 
-Phase 4 Task 1M.4: validate employee roster writes atomically — held at its separate planning gate while 4P-R publishes the completed Tasks 1M.1-1M.3 work. Task 1M.5 remains planned, and no 4Q implementation is authorized.
+Phase 4 Task 1M.4: validate employee roster writes atomically — current for a separate work-block planning pass only. Task 1M.5 remains planned, and no 4Q implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns the exact-path 4P-R commit, direct-main fast-forward push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan owns any recovery, scope expansion, protected-data, or live-system decision and the later Task 1M.4 confirmation.
+Ryan owns the next Task 1M.4 scope and confirmation decision. Codex Desktop owns later confirmed planning, implementation, verification, and Runway OS stewardship.
 
 ## Current Action
 
-Re-run maintained verification, stage only the exact 4P set, commit on `codex/payroll-import-integrity`, fast-forward local `main`, push `origin/main`, observe the attributable automatic Fly run, verify credential-free `/health`, and publish a command-center-only `[skip actions]` closeout. Stop on any divergence or failed check.
+Define and confirm one bounded Task 1M.4 work block before implementation. Keep Task 1M.5, real payroll/HR data, retained uploads, credentials, production/demo, live systems, GitHub durability, deployment, and both preserved untracked files outside scope unless a later block explicitly authorizes them.
+
+## Work Block 4P-R Result
+
+- Exact twelve-path source commit `4b2775c` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29753360363` and deploy job `88389339278` passed every reported step for exact source SHA `4b2775c403a631512d49d0fc0b8720a8495b5183`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the high-confidence staged sensitive-addition scan returned zero.
+- No protected data, retained upload, credential, authenticated production page, external call, manual workflow action, non-automatic Fly change, downstream access/write, migration, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4M-R Result
 
@@ -114,4 +123,4 @@ Re-run maintained verification, stage only the exact 4P set, commit on `codex/pa
 
 ## Next Report Point
 
-Report the completed 4P contract, exact changed paths, matching and creation behavior, payload and workbook matrix, full verification, cleanup, local-only branch state, preserved exclusions, and the recommended 4Q planning boundary.
+Report the 4P source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the Task 1M.4 planning gate.

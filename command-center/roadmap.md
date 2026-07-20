@@ -1933,7 +1933,7 @@ Evidence: `command-center/payroll-import-integrity-contract.md`, `command-center
 
 ### Confirmed Work Block 4P-R: Payroll Import Integrity Durability And Release
 
-Status: active under Ryan's direct 2026-07-20 instruction to commit and push the verified 4P work to `main`
+Status: complete, durable, automatically deployed, and credential-free production health verified on 2026-07-20
 
 Included: the exact verified twelve-path 4P application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/payroll-import-integrity`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -1948,6 +1948,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and the Task 1M.4 planning gate.
+
+Result: the exact twelve-path 4P source set was committed as `4b2775c`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29753360363` and deploy job `88389339278` passed every reported step for exact source SHA `4b2775c403a631512d49d0fc0b8720a8495b5183`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, and no protected data, retained upload, credential, authenticated production page, external call, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1M.4 implementation, force push, or unrelated action occurred. Evidence: `command-center/logs/2026-07-20-payroll-import-integrity-release-4p-r.md`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
