@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Hold after the durable 4L-R release and use the next natural scheduled run as the remaining production truth point before separately planning Task 1L.
+Run confirmed work block 4M after the first natural scheduled run proves the released 4L path under real schedule conditions.
 
 ## Current Phase
 
@@ -10,19 +10,19 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-No work block is active. Work block 4L-R is done, durable on `main`, automatically deployed, and safely credential-free production verified.
+Work block 4M: Vendor Payment Matching Integrity — active and waiting at its natural scheduled-run activation gate before application implementation.
 
 ## Current Task
 
-Phase 4 Task 1L: next for separate bounded planning after the natural scheduled-run monitor confirms the released Task 1K path under real schedule conditions.
+Phase 4 Task 1L.1: restore vendor-payment matching integrity. Ryan confirmed 4M; implementation remains behind the first successful natural scheduled run after source commit `2a12533`.
 
 ## Owner
 
-Ryan owns the Task 1L planning decision. The existing independent read-only monitor owns natural scheduled-run freshness and failure alerting; Codex Desktop completed 4L-R source durability, automatic deployment observation, safe production checks, and this closeout.
+Codex Desktop owns confirmed work block 4M, its local implementation, synthetic verification, and Runway OS closeout. The existing independent read-only monitor owns scheduled-run freshness and failure alerting; Ryan owns any new product, migration, live-action, publication, or recovery decision.
 
 ## Current Action
 
-Stop after publishing this command-center-only `[skip actions]` closeout. Do not manually dispatch or authenticate `/plaid/sync-all`; let the existing read-only monitor observe the next natural schedule event, and separately ask Ryan before defining Task 1L.
+Do not manually dispatch or authenticate `/plaid/sync-all`. Recheck only sanitized public workflow metadata for the first natural schedule event after source commit `2a12533`. If it succeeds, create `codex/vendor-payment-matching-integrity` and begin the confirmed local-only Task 1L.1 implementation; otherwise stop at the exact gate.
 
 ## Work Block 4L Result
 
@@ -51,4 +51,4 @@ Stop after publishing this command-center-only `[skip actions]` closeout. Do not
 
 ## Next Report Point
 
-Return source and closeout commits, exact published paths, automatic workflow run and job result, credential-free production proof, final `main` alignment, preserved exclusions, and the remaining natural scheduled-run boundary.
+Return the first natural post-`2a12533` scheduled-run result without opening logs or response bodies. If green, continue through the confirmed 4M contract, focused and full synthetic verification, cleanup, and local Runway OS closeout. If missing or unsuccessful, stop and report the exact gate without application edits.

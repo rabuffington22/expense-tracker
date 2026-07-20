@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 8:58 PM CST",
+    "lastUpdated": "2026-07-19 9:22 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,18 +27,43 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4L-R is durable on main, automatically deployed, and safely credential-free production verified; Task 1L is next for separate planning.",
+    "summary": "Work block 4L-R is durable on main and safely credential-free production verified; Task 1L is decomposed into Tasks 1L.1-1L.3, with confirmed work block 4M active at the natural scheduled-run gate.",
     "progress": 92
   },
   "currentTask": {
-    "title": "Task 1L: Repair vendor import-to-categorization integrity",
-    "owner": "Ryan",
+    "title": "Task 1L.1: Restore vendor-payment matching integrity",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop completed 4L-R source durability, automatic deployment observation, credential-free health and missing-bearer verification, and Runway OS closeout",
-    "nextAction": "Separately define and confirm a bounded Task 1L work block when ready; allow the existing monitor to observe the next natural scheduled run.",
-    "blocker": "No Task 1L implementation or additional live action is authorized."
+    "supportingAgent": "The independent read-only monitor owns scheduled-run freshness and failure alerting",
+    "nextAction": "Recheck sanitized public workflow metadata for the first natural scheduled run after source commit 2a12533; start confirmed local implementation only after success.",
+    "blocker": "The first natural scheduled run after source commit 2a12533 has not yet been observed successfully."
   },
-  "currentWorkBlock": null,
+  "currentWorkBlock": {
+    "id": "phase-4-block-m",
+    "label": "4M",
+    "name": "Vendor Payment Matching Integrity",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "currentTask": "Await first successful natural scheduled run after source commit 2a12533 before implementation",
+    "includedTasks": [
+      "Task 1L.1",
+      "Task 2 focused vendor-payment matching regression slice"
+    ],
+    "stopConditions": [
+      "The activation run is missing or unsuccessful",
+      "Repair requires protected data, credentials, live access, migration, backfill, or a new product decision",
+      "One-bank-to-one-vendor semantics conflict with tracked source",
+      "Scope or plan-changing verification expands beyond the confirmed block",
+      "Command-center checks fail or either preserved untracked file would be touched"
+    ],
+    "verification": [
+      "Baseline and final maintained synthetic smoke suite",
+      "Focused exact review unmatched apply stale duplicate rollback and all-entity isolation coverage",
+      "Denied outbound networking and exact temporary cleanup",
+      "Python compilation, JSON validation, dashboard refresh, health check, git diff check, dashboard inspection, and explicit worktree review"
+    ],
+    "nextReportPoint": "Return the natural post-release run evidence, exact matching contract, focused and full synthetic results, migration disposition, cleanup, local branch state, preserved exclusions, and separate release gate."
+  },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -62,23 +87,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 1L as a bounded work block",
-    "status": "awaiting Ryan",
-    "owner": "Ryan",
-    "why": "4L-R is durable, automatically deployed, and safely credential-free production verified; vendor import-to-categorization uses a separate generated-file and category-domain contract.",
-    "action": "Ask Codex to define and confirm a bounded Task 1L work block when ready; the existing monitor will observe the next natural scheduled run.",
+    "title": "Observe the 4M activation gate",
+    "status": "scheduled gate",
+    "owner": "Codex Desktop",
+    "why": "Ryan confirmed 4M, but the released sync-entry path still needs its first natural scheduled-run truth point before unrelated application work resumes.",
+    "action": "Use only sanitized public workflow metadata; after a successful natural post-2a12533 run, create codex/vendor-payment-matching-integrity and implement Task 1L.1 locally.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Work block 4L-R is complete; Task 1L planning requires a separate Ryan decision.",
-    "items": [
-      "Choose whether to define and confirm a bounded Task 1L work block."
-    ]
+    "summary": "No Ryan decision is currently required; 4M is confirmed and waiting on its scheduled activation gate.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4L-R is complete. Tasks 1L-1P, broader Task 2, Tasks 3-4, protected data, and additional live actions remain outside authorization.",
-    "decisionQueue": "The next Ryan decision is whether to define and confirm a bounded Task 1L work block.",
+    "phaseQuestions": "Work block 4M is confirmed for Task 1L.1 and its focused Task 2 slice only. Tasks 1L.2-1P, broader Task 2, Tasks 3-4, protected data, migrations, publication, and additional live actions remain outside authorization.",
+    "decisionQueue": "No current Ryan decision; stop and ask if the activation gate fails or implementation needs a migration, data policy, scope expansion, or live action.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2222,6 +2245,56 @@
         "Fly deploy job 88256335090"
       ],
       "result": "Published source commit 2a12533 directly to main by exact-path fast-forward, observed successful automatic Fly run 29711640510 and job 88256335090, verified credential-free production health at HTTP 200 and missing-bearer sync-all at HTTP 401 without redirect, preserved both unrelated untracked files, and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-m",
+      "phaseId": "phase-4",
+      "label": "4M",
+      "name": "Vendor Payment Matching Integrity",
+      "status": "active",
+      "includedTasks": [
+        "Task 1L.1",
+        "Task 2 focused vendor-payment matching regression slice"
+      ],
+      "excludedTasks": [
+        "Tasks 1L.2-1P, the remainder of Task 2, and Tasks 3-4",
+        "Existing-invalid-row remediation, the import Undo wording issue, vendor line-item persistence, and category-domain enforcement",
+        "Real databases or financial rows, uploads, credentials, live Plaid or vendor access, authenticated production pages, manual workflow action, Fly, downstream access or writes, migration, and backfill",
+        "GitHub durability, deployment, pre-existing untracked scripts/sync_prod_to_local.sh, and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block tightly couples sensitive financial-integrity behavior, local source changes, temporary all-entity verification, and final Runway OS stewardship.",
+      "runnerPath": "Current Codex task on codex/vendor-payment-matching-integrity after the natural scheduled-run activation gate passes.",
+      "activationGate": "The first natural scheduled run after source commit 2a12533 must complete successfully using sanitized public workflow metadata; do not manually dispatch, authenticate, or inspect response bodies.",
+      "expectedFiles": [
+        "core/vendor_matching.py",
+        "Focused additions to scripts/smoke_test.py",
+        "A concise vendor-payment matching contract and sanitized 4M closeout log",
+        "Relevant issue disposition and Runway OS state"
+      ],
+      "defaults": [
+        "Treat vendor_transactions.matched_transaction_id as the canonical relationship",
+        "Permit at most one vendor match per bank transaction",
+        "Preserve exact auto-application and likely or loose review behavior",
+        "Reject stale or duplicate application without unrelated mutation",
+        "Make no historical repair or schema change and keep release separately gated"
+      ],
+      "stopConditions": [
+        "The activation run is missing or unsuccessful",
+        "Repair requires protected data, credentials, production inspection, live vendor or Plaid activity, migration, backfill, or historical duplicate policy",
+        "One-bank-to-one-vendor semantics conflict with tracked source",
+        "Work expands beyond the confirmed task or verification materially changes the plan",
+        "Command-center refresh or health fails or either preserved untracked file would be touched"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "Fresh temporary Personal BFM and Luxe Legacy exact review unmatched accepted stale duplicate rollback and isolation cases",
+        "Proof only the intended bank transaction is enriched, denied outbound networking, and exact cleanup",
+        "Python compilation, JSON validation, dashboard refresh, health check, git diff check, dashboard inspection, and explicit worktree review"
+      ],
+      "reportBack": "Return the natural post-release run evidence, exact matching contract, changed paths, focused and full synthetic results, migration disposition, cleanup, local branch state, preserved exclusions, and separate release gate.",
+      "nextBlock": "4N for Task 1L.2 plus focused vendor line-item persistence and auto-split regression coverage."
     }
   ],
   "phaseTasks": [
@@ -2771,11 +2844,37 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1L",
       "title": "Task 1L: Repair vendor import-to-categorization integrity",
+      "status": "active",
+      "owner": "Codex Desktop",
+      "summary": "Umbrella decomposed into Tasks 1L.1-1L.3 for vendor-payment matching, vendor line-item persistence, and category-domain enforcement.",
+      "nextAction": "Start Task 1L.1 after the first natural post-2a12533 scheduled run succeeds under confirmed work block 4M.",
+      "blocker": "Confirmed Task 1L.1 implementation is waiting on the post-2a12533 natural scheduled-run gate."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1L1",
+      "title": "Task 1L.1: Restore vendor-payment matching integrity",
       "status": "current",
-      "owner": "Ryan",
-      "summary": "Repair the P3-3B import, line-item, and category-domain findings with generated synthetic files.",
-      "nextAction": "Separately define and confirm a bounded Task 1L work block when ready.",
-      "blocker": "No Task 1L implementation is authorized."
+      "owner": "Codex Desktop",
+      "summary": "Replace the nonexistent transactions.matched_order_id dependency with one explicit, race-safe vendor-to-bank match contract and focused exact, review, unmatched, apply, and isolation coverage.",
+      "nextAction": "Observe a successful first natural scheduled run after source commit 2a12533, then implement confirmed work block 4M locally.",
+      "blocker": "The post-2a12533 natural scheduled-run activation gate remains pending."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1L2",
+      "title": "Task 1L.2: Persist vendor-order line items end to end",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Persist Amazon and Henry Schein line items transactionally and idempotently, reconcile integer cents, and restore the maintained auto-split path for new imports."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1L3",
+      "title": "Task 1L.3: Enforce the category source of truth deterministically",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Validate inferred and accepted entity-specific category pairs, make mixed-category ties deterministic, and reject invalid writes without changing stored data; existing-row remediation stays separate."
     },
     {
       "phaseId": "phase-4",
@@ -3833,8 +3932,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Define bounded Task 1L work",
-    "description": "Separately plan vendor import-to-categorization integrity after the durable 4L-R release while the existing monitor observes the next natural scheduled sync."
+    "name": "Pass the 4M activation gate",
+    "description": "Observe a successful first natural scheduled sync after source commit 2a12533, then execute the confirmed bounded Task 1L.1 vendor-payment matching repair locally."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -3843,7 +3942,7 @@
     "applicationSmoke": "pass; maintained synthetic suite and focused auth/cache contracts passed legacy and Werkzeug hashes, wrong/correct login, CSRF, safe redirect, protected/full/HTMX/no-password/public/exempt behavior, no-store, and static-only cache rules",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
-    "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; first natural minute-17 run remains under the independent monitor",
+    "workflowState": "pass with pending post-release truth point; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; run 29683898125 succeeded before source commit 2a12533 and therefore does not satisfy the first natural post-release run gate",
     "safeguardResearch": "pass; authoritative GitHub behavior cited, five options compared, and one implementation-ready path recommended",
     "independentMonitor": "pass; expense-tracker-daily-plaid-sync-monitor active on a daily 7:00 AM local schedule; public schedule-event test returned healthy with manual dispatch excluded",
     "preRelease": "pass; exact minute-17 workflow diff, YAML parse, synthetic smoke suite, dashboard refresh, health check, whitespace check, and visual dashboard inspection",
