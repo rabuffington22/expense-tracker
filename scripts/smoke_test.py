@@ -411,6 +411,257 @@ def main() -> None:
         conn_identity.close()
         print("   ✅ Source/account separation, duplicates, redelivery, Plaid IDs, and populated references passed")
 
+        # ── 7c. Vendor line-item persistence ─────────────────────────
+        print("\n7c. Vendor line-item persistence tests…")
+        from openpyxl import Workbook
+        from core.amazon import (
+            auto_split_from_line_items,
+            group_orders,
+            parse_amazon_csv,
+            save_orders_to_db,
+        )
+        from core.henryschein import parse_henryschein_xlsx
+
+        amazon_csv_text = (
+            "Payment Reference ID,Order ID,Order Date,Payment Date,Product Name,"
+            "Item Net Total,Payment Amount,Item Quantity,ASIN,"
+            "Amazon-Internal Product Category,Order Status\n"
+            "PAY-4N-001,ORDER-4N-AMZ,2026-07-10,2026-07-11,Office labels,"
+            "$10.01,$15.00,1,ASIN-4N-A,Office Product,Shipped\n"
+            "PAY-4N-001,ORDER-4N-AMZ,2026-07-10,2026-07-11,Coffee pods,"
+            "$4.99,$15.00,1,ASIN-4N-B,Grocery,Shipped\n"
+        )
+        amazon_csv = io.StringIO(amazon_csv_text)
+        amazon_df, amazon_warnings = parse_amazon_csv(amazon_csv)
+        _check(not amazon_warnings, f"vendor line items: unexpected Amazon warnings {amazon_warnings}")
+        amazon_orders = group_orders(amazon_df)
+        _check(len(amazon_orders) == 1 and len(amazon_orders[0]["items"]) == 2,
+               "vendor line items: Amazon parser should preserve two grouped items")
+
+        hs_book = Workbook()
+        hs_sheet = hs_book.active
+        hs_sheet.append(["Items Purchased"])
+        hs_sheet.append([])
+        hs_sheet.append([
+            "Invoice No", "Short Description", "Amount", "Invoice Date",
+            "Category", "Sub Category1", "Qty", "Unit Price", "Item Code",
+        ])
+        hs_sheet.append([
+            "INV-4N-HS", "Diagnostic strips", "$15.00", "2026-07-12",
+            "Diagnostics", "Testing", 1, "$4.00", "HS-4N-A",
+        ])
+        hs_sheet.append([
+            "INV-4N-HS", "Exam gloves", "$15.00", "2026-07-12",
+            "PPE", "Gloves", 2, "$5.50", "HS-4N-B",
+        ])
+        hs_buffer = io.BytesIO()
+        hs_book.save(hs_buffer)
+        hs_buffer.seek(0)
+        hs_orders, hs_warnings = parse_henryschein_xlsx(hs_buffer)
+        _check(not hs_warnings, f"vendor line items: unexpected Henry Schein warnings {hs_warnings}")
+        _check(len(hs_orders) == 1 and len(hs_orders[0]["items"]) == 2,
+               "vendor line items: Henry Schein parser should preserve two grouped items")
+
+        vendor_entities = ("personal", "company", "luxelegacy")
+        original_socket = socket.socket
+
+        def _deny_vendor_network(*_args, **_kwargs):
+            raise AssertionError("vendor line-item persistence attempted outbound networking")
+
+        try:
+            socket.socket = _deny_vendor_network
+            for entity_key in vendor_entities:
+                before_conn = get_connection(entity_key)
+                before_transactions = before_conn.execute(
+                    "SELECT COUNT(*) FROM transactions"
+                ).fetchone()[0]
+                before_conn.close()
+
+                inserted_amz, skipped_amz = save_orders_to_db(
+                    entity_key, amazon_orders, vendor="amazon"
+                )
+                inserted_hs, skipped_hs = save_orders_to_db(
+                    entity_key, hs_orders, vendor="henryschein"
+                )
+                _check((inserted_amz, skipped_amz, inserted_hs, skipped_hs) == (1, 0, 1, 0),
+                       f"vendor line items: first save counts wrong for {entity_key}")
+
+                conn_vendor = get_connection(entity_key)
+                parent_rows = conn_vendor.execute(
+                    "SELECT id, order_id, order_total_cents, vendor "
+                    "FROM amazon_orders WHERE order_id IN ('ORDER-4N-AMZ', 'INV-4N-HS') "
+                    "ORDER BY order_id"
+                ).fetchall()
+                _check(len(parent_rows) == 2,
+                       f"vendor line items: expected two parents in {entity_key}")
+                parent_by_order = {row["order_id"]: row for row in parent_rows}
+                _check(parent_by_order["ORDER-4N-AMZ"]["order_total_cents"] == 1500,
+                       f"vendor line items: Amazon parent cents wrong in {entity_key}")
+                _check(parent_by_order["INV-4N-HS"]["order_total_cents"] == 1500,
+                       f"vendor line items: Henry Schein parent cents wrong in {entity_key}")
+
+                item_rows = conn_vendor.execute(
+                    "SELECT ao.order_id, li.product_name, li.quantity, "
+                    "li.unit_price_cents, li.item_total_cents, li.asin, "
+                    "li.amazon_category, li.category, li.subcategory "
+                    "FROM order_line_items li "
+                    "JOIN amazon_orders ao ON ao.id = li.amazon_order_id "
+                    "WHERE ao.order_id IN ('ORDER-4N-AMZ', 'INV-4N-HS') "
+                    "ORDER BY ao.order_id, li.id"
+                ).fetchall()
+                _check(len(item_rows) == 4,
+                       f"vendor line items: expected four children in {entity_key}")
+                item_totals = {}
+                for row in item_rows:
+                    item_totals.setdefault(row["order_id"], 0)
+                    item_totals[row["order_id"]] += row["item_total_cents"]
+                    _check(row["category"] is None and row["subcategory"] is None,
+                           "vendor line items: raw import must not invent Ledger categories")
+                _check(item_totals == {"INV-4N-HS": 1500, "ORDER-4N-AMZ": 1500},
+                       f"vendor line items: child cents do not reconcile in {entity_key}: {item_totals}")
+                hs_items = [row for row in item_rows if row["order_id"] == "INV-4N-HS"]
+                _check([(row["quantity"], row["unit_price_cents"], row["item_total_cents"])
+                        for row in hs_items] == [(1, 400, 400), (2, 550, 1100)],
+                       f"vendor line items: Henry quantity and cents wrong in {entity_key}")
+                _check(conn_vendor.execute(
+                    "SELECT COUNT(*) FROM transactions"
+                ).fetchone()[0] == before_transactions,
+                       f"vendor line items: save changed unrelated transactions in {entity_key}")
+                conn_vendor.close()
+
+                repeat_amz = save_orders_to_db(entity_key, amazon_orders, vendor="amazon")
+                repeat_hs = save_orders_to_db(entity_key, hs_orders, vendor="henryschein")
+                _check((repeat_amz, repeat_hs) == ((0, 1), (0, 1)),
+                       f"vendor line items: exact reimport not idempotent in {entity_key}")
+                conn_vendor = get_connection(entity_key)
+                _check(conn_vendor.execute(
+                    "SELECT COUNT(*) FROM order_line_items li "
+                    "JOIN amazon_orders ao ON ao.id = li.amazon_order_id "
+                    "WHERE ao.order_id IN ('ORDER-4N-AMZ', 'INV-4N-HS')"
+                ).fetchone()[0] == 4,
+                       f"vendor line items: reimport duplicated children in {entity_key}")
+                conn_vendor.close()
+        finally:
+            socket.socket = original_socket
+
+        # A child-row failure must roll back its newly inserted parent and every
+        # earlier row in the same save transaction.
+        conn_vendor = get_connection("personal")
+        conn_vendor.execute(
+            "CREATE TRIGGER vendor_line_item_4n_abort "
+            "BEFORE INSERT ON order_line_items "
+            "BEGIN SELECT RAISE(ABORT, 'synthetic 4N rollback'); END"
+        )
+        conn_vendor.commit()
+        conn_vendor.close()
+        rollback_order = dict(amazon_orders[0])
+        rollback_order["order_id"] = "ORDER-4N-ROLLBACK"
+        try:
+            save_orders_to_db("personal", [rollback_order], vendor="amazon")
+            _check(False, "vendor line items: forced child failure should raise")
+        except Exception as exc:
+            _check("synthetic 4N rollback" in str(exc),
+                   f"vendor line items: unexpected rollback error {exc}")
+        conn_vendor = get_connection("personal")
+        _check(conn_vendor.execute(
+            "SELECT COUNT(*) FROM amazon_orders WHERE order_id='ORDER-4N-ROLLBACK'"
+        ).fetchone()[0] == 0,
+               "vendor line items: failed child insert left its parent behind")
+        conn_vendor.execute("DROP TRIGGER vendor_line_item_4n_abort")
+        conn_vendor.commit()
+        conn_vendor.close()
+
+        invalid_quantity_order = dict(amazon_orders[0])
+        invalid_quantity_order["order_id"] = "ORDER-4N-INVALID-QTY"
+        invalid_quantity_order["items"] = [
+            dict(amazon_orders[0]["items"][0], quantity=0)
+        ]
+        try:
+            save_orders_to_db("personal", [invalid_quantity_order], vendor="amazon")
+            _check(False, "vendor line items: invalid quantity should raise")
+        except ValueError as exc:
+            _check("quantity" in str(exc),
+                   f"vendor line items: unexpected quantity error {exc}")
+        conn_vendor = get_connection("personal")
+        _check(conn_vendor.execute(
+            "SELECT COUNT(*) FROM amazon_orders WHERE order_id='ORDER-4N-INVALID-QTY'"
+        ).fetchone()[0] == 0,
+               "vendor line items: invalid quantity left its parent behind")
+        conn_vendor.close()
+
+        # Prove the maintained split path can consume newly persisted children
+        # without the standalone population script. Category assignment itself
+        # remains the separately scoped Task 1L.3 contract.
+        vendor_split_txn = "vendor-line-item-4n-split"
+        conn_vendor = get_connection("personal")
+        conn_vendor.execute(
+            "INSERT INTO transactions "
+            "(transaction_id, date, description_raw, amount, amount_cents, imported_at) "
+            "VALUES (?, '2026-07-11', 'AMAZON 4N SYNTHETIC', -15.00, -1500, '2026-07-19')",
+            (vendor_split_txn,),
+        )
+        conn_vendor.execute(
+            "UPDATE amazon_orders SET matched_transaction_id=? "
+            "WHERE order_id='ORDER-4N-AMZ'",
+            (vendor_split_txn,),
+        )
+        amazon_item_ids = conn_vendor.execute(
+            "SELECT li.id FROM order_line_items li "
+            "JOIN amazon_orders ao ON ao.id=li.amazon_order_id "
+            "WHERE ao.order_id='ORDER-4N-AMZ' ORDER BY li.id"
+        ).fetchall()
+        conn_vendor.execute(
+            "UPDATE order_line_items SET category='Office Supplies', subcategory='General' "
+            "WHERE id=?", (amazon_item_ids[0]["id"],)
+        )
+        conn_vendor.execute(
+            "UPDATE order_line_items SET category='Food', subcategory='Coffee' "
+            "WHERE id=?", (amazon_item_ids[1]["id"],)
+        )
+        split_result = auto_split_from_line_items(conn_vendor, vendor_split_txn)
+        _check(split_result == {"ok": True, "count": 2},
+               f"vendor line items: auto-split result wrong: {split_result}")
+        split_rows = conn_vendor.execute(
+            "SELECT amount_cents, source FROM transaction_splits "
+            "WHERE transaction_id=? ORDER BY sort_order", (vendor_split_txn,)
+        ).fetchall()
+        _check(len(split_rows) == 2 and sum(row["amount_cents"] for row in split_rows) == -1500,
+               "vendor line items: auto-split pieces must reconcile to the bank transaction")
+        _check(all(row["source"] == "vendor_line_item" for row in split_rows),
+               "vendor line items: auto-split source should remain vendor_line_item")
+        conn_vendor.commit()
+        conn_vendor.close()
+
+        # Exact cleanup across all three synthetic entities.
+        for entity_key in vendor_entities:
+            conn_vendor = get_connection(entity_key)
+            if entity_key == "personal":
+                conn_vendor.execute(
+                    "DELETE FROM transaction_splits WHERE transaction_id=?",
+                    (vendor_split_txn,),
+                )
+                conn_vendor.execute(
+                    "DELETE FROM transactions WHERE transaction_id=?",
+                    (vendor_split_txn,),
+                )
+            conn_vendor.execute(
+                "DELETE FROM order_line_items WHERE amazon_order_id IN ("
+                "SELECT id FROM amazon_orders "
+                "WHERE order_id IN ('ORDER-4N-AMZ', 'INV-4N-HS'))"
+            )
+            conn_vendor.execute(
+                "DELETE FROM amazon_orders "
+                "WHERE order_id IN ('ORDER-4N-AMZ', 'INV-4N-HS', "
+                "'ORDER-4N-ROLLBACK', 'ORDER-4N-INVALID-QTY')"
+            )
+            conn_vendor.commit()
+            _check(conn_vendor.execute(
+                "SELECT COUNT(*) FROM order_line_items"
+            ).fetchone()[0] == 0,
+                   f"vendor line items: cleanup left child rows in {entity_key}")
+            conn_vendor.close()
+        print("   ✅ Amazon and Henry parent/item atomicity, cents, reimport, split, isolation, denied-network, and cleanup passed")
+
         # ── 8. Route regression tests ────────────────────────────────
         print("\n8. Route regression tests…")
         os.environ["FLASK_SECRET"] = "smoke-test-secret-key"
@@ -431,6 +682,88 @@ def main() -> None:
                 _check(resp.status_code == 200, f"{label}: expected 200, got {resp.status_code}")
                 body = resp.get_data(as_text=True)
                 _check(needle in body, f"{label}: missing '{needle}'")
+
+            # The normal preview/save HTTP flow must preserve parsed items
+            # through its temporary JSON handoff and remove that payload after
+            # the save. Amazon and Henry Schein exercise separate parsers and
+            # entity databases.
+            import web.routes.data_sources as data_sources_routes
+
+            with client.session_transaction() as vendor_session:
+                vendor_session["_csrf_token"] = "vendor-line-items-4n-csrf"
+
+            route_cases = [
+                (
+                    "Personal",
+                    "personal",
+                    "Amazon",
+                    "orders-4n.csv",
+                    amazon_csv_text.encode("utf-8"),
+                    "ORDER-4N-AMZ",
+                ),
+                (
+                    "BFM",
+                    "company",
+                    "Henry Schein",
+                    "orders-4n.xlsx",
+                    hs_buffer.getvalue(),
+                    "INV-4N-HS",
+                ),
+            ]
+            for display_entity, entity_key, vendor_name, filename, payload, order_id in route_cases:
+                client.set_cookie("entity", display_entity)
+                parse_resp = client.post(
+                    "/data-sources/parse",
+                    data={
+                        "_csrf_token": "vendor-line-items-4n-csrf",
+                        "vendor": vendor_name,
+                        "file": (io.BytesIO(payload), filename),
+                    },
+                    content_type="multipart/form-data",
+                )
+                _check(parse_resp.status_code == 200,
+                       f"vendor line items route: {vendor_name} preview should render")
+                with client.session_transaction() as vendor_session:
+                    temp_key = vendor_session.get("vendor_temp_key")
+                _check(temp_key is not None,
+                       f"vendor line items route: {vendor_name} preview should retain a temp key")
+                temp_path = Path(data_sources_routes._TEMP_DIR) / f"{temp_key}.json"
+                _check(temp_path.exists(),
+                       f"vendor line items route: {vendor_name} preview payload missing")
+
+                save_resp = client.post(
+                    "/data-sources/save",
+                    data={"_csrf_token": "vendor-line-items-4n-csrf"},
+                    follow_redirects=False,
+                )
+                _check(save_resp.status_code == 302,
+                       f"vendor line items route: {vendor_name} save should redirect")
+                _check(not temp_path.exists(),
+                       f"vendor line items route: {vendor_name} temp payload should be deleted")
+                with client.session_transaction() as vendor_session:
+                    _check("vendor_temp_key" not in vendor_session,
+                           f"vendor line items route: {vendor_name} session key should be consumed")
+
+                conn_route_vendor = get_connection(entity_key)
+                route_counts = conn_route_vendor.execute(
+                    "SELECT COUNT(DISTINCT ao.id), COUNT(li.id) "
+                    "FROM amazon_orders ao "
+                    "LEFT JOIN order_line_items li ON li.amazon_order_id=ao.id "
+                    "WHERE ao.order_id=?", (order_id,)
+                ).fetchone()
+                _check(tuple(route_counts) == (1, 2),
+                       f"vendor line items route: {vendor_name} should save one parent and two children")
+                conn_route_vendor.execute(
+                    "DELETE FROM order_line_items WHERE amazon_order_id IN ("
+                    "SELECT id FROM amazon_orders WHERE order_id=?)", (order_id,)
+                )
+                conn_route_vendor.execute(
+                    "DELETE FROM amazon_orders WHERE order_id=?", (order_id,)
+                )
+                conn_route_vendor.commit()
+                conn_route_vendor.close()
+
+            client.set_cookie("entity", "Personal")
 
             # vendor_breakdown with date range (was 500 before fix 2b85b9d)
             # Assert content to catch "200 but wrong page" regressions

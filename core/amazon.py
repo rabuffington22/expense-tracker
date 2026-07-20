@@ -9,6 +9,7 @@ Supports:
 """
 
 from datetime import datetime, timedelta
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from itertools import combinations
 from typing import Optional
 
@@ -637,30 +638,101 @@ def match_orders_to_transactions(
 
 # ── DB persistence for Amazon orders ─────────────────────────────────────────
 
+def _money_to_cents(value) -> int:
+    """Convert a parser-provided money value to integer cents."""
+    try:
+        amount = Decimal(str(value if value is not None else 0))
+    except (InvalidOperation, ValueError) as exc:
+        raise ValueError(f"Invalid vendor line-item amount: {value!r}") from exc
+    if not amount.is_finite():
+        raise ValueError(f"Invalid vendor line-item amount: {value!r}")
+    return int((amount * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+
+def _optional_text(value) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    return None if not text or text.lower() == "nan" else text
+
+
+def _normalize_line_item(item: dict) -> dict:
+    """Normalize the shared Amazon/Henry Schein item shapes for persistence.
+
+    Raw vendor category metadata is preserved separately from the optional
+    Ledger category fields. Category-domain inference and validation belong to
+    the separately scoped Task 1L.3.
+    """
+    product_name = _optional_text(item.get("product_name") or item.get("description"))
+    if not product_name:
+        product_name = "Unknown"
+
+    quantity_value = item.get("quantity", item.get("qty", 1))
+    try:
+        quantity_decimal = Decimal(str(quantity_value))
+    except (InvalidOperation, ValueError) as exc:
+        raise ValueError(f"Invalid vendor line-item quantity: {quantity_value!r}") from exc
+    if (not quantity_decimal.is_finite() or quantity_decimal < 1
+            or quantity_decimal != quantity_decimal.to_integral_value()):
+        raise ValueError(f"Invalid vendor line-item quantity: {quantity_value!r}")
+    quantity = int(quantity_decimal)
+
+    unit_price = item.get("unit_price", 0)
+    unit_price_cents = _money_to_cents(unit_price)
+    if "amount" in item:
+        item_total_cents = _money_to_cents(item.get("amount"))
+    else:
+        try:
+            item_total = (
+                Decimal(str(unit_price if unit_price is not None else 0))
+                + Decimal(str(item.get("tax", 0) or 0))
+                + Decimal(str(item.get("shipping", 0) or 0))
+            )
+        except (InvalidOperation, ValueError) as exc:
+            raise ValueError(f"Invalid vendor line-item total: {item!r}") from exc
+        item_total_cents = _money_to_cents(item_total)
+
+    return {
+        "product_name": product_name,
+        "quantity": quantity,
+        "unit_price_cents": unit_price_cents,
+        "item_total_cents": item_total_cents,
+        "asin": _optional_text(item.get("asin") or item.get("item_code")),
+        "amazon_category": _optional_text(
+            item.get("amazon_category") or item.get("hs_category")
+        ),
+        "category": _optional_text(item.get("category")),
+        "subcategory": _optional_text(item.get("subcategory")),
+    }
+
+
 def save_orders_to_db(entity: str, orders: list[dict], vendor: str = "amazon") -> tuple[int, int]:
     """
-    Save grouped vendor orders to the amazon_orders table.
+    Save grouped vendor orders and their parsed line items atomically.
 
-    Skips duplicates (same order_id + order_total within $0.01 + same vendor).
-    Returns (inserted, skipped) counts.
+    Skips duplicate parents using exact integer cents, order ID, and vendor.
+    Existing parents are never backfilled implicitly. Returns parent-order
+    (inserted, skipped) counts.
     """
     now = datetime.now().isoformat()
     conn = get_connection(entity)
     try:
         inserted = skipped = 0
         for o in orders:
+            order_total_cents = _money_to_cents(o["order_total"])
             # Check for duplicates (scoped to vendor)
             existing = conn.execute(
                 "SELECT id FROM amazon_orders "
-                "WHERE order_id = ? AND ABS(order_total - ?) < 0.02 "
+                "WHERE order_id = ? "
+                "AND COALESCE(order_total_cents, CAST(ROUND(order_total * 100) AS INTEGER)) = ? "
                 "AND COALESCE(vendor, 'amazon') = ?",
-                (o["order_id"], o["order_total"], vendor),
+                (o["order_id"], order_total_cents, vendor),
             ).fetchone()
             if existing:
                 skipped += 1
                 continue
 
-            conn.execute(
+            cursor = conn.execute(
                 "INSERT INTO amazon_orders "
                 "(order_id, payment_ref_id, order_date, charge_date, "
                 " product_summary, amazon_category, order_total, order_total_cents, "
@@ -674,11 +746,34 @@ def save_orders_to_db(entity: str, orders: list[dict], vendor: str = "amazon") -
                     o["product_summary"],
                     o.get("amazon_category", ""),
                     o["order_total"],
-                    round(o["order_total"] * 100),
+                    order_total_cents,
                     vendor,
                     now,
                 ),
             )
+            parent_id = cursor.lastrowid
+
+            for raw_item in o.get("items", []):
+                item = _normalize_line_item(raw_item)
+                conn.execute(
+                    "INSERT INTO order_line_items "
+                    "(amazon_order_id, product_name, quantity, unit_price_cents, "
+                    " item_total_cents, asin, amazon_category, category, "
+                    " subcategory, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        parent_id,
+                        item["product_name"],
+                        item["quantity"],
+                        item["unit_price_cents"],
+                        item["item_total_cents"],
+                        item["asin"],
+                        item["amazon_category"],
+                        item["category"],
+                        item["subcategory"],
+                        now,
+                    ),
+                )
             inserted += 1
 
         conn.commit()

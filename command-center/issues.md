@@ -295,7 +295,7 @@ Tracked test expansion was explicitly excluded from audit work block 3A and belo
 
 ## Vendor-Payment Matching References A Missing Transaction Column
 
-Status: open; discovered in work block 3B
+Status: resolved locally in work block 4N; release not authorized
 
 Severity: high functional correctness risk
 
@@ -348,12 +348,12 @@ Acceptance checks:
 
 - Normal Amazon and Henry Schein save flows persist their parsed line items transactionally with the parent order.
 - Exact re-imports remain idempotent for both orders and line items.
-- Item totals, quantity, tax/shipping treatment, category/subcategory, and parent totals reconcile in integer cents.
-- A matched multi-category order can create valid vendor-line-item splits without a separate production script.
+- Item totals, quantity, tax/shipping treatment, raw vendor metadata, and parent totals reconcile in integer cents without inventing Ledger categories.
+- Once valid Ledger categories exist, a matched multi-category order can create valid vendor-line-item splits without the standalone population script.
 
-Why not fixed now:
+Result:
 
-Changing persistence and backfill behavior is implementation work with migration and regression implications, excluded from work block 3B.
+Work block 4N now saves each new Amazon or Henry Schein parent and every parsed child in one SQLite transaction, deduplicates parents by exact vendor, order ID, and integer-cent total, skips existing parents without implicit backfill, and rolls the parent back when any child fails. Maintained synthetic coverage uses generated Amazon CSV and Henry Schein XLSX inputs across Personal, BFM, and Luxe Legacy; preserves raw category metadata without assigning a Ledger category; verifies quantity and cents, exact reimport, normal preview/save handoff, temporary-payload consumption, denied networking, unrelated-row preservation, auto-split consumption, and exact cleanup. Migration 53 already supplied the required table, so no migration, production script, existing-row repair, protected data, or live action was needed. Category inference and domain enforcement remain Task 1L.3.
 
 ## Vendor Categorization Can Escape The Category Source Of Truth
 
@@ -389,7 +389,7 @@ Domain-enforcement behavior, existing-row remediation, and tracked tests require
 
 ## Task 2 Import And Categorization Paths Lack Tracked Regression Coverage
 
-Status: parked for Phase 4 regression coverage
+Status: partly addressed through work block 4N
 
 Severity: medium regression-confidence risk
 
@@ -401,7 +401,7 @@ Revisit: Phase 4 Task 2, preferably alongside the related Task 2 repairs
 
 Summary:
 
-Work block 3B passed current synthetic behavior for CSV/PDF parsing, profiles, upload confirmation, Amazon/Henry parsing and deduplication, order matching, aliases, temporary-file cleanup, and entity isolation. The tracked smoke suite covers generic CSV import and route availability but does not guard these Task 2 paths.
+Work block 3B passed current synthetic behavior for CSV/PDF parsing, profiles, upload confirmation, Amazon/Henry parsing and deduplication, order matching, aliases, temporary-file cleanup, and entity isolation. Work block 4N now adds maintained Amazon and Henry Schein parent-plus-line-item, preview/save, exact-reimport, rollback, integer-cents, auto-split, all-entity isolation, denied-network, and cleanup coverage. Remaining CSV/PDF profile, broader matching, alias, category-domain, and explicit undo coverage stays paired with its related repair work.
 
 Impact:
 
