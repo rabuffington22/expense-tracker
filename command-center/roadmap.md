@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after local completion of work block 4L; Task 1K release remains separately gated
+Status: active after durable release and safe production verification of work block 4L-R; Task 1L is next for separate planning
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -905,15 +905,15 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: done, released, and credential-free production health verified through work blocks 4I-4I-R for `P3-3G-01` plus the focused atomicity slice of `P3-3G-C01`.
 - **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: done, released, and credential-free production health verified through work blocks 4J-4J-R for `P3-3G-02` through `P3-3G-05` plus the matching focused `P3-3G-C01` coverage slice.
 - **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: done, released, and credential-free production health verified through work blocks 4K-4K-R for `P3-3G-06`, `P3-3G-07`, and the matching focused `P3-3G-C01` slice.
-- **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: complete and verified locally through work block 4L for `P3-3H-02` through `P3-3H-07` plus the remaining `P3-3H-C01` slice; release remains separately gated.
-- **Task 1L: Repair vendor import-to-categorization integrity.** Status: planned after the Plaid and sync-entry foundations.
+- **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: done, released, automatically deployed, and safely credential-free production verified through work blocks 4L-4L-R for `P3-3H-02` through `P3-3H-07` plus the remaining `P3-3H-C01` slice; the next natural scheduled run remains the real-sync truth point.
+- **Task 1L: Repair vendor import-to-categorization integrity.** Status: current for separate bounded planning after the Plaid and sync-entry foundations.
 - **Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention.** Status: planned after Task 1C; separate hourly and salary cohorts per Ryan's confirmed default.
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice of `P3-3G-C01`, 4J completed its reconciliation, link, liability, and freshness slice, and 4K completed its item-isolation and observability slice.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4K-R; every future release remains separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4L-R; every future release remains separately gated.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -1705,7 +1705,7 @@ Evidence: `core/sync_coordination.py`; `web/routes/plaid.py`; `web/routes/kristi
 
 ### Work Block 4L-R: Durability And Release
 
-Status: active under Ryan's 2026-07-19 direct instruction to commit and push the completed work to `main`
+Status: done, durable, automatically deployed, and safely credential-free production verified on 2026-07-19
 
 Included: the exact fifteen intended 4L application, maintained-test, contract, review, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/sync-entry-coordination`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; one missing-bearer `/plaid/sync-all` request with redirects disabled; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -1722,6 +1722,10 @@ Stop conditions: the exact diff includes an unexpected path, sensitive value, pr
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; missing-bearer `/plaid/sync-all` HTTP 401 with redirects disabled; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free health and missing-bearer proof, final main alignment, preserved exclusions, and the remaining natural scheduled-run observation boundary.
+
+Result: the exact fifteen-path 4L source set was committed as `2a12533`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29711640510` and deploy job `88256335090` passed every reported step for exact source SHA `2a12533d637060ce2ea91ff205b30cde3cbbc99a`. Production `/health` returned HTTP 200, and a credential-free missing-bearer `/plaid/sync-all` request returned HTTP 401 with redirects disabled, proving the repaired boundary without entering Plaid synchronization. Local `main` matched `origin/main` before closeout; the staged high-confidence sensitive-addition scan returned zero; both preserved untracked files remained excluded; and no protected data, credential, authenticated production page, authorized bearer, manual workflow, non-automatic Fly, live Plaid, downstream, workflow edit, Task 1L implementation, force push, or unrelated action occurred. This command-center-only closeout uses `[skip actions]` to avoid a second deployment. The next natural scheduled run remains the safe proof of real scheduled synchronization.
+
+Evidence: `command-center/logs/2026-07-19-sync-entry-coordination-release-4l-r.md`, source commit `2a12533`, GitHub Actions run `29711640510`, and Fly deploy job `88256335090`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
