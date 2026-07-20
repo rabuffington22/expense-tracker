@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Begin confirmed work block 4M now that the first natural scheduled run has proved the released 4L path under real schedule conditions. Work block 4O is complete and verified locally.
+Begin confirmed work block 4M now that the first natural scheduled run has proved the released 4L path under real schedule conditions. Work blocks 4O and 4O-R are complete, durable, deployed, and credential-free health verified.
 
 ## Current Phase
 
@@ -10,7 +10,7 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4M: Vendor Payment Matching Integrity — active and unblocked for its separately authorized local implementation. Work block 4O is complete and locally verified; work blocks 4N and 4N-R are complete, durable, deployed, and credential-free health verified.
+Work block 4M: Vendor Payment Matching Integrity — active and unblocked for its separately authorized local implementation. Work blocks 4O and 4O-R are complete, durable, deployed, and credential-free health verified; work blocks 4N and 4N-R remain complete and durable.
 
 ## Current Task
 
@@ -32,7 +32,15 @@ Create `codex/vendor-payment-matching-integrity` from updated `main` and begin t
 - Transaction batches, vendor-order saves, and accepted order matches prevalidate before any transaction, order, note, match, or alias mutation.
 - The vendor card no longer offers ad hoc subcategory creation, while the dedicated `Skipped` workflow sentinel remains intact.
 - Baseline and final smoke, focused all-entity valid/invalid and zero-mutation cases, denied networking, exact cleanup, compilation, JSON, whitespace, dashboard, and health checks pass.
-- No taxonomy, migration, historical-row action, protected data, live system, commit, push, or deployment occurred.
+- No taxonomy, migration, historical-row action, protected data, or live vendor/Plaid action occurred.
+
+## Work Block 4O-R Result
+
+- Exact seventeen-path source commit `5529912` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29745531202` and deploy job `88362414145` passed every reported step for exact source SHA `5529912b47003a931a33776f6ad24fe327257e25`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the high-confidence staged sensitive-addition scan returned zero.
+- The sanitized command-center-only closeout uses `[skip actions]` so it must not start a second deployment.
 
 ## Work Block 4N Result
 
@@ -82,8 +90,9 @@ Create `codex/vendor-payment-matching-integrity` from updated `main` and begin t
 - Work block 4N baseline and final full smoke suites, Python compilation, parent/child route handoff, exact reimport, rollback, cents, auto-split, all-entity isolation, denied networking, payload consumption, and cleanup: pass locally.
 - Automatic Fly run/job attribution and every reported step: pass.
 - Production `/health` HTTP 200 and missing-bearer `/plaid/sync-all` HTTP 401 with redirects disabled: pass.
-- This command-center-only closeout must produce no second Fly run and must leave local `main` aligned with `origin/main`.
+- Work block 4O source commit, automatic Fly run/job, and credential-free production `/health`: pass.
+- This command-center-only closeout must produce no second Fly run and leave local `main` aligned with `origin/main`.
 
 ## Next Report Point
 
-Create the confirmed 4M implementation branch from updated `main`, then complete its focused and full synthetic verification, cleanup, and local Runway OS closeout. Keep publication and live actions as separate decisions. Work block 4O is complete locally, and its publication remains a separate decision.
+Create the confirmed 4M implementation branch from updated `main`, then complete its focused and full synthetic verification, cleanup, and local Runway OS closeout. Keep publication and live actions as separate decisions. Work blocks 4O and 4O-R are complete and durable.

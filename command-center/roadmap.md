@@ -1846,6 +1846,30 @@ Result: `categories.md` is now authoritative for new in-scope category writes. V
 
 Evidence: `command-center/category-domain-contract.md` and `command-center/logs/2026-07-19-category-domain-enforcement-4o.md`.
 
+### Work Block 4O-R: Durability And Release
+
+Status: done, durable, automatically deployed, and credential-free production health verified on 2026-07-20
+
+Included: the exact seventeen intended 4O application, maintained-test, contract, issue, evidence, and command-center paths, including the sanitized 4M activation-gate evidence needed to keep shared Runway OS state coherent; explicit staging; one source commit on `codex/category-domain-enforcement`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Exact source set: `core/amazon.py`; `core/categories.py`; `core/henryschein.py`; `scripts/smoke_test.py`; `web/routes/categorize.py`; `web/routes/categorize_vendors.py`; `web/routes/match.py`; `web/templates/components/vendor_card.html`; `command-center/category-domain-contract.md`; `command-center/logs/2026-07-19-category-domain-enforcement-4o.md`; `command-center/logs/2026-07-20-natural-scheduled-run-4m-gate.md`; `command-center/issues.md`; `command-center/decisions.md`; `command-center/now.md`; `command-center/roadmap.md`; `command-center/state.json`; and `command-center/index.html`.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real databases or financial rows; retained uploads or original user files; credentials; authenticated production pages; live vendor or Plaid calls; manual workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream access or writes; workflow-file changes; 4M implementation; Tasks 1M-1P; broader Task 2; Tasks 3-4; unrelated repairs; force push; and recovery outside the exact fast-forward publish path.
+
+Owner and recommended agent: Codex Desktop. The release required exact-path Git and sensitive-addition review, direct-main durability, automatic Fly observation, credential-free HTTP verification, and Runway OS closeout.
+
+Defaults: no PR because Ryan directly requested commit and push to `main`; preserve the verified 4O contract, implementation, tests, and evidence; use only credential-free production `/health`; do not authenticate, inspect protected pages, or trigger live vendor or Plaid activity; inspect workflow metadata and open logs only if failure requires diagnosis; publish the post-deploy closeout with `[skip actions]` to prevent a second deployment.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the authorized path.
+
+Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and current unblocked 4M status.
+
+Result: the exact seventeen-path 4O source set was committed as `5529912`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29745531202` and deploy job `88362414145` passed every reported step for exact source SHA `5529912b47003a931a33776f6ad24fe327257e25`. Production `/health` returned HTTP 200 without credentials. Local `main` matched `origin/main` before closeout; the staged high-confidence sensitive-addition scan returned zero; both preserved untracked files remained excluded; and no protected data, credential, authenticated production page, manual workflow action, non-automatic Fly mutation, live vendor or Plaid call, downstream access or write, workflow edit, 4M implementation, force push, or unrelated action occurred. This command-center-only closeout uses `[skip actions]` to avoid a second deployment. Confirmed 4M remains current and unblocked.
+
+Evidence: `command-center/logs/2026-07-20-category-domain-enforcement-release-4o-r.md`, source commit `5529912`, GitHub Actions run `29745531202`, and Fly deploy job `88362414145`.
+
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
 Status: planned

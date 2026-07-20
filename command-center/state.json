@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-20 8:14 AM CST",
+    "lastUpdated": "2026-07-20 8:19 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,12 +22,12 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4N-R are published on main; local-only 4O is complete and verified but not published; confirmed 4M is unblocked at its local implementation gate"
+    "durabilityStatus": "Work blocks through 4O-R are published on main; source commit 5529912 deployed successfully with credential-free health at 200; confirmed 4M is unblocked at its local implementation gate"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4O is complete and verified locally; confirmed work block 4M is current and unblocked for local implementation.",
+    "summary": "Work blocks 4O and 4O-R are complete durable deployed and credential-free health verified; confirmed work block 4M is current and unblocked for local implementation.",
     "progress": 92
   },
   "currentTask": {
@@ -44,7 +44,7 @@
     "name": "Vendor Payment Matching Integrity",
     "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Await first successful natural scheduled run after source commit 2a12533 before implementation",
+    "currentTask": "Begin the confirmed local vendor-payment matching implementation from updated main",
     "includedTasks": [
       "Task 1L.1",
       "Task 2 focused vendor-payment matching regression slice"
@@ -87,20 +87,20 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Observe the 4M activation gate",
+    "title": "Begin confirmed work block 4M",
     "status": "ready",
     "owner": "Codex Desktop",
-    "why": "Work block 4O is complete locally and the first natural post-2a12533 scheduled run cleared the 4M activation gate.",
+    "why": "Work blocks 4O and 4O-R are complete and durable and the first natural post-2a12533 scheduled run cleared the 4M activation gate.",
     "action": "Create codex/vendor-payment-matching-integrity from updated main for confirmed local Task 1L.1 implementation; keep release and live actions separately gated.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No Ryan decision is currently required; 4O is complete locally and 4M is confirmed and unblocked for local implementation.",
+    "summary": "No Ryan decision is currently required; 4O and 4O-R are complete and durable and 4M is confirmed and unblocked for local implementation.",
     "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4O is complete locally for Task 1L.3 and its focused Task 2 slice. Work block 4M remains confirmed for Task 1L.1; Tasks 1M-1P broader Task 2 Tasks 3-4 historical remediation taxonomy changes publication protected data and live actions remain outside current authorization.",
+    "phaseQuestions": "Work blocks 4O and 4O-R are complete for Task 1L.3 and its focused Task 2 slice. Work block 4M remains confirmed for Task 1L.1; Tasks 1M-1P broader Task 2 Tasks 3-4 historical remediation taxonomy changes protected data publication of new work and live actions remain outside current authorization.",
     "decisionQueue": "No current Ryan decision; stop and ask if the 4M activation gate fails or implementation needs a migration data policy scope expansion or live action.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -2460,6 +2460,58 @@
         "scripts/smoke_test.py"
       ],
       "result": "Made categories.md authoritative for new entity-specific inference and acceptance writes; added safe Needs Review and General fallback deterministic mixed-category ties whole-batch zero-mutation validation preserved dedicated Skipped behavior all-entity denied-network coverage and exact cleanup; passed baseline and final smoke compilation JSON whitespace dashboard and health checks without taxonomy migration historical-row live-system or GitHub action."
+    },
+    {
+      "id": "phase-4-block-o-release",
+      "phaseId": "phase-4",
+      "label": "4O-R",
+      "name": "Deterministic Category-Domain Enforcement Durability And Release",
+      "status": "done",
+      "includedTasks": [
+        "Exact seventeen-path verified 4O source set and sanitized current 4M activation-gate evidence",
+        "Explicit staging source commit direct-main fast-forward push automatic Fly observation credential-free health and skip-actions closeout"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real databases financial rows uploads credentials authenticated production pages live vendor or Plaid actions downstream access or writes workflow edits and manual workflow actions",
+        "4M implementation Tasks 1M-1P broader Task 2 Tasks 3-4 unrelated repairs force push and out-of-path recovery"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release required exact-path Git and sensitive-addition review direct-main durability automatic Fly observation credential-free HTTP verification and Runway OS closeout.",
+      "runnerPath": "Current Codex task on local main after fast-forwarding codex/category-domain-enforcement.",
+      "expectedFiles": [
+        "Exact seventeen-path 4O application test contract issue evidence and command-center source set",
+        "A sanitized 4O-R closeout log and command-center-only skip-actions commit"
+      ],
+      "defaults": [
+        "No PR because Ryan requested commit and push to main",
+        "Observe only the automatic Fly deployment caused by the source push",
+        "Use only credential-free production health verification",
+        "Publish closeout with skip actions to prevent a second deployment"
+      ],
+      "stopConditions": [
+        "Unexpected staged path sensitive addition protected data or unrelated user change",
+        "Local or remote main divergence or required force push",
+        "Maintained verification automatic deployment or credential-free health failure",
+        "Closeout starts a second Fly deployment or recovery exceeds the authorized path"
+      ],
+      "verification": [
+        "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
+        "Maintained synthetic suite Python compilation JSON validation dashboard refresh health check and git diff check",
+        "Explicit staging source commit and direct-main fast-forward push",
+        "Exact automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits exact published paths automatic workflow result credential-free health final main alignment preserved exclusions and current unblocked 4M status.",
+      "durability": "Source commit 5529912 is durable on main; automatic Fly run 29745531202 and deploy job 88362414145 passed credential-free production health returned 200 and the sanitized command-center closeout is published separately with skip actions.",
+      "evidence": [
+        "command-center/logs/2026-07-19-category-domain-enforcement-4o.md",
+        "command-center/logs/2026-07-20-category-domain-enforcement-release-4o-r.md",
+        "GitHub Actions run 29745531202",
+        "Fly deploy job 88362414145"
+      ],
+      "result": "Published source commit 5529912 directly to main by exact-path fast-forward observed successful automatic Fly run 29745531202 and job 88362414145 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout."
     }
   ],
   "phaseTasks": [
@@ -3387,9 +3439,41 @@
     {
       "name": "Work Block 4N-R Vendor Line-Item Persistence Release Closeout",
       "path": "command-center/logs/2026-07-19-vendor-line-item-persistence-release-4n-r.md"
+    },
+    {
+      "name": "Category-Domain Contract",
+      "path": "command-center/category-domain-contract.md"
+    },
+    {
+      "name": "Work Block 4O Deterministic Category-Domain Enforcement Closeout",
+      "path": "command-center/logs/2026-07-19-category-domain-enforcement-4o.md"
+    },
+    {
+      "name": "Work Block 4M Natural Scheduled-Run Gate Evidence",
+      "path": "command-center/logs/2026-07-20-natural-scheduled-run-4m-gate.md"
+    },
+    {
+      "name": "Work Block 4O-R Deterministic Category-Domain Enforcement Release Closeout",
+      "path": "command-center/logs/2026-07-20-category-domain-enforcement-release-4o-r.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-20",
+      "text": "Published 4O source commit 5529912 to main; automatic Fly run 29745531202 and deploy job 88362414145 succeeded credential-free production health returned 200 and the sanitized skip-actions closeout was prepared."
+    },
+    {
+      "time": "2026-07-20",
+      "text": "Ryan directly authorized work block 4O-R to commit and push the exact verified 4O set plus coherent sanitized 4M gate state to main observe the automatic Fly deployment verify credential-free health and publish a sanitized skip-actions closeout."
+    },
+    {
+      "time": "2026-07-20",
+      "text": "The independent read-only monitor observed successful natural scheduled run 29740509073 after source commit 2a12533 using sanitized public metadata so confirmed 4M is unblocked for local implementation."
+    },
+    {
+      "time": "2026-07-19",
+      "text": "Completed work block 4O locally: categories.md is authoritative for entity-specific inference and acceptance deterministic ties and whole-batch zero-mutation rejection pass across all entities while Skipped remains a dedicated workflow sentinel."
+    },
     {
       "time": "2026-07-19",
       "text": "Published 4N source commit 89236a6 to main; automatic Fly run 29714030248 and deploy job 88263334817 succeeded credential-free production health returned 200 and the sanitized skip-actions closeout was prepared."
@@ -4140,8 +4224,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Pass the 4M activation gate",
-    "description": "Observe a successful first natural scheduled sync after source commit 2a12533 then execute the confirmed bounded Task 1L.1 vendor-payment matching repair from updated main."
+    "name": "Complete work block 4M locally",
+    "description": "Execute the confirmed bounded Task 1L.1 vendor-payment matching repair from updated main with focused and full synthetic verification while release and live actions remain separately gated."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -4253,6 +4337,11 @@
     "phase4VendorLineItemCoverage": "pass; generated Amazon CSV and Henry Schein XLSX data-layer plus normal preview-save routes cover parent children quantity cents exact reimport rollback invalid quantity auto-split all-entity isolation denied networking temporary-payload consumption and exact cleanup",
     "phase4VendorLineItemBoundaries": "pass; migration 53 was sufficient and no category inference backfill protected data retained user file external call or preserved untracked-file change occurred",
     "phase4VendorLineItemRelease": "pass; source commit 89236a6 is on main automatic Fly run 29714030248 and deploy job 88263334817 passed every reported step and credential-free production health returned HTTP 200",
-    "phase4VendorLineItemDurability": "pass; local main matched origin/main at source commit 89236a6 before this command-center-only skip-actions closeout with both preserved untracked files excluded"
+    "phase4VendorLineItemDurability": "pass; local main matched origin/main at source commit 89236a6 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
+    "phase4CategoryDomainEnforcement": "pass; categories.md is authoritative for new entity-specific inference and acceptance writes with safe fallback deterministic ties whole-batch zero-mutation rejection and preserved dedicated Skipped behavior",
+    "phase4CategoryDomainCoverage": "pass; maintained Personal BFM and Luxe Legacy valid invalid match order alias skip-sentinel cross-hash-seed denied-network exact-cleanup and full smoke checks passed",
+    "phase4CategoryDomainBoundaries": "pass; no taxonomy migration historical-row action protected data live vendor or Plaid action downstream access workflow edit or preserved untracked-file change occurred",
+    "phase4CategoryDomainRelease": "pass; source commit 5529912 is on main automatic Fly run 29745531202 and deploy job 88362414145 passed every reported step and credential-free production health returned HTTP 200",
+    "phase4CategoryDomainDurability": "pass; local main matched origin/main at source commit 5529912 before this command-center-only skip-actions closeout with both preserved untracked files excluded"
   }
 }
