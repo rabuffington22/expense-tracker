@@ -1788,7 +1788,7 @@ Result: new Amazon and Henry Schein imports now persist each parent and all pars
 
 ### Work Block 4N-R: Durability And Release
 
-Status: active and authorized on 2026-07-19
+Status: done, durable, automatically deployed, and credential-free production health verified on 2026-07-19
 
 Included: the exact ten intended 4N application, maintained-test, contract, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/vendor-line-item-persistence`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -1805,6 +1805,10 @@ Stop conditions: the exact diff includes an unexpected path, sensitive value, pr
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the unchanged 4M scheduled-run gate.
+
+Result: the exact ten-path 4N source set was committed as `89236a6`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29714030248` and deploy job `88263334817` passed every reported step for exact source SHA `89236a62438c4c5063aedf6c276f0ae52fafcfbe`. Production `/health` returned HTTP 200 without credentials. Local `main` matched `origin/main` before closeout; the staged high-confidence sensitive-addition scan returned zero; both preserved untracked files remained excluded; and no protected data, credential, authenticated production page, manual workflow action, non-automatic Fly mutation, live vendor or Plaid call, downstream access or write, workflow edit, Task 1L.1 implementation, Task 1L.3 work, force push, or unrelated action occurred. This command-center-only closeout uses `[skip actions]` to avoid a second deployment. Confirmed 4M is current again at its unchanged natural scheduled-run gate.
+
+Evidence: `command-center/logs/2026-07-19-vendor-line-item-persistence-release-4n-r.md`, source commit `89236a6`, GitHub Actions run `29714030248`, and Fly deploy job `88263334817`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

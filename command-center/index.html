@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 10:08 PM CST",
+    "lastUpdated": "2026-07-19 10:12 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,49 +1619,47 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4L-R are published on main; work block 4N-R is authorized and publishing the verified 4N set; work block 4M remains at its scheduled gate"
+    "durabilityStatus": "Work blocks through 4N-R are published on main; source commit 89236a6 deployed successfully with credential-free health at 200; work block 4M remains at its scheduled gate"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4N-R is active for direct-main durability, automatic Fly observation, credential-free health, and sanitized closeout; confirmed work block 4M remains waiting at the natural scheduled-run gate.",
+    "summary": "Work block 4N-R is durable on main automatically deployed and credential-free health verified; confirmed work block 4M is current and waiting at the natural scheduled-run gate.",
     "progress": 92
   },
   "currentTask": {
-    "title": "Task 1L.2: Persist vendor-order line items end to end",
+    "title": "Task 1L.1: Restore vendor-payment matching integrity",
     "owner": "Codex Desktop",
     "status": "current",
     "supportingAgent": "The independent read-only monitor owns scheduled-run freshness and failure alerting",
-    "nextAction": "Publish the exact verified 4N set through direct-main fast-forward, observe the automatic Fly run, verify credential-free health, and publish a skip-actions closeout.",
-    "blocker": null
+    "nextAction": "Recheck sanitized public workflow metadata for the first natural scheduled run after source commit 2a12533; start confirmed local 4M implementation from updated main only after success.",
+    "blocker": "The first natural scheduled run after source commit 2a12533 has not yet been observed successfully."
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-n-release",
-    "label": "4N-R",
-    "name": "Vendor Line-Item Persistence Durability And Release",
+    "id": "phase-4-block-m",
+    "label": "4M",
+    "name": "Vendor Payment Matching Integrity",
     "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Commit the exact verified 4N set, fast-forward and push main, observe the automatic Fly deploy, verify credential-free health, and publish the sanitized closeout",
+    "currentTask": "Await first successful natural scheduled run after source commit 2a12533 before implementation",
     "includedTasks": [
-      "Task 1L.2 durability and automatic release",
-      "Safe credential-free production health verification",
-      "Sanitized command-center closeout"
+      "Task 1L.1",
+      "Task 2 focused vendor-payment matching regression slice"
     ],
     "stopConditions": [
-      "The exact diff includes an unexpected path sensitive value protected data or unrelated user change",
-      "Local or remote main diverges or cannot be fast-forwarded safely",
-      "Maintained verification fails or staging includes an excluded path",
-      "The automatic deployment cannot be attributed to the source SHA or fails",
-      "Credential-free health fails a second deploy starts or recovery exceeds authorization"
+      "The activation run is missing or unsuccessful",
+      "Repair requires protected data credentials live access migration backfill or a new product decision",
+      "One-bank-to-one-vendor semantics conflict with tracked source",
+      "Scope or plan-changing verification expands beyond the confirmed block",
+      "Command-center checks fail or either preserved untracked file would be touched"
     ],
     "verification": [
-      "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
-      "Maintained synthetic suite Python compilation JSON validation dashboard refresh health check and git diff check",
-      "Explicit staging review source commit and direct-main fast-forward push",
-      "Automatic Fly run and job result plus credential-free production health",
-      "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      "Baseline and final maintained synthetic smoke suite",
+      "Focused exact review unmatched apply stale duplicate rollback and all-entity isolation coverage",
+      "Denied outbound networking and exact temporary cleanup",
+      "Python compilation JSON validation dashboard refresh health check git diff check dashboard inspection and explicit worktree review"
     ],
-    "nextReportPoint": "Return source and closeout commits exact published paths automatic workflow result credential-free health final main alignment preserved exclusions and the unchanged 4M scheduled-run gate."
+    "nextReportPoint": "Return the natural post-release run evidence exact matching contract focused and full synthetic results migration disposition cleanup local branch state preserved exclusions and separate release gate."
   },
   "routerHealth": {
     "status": "healthy",
@@ -1686,21 +1684,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish work block 4N-R",
-    "status": "active",
+    "title": "Observe the 4M activation gate",
+    "status": "scheduled gate",
     "owner": "Codex Desktop",
-    "why": "Ryan directly authorized exact-path durability and automatic release for the complete verified 4N implementation.",
-    "action": "Commit the ten-path 4N set, fast-forward and push main, observe the exact automatic Fly run, verify credential-free health, and publish the sanitized skip-actions closeout.",
+    "why": "Work blocks 4N and 4N-R are complete while the released sync-entry path still needs its first natural post-2a12533 scheduled-run truth point before 4M begins.",
+    "action": "Use only sanitized public workflow metadata; after a successful natural post-2a12533 run create codex/vendor-payment-matching-integrity from updated main for confirmed Task 1L.1.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No Ryan decision is currently required; 4N-R is authorized and active while 4M remains confirmed at its scheduled activation gate.",
+    "summary": "No Ryan decision is currently required; 4N-R is complete and 4M is confirmed and waiting on its scheduled activation gate.",
     "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4N-R authorizes only exact-path publication, automatic Fly observation, credential-free health, and sanitized closeout for completed Task 1L.2. Work block 4M remains confirmed for Task 1L.1; Task 1L.3, broader Task 2, Tasks 1M-1P and 3-4, protected data, migration, backfill, manual live actions, and recovery remain outside current authorization.",
-    "decisionQueue": "No current Ryan decision; stop and ask if 4N-R hits a release stop condition or if later 4M needs migration, data policy, scope expansion, or live action.",
+    "phaseQuestions": "Work blocks 4N and 4N-R are complete for Task 1L.2 and its focused Task 2 slice. Work block 4M remains confirmed for Task 1L.1; Task 1L.3 broader Task 2 Tasks 1M-1P and 3-4 protected data migration backfill publication and live actions remain outside current authorization.",
+    "decisionQueue": "No current Ryan decision; stop and ask if the 4M activation gate fails or implementation needs a migration data policy scope expansion or live action.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -3959,7 +3957,7 @@
       "phaseId": "phase-4",
       "label": "4N-R",
       "name": "Vendor Line-Item Persistence Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1L.2 durability and automatic release",
         "Safe credential-free production health verification",
@@ -3994,10 +3992,14 @@
         "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits exact published paths automatic workflow result credential-free health final main alignment preserved exclusions and the unchanged 4M scheduled-run gate.",
-      "durability": "Publication authorized and in progress; source commit automatic deployment production health and skip-actions closeout remain pending.",
+      "durability": "Source commit 89236a6 is durable on main; automatic Fly run 29714030248 and deploy job 88263334817 passed credential-free production health returned 200 and the sanitized command-center closeout is published separately with skip actions.",
       "evidence": [
-        "command-center/logs/2026-07-19-vendor-line-item-persistence-4n.md"
-      ]
+        "command-center/logs/2026-07-19-vendor-line-item-persistence-4n.md",
+        "command-center/logs/2026-07-19-vendor-line-item-persistence-release-4n-r.md",
+        "GitHub Actions run 29714030248",
+        "Fly deploy job 88263334817"
+      ],
+      "result": "Published source commit 89236a6 directly to main by exact-path fast-forward observed successful automatic Fly run 29714030248 and job 88263334817 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout."
     }
   ],
   "phaseTasks": [
@@ -4557,7 +4559,7 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1L1",
       "title": "Task 1L.1: Restore vendor-payment matching integrity",
-      "status": "waiting",
+      "status": "current",
       "owner": "Codex Desktop",
       "summary": "Replace the nonexistent transactions.matched_order_id dependency with one explicit, race-safe vendor-to-bank match contract and focused exact, review, unmatched, apply, and isolation coverage.",
       "nextAction": "Observe a successful first natural scheduled run after source commit 2a12533, then implement confirmed work block 4M locally.",
@@ -4567,15 +4569,16 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1L2",
       "title": "Task 1L.2: Persist vendor-order line items end to end",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Implementation is complete and locally verified; work block 4N-R is publishing the exact set through direct-main durability, automatic Fly observation, credential-free health, and sanitized closeout.",
-      "result": "Work block 4N now persists new parent and child rows atomically, skips exact reimports, rolls back failed children, preserves raw category metadata without inventing Ledger classifications, and passes generated Amazon and Henry all-entity route, cents, split, isolation, denied-network, and cleanup coverage without a migration.",
+      "summary": "Work blocks 4N and 4N-R completed implementation local verification direct-main durability automatic Fly release and credential-free production health.",
+      "result": "New parent and child rows persist atomically with exact reimport identity rollback and all-entity coverage; source commit 89236a6 is durable on main automatic Fly run 29714030248 passed and production health returned 200.",
       "evidence": [
         "command-center/vendor-line-item-persistence-contract.md",
-        "command-center/logs/2026-07-19-vendor-line-item-persistence-4n.md"
+        "command-center/logs/2026-07-19-vendor-line-item-persistence-4n.md",
+        "command-center/logs/2026-07-19-vendor-line-item-persistence-release-4n-r.md"
       ],
-      "nextAction": "Complete authorized work block 4N-R and then restore confirmed 4M at its scheduled-run gate.",
+      "nextAction": null,
       "blocker": null
     },
     {
@@ -4913,9 +4916,17 @@
     {
       "name": "Work Block 4N Vendor Line-Item Persistence Closeout",
       "path": "command-center/logs/2026-07-19-vendor-line-item-persistence-4n.md"
+    },
+    {
+      "name": "Work Block 4N-R Vendor Line-Item Persistence Release Closeout",
+      "path": "command-center/logs/2026-07-19-vendor-line-item-persistence-release-4n-r.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-19",
+      "text": "Published 4N source commit 89236a6 to main; automatic Fly run 29714030248 and deploy job 88263334817 succeeded credential-free production health returned 200 and the sanitized skip-actions closeout was prepared."
+    },
     {
       "time": "2026-07-19",
       "text": "Ryan directly authorized work block 4N-R to commit and push the exact verified 4N set to main observe the automatic Fly deployment verify credential-free health and publish a sanitized skip-actions closeout."
@@ -5662,8 +5673,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete work block 4N-R",
-    "description": "Publish the exact verified 4N set to main observe the automatic Fly deployment verify credential-free health and publish the sanitized skip-actions closeout before restoring the unchanged 4M activation gate."
+    "name": "Pass the 4M activation gate",
+    "description": "Observe a successful first natural scheduled sync after source commit 2a12533 then execute the confirmed bounded Task 1L.1 vendor-payment matching repair from updated main."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -5772,7 +5783,9 @@
     "phase4SyncEntryProductionBoundary": "pass with natural-run follow-up; missing-bearer production verification confirms bearer-first 401 without entity setup or Plaid, while the next natural scheduled run remains the safe real-sync truth point",
     "phase4VendorLineItemPersistence": "pass locally; new Amazon and Henry Schein parent orders and parser-provided children commit atomically with exact integer-cent reimport identity and no implicit existing-row backfill",
     "phase4VendorLineItemCoverage": "pass; generated Amazon CSV and Henry Schein XLSX data-layer plus normal preview-save routes cover parent children quantity cents exact reimport rollback invalid quantity auto-split all-entity isolation denied networking temporary-payload consumption and exact cleanup",
-    "phase4VendorLineItemBoundaries": "pass; migration 53 was sufficient and no category inference backfill protected data retained user file external call live action GitHub durability or preserved untracked-file change occurred"
+    "phase4VendorLineItemBoundaries": "pass; migration 53 was sufficient and no category inference backfill protected data retained user file external call or preserved untracked-file change occurred",
+    "phase4VendorLineItemRelease": "pass; source commit 89236a6 is on main automatic Fly run 29714030248 and deploy job 88263334817 passed every reported step and credential-free production health returned HTTP 200",
+    "phase4VendorLineItemDurability": "pass; local main matched origin/main at source commit 89236a6 before this command-center-only skip-actions closeout with both preserved untracked files excluded"
   }
 }
 </script>

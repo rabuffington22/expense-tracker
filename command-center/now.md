@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Publish completed work block 4N through the authorized 4N-R direct-main release path, then restore confirmed 4M at its natural scheduled-run gate.
+Run confirmed work block 4M after the first natural scheduled run proves the released 4L path under real schedule conditions.
 
 ## Current Phase
 
@@ -10,19 +10,19 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4N-R: Vendor Line-Item Persistence Durability And Release — active and authorized. Work block 4M remains confirmed and waiting at its natural scheduled-run activation gate.
+Work block 4M: Vendor Payment Matching Integrity — active and waiting at its natural scheduled-run activation gate before application implementation. Work blocks 4N and 4N-R are complete, durable, deployed, and credential-free health verified.
 
 ## Current Task
 
-Phase 4 Task 1L.2 release durability. The implementation is complete locally; exact-path commit, direct-main push, automatic Fly observation, credential-free health, and sanitized closeout are current.
+Phase 4 Task 1L.1: restore vendor-payment matching integrity. Ryan confirmed 4M; implementation remains behind the first successful natural scheduled run after source commit `2a12533`.
 
 ## Owner
 
-Codex Desktop owns authorized work block 4N-R publication, automatic release observation, credential-free health verification, and Runway OS closeout. The existing independent read-only monitor continues to own scheduled-run freshness and failure alerting; Ryan owns any recovery or scope expansion outside the exact release path.
+Codex Desktop owns confirmed work block 4M, its local implementation, synthetic verification, and Runway OS closeout. The existing independent read-only monitor owns scheduled-run freshness and failure alerting; Ryan owns any new product, migration, live-action, publication, or recovery decision.
 
 ## Current Action
 
-Stage only the exact ten-path 4N set, rerun maintained verification, commit on `codex/vendor-line-item-persistence`, fast-forward and push `main`, observe the exact automatic Fly run, verify credential-free `/health`, and publish a command-center-only `[skip actions]` closeout. Stop on any unexpected path, sensitive addition, divergence, failed check, unattributable deploy, or failed health response.
+Do not manually dispatch or authenticate `/plaid/sync-all`. Recheck only sanitized public workflow metadata for the first natural schedule event after source commit `2a12533`. If it succeeds, create `codex/vendor-payment-matching-integrity` from updated `main` and begin the confirmed local-only Task 1L.1 implementation; otherwise stop at the exact gate.
 
 ## Work Block 4N Result
 
@@ -33,6 +33,13 @@ Stage only the exact ten-path 4N set, rerun maintained verification, commit on `
 - Newly persisted children feed the maintained multi-category auto-split helper without `scripts/populate_line_items.py` once valid categories exist.
 - Generated Amazon CSV and Henry Schein XLSX data-layer plus normal preview/save route checks pass across temporary Personal, BFM, and Luxe Legacy databases with denied networking, consumed temporary payloads, unchanged unrelated rows, and exact cleanup.
 - Migration 53 was sufficient; no migration, backfill, protected data, retained user file, live action, commit, push, or deployment occurred.
+
+## Work Block 4N-R Result
+
+- Exact ten-path source commit `89236a6` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29714030248` and deploy job `88263334817` passed every reported step for exact source SHA `89236a62438c4c5063aedf6c276f0ae52fafcfbe`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the high-confidence staged sensitive-addition scan returned zero.
 
 ## Work Block 4L Result
 
@@ -58,8 +65,8 @@ Stage only the exact ten-path 4N set, rerun maintained verification, commit on `
 - Work block 4N baseline and final full smoke suites, Python compilation, parent/child route handoff, exact reimport, rollback, cents, auto-split, all-entity isolation, denied networking, payload consumption, and cleanup: pass locally.
 - Automatic Fly run/job attribution and every reported step: pass.
 - Production `/health` HTTP 200 and missing-bearer `/plaid/sync-all` HTTP 401 with redirects disabled: pass.
-- The 4N-R command-center-only closeout must produce no second Fly run and must leave local `main` aligned with `origin/main`.
+- This command-center-only closeout must produce no second Fly run and must leave local `main` aligned with `origin/main`.
 
 ## Next Report Point
 
-Return the 4N source and closeout commits, exact published paths, automatic Fly run and job result, credential-free health, final main alignment, and preserved exclusions. Then restore the first natural post-`2a12533` scheduled-run observation as the unchanged 4M gate without manually dispatching or authenticating.
+Return the first natural post-`2a12533` scheduled-run result without opening logs or response bodies. If green, continue through the confirmed 4M contract, focused and full synthetic verification, cleanup, and local Runway OS closeout from a separate branch; if missing or unsuccessful, stop and report the exact gate. Work blocks 4N and 4N-R are complete and durable on `main`.
