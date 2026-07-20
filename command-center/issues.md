@@ -295,7 +295,7 @@ Tracked test expansion was explicitly excluded from audit work block 3A and belo
 
 ## Vendor-Payment Matching References A Missing Transaction Column
 
-Status: resolved locally in work block 4M; release not authorized
+Status: resolved and released through work blocks 4M-4M-R
 
 Severity: high functional correctness risk
 
@@ -322,7 +322,7 @@ Acceptance checks:
 
 Why not fixed now:
 
-Work block 4M removed the nonexistent bank-side column dependency without a migration, made `vendor_transactions.matched_transaction_id` canonical, and added maintained all-entity exact, review, unmatched, stale, duplicate, concurrent-claim, rollback, denied-network, and cleanup coverage. Publication and production verification remain separately gated.
+Work block 4M removed the nonexistent bank-side column dependency without a migration, made `vendor_transactions.matched_transaction_id` canonical, and added maintained all-entity exact, review, unmatched, stale, duplicate, concurrent-claim, rollback, denied-network, and cleanup coverage. Work block 4M-R published source commit `ffd42dd`, automatic Fly run `29748373589` passed, and credential-free production health returned HTTP 200.
 
 ## Vendor-Order Imports Discard Parsed Line Items
 

@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after local completion of work block 4M; publication of 4M and the next Task 1M work block remain separate decisions
+Status: active after durable release and credential-free production health verification of work block 4M-R; Task 1M is current for a separate just-in-time work-block planning pass
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -906,17 +906,17 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: done, released, and credential-free production health verified through work blocks 4J-4J-R for `P3-3G-02` through `P3-3G-05` plus the matching focused `P3-3G-C01` coverage slice.
 - **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: done, released, and credential-free production health verified through work blocks 4K-4K-R for `P3-3G-06`, `P3-3G-07`, and the matching focused `P3-3G-C01` slice.
 - **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: done, released, automatically deployed, and safely credential-free production verified through work blocks 4L-4L-R for `P3-3H-02` through `P3-3H-07` plus the remaining `P3-3H-C01` slice; the next natural scheduled run remains the real-sync truth point.
-- **Task 1L: Repair vendor import-to-categorization integrity.** Status: complete locally across Tasks 1L.1-1L.3 through work blocks 4M, 4N, and 4O; 4N and 4O are released, while 4M publication remains separate.
-  - **Task 1L.1: Restore vendor-payment matching integrity.** Replace the nonexistent `transactions.matched_order_id` dependency with one explicit, race-safe vendor-to-bank match contract, preserve target-entity isolation, and add focused exact/review/unmatched/apply regression coverage. Status: done and verified locally through work block 4M; release remains separate.
+- **Task 1L: Repair vendor import-to-categorization integrity.** Status: done and released across Tasks 1L.1-1L.3 through work blocks 4M/4M-R, 4N/4N-R, and 4O/4O-R.
+  - **Task 1L.1: Restore vendor-payment matching integrity.** Replace the nonexistent `transactions.matched_order_id` dependency with one explicit, race-safe vendor-to-bank match contract, preserve target-entity isolation, and add focused exact/review/unmatched/apply regression coverage. Status: done, released, automatically deployed, and credential-free production health verified through work blocks 4M-4M-R.
   - **Task 1L.2: Persist vendor-order line items end to end.** Save Amazon and Henry Schein line items transactionally with their parent orders, preserve exact-reimport idempotency, reconcile integer cents, and prove the maintained auto-split path no longer needs the standalone population script for new imports. Status: done and verified locally through work block 4N; release remains separate.
   - **Task 1L.3: Enforce the category source of truth deterministically.** Validate inferred and accepted transaction/vendor-order category pairs against the current entity definition, make mixed-category ties deterministic, and reject invalid writes without changing stored data. Status: done and verified locally through work block 4O; release and existing-row detection or remediation remain separate decisions.
-- **Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention.** Status: planned after Task 1C; separate hourly and salary cohorts per Ryan's confirmed default.
+- **Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention.** Status: current for a separate just-in-time work-block planning pass; implementation is not authorized; separate hourly and salary cohorts per Ryan's confirmed default.
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice of `P3-3G-C01`, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, and 4M completed its vendor-payment matching slice.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4L-R; every future release remains separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4M-R; every future release remains separately gated.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -1754,7 +1754,7 @@ Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; fresh
 
 Report point: return the natural post-release run evidence, exact matching contract, changed paths, focused and full synthetic results, confirmation that no migration was needed or the precise stop reason, cleanup evidence, local branch state, preserved exclusions, and the separate release gate.
 
-Suggested next action: Ryan decides whether to authorize a separate 4M-R durability and release block. If publication is deferred, plan the next bounded Task 1M block separately.
+Suggested next action: work block 4M-R is complete; define and confirm the next bounded Task 1M work block separately before implementation.
 
 Activation result: the first natural post-`2a12533` scheduled run `29740509073` completed successfully, clearing the 4M gate. Evidence: `command-center/logs/2026-07-20-natural-scheduled-run-4m-gate.md`.
 
@@ -1762,7 +1762,7 @@ Result: matching now uses `vendor_transactions.matched_transaction_id` as the ca
 
 ### Confirmed Work Block 4M-R: Vendor Payment Matching Durability And Release
 
-Status: active under Ryan's direct 2026-07-20 instruction to commit and push the verified 4M work to `main`
+Status: complete, durable, automatically deployed, and credential-free production health verified on 2026-07-20
 
 Included: the exact verified 4M application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/vendor-payment-matching-integrity`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -1777,6 +1777,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and the Task 1M planning gate.
+
+Result: the exact ten-path 4M source set was committed as `ffd42dd`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29748373589` and deploy job `88372068257` passed every reported step for exact source SHA `ffd42dd34160a860bf12998cf3cb22e73b5b3c63`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, and no protected data, credential, authenticated production page, live vendor/Plaid action, manual workflow action, non-automatic Fly change, downstream access/write, migration, backfill, force push, or unrelated action occurred. Evidence: `command-center/logs/2026-07-20-vendor-payment-matching-release-4m-r.md`.
 
 ### Confirmed Work Block 4N: Vendor Line-Item Persistence
 
