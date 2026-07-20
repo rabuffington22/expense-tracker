@@ -826,7 +826,7 @@ Compensation semantics require separately confirmed product-direction and implem
 
 ## Payroll Employee Inputs Are Not Safely Normalized
 
-Status: open; discovered in work block 3F
+Status: resolved locally in work block 4Q; release not authorized
 
 Severity: medium data-integrity and availability risk
 
@@ -851,9 +851,9 @@ Acceptance checks:
 - Invalid requests leave prior data unchanged and return a controlled response.
 - Valid create/update and rate-history behavior remains intact.
 
-Why not fixed now:
+Resolution:
 
-Validation and regression-test changes were excluded from audit work block 3F.
+Work block 4Q adds one shared pre-mutation employee validator across manual create, manual update, and import-created roster rows. Maintained roles, pay types, statuses, exact optional dates, entity-local employee and assignment IDs, payload-linked imported names, duplicate normalized assignments, optional trimmed Phoenix codes, and decimal rates from zero through `$999,999,999.99` now have explicit contracts. Invalid, non-finite, negative, extreme, forged, duplicate, and missing values return controlled sanitized outcomes with exact zero mutation. Forced post-history and post-employee import failures prove rate history, employee changes, and payroll entries roll back together. Baseline and final full smoke suites, compilation, cleanup, denied networking, dashboard refresh, and health checks pass locally.
 
 ## Canceling Payroll Preview Retains The Parsed Payload
 
@@ -919,7 +919,7 @@ Work block 4P places one sanitized error boundary around workbook-engine loading
 
 ## Payroll Lifecycle Paths Lack Tracked Regression Coverage
 
-Status: partly addressed through work blocks 4D and 4P; remaining roster-validation and compensation coverage parked for Tasks 1M.4-1M.5
+Status: partly addressed through work blocks 4D, 4P, and 4Q; remaining compensation coverage parked for Task 1M.5
 
 Severity: medium regression-confidence risk
 
@@ -931,7 +931,7 @@ Revisit: Phase 4 Task 2, preferably alongside the related payroll repairs
 
 Summary:
 
-Work block 4D added maintained coverage for the payroll routes, Personal/Luxe Legacy denial, unchanged denied-state snapshots, temporary-payload preservation, and normal BFM roster/detail/import/spending availability. Work block 4P extends that maintained matrix to exact preview/save matching, reassignment, new creation, reimport, payload permissions and lifecycle, malformed workbook outcomes, valid multi-section parsing, all-entity isolation, denied networking, and exact cleanup. Roster input validation and compensation-cohort coverage remain paired with Tasks 1M.4-1M.5.
+Work block 4D added maintained coverage for the payroll routes, Personal/Luxe Legacy denial, unchanged denied-state snapshots, temporary-payload preservation, and normal BFM roster/detail/import/spending availability. Work block 4P extends that maintained matrix to exact preview/save matching, reassignment, new creation, reimport, payload permissions and lifecycle, malformed workbook outcomes, valid multi-section parsing, all-entity isolation, denied networking, and exact cleanup. Work block 4Q adds manual and import-created roster-domain validation, decimal-rate boundaries, controlled rejection, exact zero-mutation snapshots, valid rate-history behavior, and forced update/import rollback. Compensation-cohort coverage remains paired with Task 1M.5.
 
 Impact:
 
@@ -946,7 +946,7 @@ Acceptance checks:
 
 Remaining gap:
 
-The BFM-only boundary and Tasks 1M.1-1M.3 slices are tracked. Employee-input normalization and hourly-versus-salary cohort behavior remain intentionally excluded and must accompany Tasks 1M.4-1M.5.
+The BFM-only boundary and Tasks 1M.1-1M.4 slices are tracked. Hourly-versus-salary cohort behavior remains intentionally excluded and must accompany Task 1M.5.
 
 ## Plaid Persistence Errors Can Advance The Cursor Past Missing Data
 

@@ -11,6 +11,7 @@ Usage:
 
 import io
 import os
+import sqlite3 as sqlite3_module
 import subprocess
 import sys
 import tempfile
@@ -2518,6 +2519,403 @@ def main() -> None:
                "payroll 4P exact database cleanup failed")
         conn_payroll.close()
         print("   ✅ Matching, reassignment, new creation, reimport, payload lifecycle, malformed workbooks, isolation, denied-network, and cleanup passed")
+
+        # ── 8b3. Atomic payroll roster validation ──────────────────
+        print("\n8b3. Atomic payroll roster validation…")
+
+        payroll_4q_names = (
+            "4Q Valid Employee",
+            "4Q Zero Rate Employee",
+            "4Q Invalid Import Employee",
+            "4Q Invalid Assignment Employee",
+        )
+
+        def _payroll_4q_snapshot():
+            conn = get_connection("company")
+            try:
+                return tuple(
+                    (table, tuple(tuple(row) for row in conn.execute(
+                        f"SELECT * FROM {table} ORDER BY id"
+                    ).fetchall()))
+                    for table in (
+                        "employees", "employee_pay_changes", "payroll_entries"
+                    )
+                )
+            finally:
+                conn.close()
+
+        conn_payroll = get_connection("company")
+        conn_payroll.execute(
+            "DELETE FROM employees WHERE name IN ({})".format(
+                ",".join("?" for _ in payroll_4q_names)
+            ),
+            payroll_4q_names,
+        )
+        conn_payroll.commit()
+        conn_payroll.close()
+
+        with app.test_client() as payroll_4q_client:
+            payroll_4q_client.set_cookie("entity", "BFM")
+
+            invalid_create_cases = (
+                ({"name": "", "role": "Nurses", "pay_type": "hourly", "pay_rate": "1"},
+                 "Employee name is required"),
+                ({"name": "Invalid", "role": "Unknown", "pay_type": "hourly", "pay_rate": "1"},
+                 "valid employee role"),
+                ({"name": "Invalid", "role": "Nurses", "pay_type": "contract", "pay_rate": "1"},
+                 "valid pay type"),
+                ({"name": "Invalid", "role": "Nurses", "pay_type": "hourly", "pay_rate": "NaN"},
+                 "finite non-negative"),
+                ({"name": "Invalid", "role": "Nurses", "pay_type": "hourly", "pay_rate": "Infinity"},
+                 "finite non-negative"),
+                ({"name": "Invalid", "role": "Nurses", "pay_type": "hourly", "pay_rate": "-1"},
+                 "finite non-negative"),
+                ({"name": "Invalid", "role": "Nurses", "pay_type": "salary", "pay_rate": "1,000,000,000.00"},
+                 "supported maximum"),
+                ({"name": "Invalid", "role": "Nurses", "pay_type": "salary", "pay_rate": "1e999999"},
+                 "supported maximum"),
+                ({"name": "Invalid", "role": "Nurses", "pay_type": "hourly", "pay_rate": "1", "hire_date": "2026-02-30"},
+                 "valid hire date"),
+            )
+            for form_data, expected_message in invalid_create_cases:
+                before = _payroll_4q_snapshot()
+                response = payroll_4q_client.post(
+                    "/payroll/employees/create",
+                    data=form_data,
+                    follow_redirects=True,
+                )
+                _check(
+                    response.status_code == 200
+                    and expected_message in response.get_data(as_text=True),
+                    f"payroll 4Q create validation: uncontrolled {expected_message}",
+                )
+                _check(
+                    _payroll_4q_snapshot() == before,
+                    f"payroll 4Q create validation mutated rows for {expected_message}",
+                )
+
+            valid_create = payroll_4q_client.post(
+                "/payroll/employees/create",
+                data={
+                    "name": "  4Q Valid Employee  ",
+                    "role": "Nurses",
+                    "pay_type": "hourly",
+                    "pay_rate": "$1,234.567",
+                    "hire_date": "2099-12-31",
+                    "phoenix_job_code": "  600 Nurse /MA  ",
+                },
+            )
+            zero_create = payroll_4q_client.post(
+                "/payroll/employees/create",
+                data={
+                    "name": "4Q Zero Rate Employee",
+                    "role": "Front Office",
+                    "pay_type": "hourly",
+                    "pay_rate": "",
+                },
+            )
+            _check(
+                valid_create.status_code == 302 and zero_create.status_code == 302,
+                "payroll 4Q valid create did not redirect",
+            )
+            conn_payroll = get_connection("company")
+            valid_employee = conn_payroll.execute(
+                "SELECT * FROM employees WHERE name='4Q Valid Employee'"
+            ).fetchone()
+            zero_employee = conn_payroll.execute(
+                "SELECT * FROM employees WHERE name='4Q Zero Rate Employee'"
+            ).fetchone()
+            _check(
+                valid_employee is not None
+                and valid_employee["pay_rate_cents"] == 123457
+                and valid_employee["hire_date"] == "2099-12-31"
+                and valid_employee["phoenix_job_code"] == "600 Nurse /MA",
+                "payroll 4Q valid create did not normalize fields and decimal cents",
+            )
+            _check(
+                zero_employee is not None and zero_employee["pay_rate_cents"] == 0,
+                "payroll 4Q empty rate did not preserve zero-rate behavior",
+            )
+            valid_employee_id = valid_employee["id"]
+            zero_employee_id = zero_employee["id"]
+            conn_payroll.close()
+
+            invalid_update_cases = (
+                {"name": "4Q Valid Employee", "role": "Unknown", "pay_type": "hourly", "pay_rate": "1234.57", "status": "active"},
+                {"name": "4Q Valid Employee", "role": "Nurses", "pay_type": "contract", "pay_rate": "1234.57", "status": "active"},
+                {"name": "4Q Valid Employee", "role": "Nurses", "pay_type": "hourly", "pay_rate": "-1", "status": "active"},
+                {"name": "4Q Valid Employee", "role": "Nurses", "pay_type": "hourly", "pay_rate": "1234.57", "status": "unknown"},
+                {"name": "4Q Valid Employee", "role": "Nurses", "pay_type": "hourly", "pay_rate": "1234.57", "status": "active", "hire_date": "2026-13-01"},
+            )
+            for form_data in invalid_update_cases:
+                before = _payroll_4q_snapshot()
+                response = payroll_4q_client.post(
+                    f"/payroll/employees/update/{valid_employee_id}",
+                    data=form_data,
+                )
+                _check(response.status_code == 302,
+                       "payroll 4Q invalid update did not return controlled redirect")
+                _check(_payroll_4q_snapshot() == before,
+                       "payroll 4Q invalid update changed payroll rows")
+
+            before_missing = _payroll_4q_snapshot()
+            missing_update = payroll_4q_client.post(
+                "/payroll/employees/update/999999999",
+                data={"name": "Missing", "role": "Nurses", "pay_type": "hourly", "pay_rate": "1", "status": "active"},
+            )
+            _check(
+                missing_update.status_code == 302
+                and _payroll_4q_snapshot() == before_missing,
+                "payroll 4Q missing employee identifier was not a controlled no-op",
+            )
+
+            positive_update = payroll_4q_client.post(
+                f"/payroll/employees/update/{valid_employee_id}",
+                data={
+                    "name": "4Q Valid Employee",
+                    "role": "Nurses",
+                    "pay_type": "hourly",
+                    "pay_rate": "1300",
+                    "status": "active",
+                    "hire_date": "2099-12-31",
+                },
+            )
+            zero_update = payroll_4q_client.post(
+                f"/payroll/employees/update/{zero_employee_id}",
+                data={
+                    "name": "4Q Zero Rate Employee",
+                    "role": "Front Office",
+                    "pay_type": "hourly",
+                    "pay_rate": "25",
+                    "status": "active",
+                },
+            )
+            _check(
+                positive_update.status_code == 302 and zero_update.status_code == 302,
+                "payroll 4Q valid updates did not redirect",
+            )
+            conn_payroll = get_connection("company")
+            positive_history = conn_payroll.execute(
+                "SELECT old_rate_cents, new_rate_cents FROM employee_pay_changes "
+                "WHERE employee_id=? ORDER BY id",
+                (valid_employee_id,),
+            ).fetchall()
+            zero_history_count = conn_payroll.execute(
+                "SELECT COUNT(*) FROM employee_pay_changes WHERE employee_id=?",
+                (zero_employee_id,),
+            ).fetchone()[0]
+            _check(
+                [tuple(row) for row in positive_history] == [(123457, 130000)]
+                and zero_history_count == 0,
+                "payroll 4Q valid rate-history behavior changed",
+            )
+            conn_payroll.close()
+
+            before_forced_failure = _payroll_4q_snapshot()
+            original_log_pay_change = payroll_routes._log_pay_change
+
+            def _log_then_fail(*args, **kwargs):
+                original_log_pay_change(*args, **kwargs)
+                raise RuntimeError("synthetic 4Q post-history failure")
+
+            try:
+                with patch.object(
+                    payroll_routes, "_log_pay_change", side_effect=_log_then_fail
+                ):
+                    payroll_4q_client.post(
+                        f"/payroll/employees/update/{valid_employee_id}",
+                        data={
+                            "name": "4Q Valid Employee",
+                            "role": "Nurses",
+                            "pay_type": "hourly",
+                            "pay_rate": "1400",
+                            "status": "active",
+                            "hire_date": "2099-12-31",
+                        },
+                    )
+            except RuntimeError as exc:
+                _check(
+                    str(exc) == "synthetic 4Q post-history failure",
+                    "payroll 4Q forced rollback raised an unexpected error",
+                )
+            else:
+                raise AssertionError("payroll 4Q forced rollback did not fail")
+            _check(
+                _payroll_4q_snapshot() == before_forced_failure,
+                "payroll 4Q forced failure did not roll back rate history and employee update",
+            )
+
+            invalid_import_workbook = _payroll_workbook_bytes([
+                ("4Q Invalid Import Employee", "600 Nurse /MA", 100.0),
+            ])
+            invalid_assignment_workbook = _payroll_workbook_bytes([
+                ("4Q Invalid Assignment Employee", "600 Nurse /MA", 100.0),
+            ])
+            forced_failure_workbook = _payroll_workbook_bytes([
+                ("4Q Invalid Import Employee", "600 Nurse /MA", 100.0),
+            ])
+            with tempfile.TemporaryDirectory(prefix="payroll_4q_") as payroll_4q_dir, patch.object(
+                payroll_routes, "_TEMP_DIR", payroll_4q_dir
+            ):
+                original_socket = socket.socket
+
+                def _deny_payroll_4q_network(*_args, **_kwargs):
+                    raise AssertionError("payroll 4Q attempted outbound networking")
+
+                socket.socket = _deny_payroll_4q_network
+                try:
+                    _, _, invalid_role_key = _payroll_preview(
+                        payroll_4q_client, invalid_import_workbook, "4q-invalid-role.xlsx"
+                    )
+                    before_invalid_role = _payroll_4q_snapshot()
+                    invalid_role_response = payroll_4q_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": invalid_role_key,
+                            "assign_4Q Invalid Import Employee": "new",
+                            "new_role_4Q Invalid Import Employee": "Unknown",
+                        },
+                        follow_redirects=True,
+                    )
+                    _check(
+                        invalid_role_response.status_code == 200
+                        and "valid employee role" in invalid_role_response.get_data(as_text=True)
+                        and _payroll_4q_snapshot() == before_invalid_role,
+                        "payroll 4Q invalid import role changed payroll rows",
+                    )
+
+                    _, _, forged_name_key = _payroll_preview(
+                        payroll_4q_client, invalid_assignment_workbook, "4q-invalid-id.xlsx"
+                    )
+                    before_forged_name = _payroll_4q_snapshot()
+                    forged_name_response = payroll_4q_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": forged_name_key,
+                            "assign_Forged Payroll Employee": "new",
+                            "new_role_Forged Payroll Employee": "Nurses",
+                        },
+                        follow_redirects=True,
+                    )
+                    _check(
+                        forged_name_response.status_code == 200
+                        and "valid payroll employee assignment" in forged_name_response.get_data(as_text=True)
+                        and _payroll_4q_snapshot() == before_forged_name,
+                        "payroll 4Q forged import assignment changed payroll rows",
+                    )
+
+                    _, _, duplicate_name_key = _payroll_preview(
+                        payroll_4q_client, invalid_assignment_workbook, "4q-duplicate-name.xlsx"
+                    )
+                    before_duplicate_name = _payroll_4q_snapshot()
+                    duplicate_name_response = payroll_4q_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": duplicate_name_key,
+                            "assign_4Q Invalid Assignment Employee": "new",
+                            "new_role_4Q Invalid Assignment Employee": "Nurses",
+                            "assign_4q invalid assignment employee": "new",
+                            "new_role_4q invalid assignment employee": "Nurses",
+                        },
+                        follow_redirects=True,
+                    )
+                    _check(
+                        duplicate_name_response.status_code == 200
+                        and "only once" in duplicate_name_response.get_data(as_text=True)
+                        and _payroll_4q_snapshot() == before_duplicate_name,
+                        "payroll 4Q duplicate normalized assignment changed payroll rows",
+                    )
+
+                    _, _, invalid_id_key = _payroll_preview(
+                        payroll_4q_client, invalid_assignment_workbook, "4q-invalid-id.xlsx"
+                    )
+                    before_invalid_id = _payroll_4q_snapshot()
+                    invalid_id_response = payroll_4q_client.post(
+                        "/payroll/import/save",
+                        data={
+                            "temp_key": invalid_id_key,
+                            "assign_4Q Invalid Assignment Employee": "999999999",
+                        },
+                        follow_redirects=True,
+                    )
+                    _check(
+                        invalid_id_response.status_code == 200
+                        and "valid existing employee" in invalid_id_response.get_data(as_text=True)
+                        and _payroll_4q_snapshot() == before_invalid_id,
+                        "payroll 4Q invalid import identifier changed payroll rows",
+                    )
+
+                    _, _, forced_failure_key = _payroll_preview(
+                        payroll_4q_client,
+                        forced_failure_workbook,
+                        "4q-forced-failure.xlsx",
+                    )
+                    conn_payroll = get_connection("company")
+                    conn_payroll.execute(
+                        "CREATE TRIGGER payroll_4q_forced_entry_failure "
+                        "BEFORE INSERT ON payroll_entries "
+                        "WHEN NEW.source_filename='4q-forced-failure.xlsx' "
+                        "BEGIN SELECT RAISE(ABORT, 'synthetic 4Q entry failure'); END"
+                    )
+                    conn_payroll.commit()
+                    conn_payroll.close()
+                    before_import_failure = _payroll_4q_snapshot()
+                    try:
+                        payroll_4q_client.post(
+                            "/payroll/import/save",
+                            data={
+                                "temp_key": forced_failure_key,
+                                "assign_4Q Invalid Import Employee": "new",
+                                "new_role_4Q Invalid Import Employee": "Nurses",
+                            },
+                        )
+                    except sqlite3_module.IntegrityError as exc:
+                        _check(
+                            "synthetic 4Q entry failure" in str(exc),
+                            "payroll 4Q import rollback raised an unexpected error",
+                        )
+                    else:
+                        raise AssertionError(
+                            "payroll 4Q import rollback did not force a persistence failure"
+                        )
+                    finally:
+                        conn_payroll = get_connection("company")
+                        conn_payroll.execute(
+                            "DROP TRIGGER IF EXISTS payroll_4q_forced_entry_failure"
+                        )
+                        conn_payroll.commit()
+                        conn_payroll.close()
+                    _check(
+                        _payroll_4q_snapshot() == before_import_failure,
+                        "payroll 4Q import failure did not roll back roster and payroll rows",
+                    )
+                    _check(
+                        not any(Path(payroll_4q_dir).iterdir()),
+                        "payroll 4Q rejected import retained a one-use payload",
+                    )
+                finally:
+                    socket.socket = original_socket
+
+        conn_payroll = get_connection("company")
+        conn_payroll.execute(
+            "DELETE FROM employees WHERE name IN ({})".format(
+                ",".join("?" for _ in payroll_4q_names)
+            ),
+            payroll_4q_names,
+        )
+        conn_payroll.commit()
+        remaining_4q_rows = conn_payroll.execute(
+            "SELECT "
+            "(SELECT COUNT(*) FROM employees WHERE name IN ({})), "
+            "(SELECT COUNT(*) FROM payroll_entries WHERE source_filename LIKE '4q-%')".format(
+                ",".join("?" for _ in payroll_4q_names)
+            ),
+            payroll_4q_names,
+        ).fetchone()
+        _check(tuple(remaining_4q_rows) == (0, 0),
+               "payroll 4Q exact database cleanup failed")
+        conn_payroll.close()
+        print("   ✅ Roster domains, decimal rates, zero-mutation rejection, valid history, rollback, import IDs, isolation, denied-network, and cleanup passed")
 
         # ── 8c. Luxe Legacy downstream selection boundary ──────────
         print("\n8c. Luxe Legacy downstream selection boundary…")

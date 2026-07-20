@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Close durable and production-health-verified work block 4P-R and prepare Task 1M.4 for a separate just-in-time planning pass. No 4Q implementation is authorized.
+Publish the exact verified work block 4Q source set through authorized work block 4Q-R, observe only its automatic Fly deployment, verify credential-free production health, and publish a sanitized closeout without starting a second deployment.
 
 ## Current Phase
 
@@ -10,19 +10,47 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4P-R: Payroll Import Integrity Durability And Release — complete, durable on `main`, automatically deployed, and credential-free production health verified.
+Work block 4Q-R: Atomic Payroll Roster Validation Durability And Release — active on `codex/atomic-payroll-roster-validation` under Ryan's direct commit-and-push-to-main authorization.
 
 ## Current Task
 
-Phase 4 Task 1M.4: validate employee roster writes atomically — current for a separate work-block planning pass only. Task 1M.5 remains planned, and no 4Q implementation is authorized.
+Phase 4 Task 1M.4: validate employee roster writes atomically — complete locally through work block 4Q and now in its exact-scope 4Q-R durability and automatic-release step. Task 1M.5 remains planned and excluded.
 
 ## Owner
 
-Ryan owns the next Task 1M.4 scope and confirmation decision. Codex Desktop owns later confirmed planning, implementation, verification, and Runway OS stewardship.
+Codex Desktop owns exact-path staging, source commit, fast-forward main publication, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
 
 ## Current Action
 
-Define and confirm one bounded Task 1M.4 work block before implementation. Keep Task 1M.5, real payroll/HR data, retained uploads, credentials, production/demo, live systems, GitHub durability, deployment, and both preserved untracked files outside scope unless a later block explicitly authorizes them.
+Finish the 4Q-R preflight, publish one source commit directly to `main`, attribute and observe only the automatic Fly Deploy, verify credential-free `/health`, then publish a command-center-only `[skip actions]` closeout.
+
+## Work Block 4Q-R Contract
+
+- Include the exact verified ten-path 4Q application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/atomic-payroll-roster-validation`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real payroll/HR or financial rows, retained uploads, credentials, authenticated production pages, external calls other than GitHub/Fly status and credential-free health, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1M.5, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4Q contract; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive value, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, and preserved exclusions.
+
+## Work Block 4Q Contract
+
+- Include Task 1M.4 and only its focused Task 2 / `P3-3F-C01` regression slice.
+- Validate required normalized names, maintained roles, hourly/salary pay types, active/inactive/terminated statuses, optional real ISO hire dates, entity-local employee/assignment identifiers, optional trimmed Phoenix codes, and finite non-negative rates no greater than `$999,999,999.99` before any employee, pay-change, or payroll-entry mutation.
+- Preserve empty-rate-as-zero behavior, future hire dates, existing one-use import-payload lifecycle, current valid rate-history rules, and BFM-only access.
+- Return controlled sanitized validation outcomes without echoing protected input; rejected requests must leave payroll rows unchanged.
+- Keep Task 1M.5, duplicate-identity policy, employee deletion, compensation calculations, migrations, historical cleanup, protected data, retained uploads, credentials, production/demo, live systems, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Stop for a new product or identity policy, migration, auth/CSRF change, protected or live access, plan-changing verification failure, failed cleanup, command-center failure, or scope expansion.
+
+## Work Block 4Q Result
+
+- One shared validator now governs manual create, manual update, and import-created employee rows before mutation.
+- Maintained role, pay-type, status, exact optional-date, entity-local assignment, payload-linked name, optional Phoenix-code, and bounded decimal-rate rules return controlled sanitized outcomes.
+- Empty rates remain zero, future hire dates remain accepted, and valid currency values round deterministically to cents.
+- Invalid create, update, and import requests preserve complete employee, pay-change, and payroll-entry snapshots.
+- Forced post-history and post-employee import failures prove their whole transactions roll back without partial roster or payroll rows.
+- The 4P one-use payload contract remains intact; rejected import saves remove only their exact payload.
+- Baseline and final full smoke suites, Python compilation, denied networking, exact cleanup, JSON, whitespace, dashboard, health, and rendered inspection pass locally.
+- No migration, template, protected data, retained upload, external call, GitHub durability, deployment, or live action occurred.
 
 ## Work Block 4P-R Result
 
@@ -119,8 +147,9 @@ Define and confirm one bounded Task 1M.4 work block before implementation. Keep 
 - Production `/health` HTTP 200 and missing-bearer `/plaid/sync-all` HTTP 401 with redirects disabled: pass.
 - Work block 4O source commit, automatic Fly run/job, and credential-free production `/health`: pass.
 - Work block 4M baseline and final full smoke suites, Python compilation, all-entity vendor-payment matrix, two-thread contention, rollback, denied networking, and cleanup: pass locally.
+- Work block 4Q baseline and final full smoke suites, roster-domain and decimal-rate matrices, zero-mutation snapshots, forced manual/import rollback, BFM-only isolation, denied networking, and cleanup: pass locally.
 - Final JSON validation, dashboard refresh, command-center health, `git diff --check`, dashboard inspection, and explicit worktree review: pass locally.
 
 ## Next Report Point
 
-Report the 4P source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the Task 1M.4 planning gate.
+Report the 4Q validation contract, changed paths, rejection and rollback matrix, preserved valid behavior, full verification, cleanup, local branch state, preserved exclusions, and separate 4Q-R publication gate.

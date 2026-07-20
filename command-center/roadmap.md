@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after durable release and credential-free production health verification of work block 4M-R; Task 1M is current for a separate just-in-time work-block planning pass
+Status: active after local completion and verification of work block 4Q; 4Q durability and Task 1M.5 implementation remain separately gated
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -914,14 +914,14 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.1: Prevent duplicate employees during payroll import.** Stabilize exact existing-employee assignment across preview and save, preserve explicit reassignment and genuinely unmatched creation, and pair `P3-3F-02` with its focused `P3-3F-C01` coverage slice. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.2: End abandoned payroll-preview payload retention.** Add an explicit cancel path that consumes only its exact temporary payload and prove save, cancel, missing, reused, expired, malformed, unrelated-payload, and cleanup behavior for `P3-3F-05` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
-  - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: current for a separately confirmed work-block planning pass.
+  - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done and verified locally through work block 4Q; release remains separate.
   - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: planned under Ryan's confirmed no-annualization default.
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
-- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice of `P3-3G-C01`, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, and 4M completed its vendor-payment matching slice.
+- **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice of `P3-3G-C01`, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, and 4Q completed its roster-validation slice.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4M-R; every future release remains separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4P-R; every future release remains separately gated.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
@@ -1950,6 +1950,58 @@ Verification: exact path and sensitive-addition review; maintained synthetic sui
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and the Task 1M.4 planning gate.
 
 Result: the exact twelve-path 4P source set was committed as `4b2775c`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29753360363` and deploy job `88389339278` passed every reported step for exact source SHA `4b2775c403a631512d49d0fc0b8720a8495b5183`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, and no protected data, retained upload, credential, authenticated production page, external call, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1M.4 implementation, force push, or unrelated action occurred. Evidence: `command-center/logs/2026-07-20-payroll-import-integrity-release-4p-r.md`.
+
+### Confirmed Work Block 4Q: Atomic Payroll Roster Validation
+
+Status: done and verified locally on 2026-07-20; release not authorized
+
+Included: Task 1M.4 plus only the focused Task 2 coverage for `P3-3F-04` and its matching `P3-3F-C01` slice. Validate every manual-create, manual-update, and import-created employee row before mutation; preserve valid employee and rate-history behavior; return controlled sanitized rejection outcomes; and prove invalid or failed requests leave employees, pay changes, and payroll entries unchanged.
+
+Excluded: Task 1M.5; Tasks 1N-1P; the remainder of Task 2; Tasks 3-4; employee deletion; duplicate-identity or roster-deduplication policy changes; compensation calculations; migrations or historical cleanup; real payroll/HR or financial rows; retained uploads; credentials; authentication or CSRF changes; production/demo; external calls; live systems; GitHub durability; deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Why this grouping: manual create, manual update, and import-created roster rows share one employee-domain contract, one BFM-only mutation boundary, and one temporary-database verification path. Their focused regression coverage is required to prove validation and rate-history behavior are atomic. Task 1M.5 changes compensation calculations and display semantics through a different verification path and remains separate.
+
+Owner and recommended agent: Codex Desktop in the current task. This sensitive payroll block couples route behavior, transactional integrity, maintained synthetic verification, cleanup, and Runway OS stewardship. External workers remain inactive, and no second opinion is needed because the accepted contract is deterministic with explicit checks.
+
+Runner path: current Codex task on local branch `codex/atomic-payroll-roster-validation`. Codex owns implementation, verification, cleanup, final intake, dashboard currency, and the decision whether 4Q satisfies the confirmed block.
+
+Expected surfaces: `web/routes/payroll.py`; focused additions to `scripts/smoke_test.py`; a concise payroll-roster validation contract; a sanitized 4Q closeout log; matching issue dispositions; and Runway OS roadmap, now, decisions, state, and dashboard. Templates change only if the existing flash surface cannot return accessible controlled feedback. `core/db.py` is expected to remain unchanged.
+
+Defaults: require a non-empty normalized name; use the maintained `ROLE_ORDER` role domain, `hourly`/`salary` pay types, and `active`/`inactive`/`terminated` statuses; accept an empty or real ISO `YYYY-MM-DD` hire date without forbidding future dates; require employee and assignment IDs to resolve inside BFM; keep Phoenix codes optional, trimmed, and nullable without a new whitelist; preserve empty-rate-as-zero; parse currency through decimal cents and reject non-numeric, non-finite, negative, or greater-than-`$999,999,999.99` rates; preserve the one-use import-payload lifecycle; and keep commit, push, release, and live verification separately gated.
+
+Blocking questions: none.
+
+Stop conditions: implementation needs real payroll/HR data, a retained upload, credentials, migration, identity-policy decision, authentication or CSRF change, production/demo, external access, or another live action; validation cannot preserve valid import or rate-history behavior; work expands into Task 1M.5 or another repair family; focused or full verification materially changes the plan; cleanup cannot be proven; command-center refresh or health fails; or either preserved untracked file would be touched.
+
+Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; focused valid and invalid manual-create, manual-update, and import-created employee cases; role, pay-type, status, date, employee/assignment-ID, name, and empty/finite/negative/overflow rate matrices; before/after row snapshots proving rejected requests create no employee, pay-change, or payroll-entry mutation; forced failure proving employee update and rate-history insertion roll back together; valid zero-to-positive and positive-to-positive history behavior; BFM-only isolation; denied networking; exact temporary cleanup; Python compilation; JSON validation; dashboard refresh; command-center health; `git diff --check`; dashboard inspection; and explicit worktree review.
+
+Dashboard closeout: update human-readable sources first; align `state.json`; refresh and health-check the dashboard; and record 4Q as done only if every required check passes.
+
+Durability: local-only. No commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action is included.
+
+Report point: return the exact validation contract, changed paths, rejection and rollback matrix, preserved valid behavior, focused and full synthetic results, cleanup evidence, local branch state, preserved exclusions, and the separate publication gate.
+
+Suggested next work block: 4Q-R for exact-scope durability and automatic release if separately authorized; after that gate, separately propose 4R for Task 1M.5 like-for-like payroll peer comparisons.
+
+Result: one shared pre-mutation validator now governs manual create, manual update, and import-created employee rows. Maintained role, pay-type, status, exact optional-date, entity-local assignment, payload-linked name, optional Phoenix-code, and bounded decimal-rate rules return controlled sanitized outcomes; empty rates, future dates, and valid rate-history behavior remain intact. Maintained coverage proves invalid create/update/import requests leave complete payroll snapshots unchanged, positive-to-positive and zero-to-positive history rules remain explicit, forged assignment names and missing IDs reject, rejected payloads are consumed exactly once, and forced post-history plus post-employee persistence failures roll back whole transactions. Baseline and final smoke suites, Python compilation, BFM-only isolation, denied networking, exact cleanup, JSON, whitespace, dashboard refresh, health, and rendered inspection pass. No migration, template, protected data, retained upload, external call, GitHub durability, deployment, or live action occurred. Evidence: `command-center/payroll-roster-validation-contract.md`, `command-center/logs/2026-07-20-atomic-payroll-roster-validation-4q.md`, `web/routes/payroll.py`, and `scripts/smoke_test.py`.
+
+### Confirmed Work Block 4Q-R: Atomic Payroll Roster Validation Durability And Release
+
+Status: active under Ryan's direct commit-and-push-to-main authorization on 2026-07-20
+
+Included: the exact verified ten-path 4Q application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/atomic-payroll-roster-validation`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real payroll/HR or financial rows; retained uploads; credentials; authenticated production pages; external calls other than GitHub/Fly status and credential-free health; manual workflow dispatch or rerun; workflow edits; non-automatic Fly changes; downstream access or writes; migrations; Task 1M.5; broader Task 2; Tasks 3-4 except this exact 4Q durability action; unrelated repairs; force push; and recovery outside the exact fast-forward publish path.
+
+Owner and recommended agent: Codex Desktop. This release requires exact-path Git stewardship, sensitive-addition review, direct-main fast-forward safety, automatic Fly observation, credential-free health verification, and final Runway OS closeout.
+
+Defaults: no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4Q contract and implementation; observe only the automatic Fly deployment caused by the main push; verify only credential-free `/health`; publish the release closeout with `[skip actions]` so it cannot trigger a second deployment; and leave Task 1M.5 planning separate.
+
+Stop conditions: the intended diff contains an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the exact authorized fast-forward path.
+
+Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final main alignment, preserved exclusions, and the separate Task 1M.5 planning gate.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

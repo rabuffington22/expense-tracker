@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import tempfile
 import time
 import uuid
 from datetime import date, datetime
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
-from flask import Blueprint, g, redirect, render_template, request, url_for, jsonify
+from flask import Blueprint, flash, g, jsonify, redirect, render_template, request, url_for
 from markupsafe import escape
 
 from core.db import get_connection
@@ -47,6 +49,92 @@ ROLE_COLORS: dict[str, str] = {
 }
 
 ROLE_ORDER = ["Providers", "Nurses", "Scribes", "Front Office", "Office Manager", "HR", "Owner"]
+PAY_TYPES = {"hourly", "salary"}
+EMPLOYEE_STATUSES = {"active", "inactive", "terminated"}
+MAX_PAY_RATE_CENTS = 99_999_999_999
+
+
+class EmployeeValidationError(ValueError):
+    """A controlled employee-roster validation failure."""
+
+
+def _normalize_employee_name(value: str | None) -> str:
+    return (value or "").strip()
+
+
+def _employee_name_key(value: str | None) -> str:
+    return _normalize_employee_name(value).casefold()
+
+
+def _parse_pay_rate_cents(value: str | None) -> int:
+    raw_value = (value or "").strip().replace(",", "").replace("$", "")
+    if not raw_value:
+        return 0
+    try:
+        amount = Decimal(raw_value)
+    except (InvalidOperation, ValueError):
+        raise EmployeeValidationError("Enter a valid pay rate.") from None
+    if not amount.is_finite() or amount < 0:
+        raise EmployeeValidationError("Pay rate must be a finite non-negative amount.")
+    if amount > Decimal(MAX_PAY_RATE_CENTS) / 100:
+        raise EmployeeValidationError("Pay rate exceeds the supported maximum.")
+    try:
+        cents = (amount * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+    except InvalidOperation:
+        raise EmployeeValidationError("Pay rate exceeds the supported maximum.") from None
+    return int(cents)
+
+
+def _validate_hire_date(value: str | None) -> str | None:
+    hire_date = (value or "").strip()
+    if not hire_date:
+        return None
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", hire_date):
+        raise EmployeeValidationError("Enter a valid hire date.")
+    try:
+        date.fromisoformat(hire_date)
+    except ValueError:
+        raise EmployeeValidationError("Enter a valid hire date.") from None
+    return hire_date
+
+
+def _validate_employee_fields(
+    *,
+    name: str | None,
+    role: str | None,
+    pay_type: str | None,
+    pay_rate: str | None,
+    hire_date: str | None = None,
+    status: str | None = "active",
+    phoenix_job_code: str | None = None,
+) -> dict:
+    """Normalize and validate one employee row before any mutation."""
+    normalized_name = _normalize_employee_name(name)
+    normalized_role = (role or "").strip()
+    normalized_pay_type = (pay_type or "").strip()
+    normalized_status = (status or "").strip()
+    if not normalized_name:
+        raise EmployeeValidationError("Employee name is required.")
+    if normalized_role not in ROLE_ORDER:
+        raise EmployeeValidationError("Select a valid employee role.")
+    if normalized_pay_type not in PAY_TYPES:
+        raise EmployeeValidationError("Select a valid pay type.")
+    if normalized_status not in EMPLOYEE_STATUSES:
+        raise EmployeeValidationError("Select a valid employee status.")
+    return {
+        "name": normalized_name,
+        "role": normalized_role,
+        "pay_type": normalized_pay_type,
+        "pay_rate_cents": _parse_pay_rate_cents(pay_rate),
+        "hire_date": _validate_hire_date(hire_date),
+        "status": normalized_status,
+        "phoenix_job_code": (phoenix_job_code or "").strip() or None,
+    }
+
+
+def _reject_employee_input(exc: EmployeeValidationError):
+    flash(str(exc), "danger")
+    return redirect(url_for("payroll.index"))
 
 
 def _sanitize_temp_key(key: str) -> str:
@@ -304,31 +392,33 @@ def index():
 @bp.route("/employees/create", methods=["POST"])
 def create_employee():
     """Add a new employee."""
-    name = request.form.get("name", "").strip()
-    role = request.form.get("role", "").strip()
-    pay_type = request.form.get("pay_type", "hourly")
-    pay_rate = request.form.get("pay_rate", "0").replace(",", "").replace("$", "")
-    hire_date = request.form.get("hire_date", "")
-    phoenix_job_code = request.form.get("phoenix_job_code", "").strip()
-    notes = request.form.get("notes", "").strip()
-
-    if not name or not role:
-        return redirect(url_for("payroll.index"))
-
     try:
-        pay_rate_cents = int(round(float(pay_rate) * 100))
-    except (ValueError, TypeError):
-        pay_rate_cents = 0
+        employee = _validate_employee_fields(
+            name=request.form.get("name", ""),
+            role=request.form.get("role", ""),
+            pay_type=request.form.get("pay_type", "hourly"),
+            pay_rate=request.form.get("pay_rate", ""),
+            hire_date=request.form.get("hire_date", ""),
+            status="active",
+            phoenix_job_code=request.form.get("phoenix_job_code", ""),
+        )
+    except EmployeeValidationError as exc:
+        return _reject_employee_input(exc)
+    notes = request.form.get("notes", "").strip()
 
     conn = get_connection(g.entity_key)
     try:
         conn.execute(
             "INSERT INTO employees (name, role, phoenix_job_code, pay_type, "
             "pay_rate_cents, hire_date, notes) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (name, role, phoenix_job_code or None, pay_type,
-             pay_rate_cents, hire_date or None, notes or None),
+            (employee["name"], employee["role"], employee["phoenix_job_code"],
+             employee["pay_type"], employee["pay_rate_cents"],
+             employee["hire_date"], notes or None),
         )
         conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 
@@ -346,33 +436,45 @@ def update_employee(emp_id: int):
         if not old:
             return redirect(url_for("payroll.index"))
 
-        name = request.form.get("name", old["name"]).strip()
-        role = request.form.get("role", old["role"]).strip()
-        pay_type = request.form.get("pay_type", old["pay_type"])
-        pay_rate = request.form.get("pay_rate", "0").replace(",", "").replace("$", "")
-        hire_date = request.form.get("hire_date", old["hire_date"] or "")
-        status = request.form.get("status", old["status"])
-        phoenix_job_code = request.form.get("phoenix_job_code", old["phoenix_job_code"] or "").strip()
+        try:
+            employee = _validate_employee_fields(
+                name=request.form.get("name", old["name"]),
+                role=request.form.get("role", old["role"]),
+                pay_type=request.form.get("pay_type", old["pay_type"]),
+                pay_rate=request.form.get(
+                    "pay_rate", str(Decimal(old["pay_rate_cents"]) / 100)
+                ),
+                hire_date=request.form.get("hire_date", old["hire_date"] or ""),
+                status=request.form.get("status", old["status"]),
+                phoenix_job_code=request.form.get(
+                    "phoenix_job_code", old["phoenix_job_code"] or ""
+                ),
+            )
+        except EmployeeValidationError as exc:
+            return _reject_employee_input(exc)
         notes = request.form.get("notes", old["notes"] or "").strip()
 
-        try:
-            new_rate_cents = int(round(float(pay_rate) * 100))
-        except (ValueError, TypeError):
-            new_rate_cents = old["pay_rate_cents"]
-
         # Log rate change if pay rate changed
-        if new_rate_cents != old["pay_rate_cents"] and old["pay_rate_cents"] > 0:
+        if (employee["pay_rate_cents"] != old["pay_rate_cents"]
+                and old["pay_rate_cents"] > 0):
             eff_date = date.today().strftime("%Y-%m-%d")
-            _log_pay_change(conn, emp_id, old["pay_rate_cents"], new_rate_cents, eff_date)
+            _log_pay_change(
+                conn, emp_id, old["pay_rate_cents"],
+                employee["pay_rate_cents"], eff_date
+            )
 
         conn.execute(
             "UPDATE employees SET name=?, role=?, phoenix_job_code=?, pay_type=?, "
             "pay_rate_cents=?, hire_date=?, status=?, notes=?, "
             "updated_at=datetime('now') WHERE id=?",
-            (name, role, phoenix_job_code or None, pay_type,
-             new_rate_cents, hire_date or None, status, notes or None, emp_id),
+            (employee["name"], employee["role"], employee["phoenix_job_code"],
+             employee["pay_type"], employee["pay_rate_cents"],
+             employee["hire_date"], employee["status"], notes or None, emp_id),
         )
         conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 
@@ -464,11 +566,11 @@ def import_parse():
         employees_by_name: dict[str, list[dict]] = {}
         for employee in employees:
             employees_by_name.setdefault(
-                employee["name"].casefold().strip(), []
+                _employee_name_key(employee["name"]), []
             ).append(employee)
         for employee in unique_employees:
             exact_matches = employees_by_name.get(
-                employee["name"].casefold().strip(), []
+                _employee_name_key(employee["name"]), []
             )
             employee["exact_matches"] = exact_matches
             employee["matched_employee"] = (
@@ -539,15 +641,31 @@ def import_save():
         existing_employees: dict[str, list[dict]] = {}
         for employee in employee_rows:
             existing_employees.setdefault(
-                employee["name"].casefold().strip(), []
+                _employee_name_key(employee["name"]), []
             ).append(employee)
+        entries_by_name = {
+            _employee_name_key(entry.get("name")): entry
+            for entry in entries
+            if _employee_name_key(entry.get("name"))
+        }
 
-        # Collect assignments from form
+        # Validate the full roster-assignment batch before the first write.
         assignments: dict[str, int] = {}  # lowercase name -> employee_id
+        pending_new_employees: list[tuple[str, dict]] = []
+        seen_assignment_names: set[str] = set()
         for key, val in request.form.items():
             if key.startswith("assign_"):
                 emp_name = key[7:]  # Remove "assign_" prefix
-                normalized_name = emp_name.casefold().strip()
+                normalized_name = _employee_name_key(emp_name)
+                if normalized_name not in entries_by_name:
+                    raise EmployeeValidationError(
+                        "Select a valid payroll employee assignment."
+                    )
+                if normalized_name in seen_assignment_names:
+                    raise EmployeeValidationError(
+                        "Select each payroll employee only once."
+                    )
+                seen_assignment_names.add(normalized_name)
                 if val == "new":
                     exact_matches = existing_employees.get(normalized_name, [])
                     if len(exact_matches) == 1:
@@ -563,37 +681,52 @@ def import_save():
                     if not role:
                         continue
                     # Find Phoenix job code from entries
-                    job_code = ""
-                    for e in entries:
-                        if e["name"] == emp_name:
-                            job_code = e.get("phoenix_job_code", "")
-                            break
-                    cur = conn.execute(
-                        "INSERT INTO employees (name, role, phoenix_job_code, pay_type, "
-                        "pay_rate_cents) VALUES (?, ?, ?, 'hourly', 0)",
-                        (emp_name, role, job_code or None),
+                    job_code = entries_by_name[normalized_name].get(
+                        "phoenix_job_code", ""
                     )
-                    assignments[normalized_name] = cur.lastrowid
-                    new_employee = {
-                        "id": cur.lastrowid,
-                        "name": emp_name,
-                    }
-                    existing_employee_ids.add(cur.lastrowid)
-                    existing_employees[normalized_name] = [new_employee]
+                    employee = _validate_employee_fields(
+                        name=emp_name,
+                        role=role,
+                        pay_type="hourly",
+                        pay_rate="0",
+                        status="active",
+                        phoenix_job_code=job_code,
+                    )
+                    pending_new_employees.append((normalized_name, employee))
                 elif val:
                     try:
                         employee_id = int(val)
                     except (ValueError, TypeError):
-                        pass
-                    else:
-                        if employee_id in existing_employee_ids:
-                            assignments[normalized_name] = employee_id
+                        raise EmployeeValidationError(
+                            "Select a valid existing employee."
+                        ) from None
+                    if employee_id not in existing_employee_ids:
+                        raise EmployeeValidationError(
+                            "Select a valid existing employee."
+                        )
+                    assignments[normalized_name] = employee_id
+
+        for normalized_name, employee in pending_new_employees:
+            cur = conn.execute(
+                "INSERT INTO employees (name, role, phoenix_job_code, pay_type, "
+                "pay_rate_cents, hire_date, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (employee["name"], employee["role"], employee["phoenix_job_code"],
+                 employee["pay_type"], employee["pay_rate_cents"],
+                 employee["hire_date"], employee["status"]),
+            )
+            assignments[normalized_name] = cur.lastrowid
+            new_employee = {
+                "id": cur.lastrowid,
+                "name": employee["name"],
+            }
+            existing_employee_ids.add(cur.lastrowid)
+            existing_employees[normalized_name] = [new_employee]
 
         # Match entries to employees and insert
         inserted = 0
         skipped = 0
         for entry in entries:
-            e_name = entry["name"].casefold().strip()
+            e_name = _employee_name_key(entry["name"])
             emp_id = assignments.get(e_name)
 
             # Try existing employees if not in assignments
@@ -607,18 +740,21 @@ def import_save():
                 continue
 
             amount_cents = int(round(entry["amount"] * 100))
-            try:
-                conn.execute(
-                    "INSERT OR IGNORE INTO payroll_entries "
-                    "(employee_id, paycheck_date, amount_cents, source_filename) "
-                    "VALUES (?, ?, ?, ?)",
-                    (emp_id, entry["paycheck_date"], amount_cents, filename),
-                )
-                inserted += 1
-            except Exception:
-                skipped += 1
+            conn.execute(
+                "INSERT OR IGNORE INTO payroll_entries "
+                "(employee_id, paycheck_date, amount_cents, source_filename) "
+                "VALUES (?, ?, ?, ?)",
+                (emp_id, entry["paycheck_date"], amount_cents, filename),
+            )
+            inserted += 1
 
         conn.commit()
+    except EmployeeValidationError as exc:
+        conn.rollback()
+        return _reject_employee_input(exc)
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()
 
