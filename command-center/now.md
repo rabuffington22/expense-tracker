@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Close completed work block 4Q-R after exact-path durability, successful automatic deployment, and credential-free production health, then return Task 1M.5 to a separate planning and confirmation gate.
+Publish the exact verified 4R payroll peer-comparison set directly to `main`, observe its automatic Fly deployment, verify credential-free production health, and close without triggering a second deployment.
 
 ## Current Phase
 
@@ -10,19 +10,47 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4Q-R: Atomic Payroll Roster Validation Durability And Release — complete, durable on `main`, automatically deployed, and credential-free production health verified.
+Work block 4R-R: Like-For-Like Payroll Peer Comparisons Durability And Release — active under Ryan's direct commit-and-push instruction.
 
 ## Current Task
 
-Phase 4 Task 1M.5: separate payroll peer comparisons by compensation unit — current for a new bounded planning pass only. No Task 1M.5 implementation is authorized.
+Phase 4 Task 4: publish and verify explicitly approved repairs — current only for the exact verified 4R-R release scope. Task 1N remains planned and unauthorized.
 
 ## Owner
 
-Ryan owns confirmation or adjustment of the next Task 1M.5 work block. Codex Desktop owns the planning pass and Runway OS stewardship.
+Codex Desktop owns the exact-path Git release, automatic-deployment observation, credential-free health check, and sanitized closeout. Ryan owns any recovery or scope expansion.
 
 ## Current Action
 
-Publish this sanitized command-center-only `[skip actions]` closeout, verify final `main` alignment and no second Fly deployment, then report the durable 4Q-R result and separate Task 1M.5 gate.
+Re-run the maintained checks, stage and commit the exact 4R source set, fast-forward and push `main`, observe the attributable automatic deployment, verify `/health`, and publish one `[skip actions]` command-center closeout.
+
+## Work Block 4R-R Contract
+
+- Include the exact verified eleven-path 4R application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/payroll-compensation-cohorts`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real payroll/HR or financial rows, retained uploads, credentials, authenticated production pages, external calls other than GitHub/Fly status and credential-free health, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1N, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4R contract; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive value, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, and preserved exclusions.
+
+## Work Block 4R Contract
+
+- Include Task 1M.5 and only the focused Task 2 / `P3-3F-C01` regression slice required for `P3-3F-03`.
+- Define a peer as another active employee with the same role and pay type; exclude the selected employee from their own average, keep inactive rows out of every cohort, and allow an inactive selected employee to compare against current active peers.
+- Never annualize, normalize, or mix hourly and salary values. Preserve real zero-rate averages distinctly from an empty cohort, use an explicit empty value when no comparable peer exists, and label the UI with the matching role/pay-type contract and unit.
+- Keep Tasks 1M.1-1M.4, Tasks 1N-1P, the remainder of Task 2, Tasks 3-4, employee import/identity/deletion/validation/pay-history behavior, migrations, historical cleanup, protected data, retained uploads, credentials, production/demo, external calls, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Stop if correct behavior needs annualization, a new compensation policy, protected or live data, a migration, historical cleanup, authentication or CSRF changes, another payroll/calculation task, plan-changing verification changes, failed cleanup, failed command-center checks, or either preserved untracked file.
+- Verify baseline and final maintained smoke, focused temporary-BFM mixed/multiple/single/inactive/zero/empty cohort cases, JSON and rendered unit/label/empty-state behavior, Personal/LL denial and unchanged state, denied networking, exact cleanup, Python compilation, JSON, whitespace, dashboard refresh, health, rendered inspection, and final worktree scope.
+- Report the exact cohort contract, visible behavior, focused and full verification, changed paths, preserved exclusions, local branch state, and the separate publication gate.
+
+## Work Block 4R Result
+
+- Peer averages use other active employees with the same role and pay type; the selected employee and inactive rows never contribute.
+- An inactive selected employee can still compare against current active peers, while hourly and salary values are never mixed, converted, or annualized.
+- Employee detail returns a numeric average and peer count when comparable peers exist, including a real zero average, and returns an explicit empty value otherwise.
+- The modal states the same-role/same-pay-type basis, preserves `/hr` and `/yr`, and displays `No comparable peers` for an empty cohort.
+- Baseline and final full smoke suites passed, including maintained mixed, multiple, self-exclusion, inactive, zero-rate, empty, BFM-only, denied-network, and exact-cleanup checks.
+- Disposable-browser verification rendered `$30.00/hr`, `$120,000/yr`, and the explicit empty state from synthetic data; the temporary server and database were removed.
+- No migration, protected data, retained upload, external call, GitHub durability, deployment, or live action occurred. Both pre-existing untracked files remain untouched.
 
 ## Work Block 4Q-R Contract
 

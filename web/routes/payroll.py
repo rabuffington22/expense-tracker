@@ -272,22 +272,26 @@ def _log_pay_change(conn, emp_id: int, old_cents: int, new_cents: int,
     )
 
 
-def _get_compensation_analysis(conn) -> dict:
-    """Compute per-role average pay rates for comparison."""
+def _get_compensation_analysis(conn, exclude_employee_id: int | None = None) -> dict:
+    """Compute active peer cohorts by role and compensation unit."""
     rows = conn.execute(
-        "SELECT role, pay_type, pay_rate_cents FROM employees WHERE status = 'active'"
+        "SELECT id, role, pay_type, pay_rate_cents FROM employees "
+        "WHERE status = 'active'"
     ).fetchall()
-    role_rates: dict[str, list[int]] = {}
+    cohort_rates: dict[tuple[str, str], list[int]] = {}
     for r in rows:
-        role = r["role"]
-        if role not in role_rates:
-            role_rates[role] = []
-        role_rates[role].append(r["pay_rate_cents"])
-    # Compute averages
-    role_avgs: dict[str, int] = {}
-    for role, rates in role_rates.items():
-        role_avgs[role] = round(sum(rates) / len(rates)) if rates else 0
-    return role_avgs
+        if exclude_employee_id is not None and r["id"] == exclude_employee_id:
+            continue
+        cohort = (r["role"], r["pay_type"])
+        cohort_rates.setdefault(cohort, []).append(r["pay_rate_cents"])
+
+    return {
+        cohort: {
+            "average_cents": round(sum(rates) / len(rates)),
+            "count": len(rates),
+        }
+        for cohort, rates in cohort_rates.items()
+    }
 
 
 def _get_role_spending(conn, paycheck_date: str) -> list[dict]:
@@ -508,9 +512,13 @@ def employee_detail(emp_id: int):
         emp_dict["pay_changes"] = _get_pay_changes(conn, emp_id)
         emp_dict["recent_paychecks"] = _get_recent_paychecks(conn, emp_id)
 
-        # Peer comparison
-        role_avgs = _get_compensation_analysis(conn)
-        emp_dict["peer_avg_cents"] = role_avgs.get(emp["role"], 0)
+        # Peer comparison: active employees with the same role and pay type.
+        cohorts = _get_compensation_analysis(conn, exclude_employee_id=emp_id)
+        peer_cohort = cohorts.get((emp["role"], emp["pay_type"]))
+        emp_dict["peer_avg_cents"] = (
+            peer_cohort["average_cents"] if peer_cohort else None
+        )
+        emp_dict["peer_count"] = peer_cohort["count"] if peer_cohort else 0
 
         # Days since last raise
         last_change = conn.execute(

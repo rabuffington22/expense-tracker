@@ -2917,6 +2917,122 @@ def main() -> None:
         conn_payroll.close()
         print("   ✅ Roster domains, decimal rates, zero-mutation rejection, valid history, rollback, import IDs, isolation, denied-network, and cleanup passed")
 
+        # ── 8b4. Like-for-like payroll peer comparisons ─────────────
+        print("\n8b4. Like-for-like payroll peer comparisons…")
+        payroll_4r_rows = (
+            ("4R Hourly Target", "Providers", "hourly", 1000, "active"),
+            ("4R Hourly Peer One", "Providers", "hourly", 2000, "active"),
+            ("4R Hourly Peer Two", "Providers", "hourly", 4000, "active"),
+            ("4R Hourly Inactive", "Providers", "hourly", 9900, "inactive"),
+            ("4R Salary Target", "Providers", "salary", 10000000, "active"),
+            ("4R Salary Peer", "Providers", "salary", 12000000, "active"),
+            ("4R Zero Target", "Nurses", "hourly", 5000, "active"),
+            ("4R Zero Peer", "Nurses", "hourly", 0, "active"),
+            ("4R Single Target", "Front Office", "hourly", 2500, "active"),
+            ("4R Inactive Target", "HR", "salary", 9000000, "inactive"),
+            ("4R Active Peer", "HR", "salary", 11000000, "active"),
+        )
+        payroll_4r_names = tuple(row[0] for row in payroll_4r_rows)
+        payroll_4r_baseline = {}
+        for entity_key in ("personal", "company", "luxelegacy"):
+            conn_payroll = get_connection(entity_key)
+            payroll_4r_baseline[entity_key] = tuple(
+                conn_payroll.execute(
+                    f"SELECT COUNT(*) FROM {table}"
+                ).fetchone()[0]
+                for table in ("employees", "employee_pay_changes", "payroll_entries")
+            )
+            conn_payroll.close()
+
+        conn_payroll = get_connection("company")
+        conn_payroll.executemany(
+            "INSERT INTO employees (name, role, pay_type, pay_rate_cents, status) "
+            "VALUES (?, ?, ?, ?, ?)",
+            payroll_4r_rows,
+        )
+        payroll_4r_ids = {
+            row["name"]: row["id"]
+            for row in conn_payroll.execute(
+                "SELECT id, name FROM employees WHERE name IN ({})".format(
+                    ",".join("?" for _ in payroll_4r_names)
+                ),
+                payroll_4r_names,
+            ).fetchall()
+        }
+        conn_payroll.commit()
+        conn_payroll.close()
+
+        with app.test_client() as payroll_4r_client, patch(
+            "socket.socket",
+            side_effect=AssertionError("payroll 4R attempted outbound networking"),
+        ):
+            payroll_4r_client.set_cookie("entity", "BFM")
+
+            detail_expectations = {
+                "4R Hourly Target": (3000, 2, "hourly"),
+                "4R Salary Target": (12000000, 1, "salary"),
+                "4R Zero Target": (0, 1, "hourly"),
+                "4R Single Target": (None, 0, "hourly"),
+                "4R Inactive Target": (11000000, 1, "salary"),
+            }
+            for employee_name, (expected_avg, expected_count, pay_type) in detail_expectations.items():
+                response = payroll_4r_client.get(
+                    f"/payroll/employees/detail/{payroll_4r_ids[employee_name]}"
+                )
+                payload = response.get_json()
+                _check(
+                    response.status_code == 200
+                    and payload["peer_avg_cents"] == expected_avg
+                    and payload["peer_count"] == expected_count
+                    and payload["pay_type"] == pay_type,
+                    f"payroll 4R {employee_name}: wrong peer cohort {payload}",
+                )
+
+            payroll_page = payroll_4r_client.get("/payroll/")
+            payroll_html = payroll_page.get_data(as_text=True)
+            _check(
+                payroll_page.status_code == 200
+                and "Peer Avg (same role and pay type)" in payroll_html
+                and "No comparable peers" in payroll_html
+                and "d.peer_avg_cents !== null" in payroll_html,
+                "payroll 4R display contract is missing labels or explicit empty handling",
+            )
+
+            for entity_display in ("Personal", "LL"):
+                payroll_4r_client.set_cookie("entity", entity_display)
+                denied_response = payroll_4r_client.get(
+                    f"/payroll/employees/detail/{payroll_4r_ids['4R Hourly Target']}"
+                )
+                _check(
+                    denied_response.status_code == 302,
+                    f"payroll 4R {entity_display}: detail route crossed BFM-only boundary",
+                )
+
+        conn_payroll = get_connection("company")
+        conn_payroll.execute(
+            "DELETE FROM employees WHERE name IN ({})".format(
+                ",".join("?" for _ in payroll_4r_names)
+            ),
+            payroll_4r_names,
+        )
+        conn_payroll.commit()
+        conn_payroll.close()
+
+        for entity_key in ("personal", "company", "luxelegacy"):
+            conn_payroll = get_connection(entity_key)
+            final_counts = tuple(
+                conn_payroll.execute(
+                    f"SELECT COUNT(*) FROM {table}"
+                ).fetchone()[0]
+                for table in ("employees", "employee_pay_changes", "payroll_entries")
+            )
+            conn_payroll.close()
+            _check(
+                final_counts == payroll_4r_baseline[entity_key],
+                f"payroll 4R {entity_key}: exact cleanup or entity isolation failed",
+            )
+        print("   ✅ Same-role/pay-type cohorts, self and inactive exclusion, zero/empty distinction, units, isolation, denied-network, and cleanup passed")
+
         # ── 8c. Luxe Legacy downstream selection boundary ──────────
         print("\n8c. Luxe Legacy downstream selection boundary…")
         # The maintained requirements include requests, but keep this synthetic

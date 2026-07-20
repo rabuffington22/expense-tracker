@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-20 11:53 AM CST",
+    "lastUpdated": "2026-07-20 4:00 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,26 +27,26 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work blocks 4Q and 4Q-R completed Task 1M.4 locally and durably with automatic deployment and credential-free health; Task 1M.5 is current for separate planning.",
-    "progress": 97
+    "summary": "Confirmed work block 4R-R is publishing the exact verified 4R peer-comparison set through a direct-main fast-forward, attributable automatic Fly deployment, credential-free health check, and skip-actions closeout.",
+    "progress": 98
   },
   "currentTask": {
-    "title": "Task 1M.5: Separate payroll peer comparisons by compensation unit",
-    "owner": "Ryan",
+    "title": "Task 4: Publish and verify explicitly approved repairs",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns the next just-in-time work-block planning pass and later confirmed execution",
-    "nextAction": "Define and confirm one bounded Task 1M.5 work block before implementation.",
-    "blocker": "No Task 1M.5 implementation work block is confirmed."
+    "supportingAgent": "Ryan owns any recovery or scope expansion beyond the exact authorized fast-forward release path",
+    "nextAction": "Re-run maintained checks stage and commit the exact 4R set fast-forward and push main observe the attributable automatic deployment verify credential-free health and publish one skip-actions closeout.",
+    "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-q-release",
-    "label": "4Q-R",
-    "name": "Atomic Payroll Roster Validation Durability And Release",
-    "status": "done",
+    "id": "phase-4-block-r-release",
+    "label": "4R-R",
+    "name": "Like-For-Like Payroll Peer Comparisons Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Published the exact verified 4Q set observed the automatic Fly deployment verified credential-free health and prepared the sanitized closeout",
+    "currentTask": "Publish the exact verified 4R source set observe its automatic Fly deployment verify credential-free health and publish a skip-actions closeout",
     "includedTasks": [
-      "Task 1M.4 durability and automatic release",
+      "Task 1M.5 durability and automatic release",
       "Credential-free production health verification",
       "Sanitized command-center closeout"
     ],
@@ -54,17 +54,25 @@
       "Unexpected staged path sensitive addition protected data or unrelated user change",
       "Local or remote main divergence or required force push",
       "Maintained verification automatic deployment or credential-free health failure",
-      "Closeout starts a second Fly deployment or recovery exceeds the authorized path"
+      "Closeout starts a second Fly deployment or recovery exceeds authorization"
     ],
     "verification": [
       "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
       "Maintained synthetic suite Python compilation JSON validation dashboard refresh health check and git diff check",
       "Explicit staging source commit and direct-main fast-forward push",
-      "Exact automatic Fly run and job result credential-free production health final alignment preserved exclusions and skip-actions closeout"
+      "Exact automatic Fly run and job result plus credential-free production health",
+      "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
-    "nextReportPoint": "Report the durable 4Q-R result and return Task 1M.5 to a separately confirmed planning gate.",
-    "result": "Published source commit 3f3ffb2 directly to main by exact-path fast-forward observed successful automatic Fly run 29761239024 and job 88416099000 verified credential-free production health at HTTP 200 and preserved both unrelated untracked files.",
-    "durability": "Source commit 3f3ffb2 is durable on main automatic Fly run 29761239024 and deploy job 88416099000 passed credential-free production health returned 200 and the sanitized command-center closeout is published separately with skip actions."
+    "nextReportPoint": "Return the source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N planning gate.",
+    "result": "Release authorization recorded; source durability deployment observation health verification and closeout remain in progress.",
+    "durability": "Active on codex/payroll-compensation-cohorts under Ryan's direct-main instruction; no release commit or push has occurred yet.",
+    "evidence": [
+      "command-center/payroll-peer-comparison-contract.md",
+      "command-center/logs/2026-07-20-payroll-peer-comparisons-4r.md",
+      "web/routes/payroll.py",
+      "web/templates/payroll.html",
+      "scripts/smoke_test.py"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -89,23 +97,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Define the next Task 1M.5 work block",
-    "status": "planning",
-    "owner": "Ryan",
-    "why": "Work blocks 4Q and 4Q-R are complete and durable; compensation-cohort truthfulness is the next distinct payroll contract.",
-    "action": "Review a bounded Task 1M.5 proposal for like-for-like hourly and salary cohorts under the existing no-annualization decision before implementation.",
+    "title": "Complete work block 4R-R",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan explicitly authorized commit and push to main for the exact verified 4R set.",
+    "action": "Complete exact-path verification source commit direct-main fast-forward automatic deploy observation credential-free health and skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Work block 4Q-R is complete and durable; Task 1M.5 needs a separately proposed and confirmed work block before implementation.",
-    "items": [
-      "Confirm or adjust the next bounded Task 1M.5 work block after Codex proposes it."
-    ]
+    "summary": "No decision is currently waiting on Ryan; 4R-R is confirmed and active.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work blocks 4Q and 4Q-R are complete durable deployed and health verified. Task 1M.5 is current for planning only; broader Task 2 protected payroll or HR data publication and live actions remain outside authorization.",
-    "decisionQueue": "Define and confirm one bounded Task 1M.5 work block before implementation.",
+    "phaseQuestions": "Only exact 4R source durability automatic Fly observation credential-free health and sanitized closeout are authorized; protected payroll or HR data Task 1N implementation and other live actions remain outside scope.",
+    "decisionQueue": "None during the confirmed 4R-R release unless a stop condition requires recovery or scope expansion.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2809,6 +2815,114 @@
         "Fly deploy job 88416099000"
       ],
       "result": "Published source commit 3f3ffb2 directly to main by exact-path fast-forward observed successful automatic Fly run 29761239024 and job 88416099000 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-r",
+      "phaseId": "phase-4",
+      "label": "4R",
+      "name": "Like-For-Like Payroll Peer Comparisons",
+      "status": "done",
+      "includedTasks": [
+        "Task 1M.5",
+        "Task 2 focused P3-3F-03 and P3-3F-C01 compensation-comparison regression slice"
+      ],
+      "excludedTasks": [
+        "Tasks 1M.1-1M.4 Tasks 1N-1P the remainder of Task 2 and Tasks 3-4",
+        "Employee import identity deletion validation and pay-history behavior migrations and historical cleanup",
+        "Real payroll HR or financial rows retained uploads credentials authentication or CSRF changes production demo external calls live systems GitHub durability and deployment",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The small sensitive-project block couples Flask JSON Jinja display focused synthetic verification and Runway OS stewardship while external workers remain inactive.",
+      "runnerPath": "Current Codex task on local branch codex/payroll-compensation-cohorts without delegation or second opinion.",
+      "expectedFiles": [
+        "web/routes/payroll.py web/templates/payroll.html and focused additions to scripts/smoke_test.py",
+        "A payroll peer-comparison contract sanitized 4R evidence issue disposition and Runway OS state"
+      ],
+      "defaults": [
+        "A peer is another active employee with the same role and pay type and the selected employee is excluded",
+        "Inactive rows do not contribute while an inactive selected employee may compare against current active peers",
+        "Valid zero-rate averages remain distinct from an empty cohort",
+        "Hourly and salary values are never mixed converted or annualized and the UI states the matching unit contract",
+        "Commit push release and live verification remain separately gated"
+      ],
+      "stopConditions": [
+        "Correct behavior requires annualization a new compensation policy protected data migration historical cleanup external access or live action",
+        "Work expands into another payroll or calculation task or alters excluded employee behavior",
+        "BFM-only behavior regresses or focused or full verification materially changes the plan",
+        "Cleanup command-center checks or preserved untracked-file boundaries fail"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "Temporary-BFM mixed multiple single inactive zero-rate and empty cohort checks",
+        "Employee-detail JSON and rendered value unit label and empty-state assertions",
+        "Personal and Luxe Legacy denial denied-network exact-cleanup compilation JSON dashboard health whitespace visual and worktree checks"
+      ],
+      "reportBack": "Returned the exact cohort contract visible behavior focused and full synthetic results cleanup preserved boundaries local branch state and separate publication gate.",
+      "nextBlock": "4R-R for exact-scope durability and automatic release only if separately authorized otherwise a new Task 1N planning pass.",
+      "durability": "Complete and verified locally on codex/payroll-compensation-cohorts; no commit push PR merge deployment protected data retained upload external call or live action occurred.",
+      "evidence": [
+        "command-center/payroll-peer-comparison-contract.md",
+        "command-center/logs/2026-07-20-payroll-peer-comparisons-4r.md",
+        "web/routes/payroll.py",
+        "web/templates/payroll.html",
+        "scripts/smoke_test.py"
+      ],
+      "result": "Other active same-role same-pay-type peers now drive employee detail comparisons with explicit peer count numeric zero and empty-null semantics while maintained and rendered synthetic verification pass."
+    },
+    {
+      "id": "phase-4-block-r-release",
+      "phaseId": "phase-4",
+      "label": "4R-R",
+      "name": "Like-For-Like Payroll Peer Comparisons Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1M.5 durability and automatic release",
+        "Credential-free production health verification",
+        "Sanitized command-center closeout"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real payroll HR or financial rows retained uploads credentials authenticated production pages manual workflow actions and downstream access or writes",
+        "Workflow edits non-automatic Fly changes migrations force push and recovery outside the exact fast-forward path",
+        "Task 1N broader Task 2 unrelated repairs and other live actions"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git stewardship sensitive-addition review direct-main fast-forward safety automatic Fly observation credential-free health verification and final Runway OS closeout.",
+      "runnerPath": "Current Codex task on codex/payroll-compensation-cohorts then local main after exact fast-forward.",
+      "expectedLiveEffect": "Push one verified source commit to main triggering one automatic Fly deployment verify only credential-free health then push one skip-actions command-center closeout without a second deployment.",
+      "expectedFiles": [
+        "Exact verified eleven-path 4R application maintained-test contract issue evidence and Runway OS source set",
+        "A sanitized 4R-R closeout log and command-center-only skip-actions commit"
+      ],
+      "defaults": [
+        "No PR because Ryan directly instructed commit and push to main",
+        "Observe only the automatic Fly deployment caused by the source push",
+        "Use only credential-free production health verification",
+        "Publish closeout with skip actions to prevent a second deployment"
+      ],
+      "stopConditions": [
+        "Unexpected staged path sensitive addition protected data or unrelated user change",
+        "Local or remote main divergence or required force push",
+        "Maintained verification automatic deployment or credential-free health failure",
+        "Closeout starts a second Fly deployment or recovery exceeds authorization"
+      ],
+      "verification": [
+        "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
+        "Maintained synthetic suite Python compilation JSON validation dashboard refresh health check and git diff check",
+        "Explicit staging source commit and direct-main fast-forward push",
+        "Exact automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and Task 1N planning gate.",
+      "durability": "Active under Ryan's direct-main instruction; no source release commit push deployment or closeout has occurred yet.",
+      "evidence": [
+        "command-center/payroll-peer-comparison-contract.md",
+        "command-center/logs/2026-07-20-payroll-peer-comparisons-4r.md"
+      ],
+      "result": "Release authorization is recorded and exact-path verification is in progress."
     }
   ],
   "phaseTasks": [
@@ -3417,11 +3531,17 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1M",
       "title": "Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention",
-      "status": "active",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Umbrella decomposed into Tasks 1M.1 through 1M.5 for import matching payload cleanup malformed-workbook handling roster validation and compensation-cohort truthfulness.",
-      "nextAction": "Define and confirm one bounded Task 1M.5 work block before implementation.",
-      "blocker": "No Task 1M.5 implementation work block is confirmed."
+      "result": "Work blocks 4P 4Q and 4R completed all five payroll integrity validation retention import and compensation-cohort tasks with maintained synthetic coverage; 4R release remains separate.",
+      "evidence": [
+        "command-center/payroll-import-integrity-contract.md",
+        "command-center/payroll-roster-validation-contract.md",
+        "command-center/payroll-peer-comparison-contract.md"
+      ],
+      "nextAction": null,
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -3483,11 +3603,16 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1M5",
       "title": "Task 1M.5: Separate payroll peer comparisons by compensation unit",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Compute and display like-for-like hourly and salary cohorts under Ryan's confirmed no-annualization default for P3-3F-03 with focused coverage.",
-      "nextAction": "Define and confirm one bounded Task 1M.5 work block before implementation.",
-      "blocker": "No Task 1M.5 implementation work block is confirmed."
+      "result": "Other active same-role same-pay-type peers now produce unit-correct averages peer counts numeric-zero distinction and explicit empty states with maintained and rendered synthetic coverage.",
+      "evidence": [
+        "command-center/payroll-peer-comparison-contract.md",
+        "command-center/logs/2026-07-20-payroll-peer-comparisons-4r.md"
+      ],
+      "nextAction": null,
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -3495,7 +3620,9 @@
       "title": "Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness",
       "status": "planned",
       "owner": "Codex Desktop",
-      "summary": "Repair the remaining P3-3D and P3-3E calculation families after the planning route guard."
+      "summary": "Repair the remaining P3-3D and P3-3E calculation families after the planning route guard.",
+      "nextAction": "Return to a separately confirmed planning pass after 4R-R closes.",
+      "blocker": "No Task 1N implementation work block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -3533,10 +3660,10 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "done",
+      "status": "current",
       "owner": "Codex Desktop",
       "summary": "Publish only exact verified repair scopes through separately authorized release blocks.",
-      "result": "Releases through 4K-R completed successfully; 4K source commit 72d2bba is on main, Fly run 29700530131 and job 88228726512 succeeded, and credential-free production health returned 200. Every later release remains separately gated.",
+      "result": "Releases through 4Q-R completed successfully; 4R-R is current for the exact verified peer-comparison source set and every later release remains separately gated.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -3549,8 +3676,8 @@
         "command-center/logs/2026-07-19-plaid-account-state-truthfulness-release-4j-r.md",
         "command-center/logs/2026-07-19-plaid-item-isolation-observability-release-4k-r.md"
       ],
-      "nextAction": "Require separate approval for each future release block.",
-      "blocker": "No additional release or live action is authorized."
+      "nextAction": "Complete the exact 4R-R source push automatic-deployment observation credential-free health check and skip-actions closeout.",
+      "blocker": null
     },
     {
       "phaseId": "phase-5",
@@ -4456,8 +4583,8 @@
     },
     {
       "title": "Payroll peer averages mix hourly and salary units",
-      "summary": "Active employees are averaged by role without pay type, so raw hourly and annual salary cents become a materially meaningless peer comparison.",
-      "status": "open",
+      "summary": "Resolved locally in work block 4R: other active same-role same-pay-type peers drive explicit numeric-zero and empty-null comparisons with correct display units and maintained coverage.",
+      "status": "resolved-local",
       "severity": "high",
       "source": "command-center/issues.md"
     },
@@ -4484,8 +4611,8 @@
     },
     {
       "title": "Payroll lifecycle paths lack tracked regression coverage",
-      "summary": "Work block 4D added maintained all-route BFM-boundary and unchanged-state coverage; parser, matching, compensation, validation, retention, and full lifecycle coverage remains paired with Task 1M.",
-      "status": "partly-addressed",
+      "summary": "Resolved locally through work blocks 4D 4P 4Q and 4R: maintained synthetic coverage now spans every repaired payroll boundary import retention validation rollback and compensation-cohort behavior.",
+      "status": "resolved-local",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
@@ -4681,14 +4808,14 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Define the Task 1M.5 work block",
-    "description": "Propose and confirm one bounded like-for-like hourly and salary peer-comparison block under Ryan's existing no-annualization decision before implementation."
+    "name": "Complete work block 4R-R",
+    "description": "Publish the exact verified 4R set observe its automatic deployment verify credential-free health and publish one skip-actions closeout."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
     "browserSmoke": "pass; configured-auth Chromium passed 19/19 and no-password Chromium 2/2 with zero external requests; production credential-free root/login and service-worker v4 checks passed after deployment",
-    "applicationSmoke": "pass; maintained synthetic suite including deterministic category-domain coverage plus focused auth/cache contracts passed",
+    "applicationSmoke": "pass; maintained synthetic suite including payroll peer-comparison section 8b4 plus existing deterministic category-domain and auth/cache contracts passed",
     "categoryDomain": "pass; Personal BFM and Luxe Legacy inference valid and invalid acceptance zero-mutation match order alias skip-sentinel cross-hash-seed denied-network and exact-cleanup checks passed",
     "phase4VendorPaymentMatching": "pass locally; vendor_transactions.matched_transaction_id is canonical and exact review unmatched accepted stale duplicate concurrent claim rollback and isolation behavior passes across Personal BFM and Luxe Legacy without migration",
     "phase4VendorPaymentMatchingBoundaries": "pass; temporary synthetic databases denied outbound networking exact cleanup no protected data credentials live systems application-integration requests migration backfill or preserved untracked-file changes",
@@ -4705,6 +4832,9 @@
     "phase4PayrollRosterBoundaries": "pass; BFM-only isolation one-use rejected payload cleanup denied outbound networking exact cleanup no migration template protected data retained upload external call live system or GitHub durability",
     "phase4PayrollRosterRelease": "pass; source commit 3f3ffb2 is on main automatic Fly run 29761239024 and deploy job 88416099000 passed every reported step and credential-free production health returned HTTP 200",
     "phase4PayrollRosterDurability": "pass; local main matched origin/main at source commit 3f3ffb2 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
+    "phase4PayrollPeerComparisons": "pass locally; other active same-role same-pay-type peers exclude the selected employee and inactive contributors without hourly salary conversion or annualization while numeric zero remains distinct from no peers",
+    "phase4PayrollPeerDisplay": "pass; employee detail returns peer_avg_cents plus peer_count and disposable-browser verification rendered 30.00 per hour 120000 per year and No comparable peers with the explicit matching-basis label",
+    "phase4PayrollPeerBoundaries": "pass; temporary BFM data only Personal and Luxe Legacy remain denied outbound networking is blocked exact cleanup passed and no migration protected data retained upload external call live system or GitHub durability occurred",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
     "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; natural post-release scheduled run 29740509073 completed successfully at 2026-07-20T11:59:33Z",

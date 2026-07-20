@@ -795,7 +795,7 @@ Work block 4P moves normalized-name assignment into explicit route data, renders
 
 ## Payroll Peer Averages Mix Hourly And Salary Units
 
-Status: open; discovered in work block 3F
+Status: resolved locally in work block 4R; release not authorized
 
 Severity: high compensation-comparison correctness risk
 
@@ -820,9 +820,9 @@ Acceptance checks:
 - Mixed, single-member, inactive, zero-rate, and empty cohorts have explicit behavior.
 - Tracked tests reconcile the displayed comparison to deterministic source rates.
 
-Why not fixed now:
+Resolution:
 
-Compensation semantics require separately confirmed product-direction and implementation scope.
+Work block 4R groups active employees by both maintained role and pay type, excludes the selected employee and inactive rows from contributing, and performs no annualization or hourly/salary conversion. Employee detail returns an integer-cent peer average plus peer count when another comparable employee exists, including a real zero average, and returns an explicit empty value when none exists. The modal states the same-role and same-pay-type basis, preserves `/hr` and `/yr`, and displays `No comparable peers` for an empty cohort. Maintained synthetic coverage verifies mixed units, multiple peers, self exclusion, inactive contributors and selected employees, zero-rate and empty cohorts, BFM-only denial, denied networking, rendered output, and exact cleanup.
 
 ## Payroll Employee Inputs Are Not Safely Normalized
 
@@ -919,7 +919,7 @@ Work block 4P places one sanitized error boundary around workbook-engine loading
 
 ## Payroll Lifecycle Paths Lack Tracked Regression Coverage
 
-Status: partly addressed through work blocks 4D, 4P, and 4Q; remaining compensation coverage parked for Task 1M.5
+Status: resolved locally through work blocks 4D, 4P, 4Q, and 4R; 4R release not authorized
 
 Severity: medium regression-confidence risk
 
@@ -931,7 +931,7 @@ Revisit: Phase 4 Task 2, preferably alongside the related payroll repairs
 
 Summary:
 
-Work block 4D added maintained coverage for the payroll routes, Personal/Luxe Legacy denial, unchanged denied-state snapshots, temporary-payload preservation, and normal BFM roster/detail/import/spending availability. Work block 4P extends that maintained matrix to exact preview/save matching, reassignment, new creation, reimport, payload permissions and lifecycle, malformed workbook outcomes, valid multi-section parsing, all-entity isolation, denied networking, and exact cleanup. Work block 4Q adds manual and import-created roster-domain validation, decimal-rate boundaries, controlled rejection, exact zero-mutation snapshots, valid rate-history behavior, and forced update/import rollback. Compensation-cohort coverage remains paired with Task 1M.5.
+Work block 4D added maintained coverage for the payroll routes, Personal/Luxe Legacy denial, unchanged denied-state snapshots, temporary-payload preservation, and normal BFM roster/detail/import/spending availability. Work block 4P extends that maintained matrix to exact preview/save matching, reassignment, new creation, reimport, payload permissions and lifecycle, malformed workbook outcomes, valid multi-section parsing, all-entity isolation, denied networking, and exact cleanup. Work block 4Q adds manual and import-created roster-domain validation, decimal-rate boundaries, controlled rejection, exact zero-mutation snapshots, valid rate-history behavior, and forced update/import rollback. Work block 4R completes the matrix with same-role/same-pay-type peer cohorts, self and inactive exclusion, zero-versus-empty behavior, display units and labels, BFM-only denial, denied networking, and exact cleanup.
 
 Impact:
 
@@ -944,9 +944,9 @@ Acceptance checks:
 - Every repaired 3F defect has a failing-before and passing-after regression case.
 - Tests require no real payroll/HR data, credentials, production access, or external calls.
 
-Remaining gap:
+Resolution:
 
-The BFM-only boundary and Tasks 1M.1-1M.4 slices are tracked. Hourly-versus-salary cohort behavior remains intentionally excluded and must accompany Task 1M.5.
+Every repaired 3F defect now has maintained synthetic coverage. The full suite requires no real payroll/HR data, retained uploads, credentials, production access, or external calls. The 4R compensation slice is locally verified but remains unpublished pending a separate release decision.
 
 ## Plaid Persistence Errors Can Advance The Cursor Past Missing Data
 

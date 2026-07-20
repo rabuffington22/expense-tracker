@@ -305,7 +305,7 @@
             <span class="pr-detail-stat-value" id="pr-detail-days-raise"></span>
           </div>
           <div class="pr-detail-stat">
-            <span class="pr-detail-stat-label">Peer Avg (same role)</span>
+            <span class="pr-detail-stat-label">Peer Avg (same role and pay type)</span>
             <span class="pr-detail-stat-value" id="pr-detail-peer-avg"></span>
           </div>
         </div>
@@ -457,8 +457,8 @@ function prPopulateDetail(d) {
     daysEl.className = 'pr-detail-stat-value pr-raise-flag--none';
   }
 
-  var peerStr = '—';
-  if (d.peer_avg_cents > 0) {
+  var peerStr = 'No comparable peers';
+  if (d.peer_avg_cents !== null) {
     if (d.pay_type === 'salary') {
       peerStr = '$' + (d.peer_avg_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) + '/yr';
     } else {
