@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after durable release and credential-free production verification of work block 4K-R; Task 1K is next for separate planning
+Status: active after local completion of work block 4L; Task 1K release remains separately gated
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -905,7 +905,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1H: Make Plaid page application and cursor advancement atomic.** Status: done, released, and credential-free production health verified through work blocks 4I-4I-R for `P3-3G-01` plus the focused atomicity slice of `P3-3G-C01`.
 - **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: done, released, and credential-free production health verified through work blocks 4J-4J-R for `P3-3G-02` through `P3-3G-05` plus the matching focused `P3-3G-C01` coverage slice.
 - **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: done, released, and credential-free production health verified through work blocks 4K-4K-R for `P3-3G-06`, `P3-3G-07`, and the matching focused `P3-3G-C01` slice.
-- **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: current for separate planning after Tasks 1H-1J.
+- **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: complete and verified locally through work block 4L for `P3-3H-02` through `P3-3H-07` plus the remaining `P3-3H-C01` slice; release remains separately gated.
 - **Task 1L: Repair vendor import-to-categorization integrity.** Status: planned after the Plaid and sync-entry foundations.
 - **Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention.** Status: planned after Task 1C; separate hourly and salary cohorts per Ryan's confirmed default.
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
@@ -1674,6 +1674,54 @@ Report point: return source and closeout commits, exact published paths, automat
 Result: the exact ten-path 4K source set was committed as `72d2bba`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29700530131` and deploy job `88228726512` passed every reported step for exact source SHA `72d2bbaed19bee431ce8bee12e41ef891c0fedd2`. Production `/health` returned HTTP 200 without credentials, and local `main` matched `origin/main` before closeout. The staged high-confidence sensitive-addition scan returned zero; the untracked sync script and unrelated `command-center/now 2.md` remained excluded; and no protected data, credentials, authenticated production page, manual workflow, non-automatic Fly, live Plaid, downstream, workflow-edit, Task 1K implementation, force-push, or unrelated action occurred. This command-center-only closeout uses `[skip actions]` to avoid a second deployment.
 
 Evidence: `command-center/logs/2026-07-19-plaid-item-isolation-observability-release-4k-r.md`, source commit `72d2bba`, GitHub Actions run `29700530131`, and Fly deploy job `88228726512`.
+
+### Confirmed Work Block 4L: Sync Entry Coordination And Truthful Recovery
+
+Status: done and verified locally on 2026-07-19; release not authorized
+
+Included: Task 1K for `P3-3H-02` through `P3-3H-07`, plus only the matching `P3-3H-C01` Task 2 regression-coverage slice. Establish one process-safe coordination contract across manual, scheduled, and dashboard-triggered Plaid sync; preserve the current `/k/` refresh-on-view trigger while routing it through the maintained primary sync core; apply removed events atomically; exclude vendor items; continue healthy later scheduled entities after one entity exception with structured sanitized partial results; put bearer authorization before normal entity setup; and consume the dashboard-trigger throttle only after successful worker launch.
+
+Excluded: Tasks 1L-1P; the remainder of Task 2; Tasks 3-4; `/k/` authentication or other public-route policy changes; automatic retry queues or new services; database migrations unless a changed plan is separately confirmed; workflow edits or execution; real databases or financial, payroll, or HR rows; uploads; credentials; authenticated production pages; live Plaid; production/demo access; Fly; downstream contract changes or writes; GitHub durability; deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Owner and recommended agent: Codex Desktop. The block couples a process-level coordination contract, sensitive financial-integrity boundaries, cross-file integration, true multiprocess synthetic proof, and Runway OS stewardship.
+
+Reviewer route: direct Claude CLI using `claude-fable-5` at `max` effort in read-only plan mode with no session persistence. Codex will write a sanitized repo-backed review packet, intake the critique, and either move 4L to active when the confirmed scope remains intact or stop in awaiting-confirmation if the critique materially changes scope. The exact route must not silently fall back.
+
+Review result: completed successfully with no fallback. The reviewer endorsed the scope unchanged and required per-entity initialization after authorization, configured-auth endpoint coverage, three deliberate maintained-check updates, deletion of the duplicate dashboard bridge call, and explicit `flock`-only/never-unlink invariants. Codex accepted all five and activated local implementation. The review inferred that configured server auth may currently redirect scheduled workflow requests before bearer validation while `curl --fail` remains green; this is source-derived urgency evidence, not live verification or release authority.
+
+Expected surfaces: a small shared coordinator under `core/` or an equivalent reviewed location; `web/routes/plaid.py`; `web/routes/kristine.py`; `web/__init__.py`; `scripts/smoke_test.py`; a sanitized sync-entry coordination contract and 4L closeout log; `command-center/issues.md`; and the Runway OS roadmap, now, decisions, state, and dashboard.
+
+Defaults: keep `/k/` access behavior unchanged for later Task 1P; preserve refresh-on-view but remove its duplicate transaction-application logic; coordinate manual, scheduled, and dashboard-triggered entry points; prefer a non-blocking volume-backed process-safe lock under the configured or temporary `DATA_DIR`, with automatic release on process exit and no migration; keep contention non-queued; preserve the existing downstream invocation contract; continue later scheduled entities after one exception; keep errors sanitized; exclude vendor items; and make failed worker launch immediately retryable.
+
+Stop conditions: coordination requires cross-machine infrastructure beyond the current mounted-volume runtime; the lock cannot prove process-exit cleanup or mutual exclusion across existing entry points; correctness requires a `/k/` access-policy change, protected data, credentials, live Plaid, production inspection, a migration, or a downstream contract change; the current refresh-on-view behavior needs a new product decision; verification reveals a materially different architecture or scope; command-center checks fail; or work overlaps either preserved untracked file.
+
+Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; true two-process contention using temporary synthetic `DATA_DIR`; manual/scheduled/dashboard mutual exclusion; removed-event atomicity; vendor-item exclusion; scheduled entity-exception continuation and truthful partial results; unauthorized bearer rejection before entity initialization or category sync; failed-launch immediate retry; fake tokens, mocked Plaid, denied outbound sockets, all-entity isolation, and exact cleanup; Python compilation; JSON validation; dashboard refresh; command-center health; `git diff --check`; dashboard inspection; and explicit worktree review.
+
+Report point: return the exact reviewed coordination contract, reviewer disposition, changed paths, multiprocess proof, scheduled/manual/dashboard behavior, focused and full synthetic results, cleanup evidence, local branch state, preserved exclusions, and the separate 4L-R release gate.
+
+Result: added one stable mode-0600 `DATA_DIR` `fcntl.flock` lease shared by manual, scheduled, and dashboard-triggered Plaid entry points; proved same-process separate-open and real two-process contention plus normal and SIGKILL cleanup; exempted `/plaid/sync-all` from browser session/entity setup so constant-time bearer validation precedes mutation; initialized and contained each authorized scheduled entity with structured sanitized continuation; rewrote dashboard launch ownership and throttle ordering; reused the maintained atomic non-vendor `_sync_entity` core; and removed the duplicate bridge call. Baseline and final full smoke, Python compilation, configured-auth, actual dashboard removal/vendor, denied-network, exact-cleanup, JSON, whitespace, dashboard, and health checks pass without protected data, live systems, migration, release, or either preserved untracked file.
+
+Evidence: `core/sync_coordination.py`; `web/routes/plaid.py`; `web/routes/kristine.py`; `web/__init__.py`; `scripts/smoke_test.py`; `command-center/sync-entry-coordination-contract.md`; `command-center/logs/second-opinion/2026-07-19-phase-4-4l-fable-5-max.md`; and `command-center/logs/2026-07-19-sync-entry-coordination-4l.md`.
+
+### Work Block 4L-R: Durability And Release
+
+Status: active under Ryan's 2026-07-19 direct instruction to commit and push the completed work to `main`
+
+Included: the exact fifteen intended 4L application, maintained-test, contract, review, issue, evidence, and command-center paths; explicit staging; one source commit on `codex/sync-entry-coordination`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; one missing-bearer `/plaid/sync-all` request with redirects disabled; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Exact source set: `core/sync_coordination.py`; `web/routes/plaid.py`; `web/routes/kristine.py`; `web/__init__.py`; `scripts/smoke_test.py`; `command-center/sync-entry-coordination-contract.md`; `command-center/handoffs/second-opinion/2026-07-19-phase-4-4l-sync-entry-coordination.md`; `command-center/logs/second-opinion/2026-07-19-phase-4-4l-fable-5-max.md`; `command-center/logs/2026-07-19-sync-entry-coordination-4l.md`; `command-center/issues.md`; `command-center/decisions.md`; `command-center/now.md`; `command-center/roadmap.md`; `command-center/state.json`; and `command-center/index.html`.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real databases or financial/payroll/HR rows; uploads; credentials; authenticated production pages; an authorized bearer or live Plaid call; manual workflow dispatch or rerun; Fly mutation outside the automatic main-push workflow; downstream access or writes; workflow-file changes; Tasks 1L-1P; broader Task 2; Tasks 3-4; unrelated repairs; force push; and recovery outside the exact fast-forward publish path.
+
+Owner and recommended agent: Codex Desktop. The release requires exact-path Git and sensitive-addition review, direct-main durability, automatic Fly observation, safe credential-free HTTP verification, and Runway OS closeout.
+
+Defaults: no PR because Ryan directly requested commit and push to `main`; preserve the verified 4L contract, implementation, tests, review, and evidence; use only credential-free production `/health` plus a missing-bearer request that cannot enter synchronization; do not supply `SYNC_SECRET`, inspect authenticated pages, or trigger Plaid; inspect workflow metadata and open logs only if failure requires diagnosis; publish the post-deploy closeout with `[skip actions]` to prevent a second deployment.
+
+Stop conditions: the exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health or the missing-bearer `401` boundary fails; a second deployment starts for the closeout; or recovery would exceed the authorized path.
+
+Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staging review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; missing-bearer `/plaid/sync-all` HTTP 401 with redirects disabled; final main/origin alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return source and closeout commits, exact published paths, automatic workflow result, credential-free health and missing-bearer proof, final main alignment, preserved exclusions, and the remaining natural scheduled-run observation boundary.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

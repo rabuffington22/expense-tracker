@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Choose the next bounded scheduled/public sync-entry step after durable release of primary Plaid item isolation and truthful observability through work blocks 4K and 4K-R.
+Publish the verified 4L sync-entry coordination repair through the separately authorized 4L-R durability and release block.
 
 ## Current Phase
 
@@ -10,43 +10,45 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-None active. Work block 4K-R is complete: source commit `72d2bba` is on `main`, automatic Fly Deploy run `29700530131` and job `88228726512` passed, and credential-free production `/health` returned HTTP 200.
+Work block 4L-R Durability And Release — active under Ryan's direct instruction to commit and push to `main`.
 
 ## Current Task
 
-Phase 4 Task 1K: separately plan the remaining scheduled/public sync-entry coordination and result-truthfulness family after Tasks 1H-1J established trustworthy primary item behavior.
+Phase 4 Task 1K: locally complete for `P3-3H-02` through `P3-3H-07` plus the remaining `P3-3H-C01` coverage slice; durability and release are in progress.
 
 ## Owner
 
-Ryan owns the next Task 1K work-block decision. Codex Desktop completed 4K-R durability, automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout.
+Codex Desktop owns exact-path publication, automatic deployment observation, safe credential-free production checks, and the sanitized closeout. Ryan authorized the direct-main release.
 
 ## Current Action
 
-Stop at the completed 4K-R release gate. Separately define and confirm a bounded 4L Task 1K block; do not infer live Plaid, scheduled/public coordination, `/k/` changes, broader repair, or additional release authority.
+Re-run maintained verification; stage only the exact 4L source set; commit on `codex/sync-entry-coordination`; fast-forward local `main`; push `origin/main`; observe the exact automatic Fly run; verify credential-free `/health` and a missing-bearer `401` at `/plaid/sync-all` without following redirects; then publish one sanitized command-center-only `[skip actions]` closeout.
 
-## Work Block 4K-R Result
+## Work Block 4L Result
 
-- The exact ten intended 4K paths were committed as `72d2bba`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force.
-- Automatic Fly Deploy run `29700530131` and job `88228726512` completed successfully for exact source SHA `72d2bbaed19bee431ce8bee12e41ef891c0fedd2`.
-- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200.
-- Exact-path staging, high-confidence sensitive-addition scan, full smoke, compilation, JSON, dashboard, health, whitespace, alignment, and exclusion checks passed.
-- GitHub repeated its non-blocking `actions/checkout@v4` Node 20 deprecation annotation; the action was forced onto Node 24 and deployment still passed.
-- This sanitized command-center-only closeout uses `[skip actions]` to prevent a second deployment.
+- One stable mode-0600 `DATA_DIR` file provides non-blocking `fcntl.flock` coordination for manual, scheduled, and dashboard-triggered synchronization.
+- Same-process separate opens, real two-process contention, normal release, and SIGKILL cleanup pass.
+- `/plaid/sync-all` bypasses browser session authentication and normal entity setup, validates bearer first with constant-time comparison, then initializes each entity inside its own exception boundary.
+- Unexpected scheduled entity failures are sanitized, structured, and contained so later entities continue and top-level partial/all failure remains truthful.
+- Dashboard launch acquires the shared lease first, updates throttle only after successful start, transfers ownership to the worker, and releases without consuming throttle on start failure.
+- Dashboard sync now reuses the maintained atomic non-vendor `_sync_entity` path; actual removed-event plus split cleanup, cursor advancement, vendor exclusion, item isolation, and one net Luxe Legacy bridge seam pass.
+- The exact `claude-fable-5` max-effort review completed without fallback and its five required in-scope amendments were accepted.
 
-## Remaining Gates
+## Release Boundaries
 
-- Task 1K, broader Task 2, Task 3, and every later repair or release require separate confirmation.
-- Scheduled/public cross-process coordination, public removed-event behavior, vendor-item scope, entity exception isolation, bearer-before-setup, thread-launch retry, `/k/` policy changes, downstream behavior, and unrelated repair families remain excluded.
+- No PR is required because Ryan explicitly requested a direct push to `main`; force push and recovery outside the exact fast-forward path remain prohibited.
+- The safe missing-bearer check may verify the repaired `401` boundary without credentials or a Plaid call. It does not prove a real scheduled sync succeeds.
+- Tasks 1L-1P, broader Task 2, Tasks 3-4, `/k/` authentication, shared durable throttle state, migrations, queues, new services, downstream contract changes, and unrelated repairs remain excluded.
 - Real databases or financial/payroll/HR rows, uploads, credentials, authenticated production pages, live Plaid, manual workflow actions, non-automatic Fly changes, downstream access/writes, and other external actions remain closed.
 - Untracked `scripts/sync_prod_to_local.sh` and unrelated `command-center/now 2.md` remain untouched and unstaged.
 
 ## Verification
 
-- Source commit `72d2bbaed19bee431ce8bee12e41ef891c0fedd2` matches the successful automatic workflow head SHA.
-- Fly Deploy run `29700530131` and deploy job `88228726512`: success with every reported step passing.
-- Credential-free production `/health`: HTTP 200.
-- Command-center dashboard refresh, health check, JSON validation, whitespace checks, final main/origin alignment, preserved exclusions, and absence of a second deployment: required before closeout publication is reported complete.
+- Re-run `.venv/bin/python scripts/smoke_test.py`, Python compilation, JSON validation, dashboard refresh, command-center health, `git diff --check`, staged-path review, and staged sensitive-addition scan before publication.
+- Attribute the automatic Fly run to the exact source SHA and require success.
+- Require production `/health` HTTP 200 and missing-bearer `/plaid/sync-all` HTTP 401 with redirects disabled.
+- Require the `[skip actions]` closeout to produce no second Fly run and leave local `main` aligned with `origin/main`.
 
 ## Next Report Point
 
-Return the source and closeout commits, exact published paths, automatic workflow result, credential-free health, final main alignment, preserved exclusions, and the separate 4L Task 1K planning gate.
+Return source and closeout commits, exact published paths, automatic workflow run and job result, credential-free health and missing-bearer proof, final `main` alignment, preserved exclusions, and the remaining natural scheduled-run observation boundary.

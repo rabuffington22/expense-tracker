@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 2:28 PM CST",
+    "lastUpdated": "2026-07-19 8:53 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,18 +27,43 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4K-R is complete, durable on main, automatically deployed, and credential-free health verified; Task 1K is next for separate planning.",
-    "progress": 84
+    "summary": "Work block 4L-R is actively publishing the verified Task 1K repair directly to main under Ryan's authorization.",
+    "progress": 88
   },
   "currentTask": {
     "title": "Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness",
-    "owner": "Ryan",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop completed 4K-R source durability, automatic deployment observation, credential-free health verification, and Runway OS closeout",
-    "nextAction": "Separately define and confirm a bounded 4L Task 1K work block.",
-    "blocker": "No Task 1K implementation or additional live action is authorized"
+    "supportingAgent": "Codex Desktop completed the exact review intake, shared coordination repair, maintained synthetic verification, issue resolution, and local Runway OS closeout",
+    "nextAction": "Verify, stage the exact 4L set, commit, fast-forward main, push, observe automatic Fly deployment, run safe credential-free checks, and publish a skip-actions closeout.",
+    "blocker": null
   },
-  "currentWorkBlock": null,
+  "currentWorkBlock": {
+    "label": "4L-R",
+    "name": "Durability And Release",
+    "status": "active",
+    "includedTasks": [
+      "Task 1K durability and automatic release",
+      "Safe credential-free production verification",
+      "Sanitized command-center closeout"
+    ],
+    "owner": "Codex Desktop",
+    "stopConditions": [
+      "The exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change",
+      "Local or remote main diverges or cannot be fast-forwarded safely",
+      "Maintained verification fails or staging includes an excluded path",
+      "Automatic deployment cannot be attributed to the source SHA or fails",
+      "Credential-free health or missing-bearer 401 fails, a second deploy starts, or recovery exceeds authorization"
+    ],
+    "verification": [
+      "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
+      "Maintained synthetic suite Python compilation JSON validation dashboard refresh health and git diff check",
+      "Source commit direct-main fast-forward push and exact automatic Fly run attribution",
+      "Credential-free production health and missing-bearer 401 without redirects",
+      "Final main origin alignment preserved exclusions and sanitized skip-actions closeout"
+    ],
+    "nextReportPoint": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free health and missing-bearer proof, final main alignment, preserved exclusions, and remaining natural scheduled-run boundary."
+  },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
@@ -62,23 +87,18 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 1K as bounded work block 4L",
-    "status": "awaiting Ryan",
-    "owner": "Ryan",
-    "why": "4K-R is durable, automatically deployed, and credential-free health verified; the remaining scheduled/public sync-entry family uses a separate coordination and verification contract.",
-    "action": "Ask Codex to define and confirm bounded work block 4L for Task 1K when ready.",
+    "title": "Publish and verify work block 4L",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized commit and push to main for the verified sync-entry repair.",
+    "action": "Complete exact-path publication, automatic deployment observation, safe credential-free checks, and the skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
-  "waitingOnRyan": {
-    "summary": "Work block 4K-R is complete; Task 1K planning requires a separate Ryan decision.",
-    "items": [
-      "Choose whether to define and confirm work block 4L for Task 1K."
-    ]
-  },
+  "waitingOnRyan": null,
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4K-R is complete. Task 1K-1P implementation, broader Task 2, Task 3, protected data, and additional live actions remain outside authorization.",
-    "decisionQueue": "The next Ryan decision is whether to define and confirm work block 4L for Task 1K.",
+    "phaseQuestions": "Work block 4L is complete locally. Tasks 1L-1P, broader Task 2, Tasks 3-4, protected data, release, and live actions remain outside authorization.",
+    "decisionQueue": "4L-R is authorized. Tasks 1L-1P and any live Plaid or manual workflow action remain separate decisions.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -94,7 +114,7 @@
     },
     {
       "name": "Claude CLI",
-      "role": "Completed the read-only 3L prioritization review using claude-fable-5 at max effort",
+      "role": "Completed the read-only 3L prioritization and 4L coordination reviews using claude-fable-5 at max effort",
       "active": false
     }
   ],
@@ -2109,6 +2129,113 @@
         "Fly deploy job 88228726512"
       ],
       "result": "Published source commit 72d2bba directly to main by exact-path fast-forward, observed successful automatic Fly run 29700530131 and job 88228726512, verified credential-free production health at HTTP 200, preserved both unrelated untracked files, and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-l",
+      "phaseId": "phase-4",
+      "label": "4L",
+      "name": "Sync Entry Coordination And Truthful Recovery",
+      "status": "done",
+      "includedTasks": [
+        "Task 1K",
+        "Task 2 paired only for the P3-3H-C01 sync-entry coverage slice"
+      ],
+      "includedFindings": [
+        "P3-3H-02",
+        "P3-3H-03",
+        "P3-3H-04",
+        "P3-3H-05",
+        "P3-3H-06",
+        "P3-3H-07",
+        "P3-3H-C01 focused sync-entry slice"
+      ],
+      "excludedTasks": [
+        "Tasks 1L-1P, the remainder of Task 2, and Tasks 3-4",
+        "k authentication or public-route policy changes, automatic retry queues, new services, unconfirmed migrations, and downstream contract changes",
+        "Real databases or protected financial payroll or HR rows, uploads, credentials, authenticated production pages, production or demo, live Plaid, workflows, Fly, downstream access or writes, GitHub durability, and deployment",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block couples a process-level coordination contract, sensitive financial-integrity boundaries, cross-file integration, true multiprocess synthetic proof, and Runway OS stewardship.",
+      "runnerPath": "Current Codex task on codex/sync-entry-coordination after a direct read-only Claude CLI review using claude-fable-5 at max effort.",
+      "reviewerRoute": "Direct Claude CLI with claude-fable-5 at max effort, read-only tools, plan permission, and no session persistence; no silent fallback.",
+      "expectedFiles": [
+        "A small shared coordinator under core or an equivalent reviewed location",
+        "web/routes/plaid.py, web/routes/kristine.py, and web/__init__.py",
+        "scripts/smoke_test.py",
+        "A sanitized sync-entry coordination contract, second-opinion packet and response, issues update, 4L closeout log, and Runway OS state"
+      ],
+      "stopConditions": [
+        "Coordination requires cross-machine infrastructure beyond the current mounted-volume runtime",
+        "The lock cannot prove process-exit cleanup or mutual exclusion across existing entry points",
+        "Correctness requires a k access-policy change, protected data, credentials, live Plaid, production inspection, a migration, or a downstream contract change",
+        "The current refresh-on-view behavior needs a new product decision",
+        "The reviewer or verification materially changes scope, command-center checks fail, or work overlaps either preserved untracked file"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "True two-process contention and process-exit cleanup using temporary DATA_DIR",
+        "Manual scheduled and dashboard mutual exclusion, removed-event atomicity, vendor exclusion, entity-exception continuation, bearer-before-setup, and failed-launch immediate retry",
+        "Fake tokens and secrets, mocked Plaid, denied outbound sockets, all-entity isolation, and exact cleanup",
+        "Python compilation, JSON validation, dashboard refresh, health check, git diff check, dashboard inspection, and final explicit-path worktree review"
+      ],
+      "reportBack": "Return the reviewed coordination contract, reviewer disposition, changed paths, multiprocess proof, entry-point behavior, focused and full synthetic results, cleanup, local branch state, preserved exclusions, and separate 4L-R release gate.",
+      "durability": "Complete and verified locally on codex/sync-entry-coordination; commit, push, deployment, production inspection, and scheduled-response verification remain separately gated.",
+      "evidence": [
+        "core/sync_coordination.py",
+        "web/routes/plaid.py",
+        "web/routes/kristine.py",
+        "web/__init__.py",
+        "scripts/smoke_test.py",
+        "command-center/sync-entry-coordination-contract.md",
+        "command-center/logs/second-opinion/2026-07-19-phase-4-4l-fable-5-max.md",
+        "command-center/logs/2026-07-19-sync-entry-coordination-4l.md"
+      ],
+      "result": "Added one shared non-blocking flock lease across manual scheduled and dashboard sync; proved same-process and cross-process contention plus SIGKILL cleanup; restored bearer-before-setup under configured auth; contained scheduled entity exceptions; reused the atomic non-vendor primary core for dashboard sync; fixed launch throttle ordering; and passed the full maintained synthetic suite without live action."
+    },
+    {
+      "id": "phase-4-block-l-release",
+      "phaseId": "phase-4",
+      "label": "4L-R",
+      "name": "Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1K durability and automatic release",
+        "Safe credential-free production verification",
+        "Sanitized command-center closeout"
+      ],
+      "excludedTasks": [
+        "Tasks 1L-1P, the remainder of Task 2, Tasks 3-4, and unrelated repairs",
+        "Real databases or protected financial payroll or HR rows, uploads, credentials, authenticated production pages, an authorized bearer, live Plaid, manual workflow actions, and downstream access or writes",
+        "Workflow edits, non-automatic Fly changes, force push, and recovery outside the exact fast-forward path",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git and sensitive-addition review, direct-main durability, automatic Fly observation, safe credential-free production verification, and Runway OS closeout.",
+      "expectedLiveEffect": "Push one verified source commit to main, triggering one automatic Fly deployment; perform only credential-free health and missing-bearer checks; then push one skip-actions command-center closeout without a second deployment.",
+      "expectedFiles": [
+        "The exact fifteen-path 4L source set",
+        "A sanitized 4L-R closeout log and command-center-only skip-actions commit"
+      ],
+      "stopConditions": [
+        "The exact diff includes an unexpected path, sensitive value, protected data, or unrelated user change",
+        "Local or remote main diverges or cannot be fast-forwarded safely",
+        "Maintained verification fails or staging includes an excluded path",
+        "Automatic deployment cannot be attributed to the source SHA or fails",
+        "Credential-free health or missing-bearer 401 fails, a second deploy starts, or recovery exceeds authorization"
+      ],
+      "verification": [
+        "Exact path, staged-set, sensitive-addition, branch-ancestry, GitHub-authentication, and remote-alignment review",
+        "Maintained synthetic suite, Python compilation, JSON validation, dashboard refresh, health check, and git diff check",
+        "Explicit staging review, source commit, and direct-main fast-forward push",
+        "Exact automatic Fly run and job result plus credential-free production health and missing-bearer 401",
+        "Final main and origin alignment, preserved exclusions, and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits, exact published paths, automatic workflow result, credential-free health and missing-bearer proof, final main alignment, preserved exclusions, and remaining natural scheduled-run boundary.",
+      "durability": "Authorized by Ryan and active on codex/sync-entry-coordination; source and closeout commits are not yet published.",
+      "result": null
     }
   ],
   "phaseTasks": [
@@ -2648,10 +2775,10 @@
       "taskId": "P4-T1K",
       "title": "Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness",
       "status": "current",
-      "owner": "Ryan",
-      "summary": "Separately plan the remaining P3-3H scheduled/public sync-entry family after Tasks 1H-1J established trustworthy primary item behavior.",
-      "nextAction": "Request a bounded 4L Task 1K work-block proposal when ready.",
-      "blocker": "No Task 1K implementation is authorized."
+      "owner": "Codex Desktop",
+      "summary": "Work block 4L resolved P3-3H-02 through P3-3H-07 and the remaining P3-3H-C01 coverage slice locally with full synthetic verification.",
+      "nextAction": "Complete the active 4L-R direct-main durability and release block.",
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -3717,8 +3844,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Define bounded work block 4L",
-    "description": "Separately plan Task 1K scheduled/public sync-entry coordination and result truthfulness after the durable 4K-R release."
+    "name": "Complete 4L-R durability and release",
+    "description": "Publish the verified repair, observe the exact automatic deployment, verify credential-free health and missing-bearer 401, and publish the sanitized closeout."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -3816,6 +3943,11 @@
     "phase4PlaidAccountStateCoverage": "pass; populated schema-57 upgrade plus 28 focused Personal BFM and Luxe Legacy assertions cover success, partial failure, empty keep sets, manual preservation, liabilities, successful empty responses, mixed freshness, toggle invalidation, successful and failed link exchange, denied networking, isolation, and cleanup",
     "phase4PlaidAccountStateCleanup": "pass; baseline and final smoke suites, Python compilation, disposable upgrade and all-entity roots, denied outbound sockets, exact synthetic cleanup, JSON validation, dashboard refresh, health check, git diff check, and preserved untracked exclusions pass",
     "phase4PlaidAccountStateRelease": "pass; source commit 74ad56d is on main, automatic Fly run 29699120063 and deploy job 88225014833 passed every reported step, and credential-free production health returned HTTP 200",
-    "phase4PlaidAccountStateDurability": "pass; local main matched origin/main at source commit 74ad56d before this command-center-only skip-actions closeout"
+    "phase4PlaidAccountStateDurability": "pass; local main matched origin/main at source commit 74ad56d before this command-center-only skip-actions closeout",
+    "phase4SyncEntryReview": "pass; direct claude-fable-5 max-effort review completed with read-only tools plan mode safe mode no session persistence and no fallback; unchanged scope and five accepted amendments are saved and intaken",
+    "phase4SyncEntryCoordination": "pass locally; one stable mode-0600 DATA_DIR flock lease coordinates manual scheduled and dashboard sync with same-process and real two-process contention plus normal and SIGKILL cleanup",
+    "phase4SyncEntryAuthRecovery": "pass locally; configured-auth missing bearer returns 401 instead of 302 without entity setup and correct bearer reaches ordered post-authorization entity initialization",
+    "phase4SyncEntryRecoveryCoverage": "pass; structured entity continuation sanitized failures shared contention launch success failure and throttle dashboard removal cursor vendor isolation one LL bridge seam denied networking and exact cleanup pass",
+    "phase4SyncEntryCleanup": "pass; baseline and final full smoke suites Python compilation JSON validation git diff check dashboard refresh health check synthetic temporary roots and preserved untracked exclusions pass"
   }
 }

@@ -924,6 +924,7 @@ def main() -> None:
             bridge_requests_stub = Mock()
             sys.modules["requests"] = bridge_requests_stub
         from core.luxury_bridge import push_luxelegacy_to_supabase
+        from core.sync_coordination import try_acquire_sync_lease
         from web.routes import kristine as kristine_routes
         from web.routes import plaid as plaid_routes
 
@@ -1048,7 +1049,10 @@ def main() -> None:
             "socket.socket",
             side_effect=AssertionError("public bridge smoke forbids outbound networking"),
         ):
-            kristine_routes._background_sync()
+            public_lease = try_acquire_sync_lease()
+            _check(public_lease is not None,
+                   "public bridge: background worker should acquire the shared lease")
+            kristine_routes._background_sync(public_lease)
             _check(public_bridge.call_count == 1,
                    "public bridge: Personal plus LL worker must invoke the mirror once")
 
@@ -1178,35 +1182,49 @@ def main() -> None:
             _check(failed_body["results"] == failed_results,
                    "scheduled result: failed per-entity results should be preserved")
 
-            from web.routes import plaid as scheduled_plaid_routes
-            _check(scheduled_plaid_routes._sync_lock.acquire(blocking=False),
-                   "scheduled result: smoke test should acquire an idle sync lock")
+            contention_lease = try_acquire_sync_lease()
+            _check(contention_lease is not None,
+                   "scheduled result: smoke test should acquire an idle shared lease")
             try:
                 contention_response = scheduled_client.post(
                     "/plaid/sync-all", headers=scheduled_headers
                 )
             finally:
-                scheduled_plaid_routes._sync_lock.release()
+                contention_lease.close()
             _check(contention_response.status_code == 429,
                    "scheduled result: lock contention should remain 429")
 
-            original_propagate = app.config.get("PROPAGATE_EXCEPTIONS")
-            app.config["PROPAGATE_EXCEPTIONS"] = False
-            try:
-                with patch.object(app.logger, "error"), patch(
-                    "web.routes.plaid._sync_entity",
-                    side_effect=RuntimeError("synthetic route exception"),
-                ):
-                    exception_response = scheduled_client.post(
-                        "/plaid/sync-all", headers=scheduled_headers
-                    )
-            finally:
-                app.config["PROPAGATE_EXCEPTIONS"] = original_propagate
-            _check(exception_response.status_code == 500,
-                   "scheduled result: uncaught entity exception should remain 500")
-            _check(scheduled_plaid_routes._sync_lock.acquire(blocking=False),
-                   "scheduled result: uncaught exception should release the sync lock")
-            scheduled_plaid_routes._sync_lock.release()
+            with patch("web.routes.plaid.log.warning"), patch(
+                "web.routes.plaid._sync_entity",
+                side_effect=RuntimeError("synthetic sensitive route exception"),
+            ) as exception_sync:
+                exception_response = scheduled_client.post(
+                    "/plaid/sync-all", headers=scheduled_headers
+                )
+            exception_body = exception_response.get_json()
+            _check(exception_response.status_code == 502,
+                   "scheduled result: unexpected entity exceptions should be structured 502")
+            _check(
+                exception_body["ok"] is False
+                and exception_body["status"] == "failure"
+                and set(exception_body["results"]) == {"personal", "company", "luxelegacy"},
+                "scheduled result: every entity should receive a structured failure disposition",
+            )
+            _check(exception_sync.call_count == 3,
+                   "scheduled result: one entity exception must not abort later entities")
+            _check(
+                all(
+                    result["errors"] == ["entity sync failed"]
+                    for result in exception_body["results"].values()
+                ),
+                "scheduled result: unexpected entity errors should remain stable and sanitized",
+            )
+            _check("sensitive" not in exception_response.get_data(as_text=True),
+                   "scheduled result: raw exception detail must not enter workflow JSON")
+            released_lease = try_acquire_sync_lease()
+            _check(released_lease is not None,
+                   "scheduled result: entity exceptions should release the shared lease")
+            released_lease.close()
 
         with patch.dict(os.environ, {"SYNC_SECRET": ""}, clear=False):
             with app.test_client() as scheduled_client:
@@ -1271,6 +1289,322 @@ def main() -> None:
         _check("curl --fail" in (PROJECT_ROOT / ".github/workflows/daily-plaid-sync.yml").read_text(),
                "scheduled result: workflow should retain the curl --fail contract")
         print("   ✅ Partial and total failures are workflow-visible; success and skip behavior remain truthful")
+
+        # ── 8d2. Sync entry coordination and recovery ──────────────
+        print("\n8d2. Sync entry coordination and recovery…")
+
+        first_lease = try_acquire_sync_lease()
+        _check(first_lease is not None,
+               "sync coordination: first same-process open should acquire the lease")
+        second_lease = try_acquire_sync_lease()
+        _check(second_lease is None,
+               "sync coordination: a separate same-process open must contend")
+        first_lease.close()
+        reacquired_lease = try_acquire_sync_lease()
+        _check(reacquired_lease is not None,
+               "sync coordination: normal close should make the lease reacquirable")
+        reacquired_lease.close()
+
+        lock_path = Path(tmpdir) / ".plaid-sync.lock"
+        _check(lock_path.exists() and lock_path.stat().st_mode & 0o777 == 0o600,
+               "sync coordination: stable lock inode should exist with mode 0600")
+
+        holder_code = (
+            "from core.sync_coordination import try_acquire_sync_lease; "
+            "lease=try_acquire_sync_lease(); "
+            "assert lease is not None; "
+            "print('acquired', flush=True); "
+            "input(); lease.close()"
+        )
+        contender_code = (
+            "import sys; from core.sync_coordination import try_acquire_sync_lease; "
+            "lease=try_acquire_sync_lease(); "
+            "sys.exit(0 if lease is None else 1)"
+        )
+        child_env = os.environ.copy()
+        child_env["PYTHONPATH"] = str(PROJECT_ROOT)
+
+        holder = subprocess.Popen(
+            [sys.executable, "-c", holder_code],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=child_env,
+        )
+        _check(holder.stdout.readline().strip() == "acquired",
+               "sync coordination: holder process should acquire the lease")
+        contender = subprocess.run(
+            [sys.executable, "-c", contender_code],
+            capture_output=True,
+            text=True,
+            env=child_env,
+            check=False,
+        )
+        _check(contender.returncode == 0,
+               "sync coordination: second process should observe contention")
+        holder.stdin.write("\n")
+        holder.stdin.flush()
+        _check(holder.wait(timeout=5) == 0,
+               "sync coordination: holder should exit cleanly after release")
+        post_release = try_acquire_sync_lease()
+        _check(post_release is not None,
+               "sync coordination: another process release should be observable")
+        post_release.close()
+
+        killed_holder = subprocess.Popen(
+            [sys.executable, "-c", holder_code],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=child_env,
+        )
+        _check(killed_holder.stdout.readline().strip() == "acquired",
+               "sync coordination: SIGKILL holder should first acquire the lease")
+        killed_holder.kill()
+        killed_holder.wait(timeout=5)
+        post_kill = try_acquire_sync_lease()
+        _check(post_kill is not None,
+               "sync coordination: process death should release the kernel lease")
+        post_kill.close()
+
+        configured_auth_env = {
+            **scheduled_env,
+            "APP_PASSWORD_HASH": "0" * 64,
+            "FLASK_SECRET": "configured-auth-sync-smoke-secret",
+        }
+        with patch.dict(os.environ, configured_auth_env, clear=False):
+            configured_auth_app = create_app()
+        configured_auth_app.config["TESTING"] = True
+        with patch.dict(os.environ, configured_auth_env, clear=False), \
+                configured_auth_app.test_client() as configured_auth_client, patch(
+            "web.init_db"
+        ) as request_init, patch(
+            "web.sync_categories_from_file"
+        ) as request_category_sync, patch(
+            "web.routes.plaid.init_db"
+        ) as route_init, patch(
+            "web.routes.plaid._sync_entity",
+            side_effect=_result_side_effect(complete_results),
+        ):
+            auth_missing = configured_auth_client.post("/plaid/sync-all")
+            _check(auth_missing.status_code == 401,
+                   "sync auth order: missing bearer should be 401 rather than login redirect")
+            _check(auth_missing.headers.get("Location") is None,
+                   "sync auth order: bearer endpoint must not redirect to session login")
+            _check(request_init.call_count == 0 and request_category_sync.call_count == 0,
+                   "sync auth order: unauthorized request must not run normal entity setup")
+            _check(route_init.call_count == 0,
+                   "sync auth order: unauthorized request must not initialize scheduled entities")
+
+            auth_success = configured_auth_client.post(
+                "/plaid/sync-all", headers=scheduled_headers
+            )
+            _check(auth_success.status_code == 200,
+                   "sync auth order: correct bearer should reach the scheduled view under configured auth")
+            _check(auth_success.headers.get("Location") is None,
+                   "sync auth order: correct bearer must not receive a login redirect")
+            _check(request_init.call_count == 0 and request_category_sync.call_count == 0,
+                   "sync auth order: scheduled endpoint must remain outside normal request setup")
+            _check(
+                [call.args[0] for call in route_init.call_args_list]
+                == ["personal", "company", "luxelegacy"],
+                "sync auth order: authorized scheduled work should initialize each entity in order",
+            )
+
+        with app.test_client() as manual_client, patch.dict(
+            os.environ, scheduled_env, clear=False
+        ):
+            manual_client.set_cookie("entity", "Personal")
+            manual_contention = try_acquire_sync_lease()
+            _check(manual_contention is not None,
+                   "sync coordination: manual contention setup should acquire the lease")
+            try:
+                manual_response = manual_client.post("/plaid/sync")
+            finally:
+                manual_contention.close()
+            _check(manual_response.status_code == 302,
+                   "sync coordination: manual contention should preserve redirect behavior")
+            with manual_client.session_transaction() as manual_session:
+                manual_flashes = manual_session.get("_flashes", [])
+            _check(
+                any("already in progress" in message for _, message in manual_flashes),
+                "sync coordination: manual contention should preserve user-facing notice",
+            )
+
+        from web.routes import kristine as sync_kristine_routes
+
+        successful_lease = Mock()
+        successful_thread = Mock()
+        successful_thread.start.return_value = None
+        sync_kristine_routes._last_sync_time = 0.0
+        with patch(
+            "web.routes.plaid._plaid_available", return_value=True
+        ), patch(
+            "web.routes.kristine.try_acquire_sync_lease",
+            return_value=successful_lease,
+        ), patch(
+            "web.routes.kristine.threading.Thread",
+            return_value=successful_thread,
+        ), patch("time.monotonic", return_value=1000.0):
+            launch_success = sync_kristine_routes._start_background_sync()
+        _check(launch_success is True and sync_kristine_routes._last_sync_time == 1000.0,
+               "dashboard launch: successful start should consume the throttle window")
+        _check(successful_thread.start.call_count == 1,
+               "dashboard launch: successful path should start exactly one worker")
+        _check(successful_lease.close.call_count == 0,
+               "dashboard launch: successful start should transfer lease ownership to worker")
+
+        failed_lease = Mock()
+        failed_thread = Mock()
+        failed_thread.start.side_effect = RuntimeError("synthetic thread start failure")
+        sync_kristine_routes._last_sync_time = 0.0
+        with patch(
+            "web.routes.plaid._plaid_available", return_value=True
+        ), patch(
+            "web.routes.kristine.try_acquire_sync_lease",
+            return_value=failed_lease,
+        ), patch(
+            "web.routes.kristine.threading.Thread",
+            return_value=failed_thread,
+        ), patch("time.monotonic", return_value=1000.0):
+            try:
+                sync_kristine_routes._start_background_sync()
+                failed_launch_raised = False
+            except RuntimeError:
+                failed_launch_raised = True
+        _check(failed_launch_raised and sync_kristine_routes._last_sync_time == 0.0,
+               "dashboard launch: failed start should remain immediately retryable")
+        _check(failed_lease.close.call_count == 1,
+               "dashboard launch: failed start should release the shared lease")
+
+        sync_kristine_routes._last_sync_time = 0.0
+        with patch(
+            "web.routes.plaid._plaid_available", return_value=True
+        ), patch(
+            "web.routes.kristine.try_acquire_sync_lease", return_value=None
+        ), patch("time.monotonic", return_value=1000.0):
+            launch_contended = sync_kristine_routes._start_background_sync()
+        _check(launch_contended is False and sync_kristine_routes._last_sync_time == 0.0,
+               "dashboard launch: shared contention must not consume the throttle window")
+
+        sync_kristine_routes._last_sync_time = 500.0
+        with patch(
+            "web.routes.plaid._plaid_available", return_value=True
+        ), patch(
+            "web.routes.kristine.try_acquire_sync_lease"
+        ) as throttled_acquire, patch("time.monotonic", return_value=1000.0):
+            launch_throttled = sync_kristine_routes._start_background_sync()
+        _check(launch_throttled is False and throttled_acquire.call_count == 0,
+               "dashboard launch: process-local throttle should avoid lease churn")
+        sync_kristine_routes._last_sync_time = 0.0
+
+        successful_lease.close()
+
+        dashboard_item = "sync-entry-dashboard-personal"
+        dashboard_vendor_item = "sync-entry-dashboard-vendor"
+        dashboard_account = "sync-entry-dashboard-account"
+        dashboard_plaid_id = "sync-entry-dashboard-removed"
+        dashboard_transaction_id = "sync-entry-dashboard-transaction"
+        conn_dashboard = get_connection("personal")
+        conn_dashboard.execute(
+            "INSERT INTO plaid_items "
+            "(item_id, access_token, institution_name, cursor, is_vendor, created_at) "
+            "VALUES (?, 'synthetic-dashboard-token', 'Synthetic Dashboard Bank', "
+            "'dashboard-start', 0, '2026-07-19T00:00:00+00:00')",
+            (dashboard_item,),
+        )
+        conn_dashboard.execute(
+            "INSERT INTO plaid_items "
+            "(item_id, access_token, institution_name, cursor, is_vendor, created_at) "
+            "VALUES (?, 'synthetic-vendor-token', 'Synthetic Vendor Bank', "
+            "'vendor-start', 1, '2026-07-19T00:00:00+00:00')",
+            (dashboard_vendor_item,),
+        )
+        conn_dashboard.execute(
+            "INSERT INTO plaid_accounts "
+            "(item_id, account_id, name, mask, type, subtype, enabled) "
+            "VALUES (?, ?, 'Synthetic Dashboard Account', '0000', 'depository', "
+            "'checking', 1)",
+            (dashboard_item, dashboard_account),
+        )
+        conn_dashboard.execute(
+            "INSERT INTO transactions "
+            "(transaction_id, date, description_raw, merchant_raw, amount, amount_cents, "
+            "account, source_filename, imported_at, plaid_item_id, plaid_transaction_id) "
+            "VALUES (?, '2026-07-19', 'Dashboard Removed', 'Dashboard Removed', -1.23, "
+            "-123, 'Synthetic Dashboard Account', 'plaid', "
+            "'2026-07-19T00:00:00+00:00', ?, ?)",
+            (dashboard_transaction_id, dashboard_item, dashboard_plaid_id),
+        )
+        conn_dashboard.execute(
+            "INSERT INTO transaction_splits "
+            "(transaction_id, description, amount_cents, category, subcategory) "
+            "VALUES (?, 'Dashboard split', -123, 'Food', 'General')",
+            (dashboard_transaction_id,),
+        )
+        conn_dashboard.commit()
+        conn_dashboard.close()
+
+        dashboard_sync_result = {
+            "added": [],
+            "modified": [],
+            "removed": [dashboard_plaid_id],
+            "next_cursor": "dashboard-final",
+        }
+        dashboard_worker_lease = try_acquire_sync_lease()
+        _check(dashboard_worker_lease is not None,
+               "dashboard core reuse: worker should acquire the shared lease")
+        with patch.dict(os.environ, scheduled_env, clear=False), patch(
+            "core.crypto.decrypt_token", return_value="synthetic-dashboard-decrypted"
+        ), patch(
+            "core.plaid_client.get_transactions", return_value=dashboard_sync_result
+        ) as dashboard_plaid, patch(
+            "core.luxury_bridge.push_luxelegacy_to_supabase", return_value=0
+        ) as dashboard_bridge, patch(
+            "socket.socket",
+            side_effect=AssertionError("dashboard core reuse forbids outbound networking"),
+        ):
+            sync_kristine_routes._background_sync(dashboard_worker_lease)
+
+        conn_dashboard = get_connection("personal")
+        dashboard_state = conn_dashboard.execute(
+            "SELECT cursor FROM plaid_items WHERE item_id=?", (dashboard_item,)
+        ).fetchone()
+        dashboard_vendor_state = conn_dashboard.execute(
+            "SELECT cursor FROM plaid_items WHERE item_id=?", (dashboard_vendor_item,)
+        ).fetchone()
+        dashboard_removed = conn_dashboard.execute(
+            "SELECT transaction_id FROM transactions WHERE transaction_id=?",
+            (dashboard_transaction_id,),
+        ).fetchone()
+        dashboard_removed_split = conn_dashboard.execute(
+            "SELECT id FROM transaction_splits WHERE transaction_id=?",
+            (dashboard_transaction_id,),
+        ).fetchone()
+        _check(
+            dashboard_state["cursor"] == "dashboard-final"
+            and dashboard_vendor_state["cursor"] == "vendor-start"
+            and dashboard_removed is None
+            and dashboard_removed_split is None,
+            "dashboard core reuse: removal and cursor must be atomic while vendor state remains untouched",
+        )
+        _check(dashboard_plaid.call_count == 1,
+               "dashboard core reuse: vendor item must not reach Plaid transaction sync")
+        _check(dashboard_bridge.call_count == 0,
+               "dashboard core reuse: empty LL scope must not create a duplicate bridge call")
+        conn_dashboard.execute(
+            "DELETE FROM plaid_accounts WHERE item_id=?", (dashboard_item,)
+        )
+        conn_dashboard.execute(
+            "DELETE FROM plaid_items WHERE item_id IN (?, ?)",
+            (dashboard_item, dashboard_vendor_item),
+        )
+        conn_dashboard.commit()
+        conn_dashboard.close()
+
+        print("   ✅ Shared lease, crash cleanup, configured auth, launch retry, core reuse, removal, and vendor isolation passed")
 
         # ── 8e. Plaid transaction and cursor atomicity ──────────────
         print("\n8e. Plaid transaction and cursor atomicity…")

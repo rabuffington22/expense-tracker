@@ -1211,7 +1211,7 @@ Maintained synthetic coverage uses fake secrets and mocked entity results to ver
 
 ## Scheduled And Public Sync Paths Lack Shared Cross-Process Coordination
 
-Status: open; discovered in work block 3H
+Status: resolved locally in work block 4L; release not authorized
 
 Severity: high cursor and financial-data consistency risk
 
@@ -1236,13 +1236,13 @@ Acceptance checks:
 - Cursor writes remain monotonic and coupled to durable event application under concurrent attempts.
 - Public throttling is atomic at the required deployment scope.
 
-Why not fixed now:
+Resolution:
 
-Cross-worker coordination is a design and implementation change outside the audit block.
+Work block 4L replaces the separate module-local sync locks with one non-blocking `fcntl.flock` lease on a stable mode-0600 file under `DATA_DIR`. Separate opens contend within one process and across the two Gunicorn workers; normal close and SIGKILL release are maintained-test proven; manual, scheduled, and dashboard-triggered entry points all use the same lease; and contention performs no partial sync work. The stable lock file is never unlinked and is not itself lock state. Release remains separately gated.
 
 ## Public Background Sync Advances Past Removed Plaid Events
 
-Status: open; discovered in work block 3H
+Status: resolved locally in work block 4L; release not authorized
 
 Severity: high financial-data correctness risk
 
@@ -1266,13 +1266,13 @@ Acceptance checks:
 - Cursor movement occurs only after every event is durably applied.
 - Failure before removal completion withholds or rolls back the cursor.
 
-Why not fixed now:
+Resolution:
 
-Sync behavior and regression coverage were excluded from audit-only work block 3H.
+The dashboard worker now calls the maintained `_sync_entity` core instead of a duplicate add/modify loop. Maintained dashboard-triggered synthetic coverage proves a removed transaction and its split are deleted in the same item transaction that advances the cursor, while the full primary Plaid suite continues to prove rollback and retry behavior. Release remains separately gated.
 
 ## Public Background Sync Includes Vendor Plaid Items
 
-Status: open; discovered in work block 3H
+Status: resolved locally in work block 4L; release not authorized
 
 Severity: high workflow and data-boundary risk
 
@@ -1296,13 +1296,13 @@ Acceptance checks:
 - Vendor items remain owned by the vendor workflow unless a new explicit architecture replaces both paths.
 - Tracked all-entity tests prove table, cursor, and item-type isolation.
 
-Why not fixed now:
+Resolution:
 
-Filtering or consolidating the workers changes product behavior and requires separate repair scope.
+The dashboard worker now reuses `_sync_entity`, whose item query explicitly selects `is_vendor = 0`. Maintained synthetic coverage seeds spending and vendor items, proves only the spending item reaches mocked Plaid, and verifies the vendor cursor remains unchanged while the spending removal commits. Release remains separately gated.
 
 ## One Scheduled Entity Exception Aborts Healthy Later Entities
 
-Status: open; discovered in work block 3H
+Status: resolved locally in work block 4L; release not authorized
 
 Severity: medium all-entity reliability risk
 
@@ -1326,13 +1326,13 @@ Acceptance checks:
 - Sanitized completion state identifies successful, failed, and unattempted entities.
 - Retry semantics do not duplicate or skip cursor work.
 
-Why not fixed now:
+Resolution:
 
-Entity fanout behavior and tests require a separately confirmed repair block.
+The scheduled route now initializes and syncs each configured entity inside its own post-authorization exception boundary. Unexpected failures become the standard sanitized result shape with `errors: ["entity sync failed"]`; later entities continue; partial versus all-entity failure remains truthful; raw exception text is absent from JSON; and the shared lease releases after every disposition. Maintained coverage proves all three attempts occur after repeated synthetic exceptions. Release remains separately gated.
 
 ## Sync-All Runs Entity Setup Before Bearer Validation
 
-Status: open; discovered in work block 3H
+Status: resolved locally in work block 4L; release not authorized
 
 Severity: medium authorization-side-effect risk
 
@@ -1356,13 +1356,13 @@ Acceptance checks:
 - Missing and invalid bearer requests leave every entity database unchanged.
 - Normal authorized all-entity iteration remains correct.
 
-Why not fixed now:
+Resolution:
 
-Changing request-hook behavior is an authentication/public-route mutation outside audit scope.
+`/plaid/sync-all` is now explicitly exempt from browser session authentication and normal entity setup while retaining POST-only, CSRF-exempt, bearer-protected behavior. A fresh configured-auth app proves missing bearer returns 401 rather than a login redirect without entity initialization or category synchronization; correct bearer reaches the view and then initializes Personal, BFM, and Luxe Legacy in order. Bearer comparison is constant-time. Release remains separately gated, and the source-derived possibility that deployed scheduled requests currently stop at a green 302 remains unverified until a separately authorized release check.
 
 ## Failed Public Worker Launch Consumes Its Throttle Window
 
-Status: open; discovered in work block 3H
+Status: resolved locally in work block 4L; release not authorized
 
 Severity: medium background-sync availability risk
 
@@ -1385,13 +1385,13 @@ Acceptance checks:
 - Throttle state advances only after successful worker launch or rolls back on failure.
 - Launch failure produces a controlled response and remains immediately retryable under the chosen policy.
 
-Why not fixed now:
+Resolution:
 
-Thread-launch behavior and tracked tests were excluded from work block 3H.
+The dashboard route now serializes throttle and launch state inside one process, acquires the shared lease before thread creation, updates the throttle only after `Thread.start()` succeeds, transfers the lease to the worker on success, and releases it immediately while preserving the old timestamp on failure. Maintained deterministic coverage proves successful transfer, failed-start immediate retry, contention without throttle consumption, and throttled requests without lease churn. Release remains separately gated.
 
 ## Background Sync Entry Points Lack Tracked Regression Coverage
 
-Status: partly addressed in work block 4G; remaining entry-point coverage parked for Phase 4
+Status: resolved locally through work blocks 4G and 4L; release not authorized
 
 Severity: medium regression-confidence risk
 
@@ -1415,9 +1415,9 @@ Acceptance checks:
 - Passing request, lock-release, entity-scope, and failure-containment behavior is explicit.
 - Each repaired 3H defect has failing-before and passing-after regression coverage.
 
-Remaining boundary:
+Resolution:
 
-Only the `P3-3H-01` result slice is addressed. Each later 3H repair should add its own paired failing-before and passing-after coverage.
+Work block 4G maintains workflow-visible result coverage. Work block 4L adds same-process separate-open contention, real two-process contention, normal release, SIGKILL cleanup, manual/scheduled/dashboard mutual exclusion, configured-auth bearer ordering, per-entity continuation and sanitization, successful and failed launch behavior, dashboard-triggered removal/cursor atomicity, vendor isolation, one net Luxe Legacy bridge invocation, mocked Plaid, denied sockets, temporary all-entity databases, and exact cleanup. The full maintained suite passes locally; release remains separately gated.
 
 ## Luxe Legacy Owner Draw Is Mirrored Despite The Exclusion Intent
 

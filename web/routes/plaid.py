@@ -1,21 +1,19 @@
 """Plaid integration routes — connect banks, sync transactions."""
 
 import logging
-import threading
+import secrets
 from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for, g, jsonify
 
 log = logging.getLogger(__name__)
 
-from core.db import get_connection
+from core.db import get_connection, init_db
 from core.imports import compute_external_transaction_id
 from core.categorize import _get_active_aliases, _match_alias, _keyword_suggest, _strip_platform_prefix
+from core.sync_coordination import try_acquire_sync_lease
 
 bp = Blueprint("plaid", __name__, url_prefix="/plaid")
-
-_sync_lock = threading.Lock()
-
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -177,14 +175,13 @@ def sync():
         flash("Plaid credentials not configured.", "danger")
         return redirect(url_for("plaid.index"))
 
-    if not _sync_lock.acquire(blocking=False):
+    lease = try_acquire_sync_lease()
+    if lease is None:
         flash("A sync is already in progress. Please wait.", "info")
         return redirect(url_for("plaid.index"))
 
-    try:
+    with lease:
         return _do_sync()
-    finally:
-        _sync_lock.release()
 
 
 @bp.route("/sync-all", methods=["POST"])
@@ -194,18 +191,31 @@ def sync_all():
     expected = os.environ.get("SYNC_SECRET", "")
     if not expected:
         return jsonify({"error": "SYNC_SECRET not configured"}), 500
-    if request.headers.get("Authorization") != f"Bearer {expected}":
+    supplied = request.headers.get("Authorization", "")
+    if not secrets.compare_digest(supplied, f"Bearer {expected}"):
         return jsonify({"error": "Unauthorized"}), 401
     if not _plaid_available():
         return jsonify({"error": "Plaid not configured"}), 500
-    if not _sync_lock.acquire(blocking=False):
+    lease = try_acquire_sync_lease()
+    if lease is None:
         return jsonify({"error": "Sync already in progress"}), 429
 
-    try:
+    with lease:
         from web import _ENTITY_MAP
         results = {}
         for entity_key in _ENTITY_MAP.values():
-            results[entity_key] = _sync_entity(entity_key)
+            try:
+                init_db(entity_key)
+                results[entity_key] = _sync_entity(entity_key)
+            except Exception:
+                log.warning("Scheduled sync failed for entity %s", entity_key)
+                results[entity_key] = {
+                    "new": 0,
+                    "modified": 0,
+                    "removed": 0,
+                    "backfilled": 0,
+                    "errors": ["entity sync failed"],
+                }
         failed_entities = [
             entity_key
             for entity_key, result in results.items()
@@ -220,8 +230,6 @@ def sync_all():
             else "partial_failure"
         )
         return jsonify({"ok": False, "status": status, "results": results}), 502
-    finally:
-        _sync_lock.release()
 
 
 def _do_sync():

@@ -282,7 +282,13 @@ def create_app():
 
     # ── Server-side auth configuration ────────────────────────────────────
     _AUTH_HASH = os.environ.get("APP_PASSWORD_HASH", "").strip()
-    _AUTH_EXEMPT = frozenset(("/sw.js", "/offline", "/health", "/auth/login"))
+    _AUTH_EXEMPT = frozenset((
+        "/sw.js",
+        "/offline",
+        "/health",
+        "/auth/login",
+        "/plaid/sync-all",
+    ))
 
     def _is_public_or_static_path(path: str) -> bool:
         return (
