@@ -7,9 +7,26 @@ Output format matches Amazon's order dicts for reuse with save_orders_to_db().
 """
 from __future__ import annotations
 
+from collections import Counter
 from datetime import datetime
 
 import pandas as pd
+
+
+def _deterministic_primary_category(categories: list[str]) -> str:
+    """Choose the most frequent category with a stable alphabetical tie-break."""
+    cleaned = [category.strip() for category in categories if category.strip()]
+    category_counts = Counter(cleaned)
+    if not category_counts:
+        return ""
+    return min(
+        category_counts,
+        key=lambda category: (
+            -category_counts[category],
+            category.casefold(),
+            category,
+        ),
+    )
 
 
 def parse_henryschein_xlsx(file_or_path) -> tuple[list[dict], list[str]]:
@@ -156,8 +173,9 @@ def parse_henryschein_xlsx(file_or_path) -> tuple[list[dict], list[str]]:
             product_summary = product_summary[:197] + "..."
 
         # Primary category from items
-        item_cats = [i["hs_category"] for i in items if i["hs_category"]]
-        primary_cat = max(set(item_cats), key=item_cats.count) if item_cats else ""
+        primary_cat = _deterministic_primary_category(
+            [item["hs_category"] for item in items]
+        )
 
         orders.append({
             "order_id": inv_str,

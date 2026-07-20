@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-19 10:12 PM CST",
+    "lastUpdated": "2026-07-20 8:14 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,12 +22,12 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4N-R are published on main; source commit 89236a6 deployed successfully with credential-free health at 200; work block 4M remains at its scheduled gate"
+    "durabilityStatus": "Work blocks through 4N-R are published on main; local-only 4O is complete and verified but not published; confirmed 4M is unblocked at its local implementation gate"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4N-R is durable on main automatically deployed and credential-free health verified; confirmed work block 4M is current and waiting at the natural scheduled-run gate.",
+    "summary": "Work block 4O is complete and verified locally; confirmed work block 4M is current and unblocked for local implementation.",
     "progress": 92
   },
   "currentTask": {
@@ -35,8 +35,8 @@
     "owner": "Codex Desktop",
     "status": "current",
     "supportingAgent": "The independent read-only monitor owns scheduled-run freshness and failure alerting",
-    "nextAction": "Recheck sanitized public workflow metadata for the first natural scheduled run after source commit 2a12533; start confirmed local 4M implementation from updated main only after success.",
-    "blocker": "The first natural scheduled run after source commit 2a12533 has not yet been observed successfully."
+    "nextAction": "Create codex/vendor-payment-matching-integrity from updated main and start confirmed local 4M implementation; keep release and live actions separately gated.",
+    "blocker": "None; scheduled activation run 29740509073 completed successfully."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-m",
@@ -62,12 +62,12 @@
       "Denied outbound networking and exact temporary cleanup",
       "Python compilation JSON validation dashboard refresh health check git diff check dashboard inspection and explicit worktree review"
     ],
-    "nextReportPoint": "Return the natural post-release run evidence exact matching contract focused and full synthetic results migration disposition cleanup local branch state preserved exclusions and separate release gate."
+    "nextReportPoint": "Return the exact matching contract focused and full synthetic results migration disposition cleanup local branch state preserved exclusions and separate release gate."
   },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
-    "lastChecked": "2026-07-19",
+    "lastChecked": "2026-07-20",
     "command": "node command-center/agent-router/scripts/queue-summary.js",
     "healthCommand": "node command-center/scripts/health-check.js",
     "counts": {
@@ -88,19 +88,19 @@
   },
   "recommendedNextMove": {
     "title": "Observe the 4M activation gate",
-    "status": "scheduled gate",
+    "status": "ready",
     "owner": "Codex Desktop",
-    "why": "Work blocks 4N and 4N-R are complete while the released sync-entry path still needs its first natural post-2a12533 scheduled-run truth point before 4M begins.",
-    "action": "Use only sanitized public workflow metadata; after a successful natural post-2a12533 run create codex/vendor-payment-matching-integrity from updated main for confirmed Task 1L.1.",
+    "why": "Work block 4O is complete locally and the first natural post-2a12533 scheduled run cleared the 4M activation gate.",
+    "action": "Create codex/vendor-payment-matching-integrity from updated main for confirmed local Task 1L.1 implementation; keep release and live actions separately gated.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No Ryan decision is currently required; 4N-R is complete and 4M is confirmed and waiting on its scheduled activation gate.",
+    "summary": "No Ryan decision is currently required; 4O is complete locally and 4M is confirmed and unblocked for local implementation.",
     "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work blocks 4N and 4N-R are complete for Task 1L.2 and its focused Task 2 slice. Work block 4M remains confirmed for Task 1L.1; Task 1L.3 broader Task 2 Tasks 1M-1P and 3-4 protected data migration backfill publication and live actions remain outside current authorization.",
+    "phaseQuestions": "Work block 4O is complete locally for Task 1L.3 and its focused Task 2 slice. Work block 4M remains confirmed for Task 1L.1; Tasks 1M-1P broader Task 2 Tasks 3-4 historical remediation taxonomy changes publication protected data and live actions remain outside current authorization.",
     "decisionQueue": "No current Ryan decision; stop and ask if the 4M activation gate fails or implementation needs a migration data policy scope expansion or live action.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -2265,8 +2265,8 @@
       "owner": "Codex Desktop",
       "recommendedAgent": "Codex Desktop",
       "whyThisAgent": "The block tightly couples sensitive financial-integrity behavior, local source changes, temporary all-entity verification, and final Runway OS stewardship.",
-      "runnerPath": "Current Codex task on codex/vendor-payment-matching-integrity after the natural scheduled-run activation gate passes.",
-      "activationGate": "The first natural scheduled run after source commit 2a12533 must complete successfully using sanitized public workflow metadata; do not manually dispatch, authenticate, or inspect response bodies.",
+      "runnerPath": "Create codex/vendor-payment-matching-integrity from updated main and begin the confirmed local implementation after the natural scheduled-run activation gate passed.",
+      "activationGate": "Passed 2026-07-20: workflow 256886458 was active and scheduled run 29740509073 completed successfully at 2026-07-20T11:59:33Z using sanitized unauthenticated public GitHub REST metadata; no manual dispatch, authentication, logs, or response bodies.",
       "expectedFiles": [
         "core/vendor_matching.py",
         "Focused additions to scripts/smoke_test.py",
@@ -2293,8 +2293,8 @@
         "Proof only the intended bank transaction is enriched, denied outbound networking, and exact cleanup",
         "Python compilation, JSON validation, dashboard refresh, health check, git diff check, dashboard inspection, and explicit worktree review"
       ],
-      "reportBack": "Return the natural post-release run evidence, exact matching contract, changed paths, focused and full synthetic results, migration disposition, cleanup, local branch state, preserved exclusions, and separate release gate.",
-      "nextBlock": "Begin confirmed local 4M implementation after the natural scheduled-run gate succeeds."
+      "reportBack": "Return the exact matching contract, changed paths, focused and full synthetic results, migration disposition, cleanup, local branch state, preserved exclusions, and separate release gate.",
+      "nextBlock": "Begin confirmed local 4M implementation from updated main; keep release and live actions separately gated."
     },
     {
       "id": "phase-4-block-n",
@@ -2344,7 +2344,7 @@
         "Python compilation JSON validation dashboard refresh health check git diff check dashboard inspection and explicit worktree review"
       ],
       "reportBack": "Return the exact persistence contract, changed paths, Amazon and Henry Schein parent/item outcomes, cents and auto-split proof, focused and full synthetic results, migration and backfill disposition, cleanup, local branch state, preserved exclusions, and current 4M gate status.",
-      "nextBlock": "Resume confirmed 4M after the first successful natural post-2a12533 scheduled run; stop for Ryan if that run fails.",
+      "nextBlock": "Resume confirmed 4M now that natural post-2a12533 scheduled run 29740509073 succeeded; stop for Ryan if implementation requires scope expansion.",
       "durability": "Complete and verified locally on codex/vendor-line-item-persistence; commit, push, PR, merge, deployment, protected data, real databases, live systems, migration, and backfill remain excluded.",
       "evidence": [
         "core/amazon.py",
@@ -2403,6 +2403,63 @@
         "Fly deploy job 88263334817"
       ],
       "result": "Published source commit 89236a6 directly to main by exact-path fast-forward observed successful automatic Fly run 29714030248 and job 88263334817 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-o",
+      "phaseId": "phase-4",
+      "label": "4O",
+      "name": "Deterministic Category-Domain Enforcement",
+      "status": "done",
+      "includedTasks": [
+        "Task 1L.3",
+        "Task 2 focused category-domain enforcement regression slice"
+      ],
+      "excludedTasks": [
+        "Waiting Task 1L.1 implementation completed Task 1L.2 Tasks 1M-1P the remainder of Task 2 and Tasks 3-4",
+        "Existing-invalid-row detection reporting backfill or remediation the import Undo wording issue taxonomy changes and general category-management redesign",
+        "Real databases or financial rows retained uploads or original user files credentials live vendor or Plaid access authenticated production pages workflow actions Fly downstream access or writes migrations and backfills",
+        "GitHub durability deployment pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block couples financial-classification behavior several related write paths temporary all-entity verification and final Runway OS stewardship.",
+      "runnerPath": "Current Codex task on local branch codex/category-domain-enforcement without delegation or additional second opinion.",
+      "expectedFiles": [
+        "core/categories.py core/amazon.py core/henryschein.py",
+        "web/routes/categorize.py web/routes/categorize_vendors.py and the vendor-card template only if needed for consistent validation UX",
+        "Focused additions to scripts/smoke_test.py",
+        "A concise category-domain contract sanitized 4O closeout log issue disposition and Runway OS state"
+      ],
+      "defaults": [
+        "Use each entity's categories.md definition through the maintained loader rather than database leftovers",
+        "Fall back to Needs Review and General for invalid inference instead of inventing an entity mapping",
+        "Rank mixed-category candidates by frequency then normalized alphabetical order",
+        "Prevalidate submitted batches before transaction order match or alias mutation",
+        "Preserve Skipped only through the dedicated vendor-queue action",
+        "Keep taxonomy historical rows GitHub durability release and live verification separately gated"
+      ],
+      "stopConditions": [
+        "The natural 4M activation run completes unsuccessfully",
+        "Safe enforcement requires a taxonomy decision migration historical-row access detection backfill or remediation",
+        "Dedicated Skipped behavior cannot be preserved without weakening the domain contract",
+        "Implementation expands into general category management Task 1L.1 or another repair family",
+        "Focused or full verification materially changes the plan command-center checks fail or either preserved untracked file would be touched"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "Fresh temporary Personal BFM and Luxe Legacy valid and invalid inference acceptance and zero-mutation checks",
+        "Stable mixed-category ties across hash seeds preserved Skipped behavior denied networking and exact cleanup",
+        "Python compilation JSON validation dashboard refresh health check git diff check dashboard inspection and explicit worktree review"
+      ],
+      "reportBack": "Return the exact category-domain contract fallback and tie behavior changed paths focused and full all-entity results zero-mutation rejection proof cleanup local branch state preserved exclusions and current 4M gate status.",
+      "nextBlock": "Restore already-confirmed 4M as current after verified local 4O closeout; publication of 4O remains separately gated.",
+      "durability": "Complete and verified locally on codex/category-domain-enforcement; commit push PR merge deployment taxonomy historical-row actions protected data live systems migration and backfill remain excluded.",
+      "evidence": [
+        "command-center/category-domain-contract.md",
+        "command-center/logs/2026-07-19-category-domain-enforcement-4o.md",
+        "scripts/smoke_test.py"
+      ],
+      "result": "Made categories.md authoritative for new entity-specific inference and acceptance writes; added safe Needs Review and General fallback deterministic mixed-category ties whole-batch zero-mutation validation preserved dedicated Skipped behavior all-entity denied-network coverage and exact cleanup; passed baseline and final smoke compilation JSON whitespace dashboard and health checks without taxonomy migration historical-row live-system or GitHub action."
     }
   ],
   "phaseTasks": [
@@ -2955,8 +3012,8 @@
       "status": "active",
       "owner": "Codex Desktop",
       "summary": "Umbrella decomposed into Tasks 1L.1-1L.3 for vendor-payment matching, vendor line-item persistence, and category-domain enforcement.",
-      "nextAction": "Observe a successful first natural scheduled run after source commit 2a12533, then implement confirmed work block 4M locally from main while preserving completed 4N on its branch.",
-      "blocker": "Confirmed Task 1L.1 implementation is waiting on the post-2a12533 natural scheduled-run gate."
+      "nextAction": "Create codex/vendor-payment-matching-integrity from updated main and implement confirmed 4M locally; work blocks 4N and 4O are complete.",
+      "blocker": "None; natural post-2a12533 scheduled run 29740509073 succeeded."
     },
     {
       "phaseId": "phase-4",
@@ -2965,8 +3022,8 @@
       "status": "current",
       "owner": "Codex Desktop",
       "summary": "Replace the nonexistent transactions.matched_order_id dependency with one explicit, race-safe vendor-to-bank match contract and focused exact, review, unmatched, apply, and isolation coverage.",
-      "nextAction": "Observe a successful first natural scheduled run after source commit 2a12533, then implement confirmed work block 4M locally.",
-      "blocker": "The post-2a12533 natural scheduled-run activation gate remains pending."
+      "nextAction": "Create the 4M implementation branch from updated main and begin the confirmed local vendor-payment matching repair.",
+      "blocker": "None; the post-2a12533 natural scheduled-run activation gate passed."
     },
     {
       "phaseId": "phase-4",
@@ -2988,9 +3045,16 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1L3",
       "title": "Task 1L.3: Enforce the category source of truth deterministically",
-      "status": "planned",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Validate inferred and accepted entity-specific category pairs, make mixed-category ties deterministic, and reject invalid writes without changing stored data; existing-row remediation stays separate."
+      "summary": "Work block 4O made categories.md authoritative for new entity-specific inference and acceptance writes added deterministic ties and zero-mutation rejection while preserving Skipped.",
+      "result": "Entity-aware inference safe fallback stable cross-hash-seed ties valid writes invalid batch order match and alias zero-mutation dedicated skip behavior denied networking and exact cleanup pass across Personal BFM and Luxe Legacy.",
+      "evidence": [
+        "command-center/category-domain-contract.md",
+        "command-center/logs/2026-07-19-category-domain-enforcement-4o.md"
+      ],
+      "nextAction": null,
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -4083,10 +4147,11 @@
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
     "browserSmoke": "pass; configured-auth Chromium passed 19/19 and no-password Chromium 2/2 with zero external requests; production credential-free root/login and service-worker v4 checks passed after deployment",
-    "applicationSmoke": "pass; maintained synthetic suite and focused auth/cache contracts passed legacy and Werkzeug hashes, wrong/correct login, CSRF, safe redirect, protected/full/HTMX/no-password/public/exempt behavior, no-store, and static-only cache rules",
+    "applicationSmoke": "pass; maintained synthetic suite including deterministic category-domain coverage plus focused auth/cache contracts passed",
+    "categoryDomain": "pass; Personal BFM and Luxe Legacy inference valid and invalid acceptance zero-mutation match order alias skip-sentinel cross-hash-seed denied-network and exact-cleanup checks passed",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
-    "workflowState": "pass with pending post-release truth point; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; run 29683898125 succeeded before source commit 2a12533 and therefore does not satisfy the first natural post-release run gate",
+    "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; natural post-release scheduled run 29740509073 completed successfully at 2026-07-20T11:59:33Z",
     "safeguardResearch": "pass; authoritative GitHub behavior cited, five options compared, and one implementation-ready path recommended",
     "independentMonitor": "pass; expense-tracker-daily-plaid-sync-monitor active on a daily 7:00 AM local schedule; public schedule-event test returned healthy with manual dispatch excluded",
     "preRelease": "pass; exact minute-17 workflow diff, YAML parse, synthetic smoke suite, dashboard refresh, health check, whitespace check, and visual dashboard inspection",

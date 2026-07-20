@@ -4,7 +4,11 @@ from markupsafe import escape
 from flask import Blueprint, render_template, request, session, g
 
 from core.amazon import get_uncategorized_orders, get_order_counts, categorize_order, infer_category
-from web import get_categories, get_subcategories
+from core.categories import (
+    CategoryDomainError,
+    all_category_names,
+    subcategory_names,
+)
 
 bp = Blueprint("categorize_vendors", __name__, url_prefix="/categorize-vendors")
 
@@ -33,16 +37,15 @@ def _build_card_context(entity_key):
 
     # Always show the first uncategorized order (since we just categorized/skipped the previous one)
     order = uncategorized[0]
-    categories = get_categories(entity_key)
-    if "Shopping" not in categories:
-        categories = categories + ["Shopping"]
+    categories = all_category_names(entity_key)
 
     inferred_cat, inferred_sub = infer_category(
+        entity_key,
         order.get("product_summary", ""),
         order.get("amazon_category", ""),
     )
 
-    subs = get_subcategories(entity_key, inferred_cat)
+    subs = subcategory_names(entity_key, inferred_cat)
 
     return {
         "order": order,
@@ -69,11 +72,19 @@ def save():
     order_id = request.form.get("order_id", type=int)
     category = request.form.get("category", "")
     subcategory = request.form.get("subcategory", "Unknown")
-    custom_sub = request.form.get("custom_sub", "").strip()
-    final_sub = custom_sub if custom_sub else subcategory
 
     if order_id and category:
-        categorize_order(g.entity_key, order_id, category, final_sub)
+        try:
+            categorize_order(g.entity_key, order_id, category, subcategory)
+        except CategoryDomainError as exc:
+            ctx = _build_card_context(g.entity_key)
+            ctx["error"] = str(exc)
+            template = (
+                "components/vendor_card.html"
+                if request.headers.get("HX-Request")
+                else "categorize_vendors.html"
+            )
+            return render_template(template, **ctx)
 
     ctx = _build_card_context(g.entity_key)
 
@@ -89,7 +100,13 @@ def skip():
     """Skip current order — mark with 'Skipped' category and move on."""
     order_id = request.form.get("order_id", type=int)
     if order_id:
-        categorize_order(g.entity_key, order_id, "Skipped", "")
+        categorize_order(
+            g.entity_key,
+            order_id,
+            "Skipped",
+            "",
+            allow_workflow_sentinel=True,
+        )
 
     ctx = _build_card_context(g.entity_key)
 
@@ -103,6 +120,6 @@ def skip():
 def subcategories():
     """HTMX endpoint: return subcategory <option> tags for a given category."""
     category = request.args.get("category", "")
-    subs = get_subcategories(g.entity_key, category) if category else ["Unknown"]
+    subs = subcategory_names(g.entity_key, category) if category else []
     options = "".join(f'<option value="{escape(s)}">{escape(s)}</option>' for s in subs)
     return options

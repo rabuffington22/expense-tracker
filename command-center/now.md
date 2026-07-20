@@ -2,7 +2,7 @@
 
 ## Active Objective
 
-Run confirmed work block 4M after the first natural scheduled run proves the released 4L path under real schedule conditions.
+Begin confirmed work block 4M now that the first natural scheduled run has proved the released 4L path under real schedule conditions. Work block 4O is complete and verified locally.
 
 ## Current Phase
 
@@ -10,11 +10,11 @@ Phase 4: Core Repairs And Regression Coverage — active.
 
 ## Current Work Block
 
-Work block 4M: Vendor Payment Matching Integrity — active and waiting at its natural scheduled-run activation gate before application implementation. Work blocks 4N and 4N-R are complete, durable, deployed, and credential-free health verified.
+Work block 4M: Vendor Payment Matching Integrity — active and unblocked for its separately authorized local implementation. Work block 4O is complete and locally verified; work blocks 4N and 4N-R are complete, durable, deployed, and credential-free health verified.
 
 ## Current Task
 
-Phase 4 Task 1L.1: restore vendor-payment matching integrity. Ryan confirmed 4M; implementation remains behind the first successful natural scheduled run after source commit `2a12533`.
+Phase 4 Task 1L.1: restore vendor-payment matching integrity. Ryan confirmed 4M; the first successful natural scheduled run after source commit `2a12533` cleared its activation gate.
 
 ## Owner
 
@@ -22,7 +22,17 @@ Codex Desktop owns confirmed work block 4M, its local implementation, synthetic 
 
 ## Current Action
 
-Do not manually dispatch or authenticate `/plaid/sync-all`. Recheck only sanitized public workflow metadata for the first natural schedule event after source commit `2a12533`. If it succeeds, create `codex/vendor-payment-matching-integrity` from updated `main` and begin the confirmed local-only Task 1L.1 implementation; otherwise stop at the exact gate.
+Create `codex/vendor-payment-matching-integrity` from updated `main` and begin the confirmed local-only Task 1L.1 implementation. Keep release, live actions, and production data access separately gated; do not manually dispatch or authenticate `/plaid/sync-all`.
+
+## Work Block 4O Result
+
+- `categories.md` is authoritative for new in-scope inference and acceptance writes in each entity.
+- Vendor inference preserves valid candidates and falls back to `Needs Review` / `General`; empty and `Unknown` subcategories normalize to `General`.
+- Henry Schein equal-frequency ties resolve by normalized alphabetical order across tested hash seeds.
+- Transaction batches, vendor-order saves, and accepted order matches prevalidate before any transaction, order, note, match, or alias mutation.
+- The vendor card no longer offers ad hoc subcategory creation, while the dedicated `Skipped` workflow sentinel remains intact.
+- Baseline and final smoke, focused all-entity valid/invalid and zero-mutation cases, denied networking, exact cleanup, compilation, JSON, whitespace, dashboard, and health checks pass.
+- No taxonomy, migration, historical-row action, protected data, live system, commit, push, or deployment occurred.
 
 ## Work Block 4N Result
 
@@ -59,6 +69,13 @@ Do not manually dispatch or authenticate `/plaid/sync-all`. Recheck only sanitiz
 - Missing-bearer `/plaid/sync-all` returned HTTP 401 with redirects disabled, confirming bearer-first behavior without entity initialization or a Plaid call.
 - Both preserved untracked files remained untouched and unstaged; the high-confidence staged sensitive-addition scan returned zero.
 
+## 4M Activation Gate Result
+
+- The first natural post-`2a12533` scheduled run was `29740509073`, created at `2026-07-20T11:59:33Z`.
+- Workflow `256886458` was `active`; the scheduled run completed with conclusion `success`.
+- Freshness and incomplete-run thresholds passed using sanitized public metadata only.
+- The 4M activation gate is cleared; no remediation, workflow action, Plaid call, or financial-system mutation was attempted.
+
 ## Verification
 
 - Maintained synthetic smoke suite, Python compilation, JSON validation, dashboard refresh, command-center health, `git diff --check`, staged-path review, and sensitive-addition scan: pass before publication.
@@ -69,4 +86,4 @@ Do not manually dispatch or authenticate `/plaid/sync-all`. Recheck only sanitiz
 
 ## Next Report Point
 
-Return the first natural post-`2a12533` scheduled-run result without opening logs or response bodies. If green, continue through the confirmed 4M contract, focused and full synthetic verification, cleanup, and local Runway OS closeout from a separate branch; if missing or unsuccessful, stop and report the exact gate. Work blocks 4N and 4N-R are complete and durable on `main`.
+Create the confirmed 4M implementation branch from updated `main`, then complete its focused and full synthetic verification, cleanup, and local Runway OS closeout. Keep publication and live actions as separate decisions. Work block 4O is complete locally, and its publication remains a separate decision.

@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after local completion of work block 4N; confirmed work block 4M is current and waiting at its natural scheduled-run gate
+Status: active after local completion of work block 4O; confirmed work block 4M is current and waiting at its natural scheduled-run gate
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -906,10 +906,10 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1I: Repair Plaid reconciliation, liabilities, and freshness truthfulness.** Status: done, released, and credential-free production health verified through work blocks 4J-4J-R for `P3-3G-02` through `P3-3G-05` plus the matching focused `P3-3G-C01` coverage slice.
 - **Task 1J: Isolate Plaid item failures and add truthful observability.** Status: done, released, and credential-free production health verified through work blocks 4K-4K-R for `P3-3G-06`, `P3-3G-07`, and the matching focused `P3-3G-C01` slice.
 - **Task 1K: Repair scheduled and public sync-entry coordination and result truthfulness.** Status: done, released, automatically deployed, and safely credential-free production verified through work blocks 4L-4L-R for `P3-3H-02` through `P3-3H-07` plus the remaining `P3-3H-C01` slice; the next natural scheduled run remains the real-sync truth point.
-- **Task 1L: Repair vendor import-to-categorization integrity.** Status: active umbrella, decomposed just in time into Tasks 1L.1-1L.3; work block 4N is complete locally and confirmed work block 4M is current at the next natural scheduled-run truth point.
-  - **Task 1L.1: Restore vendor-payment matching integrity.** Replace the nonexistent `transactions.matched_order_id` dependency with one explicit, race-safe vendor-to-bank match contract, preserve target-entity isolation, and add focused exact/review/unmatched/apply regression coverage. Status: current in confirmed work block 4M, waiting at the production-run gate.
+- **Task 1L: Repair vendor import-to-categorization integrity.** Status: active umbrella, decomposed just in time into Tasks 1L.1-1L.3; Tasks 1L.2 and 1L.3 are complete through work blocks 4N and 4O, while confirmed work block 4M is current at the next natural scheduled-run truth point.
+  - **Task 1L.1: Restore vendor-payment matching integrity.** Replace the nonexistent `transactions.matched_order_id` dependency with one explicit, race-safe vendor-to-bank match contract, preserve target-entity isolation, and add focused exact/review/unmatched/apply regression coverage. Status: current in confirmed work block 4M and waiting at the production-run gate.
   - **Task 1L.2: Persist vendor-order line items end to end.** Save Amazon and Henry Schein line items transactionally with their parent orders, preserve exact-reimport idempotency, reconcile integer cents, and prove the maintained auto-split path no longer needs the standalone population script for new imports. Status: done and verified locally through work block 4N; release remains separate.
-  - **Task 1L.3: Enforce the category source of truth deterministically.** Validate inferred and accepted transaction/vendor-order category pairs against the current entity definition, make mixed-category ties deterministic, and reject invalid writes without changing stored data. Status: planned after Task 1L.2; existing-row detection or remediation remains a separate decision.
+  - **Task 1L.3: Enforce the category source of truth deterministically.** Validate inferred and accepted transaction/vendor-order category pairs against the current entity definition, make mixed-category ties deterministic, and reject invalid writes without changing stored data. Status: done and verified locally through work block 4O; release and existing-row detection or remediation remain separate decisions.
 - **Task 1M: Repair remaining payroll integrity, validation, and temporary-payload retention.** Status: planned after Task 1C; separate hourly and salary cohorts per Ryan's confirmed default.
 - **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: planned after the planning route guard.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
@@ -1732,7 +1732,7 @@ Evidence: `command-center/logs/2026-07-19-sync-entry-coordination-release-4l-r.m
 
 ### Confirmed Work Block 4M: Vendor Payment Matching Integrity
 
-Status: active and waiting on 2026-07-19; implementation remains authorized but held at the first natural scheduled-run gate after source commit `2a12533`; work block 4N is complete locally
+Status: active and unblocked on 2026-07-20; the first natural scheduled-run gate after source commit `2a12533` passed; work block 4N is complete locally
 
 Included: Task 1L.1 plus only the focused vendor-payment matching slice of Task 2. Replace the nonexistent `transactions.matched_order_id` dependency with one explicit vendor-to-bank relationship contract; preserve exact-match auto-application and likely/loose review; prevent stale or duplicate application from overwriting an unrelated transaction; preserve target-entity isolation; and add maintained exact, review, unmatched, apply, rollback, and isolation coverage using temporary synthetic databases.
 
@@ -1746,7 +1746,7 @@ Expected surfaces: `core/vendor_matching.py`; focused additions to `scripts/smok
 
 Defaults: treat `vendor_transactions.matched_transaction_id` as the canonical relationship; permit at most one vendor match per bank transaction; keep exact-match auto-application and likely/loose review behavior; reject stale or duplicate application without unrelated mutation; make no historical repair or schema change; use local branch `codex/vendor-payment-matching-integrity`; and keep commit, push, PR, merge, release, and live verification separately gated.
 
-Activation gate: the first natural scheduled run after source commit `2a12533` must complete successfully using sanitized public workflow metadata. The earlier successful run `29683898125` predates that source release and does not satisfy the gate. Do not manually dispatch, authenticate, or inspect response bodies to accelerate it.
+Activation gate: passed on 2026-07-20. Using sanitized unauthenticated public GitHub REST metadata filtered to `event=schedule`, workflow `256886458` was `active` and run `29740509073` was created at `2026-07-20T11:59:33Z`, completed with conclusion `success`, and satisfied freshness and incomplete-run thresholds. No logs, response bodies, manual dispatch, authentication, or acceleration action occurred.
 
 Stop conditions: the activation run is missing or unsuccessful; repair requires real data, credentials, production inspection, live vendor/Plaid activity, a schema migration, backfill, or historical duplicate decision; one-bank-to-one-vendor semantics conflict with tracked source; work expands into another task; focused or full verification changes the plan; command-center refresh or health fails; or either preserved untracked file would be touched.
 
@@ -1754,11 +1754,13 @@ Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; fresh
 
 Report point: return the natural post-release run evidence, exact matching contract, changed paths, focused and full synthetic results, confirmation that no migration was needed or the precise stop reason, cleanup evidence, local branch state, preserved exclusions, and the separate release gate.
 
-Suggested next work block: 4N for Task 1L.2 plus its focused Task 2 line-item persistence and auto-split coverage slice.
+Suggested next action: create `codex/vendor-payment-matching-integrity` from updated `main` and begin the separately authorized local 4M implementation. Keep release and live actions separately gated.
+
+Activation result: the first natural post-`2a12533` scheduled run `29740509073` completed successfully, clearing the 4M gate. Evidence: `command-center/logs/2026-07-20-natural-scheduled-run-4m-gate.md`.
 
 ### Confirmed Work Block 4N: Vendor Line-Item Persistence
 
-Status: complete and verified locally on 2026-07-19; release not authorized; work block 4M remains waiting at its scheduled-run gate
+Status: complete and verified locally on 2026-07-19; release not authorized; work block 4M is now unblocked after its scheduled-run gate passed
 
 Included: Task 1L.2 plus only the focused vendor line-item persistence and auto-split slice of Task 2. Persist Amazon and Henry Schein parsed line items transactionally with newly inserted parent orders; preserve exact reimport idempotency; reconcile quantity, item, and parent totals in integer cents; and prove a matched multi-category new import can use the maintained auto-split path without the standalone population script.
 
@@ -1778,7 +1780,7 @@ Stop conditions: the natural post-`2a12533` scheduled run fails; correct persist
 
 Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; fresh temporary Personal, BFM, and Luxe Legacy databases; generated Amazon and Henry Schein inputs; parent-plus-child persistence, exact reimport idempotency, quantity and integer-cents reconciliation, multi-category matched auto-split, forced rollback, unchanged unrelated rows, cross-entity isolation, denied outbound networking, and exact cleanup; Python compilation; JSON validation; dashboard refresh; command-center health; `git diff --check`; dashboard inspection; and explicit worktree review.
 
-Dashboard closeout: update human-readable sources first; align `state.json`; refresh and health-check the dashboard; record 4N as done only if every required check passes; then restore 4M as current unless its scheduled gate has cleared or failed.
+Dashboard closeout: update human-readable sources first; align `state.json`; refresh and health-check the dashboard; record 4N as done only if every required check passes; then restore 4M as current. The scheduled gate has since cleared on 2026-07-20.
 
 Report point: return the exact persistence contract, changed paths, Amazon and Henry Schein parent/item outcomes, cents and auto-split proof, focused and full synthetic results, confirmation that no migration or backfill was needed or the precise stop reason, cleanup evidence, local branch state, preserved exclusions, and current 4M gate status.
 
@@ -1809,6 +1811,40 @@ Report point: return source and closeout commits, exact published paths, automat
 Result: the exact ten-path 4N source set was committed as `89236a6`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29714030248` and deploy job `88263334817` passed every reported step for exact source SHA `89236a62438c4c5063aedf6c276f0ae52fafcfbe`. Production `/health` returned HTTP 200 without credentials. Local `main` matched `origin/main` before closeout; the staged high-confidence sensitive-addition scan returned zero; both preserved untracked files remained excluded; and no protected data, credential, authenticated production page, manual workflow action, non-automatic Fly mutation, live vendor or Plaid call, downstream access or write, workflow edit, Task 1L.1 implementation, Task 1L.3 work, force push, or unrelated action occurred. This command-center-only closeout uses `[skip actions]` to avoid a second deployment. Confirmed 4M is current again at its unchanged natural scheduled-run gate.
 
 Evidence: `command-center/logs/2026-07-19-vendor-line-item-persistence-release-4n-r.md`, source commit `89236a6`, GitHub Actions run `29714030248`, and Fly deploy job `88263334817`.
+
+### Confirmed Work Block 4O: Deterministic Category-Domain Enforcement
+
+Status: done and verified locally on 2026-07-19; direct-main release authorized on 2026-07-20; confirmed work block 4M is current and unblocked
+
+Included: Task 1L.3 plus only the focused category-domain enforcement slice of Task 2. Treat each entity's current `categories.md` definition as authoritative; validate every in-scope inferred and accepted category/subcategory pair; make mixed-category vendor ties deterministic; reject invalid transaction, vendor-order, and match-application writes without changing stored data; preserve the dedicated vendor-queue `Skipped` sentinel without treating it as a financial category; and add maintained Personal, BFM, and Luxe Legacy regression coverage.
+
+Excluded: waiting Task 1L.1 implementation and its 4M contract; completed Task 1L.2; Tasks 1M-1P; the remainder of Task 2; Tasks 3-4; existing-invalid-row detection, reporting, backfill, or remediation; the low-priority import `Undo` wording issue; category-taxonomy additions, renames, or removals; general category-management redesign; real databases or financial rows; retained uploads or original user files; credentials; live vendor or Plaid access; authenticated production pages; workflow dispatch, rerun, or authentication; Fly operations; downstream access or writes; migrations; GitHub durability; deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Why this grouping: entity-specific inference, deterministic vendor-category selection, acceptance validation, and focused regression coverage share one category-domain contract and one temporary all-entity verification path. Task 1L.2 is already released and supplies the persisted line-item foundation. Work block 4M uses a different vendor-payment relationship contract and remains safely waiting on an independent scheduled-run gate.
+
+Owner and recommended agent: Codex Desktop in the current task. The block couples financial-classification behavior, several related write paths, temporary all-entity verification, and final Runway OS stewardship. No delegation or additional second opinion is needed because the safest behavior is constrained by the maintained entity definitions and explicit rejection checks.
+
+Runner path: current Codex task on local branch `codex/category-domain-enforcement`. Codex owns implementation, verification, final intake, dashboard currency, and the decision whether the returned work satisfies the confirmed block.
+
+Expected surfaces: `core/categories.py`; `core/amazon.py`; `core/henryschein.py`; `web/routes/categorize.py`; `web/routes/categorize_vendors.py`; the vendor-card template only if required for consistent validation UX; focused additions to `scripts/smoke_test.py`; a concise category-domain contract; a sanitized 4O closeout log; relevant `command-center/issues.md` disposition; and Runway OS roadmap, now, decisions, state, and dashboard. `categories.md`, `core/db.py`, production scripts, and unrelated categorization surfaces are expected to remain unchanged.
+
+Defaults: use `categories.md` through the maintained entity-aware loader rather than database leftovers; fall back to `Needs Review` / `General` when an inferred pair is invalid instead of inventing an entity mapping; rank mixed-category candidates by frequency and break ties by normalized alphabetical order; prevalidate a submitted batch before any transaction, order, match, or alias mutation; show a clear error without advancing the vendor queue on invalid input; preserve `Skipped` only through the dedicated skip action; do not change the taxonomy or historical rows; and keep commit, push, PR, merge, release, and live verification separately gated.
+
+Blocking questions: none.
+
+Stop conditions: the natural 4M activation run completes unsuccessfully; safe enforcement requires a category-taxonomy decision, schema migration, historical-row access, detection, backfill, or remediation; dedicated `Skipped` behavior cannot be preserved without weakening the domain contract; implementation expands into general category management, Task 1L.1, or another repair family; focused or full verification materially changes the plan; command-center refresh or health fails; or either preserved untracked file would be touched.
+
+Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; fresh temporary Personal, BFM, and Luxe Legacy databases; valid and invalid entity-specific inference; stable mixed-category tie results across hash seeds; valid transaction and vendor-order acceptance; invalid single and multi-row submissions with zero transaction, order, match, or alias mutation; invalid match application leaving transaction and order state unchanged; preserved dedicated `Skipped` behavior; denied outbound networking and exact cleanup; Python compilation; JSON validation; dashboard refresh; command-center health; `git diff --check`; dashboard inspection; and explicit worktree review.
+
+Dashboard closeout: update human-readable sources first; align `state.json`; refresh and health-check the dashboard; record 4O as done only if every required check passes; then restore 4M as current. The natural scheduled gate cleared on 2026-07-20 through sanitized public evidence, so 4M is ready to resume after 4O closeout.
+
+Report point: return the exact category-domain contract, fallback and tie behavior, changed paths, focused and full all-entity results, zero-mutation rejection proof, cleanup evidence, local branch state, preserved exclusions, and current 4M gate status.
+
+Suggested next work block: resume already-confirmed 4M. Publication of 4O remains a separate authorization.
+
+Result: `categories.md` is now authoritative for new in-scope category writes. Vendor inference is explicitly entity-aware, preserves valid candidates, and safely falls back to `Needs Review` / `General`; empty and `Unknown` subcategories normalize to `General`; Henry Schein equal-frequency ties resolve by frequency then normalized alphabetical order across hash seeds; and transaction batches, vendor-order saves, and accepted order matches prevalidate before any transaction, order, note, match, or alias mutation. The vendor categorization card no longer offers ad hoc subcategory creation, while the dedicated `Skipped` workflow sentinel remains intact. Baseline and final full smoke suites, focused all-entity valid/invalid and zero-mutation cases, denied networking, exact cleanup, Python compilation, JSON validation, whitespace, dashboard refresh, health, and dashboard inspection pass. No taxonomy, migration, historical-row action, protected data, live system, or GitHub durability occurred during local implementation. The natural scheduled-run gate has since cleared, so confirmed 4M is unblocked and remains separate from the authorized 4O release.
+
+Evidence: `command-center/category-domain-contract.md` and `command-center/logs/2026-07-19-category-domain-enforcement-4o.md`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

@@ -16,6 +16,7 @@ from typing import Optional
 import pandas as pd
 
 from core.db import get_connection
+from core.categories import CategoryDomainError, normalize_category_pair
 
 
 # ── Column name normalization ────────────────────────────────────────────────
@@ -172,25 +173,46 @@ _AMAZON_BIZ_CATEGORY_MAP = {
 }
 
 
-def infer_category(product_name: str, amazon_category: str = "") -> tuple[str, str]:
+def infer_category(
+    entity: str,
+    product_name: str,
+    amazon_category: str = "",
+) -> tuple[str, str]:
     """Return a (category, subcategory) guess.
 
     Uses Amazon's built-in category if available,
     otherwise falls back to keyword matching on the product name.
     Subcategory defaults to 'General' when not inferable.
     """
+    inferred = None
+
     # Try Amazon's own category first (Business CSV)
     if amazon_category:
         key = amazon_category.strip().lower()
         if key in _AMAZON_BIZ_CATEGORY_MAP:
-            return (_AMAZON_BIZ_CATEGORY_MAP[key], "General")
+            inferred = (_AMAZON_BIZ_CATEGORY_MAP[key], "General")
 
     # Fall back to keyword matching on product name
-    lower = product_name.lower()
-    for keywords, category in _AMAZON_CATEGORY_HINTS:
-        if any(kw in lower for kw in keywords):
-            return (category, "General")
-    return ("Household", "General")
+    if inferred is None:
+        lower = product_name.lower()
+        for keywords, category in _AMAZON_CATEGORY_HINTS:
+            if any(kw in lower for kw in keywords):
+                inferred = (category, "General")
+                break
+
+    if inferred is None:
+        inferred = ("Needs Review", "General")
+
+    try:
+        category, subcategory = normalize_category_pair(entity, *inferred)
+        return category, subcategory or "General"
+    except CategoryDomainError:
+        # Never invent an entity-specific mapping. All maintained entities have
+        # Needs Review, which is the explicit safe fallback for uncertain data.
+        category, subcategory = normalize_category_pair(
+            entity, "Needs Review", "General"
+        )
+        return category, subcategory or "General"
 
 
 # ── CSV parsing ──────────────────────────────────────────────────────────────
@@ -470,16 +492,27 @@ def _amounts_match(txn_amount: float, order_total: float, tolerance_pct: float =
     return diff <= max(ref * tolerance_pct, 0.10)
 
 
-def _get_order_category(order: dict) -> tuple[str, str]:
+def _get_order_category(entity: str, order: dict) -> tuple[str, str]:
     """Get category from order — prefer user-set, fall back to infer."""
     cat = order.get("category", "")
     subcat = order.get("subcategory", "")
     if cat:
-        return (cat, subcat or "Unknown")
-    return infer_category(order.get("product_summary", ""), order.get("amazon_category", ""))
+        try:
+            normalized_cat, normalized_sub = normalize_category_pair(
+                entity, cat, subcat
+            )
+            return normalized_cat, normalized_sub or "General"
+        except CategoryDomainError:
+            return "Needs Review", "General"
+    return infer_category(
+        entity,
+        order.get("product_summary", ""),
+        order.get("amazon_category", ""),
+    )
 
 
 def match_orders_to_transactions(
+    entity: str,
     orders: list[dict],
     transactions: pd.DataFrame,
     date_window: int = 5,
@@ -541,7 +574,7 @@ def match_orders_to_transactions(
             result["matched_order"] = order
             result["confidence"] = 0.95
             result["product_summary"] = order["product_summary"]
-            cat, subcat = _get_order_category(order)
+            cat, subcat = _get_order_category(entity, order)
             result["suggested_category"] = cat
             result["suggested_subcategory"] = subcat
             result["order_id"] = order["order_id"]
@@ -565,7 +598,7 @@ def match_orders_to_transactions(
             result["matched_order"] = order
             result["confidence"] = 0.80
             result["product_summary"] = order["product_summary"]
-            cat, subcat = _get_order_category(order)
+            cat, subcat = _get_order_category(entity, order)
             result["suggested_category"] = cat
             result["suggested_subcategory"] = subcat
             result["order_id"] = order["order_id"]
@@ -598,7 +631,7 @@ def match_orders_to_transactions(
                     result["matched_order"] = combo[0]  # primary
                     result["confidence"] = 0.75
                     result["product_summary"] = summary
-                    cat, subcat = _get_order_category(combo[0])
+                    cat, subcat = _get_order_category(entity, combo[0])
                     result["suggested_category"] = cat
                     result["suggested_subcategory"] = subcat
                     result["order_id"] = ", ".join(o["order_id"] for o in combo)
@@ -622,7 +655,7 @@ def match_orders_to_transactions(
             result["matched_order"] = best
             result["confidence"] = 0.50
             result["product_summary"] = best["product_summary"]
-            cat, subcat = _get_order_category(best)
+            cat, subcat = _get_order_category(entity, best)
             result["suggested_category"] = cat
             result["suggested_subcategory"] = subcat
             result["order_id"] = best["order_id"]
@@ -847,13 +880,26 @@ def get_uncategorized_orders(entity: str) -> list[dict]:
         conn.close()
 
 
-def categorize_order(entity: str, order_db_id: int, category: str, subcategory: str) -> None:
+def categorize_order(
+    entity: str,
+    order_db_id: int,
+    category: str,
+    subcategory: str,
+    *,
+    allow_workflow_sentinel: bool = False,
+) -> None:
     """Save user's category choice on an amazon_order."""
+    if allow_workflow_sentinel and category == "Skipped":
+        normalized_category, normalized_subcategory = "Skipped", None
+    else:
+        normalized_category, normalized_subcategory = normalize_category_pair(
+            entity, category, subcategory
+        )
     conn = get_connection(entity)
     try:
         conn.execute(
             "UPDATE amazon_orders SET category = ?, subcategory = ? WHERE id = ?",
-            (category, subcategory, order_db_id),
+            (normalized_category, normalized_subcategory, order_db_id),
         )
         conn.commit()
     finally:
@@ -902,10 +948,27 @@ def apply_matches(entity: str, matches: list[dict]) -> int:
     Also marks the corresponding amazon_orders as matched.
     Returns count of updated transactions.
     """
+    normalized_matches = []
+    for match in matches:
+        normalized = dict(match)
+        category = str(match.get("suggested_category") or "").strip()
+        if category:
+            normalized_category, normalized_subcategory = normalize_category_pair(
+                entity,
+                category,
+                match.get("suggested_subcategory"),
+            )
+            normalized["suggested_category"] = normalized_category
+            normalized["suggested_subcategory"] = normalized_subcategory
+        else:
+            normalized["suggested_category"] = ""
+            normalized["suggested_subcategory"] = None
+        normalized_matches.append(normalized)
+
     conn = get_connection(entity)
     try:
         updated = 0
-        for m in matches:
+        for m in normalized_matches:
             if not m.get("product_summary"):
                 continue
 
@@ -914,13 +977,14 @@ def apply_matches(entity: str, matches: list[dict]) -> int:
                 "SET notes = ?, "
                 "    merchant_canonical = 'Amazon', "
                 "    category = COALESCE(NULLIF(?, ''), category), "
-                "    subcategory = ?, "
+                "    subcategory = CASE WHEN ? != '' THEN ? ELSE subcategory END, "
                 "    confidence = ? "
                 "WHERE transaction_id = ?",
                 (
                     m["product_summary"],
                     m.get("suggested_category", ""),
-                    m.get("suggested_subcategory", "Unknown"),
+                    m.get("suggested_category", ""),
+                    m.get("suggested_subcategory"),
                     m.get("confidence", 0.0),
                     m["transaction_id"],
                 ),
@@ -935,7 +999,7 @@ def apply_matches(entity: str, matches: list[dict]) -> int:
         conn.close()
 
     # Mark amazon_orders as matched
-    mark_orders_matched(entity, matches)
+    mark_orders_matched(entity, normalized_matches)
 
     return updated
 

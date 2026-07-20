@@ -9,6 +9,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 
 from core.db import get_connection
 from core.categorize import suggest_categories, apply_aliases_to_db
+from core.categories import CategoryDomainError, normalize_category_pair
 from core.reporting import get_uncategorized
 from web import get_categories
 
@@ -150,21 +151,30 @@ def accept():
         flash("Nothing to save.", "warning")
         return redirect(url_for("categorize.index"))
 
-    conn = get_connection(g.entity_key)
-    aliases_created = 0
-    saved_count = 0
+    validated = []
     try:
         for tid in txn_ids:
             cat = request.form.get(f"cat_{tid}", "").strip()
             subcat = request.form.get(f"subcat_{tid}", "").strip()
             notes = request.form.get(f"notes_{tid}", "").strip()
-
             if cat == "Uncategorized":
                 cat = ""
+            normalized_cat, normalized_subcat = normalize_category_pair(
+                g.entity_key,
+                cat,
+                subcat,
+                allow_empty=True,
+            )
+            validated.append((tid, normalized_cat, normalized_subcat, notes))
+    except CategoryDomainError as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("categorize.index"))
 
-            if not subcat or subcat == "Unknown":
-                subcat = None
-
+    conn = get_connection(g.entity_key)
+    aliases_created = 0
+    saved_count = 0
+    try:
+        for tid, cat, subcat, notes in validated:
             conn.execute(
                 "UPDATE transactions SET category=?, subcategory=?, confidence=1.0, notes=? "
                 "WHERE transaction_id=?",

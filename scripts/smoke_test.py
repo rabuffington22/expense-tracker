@@ -662,13 +662,436 @@ def main() -> None:
             conn_vendor.close()
         print("   ✅ Amazon and Henry parent/item atomicity, cents, reimport, split, isolation, denied-network, and cleanup passed")
 
-        # ── 8. Route regression tests ────────────────────────────────
-        print("\n8. Route regression tests…")
+        # ── 7d. Deterministic category-domain enforcement ───────────
+        print("\n7d. Deterministic category-domain enforcement tests…")
         os.environ["FLASK_SECRET"] = "smoke-test-secret-key"
         os.environ["APP_PASSWORD_HASH"] = ""
         from web import create_app
         app = create_app()
         app.config["TESTING"] = True
+
+        from core.amazon import (
+            apply_matches,
+            categorize_order,
+            infer_category,
+        )
+        from core.categories import (
+            CategoryDomainError,
+            load_categories,
+            normalize_category_pair,
+        )
+        from core.henryschein import _deterministic_primary_category
+
+        domain_cases = {
+            "personal": ("Personal", "Food", "Groceries"),
+            "company": ("BFM", "Electronics", "General"),
+            "luxelegacy": ("LL", "Supplies", "General"),
+        }
+
+        for entity_key, (_, valid_cat, valid_sub) in domain_cases.items():
+            _check(
+                normalize_category_pair(entity_key, valid_cat, valid_sub)
+                == (valid_cat, valid_sub),
+                f"category domain {entity_key}: valid pair should round-trip",
+            )
+            _check(
+                normalize_category_pair(entity_key, valid_cat, "Unknown")
+                == (valid_cat, "General"),
+                f"category domain {entity_key}: Unknown should normalize to General",
+            )
+            try:
+                normalize_category_pair(entity_key, "Undefined 4O", "General")
+                _check(False, f"category domain {entity_key}: undefined category should fail")
+            except CategoryDomainError:
+                pass
+            try:
+                normalize_category_pair(entity_key, valid_cat, "Undefined 4O")
+                _check(False, f"category domain {entity_key}: undefined subcategory should fail")
+            except CategoryDomainError:
+                pass
+
+            for product_name, raw_category in (
+                ("USB charging cable", ""),
+                ("Unmapped synthetic item", "Unknown Vendor Category"),
+            ):
+                inferred_pair = infer_category(entity_key, product_name, raw_category)
+                _check(
+                    normalize_category_pair(entity_key, *inferred_pair) == inferred_pair,
+                    f"category domain {entity_key}: every inference must be valid",
+                )
+
+        _check(
+            infer_category("personal", "USB charging cable")
+            == ("Needs Review", "General"),
+            "category domain: invalid Personal Electronics inference should fall back",
+        )
+        _check(
+            infer_category("company", "USB charging cable")
+            == ("Electronics", "General"),
+            "category domain: valid BFM Electronics inference should be preserved",
+        )
+        _check(
+            infer_category("luxelegacy", "Unmapped synthetic item")
+            == ("Needs Review", "General"),
+            "category domain: unknown LL inference should fall back",
+        )
+
+        tie_categories = ["Home", "CE", "Home", "CE"]
+        _check(
+            _deterministic_primary_category(tie_categories) == "CE",
+            "category domain: equal-frequency category ties should sort deterministically",
+        )
+        tie_script = (
+            "from core.henryschein import _deterministic_primary_category as choose; "
+            "print(choose(['Home', 'CE', 'Home', 'CE']))"
+        )
+        tie_outputs = set()
+        for seed in ("1", "7", "41"):
+            tie_env = os.environ.copy()
+            tie_env["PYTHONHASHSEED"] = seed
+            tie_result = subprocess.run(
+                [sys.executable, "-c", tie_script],
+                cwd=PROJECT_ROOT,
+                env=tie_env,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            tie_outputs.add(tie_result.stdout.strip())
+        _check(
+            tie_outputs == {"CE"},
+            f"category domain: cross-hash-seed tie output changed: {tie_outputs}",
+        )
+
+        original_socket = socket.socket
+
+        def _deny_category_network(*_args, **_kwargs):
+            raise AssertionError("category-domain smoke attempted outbound networking")
+
+        try:
+            socket.socket = _deny_category_network
+            for entity_key, (display_entity, valid_cat, valid_sub) in domain_cases.items():
+                match_txn_id = f"domain-match-{entity_key}"
+                match_order_id = f"ORDER-4O-MATCH-{entity_key}"
+                order_only_id = f"ORDER-4O-CAT-{entity_key}"
+                skip_order_id = f"ORDER-4O-SKIP-{entity_key}"
+                accept_txn_ids = [
+                    f"domain-accept-{entity_key}-1",
+                    f"domain-accept-{entity_key}-2",
+                ]
+                conn_domain = get_connection(entity_key)
+                conn_domain.execute(
+                    "INSERT INTO transactions "
+                    "(transaction_id, date, description_raw, amount, amount_cents, account, "
+                    "category, subcategory, notes, source_filename, imported_at) "
+                    "VALUES (?, '2026-07-19', ?, -12.34, -1234, 'Synthetic 4O', "
+                    "'Needs Review', 'General', 'before-match', 'category-4o', "
+                    "'2026-07-19T00:00:00+00:00')",
+                    (match_txn_id, f"DOMAIN MATCH {entity_key}"),
+                )
+                for index, txn_id in enumerate(accept_txn_ids, start=1):
+                    conn_domain.execute(
+                        "INSERT INTO transactions "
+                        "(transaction_id, date, description_raw, amount, amount_cents, "
+                        "account, category, subcategory, notes, source_filename, imported_at) "
+                        "VALUES (?, '2026-07-19', ?, -5.00, -500, 'Synthetic 4O', "
+                        "'Needs Review', 'General', ?, 'category-4o', "
+                        "'2026-07-19T00:00:00+00:00')",
+                        (txn_id, f"DOMAIN 4O {entity_key} MERCHANT {index}", f"before-{index}"),
+                    )
+                for order_id in (match_order_id, order_only_id, skip_order_id):
+                    conn_domain.execute(
+                        "INSERT INTO amazon_orders "
+                        "(order_id, order_date, product_summary, order_total, "
+                        "order_total_cents, vendor, imported_at) "
+                        "VALUES (?, '2026-07-19', ?, 12.34, 1234, 'amazon', "
+                        "'2026-07-19T00:00:00+00:00')",
+                        (order_id, f"Synthetic category order {order_id}"),
+                    )
+                conn_domain.commit()
+                order_rows = conn_domain.execute(
+                    "SELECT id, order_id FROM amazon_orders "
+                    "WHERE order_id IN (?, ?, ?)",
+                    (match_order_id, order_only_id, skip_order_id),
+                ).fetchall()
+                order_db_ids = {row["order_id"]: row["id"] for row in order_rows}
+                alias_count_before = conn_domain.execute(
+                    "SELECT COUNT(*) FROM merchant_aliases"
+                ).fetchone()[0]
+                conn_domain.close()
+
+                invalid_matches = [
+                    {
+                        "transaction_id": match_txn_id,
+                        "product_summary": "Valid candidate",
+                        "suggested_category": valid_cat,
+                        "suggested_subcategory": valid_sub,
+                        "order_id": match_order_id,
+                        "order_total": 12.34,
+                        "confidence": 0.95,
+                    },
+                    {
+                        "transaction_id": match_txn_id,
+                        "product_summary": "Invalid candidate",
+                        "suggested_category": "Undefined 4O",
+                        "suggested_subcategory": "General",
+                        "order_id": match_order_id,
+                        "order_total": 12.34,
+                        "confidence": 0.95,
+                    },
+                ]
+                try:
+                    apply_matches(entity_key, invalid_matches)
+                    _check(False, f"category domain {entity_key}: invalid match batch should fail")
+                except CategoryDomainError:
+                    pass
+                conn_domain = get_connection(entity_key)
+                unchanged_match = conn_domain.execute(
+                    "SELECT category, subcategory, notes FROM transactions "
+                    "WHERE transaction_id=?", (match_txn_id,)
+                ).fetchone()
+                unmatched_order = conn_domain.execute(
+                    "SELECT matched_transaction_id FROM amazon_orders WHERE order_id=?",
+                    (match_order_id,),
+                ).fetchone()[0]
+                _check(
+                    tuple(unchanged_match) == ("Needs Review", "General", "before-match")
+                    and unmatched_order is None,
+                    f"category domain {entity_key}: invalid match changed stored data",
+                )
+                conn_domain.close()
+
+                apply_matches(entity_key, [invalid_matches[0]])
+                conn_domain = get_connection(entity_key)
+                applied_match = conn_domain.execute(
+                    "SELECT category, subcategory, notes FROM transactions "
+                    "WHERE transaction_id=?", (match_txn_id,)
+                ).fetchone()
+                applied_order = conn_domain.execute(
+                    "SELECT matched_transaction_id FROM amazon_orders WHERE order_id=?",
+                    (match_order_id,),
+                ).fetchone()[0]
+                _check(
+                    tuple(applied_match) == (valid_cat, valid_sub, "Valid candidate")
+                    and applied_order == match_txn_id,
+                    f"category domain {entity_key}: valid match did not persist exact pair",
+                )
+                conn_domain.close()
+
+                try:
+                    categorize_order(
+                        entity_key,
+                        order_db_ids[order_only_id],
+                        "Undefined 4O",
+                        "General",
+                    )
+                    _check(False, f"category domain {entity_key}: invalid order pair should fail")
+                except CategoryDomainError:
+                    pass
+                conn_domain = get_connection(entity_key)
+                invalid_order_state = conn_domain.execute(
+                    "SELECT category, subcategory FROM amazon_orders WHERE id=?",
+                    (order_db_ids[order_only_id],),
+                ).fetchone()
+                _check(
+                    tuple(invalid_order_state) == (None, None),
+                    f"category domain {entity_key}: invalid order pair changed data",
+                )
+                conn_domain.close()
+
+                with app.test_client() as category_client:
+                    category_client.set_cookie("entity", display_entity)
+                    csrf_token = f"category-domain-{entity_key}-csrf"
+                    with category_client.session_transaction() as category_session:
+                        category_session["_csrf_token"] = csrf_token
+
+                    invalid_accept = category_client.post(
+                        "/categorize/accept",
+                        data={
+                            "_csrf_token": csrf_token,
+                            "txn_id": accept_txn_ids,
+                            f"cat_{accept_txn_ids[0]}": valid_cat,
+                            f"subcat_{accept_txn_ids[0]}": valid_sub,
+                            f"notes_{accept_txn_ids[0]}": "after-1",
+                            f"desc_{accept_txn_ids[0]}": f"DOMAIN 4O {entity_key} MERCHANT 1",
+                            f"cat_{accept_txn_ids[1]}": "Undefined 4O",
+                            f"subcat_{accept_txn_ids[1]}": "General",
+                            f"notes_{accept_txn_ids[1]}": "after-2",
+                            f"desc_{accept_txn_ids[1]}": f"DOMAIN 4O {entity_key} MERCHANT 2",
+                        },
+                        follow_redirects=False,
+                    )
+                    _check(
+                        invalid_accept.status_code == 302,
+                        f"category domain {entity_key}: invalid accept should redirect",
+                    )
+                    conn_domain = get_connection(entity_key)
+                    invalid_accept_rows = conn_domain.execute(
+                        "SELECT category, subcategory, notes FROM transactions "
+                        "WHERE transaction_id IN (?, ?) ORDER BY transaction_id",
+                        tuple(accept_txn_ids),
+                    ).fetchall()
+                    alias_count_after_invalid = conn_domain.execute(
+                        "SELECT COUNT(*) FROM merchant_aliases"
+                    ).fetchone()[0]
+                    _check(
+                        [tuple(row) for row in invalid_accept_rows]
+                        == [
+                            ("Needs Review", "General", "before-1"),
+                            ("Needs Review", "General", "before-2"),
+                        ]
+                        and alias_count_after_invalid == alias_count_before,
+                        f"category domain {entity_key}: invalid accept batch mutated rows or aliases",
+                    )
+                    conn_domain.close()
+
+                    valid_accept = category_client.post(
+                        "/categorize/accept",
+                        data={
+                            "_csrf_token": csrf_token,
+                            "txn_id": accept_txn_ids,
+                            f"cat_{accept_txn_ids[0]}": valid_cat,
+                            f"subcat_{accept_txn_ids[0]}": valid_sub,
+                            f"notes_{accept_txn_ids[0]}": "after-1",
+                            f"desc_{accept_txn_ids[0]}": f"DOMAIN 4O {entity_key} MERCHANT 1",
+                            f"cat_{accept_txn_ids[1]}": valid_cat,
+                            f"subcat_{accept_txn_ids[1]}": "Unknown",
+                            f"notes_{accept_txn_ids[1]}": "after-2",
+                            f"desc_{accept_txn_ids[1]}": f"DOMAIN 4O {entity_key} MERCHANT 2",
+                        },
+                        follow_redirects=False,
+                    )
+                    _check(
+                        valid_accept.status_code == 302,
+                        f"category domain {entity_key}: valid accept should redirect",
+                    )
+                    conn_domain = get_connection(entity_key)
+                    valid_accept_rows = conn_domain.execute(
+                        "SELECT category, subcategory, notes FROM transactions "
+                        "WHERE transaction_id IN (?, ?) ORDER BY transaction_id",
+                        tuple(accept_txn_ids),
+                    ).fetchall()
+                    _check(
+                        [tuple(row) for row in valid_accept_rows]
+                        == [
+                            (valid_cat, valid_sub, "after-1"),
+                            (valid_cat, "General", "after-2"),
+                        ],
+                        f"category domain {entity_key}: valid accept did not normalize pairs",
+                    )
+                    conn_domain.close()
+
+                    vendor_page = category_client.get("/categorize-vendors/")
+                    _check(
+                        vendor_page.status_code == 200
+                        and "Or new subcategory" not in vendor_page.get_data(as_text=True),
+                        f"category domain {entity_key}: vendor card exposed ad hoc subcategory creation",
+                    )
+                    invalid_vendor = category_client.post(
+                        "/categorize-vendors/save",
+                        data={
+                            "_csrf_token": csrf_token,
+                            "order_id": order_db_ids[order_only_id],
+                            "category": "Undefined 4O",
+                            "subcategory": "General",
+                        },
+                        headers={"HX-Request": "true"},
+                    )
+                    _check(
+                        invalid_vendor.status_code == 200
+                        and "not defined for this entity"
+                        in invalid_vendor.get_data(as_text=True),
+                        f"category domain {entity_key}: invalid vendor save should explain rejection",
+                    )
+                    conn_domain = get_connection(entity_key)
+                    vendor_after_invalid = conn_domain.execute(
+                        "SELECT category, subcategory FROM amazon_orders WHERE id=?",
+                        (order_db_ids[order_only_id],),
+                    ).fetchone()
+                    _check(
+                        tuple(vendor_after_invalid) == (None, None),
+                        f"category domain {entity_key}: invalid vendor save advanced the queue",
+                    )
+                    conn_domain.close()
+
+                    valid_vendor = category_client.post(
+                        "/categorize-vendors/save",
+                        data={
+                            "_csrf_token": csrf_token,
+                            "order_id": order_db_ids[order_only_id],
+                            "category": valid_cat,
+                            "subcategory": valid_sub,
+                        },
+                        headers={"HX-Request": "true"},
+                    )
+                    _check(
+                        valid_vendor.status_code == 200,
+                        f"category domain {entity_key}: valid vendor save should render next state",
+                    )
+                    skipped_vendor = category_client.post(
+                        "/categorize-vendors/skip",
+                        data={
+                            "_csrf_token": csrf_token,
+                            "order_id": order_db_ids[skip_order_id],
+                        },
+                        headers={"HX-Request": "true"},
+                    )
+                    _check(
+                        skipped_vendor.status_code == 200,
+                        f"category domain {entity_key}: dedicated skip should remain available",
+                    )
+
+                conn_domain = get_connection(entity_key)
+                final_orders = conn_domain.execute(
+                    "SELECT order_id, category, subcategory FROM amazon_orders "
+                    "WHERE order_id IN (?, ?) ORDER BY order_id",
+                    (order_only_id, skip_order_id),
+                ).fetchall()
+                final_order_map = {
+                    row["order_id"]: (row["category"], row["subcategory"])
+                    for row in final_orders
+                }
+                _check(
+                    final_order_map[order_only_id] == (valid_cat, valid_sub)
+                    and final_order_map[skip_order_id] == ("Skipped", None),
+                    f"category domain {entity_key}: valid or skipped vendor state was wrong",
+                )
+
+                conn_domain.execute(
+                    "DELETE FROM merchant_aliases WHERE pattern LIKE ?",
+                    (f"DOMAIN 4O {entity_key}%",),
+                )
+                conn_domain.execute(
+                    "DELETE FROM transactions WHERE transaction_id IN (?, ?, ?)",
+                    (match_txn_id, *accept_txn_ids),
+                )
+                conn_domain.execute(
+                    "DELETE FROM amazon_orders WHERE order_id IN (?, ?, ?)",
+                    (match_order_id, order_only_id, skip_order_id),
+                )
+                conn_domain.commit()
+                remaining_domain_rows = conn_domain.execute(
+                    "SELECT "
+                    "(SELECT COUNT(*) FROM transactions WHERE source_filename='category-4o'), "
+                    "(SELECT COUNT(*) FROM amazon_orders WHERE order_id LIKE 'ORDER-4O-%'), "
+                    "(SELECT COUNT(*) FROM merchant_aliases WHERE pattern LIKE 'DOMAIN 4O %')"
+                ).fetchone()
+                _check(
+                    tuple(remaining_domain_rows) == (0, 0, 0),
+                    f"category domain {entity_key}: exact cleanup failed",
+                )
+                conn_domain.close()
+        finally:
+            socket.socket = original_socket
+
+        _check(
+            all(load_categories(entity) for entity in domain_cases),
+            "category domain: maintained entity definitions should remain available",
+        )
+        print("   ✅ Entity inference, stable ties, zero-mutation rejection, valid writes, skip sentinel, isolation, denied-network, and cleanup passed")
+
+        # ── 8. Route regression tests ────────────────────────────────
+        print("\n8. Route regression tests…")
 
         with app.test_client() as client:
             client.set_cookie("entity", "Personal")

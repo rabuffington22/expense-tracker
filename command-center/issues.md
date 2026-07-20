@@ -357,7 +357,7 @@ Work block 4N now saves each new Amazon or Henry Schein parent and every parsed 
 
 ## Vendor Categorization Can Escape The Category Source Of Truth
 
-Status: open; discovered in work block 3B
+Status: resolved locally in work block 4O; release not authorized
 
 Severity: high financial-classification integrity risk
 
@@ -387,9 +387,13 @@ Why not fixed now:
 
 Domain-enforcement behavior, existing-row remediation, and tracked tests require product and data-migration judgment outside the 3B audit.
 
+Result:
+
+Work block 4O makes `categories.md` authoritative for new in-scope inference and acceptance writes. Vendor inference is entity-aware and falls back to `Needs Review` / `General` rather than inventing a mapping; Henry Schein equal-frequency category ties are stable across hash seeds; transaction batches, vendor-order saves, and accepted order matches prevalidate before any transaction, order, match, note, or alias mutation; and the dedicated `Skipped` action remains a workflow sentinel rather than a financial category. Maintained synthetic coverage proves valid and invalid behavior independently in Personal, BFM, and Luxe Legacy with denied networking and exact cleanup. Existing invalid-row detection and remediation remain separately gated, and no taxonomy, migration, protected-data, or live-system change occurred.
+
 ## Task 2 Import And Categorization Paths Lack Tracked Regression Coverage
 
-Status: partly addressed through work block 4N
+Status: partly addressed through work blocks 4N and 4O
 
 Severity: medium regression-confidence risk
 
@@ -401,7 +405,7 @@ Revisit: Phase 4 Task 2, preferably alongside the related Task 2 repairs
 
 Summary:
 
-Work block 3B passed current synthetic behavior for CSV/PDF parsing, profiles, upload confirmation, Amazon/Henry parsing and deduplication, order matching, aliases, temporary-file cleanup, and entity isolation. Work block 4N now adds maintained Amazon and Henry Schein parent-plus-line-item, preview/save, exact-reimport, rollback, integer-cents, auto-split, all-entity isolation, denied-network, and cleanup coverage. Remaining CSV/PDF profile, broader matching, alias, category-domain, and explicit undo coverage stays paired with its related repair work.
+Work block 3B passed current synthetic behavior for CSV/PDF parsing, profiles, upload confirmation, Amazon/Henry parsing and deduplication, order matching, aliases, temporary-file cleanup, and entity isolation. Work block 4N adds maintained Amazon and Henry Schein parent-plus-line-item, preview/save, exact-reimport, rollback, integer-cents, auto-split, all-entity isolation, denied-network, and cleanup coverage. Work block 4O adds maintained entity-specific inference, cross-hash-seed tie, transaction-batch, vendor-order, accepted-match, zero-mutation, alias-protection, skip-sentinel, denied-network, and cleanup coverage. Remaining CSV/PDF profile, broader matching, and explicit undo coverage stays paired with its related repair work.
 
 Impact:
 

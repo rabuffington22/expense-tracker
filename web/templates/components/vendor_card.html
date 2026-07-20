@@ -7,6 +7,9 @@
 <a href="{{ url_for('data_sources.index') }}" class="btn btn-primary">Go to Data Sources &rarr;</a>
 
 {% else %}
+{% if error is defined and error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
 <p class="mb-1"><strong>Order {{ completed + 1 }} of {{ initial }}</strong> — {{ total }} remaining</p>
 
 <div class="progress-bar mb-1">
@@ -45,11 +48,6 @@
                     {% endfor %}
                 </select>
             </div>
-        </div>
-
-        <div class="form-group" style="max-width: 240px;">
-            <label>Or new subcategory</label>
-            <input type="text" name="custom_sub" placeholder="Type to create new...">
         </div>
 
         <div class="flex gap-1">

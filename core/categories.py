@@ -45,6 +45,10 @@ _LINE_RE = re.compile(
 )
 
 
+class CategoryDomainError(ValueError):
+    """Raised when a category pair is outside an entity's maintained domain."""
+
+
 def _categories_path() -> str:
     """Return absolute path to categories.md."""
     return os.path.join(
@@ -147,6 +151,44 @@ def subcategory_names(entity_key: str, category: str) -> list[str]:
     """Return subcategory names for a category. General always first."""
     cats = load_categories(entity_key)
     return cats.get(category, ["General"])
+
+
+def normalize_category_pair(
+    entity_key: str,
+    category: str | None,
+    subcategory: str | None,
+    *,
+    allow_empty: bool = False,
+) -> tuple[str, str | None]:
+    """Validate and normalize one entity-specific category pair.
+
+    ``categories.md`` is authoritative. Empty/Unknown subcategories normalize
+    to the implicit ``General`` subcategory. An empty category is accepted only
+    when the caller explicitly allows an uncategorized assignment.
+    """
+    category_name = str(category or "").strip()
+    subcategory_name = str(subcategory or "").strip()
+
+    if not category_name:
+        if allow_empty:
+            return "", None
+        raise CategoryDomainError("A category is required.")
+
+    categories = load_categories(entity_key)
+    if category_name not in categories:
+        raise CategoryDomainError(
+            f"Category '{category_name}' is not defined for this entity."
+        )
+
+    if not subcategory_name or subcategory_name == "Unknown":
+        subcategory_name = "General"
+    if subcategory_name not in categories[category_name]:
+        raise CategoryDomainError(
+            f"Subcategory '{subcategory_name}' is not defined under "
+            f"'{category_name}' for this entity."
+        )
+
+    return category_name, subcategory_name
 
 
 def validate_references() -> list[str]:

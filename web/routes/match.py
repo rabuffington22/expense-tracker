@@ -157,7 +157,7 @@ def _run_order_matching():
         flash("No unmatched orders to process.", "info")
         return redirect(url_for("match.index"))
 
-    matches = match_orders_to_transactions(db_orders, amazon_txns)
+    matches = match_orders_to_transactions(g.entity_key, db_orders, amazon_txns)
 
     # Auto-apply exact matches
     exact = [m for m in matches if m["match_type"] == "exact"]
