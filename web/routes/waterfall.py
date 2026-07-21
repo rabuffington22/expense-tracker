@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date, timedelta
+from math import ceil
 
 from flask import Blueprint, render_template, request, g, redirect, url_for
 
@@ -125,6 +126,23 @@ def _get_historical_surplus(months: list[str]) -> list[dict]:
     finally:
         conn.close()
     return results
+
+
+def _rolling_calendar_months(end_month: str, count: int = 3) -> list[str]:
+    """Return a fixed calendar-month window ending at ``end_month``."""
+    year, month = (int(part) for part in end_month.split("-"))
+    end_index = year * 12 + month - 1
+    return [
+        f"{month_index // 12:04d}-{month_index % 12 + 1:02d}"
+        for month_index in range(end_index - count + 1, end_index + 1)
+    ]
+
+
+def _average_signed_surplus(history: list[dict]) -> int:
+    """Average every signed monthly surplus, rounded to the nearest cent."""
+    if not history:
+        return 0
+    return int(round(sum(month["surplus_cents"] for month in history) / len(history)))
 
 
 # ── Target waterfall helpers ──────────────────────────────────────────────────
@@ -287,9 +305,9 @@ def _compute_payoff_estimate(avg_surplus_cents: int, cc_total_cents: int) -> dic
     if avg_surplus_cents <= 0 or cc_total_cents <= 0:
         return None
     months_to_payoff = cc_total_cents / avg_surplus_cents
-    payoff_date = date.today() + timedelta(days=int(months_to_payoff * 30.44))
+    payoff_date = date.today() + timedelta(days=ceil(months_to_payoff * 30.44))
     return {
-        "months": int(round(months_to_payoff)),
+        "months": ceil(months_to_payoff),
         "payoff_date_ym": payoff_date.strftime("%Y-%m"),
         "monthly_surplus_cents": avg_surplus_cents,
     }
@@ -505,9 +523,10 @@ def index():
     trend = _get_historical_surplus(trend_months)
     max_abs = max((abs(t["surplus_cents"]) for t in trend), default=1) or 1
 
-    # ── Payoff estimate (3-month rolling avg surplus) ─────────────────────
-    recent_surpluses = [t["surplus_cents"] for t in trend[-3:] if t["surplus_cents"] > 0]
-    avg_surplus = int(sum(recent_surpluses) / len(recent_surpluses)) if recent_surpluses else 0
+    # ── Payoff estimate (fixed signed 3-calendar-month average) ───────────
+    payoff_months = _rolling_calendar_months(month)
+    payoff_history = _get_historical_surplus(payoff_months)
+    avg_surplus = _average_signed_surplus(payoff_history)
     payoff_estimate = _compute_payoff_estimate(avg_surplus, cc_total)
 
     return render_template(

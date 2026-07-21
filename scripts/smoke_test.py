@@ -3469,6 +3469,235 @@ def main() -> None:
 
         print("   ✅ Date validation, zero-mutation rejection, defensive reads, recovery, isolation, denied-network, and cleanup passed")
 
+        # ── 8a7. Waterfall payoff truthfulness ────────────────────
+        print("\n8a7. Waterfall payoff truthfulness…")
+
+        waterfall_4x_baselines = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in ("personal", "company", "luxelegacy")
+        }
+        waterfall_4x_transactions = (
+            (
+                "synthetic-4x-may-income",
+                "2026-05-01",
+                "4X May Income",
+                1000.00,
+                100000,
+                "Income",
+            ),
+            (
+                "synthetic-4x-june-expense",
+                "2026-06-01",
+                "4X June Expense",
+                -2000.00,
+                -200000,
+                "Rent",
+            ),
+            (
+                "synthetic-4x-july-income",
+                "2026-07-01",
+                "4X July Income",
+                2500.00,
+                250000,
+                "Income",
+            ),
+        )
+        waterfall_4x_conn = get_connection("company")
+        try:
+            waterfall_4x_conn.executemany(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, merchant_canonical, amount, "
+                "amount_cents, account, category, source_filename, imported_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, '4X Synthetic', ?, 'synthetic-4x', "
+                "'2026-07-21T00:00:00+00:00')",
+                (
+                    (txn_id, txn_date, description, description, amount, amount_cents, category)
+                    for txn_id, txn_date, description, amount, amount_cents, category
+                    in waterfall_4x_transactions
+                ),
+            )
+            waterfall_4x_conn.commit()
+        finally:
+            waterfall_4x_conn.close()
+
+        waterfall_4x_card = "4X Payoff Card"
+        waterfall_4x_conn = get_connection("personal")
+        try:
+            waterfall_4x_conn.execute(
+                "INSERT INTO account_balances "
+                "(account_name, balance_cents, balance_source, account_type, "
+                "credit_limit_cents, sort_order) "
+                "VALUES (?, 25000, 'manual', 'credit_card', 100000, 870)",
+                (waterfall_4x_card,),
+            )
+            waterfall_4x_conn.commit()
+        finally:
+            waterfall_4x_conn.close()
+
+        _check(
+            waterfall_routes._rolling_calendar_months("2026-07")
+            == ["2026-05", "2026-06", "2026-07"]
+            and waterfall_routes._rolling_calendar_months("2026-01")
+            == ["2025-11", "2025-12", "2026-01"],
+            "waterfall 4X: rolling windows should use three consecutive calendar months across year boundaries",
+        )
+        mixed_history = waterfall_routes._get_historical_surplus(
+            ["2026-05", "2026-06", "2026-07"]
+        )
+        _check(
+            [month["surplus_cents"] for month in mixed_history]
+            == [100000, -200000, 250000]
+            and waterfall_routes._average_signed_surplus(mixed_history) == 50000,
+            "waterfall 4X: every positive and deficit month should produce the signed 500 dollar average",
+        )
+        missing_history = waterfall_routes._get_historical_surplus(
+            ["2026-03", "2026-04", "2026-05"]
+        )
+        _check(
+            [month["surplus_cents"] for month in missing_history]
+            == [0, 0, 100000]
+            and waterfall_routes._average_signed_surplus(missing_history) == 33333,
+            "waterfall 4X: no-row calendar months should remain zero-valued inputs in the fixed denominator",
+        )
+        _check(
+            waterfall_routes._average_signed_surplus(
+                [
+                    {"surplus_cents": 0},
+                    {"surplus_cents": 0},
+                    {"surplus_cents": 0},
+                ]
+            ) == 0
+            and waterfall_routes._average_signed_surplus(
+                [
+                    {"surplus_cents": -10000},
+                    {"surplus_cents": 0},
+                    {"surplus_cents": -20000},
+                ]
+            ) == -10000
+            and waterfall_routes._average_signed_surplus([]) == 0,
+            "waterfall 4X: zero non-positive and empty signed histories should have explicit averages",
+        )
+
+        class _WaterfallDate(real_date):
+            @classmethod
+            def today(cls):
+                return cls(2026, 7, 21)
+
+        with patch.object(waterfall_routes, "date", _WaterfallDate):
+            sub_month = waterfall_routes._compute_payoff_estimate(100000, 25000)
+            fractional = waterfall_routes._compute_payoff_estimate(100000, 150000)
+            exact_multiple = waterfall_routes._compute_payoff_estimate(100000, 200000)
+            _check(
+                sub_month is not None
+                and sub_month["months"] == 1
+                and sub_month["payoff_date_ym"] == "2026-07"
+                and fractional is not None
+                and fractional["months"] == 2
+                and fractional["payoff_date_ym"] == "2026-09"
+                and exact_multiple is not None
+                and exact_multiple["months"] == 2
+                and exact_multiple["payoff_date_ym"] == "2026-09",
+                "waterfall 4X: payoff duration and date should round completion upward from the same exact ratio",
+            )
+            _check(
+                waterfall_routes._compute_payoff_estimate(0, 25000) is None
+                and waterfall_routes._compute_payoff_estimate(-1, 25000) is None
+                and waterfall_routes._compute_payoff_estimate(100000, 0) is None,
+                "waterfall 4X: non-positive surplus or debt should not produce a payoff estimate",
+            )
+
+        waterfall_4x_fixture_state = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in ("personal", "company", "luxelegacy")
+        }
+        with app.test_client() as waterfall_4x_client, patch.object(
+            waterfall_routes, "date", _WaterfallDate
+        ), patch(
+            "socket.create_connection",
+            side_effect=AssertionError("waterfall 4X attempted outbound networking"),
+        ) as waterfall_4x_create_connection, patch(
+            "socket.socket.connect",
+            side_effect=AssertionError("waterfall 4X attempted outbound networking"),
+        ) as waterfall_4x_socket_connect:
+            for entity_display in ("Personal", "BFM"):
+                waterfall_4x_client.set_cookie("entity", entity_display)
+                mixed_response = waterfall_4x_client.get(
+                    "/waterfall/?month=2026-07"
+                )
+                mixed_body = mixed_response.get_data(as_text=True)
+                _check(
+                    mixed_response.status_code == 200
+                    and "3-month signed average of $500/mo" in mixed_body
+                    and ">1 month<" in mixed_body,
+                    f"waterfall 4X {entity_display}: mixed signed history should drive truthful rendered payoff guidance",
+                )
+                missing_response = waterfall_4x_client.get(
+                    "/waterfall/?month=2026-05"
+                )
+                _check(
+                    missing_response.status_code == 200
+                    and "3-month signed average of $333/mo"
+                    in missing_response.get_data(as_text=True),
+                    f"waterfall 4X {entity_display}: missing prior months should remain zero-valued calendar inputs",
+                )
+                non_positive_response = waterfall_4x_client.get(
+                    "/waterfall/?month=2026-06"
+                )
+                _check(
+                    non_positive_response.status_code == 200
+                    and "The 3-month signed average leaves no surplus available for paydown"
+                    in non_positive_response.get_data(as_text=True),
+                    f"waterfall 4X {entity_display}: non-positive signed average should suppress payoff guidance",
+                )
+
+            waterfall_4x_client.set_cookie("entity", "LL")
+            denied_waterfall_4x = waterfall_4x_client.get(
+                "/waterfall/?month=2026-07"
+            )
+            _check(
+                denied_waterfall_4x.status_code == 302
+                and denied_waterfall_4x.headers.get("Location", "").endswith("/"),
+                "waterfall 4X LL: Waterfall should remain denied before route handling",
+            )
+            _check(
+                all(
+                    _database_snapshot(entity_key)
+                    == waterfall_4x_fixture_state[entity_key]
+                    for entity_key in ("personal", "company", "luxelegacy")
+                ),
+                "waterfall 4X: route and helper reads should preserve every entity database",
+            )
+            waterfall_4x_create_connection.assert_not_called()
+            waterfall_4x_socket_connect.assert_not_called()
+
+        waterfall_4x_conn = get_connection("company")
+        try:
+            waterfall_4x_conn.execute(
+                "DELETE FROM transactions WHERE source_filename='synthetic-4x'"
+            )
+            waterfall_4x_conn.commit()
+        finally:
+            waterfall_4x_conn.close()
+        waterfall_4x_conn = get_connection("personal")
+        try:
+            waterfall_4x_conn.execute(
+                "DELETE FROM account_balances WHERE account_name=?",
+                (waterfall_4x_card,),
+            )
+            waterfall_4x_conn.commit()
+        finally:
+            waterfall_4x_conn.close()
+        _check(
+            all(
+                _database_snapshot(entity_key)
+                == waterfall_4x_baselines[entity_key]
+                for entity_key in ("personal", "company", "luxelegacy")
+            ),
+            "waterfall 4X: synthetic transactions and debt should clean up exactly",
+        )
+
+        print("   ✅ Signed calendar windows, deficit and missing months, payoff ceiling, rendering, isolation, denied-network, and cleanup passed")
+
         # ── 8a. BFM-only payroll route boundary ─────────────────────
         print("\n8b. BFM-only payroll route boundary…")
         from web.routes import payroll as payroll_routes

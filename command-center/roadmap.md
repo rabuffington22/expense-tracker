@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; work block 4W-R is active under Ryan's direct instruction to commit and push the exact verified 4W source set to `main`
+Status: active; work block 4X-R is active under Ryan's direct instruction to commit and push the exact verified 4X source set to `main`
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -916,20 +916,20 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4Q and 4Q-R.
   - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: done and verified locally through work block 4R; release remains separate.
-- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.5 are released, and Task 1N.6 is the next separate planning gate.
+- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.5 are released, Tasks 1N.6-1N.7 are complete locally through 4X, and Task 1N.8 is the next separate planning gate.
   - **Task 1N.1: Use stored APRs in locked payoff schedules.** Pass each linked card's maintained `apr_bps` value into payoff calculation, define missing or invalid APR behavior explicitly, and reconcile avalanche/snowball order, narrative, and saved schedule for `P3-3D-01`. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4S and 4S-R.
   - **Task 1N.2: Preserve manual goal-review notes during automatic snapshots.** Update same-day balances without replacing the snapshot identity or erasing a manual note, while preserving intentional later manual-note replacement for `P3-3D-03`. Status: done, durable, automatically deployed, and credential-free production health verified through 4T and 4T-R.
   - **Task 1N.3: Compound negative asset appreciation as depreciation.** Preserve negative projection rates instead of clamping them to zero and reconcile future asset and net-worth results for `P3-3D-04`. Status: complete, durable, automatically deployed, and health verified through 4U-R.
   - **Task 1N.4: Unify Weekly date context and scheduled card-bill amounts.** Anchor pace, MTD, burn, recurring/manual/card bills, and display periods to the viewed week; use the scheduled payment rather than the full card balance for `P3-3E-01` and `P3-3E-02`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4V and 4V-R.
   - **Task 1N.5: Validate Weekly paydown dates and read stored goals defensively.** Reject invalid target dates without changing the prior goal and prevent malformed stored values from breaking Weekly or Waterfall for `P3-3E-04`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4W and 4W-R.
-  - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: current for a separately confirmed planning pass; implementation is not authorized.
-  - **Task 1N.7: Keep Waterfall payoff duration truthful while debt remains.** Apply a documented rounding rule so positive debt with positive surplus cannot render as zero payoff months for `P3-3E-05`. Status: planned after Task 1N.6.
-  - **Task 1N.8: Normalize Waterfall tax input once.** Require one finite, range-checked value to drive calculation and rendering without direct-input crashes for `P3-3E-06`. Status: planned after Task 1N.7.
+  - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: complete and verified locally through work block 4X; publication remains separate.
+  - **Task 1N.7: Keep Waterfall payoff duration truthful while debt remains.** Apply a documented rounding rule so positive debt with positive surplus cannot render as zero payoff months for `P3-3E-05`. Status: complete and verified locally through work block 4X; publication remains separate.
+  - **Task 1N.8: Normalize Waterfall tax input once.** Require one finite, range-checked value to drive calculation and rendering without direct-input crashes for `P3-3E-06`. Status: current for a separately confirmed planning pass; implementation is not authorized.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, and 4W completed the `P3-3E-04` Weekly/Waterfall validation slice of `P3-3E-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4W-R; all future releases remain separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: active for the exact 4X source set through work block 4X-R; unrelated releases remain separately gated.
 
 ### Confirmed Work Block 4V: Weekly Date And Bill Truthfulness
 
@@ -1045,6 +1045,60 @@ Verification: exact path and sensitive-addition review; maintained synthetic sui
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.6 planning gate.
 
 Result: the exact eleven-path 4W source set was committed as `404e3d3`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29828286559` and deploy job `88626630654` passed for exact source SHA `404e3d3d5271e35ca25b857b88fa3d3df683aaf5`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, the staged high-confidence sensitive-addition scan returned zero, and no PR or unauthorized live action occurred. This command-center-only closeout uses `[skip actions]` to prevent a second deployment. Evidence: `command-center/logs/2026-07-21-weekly-paydown-goal-validation-release-4w-r.md`.
+
+### Confirmed Work Block 4X: Waterfall Payoff Truthfulness
+
+Status: complete and verified locally on 2026-07-21; publication not authorized
+
+Included: Task 1N.6, Task 1N.7, and only the focused Task 2 regression slices for `P3-3E-03`, `P3-3E-05`, and `P3-3E-C01`. Use the selected Waterfall month and the two immediately preceding calendar months; include every signed monthly BFM surplus, with a no-row month contributing zero; drive display and payoff from the same three-month average; return no estimate for a non-positive average; and use ceiling-to-whole-month display plus the same exact ratio rounded upward to a whole day for payoff date.
+
+Excluded: Task 1N.8; Tasks 1O-1P; the remainder of Task 2; Tasks 3-4; migrations; historical remediation; broader UI work; authentication; real financial data; retained uploads; credentials; production/demo access; Plaid; external calls; workflows; Fly; downstream writes; GitHub publication; deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Why this grouping: the rolling-average and payoff-duration defects share the same Waterfall route helper, displayed output, synthetic history, reconciliation path, and financial-truthfulness risk. Task 1N.8 starts a separate direct-input and tax-normalization contract.
+
+Owner and recommended agent: Codex Desktop in the current task on `codex/waterfall-payoff-truthfulness`. The block couples financial-contract definition, route/helper implementation, focused maintained coverage, issue reconciliation, exact cleanup, and Runway OS stewardship. No delegation or second opinion is needed.
+
+Defaults: use a fixed three-calendar-month window ending at the selected month; include positive, zero, and negative signed surplus; treat a no-row calendar month as zero because no separate completeness signal exists; use the same average for display and calculation; return no payoff estimate for non-positive average; use whole-month ceiling for display; derive payoff date from the same exact ratio rounded upward to a whole day; preserve Personal/BFM sharing, Luxe Legacy denial, and read-only route behavior; and keep the block local-only.
+
+Stop conditions:
+
+- Correct behavior requires a separate completeness signal or a different rolling-period or missing-month policy.
+- The repair requires Task 1N.8, migration, historical remediation, broader UI work, authentication, or another Phase 4 task.
+- Verification requires protected financial data, retained uploads, credentials, production/demo, Plaid, networking, workflows, Fly, downstream access, GitHub publication, deployment, or another live action.
+- Maintained or focused verification changes the plan, exact cleanup cannot be proven, command-center refresh or health fails, or either preserved untracked file would be touched.
+
+Verification:
+
+- Baseline and final `.venv/bin/python scripts/smoke_test.py` using only its temporary synthetic `DATA_DIR`.
+- Focused mixed, positive, zero, non-positive, missing-month, historical, and cross-year signed-window checks, including the `$1,000 - $2,000 + $2,500 = $500/month` reproduction.
+- Sub-month, fractional, exact-multiple, zero-debt, and non-positive-surplus payoff checks; displayed average, whole-month duration, and payoff date must reconcile to the same exact ratio.
+- Personal/BFM intended behavior, Luxe Legacy denial, denied networking, unrelated-row preservation, exact temporary cleanup, Python compilation, JSON validation, `git diff --check`, dashboard refresh, health check, rendered-dashboard inspection, and final worktree review.
+
+Durability: local-only. No commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action is part of work block 4X.
+
+Report point: return the exact rolling-window and signed-average contract, payoff-rounding behavior, focused and full synthetic results, changed paths, cleanup proof, preserved boundaries, local branch state, and separate publication gate. If 4X closes cleanly, 4X-R is publication-only if separately authorized; otherwise Task 1N.8 becomes the next planning gate.
+
+Result: Waterfall now uses a fixed three-calendar-month payoff window ending at the selected month and averages every signed monthly result, including deficits, zeros, and no-row months. The audit history of `$1,000`, `-$2,000`, and `$2,500` now displays and calculates from `$500/month`. Positive debt and surplus use ceiling-to-whole-month duration and a payoff date derived from the same exact ratio rounded upward to a whole day, so sub-month debt cannot report zero months. The template labels the signed average and handles singular month wording. Baseline and final full smoke suites, maintained section 8a7, compilation, JSON, whitespace, dashboard refresh, health, rendered inspection, all-entity boundaries, denied networking, read-only preservation, and exact cleanup pass locally. No Task 1N.8, migration, protected data, external access, GitHub durability, deployment, or live action occurred. Evidence: `command-center/waterfall-payoff-contract.md` and `command-center/logs/2026-07-21-waterfall-payoff-truthfulness-4x.md`.
+
+### Confirmed Work Block 4X-R: Waterfall Payoff Truthfulness Durability And Release
+
+Status: active; directly authorized by Ryan on 2026-07-21
+
+Parent task: Phase 4 Task 4 for the exact verified 4X source set only.
+
+Included: the exact verified eleven-path 4X application, template, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/waterfall-payoff-truthfulness`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real financial rows or databases; retained uploads; credentials; authenticated production pages; external calls other than GitHub/Fly status and credential-free health; manual workflow actions; workflow edits; non-automatic Fly changes; downstream access or writes; migrations; Task 1N.8; broader Task 2; unrelated repairs; force push; and recovery beyond the exact fast-forward path.
+
+Owner and recommended agent: Codex Desktop. This release requires exact-path Git stewardship, sensitive-addition review, direct-main fast-forward safety, automatic Fly observation, credential-free health verification, and final Runway OS closeout. No delegation or second opinion is needed.
+
+Defaults: no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4X contract and implementation; observe only the automatic Fly deployment caused by the source push; verify only credential-free `/health`; publish the release closeout with `[skip actions]` so it cannot trigger a second deployment; and leave Task 1N.8 planning separate.
+
+Stop conditions: the intended diff contains an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the exact authorized fast-forward path.
+
+Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.8 planning gate.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 

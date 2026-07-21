@@ -592,7 +592,7 @@ Work block 4V carries `payment_amount_cents` through the card-due helper and mak
 
 ## Waterfall Payoff Average Excludes Deficit Months
 
-Status: resolved locally through work block 4W; publication not authorized
+Status: resolved locally through work block 4X; publication not authorized
 
 Severity: high debt-planning correctness risk
 
@@ -617,13 +617,13 @@ Acceptance checks:
 - Displayed average, months-to-payoff, and payoff date reconcile to the same inputs.
 - Tracked tests cover mixed surplus/deficit history and all-empty/non-positive history.
 
-Why not fixed now:
+Resolution:
 
-Waterfall calculation changes and tracked tests require a separately confirmed Phase 4 block.
+Work block 4X uses the selected month and two preceding calendar months as a fixed signed window. Positive, zero, negative, and no-row months all remain in the denominator; the audit reproduction now averages to `$500/month`. The same value drives rendering and payoff, positive debt rounds up to at least one whole month, and maintained section 8a7 covers mixed, missing, non-positive, boundary, all-entity, denied-network, read-only, and cleanup behavior.
 
 ## Invalid Weekly Paydown Dates Persist And Break The Page
 
-Status: open; discovered in work block 3E
+Status: resolved locally through work block 4W; publication not authorized
 
 Severity: medium functional-availability risk
 
@@ -654,7 +654,7 @@ Work block 4W now requires one canonical target date strictly later than the cur
 
 ## Waterfall Can Report Zero Months While Debt Remains
 
-Status: open; discovered in work block 3E
+Status: resolved locally through work block 4X; publication not authorized
 
 Severity: medium financial-display correctness risk
 
@@ -662,7 +662,7 @@ Captured: 2026-07-18
 
 Where seen: `web/routes/waterfall.py` and direct payoff-estimate reproduction
 
-Revisit: Phase 4 Task 1 for payoff rounding repair; Phase 4 Task 2 for tracked coverage
+Revisit: separate publication gate only
 
 Summary:
 
@@ -678,9 +678,9 @@ Acceptance checks:
 - Zero debt and non-positive surplus retain explicit empty/no-estimate behavior.
 - Displayed months and payoff date use a documented rounding rule and reconcile at boundary values.
 
-Why not fixed now:
+Resolution:
 
-Payoff calculation changes and tracked tests were outside the 3E audit scope.
+Work block 4X applies ceiling-to-whole-month display for positive debt and positive average surplus, and derives the payoff date from the same exact ratio rounded upward to a whole day. Zero debt and non-positive surplus still return no estimate. Maintained section 8a7 covers sub-month, fractional, exact-multiple, zero-debt, non-positive-surplus, rendered singular/plural wording, all-entity boundaries, denied networking, read-only preservation, and exact cleanup behavior.
 
 ## Waterfall Tax Fallback Can Disagree With Display And Crash On Non-Finite Input
 

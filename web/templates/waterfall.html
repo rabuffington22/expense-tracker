@@ -353,14 +353,14 @@
     {% if payoff_estimate %}
     <div class="wf-payoff">
       <span class="wf-payoff-text">
-        At {{ fmt_dollars(avg_surplus) }}/mo surplus → CCs paid off in
-        <strong>{{ payoff_estimate.months }} months</strong>
+        At a 3-month signed average of {{ fmt_dollars(avg_surplus) }}/mo → CCs paid off in
+        <strong>{{ payoff_estimate.months }} month{% if payoff_estimate.months != 1 %}s{% endif %}</strong>
         ({{ fmt_month_full(payoff_estimate.payoff_date_ym) }})
       </span>
     </div>
     {% elif avg_surplus <= 0 and cc_total > 0 %}
     <div class="wf-payoff">
-      <span class="wf-payoff-text wf-negative">No surplus available for paydown</span>
+      <span class="wf-payoff-text wf-negative">The 3-month signed average leaves no surplus available for paydown</span>
     </div>
     {% endif %}
 

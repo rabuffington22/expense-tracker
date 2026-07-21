@@ -2,27 +2,56 @@
 
 ## Active Objective
 
-Plan Task 1N.6 separately after the completed 4W-R release.
+Publish and verify the exact completed 4X source set through confirmed work block 4X-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4W-R is complete, durable, automatically deployed, and credential-free production health verified.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4X-R is active under Ryan's direct instruction to commit and push the exact verified 4X source set to `main`.
 
 ## Current Work Block
 
-Work block 4W-R: Weekly Paydown Goal Validation Durability And Release — complete.
+Work block 4X-R: Waterfall Payoff Truthfulness Durability And Release — active.
 
 ## Current Task
 
-Task 1N.6: Include deficit months in Waterfall payoff inputs — current planning gate; no implementation is authorized.
+Task 4: Publish and verify explicitly approved repairs — current for the exact 4X release only.
 
 ## Owner
 
-Ryan owns the next planning confirmation. Codex Desktop completed the exact 4W-R release and may not begin Task 1N.6 implementation without a separately confirmed work block.
+Codex Desktop owns exact-path staging, source commit, fast-forward publication to `main`, automatic Fly observation, credential-free health verification, and sanitized Runway OS closeout. Ryan retains any recovery or scope-expansion decision.
 
 ## Current Action
 
-Report the completed 4W-R release and wait at the separate Task 1N.6 planning gate.
+Verify the exact 4X source set, commit it on `codex/waterfall-payoff-truthfulness`, fast-forward local `main`, push to `origin/main`, observe the exact automatic Fly deployment, verify credential-free `/health`, publish a `[skip actions]` closeout, and return Task 1N.8 to its separate planning gate.
+
+## Work Block 4X-R Contract
+
+- Include the exact verified eleven-path 4X application, template, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/waterfall-payoff-truthfulness`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real financial rows or databases, retained uploads, credentials, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1N.8, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4X contract and implementation; trigger only the automatic deployment caused by the source push; verify only credential-free `/health`; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
+- Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1N.8 planning gate.
+
+## Work Block 4X Contract
+
+- Include Task 1N.6, Task 1N.7, and only the focused Task 2 regression slices for `P3-3E-03`, `P3-3E-05`, and `P3-3E-C01`.
+- Use the selected Waterfall month plus the two immediately preceding calendar months. Every month contributes signed BFM surplus; a month with no eligible rows contributes zero because the application has no separate completeness signal.
+- Use the same signed three-month average for display and payoff input. A non-positive average produces no payoff estimate. Positive debt with positive average surplus uses whole-month ceiling for display and the same exact ratio rounded upward to a whole day for the payoff date.
+- Keep Task 1N.8, Tasks 1O-1P, the remainder of Task 2, Tasks 3-4, migrations, historical remediation, broader UI work, authentication, protected data, retained uploads, credentials, production/demo, Plaid, external calls, workflows, Fly, downstream writes, GitHub durability, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop in the current task on local branch `codex/waterfall-payoff-truthfulness`; no delegation or second opinion is needed. Codex owns implementation, verification, cleanup, dashboard currency, and final intake.
+- Stop if correct behavior requires a separate data-completeness model, a different rolling-period or missing-month policy, Task 1N.8, migration, historical remediation, protected/live access, scope expansion, plan-changing verification failure, failed cleanup, command-center failure, or either preserved untracked file would be touched.
+- Verify baseline and final maintained smoke; mixed, positive, zero, non-positive, missing-month, historical, and cross-year windows; sub-month, fractional, exact-multiple, zero-debt, and non-positive-surplus payoff cases; display/helper reconciliation; Personal/BFM behavior; Luxe Legacy denial; denied networking; unrelated-row preservation; exact cleanup; Python compilation; JSON; whitespace; dashboard refresh and health; rendered inspection; and final worktree scope.
+- Keep durability local-only. Report the exact period and signed-average contract, payoff-rounding behavior, focused and full synthetic results, changed paths, cleanup proof, preserved boundaries, local branch state, and separate publication gate.
+
+## Work Block 4X Result
+
+- Waterfall now uses the selected month plus the two immediately preceding calendar months as a fixed payoff window. Positive, zero, negative, and no-row months all remain in the three-value denominator, with no-row months contributing zero.
+- The displayed three-month signed average and payoff estimate use the same nearest-cent value. The audit reproduction now averages `$1,000 - $2,000 + $2,500` to `$500/month` instead of dropping the deficit and reporting `$1,750/month`.
+- Positive debt with positive average surplus now rounds completion upward to a whole month, and the payoff date uses the same exact ratio rounded upward to a whole day. A sub-month payoff therefore renders as one month, never zero.
+- The template identifies the value as a three-month signed average, uses correct singular/plural month wording, and states when the signed average leaves no surplus available.
+- Baseline and final full smoke suites, maintained section 8a7, Python compilation, mixed/positive/zero/non-positive/missing/historical/cross-year windows, payoff edge cases, Personal/BFM behavior, Luxe Legacy denial, denied networking, read-only preservation, exact cleanup, JSON, whitespace, dashboard refresh, health, rendered inspection, and final scope checks pass locally.
+- No Task 1N.8 tax change, migration, historical remediation, protected data, retained upload, credential, production/demo access, external call, workflow, Fly action, downstream write, GitHub durability, deployment, or other live action occurred. Both preserved untracked files remain untouched.
 
 ## Work Block 4W-R Contract
 
