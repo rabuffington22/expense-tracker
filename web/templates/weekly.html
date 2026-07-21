@@ -94,7 +94,7 @@
       </label>
       <input type="date" name="target_date" class="wk-cc-target-input"
              value="{{ paydown_goal.target_date if paydown_goal else '' }}"
-             min="{{ '%04d-%02d-%02d' | format(monday.year, monday.month, monday.day) }}">
+             min="{{ min_paydown_target_date }}">
       <button type="submit" class="btn btn-sm wk-cc-target-btn">
         {% if paydown_goal %}Update{% else %}Set{% endif %}
       </button>

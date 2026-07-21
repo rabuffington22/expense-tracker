@@ -592,7 +592,7 @@ Work block 4V carries `payment_amount_cents` through the card-due helper and mak
 
 ## Waterfall Payoff Average Excludes Deficit Months
 
-Status: open; discovered in work block 3E
+Status: resolved locally through work block 4W; publication not authorized
 
 Severity: high debt-planning correctness risk
 
@@ -631,7 +631,7 @@ Captured: 2026-07-18
 
 Where seen: `web/routes/weekly.py` and a deterministic direct-route POST/read reproduction
 
-Revisit: Phase 4 Task 1 for validation and defensive-read repair; Phase 4 Task 2 for tracked coverage
+Revisit: separate publication gate only
 
 Summary:
 
@@ -648,9 +648,9 @@ Acceptance checks:
 - Malformed stored values cannot crash Weekly or Waterfall reads.
 - Valid create/update behavior and Personal/BFM/LL boundaries remain intact.
 
-Why not fixed now:
+Resolution:
 
-Route validation and defensive-read changes were excluded from audit work block 3E.
+Work block 4W now requires one canonical target date strictly later than the current local date, rejects invalid requests before database access with exact prior-state preservation, retains valid start metadata on updates, and lets a valid target recover a malformed target-only row. Weekly and Waterfall share a defensive stored-goal reader that treats malformed target dates, start dates, or start balances as unavailable without read-time mutation. Maintained synthetic coverage proves valid create/update, malformed and boundary rejection, zero mutation, recovery, both read surfaces, Personal/BFM isolation, Luxe Legacy denial, denied networking, and exact cleanup. Evidence: `command-center/paydown-goal-validation-contract.md` and `command-center/logs/2026-07-21-weekly-paydown-goal-validation-4w.md`.
 
 ## Waterfall Can Report Zero Months While Debt Remains
 

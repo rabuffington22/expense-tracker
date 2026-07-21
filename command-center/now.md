@@ -2,27 +2,57 @@
 
 ## Active Objective
 
-Plan Task 1N.5 separately after the completed 4V-R release.
+Publish the exact verified 4W source set directly to `main`, observe its automatic Fly deployment, verify credential-free health, and close 4W-R without starting a second deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4V-R is complete, durable, automatically deployed, and credential-free production health verified.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4W-R is active under Ryan's direct-main publication instruction.
 
 ## Current Work Block
 
-Work block 4V-R: Weekly Date And Bill Truthfulness Durability And Release — complete.
+Work block 4W-R: Weekly Paydown Goal Validation Durability And Release — active.
 
 ## Current Task
 
-Task 1N.5: Validate Weekly paydown dates and read stored goals defensively — current planning gate; no implementation is authorized.
+Task 4: Publish and verify explicitly approved repairs — current only for the exact 4W-R release; Task 1N.6 remains excluded.
 
 ## Owner
 
-Ryan owns the next planning confirmation. Codex Desktop completed the exact 4V-R release and may not begin Task 1N.5 implementation without a separately confirmed work block.
+Codex Desktop owns exact-path staging, source commit, fast-forward direct-main publication, automatic deployment observation, credential-free health verification, and sanitized release closeout. Ryan retains every action outside this contract.
 
 ## Current Action
 
-Report the completed 4V-R release and wait at the separate Task 1N.5 planning gate.
+Verify the exact release set and branch ancestry, commit 4W, fast-forward local `main`, push `origin/main`, observe only the resulting automatic Fly deployment, check credential-free `/health`, and publish one command-center-only `[skip actions]` closeout.
+
+## Work Block 4W-R Contract
+
+- Include the exact verified eleven-path 4W application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/weekly-paydown-goal-validation`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real financial rows or databases, retained uploads, credentials, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1N.6, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4W contract and implementation; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
+- Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1N.6 planning gate.
+
+## Work Block 4W Contract
+
+- Include Task 1N.5 and only the focused Task 2 regression slice for `P3-3E-04` and matching `P3-3E-C01` coverage.
+- Accept only a real ISO target date strictly later than the current local date; reject malformed, nonexistent, empty, today, and past submissions with controlled sanitized guidance and no mutation of the prior singleton row.
+- Preserve a valid goal's stored start date and start balance on target updates; let a valid update recover a row whose target date alone is malformed; align browser minimum-date guidance with the server rule.
+- Treat malformed stored target dates, start dates, or unusable start-balance metadata as unavailable for pace calculations so Weekly and Waterfall render safely without read-time mutation.
+- Keep Tasks 1N.6-1N.8, Tasks 1O-1P, the remainder of Task 2, Tasks 3-4, Waterfall averaging/rounding/tax work, migrations, historical remediation, broader UI work, authentication or CSRF changes, protected data, retained uploads, credentials, production/demo, external calls, workflows, Fly, downstream writes, GitHub durability, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop in the current task on local branch `codex/weekly-paydown-goal-validation`; no delegation or second opinion is needed. Codex owns implementation, verification, exact cleanup, issue disposition, and Runway OS closeout.
+- Stop if the confirmed date-range rule must change, safe recovery requires a migration, deletion, or historical remediation, work expands into Waterfall calculations or another Phase 4 task, protected/live access becomes necessary, verification changes the plan, cleanup cannot be proven, command-center checks fail, or either preserved untracked file would be touched.
+- Verify baseline and final maintained smoke; Personal/BFM valid create and update; preserved start metadata; malformed, nonexistent, empty, today, and past submissions; exact zero-mutation rejection; malformed stored goal handling in Weekly and Waterfall; valid target recovery; Luxe Legacy denial; denied networking; unrelated-row preservation; exact cleanup; Python compilation; JSON; whitespace; dashboard refresh and health; rendered inspection; and final worktree scope.
+- Report the accepted date contract, rejected-input behavior, Weekly/Waterfall defensive-read behavior, recovery result, focused and full synthetic results, changed paths, cleanup proof, preserved boundaries, local branch state, and separate publication gate.
+
+## Work Block 4W Result
+
+- Weekly accepts only canonical real target dates strictly later than the current local date; empty, malformed, nonexistent, loose-format, today, and past targets return sanitized guidance before database access and preserve the complete prior entity database.
+- Valid updates preserve singleton identity, creation timestamp, start date, and start balance. A valid target can recover a malformed target-only row when its start metadata remains usable.
+- Weekly and Waterfall now share defensive stored-goal validation. Malformed target dates, start dates, or start balances become unavailable for pace rendering without read-time mutation, and direct pace computation also returns no result for unusable metadata.
+- The browser minimum date matches the server's next-day rule. Personal and BFM remain isolated, and Luxe Legacy remains denied before storage access.
+- Baseline and final full smoke suites, maintained section 8a6, Python compilation, JSON, whitespace, dashboard refresh, health, rendered inspection, denied networking, unrelated-row preservation, and exact cleanup pass locally.
+- No migration, historical remediation, Waterfall calculation change, protected data, external access, GitHub durability, deployment, or live action occurred. Both preserved untracked files remain untouched.
 
 ## Work Block 4V-R Contract
 

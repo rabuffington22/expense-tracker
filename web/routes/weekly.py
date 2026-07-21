@@ -5,7 +5,7 @@ import calendar
 import logging
 from datetime import date, datetime, timedelta
 
-from flask import Blueprint, render_template, request, g, redirect, url_for
+from flask import Blueprint, flash, render_template, request, g, redirect, url_for
 
 from core.db import get_connection
 from core.reporting import effective_txns_cte, EXCLUDE_CATS, exclude_sql
@@ -274,6 +274,17 @@ def _parse_date(s: str) -> date | None:
         return None
 
 
+def _parse_iso_date(value: object) -> date | None:
+    """Parse one canonical YYYY-MM-DD value without accepting loose variants."""
+    if not isinstance(value, str):
+        return None
+    try:
+        parsed = date.fromisoformat(value)
+    except ValueError:
+        return None
+    return parsed if parsed.isoformat() == value else None
+
+
 def _get_cc_balances(conn) -> list[dict]:
     """Get all credit cards with balances."""
     rows = conn.execute(
@@ -297,29 +308,49 @@ def _get_cc_balances(conn) -> list[dict]:
 
 
 def _get_paydown_goal(conn) -> dict | None:
-    """Get CC paydown goal (singleton)."""
+    """Get one usable CC paydown goal without trusting stored scalar values."""
     row = conn.execute(
         "SELECT target_date, start_date, start_balance_cents FROM cc_paydown_goal WHERE id = 1"
     ).fetchone()
     if not row:
         return None
+
+    start = _parse_iso_date(row["start_date"])
+    target = _parse_iso_date(row["target_date"])
+    start_balance = row["start_balance_cents"]
+    if (
+        start is None
+        or target is None
+        or target <= start
+        or start > date.today()
+        or not isinstance(start_balance, int)
+        or start_balance < 0
+    ):
+        return None
+
     return {
-        "target_date": row["target_date"],
-        "start_date": row["start_date"],
-        "start_balance_cents": row["start_balance_cents"],
+        "target_date": target.isoformat(),
+        "start_date": start.isoformat(),
+        "start_balance_cents": start_balance,
     }
 
 
-def _compute_paydown_pace(goal: dict, current_total: int, today: date) -> dict:
-    """Compute whether actual CC paydown is on pace vs linear target."""
-    start = datetime.strptime(goal["start_date"], "%Y-%m-%d").date()
-    target = datetime.strptime(goal["target_date"], "%Y-%m-%d").date()
-    start_bal = goal["start_balance_cents"]
+def _compute_paydown_pace(goal: dict, current_total: int, today: date) -> dict | None:
+    """Compute paydown pace, returning no result for unusable goal metadata."""
+    start = _parse_iso_date(goal.get("start_date"))
+    target = _parse_iso_date(goal.get("target_date"))
+    start_bal = goal.get("start_balance_cents")
+    if (
+        start is None
+        or target is None
+        or target <= start
+        or start > today
+        or not isinstance(start_bal, int)
+        or start_bal < 0
+    ):
+        return None
 
     total_days = (target - start).days
-    if total_days <= 0:
-        return {"on_pace": current_total <= 0, "expected_cents": 0, "pct_complete": 100}
-
     days_elapsed = (today - start).days
     if days_elapsed < 0:
         days_elapsed = 0
@@ -370,31 +401,47 @@ def save_paydown_goal():
 
     target_date = request.form.get("target_date", "").strip()
     week_str = request.form.get("week", _current_week())
+    parsed_target = _parse_iso_date(target_date)
+    today = date.today()
 
-    if target_date:
-        conn = get_connection(g.entity_key)
-        try:
-            # Get current total CC debt
+    if parsed_target is None or parsed_target <= today:
+        flash("Choose a valid payoff target date after today.", "danger")
+        return redirect(url_for("weekly.index", week=week_str))
+
+    conn = get_connection(g.entity_key)
+    try:
+        existing = conn.execute(
+            "SELECT start_date, start_balance_cents FROM cc_paydown_goal WHERE id = 1"
+        ).fetchone()
+        if existing:
+            start = _parse_iso_date(existing["start_date"])
+            start_balance = existing["start_balance_cents"]
+            if (
+                start is None
+                or start > today
+                or not isinstance(start_balance, int)
+                or start_balance < 0
+            ):
+                flash(
+                    "The stored payoff goal needs review before its target can be updated.",
+                    "danger",
+                )
+                return redirect(url_for("weekly.index", week=week_str))
+            conn.execute(
+                "UPDATE cc_paydown_goal SET target_date = ? WHERE id = 1",
+                (parsed_target.isoformat(),),
+            )
+        else:
             cards = _get_cc_balances(conn)
             total = sum(c["balance_cents"] for c in cards)
-            today = date.today()
-
-            # Check if goal already exists — preserve start values if so
-            existing = _get_paydown_goal(conn)
-            if existing:
-                conn.execute(
-                    "UPDATE cc_paydown_goal SET target_date = ? WHERE id = 1",
-                    (target_date,),
-                )
-            else:
-                conn.execute(
-                    "INSERT INTO cc_paydown_goal (id, target_date, start_date, start_balance_cents) "
-                    "VALUES (1, ?, ?, ?)",
-                    (target_date, today.isoformat(), total),
-                )
-            conn.commit()
-        finally:
-            conn.close()
+            conn.execute(
+                "INSERT INTO cc_paydown_goal (id, target_date, start_date, start_balance_cents) "
+                "VALUES (1, ?, ?, ?)",
+                (parsed_target.isoformat(), today.isoformat(), total),
+            )
+        conn.commit()
+    finally:
+        conn.close()
 
     return redirect(url_for("weekly.index", week=week_str))
 
@@ -520,6 +567,7 @@ def index():
             cc_total=cc_total,
             paydown_goal=paydown_goal,
             paydown_pace=paydown_pace,
+            min_paydown_target_date=(today + timedelta(days=1)).isoformat(),
         )
     finally:
         conn.close()

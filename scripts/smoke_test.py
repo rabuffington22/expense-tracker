@@ -3190,6 +3190,285 @@ def main() -> None:
 
         print("   ✅ Viewed-week pace, MTD, burn, recurrence, scheduled payments, fallbacks, isolation, denied-network, and cleanup passed")
 
+        # ── 8a6. Weekly paydown-goal validation ────────────────────
+        print("\n8a6. Weekly paydown-goal validation…")
+        from web.routes import waterfall as waterfall_routes
+
+        def _paydown_row(entity_key):
+            paydown_conn = get_connection(entity_key)
+            try:
+                row = paydown_conn.execute(
+                    "SELECT * FROM cc_paydown_goal WHERE id=1"
+                ).fetchone()
+                return dict(row) if row else None
+            finally:
+                paydown_conn.close()
+
+        def _replace_paydown_row(entity_key, row):
+            paydown_conn = get_connection(entity_key)
+            try:
+                paydown_conn.execute("DELETE FROM cc_paydown_goal")
+                if row is not None:
+                    columns = tuple(row.keys())
+                    paydown_conn.execute(
+                        f"INSERT INTO cc_paydown_goal ({','.join(columns)}) "
+                        f"VALUES ({','.join('?' for _ in columns)})",
+                        tuple(row[column] for column in columns),
+                    )
+                paydown_conn.commit()
+            finally:
+                paydown_conn.close()
+
+        paydown_baselines = {
+            entity_key: _paydown_row(entity_key)
+            for entity_key in ("personal", "company", "luxelegacy")
+        }
+        paydown_card_names = {}
+        for entity_key in ("personal", "company"):
+            card_name = f"4W Paydown Card {entity_key}"
+            card_conn = get_connection(entity_key)
+            try:
+                card_conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type, "
+                    "credit_limit_cents, sort_order) "
+                    "VALUES (?, 25000, 'manual', 'credit_card', 100000, 860)",
+                    (card_name,),
+                )
+                card_conn.commit()
+            finally:
+                card_conn.close()
+            paydown_card_names[entity_key] = card_name
+        waterfall_txn_id = "synthetic-4w-waterfall-income"
+        waterfall_conn = get_connection("company")
+        try:
+            waterfall_conn.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, merchant_canonical, amount, "
+                "amount_cents, account, category, source_filename, imported_at) "
+                "VALUES (?, '2026-07-01', '4W Waterfall Income', '4W Waterfall Income', "
+                "1000.00, 100000, '4W Synthetic', 'Income', 'synthetic-4w', "
+                "'2026-07-21T00:00:00+00:00')",
+                (waterfall_txn_id,),
+            )
+            waterfall_conn.commit()
+        finally:
+            waterfall_conn.close()
+
+        before_ll_paydown = _database_snapshot("luxelegacy")
+        with app.test_client() as paydown_client, patch.object(
+            weekly_routes, "date", _WeeklyDate
+        ), patch(
+            "socket.create_connection",
+            side_effect=AssertionError("weekly 4W attempted outbound networking"),
+        ) as paydown_create_connection, patch(
+            "socket.socket.connect",
+            side_effect=AssertionError("weekly 4W attempted outbound networking"),
+        ) as paydown_socket_connect:
+            for entity_key, entity_display in (
+                ("personal", "Personal"),
+                ("company", "BFM"),
+            ):
+                _replace_paydown_row(entity_key, None)
+                paydown_client.set_cookie("entity", entity_display)
+                with paydown_client.session_transaction() as paydown_session:
+                    paydown_session.pop("_flashes", None)
+
+                create_response = paydown_client.post(
+                    "/weekly/paydown-goal",
+                    data={"target_date": "2026-08-20", "week": "2026-W30"},
+                )
+                created = _paydown_row(entity_key)
+                _check(
+                    create_response.status_code == 302
+                    and created is not None
+                    and created["target_date"] == "2026-08-20"
+                    and created["start_date"] == "2026-07-20"
+                    and isinstance(created["start_balance_cents"], int),
+                    f"weekly 4W {entity_key}: a valid future target should create canonical goal metadata",
+                )
+
+                for invalid_target in (
+                    "",
+                    "not-a-date",
+                    "2026-02-30",
+                    "2026-7-21",
+                    "2026-07-20",
+                    "2026-07-19",
+                ):
+                    before_invalid = _database_snapshot(entity_key)
+                    invalid_response = paydown_client.post(
+                        "/weekly/paydown-goal",
+                        data={"target_date": invalid_target, "week": "2026-W30"},
+                    )
+                    _check(
+                        invalid_response.status_code == 302
+                        and _database_snapshot(entity_key) == before_invalid,
+                        f"weekly 4W {entity_key}: rejected target {invalid_target!r} should preserve the full database",
+                    )
+                with paydown_client.session_transaction() as paydown_session:
+                    validation_flashes = paydown_session.pop("_flashes", [])
+                _check(
+                    len(validation_flashes) == 6
+                    and all(
+                        category == "danger"
+                        and message == "Choose a valid payoff target date after today."
+                        for category, message in validation_flashes
+                    ),
+                    f"weekly 4W {entity_key}: rejected targets should return sanitized guidance without echoing input",
+                )
+
+                update_response = paydown_client.post(
+                    "/weekly/paydown-goal",
+                    data={"target_date": "2026-09-20", "week": "2026-W30"},
+                )
+                updated = _paydown_row(entity_key)
+                _check(
+                    update_response.status_code == 302
+                    and updated["target_date"] == "2026-09-20"
+                    and updated["start_date"] == created["start_date"]
+                    and updated["start_balance_cents"]
+                    == created["start_balance_cents"]
+                    and updated["created_at"] == created["created_at"],
+                    f"weekly 4W {entity_key}: a valid update should preserve start metadata and row identity",
+                )
+
+                corrupt_conn = get_connection(entity_key)
+                try:
+                    corrupt_conn.execute(
+                        "UPDATE cc_paydown_goal SET target_date='not-a-date' WHERE id=1"
+                    )
+                    corrupt_conn.commit()
+                finally:
+                    corrupt_conn.close()
+                before_corrupt_read = _database_snapshot(entity_key)
+                weekly_corrupt_response = paydown_client.get(
+                    "/weekly/?week=2026-W30"
+                )
+                weekly_corrupt_body = weekly_corrupt_response.get_data(as_text=True)
+                _check(
+                    weekly_corrupt_response.status_code == 200,
+                    f"weekly 4W {entity_key}: a malformed stored target should not break Weekly",
+                )
+                _check(
+                    "not-a-date" not in weekly_corrupt_body,
+                    f"weekly 4W {entity_key}: a malformed stored target should not be rendered",
+                )
+                _check(
+                    'min="2026-07-21"' in weekly_corrupt_body,
+                    f"weekly 4W {entity_key}: browser guidance should require the next local date",
+                )
+                _check(
+                    _database_snapshot(entity_key) == before_corrupt_read,
+                    f"weekly 4W {entity_key}: a malformed stored target read should not mutate data",
+                )
+
+                if entity_key == "personal":
+                    paydown_client.set_cookie("entity", "Personal")
+                    waterfall_corrupt_response = paydown_client.get(
+                        "/waterfall/?month=2026-07"
+                    )
+                    with app.test_request_context("/waterfall/"):
+                        _, _, waterfall_goal, waterfall_pace = (
+                            waterfall_routes._get_personal_cc()
+                        )
+                    _check(
+                        waterfall_corrupt_response.status_code == 200
+                        and waterfall_goal is None
+                        and waterfall_pace is None
+                        and _database_snapshot(entity_key) == before_corrupt_read,
+                        "weekly 4W personal: Waterfall should ignore a malformed stored goal without mutation",
+                    )
+                    paydown_client.set_cookie("entity", entity_display)
+
+                recovery_response = paydown_client.post(
+                    "/weekly/paydown-goal",
+                    data={"target_date": "2026-10-20", "week": "2026-W30"},
+                )
+                recovered = _paydown_row(entity_key)
+                _check(
+                    recovery_response.status_code == 302
+                    and recovered["target_date"] == "2026-10-20"
+                    and recovered["start_date"] == created["start_date"]
+                    and recovered["start_balance_cents"]
+                    == created["start_balance_cents"],
+                    f"weekly 4W {entity_key}: a valid target should recover a malformed target-only row",
+                )
+
+                for column, bad_value in (
+                    ("start_date", "bad-start"),
+                    ("start_balance_cents", "not-cents"),
+                ):
+                    malformed_conn = get_connection(entity_key)
+                    try:
+                        malformed_conn.execute(
+                            f"UPDATE cc_paydown_goal SET {column}=? WHERE id=1",
+                            (bad_value,),
+                        )
+                        malformed_conn.commit()
+                    finally:
+                        malformed_conn.close()
+                    before_malformed = _database_snapshot(entity_key)
+                    malformed_read = paydown_client.get(
+                        "/weekly/?week=2026-W30"
+                    )
+                    rejected_repair = paydown_client.post(
+                        "/weekly/paydown-goal",
+                        data={"target_date": "2026-11-20", "week": "2026-W30"},
+                    )
+                    _check(
+                        malformed_read.status_code == 200
+                        and rejected_repair.status_code == 302
+                        and _database_snapshot(entity_key) == before_malformed,
+                        f"weekly 4W {entity_key}: malformed stored {column} should be read-safe and block target-only mutation",
+                    )
+                    _replace_paydown_row(entity_key, recovered)
+
+            paydown_client.set_cookie("entity", "LL")
+            denied_ll_paydown = paydown_client.post(
+                "/weekly/paydown-goal",
+                data={"target_date": "2026-08-20", "week": "2026-W30"},
+            )
+            _check(
+                denied_ll_paydown.status_code == 302
+                and denied_ll_paydown.headers.get("Location", "").endswith("/")
+                and _database_snapshot("luxelegacy") == before_ll_paydown,
+                "weekly 4W LL: paydown mutation should remain denied before storage",
+            )
+            paydown_create_connection.assert_not_called()
+            paydown_socket_connect.assert_not_called()
+
+        for entity_key, original_row in paydown_baselines.items():
+            _replace_paydown_row(entity_key, original_row)
+        for entity_key, card_name in paydown_card_names.items():
+            card_conn = get_connection(entity_key)
+            try:
+                card_conn.execute(
+                    "DELETE FROM account_balances WHERE account_name=?",
+                    (card_name,),
+                )
+                card_conn.commit()
+            finally:
+                card_conn.close()
+        waterfall_conn = get_connection("company")
+        try:
+            waterfall_conn.execute(
+                "DELETE FROM transactions WHERE transaction_id=?",
+                (waterfall_txn_id,),
+            )
+            waterfall_conn.commit()
+        finally:
+            waterfall_conn.close()
+        _check(
+            all(
+                _paydown_row(entity_key) == paydown_baselines[entity_key]
+                for entity_key in ("personal", "company", "luxelegacy")
+            ),
+            "weekly 4W: paydown-goal fixtures should clean up exactly",
+        )
+
+        print("   ✅ Date validation, zero-mutation rejection, defensive reads, recovery, isolation, denied-network, and cleanup passed")
+
         # ── 8a. BFM-only payroll route boundary ─────────────────────
         print("\n8b. BFM-only payroll route boundary…")
         from web.routes import payroll as payroll_routes

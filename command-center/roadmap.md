@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; work block 4V-R is complete, durable, automatically deployed, and credential-free production health verified; Task 1N.5 is the next separate planning gate
+Status: active; work block 4W-R is active under Ryan's direct instruction to commit and push the exact verified 4W source set to `main`
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -916,20 +916,20 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4Q and 4Q-R.
   - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: done and verified locally through work block 4R; release remains separate.
-- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.4 are released and Task 1N.5 is the current separate planning gate.
+- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.4 are released, Task 1N.5 is complete locally through 4W, and Task 1N.6 is the next separate planning gate.
   - **Task 1N.1: Use stored APRs in locked payoff schedules.** Pass each linked card's maintained `apr_bps` value into payoff calculation, define missing or invalid APR behavior explicitly, and reconcile avalanche/snowball order, narrative, and saved schedule for `P3-3D-01`. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4S and 4S-R.
   - **Task 1N.2: Preserve manual goal-review notes during automatic snapshots.** Update same-day balances without replacing the snapshot identity or erasing a manual note, while preserving intentional later manual-note replacement for `P3-3D-03`. Status: done, durable, automatically deployed, and credential-free production health verified through 4T and 4T-R.
   - **Task 1N.3: Compound negative asset appreciation as depreciation.** Preserve negative projection rates instead of clamping them to zero and reconcile future asset and net-worth results for `P3-3D-04`. Status: complete, durable, automatically deployed, and health verified through 4U-R.
   - **Task 1N.4: Unify Weekly date context and scheduled card-bill amounts.** Anchor pace, MTD, burn, recurring/manual/card bills, and display periods to the viewed week; use the scheduled payment rather than the full card balance for `P3-3E-01` and `P3-3E-02`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4V and 4V-R.
-  - **Task 1N.5: Validate Weekly paydown dates and read stored goals defensively.** Reject invalid target dates without changing the prior goal and prevent malformed stored values from breaking Weekly or Waterfall for `P3-3E-04`. Status: current for a separately confirmed planning pass; implementation is not authorized.
-  - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: planned after the Weekly repairs.
+  - **Task 1N.5: Validate Weekly paydown dates and read stored goals defensively.** Reject invalid target dates without changing the prior goal and prevent malformed stored values from breaking Weekly or Waterfall for `P3-3E-04`. Status: complete and verified locally through work block 4W; publication remains separate.
+  - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: current for a separately confirmed planning pass; implementation is not authorized.
   - **Task 1N.7: Keep Waterfall payoff duration truthful while debt remains.** Apply a documented rounding rule so positive debt with positive surplus cannot render as zero payoff months for `P3-3E-05`. Status: planned after Task 1N.6.
   - **Task 1N.8: Normalize Waterfall tax input once.** Require one finite, range-checked value to drive calculation and rendering without direct-input crashes for `P3-3E-06`. Status: planned after Task 1N.7.
 - **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, and 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice of `P3-3E-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4B and 4C-R through 4R-R; every future release remains separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: current for the exact authorized 4W-R release; all other future releases remain separately gated.
 
 ### Confirmed Work Block 4V: Weekly Date And Bill Truthfulness
 
@@ -981,6 +981,68 @@ Verification: exact path and staged-set review; branch ancestry and remote align
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.5 planning gate.
 
 Result: the exact twelve-path 4V source set was committed as `9b3e517`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29826028617` and deploy job `88619460588` passed for exact source SHA `9b3e517fc7edf36dd681c6ff5ffe6fd33ddc3263`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, the staged high-confidence sensitive-addition scan returned zero, and no PR or unauthorized live action occurred. This command-center-only closeout uses `[skip actions]` to prevent a second deployment. Evidence: `command-center/logs/2026-07-21-weekly-date-bill-truthfulness-release-4v-r.md`.
+
+### Confirmed Work Block 4W: Weekly Paydown Goal Validation
+
+Status: complete and verified locally on 2026-07-21; publication not authorized
+
+Included: Task 1N.5 plus only the focused Task 2 regression slice for `P3-3E-04` and matching `P3-3E-C01` coverage. Accept only a real ISO target date strictly later than the current local date; reject malformed, nonexistent, empty, today, and past submissions without mutating the prior goal; preserve valid start metadata on update; make malformed stored goals safe for Weekly and Waterfall reads; allow a later valid target to recover a row whose target date alone is malformed; and align browser guidance with the server rule.
+
+Excluded: Tasks 1N.6-1N.8; Tasks 1O-1P; the remainder of Task 2; Tasks 3-4; Waterfall averaging, rounding, or tax repairs; migrations; historical remediation; broader UI work; authentication or CSRF changes; real financial data; retained uploads; credentials; production/demo access; external calls; workflows; Fly; downstream writes; GitHub durability; deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Why this grouping: the unsafe POST, singleton stored-goal parser, Weekly rendering, Waterfall's shared paydown helper, and focused regression coverage use the same goal contract and synthetic verification path. The next Waterfall tasks change separate financial-calculation contracts and remain independently gated.
+
+Defaults confirmed by Ryan with the block: require a target strictly later than the server's current local date; preserve valid stored start date and balance on target update; perform no read-time mutation; treat malformed stored goal metadata as unavailable for pace rendering; return sanitized controlled guidance without echoing input; keep the block local-only; and gate every commit, push, release, or live action separately.
+
+Expansion candidates and questions: none. Task 1N.6 introduces a separate signed-surplus period and payoff-input contract.
+
+Owner and recommended agent: Codex Desktop in the current task on local branch `codex/weekly-paydown-goal-validation`. The small sensitive-repo repair couples route validation, a shared defensive read seam, maintained synthetic coverage, issue disposition, and Runway OS stewardship; no delegation or second opinion is needed. Codex owns implementation, verification, exact cleanup, and dashboard closeout.
+
+Expected surfaces: `web/routes/weekly.py`; `web/templates/weekly.html` if needed to align browser guidance; `web/routes/waterfall.py` only if the shared defensive seam requires a focused change; `scripts/smoke_test.py`; a compact paydown-goal contract; sanitized 4W evidence; issue disposition; and Runway OS sources/dashboard. No migration or `core/db.py` change is expected.
+
+Stop conditions:
+
+- The confirmed date-range rule needs to change, or safe recovery requires a migration, deletion, or historical remediation.
+- Correct behavior requires Waterfall averaging, payoff rounding, tax normalization, another Phase 4 task, authentication, or CSRF changes.
+- Protected data, retained uploads, credentials, production/demo, external access, workflows, Fly, downstream writes, or another live action becomes necessary.
+- Focused or full verification materially changes the plan, exact cleanup cannot be proven, command-center checks fail, or either preserved untracked file would be touched.
+
+Verification:
+
+- Baseline and final `.venv/bin/python scripts/smoke_test.py`.
+- Personal/BFM valid create and update, preserved start metadata, and valid target recovery from a malformed stored target.
+- Malformed, nonexistent, empty, today, and past submissions with exact zero-mutation proof.
+- Malformed stored target date, start date, or unusable start-balance metadata cannot break Weekly or Waterfall reads and causes no read-time mutation.
+- Luxe Legacy denial, denied networking, unrelated-row preservation, and exact temporary cleanup.
+- Python compilation, JSON validation, `git diff --check`, dashboard refresh, health check, rendered dashboard inspection, and final explicit-path worktree review.
+
+Durability: local-only. No commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action is authorized.
+
+Report point: return the accepted date contract, rejected-input behavior, Weekly and Waterfall defensive-read behavior, recovery result, focused and full synthetic results, changed paths, cleanup proof, preserved boundaries, local branch state, and the separate publication gate.
+
+Suggested next work block: 4W-R durability and automatic release only if separately authorized; otherwise separately plan Task 1N.6 as 4X.
+
+Result: Weekly now accepts only canonical real targets strictly later than the current local date and rejects empty, malformed, nonexistent, loose-format, today, and past targets before database access with exact prior-state preservation. Valid updates retain row identity, creation time, start date, and start balance; a valid target can recover a malformed target-only row when its start metadata remains usable. Weekly and Waterfall now ignore malformed stored target dates, start dates, or start balances without read-time mutation, and the browser minimum matches the server rule. Baseline and final full smoke suites, maintained section 8a6, compilation, JSON, whitespace, dashboard refresh, health, Personal/BFM isolation, Luxe Legacy denial, denied networking, unrelated-row preservation, and exact cleanup pass locally. No migration, historical remediation, Waterfall calculation repair, protected data, external access, GitHub durability, deployment, or live action occurred. Evidence: `command-center/paydown-goal-validation-contract.md` and `command-center/logs/2026-07-21-weekly-paydown-goal-validation-4w.md`.
+
+### Confirmed Work Block 4W-R: Weekly Paydown Goal Validation Durability And Release
+
+Status: active under Ryan's 2026-07-21 direct instruction to commit and push to `main`
+
+Parent task: Phase 4 Task 4 for the exact verified 4W source set only.
+
+Included: the exact verified eleven-path 4W application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/weekly-paydown-goal-validation`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real financial rows or databases; retained uploads; credentials; authenticated production pages; external calls other than GitHub/Fly status and credential-free health; manual workflow actions; workflow edits; non-automatic Fly changes; downstream access or writes; migrations; Task 1N.6; broader Task 2; unrelated repairs; force push; and recovery beyond the exact fast-forward path.
+
+Owner and recommended agent: Codex Desktop. This release requires exact-path Git stewardship, sensitive-addition review, direct-main fast-forward safety, automatic Fly observation, credential-free health verification, and final Runway OS closeout.
+
+Defaults: no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4W contract and implementation; observe only the automatic Fly deployment caused by the source push; verify only credential-free `/health`; publish the release closeout with `[skip actions]` so it cannot trigger a second deployment; and leave Task 1N.6 planning separate.
+
+Stop conditions: the intended diff contains an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the exact authorized fast-forward path.
+
+Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.6 planning gate.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
