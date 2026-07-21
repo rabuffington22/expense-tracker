@@ -153,7 +153,7 @@ Plaid is the primary bank-transaction integration when configured. Users can con
 
 CSV/PDF bank statements remain available as a fallback. Vendor imports support Amazon order CSVs and Henry Schein XLSX exports. Vendor data can be matched to bank transactions to replace generic charge descriptions with actual product/order context and to create categorized transaction splits.
 
-After a successful LL Plaid sync, an optional bridge can upsert eligible transactions to the configured Luxe Legacy downstream service. The bridge is a no-op when its environment variables are absent and does not change the Ledger databases' source-of-truth role.
+After a successful LL Plaid sync, an optional bridge can upsert eligible transactions to the configured Luxe Legacy downstream service. The bridge is a no-op when either environment variable is absent. It accepts only non-empty Plaid transaction IDs that are already free of surrounding whitespace, withholds every row in an ambiguous duplicate-key group while continuing unrelated valid rows, and explicitly uses `plaid_transaction_id` as the downstream conflict target. It never changes the Ledger databases' source-of-truth role.
 
 ## Deployment and operations
 

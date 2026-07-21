@@ -1467,7 +1467,7 @@ Work block 4F replaced the nonexistent LL `Owner Contribution` mirror exclusion 
 
 ## Luxe Legacy Mirror Idempotency Contract Permits Duplicate Conflict Keys
 
-Status: open for local repair; tracked downstream contract verified in work block 4Z
+Status: resolved locally in work block 4AA; publication not authorized
 
 Severity: high downstream correctness and availability risk
 
@@ -1492,13 +1492,13 @@ Acceptance checks:
 - Duplicate handling is deterministic, preserves the Ledger source of truth, and cannot silently drop an unrelated eligible row.
 - Failure and recovery behavior has synthetic regression coverage without live downstream access.
 
-4Z disposition:
+Resolution:
 
-The tracked-contract gate is satisfied without a downstream schema change: the required explicit conflict target is `plaid_transaction_id`. Local malformed/duplicate handling, explicit request semantics, and maintained coverage remain unimplemented and require a separately confirmed Task 1O.2-1O.4 block.
+Work block 4Z satisfied the tracked-contract gate without a downstream schema change. Work block 4AA now orders selected rows deterministically, treats each valid Plaid key as opaque, withholds every row in an exact repeated-key group, continues unrelated valid rows, and explicitly sends `on_conflict=plaid_transaction_id` with merge-duplicate semantics. Sanitized warnings report counts only. Maintained mocked coverage proves mixed duplicate and valid rows, invalid-only no-request behavior, deterministic repeat payloads, downstream failure isolation, unchanged all-entity databases, denied networking, and exact cleanup. Release remains separately gated.
 
 ## Luxe Legacy Mirror Accepts Empty Plaid Transaction IDs
 
-Status: open; discovered in work block 3I
+Status: resolved locally in work block 4AA; publication not authorized
 
 Severity: medium downstream validation risk
 
@@ -1522,13 +1522,13 @@ Acceptance checks:
 - Malformed identifiers are skipped or reported without affecting valid rows.
 - Personal and BFM remain untouched and the Ledger source rows remain intact.
 
-Why not fixed now:
+Resolution:
 
-Product repair and tracked coverage were excluded from work block 3I.
+Work block 4AA preserves SQL `NULL` exclusion and validates every selected non-null key before payload construction. Empty, whitespace-only, and whitespace-padded values are withheld without rewriting source rows; unrelated valid rows continue; sanitized warnings expose counts only; and Personal, BFM, and every source row remain unchanged. Maintained coverage includes mixed malformed and valid rows plus an invalid-only no-request path. Release remains separately gated.
 
 ## Luxe Legacy Downstream Mirror Lacks Tracked Regression Coverage
 
-Status: partly addressed by the focused work block 4F selection-boundary slice
+Status: resolved locally through work blocks 4F and 4AA; publication not authorized for 4AA
 
 Severity: medium regression-confidence risk
 
@@ -1540,7 +1540,7 @@ Revisit: Phase 4 Task 2, preferably alongside mirror eligibility and idempotency
 
 Summary:
 
-The maintained smoke suite now exercises the Owner Draw selection boundary, valid LL eligibility, LL-only storage access, unchanged entity databases, and scheduled/public LL-only invocation with fake configuration, mocked HTTP, and denied outbound sockets. Broader no-op, request-shape, failure-isolation, empty-ID, duplicate-key, and downstream-contract coverage remains for Task 1O or later separately gated work.
+The maintained smoke suite exercises the Owner Draw selection boundary, valid LL eligibility, LL-only storage access, unchanged entity databases, scheduled/public LL-only invocation, missing and partial configuration no-ops, exact request semantics, malformed and duplicate keys, invalid-only selection, repeatability, and downstream failure isolation with fake configuration, mocked HTTP, and denied outbound sockets.
 
 Impact:
 
@@ -1552,9 +1552,9 @@ Acceptance checks:
 - Passing no-op, request-shape, failure-isolation, and entity-boundary behavior is explicit.
 - Every repaired 3I finding has failing-before and passing-after coverage.
 
-Remaining coverage:
+Resolution:
 
-Work block 4F intentionally added only the focused `P3-3I-01` selection slice. The remaining bridge contract and idempotency coverage stays parked with the corresponding unrepaired findings.
+Work block 4F supplied the focused `P3-3I-01` source-selection slice. Work block 4AA completes the scoped `P3-3I-C01` bridge contract and idempotency slice: absent and partial configuration, invalid-only no-request behavior, mixed malformed/duplicate/valid payload selection, explicit conflict target and request shape, sanitized warnings, deterministic repeat calls, failure isolation, all-entity preservation, scheduled/public LL-only invocation, denied networking, and exact cleanup. Publication remains separate.
 
 ## Main Authentication Boundary Returns Protected HTML And Accepts A Client-Exposed Digest
 

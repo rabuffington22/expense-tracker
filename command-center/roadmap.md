@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; work block 4X-R is complete, durable, automatically deployed, and credential-free production health verified
+Status: active; work block 4AA completed the local-only Tasks 1O.2-1O.4 mirror idempotency repair, and publication remains separately gated
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -925,15 +925,15 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4X and 4X-R.
   - **Task 1N.7: Keep Waterfall payoff duration truthful while debt remains.** Apply a documented rounding rule so positive debt with positive surplus cannot render as zero payoff months for `P3-3E-05`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4X and 4X-R.
   - **Task 1N.8: Normalize Waterfall tax input once.** Require one finite, range-checked value to drive calculation and rendering without direct-input crashes for `P3-3E-06`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4Y and 4Y-R.
-- **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: active as a decomposed umbrella; work block 4Z satisfied the tracked-contract gate without implementation or live downstream access.
+- **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: done and verified locally across Tasks 1O.1-1O.4 through work blocks 4Z and 4AA; publication and live downstream verification remain separate gates.
   - **Task 1O.1: Verify the tracked downstream conflict contract read-only.** Inspect only tracked schema, migration, and request-contract sources in the local downstream repository to determine whether `ledger_transactions.plaid_transaction_id` is uniquely constrained and which explicit PostgREST conflict target the mirror must use. Do not open credentials, databases, row data, network surfaces, or make changes. Status: done through 4Z; tracked schema and importer establish `plaid_transaction_id` as the primary key and explicit conflict target.
-  - **Task 1O.2: Reject malformed and duplicate mirror keys deterministically.** After Task 1O.1, define and implement a local payload-selection rule for empty, whitespace-only, and repeated Plaid transaction IDs without changing Ledger source rows or dropping unrelated eligible rows. Status: current for a separate 4AA planning and confirmation pass.
-  - **Task 1O.3: Make the mirror conflict target explicit in tracked contracts.** After Task 1O.1, align the Ledger request and any tracked downstream schema or migration needed to establish `plaid_transaction_id` as the idempotency key. Status: planned; downstream writes, production inspection, and deployment remain separately gated.
-  - **Task 1O.4: Complete maintained synthetic downstream-mirror coverage.** Pair Tasks 1O.2-1O.3 with the remaining `P3-3I-C01` no-op, request-shape, malformed-key, duplicate-key, failure-isolation, and entity-preservation checks using temporary databases, mocked HTTP, and denied outbound sockets. Status: planned.
+  - **Task 1O.2: Reject malformed and duplicate mirror keys deterministically.** After Task 1O.1, define and implement a local payload-selection rule for empty, whitespace-only, whitespace-padded, and repeated Plaid transaction IDs without changing Ledger source rows or dropping unrelated eligible rows. Status: done and verified locally through work block 4AA; publication remains separate.
+  - **Task 1O.3: Make the mirror conflict target explicit in tracked contracts.** After Task 1O.1, align the Ledger request with `plaid_transaction_id` as the explicit PostgREST conflict target. Status: done and verified locally through work block 4AA without a downstream schema change; downstream writes, production inspection, and deployment remain separately gated.
+  - **Task 1O.4: Complete maintained synthetic downstream-mirror coverage.** Pair Tasks 1O.2-1O.3 with the remaining `P3-3I-C01` no-op, request-shape, malformed-key, duplicate-key, failure-isolation, and entity-preservation checks using temporary databases, mocked HTTP, and denied outbound sockets. Status: done and verified locally through work block 4AA; publication remains separate.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, and 4W completed the `P3-3E-04` Weekly/Waterfall validation slice of `P3-3E-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4Y-R; all future releases remain separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: current at the separate 4AA-R decision gate; releases through 4Y-R are complete, and no 4AA publication is authorized.
 
 ### Confirmed Work Block 4V: Weekly Date And Bill Truthfulness
 
@@ -1141,6 +1141,64 @@ Durability: exact eight-path closeout commit `88a8c52` is durable on local `main
 Report point: return the proven conflict key and request semantics, exact tracked evidence, compatibility verdict, remaining uncertainty, preserved boundaries, and the recommended readiness or blocker for a separately confirmed Task 1O.2-1O.4 implementation block.
 
 Result: tracked downstream sources identify `/Users/ryanbuffington/Documents/GitHub/luxurious luxury` as the intended Supabase consumer, direct operators to `src/lib/db/schema.sql`, define `ledger_transactions.plaid_transaction_id` as the table primary key, and explicitly upsert the tracked Apple Card importer on that column. The Ledger bridge names the same intended key but its local index is non-unique, its eligibility predicate admits empty strings, its payload builder does not handle repeated keys, and its REST request leaves the conflict target implicit. No downstream schema change is indicated. Tasks 1O.2-1O.4 are ready for separate local-only planning; deployed-schema and live behavior remain intentionally unverified. The initial broad tracked-source search returned credential-related history from a tracked memory file; no value is reproduced, the search was narrowed immediately, and no environment file, keychain, database, row data, untracked payload, network, Supabase surface, downstream mutation, or live action occurred. Evidence: `command-center/luxe-legacy-downstream-contract-discovery.md`.
+
+### Confirmed Work Block 4AA: Mirror Key Validation And Explicit Idempotency
+
+Status: complete and verified locally on 2026-07-21; publication not authorized
+
+Included: Tasks 1O.2-1O.4. Treat Plaid transaction IDs as opaque; reject null, empty, whitespace-only, or whitespace-padded identifiers without rewriting them; reject every row in a repeated valid-key group while continuing with unrelated valid rows; record only sanitized invalid and duplicate counts; explicitly send `on_conflict=plaid_transaction_id` with merge-duplicate semantics; and complete the remaining maintained `P3-3I-C01` configuration no-op, request-shape, malformed-key, duplicate-key, failure-isolation, repeatability, and entity-preservation coverage using temporary all-entity databases, mocked HTTP, and denied sockets.
+
+Excluded: Task 1P; unrelated Task 2 coverage; Tasks 3-4; database migrations; downstream-repository changes; production or deployed-schema inspection; live Supabase requests or writes; protected data; credentials; Plaid, Fly, workflows, deployment, commit, push, PR, or merge actions; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Why this grouping: the three tasks share one bridge function, one established downstream key contract, one maintained smoke-test section, one synthetic verification path, and one downstream-correctness risk. Work block 4Z removed the only schema-choice dependency by proving the tracked downstream primary key and explicit conflict target are both `plaid_transaction_id` and that no downstream schema change is indicated. Task 1P starts a separate authentication, mobile, browser-hardening, and UX decision family.
+
+Owner and recommended agent: Codex Desktop in the current task on local branch `codex/luxe-legacy-mirror-idempotency`. The block is a small integrated repair coupling implementation, synthetic financial-boundary verification, issue disposition, and Runway OS stewardship. No delegation or second opinion is needed. Codex owns implementation, verification, cleanup, dashboard currency, and final intake.
+
+Defaults confirmed by Ryan: treat keys as opaque and require a non-empty identifier equal to its stripped form; do not repair or rewrite malformed source values; reject every row in an exact duplicate valid-key group rather than choosing a winner; continue with unrelated valid rows; log only sanitized counts, never identifiers or row data; retain the existing successful-row count and failure-isolation return contract; use the explicit PostgREST `on_conflict=plaid_transaction_id` request parameter; make no migration or downstream-repository change; and keep durability local-only.
+
+Stop conditions:
+
+- Correct behavior requires choosing a duplicate winner, rewriting source identifiers, or changing the confirmed malformed-key policy.
+- A local or downstream schema migration, deployed-schema inspection, production verification, or downstream-repository change becomes necessary.
+- Verification requires credentials, protected or row-level financial data, networking, Supabase, Plaid, Fly, workflows, or another live system.
+- Work expands into sync orchestration, broader failure semantics, Task 1P, another repair family, or unrelated Task 2 coverage.
+- Focused or full verification changes the plan, exact cleanup cannot be proven, command-center refresh or health fails, or either preserved untracked file would be touched.
+
+Verification:
+
+- Baseline and final `.venv/bin/python scripts/smoke_test.py` using only its temporary synthetic `DATA_DIR`.
+- Focused missing and partial configuration no-op, explicit request path/headers/conflict target/timeout/payload, success, failure-isolation, and repeatability checks.
+- Null, empty, whitespace-only, whitespace-padded, exact duplicate-group, mixed malformed/duplicate/valid, and unrelated-valid-row behavior.
+- Temporary Personal, BFM, and Luxe Legacy databases; mocked HTTP; denied outbound sockets; exact source-row and all-entity preservation; and exact cleanup.
+- Targeted Python compilation, JSON validation, `git diff --check`, dashboard refresh, health check, rendered-dashboard inspection, and final worktree review.
+
+Dashboard closeout: update human-readable sources first; align `state.json`; refresh and health-check the dashboard; and record Tasks 1O.2-1O.4 and 4AA as done only if every required check passes.
+
+Durability: local-only. No commit, push, PR, merge, workflow, deployment, credential, protected-data, production, Plaid, Supabase, downstream-write, or other live action is included.
+
+Report point: return the exact malformed and duplicate-key policy, explicit request contract, focused and full synthetic results, changed paths, cleanup proof, preserved boundaries, local branch state, and separate 4AA-R publication gate.
+
+Suggested next work block: 4AA-R for exact-scope durability and automatic release only if Ryan separately authorizes publication after local verification.
+
+Result: the bridge now keeps SQL `NULL` identifiers outside selection; rejects empty, whitespace-only, and whitespace-padded identifiers without rewriting source rows; withholds every row in an exact duplicate valid-key group; continues unrelated valid rows in deterministic order; logs sanitized counts only; returns zero without HTTP when nothing valid remains; and explicitly sends `on_conflict=plaid_transaction_id` with merge-duplicate semantics. Maintained section 8c proves missing and partial configuration no-ops, invalid-only behavior, mixed malformed/duplicate/excluded/valid selection, repeatability, exact request headers and conflict semantics, timeout, failure isolation, all-entity preservation, scheduled/public Luxe Legacy-only invocation, denied networking, and exact cleanup. Baseline and final full smoke suites, Python compilation, JSON, whitespace, dashboard refresh, health, rendered inspection, and final scope review pass locally. The request-header assertion caught a service-key/row-key variable shadowing regression before closeout; the variables were separated and the entire suite passed again. No migration, downstream-repository change, protected data, credential, production or Supabase access, external request, GitHub durability, deployment, or live action occurred. Evidence: `command-center/luxe-legacy-mirror-idempotency-contract.md` and `command-center/logs/2026-07-21-luxe-legacy-mirror-idempotency-4aa.md`.
+
+### Confirmed Work Block 4AA-R: Mirror Idempotency Durability And Release
+
+Status: active; directly authorized by Ryan on 2026-07-21
+
+Included: the exact verified eleven-path 4AA application, maintained-test, README, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/luxe-legacy-mirror-idempotency`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real financial rows or databases; retained uploads; credentials; authenticated production pages; external calls other than GitHub/Fly status and credential-free health; manual workflow actions; workflow edits; non-automatic Fly changes; downstream access or writes; migrations; Task 1P; broader Task 2; unrelated repairs; PR creation; force push; and recovery beyond the exact fast-forward path.
+
+Owner and recommended agent: Codex Desktop. This release requires exact-path Git stewardship, sensitive-addition review, direct-main fast-forward safety, automatic Fly observation, credential-free health verification, and final Runway OS closeout.
+
+Defaults: no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4AA contract and implementation; create one source commit on the existing feature branch; fast-forward local `main`; push `main` without force; observe only the automatic Fly deployment caused by the source push; verify only credential-free `/health`; publish the release closeout with `[skip actions]` so it cannot trigger a second deployment; and leave Task 1P planning separate.
+
+Stop conditions: the intended diff contains an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the exact authorized fast-forward path.
+
+Verification: exact path and high-confidence sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; exact automatic Fly run/job attribution; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1P planning gate.
 
 ### Confirmed Work Block 4X: Waterfall Payoff Truthfulness
 

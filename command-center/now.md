@@ -2,27 +2,55 @@
 
 ## Active Objective
 
-Plan and confirm work block 4AA for the locally provable Luxe Legacy mirror repair after 4Z satisfied the tracked downstream contract gate.
+Publish and verify the exact 4AA Luxe Legacy mirror repair through directly authorized work block 4AA-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4Z is complete from tracked local sources and Tasks 1O.2-1O.4 remain separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4AA-R is authorized and active for exact-path durability and automatic release.
 
 ## Current Work Block
 
-Work block 4Z: Downstream Idempotency Contract Discovery — complete.
+Work block 4AA-R: Mirror Idempotency Durability And Release — active.
 
 ## Current Task
 
-Task 1O.2: Reject malformed and duplicate mirror keys deterministically — current for a separate 4AA planning and confirmation pass; implementation and live downstream access remain unauthorized.
+Task 4: Publish and verify only explicitly approved repairs — current for the directly authorized 4AA-R exact-path release; Task 1P remains planned.
 
 ## Owner
 
-Ryan owns the next 4AA work-block confirmation. Codex Desktop completed 4Z, recorded the sanitized contract verdict, and remains responsible for planning, Runway OS stewardship, and final intake.
+Codex Desktop owns exact-path staging, source commit, local-main fast-forward, direct `main` push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan retains every manual workflow, credential, protected-data, downstream-write, and recovery gate beyond the exact authorized path.
 
 ## Current Action
 
-Propose a bounded local-only 4AA work block for Tasks 1O.2-1O.4 using `plaid_transaction_id` as the established tracked conflict target; do not implement or access live downstream systems before confirmation.
+Re-verify and stage only the exact eleven-path 4AA source set, commit on `codex/luxe-legacy-mirror-idempotency`, fast-forward local `main`, push `main` without force, observe the attributable automatic Fly deployment, verify credential-free `/health`, and publish one `[skip actions]` command-center closeout.
+
+## Work Block 4AA-R Contract
+
+- Include the exact verified eleven-path 4AA application, maintained-test, README, contract, issue, evidence, and Runway OS source set; explicit staging; one source commit; fast-forward local `main`; direct push to `origin/main`; automatic Fly observation; credential-free production `/health`; and one sanitized `[skip actions]` closeout commit and push.
+- Keep both preserved untracked files, protected data, real databases, retained uploads, credentials, authenticated production pages, manual workflow actions, non-automatic Fly changes, downstream access/writes, migrations, Task 1P, unrelated work, PR creation, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`. Trigger only the automatic deployment caused by the source push and ensure the closeout cannot start a second deployment.
+- Stop for unexpected paths, sensitive additions, protected data, unrelated changes, main divergence, failed maintained verification, excluded staging, unattributable or failed deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized path.
+- Verify exact scope, sensitive additions, branch ancestry, remote alignment, maintained smoke, compilation, JSON, dashboard refresh and health, whitespace, staged set, source commit, automatic run/job attribution, credential-free health, final `main` alignment, preserved exclusions, and `[skip actions]` closeout publication.
+
+## Work Block 4AA Contract
+
+- Include Tasks 1O.2-1O.4: reject null, empty, whitespace-only, whitespace-padded, and repeated valid Plaid transaction IDs without rewriting source rows; continue with unrelated valid rows; record only sanitized invalid/duplicate counts; explicitly send `on_conflict=plaid_transaction_id`; and complete maintained mocked downstream-mirror coverage.
+- Reject every row in a repeated valid-key group rather than choosing a winner. Treat keys as opaque and require each accepted value to equal its stripped form.
+- Keep Task 1P, unrelated Task 2 coverage, Tasks 3-4, migrations, downstream-repository changes, deployed-schema or production inspection, live Supabase requests/writes, protected data, credentials, Plaid, Fly, workflows, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Use Codex Desktop in the current task on local branch `codex/luxe-legacy-mirror-idempotency`; no delegation or second opinion is needed. Codex owns implementation, verification, cleanup, issue disposition, dashboard currency, and final intake.
+- Stop if correct behavior requires choosing a duplicate winner or rewriting a key; a migration, downstream change, production verification, or broader sync/error redesign becomes necessary; protected/live access is needed; scope reaches another task; verification changes the plan; cleanup cannot be proven; command-center checks fail; or either preserved untracked file would be touched.
+- Verify baseline and final maintained smoke; configuration no-ops; exact request path, headers, conflict target, timeout, and payload; malformed and duplicate groups; unrelated valid-row continuation; failure isolation; repeatability; all-entity preservation; denied networking; exact cleanup; Python compilation; JSON; whitespace; dashboard refresh and health; rendered inspection; and final worktree scope.
+- Keep durability local-only. Report the exact key-selection and request contract, focused and full synthetic results, changed paths, cleanup proof, preserved boundaries, local branch state, and separate publication gate.
+
+## Work Block 4AA Result
+
+- The bridge excludes SQL `NULL` identifiers; rejects empty, whitespace-only, and whitespace-padded identifiers without rewriting source rows; withholds every row in an exact repeated-key group; and continues unrelated valid unique rows in deterministic order.
+- Sanitized warnings expose only malformed-row, duplicate-row, and duplicate-key counts. Invalid-only selections return zero without HTTP.
+- Requests explicitly send `on_conflict=plaid_transaction_id` with merge-duplicate semantics, the existing service-key headers, and a 15-second timeout. Failure remains isolated and returns zero without entity mutation.
+- Maintained section 8c proves absent/partial configuration, invalid-only and mixed selection, repeatability, exact request shape, failure isolation, all-entity preservation, LL-only invocation, denied networking, and exact cleanup.
+- The request-header assertion caught a service-key/row-key variable-shadowing regression before closeout; the variables were separated and the entire smoke suite passed again.
+- Baseline and final full smoke suites, Python compilation, JSON, whitespace, dashboard refresh, health, rendered inspection, and scope review pass locally.
+- No migration, downstream-repository change, protected data, credential access, production or Supabase request, GitHub durability, deployment, or live action occurred. Both preserved untracked files remain untouched.
 
 ## Work Block 4Z Contract
 

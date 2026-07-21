@@ -9,6 +9,7 @@ See ~/.claude/plans/polymorphic-mixing-whistle.md for the architecture.
 """
 from __future__ import annotations
 
+from collections import Counter
 import logging
 import os
 
@@ -31,8 +32,8 @@ def push_luxelegacy_to_supabase() -> int:
     is down.
     """
     url = os.environ.get("LUXURY_SUPABASE_URL", "").rstrip("/")
-    key = os.environ.get("LUXURY_SUPABASE_SERVICE_KEY", "")
-    if not url or not key:
+    service_key = os.environ.get("LUXURY_SUPABASE_SERVICE_KEY", "")
+    if not url or not service_key:
         return 0
 
     placeholders = ",".join("?" for _ in EXCLUDE_CATS)
@@ -43,7 +44,8 @@ def push_luxelegacy_to_supabase() -> int:
                        description_raw, merchant_canonical, account, category
                 FROM transactions
                 WHERE plaid_transaction_id IS NOT NULL
-                  AND COALESCE(category, '') NOT IN ({placeholders})""",
+                  AND COALESCE(category, '') NOT IN ({placeholders})
+                ORDER BY plaid_transaction_id, transaction_id""",
             EXCLUDE_CATS,
         ).fetchall()
     finally:
@@ -51,6 +53,34 @@ def push_luxelegacy_to_supabase() -> int:
 
     if not rows:
         return 0
+
+    valid_rows = []
+    valid_keys = []
+    malformed_rows = 0
+    for row in rows:
+        plaid_key = row["plaid_transaction_id"]
+        if (
+            not isinstance(plaid_key, str)
+            or not plaid_key
+            or plaid_key != plaid_key.strip()
+        ):
+            malformed_rows += 1
+            continue
+        valid_rows.append(row)
+        valid_keys.append(plaid_key)
+
+    key_counts = Counter(valid_keys)
+    duplicate_keys = {key for key, count in key_counts.items() if count > 1}
+    duplicate_rows = sum(key_counts[key] for key in duplicate_keys)
+
+    if malformed_rows or duplicate_rows:
+        log.warning(
+            "luxury_bridge skipped malformed_rows=%d duplicate_rows=%d "
+            "duplicate_keys=%d",
+            malformed_rows,
+            duplicate_rows,
+            len(duplicate_keys),
+        )
 
     payload = [
         {
@@ -63,18 +93,23 @@ def push_luxelegacy_to_supabase() -> int:
             "account_name": r["account"],
             "category": r["category"],
         }
-        for r in rows
+        for r in valid_rows
+        if r["plaid_transaction_id"] not in duplicate_keys
     ]
+
+    if not payload:
+        return 0
 
     try:
         resp = requests.post(
             f"{url}/rest/v1/ledger_transactions",
             headers={
-                "apikey": key,
-                "Authorization": f"Bearer {key}",
+                "apikey": service_key,
+                "Authorization": f"Bearer {service_key}",
                 "Content-Type": "application/json",
                 "Prefer": "resolution=merge-duplicates",
             },
+            params={"on_conflict": "plaid_transaction_id"},
             json=payload,
             timeout=15,
         )

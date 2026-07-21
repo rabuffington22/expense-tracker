@@ -5062,12 +5062,81 @@ def main() -> None:
         from web.routes import kristine as kristine_routes
         from web.routes import plaid as plaid_routes
 
+        bridge_noop_envs = (
+            {},
+            {"LUXURY_SUPABASE_URL": "https://synthetic.invalid"},
+            {"LUXURY_SUPABASE_SERVICE_KEY": "synthetic-service-key"},
+        )
+        for bridge_noop_env in bridge_noop_envs:
+            with patch.dict(
+                os.environ, bridge_noop_env, clear=True
+            ), patch(
+                "core.luxury_bridge.get_connection"
+            ) as bridge_noop_connection, patch(
+                "core.luxury_bridge.requests.post"
+            ) as bridge_noop_post:
+                _check(
+                    push_luxelegacy_to_supabase() == 0,
+                    "bridge configuration: missing either setting should be a no-op",
+                )
+                _check(
+                    bridge_noop_connection.call_count == 0
+                    and bridge_noop_post.call_count == 0,
+                    "bridge configuration: no-op must not open storage or HTTP",
+                )
+
+        invalid_only_connection = Mock()
+        invalid_only_connection.execute.return_value.fetchall.return_value = [
+            {"plaid_transaction_id": ""},
+            {"plaid_transaction_id": "   "},
+            {"plaid_transaction_id": "bridge-invalid-duplicate"},
+            {"plaid_transaction_id": "bridge-invalid-duplicate"},
+        ]
+        with patch.dict(os.environ, {
+            "LUXURY_SUPABASE_URL": "https://synthetic.invalid",
+            "LUXURY_SUPABASE_SERVICE_KEY": "synthetic-service-key",
+        }, clear=False), patch(
+            "core.luxury_bridge.get_connection",
+            return_value=invalid_only_connection,
+        ), patch(
+            "core.luxury_bridge.requests.post",
+        ) as invalid_only_post, patch(
+            "core.luxury_bridge.log.warning",
+        ) as invalid_only_warning, patch(
+            "socket.socket",
+            side_effect=AssertionError("invalid-only bridge smoke forbids networking"),
+        ):
+            invalid_only_count = push_luxelegacy_to_supabase()
+
+        _check(
+            invalid_only_count == 0
+            and invalid_only_post.call_count == 0
+            and invalid_only_connection.close.call_count == 1,
+            "bridge validation: an invalid-only selection must close storage and skip HTTP",
+        )
+        _check(
+            invalid_only_warning.call_args.args == (
+                "luxury_bridge skipped malformed_rows=%d duplicate_rows=%d "
+                "duplicate_keys=%d",
+                2,
+                2,
+                1,
+            ),
+            "bridge validation: invalid-only warning must expose counts only",
+        )
+
         bridge_rows = (
             ("bridge-owner-draw", "bridge-plaid-owner-draw", "Owner Draw"),
             ("bridge-transfer", "bridge-plaid-transfer", "Internal Transfer"),
             ("bridge-card-payment", "bridge-plaid-card-payment", "Credit Card Payment"),
             ("bridge-valid-cogs", "bridge-plaid-valid-cogs", "Cost of Goods"),
             ("bridge-valid-income", "bridge-plaid-valid-income", "Income"),
+            ("bridge-empty-key", "", "Supplies"),
+            ("bridge-whitespace-key", "   ", "Supplies"),
+            ("bridge-padded-key", " bridge-plaid-padded ", "Supplies"),
+            ("bridge-duplicate-a", "bridge-plaid-duplicate", "Supplies"),
+            ("bridge-duplicate-b", "bridge-plaid-duplicate", "Fees"),
+            ("bridge-null-key", None, "Supplies"),
         )
         conn_bridge = get_connection("luxelegacy")
         for transaction_id, plaid_transaction_id, category in bridge_rows:
@@ -5105,25 +5174,115 @@ def main() -> None:
             "core.luxury_bridge.requests.post",
             return_value=bridge_response,
         ) as bridge_post, patch(
+            "core.luxury_bridge.log.warning",
+        ) as bridge_warning, patch(
             "socket.socket",
             side_effect=AssertionError("bridge smoke forbids outbound networking"),
         ):
             pushed_count = push_luxelegacy_to_supabase()
+            repeated_pushed_count = push_luxelegacy_to_supabase()
 
-        _check(opened_bridge_entities == ["luxelegacy"],
+        _check(opened_bridge_entities == ["luxelegacy", "luxelegacy"],
                "bridge selection: direct execution must read only Luxe Legacy")
-        _check(bridge_post.call_count == 1,
-               "bridge selection: eligible LL rows should produce one mocked request")
-        bridge_payload = bridge_post.call_args.kwargs["json"]
+        _check(bridge_post.call_count == 2,
+               "bridge selection: repeated execution should make one mocked request each")
+        bridge_payload = bridge_post.call_args_list[0].kwargs["json"]
+        repeated_bridge_payload = bridge_post.call_args_list[1].kwargs["json"]
         payload_categories = {row["category"] for row in bridge_payload}
-        _check(pushed_count == 2 and len(bridge_payload) == 2,
+        payload_keys = [row["plaid_transaction_id"] for row in bridge_payload]
+        _check(
+            pushed_count == repeated_pushed_count == 2
+            and len(bridge_payload) == 2,
                "bridge selection: expected only the two valid LL rows")
+        _check(
+            bridge_payload == repeated_bridge_payload,
+            "bridge selection: repeated payload selection must be deterministic",
+        )
+        _check(
+            payload_keys == ["bridge-plaid-valid-cogs", "bridge-plaid-valid-income"]
+            and len(payload_keys) == len(set(payload_keys)),
+            "bridge selection: malformed and duplicate keys must stay out",
+        )
         _check(payload_categories == {"Cost of Goods", "Income"},
                "bridge selection: Owner Draw, transfers, and card payments must be omitted")
+        _check(
+            all(
+                call.kwargs["params"] == {
+                    "on_conflict": "plaid_transaction_id"
+                }
+                and call.kwargs["timeout"] == 15
+                and call.kwargs["headers"]["Prefer"]
+                == "resolution=merge-duplicates"
+                and call.kwargs["headers"]["apikey"]
+                == "synthetic-service-key"
+                and call.kwargs["headers"]["Authorization"]
+                == "Bearer synthetic-service-key"
+                and call.kwargs["headers"]["Content-Type"]
+                == "application/json"
+                and call.args[0]
+                == "https://synthetic.invalid/rest/v1/ledger_transactions"
+                for call in bridge_post.call_args_list
+            ),
+            "bridge request: conflict target path headers and timeout must be explicit",
+        )
+        _check(
+            bridge_warning.call_count == 2
+            and all(
+                call.args == (
+                    "luxury_bridge skipped malformed_rows=%d duplicate_rows=%d "
+                    "duplicate_keys=%d",
+                    3,
+                    2,
+                    1,
+                )
+                for call in bridge_warning.call_args_list
+            ),
+            "bridge validation: warnings must expose sanitized counts only",
+        )
         _check(all(
             _database_snapshot(entity_key) == bridge_baseline[entity_key]
             for entity_key in ("personal", "company", "luxelegacy")
         ), "bridge selection: mirror reads must not mutate any entity database")
+
+        bridge_failure_response = Mock()
+        bridge_failure_response.raise_for_status.side_effect = RuntimeError(
+            "synthetic downstream failure"
+        )
+        with patch.dict(os.environ, {
+            "LUXURY_SUPABASE_URL": "https://synthetic.invalid",
+            "LUXURY_SUPABASE_SERVICE_KEY": "synthetic-service-key",
+        }, clear=False), patch(
+            "core.luxury_bridge.requests.post",
+            return_value=bridge_failure_response,
+        ) as bridge_failure_post, patch(
+            "core.luxury_bridge.log.warning",
+        ) as bridge_failure_warning, patch(
+            "socket.socket",
+            side_effect=AssertionError("bridge failure smoke forbids outbound networking"),
+        ):
+            failed_pushed_count = push_luxelegacy_to_supabase()
+
+        _check(
+            failed_pushed_count == 0 and bridge_failure_post.call_count == 1,
+            "bridge failure: downstream failure must remain isolated and return zero",
+        )
+        _check(
+            bridge_failure_warning.call_count == 2
+            and bridge_failure_warning.call_args_list[0].args == (
+                "luxury_bridge skipped malformed_rows=%d duplicate_rows=%d "
+                "duplicate_keys=%d",
+                3,
+                2,
+                1,
+            )
+            and bridge_failure_warning.call_args_list[1].args[0]
+            == "luxury_bridge push failed: %s",
+            "bridge failure: warnings must stay sanitized and omit row identifiers",
+        )
+        _check(all(
+            _database_snapshot(entity_key) == bridge_baseline[entity_key]
+            for entity_key in ("personal", "company", "luxelegacy")
+        ), "bridge failure: all entity databases must remain unchanged")
 
         for entity_key in ("personal", "company", "luxelegacy"):
             conn_bridge = get_connection(entity_key)
