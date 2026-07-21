@@ -2,27 +2,55 @@
 
 ## Active Objective
 
-Choose the next bounded Phase 4 action after the completed, durable, automatically deployed, and health-verified 4AD-R mobile-drawer accessibility release.
+Publish the exact verified 4AE command-center artifact set directly to `main` through confirmed work block 4AE-R without triggering deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4AD-R is complete and Task 1P.4 is the next planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4AE-R is active for Task 1P.4.1 durability only.
 
 ## Current Work Block
 
-Work block 4AD-R: Mobile Drawer Accessibility Durability And Release — complete, durable, automatically deployed, and credential-free production health verified.
+Work block 4AE-R: CSP Contract Durability — active and command-center-only.
 
 ## Current Task
 
-Task 1P.4: Design and enforce a compatible Content Security Policy — current for a separate just-in-time planning pass; implementation is not authorized.
+Task 1P.4.1-R: Publish the CSP contract and planning closeout — active; proposed Task 1P.4.2a remains unconfirmed.
 
 ## Owner
 
-Ryan owns confirmation or revision of the next bounded Task 1P.4 planning block. Codex Desktop owns Runway OS stewardship; further implementation remains unconfirmed.
+Codex Desktop owns exact-path Git verification, staging, two command-center-only `[skip actions]` commits, direct-main pushes, remote-SHA verification, and final Runway OS closeout. Ryan retains every 4AF, product, reviewer, deployment, and live-action decision.
 
 ## Current Action
 
-Plan one bounded local-only Task 1P.4 CSP compatibility block; do not begin implementation until Ryan confirms it.
+Publish only the exact nine verified 4AE command-center paths, verify `main` alignment and native Actions skipping, then record the durable commit and restore proposed 4AF as the unconfirmed next gate.
+
+## Work Block 4AE-R Contract
+
+- Include Task 1P.4.1-R only: exact-path and sensitive-addition review; remote `main` alignment; explicit staging of the nine verified command-center paths; one `Publish 4AE CSP compatibility contract [skip actions]` commit and direct push to `origin/main`; read-only remote SHA and workflow-skipping verification; one sanitized command-center closeout commit with `[skip actions]`; final push and alignment verification.
+- Publish only `command-center/csp-compatibility-contract.md`, `command-center/logs/2026-07-21-csp-compatibility-contract-4ae.md`, `command-center/decisions.md`, `command-center/index.html`, `command-center/issues.md`, `command-center/now.md`, `command-center/phase-3-findings-consolidation.md`, `command-center/roadmap.md`, and `command-center/state.json`.
+- Keep proposed Task 1P.4.2a/work block 4AF, all product/template/JavaScript/CSS/test/dependency/runtime/authentication/header/worker/manifest/Plaid changes, protected data, credentials, real databases, production/demo inspection, workflow edits or dispatches, Fly actions, PR creation, force push, recovery beyond a clean fast-forward, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use no PR or branch because Ryan explicitly requested direct `main` durability. Both commits use GitHub's native `[skip actions]` directive because the publish set is command-center-only and must not trigger the Fly workflow.
+- Stop for an unexpected path, sensitive addition, protected-data match, unrelated change, local or remote `main` divergence, failed local verification, excluded staging, a workflow run despite the skip directive, push rejection, or recovery beyond a normal fetch-and-fast-forward decision.
+- Verify exact path set; no product diff; high-confidence secret and protected-path scans; JSON; dashboard refresh and health; whitespace including new files; rendered dashboard; staged set; commit content; `main` ancestry; remote SHA after each push; no new workflow run for either commit; final worktree preserving both excluded untracked files.
+- Report both commit SHAs, exact published paths, native Actions-skip result, final local/remote alignment, preserved exclusions, no deployment, and proposed 4AF still separately gated.
+
+## Work Block 4AE Result
+
+- Froze strict core and narrow Plaid document CSP candidates, exact origins, route-family exceptions, migration dependencies, and synthetic request/browser proof requirements in `command-center/csp-compatibility-contract.md`.
+- Counted 46 script elements: 38 executable inline scripts, three external executable scripts, and five inert JSON blocks; also counted 161 native event handlers, four `hx-on` handlers, seven inline style blocks, 221 style attributes, and at least 33 runtime style-mutation call sites.
+- Confirmed that HTMX-swapped fragment scripts must move to local static initialization before `allowScriptTags=false`; a fragment-response nonce cannot replace that migration because the owning document policy controls inserted content.
+- Confined Plaid's documented `style-src-attr 'unsafe-inline'` requirement to the two Link document routes instead of weakening login, `/k/`, offline/errors, or ordinary authenticated pages.
+- Split oversized Task 1P.4.2 into shared-foundation, swapped-fragment, and remaining-full-page slices; split Task 1P.4.3 into application-style and exceptional-document/Plaid slices.
+- No product, template, JavaScript, CSS, test, dependency, authentication, security-header, service-worker, manifest, Plaid behavior, protected-data, live-system, GitHub, publication, or deployment change occurred. The full application smoke suite was intentionally skipped because application behavior did not change.
+
+## Work Block 4AE Contract
+
+- Include Task 1P.4.1 only: inventory executable scripts, HTMX fragments, inline styles, local assets, worker/manifest behavior, login, offline/error, standalone `/k/`, and Plaid Link; define candidate directives and exact origins; classify required rewrites; and specify synthetic header/browser verification.
+- Keep Tasks 1P.4.2-1P.7, the remainder of Task 2, Tasks 3-4, all product/template/JavaScript/CSS/test/dependency/authentication/security-header changes, credentials, protected data, live systems, GitHub durability, publication, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop in the current task without delegation. Read tracked source and official public documentation only; write sanitized command-center artifacts only.
+- Stop if the contract requires a product or UX decision before it can be stated, exact compatibility cannot be established without credentials/protected data/live traffic, product changes become necessary, official requirements conflict with tracked behavior, scope reaches another task, either preserved untracked file would be touched, or command-center verification fails.
+- Verify a complete file-to-directive and rewrite-to-task matrix; explicit Ryan decisions; no product/test/dependency diff; JSON; dashboard refresh and health; `git diff --check`; rendered-dashboard inspection; and final scoped worktree review. The full application smoke suite is intentionally not required because 4AE changes no application behavior.
+- Report the candidate policy, exact allowances, compatibility blockers, migration counts and slices, reviewer recommendation, unresolved Ryan decisions, command-center paths, verification, and the separately confirmable next block.
 
 ## Work Block 4AD-R Result
 

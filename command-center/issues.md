@@ -1711,7 +1711,7 @@ Work block 4AD gives the hamburger an explicit drawer relationship and synchroni
 
 ## Session Cookie And Browser Security Policy Need Explicit Hardening
 
-Status: partly addressed through work block 4AC; cookie policy verified locally and CSP remains open
+Status: partly addressed; cookie policy is durable and Task 1P.4.1 CSP compatibility planning is complete locally through 4AE
 
 Severity: medium defense-in-depth risk
 
@@ -1719,11 +1719,11 @@ Captured: 2026-07-18
 
 Where seen: `web/__init__.py` and the repeated synthetic HTTPS response probe
 
-Revisit: Phase 4 Task 1P.4 for CSP; verify the 4AC cookie contract only in a separately authorized release
+Revisit: Phase 4 Task 1P.4.2a for the first separately confirmed CSP migration slice
 
 Summary:
 
-Work block 4AC made the Flask session cookie explicitly HttpOnly and SameSite Lax everywhere and Secure on Fly while preserving ordinary local HTTP. Protected HTML still does not emit Content-Security-Policy. Existing MIME, frame, referrer, XSS, and HTTPS HSTS headers continue to pass.
+Work block 4AC made the Flask session cookie explicitly HttpOnly and SameSite Lax everywhere and Secure on Fly while preserving ordinary local HTTP. Work block 4AE now freezes the compatible route-family policy and migration/proof sequence without changing product behavior. Protected HTML still does not emit Content-Security-Policy. Existing MIME, frame, referrer, XSS, and HTTPS HSTS headers continue to pass.
 
 Impact:
 
@@ -1737,7 +1737,7 @@ Acceptance checks:
 
 Why not fixed now:
 
-The cookie half is complete and verified locally through 4AC. CSP remains a separate Task 1P.4 compatibility and implementation block.
+The cookie half is durable through 4AC-R and the CSP compatibility contract is complete locally through 4AE. Executable-markup, style/document, header, proof, publication, and production verification remain separately confirmed Task 1P.4 gates.
 
 ## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
 
