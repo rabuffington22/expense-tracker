@@ -109,7 +109,7 @@ Tracked test and demo-seed expansion were explicitly excluded from audit work bl
 
 ## Locked Payoff Schedules Ignore Stored Account APRs
 
-Status: open; discovered in work block 3D
+Status: resolved locally in work block 4S; release not authorized
 
 Severity: high financial-planning correctness risk
 
@@ -117,7 +117,7 @@ Captured: 2026-07-18
 
 Where seen: `web/routes/short_term_planning.py`, migrated `account_balances.apr_bps`, and deterministic lock-plan reproduction
 
-Revisit: Phase 4 Task 1 for repair; Phase 4 Task 2 for tracked coverage
+Revisit: separate publication gate only
 
 Summary:
 
@@ -134,9 +134,9 @@ Acceptance checks:
 - Missing APR behavior is explicit and does not silently make different cards equivalent.
 - The saved narrative and month-by-month schedule reconcile to the same inputs and have tracked synthetic coverage.
 
-Why not fixed now:
+Resolution:
 
-Work block 3D is audit-only. Product repair and tracked tests require a separately confirmed Phase 4 block.
+Work block 4S passes each linked credit card's stored `apr_bps` into the locked payoff timeline and removes the hard-coded 20% substitution. A known zero APR remains valid; absent or negative APR returns controlled Cash Flow guidance before the existing strategy, monthly amount, target date, narrative, or schedule can change. Maintained temporary Personal and BFM coverage proves exact reversed-order avalanche cents for 9.99% and 29.99% cards, balance-ordered snowball behavior, narrative and saved-schedule reconciliation, zero-APR persistence, missing/negative zero-mutation rejection, Luxe Legacy denial, denied networking, and exact cleanup. The baseline and final full smoke suites and Python compilation pass locally. No migration, template, protected data, external access, GitHub durability, deployment, or live action occurred.
 
 ## Luxe Legacy Planning Denial Is Enforced Only On Page Entry
 

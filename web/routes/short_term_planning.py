@@ -6,7 +6,7 @@ import json
 import logging
 from datetime import date, datetime, timedelta, timezone
 
-from flask import Blueprint, render_template, request, g, redirect, url_for, make_response, jsonify
+from flask import Blueprint, render_template, request, g, redirect, url_for, make_response, jsonify, flash
 from markupsafe import escape
 
 from core.db import get_connection, init_db
@@ -464,7 +464,7 @@ def _get_linked_account_details(conn, goal: dict) -> list[dict]:
     for name in linked:
         row = conn.execute(
             "SELECT account_name, balance_cents, account_type, "
-            "credit_limit_cents, payment_due_day, payment_amount_cents "
+            "credit_limit_cents, payment_due_day, payment_amount_cents, apr_bps "
             "FROM account_balances WHERE account_name = ?",
             (name,),
         ).fetchone()
@@ -873,18 +873,22 @@ def lock_plan(goal_id):
             acct_data = []
             for a in accounts:
                 if a["account_type"] == "credit_card":
+                    rate_bps = a["apr_bps"]
+                    if not isinstance(rate_bps, int) or rate_bps < 0:
+                        flash(
+                            "Set a valid APR for every linked card in Cash Flow "
+                            "before locking this payoff plan.",
+                            "error",
+                        )
+                        return redirect(url_for("short_term_planning.index"))
+
                     # Estimate min payment as 2% of balance or $25
                     bal = abs(a["balance_cents"])
                     min_pay = max(2500, int(bal * 0.02))
-                    rate_row = conn.execute(
-                        "SELECT credit_limit_cents FROM account_balances WHERE account_name = ?",
-                        (a["account_name"],),
-                    ).fetchone()
-                    # Use a default rate if we don't have one stored
                     acct_data.append({
                         "name": a["account_name"],
                         "balance_cents": bal,
-                        "rate_bps": 2000,  # default 20% APR
+                        "rate_bps": rate_bps,
                         "min_payment_cents": min_pay,
                     })
 

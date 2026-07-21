@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-20 4:03 PM CST",
+    "lastUpdated": "2026-07-20 9:56 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,31 +22,31 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work blocks through 4R-R are published on main; source commit edaa853 deployed successfully with credential-free production health at 200"
+    "durabilityStatus": "Work block 4S-R is active to publish the exact verified 4S source set directly to main and observe its automatic deployment"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4R-R published the exact verified peer-comparison set on main, its attributable automatic Fly deployment succeeded, and credential-free production health returned 200; Task 1N is current for separate planning.",
-    "progress": 98
+    "summary": "Confirmed work block 4S-R is active for exact 4S durability direct-main publication automatic Fly observation and credential-free health verification.",
+    "progress": 79
   },
   "currentTask": {
-    "title": "Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness",
-    "owner": "Ryan",
+    "title": "Task 4: Publish and verify explicitly approved repairs",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns the next just-in-time planning pass and Runway OS stewardship",
-    "nextAction": "Define and confirm one bounded Task 1N work block before any implementation.",
-    "blocker": "No Task 1N implementation work block is confirmed."
+    "supportingAgent": "Ryan directly authorized commit and push to main for the exact 4S source set",
+    "nextAction": "Reverify stage commit fast-forward and push the exact 4S source set then observe the automatic Fly deployment and credential-free health.",
+    "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-r-release",
-    "label": "4R-R",
-    "name": "Like-For-Like Payroll Peer Comparisons Durability And Release",
-    "status": "done",
+    "id": "phase-4-block-s-release",
+    "label": "4S-R",
+    "name": "Locked Payoff APR Truthfulness Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Completed exact-path source durability automatic Fly deployment observation credential-free health verification and sanitized closeout",
+    "currentTask": "Reverify and publish the exact ten-path 4S source set then observe automatic deployment and credential-free health",
     "includedTasks": [
-      "Task 1M.5 durability and automatic release",
+      "Task 1N.1 durability and automatic release",
       "Credential-free production health verification",
       "Sanitized command-center closeout"
     ],
@@ -63,19 +63,7 @@
       "Exact automatic Fly run and job result plus credential-free production health",
       "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
-    "nextReportPoint": "Return the source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N planning gate.",
-    "result": "Published source commit edaa853 directly to main by exact fast-forward observed successful automatic Fly run 29778504012 and job 88473691178 verified credential-free production health at HTTP 200 and preserved both unrelated untracked files.",
-    "durability": "Source commit edaa853 is durable on main automatic Fly run 29778504012 and deploy job 88473691178 passed credential-free production health returned 200 and the sanitized command-center closeout is published separately with skip actions.",
-    "evidence": [
-      "command-center/payroll-peer-comparison-contract.md",
-      "command-center/logs/2026-07-20-payroll-peer-comparisons-4r.md",
-      "command-center/logs/2026-07-20-payroll-peer-comparisons-release-4r-r.md",
-      "GitHub Actions run 29778504012",
-      "Fly deploy job 88473691178",
-      "web/routes/payroll.py",
-      "web/templates/payroll.html",
-      "scripts/smoke_test.py"
-    ]
+    "nextReportPoint": "Return the source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.2 planning gate."
   },
   "routerHealth": {
     "status": "healthy",
@@ -100,23 +88,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan the first bounded Task 1N repair",
-    "status": "decision",
-    "owner": "Ryan",
-    "why": "Work block 4R-R is complete and the next calculation family requires a fresh bounded contract before implementation.",
-    "action": "Ask Codex to propose and confirm one Task 1N planning calculation repair block.",
+    "title": "Publish and verify the exact 4S source set",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized commit and push to main for the complete locally verified 4S repair.",
+    "action": "Run exact-path durability automatic deployment observation credential-free health and skip-actions closeout through work block 4S-R.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Work block 4R-R is complete; Task 1N requires a separately confirmed bounded work block.",
-    "items": [
-      "Confirm the first bounded Task 1N planning calculation repair block before implementation."
-    ]
+    "summary": "Nothing is waiting on Ryan while confirmed release work block 4S-R is active.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4R-R and the Task 1M payroll family are durable and deployed; protected payroll or HR data Task 1N implementation and other live actions remain outside authorization.",
-    "decisionQueue": "Define and confirm the first bounded Task 1N planning calculation repair block.",
+    "phaseQuestions": "Work block 4S-R authorizes only exact 4S durability automatic deployment observation credential-free health and sanitized closeout; Task 1N.2 remains outside scope.",
+    "decisionQueue": "No Ryan decision is needed unless the exact release path hits a stop condition.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2931,6 +2917,109 @@
         "Fly deploy job 88473691178"
       ],
       "result": "Published source commit edaa853 directly to main by exact-path fast-forward observed successful automatic Fly run 29778504012 and job 88473691178 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-s",
+      "phaseId": "phase-4",
+      "label": "4S",
+      "name": "Locked Payoff APR Truthfulness",
+      "status": "done",
+      "includedTasks": [
+        "Task 1N.1",
+        "Task 2 focused P3-3D-01 and P3-3D-C01 locked-payoff regression slice"
+      ],
+      "excludedTasks": [
+        "Tasks 1N.2-1N.8 Tasks 1O-1P the remainder of Task 2 and Tasks 3-4",
+        "Cash Flow APR-entry redesign migrations historical cleanup existing-data remediation and broad payoff redesign",
+        "Real financial data retained uploads credentials production demo external calls live systems GitHub durability and deployment",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The small sensitive-repo repair couples Flask calculation behavior maintained synthetic verification and Runway OS stewardship while external workers remain inactive.",
+      "runnerPath": "Current Codex task on local branch codex/locked-payoff-apr-truthfulness without delegation or second opinion.",
+      "expectedFiles": [
+        "web/routes/short_term_planning.py and focused additions to scripts/smoke_test.py",
+        "web/templates/short_term_planning.html only if existing feedback cannot communicate controlled rejection",
+        "A compact locked-payoff APR contract sanitized 4S evidence issue disposition and Runway OS state"
+      ],
+      "defaults": [
+        "Use each linked card's stored apr_bps and allow a known zero APR",
+        "Treat absent or negative APR as unavailable and reject locking without changing a prior locked plan",
+        "Keep avalanche snowball narrative and saved schedule on the same account-specific inputs",
+        "Commit push release and live verification remain separately gated"
+      ],
+      "stopConditions": [
+        "Correct behavior requires a new APR-entry policy schema migration historical remediation or broader payoff redesign",
+        "Protected data credentials external access production demo or another live action becomes necessary",
+        "Work expands into Tasks 1N.2-1N.8 or broad planning coverage",
+        "Verification changes the plan cleanup cannot be proven command-center checks fail or either preserved untracked file would be touched"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "Reversed-order stored-APR avalanche balance-ordered snowball narrative and saved-schedule reconciliation",
+        "Missing negative and known-zero APR behavior with exact zero mutation on rejection",
+        "Personal BFM Luxe Legacy denial denied networking and exact cleanup",
+        "Python compilation JSON whitespace dashboard refresh health rendered inspection when needed and final worktree scope"
+      ],
+      "reportBack": "Return the APR contract missing-APR behavior avalanche and snowball results schedule reconciliation focused and full verification changed paths cleanup preserved boundaries local branch state and separate publication gate.",
+      "nextBlock": "4T Snapshot Note Preservation for Task 1N.2 plus only its focused Task 2 regression slice after 4S evidence is complete.",
+      "durability": "Complete and verified locally on codex/locked-payoff-apr-truthfulness; no commit push PR merge workflow deployment credential protected-data external access or live action occurred.",
+      "evidence": [
+        "command-center/locked-payoff-apr-contract.md",
+        "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-4s.md",
+        "web/routes/short_term_planning.py",
+        "scripts/smoke_test.py"
+      ],
+      "result": "Stored card APRs drive locked schedules; known zero remains valid; missing or negative APR rejects before mutation; exact avalanche snowball schedule isolation denied-network cleanup and full smoke verification pass locally."
+    },
+    {
+      "id": "phase-4-block-s-release",
+      "phaseId": "phase-4",
+      "label": "4S-R",
+      "name": "Locked Payoff APR Truthfulness Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1N.1 durability and automatic release",
+        "Credential-free production health verification",
+        "Sanitized command-center closeout"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real financial rows or databases retained uploads credentials authenticated production pages manual workflow actions and downstream access or writes",
+        "Workflow edits non-automatic Fly changes migrations force push and recovery outside the exact fast-forward path",
+        "Task 1N.2 broader Task 2 unrelated repairs and other live actions"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git stewardship sensitive-addition review direct-main fast-forward safety automatic Fly observation credential-free health verification and final Runway OS closeout.",
+      "runnerPath": "Current Codex task on codex/locked-payoff-apr-truthfulness followed by an exact fast-forward to local main.",
+      "expectedLiveEffect": "Push one verified source commit to main triggering one automatic Fly deployment verify only credential-free health then push one skip-actions command-center closeout without a second deployment.",
+      "expectedFiles": [
+        "Exact verified ten-path 4S application maintained-test contract issue evidence and Runway OS source set",
+        "A sanitized 4S-R closeout log and command-center-only skip-actions commit"
+      ],
+      "defaults": [
+        "No PR because Ryan directly instructed commit and push to main",
+        "Observe only the automatic Fly deployment caused by the source push",
+        "Use only credential-free production health verification",
+        "Publish closeout with skip actions to prevent a second deployment"
+      ],
+      "stopConditions": [
+        "Unexpected staged path sensitive addition protected data or unrelated user change",
+        "Local or remote main divergence or required force push",
+        "Maintained verification automatic deployment or credential-free health failure",
+        "Closeout starts a second Fly deployment or recovery exceeds authorization"
+      ],
+      "verification": [
+        "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
+        "Maintained synthetic suite Python compilation JSON validation dashboard refresh health check and git diff check",
+        "Explicit staging source commit and direct-main fast-forward push",
+        "Exact automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.2 planning gate.",
+      "durability": "Active under Ryan's direct-main authorization; force push PR and unrelated release actions remain excluded."
     }
   ],
   "phaseTasks": [
@@ -3626,11 +3715,82 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1N",
       "title": "Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness",
-      "status": "current",
+      "status": "active",
       "owner": "Ryan",
-      "summary": "Repair the remaining P3-3D and P3-3E calculation families after the planning route guard.",
-      "nextAction": "Return to a separately confirmed planning pass after 4R-R closes.",
-      "blocker": "No Task 1N implementation work block is confirmed."
+      "summary": "Repair the remaining P3-3D and P3-3E calculation families through separately confirmed child-task blocks after the planning route guard."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1N1",
+      "title": "Task 1N.1: Use stored APRs in locked payoff schedules",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Pass maintained linked-card APRs into locked payoff calculation and define missing or invalid APR behavior explicitly for P3-3D-01 with focused coverage.",
+      "result": "Stored card APRs drive locked schedules known zero remains valid missing or negative APR rejects before mutation and exact maintained synthetic verification passes locally.",
+      "evidence": [
+        "command-center/locked-payoff-apr-contract.md",
+        "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-4s.md"
+      ],
+      "nextAction": null,
+      "blocker": null
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1N2",
+      "title": "Task 1N.2: Preserve manual goal-review notes during automatic snapshots",
+      "status": "planned",
+      "owner": "Ryan",
+      "summary": "Preserve same-day manual review notes and snapshot identity while automatic snapshots refresh balances for P3-3D-03 with focused coverage.",
+      "nextAction": "Return to a separate planning and confirmation pass after work block 4S-R closes.",
+      "blocker": "Waiting for the separately scoped 4S-R release to close."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1N3",
+      "title": "Task 1N.3: Compound negative asset appreciation as depreciation",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Preserve negative projection rates and reconcile asset and net-worth depreciation for P3-3D-04 with focused coverage."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1N4",
+      "title": "Task 1N.4: Unify Weekly date context and scheduled card-bill amounts",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Use one viewed-week date context and scheduled card payments across Weekly pace bill and total calculations for P3-3E-01 and P3-3E-02 with focused coverage."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1N5",
+      "title": "Task 1N.5: Validate Weekly paydown dates and read stored goals defensively",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Reject invalid target dates without mutation and prevent malformed stored values from breaking Weekly or Waterfall for P3-3E-04 with focused coverage."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1N6",
+      "title": "Task 1N.6: Include deficit months in Waterfall payoff inputs",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Use every month in the defined signed rolling period for Waterfall average and payoff guidance for P3-3E-03 with focused coverage."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1N7",
+      "title": "Task 1N.7: Keep Waterfall payoff duration truthful while debt remains",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Apply a documented rounding rule that never reports zero payoff months for positive debt and positive surplus for P3-3E-05 with focused coverage."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1N8",
+      "title": "Task 1N.8: Normalize Waterfall tax input once",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "Use one finite range-checked tax value for Waterfall calculation and rendering without direct-input crashes for P3-3E-06 with focused coverage."
     },
     {
       "phaseId": "phase-4",
@@ -3654,7 +3814,7 @@
       "title": "Task 2: Expand regression coverage",
       "status": "active",
       "owner": "Codex Desktop",
-      "summary": "Pair focused synthetic coverage with each repair family; 4C completed P3-3A-C01, 4D the P3-3F-C01 payroll-boundary slice, 4E the P3-3D-C01 planning-boundary slice, 4F the P3-3I-C01 selection slice, 4G the P3-3H-C01 result slice, 4H the P3-3C-C01 recurring-report slice, 4I the P3-3G-C01 atomicity slice, 4J its reconciliation, link, liability, and freshness slice, and 4K its item-isolation and observability slice."
+      "summary": "Pair focused synthetic coverage with each repair family; work blocks 4C-4K, 4M, 4P-4Q, and 4S completed their matching identity, boundary, reporting, Plaid, vendor, payroll, and locked-payoff slices."
     },
     {
       "phaseId": "phase-4",
@@ -3668,10 +3828,12 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "done",
+      "status": "current",
       "owner": "Codex Desktop",
-      "summary": "Publish only exact verified repair scopes through separately authorized release blocks.",
-      "result": "Releases through 4R-R completed successfully; 4R source commit edaa853 is on main, Fly run 29778504012 and job 88473691178 succeeded, and credential-free production health returned 200. Every later release remains separately gated.",
+      "summary": "Publish only the exact verified 4S source set through confirmed work block 4S-R then return Task 1N.2 to planning.",
+      "nextAction": "Require separate approval for each future release block.",
+      "blocker": "No additional release or live action is authorized.",
+      "result": "Releases through 4R-R completed successfully; 4S-R is now active under separate direct-main authorization.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -3684,9 +3846,7 @@
         "command-center/logs/2026-07-19-plaid-account-state-truthfulness-release-4j-r.md",
         "command-center/logs/2026-07-19-plaid-item-isolation-observability-release-4k-r.md",
         "command-center/logs/2026-07-20-payroll-peer-comparisons-release-4r-r.md"
-      ],
-      "nextAction": "Require separate approval for each future release block.",
-      "blocker": "No additional release or live action is authorized."
+      ]
     },
     {
       "phaseId": "phase-5",
@@ -4817,8 +4977,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Plan the first bounded Task 1N repair",
-    "description": "Define and confirm one planning calculation repair block before any Task 1N implementation."
+    "name": "Complete and verify work block 4S-R",
+    "description": "Publish the exact verified 4S source set to main verify its automatic deployment and credential-free health then close without a second deployment."
   },
   "verification": {
     "dashboardRefresh": "pass",

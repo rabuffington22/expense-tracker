@@ -1883,6 +1883,336 @@ def main() -> None:
 
         print("   ✅ All planning routes deny LL before handlers and preserve Personal/BFM sharing")
 
+        # ── 8a2. Stored-APR locked payoff truthfulness ─────────────
+        print("\n8a2. Stored-APR locked payoff truthfulness…")
+        import json as planning_json
+        from web.routes import short_term_planning as short_term_planning_routes
+
+        apr_fixture = {}
+
+        def _locked_goal_row(entity_key, goal_id):
+            locked_conn = get_connection(entity_key)
+            try:
+                row = locked_conn.execute(
+                    "SELECT strategy, monthly_amount_cents, target_date, ai_plan "
+                    "FROM short_term_goals WHERE id = ?",
+                    (goal_id,),
+                ).fetchone()
+                return tuple(row) if row else None
+            finally:
+                locked_conn.close()
+
+        def _expected_schedule_row(accounts, monthly_extra, strategy):
+            timeline = short_term_planning_routes._compute_payoff_timeline(
+                accounts, monthly_extra, strategy
+            )
+            _check(timeline, "locked payoff: expected a non-empty synthetic timeline")
+            first = timeline[0]
+            parts = ["| 1"]
+            for account in accounts:
+                balance = first["accounts"].get(account["name"], 0)
+                parts.append("$%s" % "{:,.0f}".format(balance / 100))
+            parts.append("$%s" % "{:,.0f}".format(first["total_cents"] / 100))
+            parts.append(
+                "$%s" % "{:,.0f}".format(
+                    first["cumulative_interest_cents"] / 100
+                )
+            )
+            return timeline, " | ".join(parts) + " |"
+
+        for entity_key, entity_display in (
+            ("personal", "Personal"),
+            ("company", "BFM"),
+        ):
+            low_name = f"APR Low {entity_key}"
+            high_name = f"APR High {entity_key}"
+            setup_conn = get_connection(entity_key)
+            try:
+                setup_conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type, "
+                    "payment_amount_cents, apr_bps, sort_order) "
+                    "VALUES (?, 100000, 'manual', 'credit_card', 2500, 999, 801)",
+                    (low_name,),
+                )
+                setup_conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type, "
+                    "payment_amount_cents, apr_bps, sort_order) "
+                    "VALUES (?, 100000, 'manual', 'credit_card', 2500, 2999, 802)",
+                    (high_name,),
+                )
+                goal_id = setup_conn.execute(
+                    "INSERT INTO short_term_goals "
+                    "(name, goal_type, target_date, strategy, monthly_amount_cents, "
+                    "linked_accounts, status, ai_plan) "
+                    "VALUES (?, 'debt_payoff', '2030-01-01', 'snowball', 3300, ?, "
+                    "'active', 'Prior locked plan')",
+                    (
+                        f"Stored APR {entity_key}",
+                        planning_json.dumps([low_name, high_name]),
+                    ),
+                ).lastrowid
+                setup_conn.commit()
+            finally:
+                setup_conn.close()
+            apr_fixture[entity_key] = {
+                "display": entity_display,
+                "low": low_name,
+                "high": high_name,
+                "goal": goal_id,
+            }
+
+        with app.test_client() as apr_client, patch(
+            "socket.create_connection",
+            side_effect=AssertionError("locked payoff attempted outbound networking"),
+        ) as apr_create_connection, patch(
+            "socket.socket.connect",
+            side_effect=AssertionError("locked payoff attempted outbound networking"),
+        ) as apr_socket_connect:
+            for entity_key in ("personal", "company"):
+                fixture = apr_fixture[entity_key]
+                apr_client.set_cookie("entity", fixture["display"])
+                response = apr_client.post(
+                    f"/planning/short-term/goals/{fixture['goal']}/lock-plan",
+                    data={
+                        "strategy": "avalanche",
+                        "monthly_amount": "100",
+                        "target_date": "2029-12-31",
+                        "narrative": f"Stored APR avalanche {entity_key}",
+                    },
+                )
+                _check(
+                    response.status_code == 302,
+                    f"locked payoff {entity_key}: avalanche lock should redirect",
+                )
+                expected_accounts = [
+                    {
+                        "name": fixture["low"],
+                        "balance_cents": 100000,
+                        "rate_bps": 999,
+                        "min_payment_cents": 2500,
+                    },
+                    {
+                        "name": fixture["high"],
+                        "balance_cents": 100000,
+                        "rate_bps": 2999,
+                        "min_payment_cents": 2500,
+                    },
+                ]
+                timeline, expected_row = _expected_schedule_row(
+                    expected_accounts, 10000, "avalanche"
+                )
+                _check(
+                    timeline[0]["accounts"][fixture["high"]]
+                    < timeline[0]["accounts"][fixture["low"]],
+                    f"locked payoff {entity_key}: avalanche should target the higher stored APR first",
+                )
+                _check(
+                    timeline[0]["accounts"][fixture["low"]] == 98332
+                    and timeline[0]["accounts"][fixture["high"]] == 89999
+                    and timeline[0]["cumulative_interest_cents"] == 3332,
+                    f"locked payoff {entity_key}: avalanche month one should reconcile to stored APR cents",
+                )
+                locked = _locked_goal_row(entity_key, fixture["goal"])
+                _check(
+                    locked is not None
+                    and locked[0] == "avalanche"
+                    and locked[1] == 10000
+                    and locked[2] == "2029-12-31"
+                    and locked[3].startswith(f"Stored APR avalanche {entity_key}")
+                    and expected_row in locked[3],
+                    f"locked payoff {entity_key}: saved avalanche inputs and schedule should reconcile",
+                )
+
+            personal_fixture = apr_fixture["personal"]
+            personal_conn = get_connection("personal")
+            try:
+                personal_conn.execute(
+                    "UPDATE account_balances SET balance_cents = 200000, apr_bps = 999 "
+                    "WHERE account_name = ?",
+                    (personal_fixture["low"],),
+                )
+                personal_conn.execute(
+                    "UPDATE account_balances SET balance_cents = 50000, apr_bps = 2999 "
+                    "WHERE account_name = ?",
+                    (personal_fixture["high"],),
+                )
+                personal_conn.commit()
+            finally:
+                personal_conn.close()
+
+            apr_client.set_cookie("entity", "Personal")
+            response = apr_client.post(
+                f"/planning/short-term/goals/{personal_fixture['goal']}/lock-plan",
+                data={
+                    "strategy": "snowball",
+                    "monthly_amount": "100",
+                    "target_date": "2029-11-30",
+                    "narrative": "Stored APR snowball personal",
+                },
+            )
+            _check(response.status_code == 302, "locked payoff: snowball lock should redirect")
+            snowball_accounts = [
+                {
+                    "name": personal_fixture["low"],
+                    "balance_cents": 200000,
+                    "rate_bps": 999,
+                    "min_payment_cents": 4000,
+                },
+                {
+                    "name": personal_fixture["high"],
+                    "balance_cents": 50000,
+                    "rate_bps": 2999,
+                    "min_payment_cents": 2500,
+                },
+            ]
+            snowball_timeline, snowball_row = _expected_schedule_row(
+                snowball_accounts, 10000, "snowball"
+            )
+            _check(
+                snowball_timeline[0]["accounts"][personal_fixture["high"]]
+                < snowball_timeline[0]["accounts"][personal_fixture["low"]],
+                "locked payoff: snowball should target the smaller balance independently of APR",
+            )
+            _check(
+                snowball_timeline[0]["accounts"][personal_fixture["low"]] == 197665
+                and snowball_timeline[0]["accounts"][personal_fixture["high"]] == 38750
+                and snowball_timeline[0]["cumulative_interest_cents"] == 2915,
+                "locked payoff: snowball month one should reconcile independently to exact cents",
+            )
+            snowball_locked = _locked_goal_row("personal", personal_fixture["goal"])
+            _check(
+                snowball_locked is not None
+                and snowball_locked[0] == "snowball"
+                and snowball_locked[1] == 10000
+                and snowball_row in snowball_locked[3],
+                "locked payoff: saved snowball inputs and schedule should reconcile",
+            )
+
+            for unavailable_apr in (None, -1):
+                invalid_conn = get_connection("personal")
+                try:
+                    invalid_conn.execute(
+                        "UPDATE account_balances SET apr_bps = ? WHERE account_name = ?",
+                        (unavailable_apr, personal_fixture["low"]),
+                    )
+                    invalid_conn.commit()
+                finally:
+                    invalid_conn.close()
+                before_rejection = _locked_goal_row("personal", personal_fixture["goal"])
+                rejected = apr_client.post(
+                    f"/planning/short-term/goals/{personal_fixture['goal']}/lock-plan",
+                    data={
+                        "strategy": "avalanche",
+                        "monthly_amount": "777",
+                        "target_date": "2035-05-05",
+                        "narrative": "Must not persist",
+                    },
+                    follow_redirects=True,
+                )
+                _check(
+                    rejected.status_code == 200
+                    and "Set a valid APR for every linked card in Cash Flow"
+                    in rejected.get_data(as_text=True),
+                    "locked payoff: unavailable APR should return controlled Cash Flow guidance",
+                )
+                _check(
+                    _locked_goal_row("personal", personal_fixture["goal"])
+                    == before_rejection,
+                    "locked payoff: unavailable APR rejection should leave the prior plan unchanged",
+                )
+
+            zero_conn = get_connection("personal")
+            try:
+                zero_conn.execute(
+                    "UPDATE account_balances SET balance_cents = 100000, apr_bps = 0 "
+                    "WHERE account_name = ?",
+                    (personal_fixture["low"],),
+                )
+                zero_conn.execute(
+                    "UPDATE account_balances SET balance_cents = 100000, apr_bps = 2999 "
+                    "WHERE account_name = ?",
+                    (personal_fixture["high"],),
+                )
+                zero_conn.commit()
+            finally:
+                zero_conn.close()
+            zero_response = apr_client.post(
+                f"/planning/short-term/goals/{personal_fixture['goal']}/lock-plan",
+                data={
+                    "strategy": "avalanche",
+                    "monthly_amount": "125",
+                    "target_date": "2029-10-31",
+                    "narrative": "Known zero APR remains valid",
+                },
+            )
+            _check(zero_response.status_code == 302, "locked payoff: known zero APR should remain valid")
+            zero_accounts = [
+                {
+                    "name": personal_fixture["low"],
+                    "balance_cents": 100000,
+                    "rate_bps": 0,
+                    "min_payment_cents": 2500,
+                },
+                {
+                    "name": personal_fixture["high"],
+                    "balance_cents": 100000,
+                    "rate_bps": 2999,
+                    "min_payment_cents": 2500,
+                },
+            ]
+            _, zero_row = _expected_schedule_row(zero_accounts, 12500, "avalanche")
+            zero_locked = _locked_goal_row("personal", personal_fixture["goal"])
+            _check(
+                zero_locked is not None
+                and zero_locked[1] == 12500
+                and zero_row in zero_locked[3],
+                "locked payoff: known zero APR should persist a reconciled schedule",
+            )
+
+            before_ll = _database_snapshot("luxelegacy")
+            apr_client.set_cookie("entity", "LL")
+            denied_ll = apr_client.post(
+                "/planning/short-term/goals/999999/lock-plan",
+                data={"strategy": "avalanche", "monthly_amount": "999"},
+            )
+            _check(
+                denied_ll.status_code == 302
+                and denied_ll.headers.get("Location", "").endswith("/"),
+                "locked payoff LL: route should remain denied before its handler",
+            )
+            _check(
+                _database_snapshot("luxelegacy") == before_ll,
+                "locked payoff LL: denied request should leave the database unchanged",
+            )
+            apr_create_connection.assert_not_called()
+            apr_socket_connect.assert_not_called()
+
+        for entity_key in ("personal", "company"):
+            fixture = apr_fixture[entity_key]
+            cleanup_conn = get_connection(entity_key)
+            try:
+                cleanup_conn.execute(
+                    "DELETE FROM short_term_goals WHERE id = ?", (fixture["goal"],)
+                )
+                cleanup_conn.execute(
+                    "DELETE FROM account_balances WHERE account_name IN (?, ?)",
+                    (fixture["low"], fixture["high"]),
+                )
+                cleanup_conn.commit()
+                leftovers = cleanup_conn.execute(
+                    "SELECT "
+                    "(SELECT COUNT(*) FROM short_term_goals WHERE id = ?) + "
+                    "(SELECT COUNT(*) FROM account_balances WHERE account_name IN (?, ?))",
+                    (fixture["goal"], fixture["low"], fixture["high"]),
+                ).fetchone()[0]
+            finally:
+                cleanup_conn.close()
+            _check(leftovers == 0, f"locked payoff {entity_key}: synthetic rows should clean up exactly")
+
+        print("   ✅ Stored APRs, explicit rejection, zero APR, schedule truth, isolation, denied-network, and cleanup passed")
+
         # ── 8a. BFM-only payroll route boundary ─────────────────────
         print("\n8b. BFM-only payroll route boundary…")
         from web.routes import payroll as payroll_routes

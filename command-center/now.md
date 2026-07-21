@@ -2,27 +2,55 @@
 
 ## Active Objective
 
-Close completed work block 4R-R after exact source durability, successful automatic deployment, and credential-free production health, then return Task 1N to a separate planning gate.
+Publish the exact verified 4S stored-APR repair to `main`, observe its automatic deployment, verify credential-free production health, and close without a second deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active.
+Phase 4: Core Repairs And Regression Coverage — active; exact 4S durability and release is authorized through work block 4S-R.
 
 ## Current Work Block
 
-Work block 4R-R: Like-For-Like Payroll Peer Comparisons Durability And Release — complete, deployed, and credential-free health verified.
+Work block 4S-R: Locked Payoff APR Truthfulness Durability And Release — active.
 
 ## Current Task
 
-Phase 4 Task 1N: repair planning, Weekly, and Waterfall calculation truthfulness — current for a new bounded planning pass only. No Task 1N implementation is authorized.
+Phase 4 Task 4: publish and verify only the exact approved 4S source set — current through work block 4S-R.
 
 ## Owner
 
-Ryan owns confirmation of the next bounded Task 1N block. Codex Desktop owns just-in-time planning and Runway OS stewardship.
+Codex Desktop owns exact-path Git stewardship, automatic-deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan retains all unrelated product and live-action gates.
 
 ## Current Action
 
-Refresh and verify the completed 4R-R dashboard state, publish this sanitized `[skip actions]` closeout without a second deployment, and stop before Task 1N implementation.
+Reverify the exact ten-path 4S source set; stage and commit only those paths; fast-forward local `main`; push `origin/main`; observe the attributable automatic Fly deployment; verify credential-free `/health`; publish one command-center-only `[skip actions]` closeout; and stop before Task 1N.2.
+
+## Work Block 4S-R Contract
+
+- Include the exact verified ten-path 4S application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/locked-payoff-apr-truthfulness`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real financial rows or databases, retained uploads, credentials, authenticated production pages, external calls other than GitHub/Fly status and credential-free health, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1N.2, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4S contract and implementation; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive value, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
+- Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.2 planning gate.
+
+## Work Block 4S Contract
+
+- Include Task 1N.1 and only the focused Task 2 coverage for `P3-3D-01` and its matching `P3-3D-C01` slice.
+- Pass each linked card's stored `apr_bps` into locked payoff calculation; allow a known zero APR; treat absent or negative APR as unavailable; reject locking without changing a prior locked plan when any linked card lacks a valid APR; and keep avalanche, snowball, narrative, and saved schedule on the same account-specific inputs.
+- Keep Tasks 1N.2-1N.8, Tasks 1O-1P, the remainder of Task 2, Tasks 3-4, Cash Flow APR-entry redesign, migrations, historical cleanup or existing-data remediation, real financial data, retained uploads, credentials, production/demo, external calls, live systems, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Use Codex Desktop in the current task on local branch `codex/locked-payoff-apr-truthfulness`; no delegation or second opinion is needed. Codex owns implementation, verification, exact-scope intake, and dashboard closeout.
+- Stop if correct behavior needs a new APR-entry policy, schema migration, broader payoff-engine redesign, protected or live data, external access, another Task 1N repair, plan-changing verification, failed cleanup, command-center failure, or either preserved untracked file.
+- Verify baseline and final maintained smoke, reversed-order stored-APR avalanche, balance-ordered snowball, narrative and saved-schedule reconciliation, missing/negative/zero APR behavior, exact zero mutation on rejection, Personal/BFM behavior, Luxe Legacy denial, denied networking, exact cleanup, Python compilation, JSON, whitespace, dashboard refresh, health, rendered inspection if UI feedback changes, and final worktree scope.
+- Report the exact APR contract, missing-APR behavior, avalanche and snowball results, schedule reconciliation, focused and full verification, changed paths, preserved boundaries, local branch state, and the separate publication gate.
+
+## Work Block 4S Result
+
+- Locked payoff schedules use each linked credit card's stored `apr_bps`; the hard-coded 20% substitution is removed.
+- A known 0% APR remains valid. Missing or negative APR returns controlled Cash Flow guidance before the prior strategy, monthly amount, target date, narrative, or schedule can change.
+- Exact synthetic month-one results prove reversed-order avalanche and balance-ordered snowball behavior, while saved schedule rows reconcile to the same account-specific inputs.
+- Personal and BFM paths pass, Luxe Legacy remains denied before the handler, outbound networking remains unused, and focused synthetic rows clean up exactly.
+- Baseline and final full smoke suites, Python compilation, JSON, whitespace, dashboard refresh, health, and final worktree scope pass locally.
+- No template, migration, protected data, external access, GitHub durability, deployment, or live action occurred. Both pre-existing untracked files remain untouched.
 
 ## Work Block 4R-R Contract
 
