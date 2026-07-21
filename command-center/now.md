@@ -2,27 +2,37 @@
 
 ## Active Objective
 
-Publish and verify the exact 4AA Luxe Legacy mirror repair through directly authorized work block 4AA-R.
+Plan the next bounded Task 1P block after 4AA-R durably released the verified Luxe Legacy mirror repair.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4AA-R is authorized and active for exact-path durability and automatic release.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4AA-R is complete, deployed, and health verified, and Task 1P is the next planning gate.
 
 ## Current Work Block
 
-Work block 4AA-R: Mirror Idempotency Durability And Release — active.
+Work block 4AA-R: Mirror Idempotency Durability And Release — complete.
 
 ## Current Task
 
-Task 4: Publish and verify only explicitly approved repairs — current for the directly authorized 4AA-R exact-path release; Task 1P remains planned.
+Task 1P: Resolve remaining public, mobile, browser-hardening, availability, and operator-clarity findings — current for a separate just-in-time planning pass; implementation is not authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, local-main fast-forward, direct `main` push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan retains every manual workflow, credential, protected-data, downstream-write, and recovery gate beyond the exact authorized path.
+Ryan owns the next Task 1P work-block confirmation. Codex Desktop completed 4AA-R publication, automatic deployment observation, credential-free health verification, and sanitized closeout.
 
 ## Current Action
 
-Re-verify and stage only the exact eleven-path 4AA source set, commit on `codex/luxe-legacy-mirror-idempotency`, fast-forward local `main`, push `main` without force, observe the attributable automatic Fly deployment, verify credential-free `/health`, and publish one `[skip actions]` command-center closeout.
+Run a new just-in-time planning pass over Task 1P before any authentication, public-route, mobile, browser-hardening, availability, or operator-clarity implementation.
+
+## Work Block 4AA-R Result
+
+- Exact eleven-path source commit `9d10e25` was fast-forwarded and pushed directly to `main` without force or PR.
+- Automatic Fly Deploy run `29839016474` and deploy job `88662740219` passed for exact source SHA `9d10e25809ef7e39f580705c9b7290cb3889ddc3`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the staged high-confidence sensitive-addition scan returned zero.
+- GitHub reported a non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24; deployment still succeeded.
+- No protected data, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1P implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it cannot start a second deployment.
 
 ## Work Block 4AA-R Contract
 

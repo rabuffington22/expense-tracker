@@ -930,10 +930,10 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1O.2: Reject malformed and duplicate mirror keys deterministically.** After Task 1O.1, define and implement a local payload-selection rule for empty, whitespace-only, whitespace-padded, and repeated Plaid transaction IDs without changing Ledger source rows or dropping unrelated eligible rows. Status: done and verified locally through work block 4AA; publication remains separate.
   - **Task 1O.3: Make the mirror conflict target explicit in tracked contracts.** After Task 1O.1, align the Ledger request with `plaid_transaction_id` as the explicit PostgREST conflict target. Status: done and verified locally through work block 4AA without a downstream schema change; downstream writes, production inspection, and deployment remain separately gated.
   - **Task 1O.4: Complete maintained synthetic downstream-mirror coverage.** Pair Tasks 1O.2-1O.3 with the remaining `P3-3I-C01` no-op, request-shape, malformed-key, duplicate-key, failure-isolation, and entity-preservation checks using temporary databases, mocked HTTP, and denied outbound sockets. Status: done and verified locally through work block 4AA; publication remains separate.
-- **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
+- **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: current for a separate just-in-time planning pass; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, and 4W completed the `P3-3E-04` Weekly/Waterfall validation slice of `P3-3E-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: current at the separate 4AA-R decision gate; releases through 4Y-R are complete, and no 4AA publication is authorized.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4AA-R; source commit `9d10e25` deployed through automatic Fly run `29839016474`, job `88662740219`, and credential-free production health returned HTTP 200. All future releases remain separately gated.
 
 ### Confirmed Work Block 4V: Weekly Date And Bill Truthfulness
 
@@ -1184,7 +1184,7 @@ Result: the bridge now keeps SQL `NULL` identifiers outside selection; rejects e
 
 ### Confirmed Work Block 4AA-R: Mirror Idempotency Durability And Release
 
-Status: active; directly authorized by Ryan on 2026-07-21
+Status: complete, durable, automatically deployed, and credential-free production health verified on 2026-07-21
 
 Included: the exact verified eleven-path 4AA application, maintained-test, README, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/luxe-legacy-mirror-idempotency`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -1199,6 +1199,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and high-confidence sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; exact automatic Fly run/job attribution; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1P planning gate.
+
+Result: the exact eleven-path 4AA source set was committed as `9d10e25`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29839016474` and deploy job `88662740219` passed every reported step for exact source SHA `9d10e25809ef7e39f580705c9b7290cb3889ddc3`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, the staged high-confidence sensitive-addition scan returned zero, and no PR, protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1P implementation, force push, or unrelated action occurred. GitHub reported the non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24. This command-center-only closeout uses `[skip actions]` to prevent a second deployment. Evidence: `command-center/logs/2026-07-21-luxe-legacy-mirror-idempotency-release-4aa-r.md`.
 
 ### Confirmed Work Block 4X: Waterfall Payoff Truthfulness
 
