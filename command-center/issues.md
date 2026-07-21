@@ -1680,7 +1680,7 @@ Work block 4A removed independent client auth state. Configured legacy and Werkz
 
 ## Mobile Sidebar Lacks Complete Keyboard Focus And Scroll Handling
 
-Status: resolved locally through work block 4AD; publication is not authorized
+Status: resolved, durable, automatically deployed, and credential-free production health verified through work blocks 4AD and 4AD-R
 
 Severity: medium navigation-accessibility risk
 
@@ -1688,7 +1688,7 @@ Captured: 2026-07-18
 
 Where seen: `web/templates/base.html`, `web/static/style.css`, and the repeated 390px isolated Chromium probe
 
-Revisit: only for separately authorized 4AD publication or new contrary evidence
+Revisit: only for new contrary evidence
 
 Summary:
 
@@ -1707,7 +1707,7 @@ Acceptance checks:
 
 Resolution:
 
-Work block 4AD gives the hamburger an explicit drawer relationship and synchronized open/close label, keeps the closed mobile navigation inert and assistive-hidden, focuses the first primary link on open, contains Tab focus while open, restores the hamburger on non-navigation close, closes on Escape or scrim, locks body scrolling only while open, preserves route and entity-submit navigation without stale focus restoration, and resets transient state when crossing the `768px` breakpoint. A maintained Playwright check uses temporary all-entity databases, the installed Chrome channel, localhost only, denied non-localhost requests, disposable browser state, console-error detection, and exact cleanup to prove phone, exact-boundary, and desktop-transition behavior. The full synthetic suite and compilation also pass. Publication remains separate.
+Work block 4AD gives the hamburger an explicit drawer relationship and synchronized open/close label, keeps the closed mobile navigation inert and assistive-hidden, focuses the first primary link on open, contains Tab focus while open, restores the hamburger on non-navigation close, closes on Escape or scrim, locks body scrolling only while open, preserves route and entity-submit navigation without stale focus restoration, and resets transient state when crossing the `768px` breakpoint. A maintained Playwright check uses temporary all-entity databases, the installed Chrome channel, localhost only, denied non-localhost requests, disposable browser state, console-error detection, and exact cleanup to prove phone, exact-boundary, and desktop-transition behavior. The full synthetic suite and compilation also pass. Work block 4AD-R published exact source commit `0459372`; automatic Fly Deploy run `29855162229` and job `88717551145` passed for that SHA, and credential-free production `/health` returned HTTP 200.
 
 ## Session Cookie And Browser Security Policy Need Explicit Hardening
 
