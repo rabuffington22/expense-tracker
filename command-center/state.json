@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-20 9:56 PM CST",
+    "lastUpdated": "2026-07-20 10:01 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,29 +22,29 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4S-R is active to publish the exact verified 4S source set directly to main and observe its automatic deployment"
+    "durabilityStatus": "Work block 4S-R is complete: source commit 91646a5 is on main, automatic Fly run 29797187213 and job 88530786726 succeeded for the exact SHA, and credential-free production health returned HTTP 200"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Confirmed work block 4S-R is active for exact 4S durability direct-main publication automatic Fly observation and credential-free health verification.",
-    "progress": 79
+    "summary": "Work block 4S-R is durable deployed and health verified; Task 1N.2 is current for a separate planning and confirmation pass only.",
+    "progress": 80
   },
   "currentTask": {
-    "title": "Task 4: Publish and verify explicitly approved repairs",
-    "owner": "Codex Desktop",
+    "title": "Task 1N.2: Preserve manual goal-review notes during automatic snapshots",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Ryan directly authorized commit and push to main for the exact 4S source set",
-    "nextAction": "Reverify stage commit fast-forward and push the exact 4S source set then observe the automatic Fly deployment and credential-free health.",
-    "blocker": null
+    "supportingAgent": "Codex Desktop may inspect current repo truth and propose a bounded work block but may not implement before confirmation",
+    "nextAction": "Define and confirm a bounded Task 1N.2 snapshot-note preservation work block.",
+    "blocker": "No Task 1N.2 implementation work block is confirmed."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-s-release",
     "label": "4S-R",
     "name": "Locked Payoff APR Truthfulness Durability And Release",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
-    "currentTask": "Reverify and publish the exact ten-path 4S source set then observe automatic deployment and credential-free health",
+    "currentTask": "Release complete; return Task 1N.2 to its separate planning and confirmation gate",
     "includedTasks": [
       "Task 1N.1 durability and automatic release",
       "Credential-free production health verification",
@@ -63,7 +63,12 @@
       "Exact automatic Fly run and job result plus credential-free production health",
       "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
-    "nextReportPoint": "Return the source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.2 planning gate."
+    "nextReportPoint": "Return source commit 91646a5 closeout commit automatic Fly run 29797187213 job 88530786726 credential-free health final main alignment preserved exclusions and separate Task 1N.2 planning gate.",
+    "result": "Exact source commit 91646a5 was pushed directly to main; automatic Fly run 29797187213 and job 88530786726 succeeded for the exact SHA; credential-free production health returned HTTP 200; both preserved untracked files remained excluded.",
+    "durability": "Source commit 91646a5 is durable on main; this command-center-only closeout uses skip actions to prevent a second deployment.",
+    "evidence": [
+      "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-release-4s-r.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -88,21 +93,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish and verify the exact 4S source set",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized commit and push to main for the complete locally verified 4S repair.",
-    "action": "Run exact-path durability automatic deployment observation credential-free health and skip-actions closeout through work block 4S-R.",
+    "title": "Plan Task 1N.2 snapshot-note preservation",
+    "status": "waiting-confirmation",
+    "owner": "Ryan",
+    "why": "Work block 4S-R is complete and Task 1N.2 is the smallest next calculation-truthfulness slice.",
+    "action": "Define and confirm a bounded Task 1N.2 work block before implementation.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Nothing is waiting on Ryan while confirmed release work block 4S-R is active.",
-    "items": []
+    "summary": "Task 1N.2 is waiting for Ryan to confirm a separately bounded implementation work block.",
+    "items": [
+      "Confirm or revise the future Task 1N.2 snapshot-note preservation work block before implementation"
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4S-R authorizes only exact 4S durability automatic deployment observation credential-free health and sanitized closeout; Task 1N.2 remains outside scope.",
-    "decisionQueue": "No Ryan decision is needed unless the exact release path hits a stop condition.",
+    "phaseQuestions": "Task 1N.2 scope exclusions stop conditions and verification require confirmation before implementation; 4S-R is closed.",
+    "decisionQueue": "Ryan must confirm or revise the proposed Task 1N.2 work block before product or test changes.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -2978,7 +2985,7 @@
       "phaseId": "phase-4",
       "label": "4S-R",
       "name": "Locked Payoff APR Truthfulness Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1N.1 durability and automatic release",
         "Credential-free production health verification",
@@ -3019,7 +3026,11 @@
         "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.2 planning gate.",
-      "durability": "Active under Ryan's direct-main authorization; force push PR and unrelated release actions remain excluded."
+      "durability": "Complete on main: source commit 91646a5 deployed once through automatic Fly run 29797187213 and this command-center-only closeout uses skip actions.",
+      "evidence": [
+        "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-release-4s-r.md"
+      ],
+      "result": "Exact source commit 91646a5 was pushed directly to main without force; automatic Fly run 29797187213 and job 88530786726 succeeded for the exact SHA; credential-free production health returned HTTP 200; both preserved untracked files remained excluded."
     }
   ],
   "phaseTasks": [
@@ -3738,11 +3749,11 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1N2",
       "title": "Task 1N.2: Preserve manual goal-review notes during automatic snapshots",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Preserve same-day manual review notes and snapshot identity while automatic snapshots refresh balances for P3-3D-03 with focused coverage.",
-      "nextAction": "Return to a separate planning and confirmation pass after work block 4S-R closes.",
-      "blocker": "Waiting for the separately scoped 4S-R release to close."
+      "nextAction": "Define and confirm a bounded Task 1N.2 snapshot-note preservation work block.",
+      "blocker": "No Task 1N.2 implementation work block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -3828,12 +3839,12 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Publish only the exact verified 4S source set through confirmed work block 4S-R then return Task 1N.2 to planning.",
+      "summary": "Publish only explicitly approved exact repair sets and verify their attributable automatic deployment and credential-free health.",
       "nextAction": "Require separate approval for each future release block.",
       "blocker": "No additional release or live action is authorized.",
-      "result": "Releases through 4R-R completed successfully; 4S-R is now active under separate direct-main authorization.",
+      "result": "Releases through 4S-R completed successfully; 4S source commit 91646a5 deployed through automatic Fly run 29797187213 and job 88530786726, and credential-free production health returned HTTP 200.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -3845,7 +3856,8 @@
         "command-center/logs/2026-07-19-plaid-sync-atomicity-release-4i-r.md",
         "command-center/logs/2026-07-19-plaid-account-state-truthfulness-release-4j-r.md",
         "command-center/logs/2026-07-19-plaid-item-isolation-observability-release-4k-r.md",
-        "command-center/logs/2026-07-20-payroll-peer-comparisons-release-4r-r.md"
+        "command-center/logs/2026-07-20-payroll-peer-comparisons-release-4r-r.md",
+        "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-release-4s-r.md"
       ]
     },
     {
@@ -4977,8 +4989,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete and verify work block 4S-R",
-    "description": "Publish the exact verified 4S source set to main verify its automatic deployment and credential-free health then close without a second deployment."
+    "name": "Plan and confirm Task 1N.2",
+    "description": "Define a bounded snapshot-note preservation work block with explicit exclusions stop conditions and synthetic verification before implementation."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -5006,6 +5018,9 @@
     "phase4PayrollPeerBoundaries": "pass; temporary BFM data only Personal and Luxe Legacy remain denied outbound networking is blocked exact cleanup passed and no migration protected data retained upload external call live system or GitHub durability occurred",
     "phase4PayrollPeerRelease": "pass; source commit edaa853 is on main automatic Fly run 29778504012 and deploy job 88473691178 passed every reported step and credential-free production health returned HTTP 200",
     "phase4PayrollPeerDurability": "pass; local main matched origin/main at source commit edaa853 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
+    "phase4LockedPayoffApr": "pass; stored linked-card APRs drive locked schedules known zero remains valid missing or negative APR rejects before mutation and maintained avalanche snowball narrative schedule isolation denied-network and cleanup checks pass",
+    "phase4LockedPayoffAprRelease": "pass; source commit 91646a5 is on main automatic Fly run 29797187213 and deploy job 88530786726 passed every reported step and credential-free production health returned HTTP 200",
+    "phase4LockedPayoffAprDurability": "pass; local main matched origin/main at source commit 91646a5 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
     "gitDiffCheck": "pass; tracked diff and new-file whitespace checks",
     "operationalRun": "pass; GitHub Actions run 29627530457 completed successfully",
     "workflowState": "pass; Daily Plaid Sync workflow ID 256886458 remains active with default-branch cron 17 9 * * *; natural post-release scheduled run 29740509073 completed successfully at 2026-07-20T11:59:33Z",

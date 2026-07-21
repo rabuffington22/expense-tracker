@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4S stored-APR repair to `main`, observe its automatic deployment, verify credential-free production health, and close without a second deployment.
+Plan and confirm the next bounded repair for Task 1N.2 without beginning implementation.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; exact 4S durability and release is authorized through work block 4S-R.
+Phase 4: Core Repairs And Regression Coverage — active; 4S-R is complete, durable, automatically deployed, and health verified.
 
 ## Current Work Block
 
-Work block 4S-R: Locked Payoff APR Truthfulness Durability And Release — active.
+No implementation work block is active. Work block 4S-R is complete; Task 1N.2 is at its separate planning and confirmation gate.
 
 ## Current Task
 
-Phase 4 Task 4: publish and verify only the exact approved 4S source set — current through work block 4S-R.
+Task 1N.2: Preserve manual goal-review notes during automatic snapshots — current for planning only; no implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path Git stewardship, automatic-deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan retains all unrelated product and live-action gates.
+Ryan owns confirmation of the next bounded work block. Codex Desktop may inspect current repo truth and propose Task 1N.2 scope, exclusions, stops, and verification, but may not implement it without confirmation.
 
 ## Current Action
 
-Reverify the exact ten-path 4S source set; stage and commit only those paths; fast-forward local `main`; push `origin/main`; observe the attributable automatic Fly deployment; verify credential-free `/health`; publish one command-center-only `[skip actions]` closeout; and stop before Task 1N.2.
+Define and confirm a bounded Task 1N.2 snapshot-note preservation block before any product, test, GitHub, deployment, protected-data, or live action.
 
 ## Work Block 4S-R Contract
 
@@ -32,6 +32,15 @@ Reverify the exact ten-path 4S source set; stage and commit only those paths; fa
 - Stop for an unexpected path, sensitive value, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
 - Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
 - Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.2 planning gate.
+
+## Work Block 4S-R Result
+
+- Exact ten-path source commit `91646a5` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29797187213` and deploy job `88530786726` passed every reported step for exact source SHA `91646a50e02d147ef21d4452c415fecaf3e82274`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the pre-publication staged sensitive-addition scan returned zero.
+- No protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N.2 implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4S Contract
 

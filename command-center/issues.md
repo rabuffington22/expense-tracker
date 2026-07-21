@@ -109,7 +109,7 @@ Tracked test and demo-seed expansion were explicitly excluded from audit work bl
 
 ## Locked Payoff Schedules Ignore Stored Account APRs
 
-Status: resolved locally in work block 4S; release not authorized
+Status: resolved and released through work blocks 4S-4S-R
 
 Severity: high financial-planning correctness risk
 
@@ -136,7 +136,7 @@ Acceptance checks:
 
 Resolution:
 
-Work block 4S passes each linked credit card's stored `apr_bps` into the locked payoff timeline and removes the hard-coded 20% substitution. A known zero APR remains valid; absent or negative APR returns controlled Cash Flow guidance before the existing strategy, monthly amount, target date, narrative, or schedule can change. Maintained temporary Personal and BFM coverage proves exact reversed-order avalanche cents for 9.99% and 29.99% cards, balance-ordered snowball behavior, narrative and saved-schedule reconciliation, zero-APR persistence, missing/negative zero-mutation rejection, Luxe Legacy denial, denied networking, and exact cleanup. The baseline and final full smoke suites and Python compilation pass locally. No migration, template, protected data, external access, GitHub durability, deployment, or live action occurred.
+Work block 4S passes each linked credit card's stored `apr_bps` into the locked payoff timeline and removes the hard-coded 20% substitution. A known zero APR remains valid; absent or negative APR returns controlled Cash Flow guidance before the existing strategy, monthly amount, target date, narrative, or schedule can change. Maintained temporary Personal and BFM coverage proves exact reversed-order avalanche cents for 9.99% and 29.99% cards, balance-ordered snowball behavior, narrative and saved-schedule reconciliation, zero-APR persistence, missing/negative zero-mutation rejection, Luxe Legacy denial, denied networking, and exact cleanup. Work block 4S-R published exact source commit `91646a5`; automatic Fly Deploy run `29797187213` and job `88530786726` succeeded for the exact SHA, and credential-free production `/health` returned HTTP 200. No migration, template, protected data, credential, authenticated production access, manual workflow action, or non-automatic Fly mutation occurred.
 
 ## Luxe Legacy Planning Denial Is Enforced Only On Page Entry
 
