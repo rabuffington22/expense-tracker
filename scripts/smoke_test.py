@@ -3698,6 +3698,204 @@ def main() -> None:
 
         print("   ✅ Signed calendar windows, deficit and missing months, payoff ceiling, rendering, isolation, denied-network, and cleanup passed")
 
+        # ── 8a8. Waterfall tax input truthfulness ─────────────────
+        print("\n8a8. Waterfall tax input truthfulness…")
+
+        waterfall_4y_baselines = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in ("personal", "company", "luxelegacy")
+        }
+        waterfall_4y_conn = get_connection("company")
+        try:
+            waterfall_4y_conn.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, merchant_canonical, amount, "
+                "amount_cents, account, category, source_filename, imported_at) "
+                "VALUES ('synthetic-4y-income', '2024-01-10', '4Y Tax Income', "
+                "'4Y Tax Income', 1000.00, 100000, '4Y Synthetic', 'Income', "
+                "'synthetic-4y', '2026-07-21T00:00:00+00:00')"
+            )
+            waterfall_4y_conn.commit()
+        finally:
+            waterfall_4y_conn.close()
+        waterfall_4y_fixture_state = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in ("personal", "company", "luxelegacy")
+        }
+        normalized_tax_cases = (
+            (None, 2200),
+            ("", 2200),
+            ("not-a-rate", 2200),
+            ("NaN", 2200),
+            ("Infinity", 2200),
+            ("-Infinity", 2200),
+            ("-0.01", 2200),
+            ("100", 2200),
+            ("99.995", 2200),
+            ("1e999999", 2200),
+            ("0", 0),
+            ("22", 2200),
+            ("22.124", 2212),
+            ("22.125", 2213),
+            ("99.994", 9999),
+        )
+        for raw_rate, expected_bps in normalized_tax_cases:
+            _check(
+                waterfall_routes._normalize_tax_rate_bps(raw_rate)
+                == expected_bps,
+                f"waterfall 4Y: {raw_rate!r} should normalize to {expected_bps} basis points",
+            )
+        _check(
+            waterfall_routes._format_tax_rate_bps(0) == "0"
+            and waterfall_routes._format_tax_rate_bps(2200) == "22"
+            and waterfall_routes._format_tax_rate_bps(2213) == "22.13"
+            and waterfall_routes._format_tax_rate_bps(9999) == "99.99",
+            "waterfall 4Y: rendered rates should derive exactly from normalized basis points",
+        )
+
+        captured_waterfall_contexts = []
+
+        def _capture_waterfall_context(sender, template, context, **extra):
+            if template.name == "waterfall.html":
+                captured_waterfall_contexts.append(dict(context))
+
+        from flask import template_rendered
+
+        route_tax_cases = (
+            (None, 2200),
+            ("", 2200),
+            ("bad", 2200),
+            ("NaN", 2200),
+            ("Infinity", 2200),
+            ("-Infinity", 2200),
+            ("-1", 2200),
+            ("100", 2200),
+            ("99.995", 2200),
+            ("1e999999", 2200),
+            ("0", 0),
+            ("12.34", 1234),
+            ("99.994", 9999),
+        )
+        with app.test_client() as waterfall_4y_client, template_rendered.connected_to(
+            _capture_waterfall_context,
+            app,
+        ), patch(
+            "socket.create_connection",
+            side_effect=AssertionError("waterfall 4Y attempted outbound networking"),
+        ) as waterfall_4y_create_connection, patch(
+            "socket.socket.connect",
+            side_effect=AssertionError("waterfall 4Y attempted outbound networking"),
+        ) as waterfall_4y_socket_connect:
+            for entity_display in ("Personal", "BFM"):
+                waterfall_4y_client.set_cookie("entity", entity_display)
+                for raw_rate, expected_bps in route_tax_cases:
+                    query = {
+                        "month": "2024-01",
+                        "mode": "revenue",
+                        "target_revenue": "1000000",
+                    }
+                    if raw_rate is not None:
+                        query["tax_rate"] = raw_rate
+                    response = waterfall_4y_client.get(
+                        "/waterfall/",
+                        query_string=query,
+                    )
+                    context = captured_waterfall_contexts[-1]
+                    expected_display = waterfall_routes._format_tax_rate_bps(
+                        expected_bps
+                    )
+                    _check(
+                        response.status_code == 200
+                        and context["tax_rate_bps"] == expected_bps
+                        and context["tax_rate_display"] == expected_display
+                        and context["owner_take_home"]
+                        == int(
+                            context["owner_gross"]
+                            * (10000 - expected_bps)
+                            / 10000
+                        )
+                        and context["actual_take_home"]
+                        == int(
+                            context["actual_owner_gross"]
+                            * (10000 - expected_bps)
+                            / 10000
+                        ),
+                        f"waterfall 4Y {entity_display}: {raw_rate!r} should keep calculation and display on {expected_bps} basis points",
+                    )
+                    rendered_body = response.get_data(as_text=True)
+                    _check(
+                        rendered_body.count(f'value="{expected_display}"') == 2,
+                        f"waterfall 4Y {entity_display}: both tax inputs should display the one normalized value",
+                    )
+
+                takehome_response = waterfall_4y_client.get(
+                    "/waterfall/",
+                    query_string={
+                        "month": "2024-01",
+                        "mode": "takehome",
+                        "take_home": "1234",
+                        "tax_rate": "12.34",
+                    },
+                )
+                takehome_context = captured_waterfall_contexts[-1]
+                expected_owner_gross = int(123400 * 10000 / (10000 - 1234))
+                _check(
+                    takehome_response.status_code == 200
+                    and takehome_context["tax_rate_bps"] == 1234
+                    and takehome_context["owner_gross"] == expected_owner_gross
+                    and takehome_context["target_revenue"]
+                    == expected_owner_gross + takehome_context["bfm_costs"]
+                    and takehome_context["owner_take_home"]
+                    == int(expected_owner_gross * (10000 - 1234) / 10000),
+                    f"waterfall 4Y {entity_display}: take-home mode should use the same normalized tax rate for gross revenue and rendered take-home",
+                )
+                _check(
+                    "val = val.trim();" in takehome_response.get_data(as_text=True)
+                    and "val.replace(/[^0-9.]/g, '')" not in takehome_response.get_data(as_text=True),
+                    "waterfall 4Y: browser input should reach server normalization without reinterpretation",
+                )
+
+            waterfall_4y_client.set_cookie("entity", "LL")
+            denied_waterfall_4y = waterfall_4y_client.get(
+                "/waterfall/",
+                query_string={"month": "2024-01", "tax_rate": "NaN"},
+            )
+            _check(
+                denied_waterfall_4y.status_code == 302
+                and denied_waterfall_4y.headers.get("Location", "").endswith("/"),
+                "waterfall 4Y LL: Waterfall should remain denied before tax parsing",
+            )
+            waterfall_4y_create_connection.assert_not_called()
+            waterfall_4y_socket_connect.assert_not_called()
+
+        _check(
+            all(
+                _database_snapshot(entity_key)
+                == waterfall_4y_fixture_state[entity_key]
+                for entity_key in ("personal", "company", "luxelegacy")
+            ),
+            "waterfall 4Y: route and helper checks should not mutate the seeded entity state",
+        )
+        waterfall_4y_conn = get_connection("company")
+        try:
+            waterfall_4y_conn.execute(
+                "DELETE FROM transactions WHERE source_filename='synthetic-4y'"
+            )
+            waterfall_4y_conn.commit()
+        finally:
+            waterfall_4y_conn.close()
+
+        _check(
+            all(
+                _database_snapshot(entity_key)
+                == waterfall_4y_baselines[entity_key]
+                for entity_key in ("personal", "company", "luxelegacy")
+            ),
+            "waterfall 4Y: tax normalization and rendered route checks should preserve every entity database",
+        )
+
+        print("   ✅ Finite basis-point normalization, safe fallback, display/calculation reconciliation, isolation, denied-network, and cleanup passed")
+
         # ── 8a. BFM-only payroll route boundary ─────────────────────
         print("\n8b. BFM-only payroll route boundary…")
         from web.routes import payroll as payroll_routes

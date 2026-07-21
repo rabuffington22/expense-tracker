@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date, timedelta
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from math import ceil
 
 from flask import Blueprint, render_template, request, g, redirect, url_for
@@ -20,6 +21,7 @@ log = logging.getLogger(__name__)
 _TARGET_REVENUE = 17_000_000        # $170,000/mo in cents
 _OWNER_SALARY_GROSS = 4_800_000     # $48,000/mo gross in cents
 _EFFECTIVE_TAX_RATE_BPS = 2200      # 22% effective tax rate
+_TAX_RATE_BASIS_POINT = Decimal("0.01")
 
 bp = Blueprint("waterfall", __name__, url_prefix="/waterfall")
 
@@ -39,6 +41,36 @@ def _fmt_month_short(ym: str) -> str:
     """'2026-02' -> 'Feb' or 'Feb 25'."""
     from web.routes.reports import fmt_month_short
     return fmt_month_short(ym)
+
+
+def _normalize_tax_rate_bps(raw_value: object) -> int:
+    """Return one finite tax rate in basis points or the safe default."""
+    if raw_value is None:
+        return _EFFECTIVE_TAX_RATE_BPS
+
+    try:
+        rate_pct = Decimal(str(raw_value).strip())
+        if not rate_pct.is_finite():
+            return _EFFECTIVE_TAX_RATE_BPS
+        normalized_pct = rate_pct.quantize(
+            _TAX_RATE_BASIS_POINT,
+            rounding=ROUND_HALF_UP,
+        )
+        rate_bps = int(normalized_pct * 100)
+    except (InvalidOperation, ValueError, OverflowError):
+        return _EFFECTIVE_TAX_RATE_BPS
+
+    if not 0 <= rate_bps <= 9999:
+        return _EFFECTIVE_TAX_RATE_BPS
+    return rate_bps
+
+
+def _format_tax_rate_bps(rate_bps: int) -> str:
+    """Format an already-normalized rate without reinterpreting it."""
+    whole, fractional = divmod(rate_bps, 100)
+    if fractional == 0:
+        return str(whole)
+    return f"{whole}.{fractional:02d}".rstrip("0")
 
 
 # ── BFM data helpers ────────────────────────────────────────────────────────
@@ -387,14 +419,9 @@ def index():
     if target_mode not in ("revenue", "takehome"):
         target_mode = "revenue"
 
-    # Adjustable effective tax rate (URL param overrides default)
-    try:
-        tax_rate_pct = float(request.args.get("tax_rate", _EFFECTIVE_TAX_RATE_BPS / 100))
-    except (ValueError, TypeError):
-        tax_rate_pct = _EFFECTIVE_TAX_RATE_BPS / 100
-    tax_rate_bps = int(round(tax_rate_pct * 100))
-    if tax_rate_bps < 0 or tax_rate_bps > 9999:
-        tax_rate_bps = _EFFECTIVE_TAX_RATE_BPS
+    # Parse once; calculations and rendering share this normalized value.
+    tax_rate_bps = _normalize_tax_rate_bps(request.args.get("tax_rate"))
+    tax_rate_display = _format_tax_rate_bps(tax_rate_bps)
 
     target_staff_payroll = bfm_budgets["staff_payroll_cents"]
     target_bfm_fixed = bfm_budgets["fixed_cents"]
@@ -573,7 +600,8 @@ def index():
         owner_take_home=owner_take_home,
         target_bfm_surplus=target_bfm_surplus,
         bfm_costs=bfm_costs,
-        tax_rate_pct=tax_rate_pct,
+        tax_rate_bps=tax_rate_bps,
+        tax_rate_display=tax_rate_display,
         personal_remaining=personal_remaining,
         # Target tooltip data (category → budget)
         bfm_fixed_tip=bfm_budgets.get("fixed_items", []),

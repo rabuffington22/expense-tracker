@@ -168,7 +168,7 @@
     <span class="wf-bridge-title">Owner Salary</span>
     <span class="wf-bridge-amount">{{ fmt_dollars(actual_owner_gross) }} gross
       &nbsp;@&nbsp;<input type="text" class="wf-tax-input" id="wf-tax-rate-actual"
-             value="{{ '{:.0f}'.format(tax_rate_pct) if tax_rate_pct == tax_rate_pct|int else '{:.1f}'.format(tax_rate_pct) }}"
+             value="{{ tax_rate_display }}"
              size="3" inputmode="decimal"
              onkeydown="if(event.key==='Enter'){wfApplyTaxRate();}">%
       &nbsp;→&nbsp; {{ fmt_dollars(actual_take_home) }} take-home</span>
@@ -282,7 +282,7 @@
     <span class="wf-bridge-title">Owner Salary</span>
     <span class="wf-bridge-amount">{{ fmt_dollars(owner_gross) }} gross
       &nbsp;@&nbsp;<input type="text" class="wf-tax-input" id="wf-tax-rate"
-             value="{{ '{:.0f}'.format(tax_rate_pct) if tax_rate_pct == tax_rate_pct|int else '{:.1f}'.format(tax_rate_pct) }}"
+             value="{{ tax_rate_display }}"
              size="3" inputmode="decimal"
              onkeydown="if(event.key==='Enter'){wfApplyTaxRate();}">%
       &nbsp;→&nbsp; {{ fmt_dollars(owner_take_home) }} take-home</span>
@@ -564,7 +564,7 @@ function wfApplyTaxRate() {
     } else if (elTarget) {
         val = elTarget.value;
     }
-    val = val.replace(/[^0-9.]/g, '');
+    val = val.trim();
     if (!val) return;
     var url = new URL(window.location);
     url.searchParams.set('tax_rate', val);

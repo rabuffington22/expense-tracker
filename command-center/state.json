@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-21 7:39 AM CST",
+    "lastUpdated": "2026-07-21 8:19 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,38 +22,38 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4X-R source commit dc12890 is on main automatic Fly run 29830719921 and job 88634537268 passed and credential-free production health returned HTTP 200"
+    "durabilityStatus": "Work block 4Y-R is active for exact-path direct-main durability automatic Fly deployment observation credential-free health and sanitized skip-actions closeout"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4X-R is complete durable automatically deployed and credential-free production health verified; Task 1N.8 is the next separate planning gate.",
-    "progress": 89
+    "summary": "Work block 4Y-R is active to publish the exact verified Waterfall tax-input repair and observe its automatic release.",
+    "progress": 90
   },
   "currentTask": {
     "title": "Task 1N.8: Normalize Waterfall tax input once",
-    "owner": "Ryan",
-    "status": "waiting-decision",
-    "supportingAgent": "Codex Desktop completed 4X-R exact-path publication automatic deployment observation credential-free health and sanitized closeout",
-    "nextAction": "Separately confirm a bounded Task 1N.8 planning and implementation block when ready.",
-    "blocker": "Task 1N.8 has no confirmed work block."
+    "owner": "Codex Desktop",
+    "status": "in-progress",
+    "supportingAgent": "Codex Desktop owns exact-path Git stewardship deployment attribution credential-free health verification and sanitized closeout",
+    "nextAction": "Rerun release checks stage and commit only the exact verified source set fast-forward and push main observe the exact automatic deployment verify health and publish skip-actions closeout.",
+    "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-x-release",
-    "label": "4X-R",
-    "name": "Waterfall Payoff Truthfulness Durability And Release",
-    "status": "done",
+    "id": "phase-4-block-y-release",
+    "label": "4Y-R",
+    "name": "Waterfall Tax Input Truthfulness Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Release complete; return Task 1N.8 to a separate planning gate",
+    "currentTask": "Publish the exact verified source set observe the automatic Fly deployment verify credential-free health and publish sanitized skip-actions closeout",
     "includedTasks": [
-      "Exact verified eleven-path 4X application template maintained-test contract issue evidence and Runway OS source set",
-      "Direct-main fast-forward push one automatic Fly deployment observation credential-free health and sanitized skip-actions closeout"
+      "Exact verified eleven-path 4Y source set",
+      "Direct-main source publication exact automatic Fly observation credential-free health and sanitized skip-actions closeout"
     ],
     "stopConditions": [
-      "An unexpected path sensitive addition protected data or unrelated user change appears",
-      "Local or remote main diverges maintained verification fails or an excluded path is staged",
-      "The automatic deployment cannot be attributed to the exact source SHA or fails or credential-free health fails",
-      "The closeout starts a second Fly deployment or recovery exceeds the authorized fast-forward path"
+      "Unexpected path sensitive addition protected data or unrelated user change",
+      "Local or remote main divergence failed maintained verification or excluded staging",
+      "Unattributable or failed automatic deployment or failed credential-free health",
+      "Second closeout deployment or recovery beyond the authorized fast-forward path"
     ],
     "verification": [
       "Exact path staged-set high-confidence sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
@@ -62,13 +62,12 @@
       "Exact automatic Fly run and job attribution plus credential-free production health",
       "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
-    "nextReportPoint": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and the separate Task 1N.8 planning gate.",
-    "result": "Published exact source commit dc12890 directly to main by fast-forward observed successful automatic Fly run 29830719921 and job 88634537268 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout.",
-    "durability": "Source commit dc12890 is durable on main; this command-center-only closeout uses skip actions to prevent a second deployment.",
+    "nextReportPoint": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1O planning gate.",
+    "result": "Release active; exact source commit deployment attribution health verification and closeout evidence remain pending.",
+    "durability": "Ryan authorized exact-path direct-main publication and the automatic Fly release triggered by the source push.",
     "evidence": [
-      "command-center/waterfall-payoff-contract.md",
-      "command-center/logs/2026-07-21-waterfall-payoff-truthfulness-4x.md",
-      "command-center/logs/2026-07-21-waterfall-payoff-truthfulness-release-4x-r.md",
+      "command-center/waterfall-tax-input-contract.md",
+      "command-center/logs/2026-07-21-waterfall-tax-input-truthfulness-4y.md",
       "scripts/smoke_test.py"
     ]
   },
@@ -95,23 +94,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 1N.8 separately",
-    "status": "waiting-decision",
-    "owner": "Ryan",
-    "why": "Work block 4X-R is complete durable deployed and health verified while the next Waterfall tax repair remains separately gated.",
-    "action": "Invoke a separate work-block planning pass for Task 1N.8 when ready.",
+    "title": "Complete authorized work block 4Y-R",
+    "status": "in-progress",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized publishing the exact verified 4Y source set to main with automatic deployment observation and credential-free health verification.",
+    "action": "Commit the exact source set fast-forward and push main observe the exact automatic Fly run verify health and publish sanitized skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan owns the separate Task 1N.8 planning confirmation.",
-    "items": [
-      "Invoke a separate Task 1N.8 planning pass when ready"
-    ]
+    "summary": "Nothing is waiting on Ryan inside the confirmed 4Y-R release block.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4X-R is complete; Task 1N.8 planning remains separate.",
-    "decisionQueue": "Ryan may confirm a future bounded Task 1N.8 block.",
+    "phaseQuestions": "Work block 4Y-R is active; Task 1O planning remains separate.",
+    "decisionQueue": "No decision is needed inside the confirmed 4Y-R release block.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -3584,6 +3581,116 @@
         "scripts/smoke_test.py"
       ],
       "result": "Exact eleven-path source commit dc12890 was fast-forwarded and pushed to main without force; exact automatic Fly run 29830719921 and job 88634537268 succeeded; credential-free production health returned HTTP 200; both preserved untracked files remained excluded; and the closeout uses skip actions."
+    },
+    {
+      "id": "phase-4-block-y",
+      "phaseId": "phase-4",
+      "label": "4Y",
+      "name": "Waterfall Tax Input Truthfulness",
+      "status": "done",
+      "includedTasks": [
+        "Task 1N.8",
+        "Task 2 focused P3-3E-06 and P3-3E-C01 Waterfall regression slice"
+      ],
+      "excludedTasks": [
+        "Tasks 1O-1P the remainder of Task 2 and Tasks 3-4",
+        "Waterfall payoff changes migrations historical remediation broad UI work authentication and CSRF changes",
+        "Protected data retained uploads credentials production demo Plaid networking workflows Fly downstream writes GitHub durability deployment and other live actions",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block couples financial-input normalization route and template reconciliation maintained synthetic coverage issue disposition exact cleanup and Runway OS stewardship.",
+      "runnerPath": "Current Codex task on local branch codex/waterfall-tax-input-truthfulness without delegation or second opinion.",
+      "expectedFiles": [
+        "web/routes/waterfall.py and focused web/templates/waterfall.html display alignment",
+        "scripts/smoke_test.py and a compact Waterfall tax-input contract",
+        "command-center issues evidence status state and generated dashboard files"
+      ],
+      "defaults": [
+        "Parse the tax query once with finite decimal handling and round once to basis-point precision",
+        "Accept normalized values from 0 through 9999 basis points",
+        "Use the existing 2200-basis-point default for omitted blank malformed non-finite negative 100-percent-or-greater or normalization-overflow input",
+        "Derive display actual target and take-home-mode calculations from the same normalized basis-point value",
+        "Preserve existing calculation behavior otherwise and keep durability local-only"
+      ],
+      "stopConditions": [
+        "Correct behavior requires a different invalid-input response range or precision policy",
+        "Work expands into payoff calculations migration historical remediation authentication or another Phase 4 task",
+        "Protected data credentials production demo networking workflows Fly downstream GitHub publication deployment or another live action becomes necessary",
+        "Verification changes the plan cleanup cannot be proven command-center checks fail or either preserved untracked file would be touched"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "Omitted valid integer decimal zero 99.99 100 negative blank malformed non-finite and extreme input cases",
+        "Rendered-rate actual target and take-home-mode calculation reconciliation",
+        "Personal BFM Luxe Legacy denial denied networking unrelated-row preservation and exact cleanup",
+        "Python compilation JSON whitespace dashboard refresh health rendered inspection and final worktree scope"
+      ],
+      "reportBack": "Return the normalized input and fallback contract calculation-display reconciliation focused and full synthetic results changed paths cleanup preserved boundaries local branch state and separate publication gate.",
+      "nextBlock": "4Y-R publication only if separately authorized; otherwise separately plan Task 1O.",
+      "durability": "Complete and verified locally on codex/waterfall-tax-input-truthfulness; commit push PR merge workflow deployment and live actions remain separately gated.",
+      "evidence": [
+        "command-center/waterfall-tax-input-contract.md",
+        "command-center/logs/2026-07-21-waterfall-tax-input-truthfulness-4y.md",
+        "scripts/smoke_test.py"
+      ],
+      "result": "One finite decimal normalization produces accepted 0-9999 basis points or the existing 2200-basis-point fallback and drives both rendered controls plus actual revenue and take-home-mode calculations; maintained section 8a8 and the full synthetic suite pass with isolation denied-network database-preservation and exact-cleanup proof."
+    },
+    {
+      "id": "phase-4-block-y-release",
+      "phaseId": "phase-4",
+      "label": "4Y-R",
+      "name": "Waterfall Tax Input Truthfulness Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Exact verified eleven-path 4Y application template maintained-test contract issue evidence and Runway OS source set",
+        "Explicit-path source commit on codex/waterfall-tax-input-truthfulness and fast-forward direct push to main",
+        "Read-only observation of the exact automatic Fly deployment and credential-free production health",
+        "Sanitized command-center-only skip-actions closeout commit and push"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real financial rows or databases retained uploads credentials and authenticated production pages",
+        "Manual workflow actions workflow edits non-automatic Fly changes downstream access or writes and migrations",
+        "Task 1O broader Task 2 unrelated repairs force push and recovery beyond the exact fast-forward path"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The current task holds the verified source state and can preserve exact staging deployment attribution health verification and Runway OS closeout continuity.",
+      "runnerPath": "Current Codex task; no PR because Ryan directly instructed commit and push to main.",
+      "expectedFiles": [
+        "Exact eleven-path verified 4Y source set",
+        "Sanitized command-center release log state sources and generated dashboard closeout"
+      ],
+      "defaults": [
+        "No PR",
+        "Only one automatic deployment caused by the source push",
+        "Credential-free production health only",
+        "Closeout commit uses skip actions to prevent a second deployment",
+        "Task 1O remains a separate planning gate"
+      ],
+      "stopConditions": [
+        "Unexpected path sensitive addition protected data or unrelated user change",
+        "Local or remote main divergence failed maintained verification or excluded staging",
+        "Unattributable or failed automatic deployment or failed credential-free health",
+        "Second closeout deployment or recovery beyond the authorized fast-forward path"
+      ],
+      "verification": [
+        "Exact path staged-set high-confidence sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
+        "Maintained synthetic smoke Python compilation JSON dashboard refresh health and whitespace checks",
+        "Explicit staging source commit and direct-main fast-forward push",
+        "Exact automatic Fly run and job attribution plus credential-free production health",
+        "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1O planning gate.",
+      "durability": "Active under Ryan's direct-main authorization; source commit automatic deployment health verification and closeout evidence remain pending.",
+      "evidence": [
+        "command-center/waterfall-tax-input-contract.md",
+        "command-center/logs/2026-07-21-waterfall-tax-input-truthfulness-4y.md",
+        "scripts/smoke_test.py"
+      ],
+      "result": "Release active; exact source commit deployment attribution health verification and sanitized closeout remain pending."
     }
   ],
   "phaseTasks": [
@@ -4351,11 +4458,12 @@
       "title": "Task 1N.5: Validate Weekly paydown dates and read stored goals defensively",
       "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Canonical future targets now validate before writes malformed stored goals are ignored safely across Weekly and Waterfall and focused all-entity coverage passes locally.",
-      "result": "Complete and verified locally through work block 4W; publication remains separately gated.",
+      "summary": "Complete durable automatically deployed and credential-free production health verified through 4W and 4W-R.",
+      "result": "Canonical future targets validate before writes malformed stored goals remain safe and source commit 404e3d3 is on main with successful automatic Fly deployment and credential-free health.",
       "evidence": [
         "command-center/paydown-goal-validation-contract.md",
         "command-center/logs/2026-07-21-weekly-paydown-goal-validation-4w.md",
+        "command-center/logs/2026-07-21-weekly-paydown-goal-validation-release-4w-r.md",
         "scripts/smoke_test.py"
       ],
       "nextAction": null,
@@ -4368,10 +4476,11 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "Use every month in the defined signed rolling period for Waterfall average and payoff guidance for P3-3E-03 with focused coverage.",
-      "result": "Complete and verified locally through work block 4X; publication remains separately gated.",
+      "result": "Complete durable automatically deployed and credential-free production health verified through work blocks 4X and 4X-R.",
       "evidence": [
         "command-center/waterfall-payoff-contract.md",
         "command-center/logs/2026-07-21-waterfall-payoff-truthfulness-4x.md",
+        "command-center/logs/2026-07-21-waterfall-payoff-truthfulness-release-4x-r.md",
         "scripts/smoke_test.py"
       ],
       "nextAction": null,
@@ -4384,10 +4493,11 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "Apply a documented rounding rule that never reports zero payoff months for positive debt and positive surplus for P3-3E-05 with focused coverage.",
-      "result": "Complete and verified locally through work block 4X; publication remains separately gated.",
+      "result": "Complete durable automatically deployed and credential-free production health verified through work blocks 4X and 4X-R.",
       "evidence": [
         "command-center/waterfall-payoff-contract.md",
         "command-center/logs/2026-07-21-waterfall-payoff-truthfulness-4x.md",
+        "command-center/logs/2026-07-21-waterfall-payoff-truthfulness-release-4x-r.md",
         "scripts/smoke_test.py"
       ],
       "nextAction": null,
@@ -4398,10 +4508,16 @@
       "taskId": "P4-T1N8",
       "title": "Task 1N.8: Normalize Waterfall tax input once",
       "status": "current",
-      "owner": "Ryan",
+      "owner": "Codex Desktop",
       "summary": "Use one finite range-checked tax value for Waterfall calculation and rendering without direct-input crashes for P3-3E-06 with focused coverage.",
-      "nextAction": "Separately confirm a bounded Task 1N.8 work block when ready.",
-      "blocker": "No confirmed Task 1N.8 work block."
+      "result": "Complete and verified locally through work block 4Y; one accepted basis-point value or the existing safe fallback drives rendering and every tax calculation.",
+      "evidence": [
+        "command-center/waterfall-tax-input-contract.md",
+        "command-center/logs/2026-07-21-waterfall-tax-input-truthfulness-4y.md",
+        "scripts/smoke_test.py"
+      ],
+      "nextAction": "Complete the authorized 4Y-R direct-main release and sanitized closeout.",
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -5369,15 +5485,15 @@
     },
     {
       "title": "Waterfall tax fallback can disagree with display and fail on non-finite input",
-      "summary": "A 100 percent input displayed 100 while calculations used the 22 percent fallback, and a direct nan value raised ValueError.",
-      "status": "open",
+      "summary": "Resolved locally through 4Y: one finite decimal normalization produces accepted basis points or the 22 percent fallback and drives both rendered controls plus every actual and target calculation.",
+      "status": "resolved-local",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
     {
       "title": "Weekly and Waterfall paths lack tracked regression coverage",
-      "summary": "The 3E temporary probes verified current behavior and reproduced six defects, but the tracked smoke suite has no dedicated Weekly or Waterfall cases.",
-      "status": "parked",
+      "summary": "Resolved locally through paired sections 8a5-8a8 covering all six 3E repairs with synthetic route and helper checks, entity boundaries, denied networking, preservation, and cleanup.",
+      "status": "resolved-local",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
@@ -5622,14 +5738,14 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Plan Task 1N.8 separately",
-    "description": "Work block 4X-R is complete durable deployed and health verified; separately plan Waterfall tax input normalization."
+    "name": "Decide whether to publish work block 4Y",
+    "description": "The tax-input repair and maintained coverage are complete locally; publication and deployment remain separately gated."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
     "browserSmoke": "pass; configured-auth Chromium passed 19/19 and no-password Chromium 2/2 with zero external requests; production credential-free root/login and service-worker v4 checks passed after deployment",
-    "applicationSmoke": "pass; maintained synthetic suite including Weekly date and bill section 8a5 payroll peer-comparison section 8b4 and existing deterministic category-domain and auth/cache contracts passed",
+    "applicationSmoke": "pass; baseline and final maintained synthetic suites including Waterfall tax-input section 8a8 Weekly date and bill section 8a5 payroll peer-comparison section 8b4 and existing deterministic category-domain and auth/cache contracts passed",
     "phase4WeeklyDateBillRelease": "pass; source commit 9b3e517 is on main automatic Fly run 29826028617 and deploy job 88619460588 passed and credential-free production health returned HTTP 200",
     "phase4WeeklyDateBillDurability": "pass; local main matched origin/main at source commit 9b3e517 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
     "phase4WeeklyPaydownValidation": "pass locally; canonical future-date writes invalid-input zero mutation preserved start metadata target-only recovery and defensive malformed stored-goal reads pass across Weekly and Waterfall",
@@ -5640,6 +5756,8 @@
     "phase4WaterfallPayoffBoundaries": "pass; maintained section 8a7 covers mixed missing historical cross-year payoff-edge Personal BFM Luxe Legacy-denial denied-network read-only preservation and exact cleanup behavior",
     "phase4WaterfallPayoffRelease": "pass; source commit dc12890 is on main automatic Fly run 29830719921 and deploy job 88634537268 passed and credential-free production health returned HTTP 200",
     "phase4WaterfallPayoffDurability": "pass; local main matched origin/main at source commit dc12890 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
+    "phase4WaterfallTaxTruthfulness": "pass locally; one finite decimal normalization yields accepted 0-9999 basis points or the existing 2200-basis-point fallback and the same value drives both rendered controls plus actual revenue and take-home-mode calculations",
+    "phase4WaterfallTaxBoundaries": "pass; maintained section 8a8 covers omitted valid invalid boundary non-finite and extreme values Personal BFM Luxe Legacy denial denied networking database preservation exact cleanup and no migration protected data external action or preserved untracked-file change",
     "categoryDomain": "pass; Personal BFM and Luxe Legacy inference valid and invalid acceptance zero-mutation match order alias skip-sentinel cross-hash-seed denied-network and exact-cleanup checks passed",
     "phase4VendorPaymentMatching": "pass locally; vendor_transactions.matched_transaction_id is canonical and exact review unmatched accepted stale duplicate concurrent claim rollback and isolation behavior passes across Personal BFM and Luxe Legacy without migration",
     "phase4VendorPaymentMatchingBoundaries": "pass; temporary synthetic databases denied outbound networking exact cleanup no protected data credentials live systems application-integration requests migration backfill or preserved untracked-file changes",

@@ -684,7 +684,7 @@ Work block 4X applies ceiling-to-whole-month display for positive debt and posit
 
 ## Waterfall Tax Fallback Can Disagree With Display And Crash On Non-Finite Input
 
-Status: open; discovered in work block 3E
+Status: resolved locally through work block 4Y; publication not authorized
 
 Severity: medium scenario-integrity and availability risk
 
@@ -708,13 +708,13 @@ Acceptance checks:
 - The displayed rate, owner take-home, target revenue, and actual continuation use the same normalized value.
 - Invalid, empty, boundary, and non-finite inputs return a safe default or validation response without a server error.
 
-Why not fixed now:
+Resolution:
 
-Input normalization and tracked tests require separately confirmed implementation scope.
+Work block 4Y parses the query once with finite decimal semantics, rounds half-up once to accepted 0-9,999 basis points, and uses the existing 2,200-basis-point default for omitted or invalid input. Both rendered controls and every actual, revenue-mode, and take-home-mode calculation consume that one value. Maintained section 8a8 covers omitted, blank, malformed, non-finite, negative, boundary, extreme, valid integer/decimal, and rounding inputs; display/calculation reconciliation; Personal/BFM behavior; Luxe Legacy denial; denied networking; database preservation; and exact cleanup.
 
 ## Weekly And Waterfall Paths Lack Tracked Regression Coverage
 
-Status: partly addressed; the `P3-3E-01` and `P3-3E-02` Weekly slice is maintained through work block 4V
+Status: resolved locally through paired maintained coverage in work blocks 4V-4Y; 4Y publication not authorized
 
 Severity: medium regression-confidence risk
 
@@ -739,9 +739,9 @@ Acceptance checks:
 - Each repaired 3E defect has a failing-before and passing-after regression case.
 - Tests remain synthetic and require no production data, credentials, Plaid, OpenRouter, or external access.
 
-Why not added now:
+Resolution:
 
-Tracked test expansion was explicitly excluded from audit work block 3E.
+Maintained sections 8a5 through 8a8 now pair all six `P3-3E` repairs with deterministic Weekly and Waterfall route/helper coverage for date context, card-bill amounts, paydown-goal validation and defensive reads, signed payoff windows, payoff duration, tax normalization, rendering, intended Personal/BFM behavior, Luxe Legacy denial, denied networking, unrelated-row preservation, and exact cleanup. All data remains synthetic and requires no credential or external access.
 
 ## Non-BFM Entities Can Directly Access And Mutate Payroll
 

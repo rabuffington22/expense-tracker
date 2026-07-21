@@ -2,27 +2,55 @@
 
 ## Active Objective
 
-Plan Task 1N.8 separately after the completed 4X-R release.
+Publish the exact verified 4Y source set through bounded direct-main release block 4Y-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4X-R is complete, durable, automatically deployed, and credential-free production health verified.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4Y-R is authorized and active.
 
 ## Current Work Block
 
-Work block 4X-R: Waterfall Payoff Truthfulness Durability And Release — complete.
+Work block 4Y-R: Waterfall Tax Input Truthfulness Durability And Release — active.
 
 ## Current Task
 
-Task 1N.8: Normalize Waterfall tax input once — current planning gate; no implementation is authorized.
+Publish the exact verified 4Y source set, observe the resulting automatic Fly deployment, verify credential-free production health, and publish a sanitized `[skip actions]` closeout.
 
 ## Owner
 
-Ryan owns the next planning confirmation. Codex Desktop completed the exact 4X-R release and may not begin Task 1N.8 implementation without a separately confirmed work block.
+Codex Desktop owns exact-path Git stewardship, deployment attribution, credential-free health verification, and sanitized Runway OS closeout. Ryan directly authorized the release.
 
 ## Current Action
 
-Report the completed 4X-R release and wait at the separate Task 1N.8 planning gate.
+Record 4Y-R durably, rerun release checks, stage and commit only the verified source set, fast-forward and push `main`, observe the exact automatic deployment, verify `/health`, then publish the command-center-only closeout with `[skip actions]`.
+
+## Work Block 4Y-R Contract
+
+- Include the exact verified eleven-path 4Y application, template, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/waterfall-tax-input-truthfulness`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real financial rows or databases, retained uploads, credentials, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1O, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4Y contract and implementation; trigger only the automatic deployment caused by the source push; verify only credential-free `/health`; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
+- Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1O planning gate.
+
+## Work Block 4Y Contract
+
+- Include Task 1N.8 and only the focused Task 2 regression slice for `P3-3E-06` and matching `P3-3E-C01` Waterfall coverage.
+- Parse the tax query once as a finite decimal, round once to basis-point precision, accept normalized values from 0 through 9,999 basis points, and use the existing 2,200-basis-point default for omitted, blank, malformed, non-finite, negative, 100%-or-greater, or normalization-overflow input.
+- Derive the rendered percentage and every actual, revenue-target, and take-home-mode calculation from the same normalized basis-point value; render enough precision to show the applied value without disagreement.
+- Keep Tasks 1O-1P, the remainder of Task 2, Tasks 3-4, Waterfall payoff changes, migrations, historical remediation, broader UI work, authentication, protected data, retained uploads, credentials, production/demo, Plaid, networking, workflows, Fly, downstream writes, GitHub durability, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop in the current task on local branch `codex/waterfall-tax-input-truthfulness`; no delegation or second opinion is needed. Codex owns implementation, verification, cleanup, issue disposition, dashboard currency, and final intake.
+- Stop if correct behavior requires a different invalid-input response, range, or precision policy; work expands into payoff calculations, migration, historical remediation, authentication, or another Phase 4 task; protected/live access is needed; verification changes the plan; cleanup cannot be proven; command-center checks fail; or either preserved untracked file would be touched.
+- Verify baseline and final maintained smoke; omitted, valid integer/decimal, zero, 99.99, 100, negative, blank, malformed, non-finite, and extreme input; rendered-rate and actual/target/take-home reconciliation; Personal/BFM behavior; Luxe Legacy denial; denied networking; unrelated-row preservation; exact cleanup; Python compilation; JSON; whitespace; dashboard refresh and health; rendered inspection; and final worktree scope.
+- Keep durability local-only. Report the normalized input and fallback contract, calculation/display reconciliation, focused and full synthetic results, changed paths, cleanup proof, preserved boundaries, local branch state, and separate publication gate.
+
+## Work Block 4Y Result
+
+- Waterfall parses the optional tax query exactly once with finite decimal semantics, rounds half-up once to integer basis points, accepts normalized 0 through 9,999 basis points, and falls back to the existing 2,200-basis-point default for omitted, blank, malformed, non-finite, negative, 100%-or-greater, or normalization-overflow input.
+- The same basis-point value drives actual take-home, revenue-mode take-home, take-home-mode gross and required revenue, and both rendered tax controls. Rendering preserves up to two decimal places without reinterpreting the value.
+- Browser input is trimmed and sent to the server normalization boundary without stripping a negative sign into a different positive number.
+- Baseline and final full smoke suites pass. Maintained section 8a8 covers helper and route cases for omitted, valid, invalid, boundary, non-finite, and extreme values; display/calculation reconciliation; Personal/BFM behavior; Luxe Legacy denial; denied networking; database preservation; and exact cleanup.
+- Python compilation, JSON validation, whitespace, dashboard refresh, health, rendered inspection, and final worktree scope pass locally. No migration, protected data, credential, production/demo, external call, workflow, Fly action, downstream write, GitHub durability, deployment, or other live action occurred. Both preserved untracked files remain untouched.
 
 ## Work Block 4X-R Contract
 
