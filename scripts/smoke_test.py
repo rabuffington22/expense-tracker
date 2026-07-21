@@ -8095,6 +8095,10 @@ def main() -> None:
         auth_app = create_app()
 
         with auth_app.test_client() as auth_client:
+            auth_boundary_before = {
+                entity_key: _database_snapshot(entity_key)
+                for entity_key in ("personal", "company", "luxelegacy")
+            }
             resp = auth_client.get("/", follow_redirects=False)
             _check(resp.status_code == 302, "auth: protected root should redirect before rendering")
             _check("/auth/login?next=/" in resp.headers.get("Location", ""), "auth: redirect should preserve a safe next path")
@@ -8111,6 +8115,49 @@ def main() -> None:
             _check(legacy_hash not in login_body, "auth: configured digest must not appear in login HTML")
             _check("/auth/verify" not in login_body and "atlas-auth" not in login_body, "auth: legacy digest replay client must be absent")
             csrf_token = _csrf_from(login_body)
+
+            with patch("web.init_db") as global_init, patch(
+                "web.routes.kristine.init_db"
+            ) as focused_init, patch(
+                "web.routes.kristine._start_background_sync"
+            ) as focused_sync:
+                focused_redirect = auth_client.get(
+                    "/k/?m=2026-07", follow_redirects=False
+                )
+                focused_slash_redirect = auth_client.get("/k", follow_redirects=False)
+                focused_htmx = auth_client.get(
+                    "/k/", headers={"HX-Request": "true"}
+                )
+                focused_json = auth_client.get("/k/", json={})
+            focused_location = focused_redirect.headers.get("Location", "")
+            _check(
+                focused_redirect.status_code == 302
+                and "/auth/login?next=/k/" in focused_location
+                and "m%3D2026-07" in focused_location,
+                "auth focused dashboard: full page should redirect safely with its local return path",
+            )
+            _check(
+                focused_slash_redirect.status_code == 302
+                and "/auth/login?next=/k" in focused_slash_redirect.headers.get("Location", ""),
+                "auth focused dashboard: slashless path should authenticate before routing",
+            )
+            _check(
+                focused_htmx.status_code == 401 and focused_json.status_code == 401,
+                "auth focused dashboard: unauthenticated HTMX and JSON should return 401",
+            )
+            _check(
+                global_init.call_count == 0
+                and focused_init.call_count == 0
+                and focused_sync.call_count == 0,
+                "auth focused dashboard: unauthenticated requests must not initialize databases or launch sync",
+            )
+            _check(
+                all(
+                    _database_snapshot(entity_key) == auth_boundary_before[entity_key]
+                    for entity_key in ("personal", "company", "luxelegacy")
+                ),
+                "auth focused dashboard: unauthenticated requests must preserve every entity database",
+            )
 
             no_csrf = auth_client.post("/auth/login", data={"password": legacy_password, "next": "/"})
             _check(no_csrf.status_code == 403, "auth: login POST should require CSRF")
@@ -8130,6 +8177,68 @@ def main() -> None:
             }, follow_redirects=False)
             _check(correct.status_code == 302 and correct.headers.get("Location", "").endswith("/transactions/"), "auth: correct plaintext password should establish a server session")
             _check(auth_client.get("/transactions/").status_code == 200, "auth: authenticated protected request should succeed")
+
+            current_month = _date.today().strftime("%Y-%m")
+            focused_marker_rows = {
+                "personal": ("BOA Primary", 43210),
+                "company": ("4AB BFM MUST NOT RENDER", 76543),
+                "luxelegacy": ("4AB LL SOURCE ACCOUNT", 87654),
+            }
+            for entity_key, (account_name, balance_cents) in focused_marker_rows.items():
+                conn_marker = get_connection(entity_key)
+                conn_marker.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type) "
+                    "VALUES (?, ?, 'manual', 'bank')",
+                    (account_name, balance_cents),
+                )
+                conn_marker.commit()
+                conn_marker.close()
+            conn_ll_marker = get_connection("luxelegacy")
+            conn_ll_marker.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, amount, amount_cents, "
+                "merchant_canonical, category, imported_at) "
+                "VALUES ('4ab-ll-auth-marker', ?, '4AB LL AUTHENTICATED MARKER', "
+                "-12.34, -1234, '4AB LL AUTHENTICATED MARKER', 'Cost of Goods', ?)",
+                (f"{current_month}-15", f"{current_month}-15"),
+            )
+            conn_ll_marker.commit()
+            conn_ll_marker.close()
+            conn_bfm_marker = get_connection("company")
+            conn_bfm_marker.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, amount, amount_cents, "
+                "merchant_canonical, category, imported_at) "
+                "VALUES ('4ab-bfm-private-marker', ?, '4AB BFM PRIVATE MARKER', "
+                "-76.54, -7654, '4AB BFM PRIVATE MARKER', 'Office Supplies', ?)",
+                (f"{current_month}-15", f"{current_month}-15"),
+            )
+            conn_bfm_marker.commit()
+            conn_bfm_marker.close()
+
+            with patch("web.init_db") as authenticated_global_init, patch(
+                "web.routes.kristine._start_background_sync", return_value=False
+            ) as authenticated_sync:
+                focused_authenticated = auth_client.get(f"/k/?m={current_month}")
+            focused_body = focused_authenticated.get_data(as_text=True)
+            _check(
+                focused_authenticated.status_code == 200
+                and "$432" in focused_body
+                and "$877" in focused_body
+                and "4AB LL AUTHENTICATED MARKER" in focused_body,
+                "auth focused dashboard: authenticated route should preserve Personal and Luxe Legacy fields",
+            )
+            _check(
+                "$765" not in focused_body
+                and "4AB BFM PRIVATE MARKER" not in focused_body,
+                "auth focused dashboard: authenticated route must continue excluding BFM",
+            )
+            _check(
+                authenticated_global_init.call_count == 0
+                and authenticated_sync.call_count == 1,
+                "auth focused dashboard: authenticated route should remain outside global entity setup and reach its own sync seam once",
+            )
 
             with auth_client.session_transaction() as auth_session:
                 replay_csrf = auth_session.setdefault("_csrf_token", "synthetic-replay-csrf")
@@ -8167,6 +8276,42 @@ def main() -> None:
             _check(root.status_code == 200, "auth: no-password mode should render protected app directly")
             _check("authOverlay" not in root_body and "atlas-auth" not in root_body, "auth: no-password mode should not render a blocking client gate")
             _check(no_auth_client.get("/auth/login").status_code == 302, "auth: no-password login route should redirect to the app")
+            with patch("web.init_db") as no_auth_global_init, patch(
+                "web.routes.kristine._start_background_sync", return_value=False
+            ) as no_auth_sync:
+                no_auth_focused = no_auth_client.get(f"/k/?m={current_month}")
+            _check(
+                no_auth_focused.status_code == 200
+                and "4AB LL AUTHENTICATED MARKER" in no_auth_focused.get_data(as_text=True),
+                "auth focused dashboard: no-password mode should remain available",
+            )
+            _check(
+                no_auth_global_init.call_count == 0 and no_auth_sync.call_count == 1,
+                "auth focused dashboard: no-password route should remain outside global entity setup",
+            )
+
+        for entity_key, (account_name, _) in focused_marker_rows.items():
+            conn_marker = get_connection(entity_key)
+            conn_marker.execute(
+                "DELETE FROM account_balances WHERE account_name = ?", (account_name,)
+            )
+            conn_marker.execute(
+                "DELETE FROM transactions WHERE transaction_id IN "
+                "('4ab-ll-auth-marker', '4ab-bfm-private-marker')"
+            )
+            conn_marker.commit()
+            remaining_markers = conn_marker.execute(
+                "SELECT "
+                "(SELECT COUNT(*) FROM account_balances WHERE account_name = ?) + "
+                "(SELECT COUNT(*) FROM transactions WHERE transaction_id IN "
+                "('4ab-ll-auth-marker', '4ab-bfm-private-marker'))",
+                (account_name,),
+            ).fetchone()[0]
+            conn_marker.close()
+            _check(
+                remaining_markers == 0,
+                f"auth focused dashboard {entity_key}: exact marker cleanup should pass",
+            )
 
         sw_source = (PROJECT_ROOT / "web" / "static" / "sw.js").read_text()
         precache = sw_source.split("const PRECACHE_URLS = [", 1)[1].split("];", 1)[0]
@@ -8176,7 +8321,7 @@ def main() -> None:
         _check(sw_source.count("caches.match(request)") == 1, "service worker: only static cache-first may match the request URL")
         _check(sw_source.count("cache.put(request") == 1, "service worker: only static assets may be cached at runtime")
 
-        print("   ✅ Server auth, legacy/modern compatibility, no-password mode, public exemptions, CSRF, and protected-cache contracts passed")
+        print("   ✅ Server auth, focused-dashboard boundary, no-password mode, exemptions, CSRF, and protected-cache contracts passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

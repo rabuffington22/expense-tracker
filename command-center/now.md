@@ -2,27 +2,45 @@
 
 ## Active Objective
 
-Plan the next bounded Task 1P block after 4AA-R durably released the verified Luxe Legacy mirror repair.
+Publish and verify the exact locally verified 4AB source set through the authorized direct-main 4AB-R release path.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4AA-R is complete, deployed, and health verified, and Task 1P is the next planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4AB-R is authorized and active for exact-scope durability and release.
 
 ## Current Work Block
 
-Work block 4AA-R: Mirror Idempotency Durability And Release — complete.
+Work block 4AB-R: Focused Dashboard Authentication Durability And Release — active.
 
 ## Current Task
 
-Task 1P: Resolve remaining public, mobile, browser-hardening, availability, and operator-clarity findings — current for a separate just-in-time planning pass; implementation is not authorized.
+Task 4: Publish and verify explicitly approved repairs — current for the exact 4AB source set only.
 
 ## Owner
 
-Ryan owns the next Task 1P work-block confirmation. Codex Desktop completed 4AA-R publication, automatic deployment observation, credential-free health verification, and sanitized closeout.
+Codex Desktop owns exact-path staging, source commit, direct-main fast-forward push, automatic Fly observation, credential-free health verification, sanitized `[skip actions]` closeout, and final intake. Ryan retains every excluded live or product scope.
 
 ## Current Action
 
-Run a new just-in-time planning pass over Task 1P before any authentication, public-route, mobile, browser-hardening, availability, or operator-clarity implementation.
+Revalidate the exact twelve-path source set, stage explicitly, commit on `codex/k-dashboard-auth-boundary`, fast-forward local `main`, push without force, observe only the resulting automatic Fly deployment, verify credential-free `/health`, then publish a command-center-only `[skip actions]` closeout without starting a second deployment.
+
+## Work Block 4AB-R Contract
+
+- Include the exact verified twelve-path 4AB source set, explicit staging, one source commit, local-main fast-forward, direct `origin/main` push, automatic Fly observation, credential-free production `/health`, and one sanitized `[skip actions]` closeout commit and push.
+- Keep both preserved untracked files, protected data, real databases, retained uploads, credentials, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access/writes, migrations, Tasks 1P.2-1P.7, unrelated work, PR creation, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; trigger only the automatic deployment caused by the source push and ensure the closeout cannot start a second deployment.
+- Stop for unexpected paths, sensitive additions, protected data, unrelated changes, main divergence, failed maintained verification, excluded staging, unattributable or failed deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized path.
+- Verify exact scope, sensitive additions, branch ancestry, remote alignment, maintained smoke, compilation, JSON, dashboard refresh and health, whitespace, staged set, source commit, automatic run/job attribution, credential-free health, final `main` alignment, preserved exclusions, and `[skip actions]` closeout publication.
+
+## Work Block 4AB Contract
+
+- Include Task 1P.1 and only the focused Task 2 coverage for `P3-3J-03` and its request/public-field slice of `P3-3J-C01`.
+- Require configured-auth `/k` and `/k/` requests to pass the existing session gate before route database initialization or background-sync launch while keeping the route outside global entity setup.
+- Preserve authenticated and no-password behavior, Personal/Luxe Legacy scope, BFM exclusion, current post-auth fields, and all existing non-`/k/` public/static/bearer exemptions.
+- Keep Tasks 1P.2-1P.7, broader Task 2, Tasks 3-4, cookie flags, CSP, mobile, generalized browser infrastructure, Upload copy, broad read-model coverage, migrations, credentials, protected data, real databases, production inspection, live actions, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Stop for a changed auth policy, wider entity-context redesign, protected/live access, scope expansion, plan-changing verification failure, failed cleanup, command-center failure, or overlap with either preserved untracked file.
+- Verify baseline/final maintained smoke, configured-auth redirect/401/authenticated behavior, fail-fast pre-route no-side-effect ordering, no-password availability, exact entity/field scope, unchanged exemptions, denied networking, unchanged temporary databases, cleanup, compilation, JSON, whitespace, dashboard refresh/health, rendered inspection, and worktree scope.
+- Keep durability local-only and report the exact contract, proof, changed paths, cleanup, boundaries, branch state, and separate publication gate.
 
 ## Work Block 4AA-R Result
 
@@ -525,7 +543,8 @@ Run a new just-in-time planning pass over Task 1P before any authentication, pub
 - Work block 4Q baseline and final full smoke suites, roster-domain and decimal-rate matrices, zero-mutation snapshots, forced manual/import rollback, BFM-only isolation, denied networking, and cleanup: pass locally.
 - Work block 4Q source commit, automatic Fly run/job, and credential-free production `/health`: pass.
 - Final JSON validation, dashboard refresh, command-center health, `git diff --check`, dashboard inspection, and explicit worktree review: pass locally.
+- Task 1P decomposition JSON validation, dashboard refresh, command-center health, `git diff --check`, generated-dashboard semantic inspection, and preserved-untracked-file review: pass; no product implementation or live action occurred.
 
 ## Next Report Point
 
-Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1M.5 planning gate.
+Return the exact authentication/exemption contract, pre-route no-side-effect proof, configured/no-password results, authenticated field/entity behavior, changed paths, cleanup proof, preserved exclusions, local branch state, and separate publication gate.

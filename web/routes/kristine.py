@@ -1,7 +1,8 @@
-"""Kristine's Dashboard — public, mobile-first page.
+"""Kristine's Dashboard — standalone, mobile-first page.
 
 Shows Personal Focus budget status + LL (Luxe Legacy) transactions/spending.
-No authentication required (bypassed in __init__.py).
+Uses the application session gate when authentication is configured and manages
+its Personal and Luxe Legacy database contexts outside the global entity setup.
 """
 from __future__ import annotations
 

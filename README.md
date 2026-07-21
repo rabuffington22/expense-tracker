@@ -31,7 +31,7 @@ The demo overrides this map with `ENTITIES=Personal:personal,Business:company` a
 - BFM employee roster and Phoenix/CyberPayroll import
 - Optional OpenRouter-powered chat, category suggestions, subscription tips, and dashboard analysis
 - PWA manifest, static/offline-only service-worker caching, data-free offline fallback, mobile navigation, and dark/light themes
-- Public mobile-oriented dashboard at `/k/`; this route intentionally bypasses the main app password gate
+- Standalone mobile-oriented dashboard at `/k/`; it uses the main session gate when authentication is configured
 
 ## Architecture
 
@@ -107,7 +107,7 @@ Never place real secret values in tracked files, documentation, test fixtures, c
 | `LUXURY_SUPABASE_URL` | LL mirror only | Optional downstream Luxe Legacy endpoint |
 | `LUXURY_SUPABASE_SERVICE_KEY` | LL mirror only | Optional downstream Luxe Legacy service credential |
 
-When `APP_PASSWORD_HASH` is configured, Flask redirects unauthenticated full-page requests to a standalone login before entity setup or protected-page rendering. Password verification occurs only on the server; the browser receives an authenticated session, not the configured digest. Static assets, health/offline surfaces, and `/k/` follow explicit exemptions in `web/__init__.py`. The service worker caches only static assets and the data-free offline page, never protected or entity-specific responses. Authentication changes remain controlled work and should not be treated as a routine documentation or deployment edit.
+When `APP_PASSWORD_HASH` is configured, Flask redirects unauthenticated full-page requests to a standalone login before entity setup or protected-page rendering. Password verification occurs only on the server; the browser receives an authenticated session, not the configured digest. The standalone `/k/` dashboard uses this same session gate but remains outside global entity setup because it manages Personal and Luxe Legacy contexts itself. Static assets, health/offline surfaces, login, and the bearer-protected scheduled-sync endpoint follow explicit exemptions in `web/__init__.py`. The service worker caches only static assets and the data-free offline page, never protected or entity-specific responses. Authentication changes remain controlled work and should not be treated as a routine documentation or deployment edit.
 
 ## Data layout and handling
 
@@ -145,7 +145,7 @@ Transaction IDs are deterministic, so importing the same normalized bank transac
 | Data Sources | `/data-sources/` | Vendor-order imports and supported vendor-account connections |
 | Import | `/upload/` | CSV/PDF statement sources, profiles, preview, confirmation, and undo |
 | Match/Categorize | `/match/`, `/categorize-vendors/`, `/categorize/` | Vendor matching and remaining categorization workflow |
-| Public dashboard | `/k/` | Standalone mobile-oriented dashboard outside the main auth gate |
+| Focused dashboard | `/k/` | Standalone mobile-oriented Personal and Luxe Legacy view using the configured session gate |
 
 ## Imports and synchronization
 

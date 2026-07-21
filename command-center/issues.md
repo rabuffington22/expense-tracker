@@ -1620,7 +1620,7 @@ Work block 4A moved to service-worker cache v4, removed protected root and all d
 
 ## Public Dashboard Exposes Detailed Personal And Luxe Legacy Financial Information
 
-Status: open product-policy decision; confirmed in work block 3J
+Status: resolved locally through work block 4AB; publication remains separate
 
 Severity: high public financial-data exposure risk
 
@@ -1628,15 +1628,15 @@ Captured: 2026-07-18
 
 Where seen: `web/routes/kristine.py`, `web/templates/kristine.html`, and the repeated synthetic public-route probe
 
-Revisit: Phase 3 Task 8 for the intended public-data contract before any Phase 4 repair
+Revisit: 4AB-R only if Ryan separately authorizes durability and automatic release
 
 Summary:
 
-The deliberately unauthenticated `/k/` route correctly includes Personal and Luxe Legacy while excluding BFM, but it renders transaction names, dates, amounts, categories, budget progress, and selected balances.
+The route previously bypassed configured authentication while rendering Personal and Luxe Legacy financial detail. Ryan selected the existing server-side session gate as the intended contract, and work block 4AB now applies that gate before route execution while preserving the route's self-managed entity context.
 
 Impact:
 
-Anyone who can reach the URL can view detailed financial information. The existing documentation identifies the route as public but does not establish whether this exact row-level exposure is an accepted product decision.
+Before 4AB, anyone who could reach the URL could view detailed financial information. The local repair now prevents configured-auth requests from reaching database initialization, background synchronization, or rendered detail until the session is authenticated.
 
 Acceptance checks:
 
@@ -1644,9 +1644,9 @@ Acceptance checks:
 - The route authenticates, minimizes to approved aggregates, or documents and enforces the accepted exposure.
 - BFM remains excluded and tests prove the exact allowed fields for Personal and Luxe Legacy.
 
-Why not changed now:
+Resolution:
 
-Public-route behavior changes and product-direction decisions were excluded from work block 3J.
+Work block 4AB separated authentication exemptions from entity-setup exemptions. Configured unauthenticated `/k` and `/k/` full-page requests redirect to the existing login with a safe return path, HTMX and JSON receive 401, and fail-fast maintained checks prove neither global nor route-specific database initialization nor background synchronization runs first. Authenticated and no-password requests preserve Personal/Luxe Legacy fields, BFM exclusion, standalone rendering, and the existing background-sync seam. Baseline and final full smoke suites, compilation, denied-network boundaries, exact synthetic cleanup, and local command-center checks pass. Commit, push, release, production verification, cookie flags, CSP, mobile work, and broader browser coverage remain separate gates.
 
 ## Client And Server Authentication Modes Can Drift
 

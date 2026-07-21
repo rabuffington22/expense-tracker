@@ -282,7 +282,7 @@ def create_app():
 
     # ── Server-side auth configuration ────────────────────────────────────
     _AUTH_HASH = os.environ.get("APP_PASSWORD_HASH", "").strip()
-    _AUTH_EXEMPT = frozenset((
+    _AUTH_EXEMPT_PATHS = frozenset((
         "/sw.js",
         "/offline",
         "/health",
@@ -290,12 +290,15 @@ def create_app():
         "/plaid/sync-all",
     ))
 
-    def _is_public_or_static_path(path: str) -> bool:
+    def _is_auth_exempt_path(path: str) -> bool:
+        return path in _AUTH_EXEMPT_PATHS or path.startswith("/static/")
+
+    def _is_entity_setup_exempt_path(path: str) -> bool:
+        """Return paths that manage their own or require no entity context."""
         return (
-            path in _AUTH_EXEMPT
+            _is_auth_exempt_path(path)
             or path == "/k"
             or path.startswith("/k/")
-            or path.startswith("/static/")
         )
 
     def _safe_next_path(value: str | None) -> str:
@@ -378,7 +381,7 @@ def create_app():
     def _check_auth():
         if not _AUTH_HASH:
             return  # No password configured (demo mode) — skip auth
-        if _is_public_or_static_path(request.path):
+        if _is_auth_exempt_path(request.path):
             return
         if session.get("authenticated"):
             return
@@ -392,8 +395,8 @@ def create_app():
     # ── Before-request: init DB, set entity context ──────────────────────────
     @app.before_request
     def _setup_entity():
-        if _is_public_or_static_path(request.path) or request.path.startswith("/auth/"):
-            return  # Kristine's page, SW, offline, health — manage own context
+        if _is_entity_setup_exempt_path(request.path) or request.path.startswith("/auth/"):
+            return  # Standalone dashboard and system surfaces manage or need no entity context
         g.entity_display, g.entity_key = get_entity()
         g.accent = get_accent()
         init_db(g.entity_key)
@@ -417,7 +420,7 @@ def create_app():
     # ── Template context ─────────────────────────────────────────────────────
     @app.context_processor
     def _inject_globals():
-        if _is_public_or_static_path(request.path) or request.path.startswith("/auth/"):
+        if _is_entity_setup_exempt_path(request.path) or request.path.startswith("/auth/"):
             return {}  # These pages don't use entity context
         # API/cron endpoints (e.g. /plaid/sync-all) skip _setup_entity context;
         # if an exception triggers the default error template, fall through safely.
