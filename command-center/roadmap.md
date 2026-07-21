@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; work block 4V-R durability and automatic release is active
+Status: active; work block 4V-R is complete, durable, automatically deployed, and credential-free production health verified; Task 1N.5 is the next separate planning gate
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -916,12 +916,12 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4Q and 4Q-R.
   - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: done and verified locally through work block 4R; release remains separate.
-- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.3 are released and Task 1N.4 is in confirmed release block 4V-R.
+- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.4 are released and Task 1N.5 is the current separate planning gate.
   - **Task 1N.1: Use stored APRs in locked payoff schedules.** Pass each linked card's maintained `apr_bps` value into payoff calculation, define missing or invalid APR behavior explicitly, and reconcile avalanche/snowball order, narrative, and saved schedule for `P3-3D-01`. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4S and 4S-R.
   - **Task 1N.2: Preserve manual goal-review notes during automatic snapshots.** Update same-day balances without replacing the snapshot identity or erasing a manual note, while preserving intentional later manual-note replacement for `P3-3D-03`. Status: done, durable, automatically deployed, and credential-free production health verified through 4T and 4T-R.
   - **Task 1N.3: Compound negative asset appreciation as depreciation.** Preserve negative projection rates instead of clamping them to zero and reconcile future asset and net-worth results for `P3-3D-04`. Status: complete, durable, automatically deployed, and health verified through 4U-R.
-  - **Task 1N.4: Unify Weekly date context and scheduled card-bill amounts.** Anchor pace, MTD, burn, recurring/manual/card bills, and display periods to the viewed week; use the scheduled payment rather than the full card balance for `P3-3E-01` and `P3-3E-02`. Status: complete locally through 4V and now in confirmed direct-main durability and automatic release block 4V-R.
-  - **Task 1N.5: Validate Weekly paydown dates and read stored goals defensively.** Reject invalid target dates without changing the prior goal and prevent malformed stored values from breaking Weekly or Waterfall for `P3-3E-04`. Status: planned after Task 1N.4.
+  - **Task 1N.4: Unify Weekly date context and scheduled card-bill amounts.** Anchor pace, MTD, burn, recurring/manual/card bills, and display periods to the viewed week; use the scheduled payment rather than the full card balance for `P3-3E-01` and `P3-3E-02`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4V and 4V-R.
+  - **Task 1N.5: Validate Weekly paydown dates and read stored goals defensively.** Reject invalid target dates without changing the prior goal and prevent malformed stored values from breaking Weekly or Waterfall for `P3-3E-04`. Status: current for a separately confirmed planning pass; implementation is not authorized.
   - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: planned after the Weekly repairs.
   - **Task 1N.7: Keep Waterfall payoff duration truthful while debt remains.** Apply a documented rounding rule so positive debt with positive surplus cannot render as zero payoff months for `P3-3E-05`. Status: planned after Task 1N.6.
   - **Task 1N.8: Normalize Waterfall tax input once.** Require one finite, range-checked value to drive calculation and rendering without direct-input crashes for `P3-3E-06`. Status: planned after Task 1N.7.
@@ -966,7 +966,7 @@ Result: Weekly now uses the selected ISO week's Monday as the single budget-mont
 
 ### Confirmed Work Block 4V-R: Weekly Date And Bill Truthfulness Durability And Release
 
-Status: active on 2026-07-21
+Status: complete on 2026-07-21
 
 Included: the exact verified twelve-path 4V application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/weekly-date-bill-truthfulness`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
 
@@ -979,6 +979,8 @@ Stop conditions: an unexpected path, sensitive addition, protected data, unrelat
 Verification: exact path and staged-set review; branch ancestry and remote alignment; staged high-confidence sensitive-addition scan; maintained smoke, Python compilation, JSON validation, dashboard refresh, health check, and whitespace check; direct-main fast-forward push; exact automatic Fly run and job attribution; credential-free production health; final `main` alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.5 planning gate.
+
+Result: the exact twelve-path 4V source set was committed as `9b3e517`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29826028617` and deploy job `88619460588` passed for exact source SHA `9b3e517fc7edf36dd681c6ff5ffe6fd33ddc3263`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, the staged high-confidence sensitive-addition scan returned zero, and no PR or unauthorized live action occurred. This command-center-only closeout uses `[skip actions]` to prevent a second deployment. Evidence: `command-center/logs/2026-07-21-weekly-date-bill-truthfulness-release-4v-r.md`.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 

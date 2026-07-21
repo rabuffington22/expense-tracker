@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4V source set directly to `main`, observe its one automatic Fly deployment, verify credential-free production health, and publish a sanitized `[skip actions]` closeout.
+Plan Task 1N.5 separately after the completed 4V-R release.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4V-R release is active.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4V-R is complete, durable, automatically deployed, and credential-free production health verified.
 
 ## Current Work Block
 
-Work block 4V-R: Weekly Date And Bill Truthfulness Durability And Release — active.
+Work block 4V-R: Weekly Date And Bill Truthfulness Durability And Release — complete.
 
 ## Current Task
 
-Task 1N.4: Unify Weekly date context and scheduled card-bill amounts — release the exact locally verified 4V result without expanding product scope.
+Task 1N.5: Validate Weekly paydown dates and read stored goals defensively — current planning gate; no implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns the confirmed 4V-R durability, automatic-release observation, health verification, and sanitized closeout.
+Ryan owns the next planning confirmation. Codex Desktop completed the exact 4V-R release and may not begin Task 1N.5 implementation without a separately confirmed work block.
 
 ## Current Action
 
-Stage only the exact twelve-path 4V source set, commit on `codex/weekly-date-bill-truthfulness`, fast-forward and push `main`, observe the exact automatic Fly run, verify credential-free `/health`, and publish one command-center-only `[skip actions]` closeout.
+Report the completed 4V-R release and wait at the separate Task 1N.5 planning gate.
 
 ## Work Block 4V-R Contract
 
@@ -32,6 +32,16 @@ Stage only the exact twelve-path 4V source set, commit on `codex/weekly-date-bil
 - Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
 - Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
 - Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.5 planning gate.
+
+## Work Block 4V-R Result
+
+- Exact twelve-path source commit `9b3e517` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29826028617` and deploy job `88619460588` passed for exact source SHA `9b3e517fc7edf36dd681c6ff5ffe6fd33ddc3263`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the staged high-confidence sensitive-addition scan returned zero.
+- GitHub reported the non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24; deployment still succeeded.
+- No PR, protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N.5 implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4V Contract
 
