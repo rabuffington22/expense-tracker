@@ -138,7 +138,7 @@ def _compute_projections(items: dict, settings: dict) -> dict:
                 asset["projections"][m_age] = asset["current_value_cents"]
                 continue
             # FV = V*(1+r)^n + C*((1+r)^n - 1)/r
-            if r > 0:
+            if r != 0:
                 growth = (1 + r) ** n
                 fv = V * growth + C * (growth - 1) / r
             else:

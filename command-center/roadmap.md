@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active after successful 4T-R durability, automatic deployment, and credential-free health verification; Task 1N.3 is current for a separate planning pass
+Status: active; work block 4U-R is authorized and active for exact-scope durability, automatic deployment observation, and credential-free health verification
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -916,11 +916,11 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4Q and 4Q-R.
   - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: done and verified locally through work block 4R; release remains separate.
-- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.2 are released and Task 1N.3 is current for a separately confirmed planning pass.
+- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.2 are released and Task 1N.3 exact-scope durability and automatic release are active through 4U-R.
   - **Task 1N.1: Use stored APRs in locked payoff schedules.** Pass each linked card's maintained `apr_bps` value into payoff calculation, define missing or invalid APR behavior explicitly, and reconcile avalanche/snowball order, narrative, and saved schedule for `P3-3D-01`. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4S and 4S-R.
   - **Task 1N.2: Preserve manual goal-review notes during automatic snapshots.** Update same-day balances without replacing the snapshot identity or erasing a manual note, while preserving intentional later manual-note replacement for `P3-3D-03`. Status: done, durable, automatically deployed, and credential-free production health verified through 4T and 4T-R.
-  - **Task 1N.3: Compound negative asset appreciation as depreciation.** Preserve negative projection rates instead of clamping them to zero and reconcile future asset and net-worth results for `P3-3D-04`. Status: current for a separate work-block planning pass; no implementation is authorized.
-  - **Task 1N.4: Unify Weekly date context and scheduled card-bill amounts.** Anchor pace, MTD, burn, recurring/manual/card bills, and display periods to the viewed week; use the scheduled payment rather than the full card balance for `P3-3E-01` and `P3-3E-02`. Status: planned after the planning-foundation repairs.
+  - **Task 1N.3: Compound negative asset appreciation as depreciation.** Preserve negative projection rates instead of clamping them to zero and reconcile future asset and net-worth results for `P3-3D-04`. Status: complete locally through 4U; exact-scope durability and automatic release are active through 4U-R.
+  - **Task 1N.4: Unify Weekly date context and scheduled card-bill amounts.** Anchor pace, MTD, burn, recurring/manual/card bills, and display periods to the viewed week; use the scheduled payment rather than the full card balance for `P3-3E-01` and `P3-3E-02`. Status: planned after 4U-R; no implementation is authorized.
   - **Task 1N.5: Validate Weekly paydown dates and read stored goals defensively.** Reject invalid target dates without changing the prior goal and prevent malformed stored values from breaking Weekly or Waterfall for `P3-3E-04`. Status: planned after Task 1N.4.
   - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: planned after the Weekly repairs.
   - **Task 1N.7: Keep Waterfall payoff duration truthful while debt remains.** Apply a documented rounding rule so positive debt with positive surplus cannot render as zero payoff months for `P3-3E-05`. Status: planned after Task 1N.6.
@@ -2216,6 +2216,71 @@ Verification: exact path and sensitive-addition review; maintained synthetic sui
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.3 planning gate.
 
 Result: the exact ten-path 4T source set was committed as `7b473bb`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29799554597` and deploy job `88537736941` passed every reported step for exact source SHA `7b473bbb6022feeafd69c61c1c7349dde726296d`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, and no protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N.3 implementation, force push, or unrelated action occurred. Evidence: `command-center/logs/2026-07-20-snapshot-note-preservation-release-4t-r.md`.
+
+### Confirmed Work Block 4U: Negative Appreciation Truthfulness
+
+Status: done and verified locally on 2026-07-20; release not authorized
+
+Parent tasks: Phase 4 Task 1N.3 and only its focused Task 2 regression slice.
+
+Included findings: `P3-3D-04` and the matching negative-appreciation slice of `P3-3D-C01` only.
+
+Outcome: make negative asset rates compound as depreciation, preserve the zero-rate contribution path and existing positive-rate behavior, and reconcile item projections, entity summaries, and combined net worth with focused maintained synthetic coverage.
+
+Why this grouping: the defect, asset projection formula, entity summaries, combined totals, existing demo Equipment case, and focused coverage share the same Long-Term Planning calculation path. Task 1N.4 begins a separate Weekly date-context and bill-source contract.
+
+Excluded: Tasks 1N.4-1N.8; Tasks 1O-1P; the remainder of Task 2; Tasks 3-4; migrations; historical remediation; demo redesign; rate-input policy changes; Weekly/Waterfall work; UI redesign; real financial data or databases; retained uploads; credentials; production/demo access; external calls; live systems; GitHub durability; deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Defaults confirmed by Ryan with the block: use the existing compound-growth formula for positive and negative nonzero rates; retain the zero-rate linear-contribution path, current inflation adjustment, and contribution timing; verify ordinary negative rates including -10% and the existing -15% demo Equipment rate; stop for a new policy decision if rates at or below -100% become material; expect no schema, template, or demo-seed edit; and keep every durability or release action separately gated.
+
+Expansion candidates and questions: none. Task 1N.4 uses a different route, calculation contract, and verification path.
+
+Owner and recommended agent: Codex Desktop in the current task on local branch `codex/negative-asset-depreciation`. This small sensitive-repo repair couples one Flask calculation seam, maintained synthetic verification, cleanup, issue disposition, and Runway OS stewardship; no delegation or second opinion is needed. Codex owns implementation, verification, exact-scope intake, and dashboard closeout.
+
+Expected surfaces: `web/routes/planning.py`; focused additions to `scripts/smoke_test.py`; a compact negative-appreciation projection contract; sanitized 4U evidence; issue disposition; and Runway OS sources/dashboard. `scripts/seed_demo_data.py` is verification input only; no template, migration, or seed edit is expected.
+
+Stop conditions:
+
+- Correct behavior requires a new rate-domain policy, especially for rates at or below -100%, a migration, historical remediation, or a template/UX decision.
+- Protected data, credentials, authentication changes, external access, production/demo, or another live action becomes necessary.
+- Work expands into Task 1N.4 or broader planning coverage.
+- Focused or full verification materially changes the plan, exact cleanup cannot be proven, command-center checks fail, or either preserved untracked file would be touched.
+
+Verification:
+
+- Baseline and final `.venv/bin/python scripts/smoke_test.py`.
+- Exact ordinary negative-rate depreciation, zero-rate contributions, positive appreciation, contribution timing, and inflation adjustment.
+- Item projections, entity asset totals, and combined net worth reconcile; existing demo Equipment produces a declining projection.
+- Personal/BFM behavior, Luxe Legacy denial, denied networking, and exact temporary cleanup.
+- Python compilation, JSON validation, `git diff --check`, dashboard refresh, health check, rendered dashboard inspection, and final explicit-path worktree review.
+
+Durability: local-only. No commit, push, PR, merge, workflow, deployment, credential, protected-data, or live action is authorized.
+
+Report point: return the exact projection contract, item/entity/combined reconciliation, focused and full synthetic results, changed paths, cleanup, preserved boundaries, local branch state, and the separate publication gate.
+
+Suggested next work block: 4U-R durability and automatic release only if separately authorized; otherwise separately plan Task 1N.4.
+
+Result: positive and negative nonzero asset rates now use the same existing compound-growth and end-of-year contribution formula, while zero rates retain the explicit linear path and inflation adjustment remains unchanged. Exact five-year checks project a $10,000 asset at -10% to $5,904.90 nominally and the demo-equivalent $85,000 Equipment asset at -15% to $37,714.95. Maintained coverage proves negative, zero, positive, contribution, inflation, item-summary, Personal/BFM entity-summary, combined-net-worth, rendered-label, Luxe Legacy denial, denied-network, unrelated-row preservation, and exact-cleanup behavior. Baseline and final full smoke suites, Python compilation, JSON, whitespace, dashboard refresh, health, and rendered inspection pass locally. No migration, template, seed, protected data, external access, GitHub durability, deployment, or live action occurred. Evidence: `command-center/negative-appreciation-projection-contract.md` and `command-center/logs/2026-07-20-negative-appreciation-truthfulness-4u.md`.
+
+### Confirmed Work Block 4U-R: Negative Appreciation Truthfulness Durability And Release
+
+Status: active under Ryan's direct instruction to commit and push to `main`
+
+Parent task: Phase 4 Task 4 for the exact verified 4U source set only.
+
+Included: the exact verified ten-path 4U application, maintained-test, contract, issue, evidence, and command-center source set; explicit-path staging; one source commit on `codex/negative-asset-depreciation`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+
+Excluded: pre-existing untracked `scripts/sync_prod_to_local.sh`; unrelated untracked `command-center/now 2.md`; real financial rows or databases; retained uploads; credentials; authenticated production pages; external calls other than GitHub/Fly status and credential-free health; manual workflow actions; workflow edits; non-automatic Fly changes; downstream access or writes; migrations; Task 1N.4; broader Task 2; unrelated repairs; force push; and recovery beyond the exact fast-forward path.
+
+Owner and recommended agent: Codex Desktop. This release requires exact-path Git stewardship, sensitive-addition review, direct-main fast-forward safety, automatic Fly observation, credential-free health verification, and final Runway OS closeout.
+
+Defaults: no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4U contract and implementation; observe only the automatic Fly deployment caused by the source push; verify only credential-free `/health`; publish the release closeout with `[skip actions]` so it cannot trigger a second deployment; and leave Task 1N.4 planning separate.
+
+Stop conditions: the intended diff contains an unexpected path, sensitive value, protected data, or unrelated user change; local or remote `main` diverges; maintained verification fails; staging includes an excluded path; the automatic deployment fails or cannot be attributed to the source SHA; credential-free health fails; a second deployment starts for the closeout; or recovery would exceed the exact authorized fast-forward path.
+
+Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
+
+Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.4 planning gate.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

@@ -206,7 +206,7 @@ Work block 4T replaced destructive same-day snapshot replacement with identity-s
 
 ## Negative Asset Appreciation Is Treated As Zero Growth
 
-Status: open; discovered in work block 3D
+Status: resolved locally through work block 4U; release not authorized
 
 Severity: medium long-term projection correctness risk
 
@@ -231,9 +231,9 @@ Acceptance checks:
 - Summary and combined net-worth totals reconcile to repaired item projections.
 - Demo Equipment produces a declining projection and the behavior has tracked synthetic coverage.
 
-Why not fixed now:
+Resolution:
 
-Projection logic and tracked tests require a separately confirmed Phase 4 repair block.
+Positive and negative nonzero asset rates now use the same compound-growth and end-of-year contribution formula; zero rates retain the linear-contribution path. Maintained synthetic coverage reconciles item, entity, and combined totals, verifies the demo-equivalent -15% Equipment decline, preserves Personal/BFM visibility and Luxe Legacy denial, denies networking, and cleans up exactly. Publication remains separately gated.
 
 ## Transaction Identity Can Collapse Distinct Transactions
 

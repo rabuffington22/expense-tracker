@@ -2522,6 +2522,271 @@ def main() -> None:
 
         print("   ✅ Identity-stable auto/manual upserts, note replacement, month transition, isolation, denied-network, and cleanup passed")
 
+        # ── 8a4. Negative asset appreciation truthfulness ──────────
+        print("\n8a4. Negative asset appreciation truthfulness…")
+        from web.routes import planning as planning_routes
+
+        projection_settings = {
+            "inflation_rate": 300,
+            "current_age": 50,
+            "custom_milestone": 55,
+            "birth_date": None,
+        }
+        projection_items = {
+            "assets": [
+                {
+                    "name": "4U Depreciating Asset",
+                    "current_value_cents": 1_000_000,
+                    "annual_rate_bps": -1000,
+                    "monthly_contrib_cents": 0,
+                },
+                {
+                    "name": "4U Depreciating Contributed Asset",
+                    "current_value_cents": 1_000_000,
+                    "annual_rate_bps": -1000,
+                    "monthly_contrib_cents": 10_000,
+                },
+                {
+                    "name": "4U Zero Rate Asset",
+                    "current_value_cents": 1_000_000,
+                    "annual_rate_bps": 0,
+                    "monthly_contrib_cents": 10_000,
+                },
+                {
+                    "name": "4U Appreciating Asset",
+                    "current_value_cents": 1_000_000,
+                    "annual_rate_bps": 500,
+                    "monthly_contrib_cents": 10_000,
+                },
+            ],
+            "liabilities": [],
+        }
+        projected = planning_routes._compute_projections(
+            projection_items, projection_settings
+        )
+        projection_by_name = {asset["name"]: asset for asset in projected["assets"]}
+        milestone = 55
+        inflation_factor = 1.03 ** 5
+        negative_growth = 0.9 ** 5
+        positive_growth = 1.05 ** 5
+        expected_negative = round(10_000 * negative_growth / inflation_factor * 100)
+        expected_negative_contrib = round(
+            (
+                10_000 * negative_growth
+                + 1_200 * (negative_growth - 1) / -0.10
+            )
+            / inflation_factor
+            * 100
+        )
+        expected_zero = round((10_000 + 1_200 * 5) / inflation_factor * 100)
+        expected_positive = round(
+            (
+                10_000 * positive_growth
+                + 1_200 * (positive_growth - 1) / 0.05
+            )
+            / inflation_factor
+            * 100
+        )
+        _check(
+            projection_by_name["4U Depreciating Asset"]["projections"][milestone]
+            == expected_negative
+            < 1_000_000,
+            "negative appreciation: ordinary negative rate should compound downward with inflation",
+        )
+        _check(
+            projection_by_name["4U Depreciating Contributed Asset"]["projections"][milestone]
+            == expected_negative_contrib,
+            "negative appreciation: contributions should use the same end-of-year compounding contract",
+        )
+        _check(
+            projection_by_name["4U Zero Rate Asset"]["projections"][milestone]
+            == expected_zero,
+            "negative appreciation: zero rate should retain the linear contribution path",
+        )
+        _check(
+            projection_by_name["4U Appreciating Asset"]["projections"][milestone]
+            == expected_positive,
+            "negative appreciation: positive appreciation and contributions should remain unchanged",
+        )
+        direct_summary = planning_routes._compute_summary(projected, [milestone])
+        _check(
+            direct_summary[milestone]["assets_cents"]
+            == sum(asset["projections"][milestone] for asset in projected["assets"])
+            and direct_summary[milestone]["net_worth_cents"]
+            == direct_summary[milestone]["assets_cents"],
+            "negative appreciation: direct asset and net-worth summaries should reconcile",
+        )
+
+        def _planning_rows(entity_key):
+            projection_conn = get_connection(entity_key)
+            try:
+                return [
+                    tuple(row)
+                    for row in projection_conn.execute(
+                        "SELECT id, item_type, name, current_value_cents, annual_rate_bps, "
+                        "monthly_contrib_cents, monthly_payment_cents, source, "
+                        "cashflow_account_name, sort_order, created_at, updated_at "
+                        "FROM planning_items ORDER BY id"
+                    ).fetchall()
+                ]
+            finally:
+                projection_conn.close()
+
+        projection_baseline = {
+            entity_key: _planning_rows(entity_key)
+            for entity_key in ("personal", "company")
+        }
+        projection_fixture_ids = {}
+        for entity_key, fixture in (
+            (
+                "personal",
+                ("4U Personal Depreciating Asset", 1_000_000, -1000),
+            ),
+            (
+                "company",
+                ("4U Demo Equipment", 8_500_000, -1500),
+            ),
+        ):
+            projection_conn = get_connection(entity_key)
+            try:
+                fixture_id = projection_conn.execute(
+                    "INSERT INTO planning_items "
+                    "(item_type, name, current_value_cents, annual_rate_bps, source, sort_order) "
+                    "VALUES ('asset', ?, ?, ?, 'manual', 804)",
+                    fixture,
+                ).lastrowid
+                projection_conn.commit()
+            finally:
+                projection_conn.close()
+            projection_fixture_ids[entity_key] = fixture_id
+
+        fixed_route_settings = {
+            "inflation_rate": 0,
+            "current_age": 50,
+            "custom_milestone": 55,
+            "birth_date": None,
+        }
+        expected_personal = round(1_000_000 * (0.9 ** 5))
+        expected_equipment = round(8_500_000 * (0.85 ** 5))
+        captured_context = {}
+
+        def _capture_planning_context(_template_name, **context):
+            captured_context.update(context)
+            return "planning context captured"
+
+        before_ll_projection = _database_snapshot("luxelegacy")
+        with app.test_client() as projection_client, patch.object(
+            planning_routes, "_get_settings", return_value=fixed_route_settings
+        ), patch(
+            "socket.create_connection",
+            side_effect=AssertionError("negative appreciation attempted outbound networking"),
+        ) as projection_create_connection, patch(
+            "socket.socket.connect",
+            side_effect=AssertionError("negative appreciation attempted outbound networking"),
+        ) as projection_socket_connect:
+            projection_client.set_cookie("entity", "Personal")
+            rendered_projection = projection_client.get("/planning/")
+            rendered_body = rendered_projection.get_data(as_text=True)
+            _check(
+                rendered_projection.status_code == 200
+                and "4U Personal Depreciating" in rendered_body
+                and "4U Demo" in rendered_body
+                and "depreciation" in rendered_body,
+                "negative appreciation: Personal route should render both entity projections and depreciation labels",
+            )
+
+            with patch.object(
+                planning_routes,
+                "render_template",
+                side_effect=_capture_planning_context,
+            ):
+                captured_projection = projection_client.get("/planning/")
+            _check(
+                captured_projection.status_code == 200,
+                "negative appreciation: route context capture should succeed",
+            )
+
+            personal_asset = next(
+                asset
+                for asset in captured_context["primary"]["assets"]
+                if asset["name"] == "4U Personal Depreciating Asset"
+            )
+            equipment_asset = next(
+                asset
+                for asset in captured_context["cross_sections"][0]["assets"]
+                if asset["name"] == "4U Demo Equipment"
+            )
+            _check(
+                personal_asset["projections"][milestone] == expected_personal,
+                "negative appreciation: Personal item projection should match exact negative compounding",
+            )
+            _check(
+                equipment_asset["projections"][milestone] == expected_equipment
+                < equipment_asset["current_value_cents"],
+                "negative appreciation: demo-equivalent Equipment should decline at negative 15 percent",
+            )
+            personal_summary = captured_context["primary"]["summary"][milestone]
+            company_summary = captured_context["cross_sections"][0]["summary"][milestone]
+            combined_summary = captured_context["combined"][milestone]
+            _check(
+                personal_summary["assets_cents"]
+                == sum(
+                    asset["projections"][milestone]
+                    for asset in captured_context["primary"]["assets"]
+                )
+                and company_summary["assets_cents"]
+                == sum(
+                    asset["projections"][milestone]
+                    for asset in captured_context["cross_sections"][0]["assets"]
+                ),
+                "negative appreciation: Personal and BFM asset summaries should reconcile to item projections",
+            )
+            _check(
+                combined_summary["net_worth_cents"]
+                == personal_summary["net_worth_cents"]
+                + company_summary["net_worth_cents"],
+                "negative appreciation: combined net worth should reconcile to Personal and BFM summaries",
+            )
+
+            projection_client.set_cookie("entity", "BFM")
+            bfm_projection = projection_client.get("/planning/")
+            _check(
+                bfm_projection.status_code == 200
+                and "4U Personal Depreciating" in bfm_projection.get_data(as_text=True)
+                and "4U Demo" in bfm_projection.get_data(as_text=True),
+                "negative appreciation: BFM route should preserve shared Personal/BFM visibility",
+            )
+
+            projection_client.set_cookie("entity", "LL")
+            denied_ll_projection = projection_client.get("/planning/")
+            _check(
+                denied_ll_projection.status_code == 302
+                and denied_ll_projection.headers.get("Location", "").endswith("/"),
+                "negative appreciation: Luxe Legacy should remain denied before projection handling",
+            )
+            _check(
+                _database_snapshot("luxelegacy") == before_ll_projection,
+                "negative appreciation: denied Luxe Legacy request should leave its database unchanged",
+            )
+            projection_create_connection.assert_not_called()
+            projection_socket_connect.assert_not_called()
+
+        for entity_key, fixture_id in projection_fixture_ids.items():
+            projection_conn = get_connection(entity_key)
+            try:
+                projection_conn.execute(
+                    "DELETE FROM planning_items WHERE id = ?", (fixture_id,)
+                )
+                projection_conn.commit()
+            finally:
+                projection_conn.close()
+            _check(
+                _planning_rows(entity_key) == projection_baseline[entity_key],
+                f"negative appreciation {entity_key}: synthetic planning rows should clean up exactly",
+            )
+
+        print("   ✅ Negative, zero, positive, contribution, inflation, summary, combined, isolation, denied-network, and cleanup behavior passed")
+
         # ── 8a. BFM-only payroll route boundary ─────────────────────
         print("\n8b. BFM-only payroll route boundary…")
         from web.routes import payroll as payroll_routes

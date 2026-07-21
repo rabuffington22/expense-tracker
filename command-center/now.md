@@ -2,27 +2,55 @@
 
 ## Active Objective
 
-Plan and confirm the next bounded repair for Task 1N.3 without beginning implementation.
+Publish the exact verified 4U source set through authorized work block 4U-R and verify its automatic release.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4T-R is complete, durable, automatically deployed, and health verified.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4U-R is authorized and active.
 
 ## Current Work Block
 
-No implementation work block is active. Work block 4T-R is complete; Task 1N.3 is at its separate planning and confirmation gate.
+Work block 4U-R: Negative Appreciation Truthfulness Durability And Release — active.
 
 ## Current Task
 
-Task 1N.3: Compound negative asset appreciation as depreciation — current for planning only; no implementation is authorized.
+Task 1N.3: Compound negative asset appreciation as depreciation — complete locally; exact-scope durability and automatic release are active through 4U-R.
 
 ## Owner
 
-Ryan owns confirmation of the next bounded work block. Codex Desktop may inspect current repo truth and propose Task 1N.3 scope, exclusions, stops, and verification, but may not implement it without confirmation.
+Codex Desktop owns exact-path staging, source commit, direct-main fast-forward, push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan retains every recovery or scope-expansion gate.
 
 ## Current Action
 
-Define and confirm a bounded Task 1N.3 negative-appreciation repair block before any product, test, GitHub, deployment, protected-data, or live action.
+Reverify the exact ten-path 4U source set, commit it on `codex/negative-asset-depreciation`, fast-forward local `main`, push `main` without force, verify the attributable automatic Fly deployment and credential-free `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+
+## Work Block 4U-R Contract
+
+- Include the exact verified ten-path 4U application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/negative-asset-depreciation`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real financial rows or databases, retained uploads, credentials, authenticated production pages, external calls other than GitHub/Fly status and credential-free health, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1N.4, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4U contract and implementation; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
+- Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.4 planning gate.
+
+## Work Block 4U Contract
+
+- Include Task 1N.3 and only the focused Task 2 regression slice for `P3-3D-04` and the matching `P3-3D-C01` coverage.
+- Apply the existing compound-growth formula to positive and negative nonzero asset rates; preserve the zero-rate linear-contribution path, current inflation adjustment, contribution timing, entity summaries, and combined net-worth reconciliation.
+- Verify ordinary negative rates including -10% and the existing demo Equipment rate of -15%; a newly discovered need to define rates at or below -100% is a product-policy stop rather than an implicit expansion.
+- Keep Tasks 1N.4-1N.8, Tasks 1O-1P, the remainder of Task 2, Tasks 3-4, migrations, historical remediation, demo redesign, rate-input policy changes, Weekly/Waterfall work, UI redesign, real financial data, retained uploads, credentials, production/demo access, external calls, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Use Codex Desktop in the current task on local branch `codex/negative-asset-depreciation`; no delegation or second opinion is needed. Codex owns implementation, verification, cleanup, issue disposition, dashboard currency, and final intake.
+- Stop if correct behavior requires a new rate-domain policy, migration, historical remediation, template or UX decision, protected/live data, credentials, external access, authentication change, another Phase 4 task, plan-changing verification, failed cleanup, failed command-center checks, or either preserved untracked file.
+- Verify baseline and final maintained smoke; negative, zero, and positive rates; contributions and inflation; item, entity-summary, and combined-net-worth reconciliation; demo Equipment decline; Personal/BFM behavior; Luxe Legacy denial; denied networking; exact cleanup; compilation; JSON; whitespace; dashboard refresh and health; rendered dashboard inspection; and final worktree scope.
+- Report the exact projection contract, reconciliation results, focused and full synthetic results, changed paths, cleanup, preserved boundaries, local branch state, and separate publication gate.
+
+## Work Block 4U Result
+
+- Positive and negative nonzero asset rates now share the existing compound-growth formula; zero rates retain the explicit linear-contribution path.
+- A $10,000 asset at -10% projects to $5,904.90 after five nominal years, and the demo-equivalent $85,000 Equipment asset at -15% projects to $37,714.95; both decline rather than remaining flat.
+- Focused coverage also proves negative-rate contributions, zero-rate contributions, positive appreciation, inflation adjustment, item totals, Personal/BFM summaries, combined net worth, rendered depreciation labels, Luxe Legacy denial, denied networking, unrelated-row preservation, and exact cleanup.
+- Baseline and final full smoke suites, Python compilation, JSON, whitespace, dashboard refresh, health, rendered dashboard inspection, and final scope checks pass locally.
+- No migration, template, demo-seed, protected-data, credential, external-access, GitHub durability, deployment, or live action occurred. Both preserved untracked files remain untouched.
 
 ## Work Block 4T-R Contract
 

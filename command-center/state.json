@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-20 10:53 PM CST",
+    "lastUpdated": "2026-07-20 11:56 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,26 +27,26 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4T-R is durable deployed and health verified; Task 1N.3 is current for a separate planning and confirmation pass only.",
-    "progress": 80
+    "summary": "Work block 4U-R is authorized and active for exact-scope durability automatic deployment observation and credential-free health verification.",
+    "progress": 82
   },
   "currentTask": {
     "title": "Task 1N.3: Compound negative asset appreciation as depreciation",
-    "owner": "Ryan",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop may inspect current repo truth and propose a bounded work block but may not implement before confirmation",
-    "nextAction": "Define and confirm a bounded Task 1N.3 negative-appreciation work block.",
-    "blocker": "No Task 1N.3 implementation work block is confirmed."
+    "supportingAgent": "Codex Desktop owns exact-path staging direct-main fast-forward automatic deployment observation credential-free health and closeout",
+    "nextAction": "Reverify commit fast-forward and push the exact ten-path 4U source set then verify the attributable automatic release.",
+    "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-t-release",
-    "label": "4T-R",
-    "name": "Snapshot Note Preservation Durability And Release",
-    "status": "done",
+    "id": "phase-4-block-u-release",
+    "label": "4U-R",
+    "name": "Negative Appreciation Truthfulness Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Release complete; return Task 1N.3 to its separate planning and confirmation gate",
+    "currentTask": "Reverify and publish the exact 4U source set then observe automatic release and credential-free health",
     "includedTasks": [
-      "Task 1N.2 durability and automatic release",
+      "Task 1N.3 durability and automatic release",
       "Credential-free production health verification",
       "Sanitized command-center closeout"
     ],
@@ -63,12 +63,10 @@
       "Exact automatic Fly run and job result plus credential-free production health",
       "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
-    "nextReportPoint": "Return source commit 7b473bb closeout commit automatic Fly run 29799554597 job 88537736941 credential-free health final main alignment preserved exclusions and separate Task 1N.3 planning gate.",
-    "result": "Exact source commit 7b473bb was pushed directly to main automatic Fly run 29799554597 and job 88537736941 succeeded for the exact SHA credential-free production health returned HTTP 200 and both preserved untracked files remained excluded.",
-    "durability": "Source commit 7b473bb is durable on main; this command-center-only closeout uses skip actions to prevent a second deployment.",
-    "evidence": [
-      "command-center/logs/2026-07-20-snapshot-note-preservation-release-4t-r.md"
-    ]
+    "nextReportPoint": "Return the source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.4 planning gate.",
+    "result": null,
+    "durability": "Active under Ryan's direct-main publication authorization; no force push manual workflow non-automatic Fly change protected-data access or recovery beyond the exact fast-forward path is allowed.",
+    "evidence": []
   },
   "routerHealth": {
     "status": "healthy",
@@ -93,23 +91,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 1N.3 negative-appreciation truthfulness",
-    "status": "waiting-confirmation",
-    "owner": "Ryan",
-    "why": "Work block 4T-R is complete and Task 1N.3 is the smallest next calculation-truthfulness slice.",
-    "action": "Define and confirm a bounded Task 1N.3 work block before implementation.",
+    "title": "Publish and verify exact 4U source set",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized commit and push to main for the complete locally verified 4U work.",
+    "action": "Reverify stage commit fast-forward push and verify the attributable automatic Fly release and credential-free health.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Task 1N.3 is waiting for Ryan to confirm a separately bounded implementation work block.",
-    "items": [
-      "Confirm or revise the future Task 1N.3 negative-appreciation work block before implementation"
-    ]
+    "summary": "No Ryan input is required during active 4U-R unless a stop condition is hit.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1N.3 scope exclusions stop conditions and verification require confirmation before implementation; 4T-R is closed.",
-    "decisionQueue": "Ryan must confirm or revise the proposed Task 1N.3 work block before product or test changes.",
+    "phaseQuestions": "None inside authorized 4U-R; Task 1N.4 remains separately gated.",
+    "decisionQueue": "No decision is pending unless release verification fails or recovery exceeds the exact fast-forward path.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -3140,6 +3136,110 @@
         "Fly deploy job 88537736941"
       ],
       "result": "Published source commit 7b473bb directly to main by exact-path fast-forward observed successful automatic Fly run 29799554597 and job 88537736941 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout."
+    },
+    {
+      "id": "phase-4-block-u",
+      "phaseId": "phase-4",
+      "label": "4U",
+      "name": "Negative Appreciation Truthfulness",
+      "status": "done",
+      "includedTasks": [
+        "Task 1N.3",
+        "Task 2 focused P3-3D-04 and P3-3D-C01 negative-appreciation regression slice"
+      ],
+      "excludedTasks": [
+        "Tasks 1N.4-1N.8 Tasks 1O-1P the remainder of Task 2 and Tasks 3-4",
+        "Migrations historical remediation demo redesign rate-input policy changes Weekly Waterfall work and UI redesign",
+        "Real financial data retained uploads credentials production demo external calls live systems GitHub durability and deployment",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The small sensitive-repo repair couples one Flask calculation seam maintained synthetic verification cleanup issue disposition and Runway OS stewardship while external workers remain inactive.",
+      "runnerPath": "Current Codex task on local branch codex/negative-asset-depreciation without delegation or second opinion.",
+      "expectedFiles": [
+        "web/routes/planning.py and focused additions to scripts/smoke_test.py",
+        "A compact negative-appreciation projection contract sanitized 4U evidence issue disposition and Runway OS state"
+      ],
+      "defaults": [
+        "Use the existing compound-growth formula for positive and ordinary negative nonzero rates",
+        "Retain the zero-rate linear-contribution path current inflation adjustment and contribution timing",
+        "Verify negative 10 percent and existing demo Equipment negative 15 percent behavior and stop for a new rate policy at or below negative 100 percent",
+        "No migration template seed edit commit push release or live verification is authorized"
+      ],
+      "stopConditions": [
+        "Correct behavior requires a new rate-domain policy especially for rates at or below negative 100 percent a migration historical remediation or a template or UX decision",
+        "Protected data credentials authentication changes external access production demo or another live action becomes necessary",
+        "Work expands into Task 1N.4 or broader planning coverage",
+        "Verification changes the plan cleanup cannot be proven command-center checks fail or either preserved untracked file would be touched"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "Negative zero and positive asset rates plus contribution timing and inflation adjustment",
+        "Item entity-summary and combined-net-worth reconciliation plus existing demo Equipment decline",
+        "Personal BFM Luxe Legacy denial denied networking and exact cleanup",
+        "Python compilation JSON whitespace dashboard refresh health rendered inspection and final worktree scope"
+      ],
+      "reportBack": "Return the exact projection contract item entity and combined reconciliation focused and full synthetic results changed paths cleanup preserved boundaries local branch state and separate publication gate.",
+      "nextBlock": "4U-R durability and automatic release only if separately authorized; otherwise separately plan Task 1N.4.",
+      "durability": "Complete and verified locally on codex/negative-asset-depreciation; no commit push PR merge workflow deployment credential protected-data external access or live action occurred.",
+      "evidence": [
+        "command-center/negative-appreciation-projection-contract.md",
+        "command-center/logs/2026-07-20-negative-appreciation-truthfulness-4u.md",
+        "web/routes/planning.py",
+        "scripts/smoke_test.py"
+      ],
+      "result": "Positive and negative nonzero asset rates now share the existing compound-growth formula while zero rates retain the linear path; exact negative contribution inflation entity-summary combined-net-worth isolation denied-network cleanup and full smoke checks pass locally."
+    },
+    {
+      "id": "phase-4-block-u-release",
+      "phaseId": "phase-4",
+      "label": "4U-R",
+      "name": "Negative Appreciation Truthfulness Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1N.3 durability and automatic release",
+        "Credential-free production health verification",
+        "Sanitized command-center closeout"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real financial rows or databases retained uploads credentials authenticated production pages manual workflow actions and downstream access or writes",
+        "Workflow edits non-automatic Fly changes migrations force push and recovery outside the exact fast-forward path",
+        "Task 1N.4 broader Task 2 unrelated repairs and other live actions"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git stewardship sensitive-addition review direct-main fast-forward safety automatic Fly observation credential-free health verification and final Runway OS closeout.",
+      "runnerPath": "Current Codex task on codex/negative-asset-depreciation followed by an exact fast-forward to local main.",
+      "expectedLiveEffect": "Push one verified source commit to main triggering one automatic Fly deployment verify only credential-free health then push one skip-actions command-center closeout without a second deployment.",
+      "expectedFiles": [
+        "Exact verified ten-path 4U application maintained-test contract issue evidence and Runway OS source set",
+        "A sanitized 4U-R closeout log and command-center-only skip-actions commit"
+      ],
+      "defaults": [
+        "No PR because Ryan directly instructed commit and push to main",
+        "Observe only the automatic Fly deployment caused by the source push",
+        "Use only credential-free production health verification",
+        "Publish closeout with skip actions to prevent a second deployment"
+      ],
+      "stopConditions": [
+        "Unexpected staged path sensitive addition protected data or unrelated user change",
+        "Local or remote main divergence or required force push",
+        "Maintained verification automatic deployment or credential-free health failure",
+        "Closeout starts a second Fly deployment or recovery exceeds authorization"
+      ],
+      "verification": [
+        "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
+        "Maintained synthetic suite Python compilation JSON validation dashboard refresh health check and git diff check",
+        "Explicit staging source commit and direct-main fast-forward push",
+        "Exact automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.4 planning gate.",
+      "durability": "Active under Ryan's direct-main publication authorization; no force push manual workflow non-automatic Fly change protected-data access or recovery beyond the exact fast-forward path is allowed.",
+      "evidence": [],
+      "result": null
     }
   ],
   "phaseTasks": [
@@ -3875,10 +3975,15 @@
       "taskId": "P4-T1N3",
       "title": "Task 1N.3: Compound negative asset appreciation as depreciation",
       "status": "current",
-      "owner": "Ryan",
-      "summary": "Preserve negative projection rates and reconcile asset and net-worth depreciation for P3-3D-04 with focused coverage.",
-      "nextAction": "Define and confirm a bounded Task 1N.3 negative-appreciation work block.",
-      "blocker": "No Task 1N.3 implementation work block is confirmed."
+      "owner": "Codex Desktop",
+      "summary": "Complete and verified locally through 4U; exact-scope durability automatic release and credential-free health verification are active through 4U-R.",
+      "result": "Positive and negative nonzero rates now share the existing compound-growth formula while zero rates remain linear; exact item entity combined isolation cleanup and full smoke checks pass locally.",
+      "evidence": [
+        "command-center/negative-appreciation-projection-contract.md",
+        "command-center/logs/2026-07-20-negative-appreciation-truthfulness-4u.md"
+      ],
+      "nextAction": "Reverify commit fast-forward push and verify the attributable automatic release under the 4U-R contract.",
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -4289,9 +4394,29 @@
     {
       "name": "Work Block 4Q-R Atomic Payroll Roster Validation Release Closeout",
       "path": "command-center/logs/2026-07-20-atomic-payroll-roster-validation-release-4q-r.md"
+    },
+    {
+      "name": "Negative Appreciation Projection Contract",
+      "path": "command-center/negative-appreciation-projection-contract.md"
+    },
+    {
+      "name": "Work Block 4U Negative Appreciation Truthfulness Closeout",
+      "path": "command-center/logs/2026-07-20-negative-appreciation-truthfulness-4u.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-20",
+      "text": "Ryan directly authorized work block 4U-R to commit and push the exact verified ten-path 4U set to main observe the resulting automatic Fly deployment verify credential-free health and publish a sanitized skip-actions closeout."
+    },
+    {
+      "time": "2026-07-20",
+      "text": "Completed work block 4U locally: ordinary negative asset rates compound as depreciation while zero and positive paths remain truthful and maintained item entity combined isolation denied-network cleanup and full smoke checks pass without migration protected data external access or GitHub durability."
+    },
+    {
+      "time": "2026-07-20",
+      "text": "Ryan confirmed local-only work block 4U for Task 1N.3 and only its focused Task 2 slice; Weekly Waterfall rate-policy protected-data live-system GitHub durability deployment and both preserved untracked files remained excluded."
+    },
     {
       "time": "2026-07-20",
       "text": "Published 4Q source commit 3f3ffb2 to main automatic Fly run 29761239024 and deploy job 88416099000 succeeded credential-free production health returned 200 and the sanitized skip-actions closeout was prepared."
@@ -4811,8 +4936,8 @@
     },
     {
       "title": "Negative asset appreciation is treated as zero growth",
-      "summary": "Long-Term Planning labels negative rates as depreciation, but a synthetic asset at negative 10 percent remained flat at the future milestone.",
-      "status": "open",
+      "summary": "Resolved locally in 4U: positive and negative nonzero rates share the existing compound formula zero rates remain linear and maintained item entity combined isolation denied-network and cleanup checks pass.",
+      "status": "resolved-local",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
@@ -5106,8 +5231,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Plan and confirm Task 1N.2",
-    "description": "Define a bounded snapshot-note preservation work block with explicit exclusions stop conditions and synthetic verification before implementation."
+    "name": "Complete 4U-R durability and automatic release",
+    "description": "Publish the exact verified 4U source set directly to main verify the attributable automatic Fly deployment and credential-free health then close with a skip-actions command-center commit."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -5252,6 +5377,9 @@
     "phase4SnapshotNoteCoverage": "pass; maintained Personal BFM automatic manual repeated-auto replacement empty-note month-transition Luxe Legacy denial denied-network and exact-cleanup checks passed",
     "phase4SnapshotNoteBoundaries": "pass; no migration template protected data external call GitHub durability deployment live action or preserved untracked-file change occurred",
     "phase4SnapshotNoteRelease": "pass; source commit 7b473bb is on main automatic Fly run 29799554597 and deploy job 88537736941 passed every reported step and credential-free production health returned HTTP 200",
-    "phase4SnapshotNoteDurability": "pass; local main matched origin/main at source commit 7b473bb before this command-center-only skip-actions closeout with both preserved untracked files excluded"
+    "phase4SnapshotNoteDurability": "pass; local main matched origin/main at source commit 7b473bb before this command-center-only skip-actions closeout with both preserved untracked files excluded",
+    "phase4NegativeAppreciationRepair": "pass locally; positive and ordinary negative nonzero asset rates use the existing compound-growth and end-of-year contribution formula while zero rates retain the linear path and inflation adjustment remains unchanged",
+    "phase4NegativeAppreciationCoverage": "pass; maintained negative zero positive contribution inflation item-summary Personal BFM combined-net-worth rendered-label Luxe Legacy denial denied-network unrelated-row-preservation and exact-cleanup checks passed",
+    "phase4NegativeAppreciationBoundaries": "pass; no rate-policy change migration template seed protected data external call GitHub durability deployment live action or preserved untracked-file change occurred"
   }
 }
