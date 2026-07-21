@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; 4T-R is authorized and active for exact-scope durability, automatic release, and credential-free health verification
+Status: active after successful 4T-R durability, automatic deployment, and credential-free health verification; Task 1N.3 is current for a separate planning pass
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -916,10 +916,10 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4Q and 4Q-R.
   - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: done and verified locally through work block 4R; release remains separate.
-- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Task 1N.1 is released and Task 1N.2 is in authorized release work block 4T-R after verified local completion through 4T.
+- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: active; Tasks 1N.1-1N.2 are released and Task 1N.3 is current for a separately confirmed planning pass.
   - **Task 1N.1: Use stored APRs in locked payoff schedules.** Pass each linked card's maintained `apr_bps` value into payoff calculation, define missing or invalid APR behavior explicitly, and reconcile avalanche/snowball order, narrative, and saved schedule for `P3-3D-01`. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4S and 4S-R.
-  - **Task 1N.2: Preserve manual goal-review notes during automatic snapshots.** Update same-day balances without replacing the snapshot identity or erasing a manual note, while preserving intentional later manual-note replacement for `P3-3D-03`. Status: done and verified locally through 4T; exact-scope release is active through 4T-R.
-  - **Task 1N.3: Compound negative asset appreciation as depreciation.** Preserve negative projection rates instead of clamping them to zero and reconcile future asset and net-worth results for `P3-3D-04`. Status: planned after Task 1N.2.
+  - **Task 1N.2: Preserve manual goal-review notes during automatic snapshots.** Update same-day balances without replacing the snapshot identity or erasing a manual note, while preserving intentional later manual-note replacement for `P3-3D-03`. Status: done, durable, automatically deployed, and credential-free production health verified through 4T and 4T-R.
+  - **Task 1N.3: Compound negative asset appreciation as depreciation.** Preserve negative projection rates instead of clamping them to zero and reconcile future asset and net-worth results for `P3-3D-04`. Status: current for a separate work-block planning pass; no implementation is authorized.
   - **Task 1N.4: Unify Weekly date context and scheduled card-bill amounts.** Anchor pace, MTD, burn, recurring/manual/card bills, and display periods to the viewed week; use the scheduled payment rather than the full card balance for `P3-3E-01` and `P3-3E-02`. Status: planned after the planning-foundation repairs.
   - **Task 1N.5: Validate Weekly paydown dates and read stored goals defensively.** Reject invalid target dates without changing the prior goal and prevent malformed stored values from breaking Weekly or Waterfall for `P3-3E-04`. Status: planned after Task 1N.4.
   - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: planned after the Weekly repairs.
@@ -2197,7 +2197,7 @@ Result: automatic same-day snapshots now update only the current balance while p
 
 ### Confirmed Work Block 4T-R: Snapshot Note Preservation Durability And Release
 
-Status: active on 2026-07-20
+Status: complete, durable, automatically deployed, and credential-free production health verified on 2026-07-20
 
 Parent task: Phase 4 Task 4 for the exact verified 4T source set only.
 
@@ -2214,6 +2214,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.3 planning gate.
+
+Result: the exact ten-path 4T source set was committed as `7b473bb`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29799554597` and deploy job `88537736941` passed every reported step for exact source SHA `7b473bbb6022feeafd69c61c1c7349dde726296d`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, and no protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N.3 implementation, force push, or unrelated action occurred. Evidence: `command-center/logs/2026-07-20-snapshot-note-preservation-release-4t-r.md`.
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 

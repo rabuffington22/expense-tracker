@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4T snapshot-note preservation source set through the authorized 4T-R direct-main release path.
+Plan and confirm the next bounded repair for Task 1N.3 without beginning implementation.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4T-R is authorized and active for the complete verified 4T source set.
+Phase 4: Core Repairs And Regression Coverage — active; 4T-R is complete, durable, automatically deployed, and health verified.
 
 ## Current Work Block
 
-Work block 4T-R: Snapshot Note Preservation Durability And Release — active on `codex/snapshot-note-preservation` with direct-main publication authorized.
+No implementation work block is active. Work block 4T-R is complete; Task 1N.3 is at its separate planning and confirmation gate.
 
 ## Current Task
 
-Task 1N.2: Preserve manual goal-review notes during automatic snapshots — complete locally and current for exact-scope durability, automatic release, and credential-free health verification.
+Task 1N.3: Compound negative asset appreciation as depreciation — current for planning only; no implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, safe fast-forward to `main`, direct push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan retains recovery and all scope-expansion decisions.
+Ryan owns confirmation of the next bounded work block. Codex Desktop may inspect current repo truth and propose Task 1N.3 scope, exclusions, stops, and verification, but may not implement it without confirmation.
 
 ## Current Action
 
-Reverify the exact ten-path 4T source set, commit it, fast-forward local `main`, push `origin/main`, observe the attributable automatic Fly deployment, verify credential-free `/health`, and publish one `[skip actions]` closeout without a second deployment.
+Define and confirm a bounded Task 1N.3 negative-appreciation repair block before any product, test, GitHub, deployment, protected-data, or live action.
 
 ## Work Block 4T-R Contract
 
@@ -32,6 +32,15 @@ Reverify the exact ten-path 4T source set, commit it, fast-forward local `main`,
 - Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
 - Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
 - Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.3 planning gate.
+
+## Work Block 4T-R Result
+
+- Exact ten-path source commit `7b473bb` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29799554597` and deploy job `88537736941` passed every reported step for exact source SHA `7b473bbb6022feeafd69c61c1c7349dde726296d`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the staged high-confidence sensitive-addition scan returned zero.
+- No protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N.3 implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4T Contract
 
