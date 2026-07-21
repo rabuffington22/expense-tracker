@@ -123,8 +123,10 @@ def _auto_snapshot(conn, goal: dict):
 
     today_str = date.today().isoformat()
     conn.execute(
-        "INSERT OR REPLACE INTO goal_snapshots (goal_id, snapshot_date, balance_cents) "
-        "VALUES (?, ?, ?)",
+        "INSERT INTO goal_snapshots (goal_id, snapshot_date, balance_cents) "
+        "VALUES (?, ?, ?) "
+        "ON CONFLICT(goal_id, snapshot_date) DO UPDATE SET "
+        "balance_cents = excluded.balance_cents",
         (goal["id"], today_str, total_cents),
     )
     conn.commit()
@@ -841,8 +843,10 @@ def record_snapshot(goal_id):
 
         today_str = date.today().isoformat()
         conn.execute(
-            "INSERT OR REPLACE INTO goal_snapshots "
-            "(goal_id, snapshot_date, balance_cents, note) VALUES (?, ?, ?, ?)",
+            "INSERT INTO goal_snapshots "
+            "(goal_id, snapshot_date, balance_cents, note) VALUES (?, ?, ?, ?) "
+            "ON CONFLICT(goal_id, snapshot_date) DO UPDATE SET "
+            "balance_cents = excluded.balance_cents, note = excluded.note",
             (goal_id, today_str, total, note),
         )
         conn.commit()

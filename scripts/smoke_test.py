@@ -2213,6 +2213,315 @@ def main() -> None:
 
         print("   ✅ Stored APRs, explicit rejection, zero APR, schedule truth, isolation, denied-network, and cleanup passed")
 
+        # ── 8a3. Snapshot note preservation ────────────────────────
+        print("\n8a3. Snapshot note preservation…")
+        from datetime import date as real_date
+
+        class _SnapshotDate(real_date):
+            current = real_date(2026, 7, 20)
+
+            @classmethod
+            def today(cls):
+                return cls.current
+
+        def _snapshot_rows(entity_key, goal_id):
+            snapshot_conn = get_connection(entity_key)
+            try:
+                return [
+                    tuple(row)
+                    for row in snapshot_conn.execute(
+                        "SELECT id, snapshot_date, balance_cents, note, created_at "
+                        "FROM goal_snapshots WHERE goal_id = ? ORDER BY snapshot_date",
+                        (goal_id,),
+                    ).fetchall()
+                ]
+            finally:
+                snapshot_conn.close()
+
+        snapshot_fixtures = {}
+        for entity_key, entity_display in (
+            ("personal", "Personal"),
+            ("company", "BFM"),
+        ):
+            account_name = f"4T Snapshot Account {entity_key}"
+            setup_conn = get_connection(entity_key)
+            try:
+                setup_conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type, sort_order) "
+                    "VALUES (?, 10000, 'manual', 'bank', 804)",
+                    (account_name,),
+                )
+                goal_id = setup_conn.execute(
+                    "INSERT INTO short_term_goals "
+                    "(name, goal_type, linked_accounts, status) "
+                    "VALUES (?, 'savings', ?, 'active')",
+                    (
+                        f"4T Snapshot Goal {entity_key}",
+                        planning_json.dumps([account_name]),
+                    ),
+                ).lastrowid
+                setup_conn.commit()
+            finally:
+                setup_conn.close()
+            snapshot_fixtures[entity_key] = {
+                "display": entity_display,
+                "account": account_name,
+                "goal": goal_id,
+            }
+
+        with app.test_client() as snapshot_client, patch.object(
+            short_term_planning_routes, "date", _SnapshotDate
+        ), patch(
+            "socket.create_connection",
+            side_effect=AssertionError("snapshot persistence attempted outbound networking"),
+        ) as snapshot_create_connection, patch(
+            "socket.socket.connect",
+            side_effect=AssertionError("snapshot persistence attempted outbound networking"),
+        ) as snapshot_socket_connect:
+            for entity_key in ("personal", "company"):
+                fixture = snapshot_fixtures[entity_key]
+                snapshot_client.set_cookie("entity", fixture["display"])
+
+                first_auto = snapshot_client.get("/planning/short-term/")
+                _check(
+                    first_auto.status_code == 200,
+                    f"snapshot {entity_key}: initial automatic snapshot should render",
+                )
+                first_rows = _snapshot_rows(entity_key, fixture["goal"])
+                _check(
+                    len(first_rows) == 1
+                    and first_rows[0][1:4] == ("2026-07-20", 10000, None),
+                    f"snapshot {entity_key}: initial automatic snapshot should insert today's balance",
+                )
+                original_id, original_created_at = first_rows[0][0], first_rows[0][4]
+
+                update_conn = get_connection(entity_key)
+                try:
+                    update_conn.execute(
+                        "UPDATE account_balances SET balance_cents = 20000 "
+                        "WHERE account_name = ?",
+                        (fixture["account"],),
+                    )
+                    update_conn.commit()
+                finally:
+                    update_conn.close()
+                manual = snapshot_client.post(
+                    f"/planning/short-term/goals/{fixture['goal']}/snapshot",
+                    data={"note": "First 4T manual review"},
+                )
+                _check(
+                    manual.status_code == 302,
+                    f"snapshot {entity_key}: manual review should redirect",
+                )
+                manual_row = _snapshot_rows(entity_key, fixture["goal"])[0]
+                _check(
+                    manual_row
+                    == (
+                        original_id,
+                        "2026-07-20",
+                        20000,
+                        "First 4T manual review",
+                        original_created_at,
+                    ),
+                    f"snapshot {entity_key}: manual upsert should preserve identity and replace note",
+                )
+
+                update_conn = get_connection(entity_key)
+                try:
+                    update_conn.execute(
+                        "UPDATE account_balances SET balance_cents = 30000 "
+                        "WHERE account_name = ?",
+                        (fixture["account"],),
+                    )
+                    update_conn.commit()
+                finally:
+                    update_conn.close()
+                repeated_auto = snapshot_client.get("/planning/short-term/")
+                _check(
+                    repeated_auto.status_code == 200,
+                    f"snapshot {entity_key}: repeated automatic snapshot should render",
+                )
+                repeated_row = _snapshot_rows(entity_key, fixture["goal"])[0]
+                _check(
+                    repeated_row
+                    == (
+                        original_id,
+                        "2026-07-20",
+                        30000,
+                        "First 4T manual review",
+                        original_created_at,
+                    ),
+                    f"snapshot {entity_key}: automatic update should preserve identity and manual note",
+                )
+
+                update_conn = get_connection(entity_key)
+                try:
+                    update_conn.execute(
+                        "UPDATE account_balances SET balance_cents = 40000 "
+                        "WHERE account_name = ?",
+                        (fixture["account"],),
+                    )
+                    update_conn.commit()
+                finally:
+                    update_conn.close()
+                snapshot_client.get("/planning/short-term/")
+                second_auto_row = _snapshot_rows(entity_key, fixture["goal"])[0]
+                _check(
+                    second_auto_row
+                    == (
+                        original_id,
+                        "2026-07-20",
+                        40000,
+                        "First 4T manual review",
+                        original_created_at,
+                    ),
+                    f"snapshot {entity_key}: repeated automatic updates should remain identity stable",
+                )
+
+                replacement = snapshot_client.post(
+                    f"/planning/short-term/goals/{fixture['goal']}/snapshot",
+                    data={"note": "Revised 4T manual review"},
+                )
+                _check(
+                    replacement.status_code == 302,
+                    f"snapshot {entity_key}: later manual replacement should redirect",
+                )
+                replacement_row = _snapshot_rows(entity_key, fixture["goal"])[0]
+                _check(
+                    replacement_row
+                    == (
+                        original_id,
+                        "2026-07-20",
+                        40000,
+                        "Revised 4T manual review",
+                        original_created_at,
+                    ),
+                    f"snapshot {entity_key}: later manual review should intentionally replace the note",
+                )
+
+                empty = snapshot_client.post(
+                    f"/planning/short-term/goals/{fixture['goal']}/snapshot",
+                    data={"note": "   "},
+                )
+                _check(
+                    empty.status_code == 302,
+                    f"snapshot {entity_key}: explicit empty review should redirect",
+                )
+                empty_row = _snapshot_rows(entity_key, fixture["goal"])[0]
+                review_conn = get_connection(entity_key)
+                try:
+                    review_goal_row = review_conn.execute(
+                        "SELECT * FROM short_term_goals WHERE id = ?",
+                        (fixture["goal"],),
+                    ).fetchone()
+                    review_goal = dict(review_goal_row)
+                    review_needed = short_term_planning_routes._check_monthly_review(
+                        review_conn, review_goal
+                    )
+                finally:
+                    review_conn.close()
+                _check(
+                    empty_row
+                    == (
+                        original_id,
+                        "2026-07-20",
+                        40000,
+                        None,
+                        original_created_at,
+                    )
+                    and review_needed,
+                    f"snapshot {entity_key}: empty manual note should preserve identity and remain review-incomplete",
+                )
+
+                restored = snapshot_client.post(
+                    f"/planning/short-term/goals/{fixture['goal']}/snapshot",
+                    data={"note": "Final July 4T review"},
+                )
+                _check(
+                    restored.status_code == 302,
+                    f"snapshot {entity_key}: final July note should redirect",
+                )
+
+                update_conn = get_connection(entity_key)
+                try:
+                    update_conn.execute(
+                        "UPDATE account_balances SET balance_cents = 50000 "
+                        "WHERE account_name = ?",
+                        (fixture["account"],),
+                    )
+                    update_conn.commit()
+                finally:
+                    update_conn.close()
+                _SnapshotDate.current = real_date(2026, 8, 1)
+                month_transition = snapshot_client.get("/planning/short-term/")
+                _check(
+                    month_transition.status_code == 200,
+                    f"snapshot {entity_key}: month transition should render",
+                )
+                transition_rows = _snapshot_rows(entity_key, fixture["goal"])
+                _check(
+                    len(transition_rows) == 2
+                    and transition_rows[0]
+                    == (
+                        original_id,
+                        "2026-07-20",
+                        40000,
+                        "Final July 4T review",
+                        original_created_at,
+                    )
+                    and transition_rows[1][0] != original_id
+                    and transition_rows[1][1:4] == ("2026-08-01", 50000, None),
+                    f"snapshot {entity_key}: new month should preserve July and insert August",
+                )
+                _SnapshotDate.current = real_date(2026, 7, 20)
+
+            before_ll_snapshots = _database_snapshot("luxelegacy")
+            snapshot_client.set_cookie("entity", "LL")
+            denied_ll_snapshot = snapshot_client.post(
+                "/planning/short-term/goals/999999/snapshot",
+                data={"note": "Denied 4T note"},
+            )
+            _check(
+                denied_ll_snapshot.status_code == 302
+                and denied_ll_snapshot.headers.get("Location", "").endswith("/"),
+                "snapshot LL: direct manual snapshot should remain denied",
+            )
+            _check(
+                _database_snapshot("luxelegacy") == before_ll_snapshots,
+                "snapshot LL: denied request should leave the database unchanged",
+            )
+            snapshot_create_connection.assert_not_called()
+            snapshot_socket_connect.assert_not_called()
+
+        for entity_key in ("personal", "company"):
+            fixture = snapshot_fixtures[entity_key]
+            cleanup_conn = get_connection(entity_key)
+            try:
+                cleanup_conn.execute(
+                    "DELETE FROM short_term_goals WHERE id = ?", (fixture["goal"],)
+                )
+                cleanup_conn.execute(
+                    "DELETE FROM account_balances WHERE account_name = ?",
+                    (fixture["account"],),
+                )
+                cleanup_conn.commit()
+                leftovers = cleanup_conn.execute(
+                    "SELECT "
+                    "(SELECT COUNT(*) FROM short_term_goals WHERE id = ?) + "
+                    "(SELECT COUNT(*) FROM goal_snapshots WHERE goal_id = ?) + "
+                    "(SELECT COUNT(*) FROM account_balances WHERE account_name = ?)",
+                    (fixture["goal"], fixture["goal"], fixture["account"]),
+                ).fetchone()[0]
+            finally:
+                cleanup_conn.close()
+            _check(
+                leftovers == 0,
+                f"snapshot {entity_key}: synthetic rows should clean up exactly",
+            )
+
+        print("   ✅ Identity-stable auto/manual upserts, note replacement, month transition, isolation, denied-network, and cleanup passed")
+
         # ── 8a. BFM-only payroll route boundary ─────────────────────
         print("\n8b. BFM-only payroll route boundary…")
         from web.routes import payroll as payroll_routes

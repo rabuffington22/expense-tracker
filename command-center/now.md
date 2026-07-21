@@ -2,27 +2,55 @@
 
 ## Active Objective
 
-Plan and confirm the next bounded repair for Task 1N.2 without beginning implementation.
+Publish the exact verified 4T snapshot-note preservation source set through the authorized 4T-R direct-main release path.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4S-R is complete, durable, automatically deployed, and health verified.
+Phase 4: Core Repairs And Regression Coverage — active; 4T-R is authorized and active for the complete verified 4T source set.
 
 ## Current Work Block
 
-No implementation work block is active. Work block 4S-R is complete; Task 1N.2 is at its separate planning and confirmation gate.
+Work block 4T-R: Snapshot Note Preservation Durability And Release — active on `codex/snapshot-note-preservation` with direct-main publication authorized.
 
 ## Current Task
 
-Task 1N.2: Preserve manual goal-review notes during automatic snapshots — current for planning only; no implementation is authorized.
+Task 1N.2: Preserve manual goal-review notes during automatic snapshots — complete locally and current for exact-scope durability, automatic release, and credential-free health verification.
 
 ## Owner
 
-Ryan owns confirmation of the next bounded work block. Codex Desktop may inspect current repo truth and propose Task 1N.2 scope, exclusions, stops, and verification, but may not implement it without confirmation.
+Codex Desktop owns exact-path staging, source commit, safe fast-forward to `main`, direct push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan retains recovery and all scope-expansion decisions.
 
 ## Current Action
 
-Define and confirm a bounded Task 1N.2 snapshot-note preservation block before any product, test, GitHub, deployment, protected-data, or live action.
+Reverify the exact ten-path 4T source set, commit it, fast-forward local `main`, push `origin/main`, observe the attributable automatic Fly deployment, verify credential-free `/health`, and publish one `[skip actions]` closeout without a second deployment.
+
+## Work Block 4T-R Contract
+
+- Include the exact verified ten-path 4T application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/snapshot-note-preservation`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real financial rows or databases, retained uploads, credentials, authenticated production pages, external calls other than GitHub/Fly status and credential-free health, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1N.3, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4T contract and implementation; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
+- Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.3 planning gate.
+
+## Work Block 4T Contract
+
+- Include Task 1N.2 and only the focused Task 2 regression slice for `P3-3D-03` and the matching `P3-3D-C01` coverage.
+- Same-day automatic snapshots update the balance only while preserving snapshot ID, creation timestamp, and any manual note; same-day manual snapshots update the balance and intentionally replace the normalized note without replacing row identity; a new date creates a new row and leaves earlier notes unchanged.
+- Keep Tasks 1N.3-1N.8, Tasks 1O-1P, the remainder of Task 2, Tasks 3-4, migrations, historical cleanup, demo seeding, UI redesign, real financial data, retained uploads, credentials, production/demo, external calls, live systems, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Use Codex Desktop in the current task on local branch `codex/snapshot-note-preservation`; no delegation or second opinion is needed. Codex owns implementation, verification, issue disposition, exact-scope intake, and dashboard closeout.
+- Stop if correct behavior requires a migration, historical remediation, a new review-note or UX policy, authentication changes, protected/live data, external access, Task 1N.3 or broader planning work, plan-changing verification, failed cleanup, failed command-center checks, or either preserved untracked file.
+- Verify baseline and final maintained smoke; automatic/manual/repeated-auto ordering; intentional later manual replacement and explicit empty-note behavior; same-day ID and `created_at` stability; month transition; Personal/BFM behavior; Luxe Legacy denial; denied networking; exact temporary cleanup; compilation; JSON; whitespace; dashboard refresh and health; rendered dashboard inspection; and final worktree scope.
+- Report the exact persistence contract, ordering and identity matrix, focused and full verification, changed paths, cleanup, preserved boundaries, local branch state, and separate publication gate.
+
+## Work Block 4T Result
+
+- Automatic same-day snapshots update only `balance_cents`, preserving the snapshot ID, creation time, and manual note.
+- Manual same-day reviews update the balance and normalized note without replacing row identity; empty notes remain review-incomplete.
+- A new month creates a separate snapshot while preserving the earlier review unchanged.
+- Maintained Personal and BFM coverage passes for automatic/manual/repeated-auto ordering, intentional replacement, empty-note state, identity stability, and month transition; Luxe Legacy denial, denied networking, and exact cleanup also pass.
+- Baseline and final full smoke suites, Python compilation, JSON, whitespace, dashboard refresh, health, generated-dashboard inspection, and final scope checks pass locally.
+- No migration, template, protected data, external access, commit, push, PR, merge, deployment, or live action occurred. Both pre-existing untracked files remain untouched.
 
 ## Work Block 4S-R Contract
 

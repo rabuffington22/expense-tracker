@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-20 10:01 PM CST",
+    "lastUpdated": "2026-07-20 10:48 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,31 +22,31 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4S-R is complete: source commit 91646a5 is on main, automatic Fly run 29797187213 and job 88530786726 succeeded for the exact SHA, and credential-free production health returned HTTP 200"
+    "durabilityStatus": "Work block 4T-R is authorized and active for the exact verified 4T source set; direct-main push will trigger one automatic Fly deployment"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4S-R is durable deployed and health verified; Task 1N.2 is current for a separate planning and confirmation pass only.",
+    "summary": "Work block 4T-R is active for exact-scope durability automatic release and credential-free health verification of Task 1N.2.",
     "progress": 80
   },
   "currentTask": {
     "title": "Task 1N.2: Preserve manual goal-review notes during automatic snapshots",
-    "owner": "Ryan",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop may inspect current repo truth and propose a bounded work block but may not implement before confirmation",
-    "nextAction": "Define and confirm a bounded Task 1N.2 snapshot-note preservation work block.",
-    "blocker": "No Task 1N.2 implementation work block is confirmed."
+    "supportingAgent": "Codex Desktop owns exact-path staging direct-main fast-forward automatic deployment observation credential-free health and closeout",
+    "nextAction": "Reverify commit fast-forward and push the exact ten-path 4T source set then verify the attributable automatic release.",
+    "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-s-release",
-    "label": "4S-R",
-    "name": "Locked Payoff APR Truthfulness Durability And Release",
-    "status": "done",
+    "id": "phase-4-block-t-release",
+    "label": "4T-R",
+    "name": "Snapshot Note Preservation Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Release complete; return Task 1N.2 to its separate planning and confirmation gate",
+    "currentTask": "Reverify and publish the exact 4T source set then observe automatic release and credential-free health",
     "includedTasks": [
-      "Task 1N.1 durability and automatic release",
+      "Task 1N.2 durability and automatic release",
       "Credential-free production health verification",
       "Sanitized command-center closeout"
     ],
@@ -63,12 +63,9 @@
       "Exact automatic Fly run and job result plus credential-free production health",
       "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
-    "nextReportPoint": "Return source commit 91646a5 closeout commit automatic Fly run 29797187213 job 88530786726 credential-free health final main alignment preserved exclusions and separate Task 1N.2 planning gate.",
-    "result": "Exact source commit 91646a5 was pushed directly to main; automatic Fly run 29797187213 and job 88530786726 succeeded for the exact SHA; credential-free production health returned HTTP 200; both preserved untracked files remained excluded.",
-    "durability": "Source commit 91646a5 is durable on main; this command-center-only closeout uses skip actions to prevent a second deployment.",
-    "evidence": [
-      "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-release-4s-r.md"
-    ]
+    "nextReportPoint": "Return the source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.3 planning gate.",
+    "durability": "Active under Ryan's direct-main publication authorization; no force push manual workflow non-automatic Fly change protected-data access or recovery beyond the exact fast-forward path is allowed.",
+    "evidence": []
   },
   "routerHealth": {
     "status": "healthy",
@@ -93,23 +90,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 1N.2 snapshot-note preservation",
-    "status": "waiting-confirmation",
-    "owner": "Ryan",
-    "why": "Work block 4S-R is complete and Task 1N.2 is the smallest next calculation-truthfulness slice.",
-    "action": "Define and confirm a bounded Task 1N.2 work block before implementation.",
+    "title": "Execute 4T-R durability and automatic release",
+    "status": "in-progress",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized commit and push to main for the exact verified 4T source set.",
+    "action": "Reverify exact scope commit fast-forward push observe the attributable automatic Fly deployment verify credential-free health and publish a skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Task 1N.2 is waiting for Ryan to confirm a separately bounded implementation work block.",
-    "items": [
-      "Confirm or revise the future Task 1N.2 snapshot-note preservation work block before implementation"
-    ]
+    "summary": "No current Ryan input is required unless a 4T-R stop condition is reached.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1N.2 scope exclusions stop conditions and verification require confirmation before implementation; 4S-R is closed.",
-    "decisionQueue": "Ryan must confirm or revise the proposed Task 1N.2 work block before product or test changes.",
+    "phaseQuestions": "4T-R is active for the exact verified source set; Task 1N.3 remains excluded and unconfirmed.",
+    "decisionQueue": "Ryan retains recovery scope-expansion manual-workflow and non-automatic Fly decisions.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -3031,6 +3026,108 @@
         "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-release-4s-r.md"
       ],
       "result": "Exact source commit 91646a5 was pushed directly to main without force; automatic Fly run 29797187213 and job 88530786726 succeeded for the exact SHA; credential-free production health returned HTTP 200; both preserved untracked files remained excluded."
+    },
+    {
+      "id": "phase-4-block-t",
+      "phaseId": "phase-4",
+      "label": "4T",
+      "name": "Snapshot Note Preservation",
+      "status": "done",
+      "includedTasks": [
+        "Task 1N.2",
+        "Task 2 focused P3-3D-03 and P3-3D-C01 snapshot-persistence regression slice"
+      ],
+      "excludedTasks": [
+        "Tasks 1N.3-1N.8 Tasks 1O-1P the remainder of Task 2 and Tasks 3-4",
+        "Migrations historical snapshot cleanup demo seeding UI redesign and unrelated planning behavior",
+        "Real financial data retained uploads credentials authentication changes production demo external calls live systems GitHub durability and deployment",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The small sensitive-repo repair couples Flask persistence maintained synthetic verification cleanup issue disposition and Runway OS stewardship while external workers remain inactive.",
+      "runnerPath": "Current Codex task on local branch codex/snapshot-note-preservation without delegation or second opinion.",
+      "expectedFiles": [
+        "web/routes/short_term_planning.py and focused additions to scripts/smoke_test.py",
+        "A snapshot-note preservation contract sanitized 4T evidence issue disposition and Runway OS state"
+      ],
+      "defaults": [
+        "Same-day automatic conflicts update only balance_cents while preserving id created_at and note",
+        "Same-day manual conflicts update balance_cents and normalized note while preserving id and created_at",
+        "An empty manual note remains empty and review-incomplete while a new date creates a new row without altering earlier notes",
+        "No migration template change commit push release or live verification is authorized"
+      ],
+      "stopConditions": [
+        "Correct behavior requires a migration historical remediation or a new review-note or UX policy",
+        "Protected data credentials authentication changes external access production demo or another live action becomes necessary",
+        "Work expands into Task 1N.3 or broader planning coverage",
+        "Verification changes the plan cleanup cannot be proven command-center checks fail or either preserved untracked file would be touched"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke suite",
+        "Same-day automatic manual repeated-auto intentional-replacement empty-note identity and created-at matrix",
+        "Month transition Personal BFM Luxe Legacy denial denied-network and exact-cleanup coverage",
+        "Python compilation JSON whitespace dashboard refresh health rendered inspection and final worktree scope"
+      ],
+      "reportBack": "Return the exact persistence contract ordering and identity matrix focused and full synthetic results changed paths cleanup preserved boundaries local branch state and separate publication gate.",
+      "nextBlock": "4T-R durability and automatic release only if separately authorized; otherwise plan Task 1N.3 as 4U.",
+      "durability": "Complete and verified locally on codex/snapshot-note-preservation; no commit push PR merge workflow deployment protected-data credential external-access or live action occurred.",
+      "evidence": [
+        "command-center/snapshot-note-preservation-contract.md",
+        "command-center/logs/2026-07-20-snapshot-note-preservation-4t.md",
+        "web/routes/short_term_planning.py",
+        "scripts/smoke_test.py"
+      ],
+      "result": "Identity-stable same-day upserts preserve automatic notes and row identity keep manual replacement explicit and pass maintained Personal BFM month-transition Luxe Legacy denial denied-network cleanup and full smoke verification locally."
+    },
+    {
+      "id": "phase-4-block-t-release",
+      "phaseId": "phase-4",
+      "label": "4T-R",
+      "name": "Snapshot Note Preservation Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1N.2 durability and automatic release",
+        "Credential-free production health verification",
+        "Sanitized command-center closeout"
+      ],
+      "excludedTasks": [
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md",
+        "Real financial rows or databases retained uploads credentials authenticated production pages manual workflow actions and downstream access or writes",
+        "Workflow edits non-automatic Fly changes migrations force push and recovery outside the exact fast-forward path",
+        "Task 1N.3 broader Task 2 unrelated repairs and other live actions"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git stewardship sensitive-addition review direct-main fast-forward safety automatic Fly observation credential-free health verification and final Runway OS closeout.",
+      "runnerPath": "Current Codex task on codex/snapshot-note-preservation followed by an exact fast-forward to local main.",
+      "expectedLiveEffect": "Push one verified source commit to main triggering one automatic Fly deployment verify only credential-free health then push one skip-actions command-center closeout without a second deployment.",
+      "expectedFiles": [
+        "Exact verified ten-path 4T application maintained-test contract issue evidence and Runway OS source set",
+        "A sanitized 4T-R closeout log and command-center-only skip-actions commit"
+      ],
+      "defaults": [
+        "No PR because Ryan directly instructed commit and push to main",
+        "Observe only the automatic Fly deployment caused by the source push",
+        "Use only credential-free production health verification",
+        "Publish closeout with skip actions to prevent a second deployment"
+      ],
+      "stopConditions": [
+        "Unexpected staged path sensitive addition protected data or unrelated user change",
+        "Local or remote main divergence or required force push",
+        "Maintained verification automatic deployment or credential-free health failure",
+        "Closeout starts a second Fly deployment or recovery exceeds authorization"
+      ],
+      "verification": [
+        "Exact path staged-set sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
+        "Maintained synthetic suite Python compilation JSON validation dashboard refresh health check and git diff check",
+        "Explicit staging source commit and direct-main fast-forward push",
+        "Exact automatic Fly run and job result plus credential-free production health",
+        "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.3 planning gate.",
+      "durability": "Active under Ryan's direct-main publication authorization; no force push manual workflow non-automatic Fly change protected-data access or recovery beyond the exact fast-forward path is allowed.",
+      "evidence": []
     }
   ],
   "phaseTasks": [
@@ -3750,10 +3847,10 @@
       "taskId": "P4-T1N2",
       "title": "Task 1N.2: Preserve manual goal-review notes during automatic snapshots",
       "status": "current",
-      "owner": "Ryan",
-      "summary": "Preserve same-day manual review notes and snapshot identity while automatic snapshots refresh balances for P3-3D-03 with focused coverage.",
-      "nextAction": "Define and confirm a bounded Task 1N.2 snapshot-note preservation work block.",
-      "blocker": "No Task 1N.2 implementation work block is confirmed."
+      "owner": "Codex Desktop",
+      "summary": "Complete and verified locally through 4T; exact-scope durability automatic release and credential-free health verification are active through 4T-R.",
+      "nextAction": "Reverify commit fast-forward push and verify the attributable automatic release under the 4T-R contract.",
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -4687,8 +4784,8 @@
     },
     {
       "title": "Automatic goal snapshots erase same-day review notes",
-      "summary": "A manual monthly-review note saved successfully, but the next page load replaced the current-day snapshot without its note and reopened the review prompt.",
-      "status": "open",
+      "summary": "Resolved locally in work block 4T: identity-stable same-day upserts preserve manual notes during automatic balance refresh and keep manual replacement explicit with maintained coverage.",
+      "status": "resolved-local",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
@@ -5130,6 +5227,9 @@
     "phase4CategoryDomainCoverage": "pass; maintained Personal BFM and Luxe Legacy valid invalid match order alias skip-sentinel cross-hash-seed denied-network exact-cleanup and full smoke checks passed",
     "phase4CategoryDomainBoundaries": "pass; no taxonomy migration historical-row action protected data live vendor or Plaid action downstream access workflow edit or preserved untracked-file change occurred",
     "phase4CategoryDomainRelease": "pass; source commit 5529912 is on main automatic Fly run 29745531202 and deploy job 88362414145 passed every reported step and credential-free production health returned HTTP 200",
-    "phase4CategoryDomainDurability": "pass; local main matched origin/main at source commit 5529912 before this command-center-only skip-actions closeout with both preserved untracked files excluded"
+    "phase4CategoryDomainDurability": "pass; local main matched origin/main at source commit 5529912 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
+    "phase4SnapshotNotePersistence": "pass locally; same-day automatic conflicts update only balance while manual conflicts update balance and normalized note with stable id and created_at and new dates insert separate rows",
+    "phase4SnapshotNoteCoverage": "pass; maintained Personal BFM automatic manual repeated-auto replacement empty-note month-transition Luxe Legacy denial denied-network and exact-cleanup checks passed",
+    "phase4SnapshotNoteBoundaries": "pass; no migration template protected data external call GitHub durability deployment live action or preserved untracked-file change occurred"
   }
 }

@@ -171,7 +171,7 @@ Work block 4E added one early Luxe Legacy denial guard to each planning blueprin
 
 ## Automatic Goal Snapshots Erase Same-Day Review Notes
 
-Status: open; discovered in work block 3D
+Status: resolved locally in work block 4T; release not authorized
 
 Severity: medium planning-record persistence risk
 
@@ -179,7 +179,7 @@ Captured: 2026-07-18
 
 Where seen: `web/routes/short_term_planning.py` and deterministic same-day snapshot reproduction
 
-Revisit: Phase 4 Task 1 for snapshot upsert repair; Phase 4 Task 2 for tracked coverage
+Revisit: release only through a separately authorized durability block
 
 Summary:
 
@@ -199,6 +199,10 @@ Acceptance checks:
 Why not fixed now:
 
 Snapshot upsert behavior and tracked tests were excluded from audit work block 3D.
+
+Resolution:
+
+Work block 4T replaced destructive same-day snapshot replacement with identity-stable SQLite conflict updates. Automatic snapshots now update only the balance and preserve manual notes; manual reviews intentionally replace the normalized note without changing `id` or `created_at`; a new month inserts a new row while leaving the prior review intact. Maintained Personal and BFM coverage exercises automatic/manual ordering, repeated automatic updates, intentional replacement, empty-note review state, month transition, Luxe Legacy denial, denied networking, and exact cleanup. Baseline and final full smoke suites and Python compilation pass locally; publication remains separately gated.
 
 ## Negative Asset Appreciation Is Treated As Zero Growth
 
