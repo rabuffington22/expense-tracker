@@ -2,27 +2,57 @@
 
 ## Active Objective
 
-Plan and confirm the next bounded repair for Task 1N.4 without beginning implementation.
+Publish the exact verified 4V source set directly to `main`, observe its one automatic Fly deployment, verify credential-free production health, and publish a sanitized `[skip actions]` closeout.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4U-R is complete, durable, automatically deployed, and health verified.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4V-R release is active.
 
 ## Current Work Block
 
-No implementation work block is active. Work block 4U-R is complete; Task 1N.4 is at its separate planning and confirmation gate.
+Work block 4V-R: Weekly Date And Bill Truthfulness Durability And Release — active.
 
 ## Current Task
 
-Task 1N.4: Unify Weekly date context and scheduled card-bill amounts — current for planning only; no implementation is authorized.
+Task 1N.4: Unify Weekly date context and scheduled card-bill amounts — release the exact locally verified 4V result without expanding product scope.
 
 ## Owner
 
-Ryan owns confirmation of the next bounded work block. Codex Desktop may inspect current repo truth and propose Task 1N.4 scope, exclusions, stops, and verification, but may not implement it without confirmation.
+Codex Desktop owns the confirmed 4V-R durability, automatic-release observation, health verification, and sanitized closeout.
 
 ## Current Action
 
-Define and confirm a bounded Task 1N.4 Weekly date-context and scheduled-card-bill repair block before any product, test, GitHub, deployment, protected-data, or live action.
+Stage only the exact twelve-path 4V source set, commit on `codex/weekly-date-bill-truthfulness`, fast-forward and push `main`, observe the exact automatic Fly run, verify credential-free `/health`, and publish one command-center-only `[skip actions]` closeout.
+
+## Work Block 4V-R Contract
+
+- Include only the exact verified twelve-path 4V application, maintained-test, contract, issue, evidence, and Runway OS source set; explicit-path staging; one source commit on `codex/weekly-date-bill-truthfulness`; fast-forward local `main`; direct push to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep pre-existing untracked `scripts/sync_prod_to_local.sh`, unrelated untracked `command-center/now 2.md`, real financial rows or databases, retained uploads, credentials, authenticated production pages, external calls other than GitHub/Fly status and credential-free health, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Task 1N.5, broader Task 2, unrelated repairs, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; preserve the verified 4V contract and implementation; trigger only the automatic deployment caused by the source push; and use `[skip actions]` on the closeout so it cannot start a second deployment.
+- Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
+- Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
+- Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.5 planning gate.
+
+## Work Block 4V Contract
+
+- Include Task 1N.4 and only the focused Task 2 regression slice for `P3-3E-01`, `P3-3E-02`, and matching `P3-3E-C01` coverage.
+- Use the selected ISO week's Monday as the budget-month anchor; make pace, category pace, MTD, burn, recurring/manual/card bill projection, and displayed period share that viewed-week context without allowing a cross-month week to create an overlong month window.
+- Use a positive `payment_amount_cents` value for credit-card bill rows and totals; when the scheduled amount is missing or zero, keep the due reminder with an unavailable amount and exclude it from totals rather than substituting the full balance.
+- Preserve today-based defaults for existing Cash Flow and Short-Term Planning callers, current Weekly layout unless a small unavailable-amount label is required, integer-cent reconciliation, entity isolation, and existing authentication/CSRF behavior.
+- Keep Tasks 1N.5-1N.8, Tasks 1O-1P, the remainder of Task 2, Tasks 3-4, migrations, historical remediation, demo redesign, broader UI work, authentication, workflows, GitHub durability, deployment, protected data, retained uploads, credentials, production/demo access, Plaid, external calls, downstream writes, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop in the current task on local branch `codex/weekly-date-bill-truthfulness`; no delegation or second opinion is needed. Codex owns implementation, synthetic verification, exact cleanup, issue disposition, dashboard currency, and final intake.
+- Stop if correct behavior requires a different week/month anchor or payment fallback, shared-helper changes alter unrelated Cash Flow or Short-Term Planning behavior, a migration or historical remediation is needed, work expands into Task 1N.5 or Waterfall, protected/live access becomes necessary, verification changes the plan, cleanup cannot be proven, command-center checks fail, or either preserved untracked file would be touched.
+- Verify baseline and final maintained smoke; current, historical, cross-month, cross-year, empty, and invalid-week navigation; pace, category pace, MTD, burn, display, recurrence, bill ordering, multiple-card, positive/missing/zero scheduled-payment, zero-balance, row/total, Personal/BFM, Luxe Legacy-denial, denied-network, unrelated-row-preservation, and exact-cleanup behavior; then run compilation, JSON, whitespace, dashboard refresh, health, rendered inspection, and final worktree review.
+- Report the exact viewed-week contract, recurrence-anchor behavior, missing-payment behavior, focused and full synthetic results, changed paths, cleanup proof, preserved boundaries, local branch status, and separate publication gate.
+
+## Work Block 4V Result
+
+- The selected ISO week's Monday now owns the Weekly budget month; total/category pace, last-week comparisons, warnings, MTD, burn, and displayed month share that context.
+- MTD ends at the earliest of viewed Sunday, current date, or anchor-month end, so cross-month and cross-year weeks cannot produce an overlong month window.
+- Detected recurring, manual recurring, and card-due helpers accept an optional reference date; Weekly passes its viewed Monday while existing Cash Flow and Short-Term Planning callers retain today-based defaults.
+- Positive scheduled card payments drive Weekly rows and totals. Missing or zero scheduled amounts remain visible as unavailable and never substitute full balances; zero-balance cards remain excluded.
+- Baseline and final full smoke, maintained section 8a5, Python compilation, JSON, whitespace, dashboard refresh, health, rendered dashboard inspection, entity isolation, denied networking, unrelated-row preservation, and exact cleanup pass locally.
+- No template, migration, schema, historical remediation, protected data, retained upload, credential, external access, GitHub durability, deployment, or live action occurred. Both preserved untracked files remain untouched.
 
 ## Work Block 4U-R Contract
 

@@ -543,7 +543,7 @@ def _get_action_items(conn) -> list[dict]:
     return items
 
 
-def _get_cc_due_items(conn) -> list[dict]:
+def _get_cc_due_items(conn, reference_date: date | None = None) -> list[dict]:
     """Generate upcoming CC payment due date reminders from account_balances."""
     rows = conn.execute(
         "SELECT account_name, balance_cents, payment_due_day, "
@@ -555,19 +555,19 @@ def _get_cc_due_items(conn) -> list[dict]:
         "ORDER BY payment_due_day"
     ).fetchall()
 
-    today = date.today()
+    anchor = reference_date or date.today()
     items = []
     for r in rows:
         due_day = r["payment_due_day"]
         if not due_day or due_day < 1 or due_day > 31:
             continue
         # Compute the next due date
-        year, month = today.year, today.month
+        year, month = anchor.year, anchor.month
         max_day = calendar.monthrange(year, month)[1]
         clamped_day = max(1, min(due_day, max_day))
         due_date = date(year, month, clamped_day)
         # If already past this month, use next month
-        if due_date < today:
+        if due_date < anchor:
             if month == 12:
                 year, month = year + 1, 1
             else:
@@ -585,10 +585,11 @@ def _get_cc_due_items(conn) -> list[dict]:
             "status": "pending",
             "due_date": due_date.isoformat(),
             "due_display": due_date.strftime("%b %d"),
-            "days_until": (due_date - today).days,
+            "days_until": (due_date - anchor).days,
             "auto": True,
             "account_name": r["account_name"],
             "balance_cents": r["balance_cents"],
+            "payment_amount_cents": payment,
         })
     items.sort(key=lambda x: x["due_date"])
     return items

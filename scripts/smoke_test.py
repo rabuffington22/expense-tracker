@@ -2787,6 +2787,409 @@ def main() -> None:
 
         print("   ✅ Negative, zero, positive, contribution, inflation, summary, combined, isolation, denied-network, and cleanup behavior passed")
 
+        # ── 8a5. Weekly date and bill truthfulness ─────────────────
+        print("\n8a5. Weekly date and bill truthfulness…")
+        from web.routes import weekly as weekly_routes
+
+        class _WeeklyDate(real_date):
+            current = real_date(2026, 7, 20)
+
+            @classmethod
+            def today(cls):
+                return cls.current
+
+        weekly_tables = (
+            "transactions",
+            "budget_items",
+            "account_balances",
+            "manual_recurring",
+            "action_items",
+            "payroll_schedule",
+        )
+
+        def _weekly_counts(entity_key):
+            weekly_conn = get_connection(entity_key)
+            try:
+                return tuple(
+                    weekly_conn.execute(
+                        f"SELECT COUNT(*) FROM {table}"
+                    ).fetchone()[0]
+                    for table in weekly_tables
+                )
+            finally:
+                weekly_conn.close()
+
+        weekly_baselines = {
+            entity_key: _weekly_counts(entity_key)
+            for entity_key in ("personal", "company")
+        }
+        weekly_fixtures = {}
+
+        for entity_key, entity_display in (
+            ("personal", "Personal"),
+            ("company", "BFM"),
+        ):
+            fixture_conn = get_connection(entity_key)
+            try:
+                original_budget_row = fixture_conn.execute(
+                    "SELECT * FROM budget_items WHERE category='Food'"
+                ).fetchone()
+                original_payroll_row = fixture_conn.execute(
+                    "SELECT * FROM payroll_schedule WHERE id=1"
+                ).fetchone()
+                if original_budget_row:
+                    fixture_conn.execute(
+                        "UPDATE budget_items SET monthly_budget_cents=310000, "
+                        "is_per_payroll=0, per_payroll_cents=NULL WHERE category='Food'"
+                    )
+                else:
+                    fixture_conn.execute(
+                        "INSERT INTO budget_items "
+                        "(category, monthly_budget_cents, budget_section, is_per_payroll) "
+                        "VALUES ('Food', 310000, 'focus', 0)"
+                    )
+
+                recurring_account = f"4V Recurring {entity_key}"
+                scheduled_card = f"4V Scheduled {entity_key}"
+                missing_card = f"4V Missing {entity_key}"
+                zero_card = f"4V Zero Balance {entity_key}"
+                recurring_account_id = fixture_conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type, sort_order) "
+                    "VALUES (?, 250000, 'manual', 'bank', 850)",
+                    (recurring_account,),
+                ).lastrowid
+                fixture_conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type, "
+                    "credit_limit_cents, payment_due_day, payment_amount_cents, sort_order) "
+                    "VALUES (?, 120000, 'manual', 'credit_card', 500000, 11, 5000, 851)",
+                    (scheduled_card,),
+                )
+                fixture_conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type, "
+                    "credit_limit_cents, payment_due_day, payment_amount_cents, sort_order) "
+                    "VALUES (?, 50000, 'manual', 'credit_card', 200000, 12, 0, 852)",
+                    (missing_card,),
+                )
+                fixture_conn.execute(
+                    "INSERT INTO account_balances "
+                    "(account_name, balance_cents, balance_source, account_type, "
+                    "credit_limit_cents, payment_due_day, payment_amount_cents, sort_order) "
+                    "VALUES (?, 0, 'manual', 'credit_card', 100000, 13, 2000, 853)",
+                    (zero_card,),
+                )
+                fixture_conn.execute(
+                    "INSERT INTO manual_recurring "
+                    "(account_id, merchant, amount_cents, day_of_month) "
+                    "VALUES (?, ?, 2000, 10)",
+                    (recurring_account_id, f"4V Manual {entity_key}"),
+                )
+                fixture_conn.execute(
+                    "INSERT INTO action_items "
+                    "(title, status, due_date, is_recurring, sort_order) "
+                    "VALUES (?, 'pending', '14', 0, 850)",
+                    (f"4V Action {entity_key}",),
+                )
+
+                synthetic_transactions = (
+                    ("auto-1", "2026-01-12", -30.00, -3000, f"4V Auto {entity_key}"),
+                    ("auto-2", "2026-01-26", -30.00, -3000, f"4V Auto {entity_key}"),
+                    ("feb-mtd", "2026-02-01", -100.00, -10000, "4V February MTD"),
+                    ("feb-week", "2026-02-10", -50.00, -5000, "4V February Week"),
+                    ("june", "2026-06-30", -60.00, -6000, "4V June Boundary"),
+                    ("july", "2026-07-01", -70.00, -7000, "4V July Boundary"),
+                )
+                transaction_ids = []
+                for suffix, txn_date, amount, amount_cents, merchant in synthetic_transactions:
+                    txn_id = f"synthetic-4v-{entity_key}-{suffix}"
+                    transaction_ids.append(txn_id)
+                    fixture_conn.execute(
+                        "INSERT INTO transactions "
+                        "(transaction_id, date, description_raw, merchant_canonical, "
+                        "amount, amount_cents, account, category, source_filename, imported_at) "
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, 'Food', 'synthetic-4v', "
+                        "'2026-07-21T00:00:00+00:00')",
+                        (
+                            txn_id,
+                            txn_date,
+                            merchant,
+                            merchant,
+                            amount,
+                            amount_cents,
+                            recurring_account,
+                        ),
+                    )
+
+                if entity_key == "company":
+                    fixture_conn.execute("DELETE FROM payroll_schedule WHERE id=1")
+                    fixture_conn.execute(
+                        "INSERT INTO payroll_schedule "
+                        "(id, anchor_date, cadence_days, pay_dow) "
+                        "VALUES (1, '2026-02-13', 14, 4)"
+                    )
+
+                fixture_conn.commit()
+                weekly_fixtures[entity_key] = {
+                    "display": entity_display,
+                    "original_budget": (
+                        dict(original_budget_row) if original_budget_row else None
+                    ),
+                    "original_payroll": (
+                        dict(original_payroll_row) if original_payroll_row else None
+                    ),
+                    "accounts": (
+                        recurring_account,
+                        scheduled_card,
+                        missing_card,
+                        zero_card,
+                    ),
+                    "transaction_ids": tuple(transaction_ids),
+                }
+            finally:
+                fixture_conn.close()
+
+        captured_weekly_context = {}
+
+        def _capture_weekly_context(_template_name, **context):
+            captured_weekly_context.clear()
+            captured_weekly_context.update(context)
+            return "weekly context captured"
+
+        before_ll_weekly = _database_snapshot("luxelegacy")
+        with app.test_client() as weekly_client, patch.object(
+            weekly_routes, "date", _WeeklyDate
+        ), patch(
+            "socket.create_connection",
+            side_effect=AssertionError("weekly 4V attempted outbound networking"),
+        ) as weekly_create_connection, patch(
+            "socket.socket.connect",
+            side_effect=AssertionError("weekly 4V attempted outbound networking"),
+        ) as weekly_socket_connect:
+            for entity_key in ("personal", "company"):
+                fixture = weekly_fixtures[entity_key]
+                weekly_client.set_cookie("entity", fixture["display"])
+
+                with patch.object(
+                    weekly_routes,
+                    "render_template",
+                    side_effect=_capture_weekly_context,
+                ):
+                    historical_response = weekly_client.get(
+                        "/weekly/?week=2026-W07"
+                    )
+                historical = dict(captured_weekly_context)
+                _check(
+                    historical_response.status_code == 200
+                    and historical["week_str"] == "2026-W07"
+                    and historical["budget_month_name"] == "February"
+                    and historical["weekly_pace"] == 77500
+                    and historical["last_week_pace"] == 77500,
+                    f"weekly 4V {entity_key}: historical pace and display should use February's 28-day context",
+                )
+                _check(
+                    historical["spent_cents"] == 5000
+                    and historical["burn_rate"]["projected_cents"] == 28000
+                    and historical["burn_rate"]["over_under_cents"] == 282000,
+                    f"weekly 4V {entity_key}: February MTD and burn inputs should reconcile",
+                )
+
+                bills_by_type = {}
+                for bill in historical["bills"]:
+                    bills_by_type.setdefault(bill["type"], []).append(bill)
+                scheduled_bill = next(
+                    bill
+                    for bill in bills_by_type["cc_payment"]
+                    if f"4V Scheduled {entity_key}" in bill["merchant"]
+                )
+                missing_bill = next(
+                    bill
+                    for bill in bills_by_type["cc_payment"]
+                    if f"4V Missing {entity_key}" in bill["merchant"]
+                )
+                _check(
+                    bills_by_type["recurring"][0]["date"]
+                    == real_date(2026, 2, 9)
+                    and bills_by_type["manual_recurring"][0]["date"]
+                    == real_date(2026, 2, 10)
+                    and scheduled_bill["date"] == real_date(2026, 2, 11)
+                    and missing_bill["date"] == real_date(2026, 2, 12),
+                    f"weekly 4V {entity_key}: historical recurring manual and card bills should use the viewed week",
+                )
+                _check(
+                    scheduled_bill["amount_cents"] == 5000
+                    and "\u2014 $50 due" in scheduled_bill["merchant"]
+                    and missing_bill["amount_cents"] is None
+                    and "\u2014 Payment due" in missing_bill["merchant"]
+                    and historical["bills_total"] == 10000,
+                    f"weekly 4V {entity_key}: scheduled card payment and unavailable fallback should reconcile",
+                )
+                _check(
+                    not any(
+                        bill["type"] == "cc_payment"
+                        and f"4V Zero Balance {entity_key}" in bill["merchant"]
+                        for bill in historical["bills"]
+                    )
+                    and [bill["date"] for bill in historical["bills"]]
+                    == sorted(bill["date"] for bill in historical["bills"]),
+                    f"weekly 4V {entity_key}: zero-balance cards should stay out and bills should remain ordered",
+                )
+                if entity_key == "company":
+                    _check(
+                        any(
+                            bill["type"] == "payroll"
+                            and bill["date"] == real_date(2026, 2, 13)
+                            for bill in historical["bills"]
+                        ),
+                        "weekly 4V company: BFM payroll should remain in the viewed week",
+                    )
+
+                with patch.object(
+                    weekly_routes,
+                    "render_template",
+                    side_effect=_capture_weekly_context,
+                ):
+                    cross_month_response = weekly_client.get(
+                        "/weekly/?week=2026-W27"
+                    )
+                cross_month = dict(captured_weekly_context)
+                _check(
+                    cross_month_response.status_code == 200
+                    and cross_month["monday"] == real_date(2026, 6, 29)
+                    and cross_month["sunday"] == real_date(2026, 7, 5)
+                    and cross_month["budget_month_name"] == "June"
+                    and cross_month["weekly_pace"] == 72333
+                    and cross_month["spent_cents"] == 13000
+                    and cross_month["burn_rate"]["projected_cents"] == 6000,
+                    f"weekly 4V {entity_key}: cross-month week should keep June pace MTD divisor and display",
+                )
+
+                with patch.object(
+                    weekly_routes,
+                    "render_template",
+                    side_effect=_capture_weekly_context,
+                ):
+                    cross_year_response = weekly_client.get(
+                        "/weekly/?week=2026-W01"
+                    )
+                cross_year = dict(captured_weekly_context)
+                _check(
+                    cross_year_response.status_code == 200
+                    and cross_year["monday"] == real_date(2025, 12, 29)
+                    and cross_year["sunday"] == real_date(2026, 1, 4)
+                    and cross_year["budget_month_name"] == "December"
+                    and cross_year["weekly_pace"] == 70000,
+                    f"weekly 4V {entity_key}: cross-year week should retain the Monday-owned December context",
+                )
+
+                with patch.object(
+                    weekly_routes,
+                    "render_template",
+                    side_effect=_capture_weekly_context,
+                ):
+                    invalid_response = weekly_client.get(
+                        "/weekly/?week=not-an-iso-week"
+                    )
+                invalid_context = dict(captured_weekly_context)
+                _check(
+                    invalid_response.status_code == 200
+                    and invalid_context["week_str"] == "2026-W30"
+                    and invalid_context["budget_month_name"] == "July"
+                    and invalid_context["weekly_pace"] == 70000,
+                    f"weekly 4V {entity_key}: invalid week should fall back to the fixed current context",
+                )
+
+                rendered_historical = weekly_client.get(
+                    "/weekly/?week=2026-W07"
+                )
+                rendered_body = rendered_historical.get_data(as_text=True)
+                _check(
+                    rendered_historical.status_code == 200
+                    and f"4V Scheduled {entity_key} \u2014 $50 due" in rendered_body
+                    and f"4V Missing {entity_key} \u2014 Payment due" in rendered_body,
+                    f"weekly 4V {entity_key}: rendered card reminders should expose scheduled and unavailable amounts",
+                )
+
+                cashflow_response = weekly_client.get("/cashflow/")
+                planning_response = weekly_client.get("/planning/short-term/")
+                _check(
+                    cashflow_response.status_code == 200
+                    and planning_response.status_code == 200,
+                    f"weekly 4V {entity_key}: existing today-based helper callers should still render",
+                )
+
+            weekly_client.set_cookie("entity", "LL")
+            denied_ll_weekly = weekly_client.get("/weekly/?week=2026-W07")
+            _check(
+                denied_ll_weekly.status_code == 302
+                and denied_ll_weekly.headers.get("Location", "").endswith("/"),
+                "weekly 4V LL: Weekly should remain denied before route handling",
+            )
+            _check(
+                _database_snapshot("luxelegacy") == before_ll_weekly,
+                "weekly 4V LL: denied request should leave the database unchanged",
+            )
+            weekly_create_connection.assert_not_called()
+            weekly_socket_connect.assert_not_called()
+
+        def _restore_weekly_row(conn, table, row):
+            if row is None:
+                return
+            columns = tuple(row.keys())
+            conn.execute(
+                f"INSERT INTO {table} ({','.join(columns)}) "
+                f"VALUES ({','.join('?' for _ in columns)})",
+                tuple(row[column] for column in columns),
+            )
+
+        for entity_key, fixture in weekly_fixtures.items():
+            cleanup_conn = get_connection(entity_key)
+            try:
+                placeholders = ",".join("?" for _ in fixture["transaction_ids"])
+                cleanup_conn.execute(
+                    f"DELETE FROM transactions WHERE transaction_id IN ({placeholders})",
+                    fixture["transaction_ids"],
+                )
+                cleanup_conn.execute(
+                    "DELETE FROM action_items WHERE title=?",
+                    (f"4V Action {entity_key}",),
+                )
+                cleanup_conn.execute(
+                    "DELETE FROM manual_recurring WHERE merchant=?",
+                    (f"4V Manual {entity_key}",),
+                )
+                account_placeholders = ",".join("?" for _ in fixture["accounts"])
+                cleanup_conn.execute(
+                    f"DELETE FROM account_balances "
+                    f"WHERE account_name IN ({account_placeholders})",
+                    fixture["accounts"],
+                )
+                cleanup_conn.execute(
+                    "DELETE FROM budget_items WHERE category='Food'"
+                )
+                _restore_weekly_row(
+                    cleanup_conn,
+                    "budget_items",
+                    fixture["original_budget"],
+                )
+                if entity_key == "company":
+                    cleanup_conn.execute("DELETE FROM payroll_schedule WHERE id=1")
+                    _restore_weekly_row(
+                        cleanup_conn,
+                        "payroll_schedule",
+                        fixture["original_payroll"],
+                    )
+                cleanup_conn.commit()
+            finally:
+                cleanup_conn.close()
+            _check(
+                _weekly_counts(entity_key) == weekly_baselines[entity_key],
+                f"weekly 4V {entity_key}: synthetic rows should clean up exactly",
+            )
+
+        print("   ✅ Viewed-week pace, MTD, burn, recurrence, scheduled payments, fallbacks, isolation, denied-network, and cleanup passed")
+
         # ── 8a. BFM-only payroll route boundary ─────────────────────
         print("\n8b. BFM-only payroll route boundary…")
         from web.routes import payroll as payroll_routes

@@ -522,7 +522,7 @@ Tracked fixture and test expansion was explicitly excluded from audit work block
 
 ## Weekly Historical Views Mix Selected And Current Dates
 
-Status: open; discovered in work block 3E
+Status: resolved locally in work block 4V; release remains separate
 
 Severity: high financial-planning correctness risk
 
@@ -551,9 +551,13 @@ Why not fixed now:
 
 Work block 3E is audit-only. Date-anchor repair and tracked tests require separate Phase 4 implementation scope.
 
+Resolution:
+
+Work block 4V makes the selected ISO week's Monday the budget-month anchor, caps MTD and burn calculations to that calendar month, passes the viewed date into recurring/manual/card projections, keeps display and pace context aligned, and adds maintained current, historical, cross-month, cross-year, empty, invalid-week, all-entity, denied-network, and cleanup coverage.
+
 ## Weekly Credit-Card Bills Use Full Balance Instead Of Scheduled Payment
 
-Status: open; discovered in work block 3E
+Status: resolved locally in work block 4V; release remains separate
 
 Severity: high cash-planning correctness risk
 
@@ -581,6 +585,10 @@ Acceptance checks:
 Why not fixed now:
 
 Bill semantics and regression tests were excluded from audit work block 3E.
+
+Resolution:
+
+Work block 4V carries `payment_amount_cents` through the card-due helper and makes Weekly use only a positive scheduled payment for the row and total. Missing or zero scheduled amounts remain visible as unavailable and never fall back to the full balance; maintained tests cover multiple cards, zero balances, rendering, integer-cent totals, entity isolation, denied networking, and exact cleanup.
 
 ## Waterfall Payoff Average Excludes Deficit Months
 
@@ -706,7 +714,7 @@ Input normalization and tracked tests require separately confirmed implementatio
 
 ## Weekly And Waterfall Paths Lack Tracked Regression Coverage
 
-Status: parked for Phase 4 regression coverage
+Status: partly addressed; the `P3-3E-01` and `P3-3E-02` Weekly slice is maintained through work block 4V
 
 Severity: medium regression-confidence risk
 

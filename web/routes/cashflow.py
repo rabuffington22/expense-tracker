@@ -238,12 +238,17 @@ def _amount_is_regular(amounts):
     return within >= 2
 
 
-def _detect_upcoming_for_account(conn, account_names: list, horizon_days: int = 30) -> list:
+def _detect_upcoming_for_account(
+    conn,
+    account_names: list,
+    horizon_days: int = 30,
+    reference_date: datetime.date | None = None,
+) -> list:
     """Detect recurring charges for a specific account, return upcoming items."""
-    cutoff = (datetime.datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
-    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
-    today = datetime.datetime.now().date()
-    horizon_end = today + timedelta(days=horizon_days)
+    anchor = reference_date or datetime.datetime.now().date()
+    cutoff = (anchor - timedelta(days=90)).isoformat()
+    anchor_str = anchor.isoformat()
+    horizon_end = anchor + timedelta(days=horizon_days)
 
     placeholders = ",".join("?" for _ in account_names)
     rows = conn.execute(
@@ -254,7 +259,7 @@ def _detect_upcoming_for_account(conn, account_names: list, horizon_days: int = 
         "  AND date >= ? AND date <= ? "
         f"  AND account IN ({placeholders}) "
         "ORDER BY merchant_canonical, date",
-        [cutoff, today_str] + account_names,
+        [cutoff, anchor_str] + account_names,
     ).fetchall()
 
     # Group by merchant
@@ -289,10 +294,10 @@ def _detect_upcoming_for_account(conn, account_names: list, horizon_days: int = 
         if not _amount_is_regular(amounts):
             continue
         last_date = dates[-1]
-        if (today - last_date).days > 2 * median_interval:
+        if (anchor - last_date).days > 2 * median_interval:
             continue
         next_date = last_date + timedelta(days=int(median_interval))
-        if next_date < today or next_date > horizon_end:
+        if next_date < anchor or next_date > horizon_end:
             continue
         median_amount = int(statistics.median([abs(a) for a in amounts]))
         upcoming.append({
@@ -307,31 +312,33 @@ def _detect_upcoming_for_account(conn, account_names: list, horizon_days: int = 
     return upcoming
 
 
-def _get_manual_recurring(conn, account_id: int) -> list:
+def _get_manual_recurring(
+    conn, account_id: int, reference_date: datetime.date | None = None
+) -> list:
     """Get manually-added recurring charges for an account, projected to next date."""
     rows = conn.execute(
         "SELECT id, merchant, amount_cents, day_of_month "
         "FROM manual_recurring WHERE account_id=? ORDER BY day_of_month",
         (account_id,),
     ).fetchall()
-    today = datetime.date.today()
+    anchor = reference_date or datetime.date.today()
     items = []
     for r in rows:
         day = r["day_of_month"]
-        # Next occurrence: this month if day >= today, else next month
+        # Next occurrence: this month if day >= the anchor, else next month
         try:
-            next_date = today.replace(day=day)
+            next_date = anchor.replace(day=day)
         except ValueError:
             # Day doesn't exist in this month (e.g. 31 in Feb) — clamp
             import calendar
-            last_day = calendar.monthrange(today.year, today.month)[1]
-            next_date = today.replace(day=min(day, last_day))
-        if next_date < today:
+            last_day = calendar.monthrange(anchor.year, anchor.month)[1]
+            next_date = anchor.replace(day=min(day, last_day))
+        if next_date < anchor:
             # Move to next month
-            if today.month == 12:
-                next_date = next_date.replace(year=today.year + 1, month=1)
+            if anchor.month == 12:
+                next_date = next_date.replace(year=anchor.year + 1, month=1)
             else:
-                next_date = next_date.replace(month=today.month + 1)
+                next_date = next_date.replace(month=anchor.month + 1)
             # Re-clamp for next month
             try:
                 next_date = next_date.replace(day=day)

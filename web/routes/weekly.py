@@ -95,19 +95,16 @@ def _get_mtd_spending(conn, month_start: str, through_date: str) -> int:
     return int(round((row["total"] or 0) * 100))
 
 
-def _compute_weekly_pace(budget_status: list) -> int:
+def _compute_weekly_pace(budget_status: list, anchor: date) -> int:
     """Derive weekly budget from monthly totals. Returns cents."""
     total_monthly = sum(b["budget_cents"] for b in budget_status if b["budget_cents"] > 0)
-    # Use current month's day count
-    today = date.today()
-    dim = _days_in_month(today)
+    dim = _days_in_month(anchor)
     return int(round(total_monthly * 7 / dim))
 
 
-def _compute_category_paces(budget_status: list) -> dict[str, int]:
+def _compute_category_paces(budget_status: list, anchor: date) -> dict[str, int]:
     """Map category → weekly pace in cents."""
-    today = date.today()
-    dim = _days_in_month(today)
+    dim = _days_in_month(anchor)
     paces = {}
     for b in budget_status:
         if b["budget_cents"] > 0:
@@ -177,7 +174,12 @@ def _get_weekly_bills(conn, entity_key: str, week_start: date, week_end: date) -
             ).fetchall()
             if alias_rows:
                 names = list({r["account"] for r in alias_rows})
-        auto = _detect_upcoming_for_account(conn, names, horizon_days=30)
+        auto = _detect_upcoming_for_account(
+            conn,
+            names,
+            horizon_days=(week_end - week_start).days,
+            reference_date=week_start,
+        )
         for item in auto:
             exp = _parse_date(item["expected_date"])
             if exp and week_start <= exp <= week_end and item["merchant"] not in seen_merchants:
@@ -194,7 +196,9 @@ def _get_weekly_bills(conn, entity_key: str, week_start: date, week_end: date) -
     # 3. Manual recurring charges
     from web.routes.cashflow import _get_manual_recurring
     for acct in acct_rows:
-        manual = _get_manual_recurring(conn, acct["id"])
+        manual = _get_manual_recurring(
+            conn, acct["id"], reference_date=week_start
+        )
         for item in manual:
             exp = _parse_date(item["expected_date"])
             if exp and week_start <= exp <= week_end and item["merchant"] not in seen_merchants:
@@ -209,14 +213,18 @@ def _get_weekly_bills(conn, entity_key: str, week_start: date, week_end: date) -
                 })
 
     # 4. Credit card due dates
-    cc_items = _get_cc_due_items(conn)
+    cc_items = _get_cc_due_items(conn, reference_date=week_start)
     for item in cc_items:
         exp = _parse_date(item["due_date"])
         if exp and week_start <= exp <= week_end:
             bills.append({
                 "type": "cc_payment",
                 "merchant": item["title"],
-                "amount_cents": item.get("balance_cents"),
+                "amount_cents": (
+                    item.get("payment_amount_cents")
+                    if (item.get("payment_amount_cents") or 0) > 0
+                    else None
+                ),
                 "date": exp,
                 "day_name": _DOW_NAMES[exp.weekday()],
                 "source": "CC Payment",
@@ -413,8 +421,8 @@ def index():
         # Use the Monday's month for budget computation
         budget_month = monday.strftime("%Y-%m")
         budget_status = _get_budget_status(conn, g.entity_key, budget_month)
-        weekly_pace = _compute_weekly_pace(budget_status)
-        category_paces = _compute_category_paces(budget_status)
+        weekly_pace = _compute_weekly_pace(budget_status, monday)
+        category_paces = _compute_category_paces(budget_status, monday)
 
         # ── This Week's KPIs ──
         week_spending = _get_weekly_spending(
@@ -445,27 +453,26 @@ def index():
             else:
                 item["pct"] = 0
 
-        # Burn rate: based on month-to-date spending through last Sunday
+        # Burn rate: month-to-date through the viewed week within its anchor month
         monthly_budget = sum(b["budget_cents"] for b in budget_status if b["budget_cents"] > 0)
-        month_start = last_monday.replace(day=1)
-        # How far into the month are we? Use the end of the viewed week or today, whichever is earlier
-        mtd_end = min(sunday, today)
-        if mtd_end < month_start:
-            mtd_end = month_start
-        spent_mtd = _get_mtd_spending(conn, month_start.isoformat(), mtd_end.isoformat())
-        days_elapsed = (mtd_end - month_start).days + 1
+        month_start = monday.replace(day=1)
         dim = _days_in_month(month_start)
+        month_end = month_start.replace(day=dim)
+        # The viewed Monday owns the budget month.  Never let a boundary week
+        # extend the MTD numerator or divisor into an adjacent month.
+        mtd_end = min(sunday, today, month_end)
+        if mtd_end < month_start:
+            spent_mtd = 0
+            days_elapsed = 0
+        else:
+            spent_mtd = _get_mtd_spending(
+                conn, month_start.isoformat(), mtd_end.isoformat()
+            )
+            days_elapsed = (mtd_end - month_start).days + 1
         burn_rate = _compute_burn_rate(spent_mtd, days_elapsed, dim, monthly_budget)
 
         # Warnings for last week
-        # Use the last-week budget month for paces
-        last_budget_month = last_monday.strftime("%Y-%m")
-        if last_budget_month != budget_month:
-            last_budget_status = _get_budget_status(conn, g.entity_key, last_budget_month)
-            last_category_paces = _compute_category_paces(last_budget_status)
-        else:
-            last_category_paces = category_paces
-        warnings = _compute_warnings(last_week_spending, last_category_paces)
+        warnings = _compute_warnings(last_week_spending, category_paces)
 
         # ── Credit Card Paydown ──
         cc_cards = _get_cc_balances(conn)
