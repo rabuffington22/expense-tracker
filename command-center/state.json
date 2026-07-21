@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-21 6:57 AM CST",
+    "lastUpdated": "2026-07-21 7:05 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,29 +22,29 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4V-R source commit 9b3e517 is on main automatic Fly run 29826028617 and job 88619460588 passed and credential-free production health returned HTTP 200"
+    "durabilityStatus": "Work block 4W-R source commit 404e3d3 is on main automatic Fly run 29828286559 and job 88626630654 passed and credential-free production health returned HTTP 200"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4W-R is active under Ryan's direct-main publication instruction; Task 1N.6 remains separately gated.",
+    "summary": "Work block 4W-R is complete durable automatically deployed and credential-free production health verified; Task 1N.6 is the next separate planning gate.",
     "progress": 85
   },
   "currentTask": {
-    "title": "Task 4: Publish and verify explicitly approved repairs",
-    "owner": "Codex Desktop",
-    "status": "in-progress",
-    "supportingAgent": "Codex Desktop owns exact-path Git stewardship automatic deployment observation credential-free health and release closeout",
-    "nextAction": "Verify stage commit fast-forward push observe the automatic Fly deployment verify health and publish a skip-actions closeout.",
-    "blocker": null
+    "title": "Task 1N.6: Include deficit months in Waterfall payoff inputs",
+    "owner": "Ryan",
+    "status": "waiting-decision",
+    "supportingAgent": "Codex Desktop completed 4W-R exact-path publication automatic deployment observation credential-free health and sanitized closeout",
+    "nextAction": "Separately confirm a bounded Task 1N.6 planning and implementation block when ready.",
+    "blocker": "Task 1N.6 has no confirmed work block."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-w-release",
     "label": "4W-R",
     "name": "Weekly Paydown Goal Validation Durability And Release",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
-    "currentTask": "Exact-path source publication automatic deployment observation health verification and skip-actions closeout",
+    "currentTask": "Release complete; return Task 1N.6 to a separate planning gate",
     "includedTasks": [
       "Exact verified eleven-path 4W source set",
       "Direct-main fast-forward push one automatic Fly deployment observation credential-free health and sanitized skip-actions closeout"
@@ -63,10 +63,12 @@
       "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
     "nextReportPoint": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and the separate Task 1N.6 planning gate.",
-    "durability": "Direct-main publication authorized for the exact verified 4W set; no other live action is authorized.",
+    "result": "Published exact source commit 404e3d3 directly to main by fast-forward observed successful automatic Fly run 29828286559 and job 88626630654 verified credential-free production health at HTTP 200 preserved both unrelated untracked files and prepared the sanitized skip-actions closeout.",
+    "durability": "Source commit 404e3d3 is durable on main; this command-center-only closeout uses skip actions to prevent a second deployment.",
     "evidence": [
       "command-center/paydown-goal-validation-contract.md",
       "command-center/logs/2026-07-21-weekly-paydown-goal-validation-4w.md",
+      "command-center/logs/2026-07-21-weekly-paydown-goal-validation-release-4w-r.md",
       "scripts/smoke_test.py"
     ]
   },
@@ -93,21 +95,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Complete exact 4W-R direct-main release",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized commit and push to main for the completed verified 4W source set.",
-    "action": "Stage exact paths commit fast-forward main push observe the automatic deployment verify health and publish the skip-actions closeout.",
+    "title": "Plan Task 1N.6 separately",
+    "status": "waiting-decision",
+    "owner": "Ryan",
+    "why": "Work block 4W-R is complete durable deployed and health verified while the next Waterfall repair remains separately gated.",
+    "action": "Invoke a separate work-block planning pass for Task 1N.6 when ready.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No Ryan action is required during exact 4W-R execution; Task 1N.6 remains separately gated.",
-    "items": []
+    "summary": "Ryan owns the separate Task 1N.6 planning confirmation.",
+    "items": [
+      "Invoke a separate Task 1N.6 planning pass when ready"
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4W-R is active for exact direct-main publication only.",
-    "decisionQueue": "Task 1N.6 remains a separate future confirmation after 4W-R closeout.",
+    "phaseQuestions": "Work block 4W-R is complete; Task 1N.6 planning remains separate.",
+    "decisionQueue": "Ryan may confirm a future bounded Task 1N.6 block.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -3418,7 +3422,7 @@
       "phaseId": "phase-4",
       "label": "4W-R",
       "name": "Weekly Paydown Goal Validation Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Exact verified eleven-path 4W application maintained-test contract issue evidence and Runway OS source set",
         "Explicit-path source commit on codex/weekly-paydown-goal-validation and fast-forward direct push to main",
@@ -3460,12 +3464,14 @@
         "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1N.6 planning gate.",
-      "durability": "Direct-main publication authorized for the exact verified 4W source set; no other live action is authorized.",
+      "durability": "Source commit 404e3d3 is durable on main; automatic Fly run 29828286559 and job 88626630654 passed; credential-free production health returned HTTP 200.",
       "evidence": [
         "command-center/paydown-goal-validation-contract.md",
         "command-center/logs/2026-07-21-weekly-paydown-goal-validation-4w.md",
+        "command-center/logs/2026-07-21-weekly-paydown-goal-validation-release-4w-r.md",
         "scripts/smoke_test.py"
-      ]
+      ],
+      "result": "Exact eleven-path source commit 404e3d3 was fast-forwarded and pushed to main without force; exact automatic Fly run 29828286559 and job 88626630654 succeeded; credential-free production health returned HTTP 200; both preserved untracked files remained excluded; and the closeout uses skip actions."
     }
   ],
   "phaseTasks": [
@@ -4247,7 +4253,7 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1N6",
       "title": "Task 1N.6: Include deficit months in Waterfall payoff inputs",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Use every month in the defined signed rolling period for Waterfall average and payoff guidance for P3-3E-03 with focused coverage.",
       "nextAction": "Separately confirm a bounded Task 1N.6 work block when ready.",
@@ -4305,12 +4311,12 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Publish the exact authorized 4W source set and verify its attributable automatic deployment credential-free health and skip-actions closeout.",
-      "nextAction": "Complete exact-path 4W-R direct-main publication and restore Task 1N.6 to its separate planning gate.",
+      "summary": "Publish and verify only explicitly approved repair sets; releases through 4W-R are complete.",
+      "nextAction": null,
       "blocker": null,
-      "result": "Releases through 4S-R completed successfully; 4S source commit 91646a5 deployed through automatic Fly run 29797187213 and job 88530786726, and credential-free production health returned HTTP 200.",
+      "result": "Releases through 4W-R completed successfully; 4W source commit 404e3d3 deployed through automatic Fly run 29828286559 and job 88626630654, and credential-free production health returned HTTP 200.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -4323,7 +4329,11 @@
         "command-center/logs/2026-07-19-plaid-account-state-truthfulness-release-4j-r.md",
         "command-center/logs/2026-07-19-plaid-item-isolation-observability-release-4k-r.md",
         "command-center/logs/2026-07-20-payroll-peer-comparisons-release-4r-r.md",
-        "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-release-4s-r.md"
+        "command-center/logs/2026-07-20-locked-payoff-apr-truthfulness-release-4s-r.md",
+        "command-center/logs/2026-07-20-snapshot-note-preservation-release-4t-r.md",
+        "command-center/logs/2026-07-20-negative-appreciation-truthfulness-release-4u-r.md",
+        "command-center/logs/2026-07-21-weekly-date-bill-truthfulness-release-4v-r.md",
+        "command-center/logs/2026-07-21-weekly-paydown-goal-validation-release-4w-r.md"
       ]
     },
     {
@@ -5483,8 +5493,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete exact 4W-R direct-main release",
-    "description": "Publish the verified 4W source set observe its automatic deployment verify credential-free health and close with skip actions."
+    "name": "Plan Task 1N.6 separately",
+    "description": "Define the bounded Waterfall signed-period average and payoff-guidance repair before implementation."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -5495,6 +5505,8 @@
     "phase4WeeklyDateBillDurability": "pass; local main matched origin/main at source commit 9b3e517 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
     "phase4WeeklyPaydownValidation": "pass locally; canonical future-date writes invalid-input zero mutation preserved start metadata target-only recovery and defensive malformed stored-goal reads pass across Weekly and Waterfall",
     "phase4WeeklyPaydownBoundaries": "pass; Personal and BFM remain isolated Luxe Legacy is denied networking is blocked unrelated rows are preserved cleanup is exact and no migration protected data external call GitHub durability deployment or live action occurred",
+    "phase4WeeklyPaydownRelease": "pass; source commit 404e3d3 is on main automatic Fly run 29828286559 and deploy job 88626630654 passed and credential-free production health returned HTTP 200",
+    "phase4WeeklyPaydownDurability": "pass; local main matched origin/main at source commit 404e3d3 before this command-center-only skip-actions closeout with both preserved untracked files excluded",
     "categoryDomain": "pass; Personal BFM and Luxe Legacy inference valid and invalid acceptance zero-mutation match order alias skip-sentinel cross-hash-seed denied-network and exact-cleanup checks passed",
     "phase4VendorPaymentMatching": "pass locally; vendor_transactions.matched_transaction_id is canonical and exact review unmatched accepted stale duplicate concurrent claim rollback and isolation behavior passes across Personal BFM and Luxe Legacy without migration",
     "phase4VendorPaymentMatchingBoundaries": "pass; temporary synthetic databases denied outbound networking exact cleanup no protected data credentials live systems application-integration requests migration backfill or preserved untracked-file changes",

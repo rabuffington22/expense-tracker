@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4W source set directly to `main`, observe its automatic Fly deployment, verify credential-free health, and close 4W-R without starting a second deployment.
+Plan Task 1N.6 separately after the completed 4W-R release.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4W-R is active under Ryan's direct-main publication instruction.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4W-R is complete, durable, automatically deployed, and credential-free production health verified.
 
 ## Current Work Block
 
-Work block 4W-R: Weekly Paydown Goal Validation Durability And Release — active.
+Work block 4W-R: Weekly Paydown Goal Validation Durability And Release — complete.
 
 ## Current Task
 
-Task 4: Publish and verify explicitly approved repairs — current only for the exact 4W-R release; Task 1N.6 remains excluded.
+Task 1N.6: Include deficit months in Waterfall payoff inputs — current planning gate; no implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, fast-forward direct-main publication, automatic deployment observation, credential-free health verification, and sanitized release closeout. Ryan retains every action outside this contract.
+Ryan owns the next planning confirmation. Codex Desktop completed the exact 4W-R release and may not begin Task 1N.6 implementation without a separately confirmed work block.
 
 ## Current Action
 
-Verify the exact release set and branch ancestry, commit 4W, fast-forward local `main`, push `origin/main`, observe only the resulting automatic Fly deployment, check credential-free `/health`, and publish one command-center-only `[skip actions]` closeout.
+Report the completed 4W-R release and wait at the separate Task 1N.6 planning gate.
 
 ## Work Block 4W-R Contract
 
@@ -32,6 +32,16 @@ Verify the exact release set and branch ancestry, commit 4W, fast-forward local 
 - Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
 - Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
 - Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1N.6 planning gate.
+
+## Work Block 4W-R Result
+
+- Exact eleven-path source commit `404e3d3` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29828286559` and deploy job `88626630654` passed for exact source SHA `404e3d3d5271e35ca25b857b88fa3d3df683aaf5`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the staged high-confidence sensitive-addition scan returned zero.
+- GitHub reported the non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24; deployment still succeeded.
+- No PR, protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N.6 implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4W Contract
 
