@@ -2,19 +2,19 @@
 
 ## Active Objective
 
-Publish the exact verified 4AF artifact set to `main`, observe the automatic Fly deployment, verify credential-free production health, and close the release without widening product scope.
+Review the durable and successfully deployed 4AF result, then run a separate just-in-time sizing pass before any Task 1P.4.2b implementation is confirmed.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4AF-R is publishing the locally verified Task 1P.4.2a result to `main` under an exact release boundary.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4AF-R made Task 1P.4.2a durable on `main`, the automatic deployment passed, and Task 1P.4.2b remains separately gated.
 
 ## Current Work Block
 
-Work block 4AF-R: Shared CSP Execution Foundation Durability And Release — active.
+Work block 4AF-R: Shared CSP Execution Foundation Durability And Release — complete.
 
 ## Current Task
 
-Task 1P.4.2a-R: Publish and verify the shared CSP execution foundation — active.
+Task 1P.4.2b: Migrate HTMX-swapped fragment execution — planning needed; not confirmed for implementation.
 
 ## Owner
 
@@ -22,7 +22,17 @@ Codex Desktop owns implementation, synthetic and isolated-browser verification, 
 
 ## Current Action
 
-Stage the exact fifteen 4AF application, static-asset, test, contract, evidence, and Runway OS paths; commit on `codex/csp-shared-execution-foundation`; fast-forward local `main`; push `main` without force; observe the automatic Fly deployment; verify credential-free `/health`; then publish a sanitized `[skip actions]` closeout.
+Run a separate just-in-time sizing pass over Task 1P.4.2b from the verified residual fragment inventory; do not begin fragment migration or change the temporary HTMX eval and swapped-script settings without a new confirmation.
+
+## Work Block 4AF-R Result
+
+- Source commit `80dd7761c13cc9da94e9a26a8326871622734be6` contains exactly the fifteen approved 4AF paths and is durable on `main` and `origin/main` before this closeout.
+- Automatic Fly Deploy run `29873831453` and deploy job `88779843248` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 after deployment.
+- Exact-path, staged-set, protected-path, high-confidence sensitive-addition, full smoke, isolated-browser, syntax, JSON, whitespace, dashboard, health, rendered-state, ancestry, and remote-alignment checks passed.
+- The existing non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24, remains visible.
+- No PR, force push, protected data, credential, real database, authenticated production page, manual workflow action, non-automatic Fly mutation, Task 1P.4.2b implementation, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-21-shared-csp-execution-foundation-release-4af-r.md`.
 
 ## Work Block 4AF-R Contract
 
