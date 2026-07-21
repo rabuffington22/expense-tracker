@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; work block 4X-R is active under Ryan's direct instruction to commit and push the exact verified 4X source set to `main`
+Status: active; work block 4X-R is complete, durable, automatically deployed, and credential-free production health verified
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -929,7 +929,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, and 4W completed the `P3-3E-04` Weekly/Waterfall validation slice of `P3-3E-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: active for the exact 4X source set through work block 4X-R; unrelated releases remain separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4X-R; all future releases remain separately gated.
 
 ### Confirmed Work Block 4V: Weekly Date And Bill Truthfulness
 
@@ -1082,7 +1082,7 @@ Result: Waterfall now uses a fixed three-calendar-month payoff window ending at 
 
 ### Confirmed Work Block 4X-R: Waterfall Payoff Truthfulness Durability And Release
 
-Status: active; directly authorized by Ryan on 2026-07-21
+Status: complete, durable, automatically deployed, and credential-free production health verified on 2026-07-21
 
 Parent task: Phase 4 Task 4 for the exact verified 4X source set only.
 
@@ -1099,6 +1099,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.8 planning gate.
+
+Result: the exact eleven-path 4X source set was committed as `dc12890`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29830719921` and deploy job `88634537268` passed for exact source SHA `dc128903bb7dd21cc3516a6742ce9d083f66bbc1`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, the staged high-confidence sensitive-addition scan returned zero, and no PR or unauthorized live action occurred. This command-center-only closeout uses `[skip actions]` to prevent a second deployment. Evidence: `command-center/logs/2026-07-21-waterfall-payoff-truthfulness-release-4x-r.md`.
 
 ### Confirmed Work Block 4A: Server-Side Auth And Protected-Cache Repair
 
