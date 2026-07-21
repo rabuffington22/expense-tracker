@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; work block 4AE completed Task 1P.4.1 locally and proposed 4AF remains unconfirmed
+Status: active; work block 4AF completed Task 1P.4.2a locally and Task 1P.4.2b remains separately gated
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -930,7 +930,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1O.2: Reject malformed and duplicate mirror keys deterministically.** After Task 1O.1, define and implement a local payload-selection rule for empty, whitespace-only, whitespace-padded, and repeated Plaid transaction IDs without changing Ledger source rows or dropping unrelated eligible rows. Status: done and verified locally through work block 4AA; publication remains separate.
   - **Task 1O.3: Make the mirror conflict target explicit in tracked contracts.** After Task 1O.1, align the Ledger request with `plaid_transaction_id` as the explicit PostgREST conflict target. Status: done and verified locally through work block 4AA without a downstream schema change; downstream writes, production inspection, and deployment remain separately gated.
   - **Task 1O.4: Complete maintained synthetic downstream-mirror coverage.** Pair Tasks 1O.2-1O.3 with the remaining `P3-3I-C01` no-op, request-shape, malformed-key, duplicate-key, failure-isolation, and entity-preservation checks using temporary databases, mocked HTTP, and denied outbound sockets. Status: done and verified locally through work block 4AA; publication remains separate.
-- **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: active and decomposed into the execution-sized tasks below; Task 1P.4.1 is complete locally and proposed Task 1P.4.2a is the next separately confirmable gate.
+- **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: active and decomposed into the execution-sized tasks below; Tasks 1P.4.1 and 1P.4.2a are complete locally, and Task 1P.4.2b requires a separate sizing and confirmation gate.
   - **Task 1P.1: Authenticate `/k/` through the existing server-side gate.** Resolve `P3-3J-03` and its exact request/public-field slice of `P3-3J-C01` by requiring the configured application session before route execution while preserving no-password mode, Personal/Luxe Legacy scope, BFM exclusion, and the route's self-managed database context. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4AB and 4AB-R.
   - **Task 1P.2: Make the session-cookie policy explicit.** Resolve the cookie half of `P3-3J-06` with a production-safe Secure, HttpOnly, and SameSite contract that preserves local and synthetic-test usability. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4AC and 4AC-R.
   - **Task 1P.3: Complete mobile-drawer accessibility.** Resolve `P3-3J-05` and its responsive-navigation slice of `P3-3J-C01` with focus placement and restoration, Escape and scrim closing, open-only scroll lock, route-click consistency, and maintained browser coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4AD and 4AD-R.
@@ -938,7 +938,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
     - **Task 1P.4.1: Freeze the CSP compatibility contract and migration matrix.** Inventory every executable-script, HTMX fragment, inline-style, local-asset, worker/manifest, login, offline/error, standalone `/k/`, and Plaid Link dependency; define exact candidate directives and allowed origins; classify every required rewrite; and specify a synthetic header/browser verification matrix without changing product behavior. Status: complete and verified locally through work block 4AE; durability is active through Task 1P.4.1-R and implementation remains separate.
       - **Task 1P.4.1-R: Publish the CSP contract and planning closeout.** Make the exact nine-path 4AE command-center artifact set durable on `main` through native `[skip actions]` commits, exact remote-SHA verification, and a sanitized closeout without triggering deployment. Status: active through confirmed work block 4AE-R.
     - **Task 1P.4.2: Remove inline executable markup and HTMX eval dependencies.** Move executable inline script blocks, native event-handler attributes, and `hx-on` behavior into maintained local static JavaScript and delegated listeners; carry server-rendered values through inert JSON or data attributes; and disable HTMX eval and swapped-script execution only after focused synthetic coverage proves compatibility. Status: planned and decomposed by the 4AE matrix.
-      - **Task 1P.4.2a: Migrate the shared execution foundation.** Move shared-shell executable blocks and native/HTMX handlers to maintained local JavaScript; move HTMX indicator rules to local CSS; disable only injected indicator styles; and prove the shell while explicitly retaining eval and swapped-script processing until their remaining fragment dependencies are removed. Status: proposed as work block 4AF and unconfirmed.
+      - **Task 1P.4.2a: Migrate the shared execution foundation.** Move shared-shell executable blocks and native/HTMX handlers to maintained local JavaScript; move HTMX indicator rules to local CSS; disable only injected indicator styles; and prove the shell while explicitly retaining eval and swapped-script processing until their remaining fragment dependencies are removed. Status: complete and verified locally through work block 4AF.
       - **Task 1P.4.2b: Migrate HTMX-swapped fragment execution.** Remove executable scripts and inline handlers from directly returned fragments; replace the remaining fragment `hx-on` behavior; carry server state through inert data; initialize repeated swaps through delegated listeners or `htmx:load`; then disable HTMX eval and swapped-script processing. Status: planned after the shared foundation; block sizing remains separate.
       - **Task 1P.4.2c: Migrate remaining full-page execution.** Move remaining page-level scripts and native handlers, including the two Plaid entry pages, to local static behavior and inert server data. Status: planned after the foundation and fragment contract; split by route cluster before execution if still broad.
     - **Task 1P.4.3: Make styling and exceptional document surfaces policy-compatible.** Apply the strict core style-attribute contract while confining Plaid's documented exception to Link documents. Status: planned and decomposed by the 4AE matrix.
@@ -982,9 +982,33 @@ Result: exact nine-path source commit `d749700` is durable on `main`; local and 
 
 Suggested next work block: proposed 4AF remains unchanged and unconfirmed after 4AE-R.
 
-### Proposed Work Block 4AF: Shared CSP Execution Foundation
+### Confirmed Work Block 4AF-R: Shared CSP Execution Foundation Durability And Release
 
-Status: proposed and awaiting Ryan confirmation
+Status: active
+
+Parent task: Phase 4 Task 1P.4.2a-R only.
+
+Included: stage the exact fifteen verified 4AF application, static-asset, maintained-test, CSP contract, issue, findings, evidence, and Runway OS paths; create one intentional source commit on `codex/csp-shared-execution-foundation`; fast-forward local `main`; push directly to `origin/main` without force or PR; observe the resulting automatic Fly deployment read-only; verify credential-free production `/health`; verify the exact source SHA is durable; create one sanitized command-center-only `[skip actions]` closeout commit; push it to `main`; and prove final local/remote alignment.
+
+Excluded: Task 1P.4.2b and later Task 1P work; all new application, template, JavaScript, CSS, test, dependency, runtime, authentication, cookie, CSRF, header, Plaid, service-worker, manifest, worker, responsive, or financial behavior changes; credentials; protected data; real databases; retained uploads; authenticated production pages; manual workflow dispatches or reruns; workflow edits; non-automatic Fly mutations; downstream access or writes; PR creation; force push; broader recovery; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md`.
+
+Why this grouping: Ryan explicitly requested commit and push to `main`. The complete 4AF set is already locally verified, so durability, automatic release observation, credential-free health, and sanitized closeout form one bounded publication block without reopening implementation.
+
+Owner and recommended agent: Codex Desktop in the current task without delegation. Codex owns exact staging, Git safety, sensitive-addition and protected-boundary review, direct-main durability, read-only deployment observation, credential-free health, and Runway OS closeout. Ryan owns every scope expansion, live mutation, failure recovery, and Task 1P.4.2b decision.
+
+Defaults: no PR or force push; exact-path staging only; preserve the verified temporary HTMX compatibility settings; use the automatic `main` deployment only; inspect no authenticated production page; make no manual workflow or Fly mutation; use `[skip actions]` only for the final command-center closeout; preserve both unrelated untracked files.
+
+Stop conditions: unexpected or excluded path; sensitive addition or protected-data risk; failed verification; local or remote `main` divergence; excluded staging; push rejection; automatic deployment failure that would require mutation; credential-free health failure; workflow behavior inconsistent with the expected automatic release; preserved-file overlap; or recovery beyond clean fast-forward and read-only diagnosis.
+
+Verification: exact path and staged sets; high-confidence sensitive-addition and protected-path checks; maintained full synthetic smoke and isolated-browser shared-shell suites; Python and JavaScript syntax; JSON; whitespace; dashboard refresh, health, and rendered state; commit content; clean fast-forward; main ancestry; exact remote SHA; automatic deployment run and job result; credential-free production `/health`; final tracked cleanliness; and preserved untracked files.
+
+Report point: return source and closeout SHAs, exact published paths, deployment run and job result, production-health result, final local/remote alignment, preserved exclusions, and Task 1P.4.2b still separately gated.
+
+Suggested next work block: after 4AF-R closes, run the separate just-in-time sizing pass for Task 1P.4.2b; do not infer implementation authorization.
+
+### Confirmed Work Block 4AF: Shared CSP Execution Foundation
+
+Status: complete and verified locally
 
 Parent task: Phase 4 Task 1P.4.2a only.
 
@@ -1007,6 +1031,8 @@ Dashboard closeout: update maintained human-readable sources first, align `state
 Report point: return the exact shared behaviors migrated, local asset/config structure, temporary HTMX dependency assertion, focused and full verification results, changed paths, residual 1P.4.2b dependencies, local-only durability, and a separately confirmable next block.
 
 Suggested next work block: only after 4AF closes, size Task 1P.4.2b from the verified fragment inventory; do not pre-authorize it.
+
+Result: `base.html` no longer contains executable inline application blocks, native inline event handlers, or `hx-on` handlers. Maintained local theme and application-shell assets preserve the shared behavior, HTMX indicator CSS is local with only injected indicators disabled, and explicit compatibility settings retain eval and swapped scripts until Task 1P.4.2b. Full synthetic and isolated-browser verification passed. The remaining tracked-template inventory is 32 executable inline scripts, 156 native inline handlers, and two fragment `hx-on` attributes. Evidence is recorded in `command-center/logs/2026-07-21-shared-csp-execution-foundation-4af.md`; durability remains local-only.
 
 ### Confirmed Work Block 4AE: CSP Compatibility Contract And Migration Matrix
 

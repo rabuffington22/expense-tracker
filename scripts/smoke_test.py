@@ -8419,6 +8419,93 @@ def main() -> None:
 
         print("   ✅ Server auth, explicit local/Fly cookies, focused-dashboard boundary, no-password mode, exemptions, CSRF, and protected-cache contracts passed")
 
+        # ── 11b. Shared CSP execution foundation ───────────────────
+        print("\n11b. Shared CSP execution foundation…")
+
+        templates_root = PROJECT_ROOT / "web" / "templates"
+        base_source = (templates_root / "base.html").read_text()
+        theme_source = (PROJECT_ROOT / "web" / "static" / "theme-init.js").read_text()
+        shell_source = (PROJECT_ROOT / "web" / "static" / "app-shell.js").read_text()
+        style_source = (PROJECT_ROOT / "web" / "static" / "style.css").read_text()
+
+        inline_base_scripts = _re.findall(
+            r"<script(?![^>]*\bsrc=)[^>]*>", base_source, flags=_re.IGNORECASE
+        )
+        native_base_handlers = _re.findall(
+            r"\son[a-z][a-z0-9_-]*\s*=", base_source, flags=_re.IGNORECASE
+        )
+        _check(
+            not inline_base_scripts,
+            "shared shell CSP: base.html must have no executable inline script blocks",
+        )
+        _check(
+            not native_base_handlers,
+            "shared shell CSP: base.html must have no native inline event handlers",
+        )
+        _check(
+            "hx-on" not in base_source,
+            "shared shell CSP: base.html must have no HTMX inline event handlers",
+        )
+        _check(
+            "theme-init.js" in base_source and "app-shell.js" in base_source,
+            "shared shell CSP: base.html must load both maintained local shell assets",
+        )
+        _check(
+            'content=\'{"includeIndicatorStyles":false,"allowEval":true,"allowScriptTags":true}\''
+            in base_source,
+            "shared shell CSP: declarative HTMX config must disable only injected indicator styles",
+        )
+        _check(
+            "{{" not in theme_source
+            and "{%" not in theme_source
+            and "{{" not in shell_source
+            and "{%" not in shell_source,
+            "shared shell CSP: maintained JavaScript must not contain executable server templating",
+        )
+        _check(
+            ".htmx-indicator { opacity: 0; }" in style_source
+            and ".htmx-request .htmx-indicator" in style_source
+            and ".htmx-request.htmx-indicator" in style_source,
+            "shared shell CSP: local CSS must preserve HTMX indicator behavior",
+        )
+
+        rendered_shell = no_auth_app.test_client().get("/").get_data(as_text=True)
+        _check(
+            "/static/theme-init.js" in rendered_shell
+            and "/static/app-shell.js" in rendered_shell,
+            "shared shell CSP: rendered no-password shell must use the maintained local assets",
+        )
+        _check(
+            'name="htmx-config"' in rendered_shell
+            and '"includeIndicatorStyles":false' in rendered_shell
+            and '"allowEval":true' in rendered_shell
+            and '"allowScriptTags":true' in rendered_shell,
+            "shared shell CSP: rendered shell must retain the explicit temporary HTMX dependency contract",
+        )
+
+        template_sources = [
+            path.read_text()
+            for path in templates_root.rglob("*.html")
+            if path.name != "base.html"
+        ]
+        remaining_hx_on = sum(source.count("hx-on") for source in template_sources)
+        remaining_inline_scripts = sum(
+            len(
+                _re.findall(
+                    r"<script(?![^>]*\btype=[\"']application/json[\"'])[^>]*>",
+                    source,
+                    flags=_re.IGNORECASE,
+                )
+            )
+            for source in template_sources
+        )
+        _check(
+            remaining_hx_on == 2 and remaining_inline_scripts > 0,
+            "shared shell CSP: fragment/page dependencies must remain explicit until Tasks 1P.4.2b-1P.4.2c",
+        )
+
+        print("   ✅ Local shell assets, handler removal, indicator CSS, HTMX config, rendered assets, and residual dependency assertions passed")
+
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
     print("=" * 60 + "\n")

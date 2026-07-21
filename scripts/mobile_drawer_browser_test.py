@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Focused isolated-browser regression coverage for the mobile drawer.
+"""Focused isolated-browser regression coverage for the shared app shell.
 
 Uses a temporary synthetic DATA_DIR, the installed Google Chrome channel, and
 blocked non-localhost browser requests. No production credentials or data are
-required.
+required. Covers the mobile drawer plus theme, HTMX configuration and swaps,
+AI modal listeners, CSRF wiring, service-worker registration, and configured-
+auth/no-password shell loading.
 """
 
 from __future__ import annotations
@@ -84,6 +86,47 @@ def _assert_open_mobile(page, label: str) -> None:
     _check(state["activeText"] == "Dashboard", f"{label}: first primary navigation link must receive focus")
 
 
+def _assert_shared_shell(page, label: str) -> None:
+    state = page.evaluate(
+        """async () => {
+            const config = window.htmx && window.htmx.config;
+            const indicator = document.createElement('div');
+            indicator.className = 'htmx-indicator';
+            document.body.appendChild(indicator);
+            const hiddenOpacity = getComputedStyle(indicator).opacity;
+            indicator.classList.add('htmx-request');
+            await new Promise((resolve) => setTimeout(resolve, 250));
+            const requestOpacity = getComputedStyle(indicator).opacity;
+            indicator.remove();
+            return {
+                themeAsset: Boolean(document.querySelector('script[src*="theme-init.js"]')),
+                shellAsset: Boolean(document.querySelector('script[src*="app-shell.js"]')),
+                includeIndicatorStyles: config && config.includeIndicatorStyles,
+                allowEval: config && config.allowEval,
+                allowScriptTags: config && config.allowScriptTags,
+                injectedIndicatorStyle: Array.from(document.head.querySelectorAll('style')).some(
+                    (style) => style.textContent.includes('.htmx-indicator')
+                ),
+                hiddenOpacity,
+                requestOpacity,
+                shellFunctions: [
+                    window.toggleTheme,
+                    window.toggleSidebar,
+                    window.aiChatOpen,
+                    window.aiChatClose,
+                ].every((value) => typeof value === 'function'),
+            };
+        }"""
+    )
+    _check(state["themeAsset"] and state["shellAsset"], f"{label}: local shell assets must load")
+    _check(state["includeIndicatorStyles"] is False, f"{label}: HTMX must not inject indicator CSS")
+    _check(state["allowEval"] is True, f"{label}: HTMX eval must remain temporarily enabled")
+    _check(state["allowScriptTags"] is True, f"{label}: HTMX swapped scripts must remain temporarily enabled")
+    _check(not state["injectedIndicatorStyle"], f"{label}: HTMX indicator style tag must be absent")
+    _check(state["hiddenOpacity"] == "0" and state["requestOpacity"] == "1", f"{label}: local indicator CSS must preserve behavior")
+    _check(state["shellFunctions"], f"{label}: compatibility globals must remain available")
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -99,6 +142,7 @@ def main() -> None:
     server_thread = None
     blocked_urls: list[str] = []
     console_errors: list[str] = []
+    page_errors: list[str] = []
 
     try:
         with tempfile.TemporaryDirectory(prefix="expense_drawer_browser_") as temp_root:
@@ -154,8 +198,152 @@ def main() -> None:
                     if message.type == "error"
                     else None,
                 )
+                page.on("pageerror", lambda error: page_errors.append(str(error)))
 
                 page.goto(base_url, wait_until="networkidle")
+                _assert_shared_shell(page, "no-password shell")
+
+                theme_state = page.evaluate(
+                    """() => ({
+                        theme: document.documentElement.getAttribute('data-theme'),
+                        stored: localStorage.getItem('theme'),
+                        color: document.querySelector('meta[name="theme-color"]').content,
+                        icon: document.querySelector('.theme-toggle-icon').textContent,
+                    })"""
+                )
+                _check(
+                    theme_state["theme"] == "dark"
+                    and theme_state["color"] == "#000000"
+                    and theme_state["icon"] == "☾",
+                    "initial theme must reconcile before interaction",
+                )
+                page.evaluate("window.toggleTheme()")
+                light_state = page.evaluate(
+                    """() => ({
+                        theme: document.documentElement.getAttribute('data-theme'),
+                        stored: localStorage.getItem('theme'),
+                        color: document.querySelector('meta[name="theme-color"]').content,
+                        icon: document.querySelector('.theme-toggle-icon').textContent,
+                    })"""
+                )
+                _check(
+                    light_state == {
+                        "theme": "light",
+                        "stored": "light",
+                        "color": "#F7F9FC",
+                        "icon": "☀️",
+                    },
+                    "theme toggle must reconcile HTML, storage, mobile color, and label",
+                )
+                page.reload(wait_until="networkidle")
+                _assert_shared_shell(page, "persisted no-password shell")
+                _check(
+                    page.evaluate("document.documentElement.getAttribute('data-theme')") == "light",
+                    "early local theme asset must restore the saved theme before app-shell initialization",
+                )
+                page.evaluate("window.toggleTheme()")
+
+                csrf_state = page.evaluate(
+                    """() => {
+                        const token = document.querySelector('meta[name="csrf-token"]').content;
+                        const existing = Array.from(document.querySelectorAll('form[method="post"]'));
+                        const existingOk = existing.every(
+                            (form) => form.querySelector('input[name="_csrf_token"]')?.value === token
+                        );
+                        const dynamic = document.createElement('form');
+                        dynamic.method = 'post';
+                        dynamic.id = 'synthetic-dynamic-post';
+                        document.body.appendChild(dynamic);
+                        dynamic.dispatchEvent(new CustomEvent('htmx:afterSettle', {
+                            bubbles: true,
+                            detail: {},
+                        }));
+                        const dynamicToken = dynamic.querySelector('input[name="_csrf_token"]')?.value;
+                        const headers = {};
+                        dynamic.dispatchEvent(new CustomEvent('htmx:configRequest', {
+                            bubbles: true,
+                            detail: { headers },
+                        }));
+                        dynamic.remove();
+                        return {
+                            existingOk,
+                            dynamicOk: dynamicToken === token,
+                            headerOk: headers['X-CSRF-Token'] === token,
+                        };
+                    }"""
+                )
+                _check(
+                    csrf_state == {"existingOk": True, "dynamicOk": True, "headerOk": True},
+                    "CSRF inputs and HTMX headers must remain wired for initial and swapped forms",
+                )
+
+                page.evaluate("window.aiChatOpen('dashboard')")
+                ai_open = page.evaluate(
+                    """() => ({
+                        hidden: document.getElementById('ai-chat-scrim').hidden,
+                        page: document.getElementById('ai-chat-page').value,
+                        clearValues: document.getElementById('ai-chat-clear-btn').getAttribute('hx-vals'),
+                        focused: document.activeElement === document.getElementById('ai-chat-input'),
+                        overflow: document.body.style.overflow,
+                    })"""
+                )
+                _check(
+                    ai_open == {
+                        "hidden": False,
+                        "page": "dashboard",
+                        "clearValues": '{"page":"dashboard"}',
+                        "focused": True,
+                        "overflow": "hidden",
+                    },
+                    "AI modal open behavior must survive handler migration",
+                )
+                ai_events = page.evaluate(
+                    """() => {
+                        const form = document.getElementById('ai-chat-form');
+                        const thinking = document.getElementById('ai-chat-thinking');
+                        form.dispatchEvent(new CustomEvent('htmx:beforeRequest', {
+                            bubbles: true,
+                            detail: {},
+                        }));
+                        const beforeVisible = !thinking.hidden;
+                        document.getElementById('ai-chat-input').value = 'synthetic';
+                        form.dispatchEvent(new CustomEvent('htmx:afterRequest', {
+                            bubbles: true,
+                            detail: { successful: true },
+                        }));
+                        return {
+                            beforeVisible,
+                            afterHidden: thinking.hidden,
+                            restoredPage: document.getElementById('ai-chat-page').value,
+                            inputCleared: document.getElementById('ai-chat-input').value === '',
+                        };
+                    }"""
+                )
+                _check(
+                    ai_events == {
+                        "beforeVisible": True,
+                        "afterHidden": True,
+                        "restoredPage": "dashboard",
+                        "inputCleared": True,
+                    },
+                    "AI HTMX lifecycle listeners must preserve thinking and reset behavior",
+                )
+                page.locator("[data-ai-chat-close]").click()
+                _check(
+                    page.evaluate(
+                        "document.getElementById('ai-chat-scrim').hidden && document.body.style.overflow === ''"
+                    ),
+                    "AI close control must hide the modal and release body scrolling",
+                )
+
+                worker_url = page.evaluate(
+                    """async () => {
+                        const registration = await navigator.serviceWorker.ready;
+                        return registration.active && registration.active.scriptURL;
+                    }"""
+                )
+                _check(worker_url.endswith("/sw.js"), "shared shell must register the same-origin service worker")
+
                 _assert_closed_mobile(page, "initial phone state")
 
                 hamburger = page.locator("#hamburger-btn")
@@ -214,6 +402,31 @@ def main() -> None:
                     page.locator("#sidebar-nav .sb-nav a[href='/']").click()
                 _assert_closed_mobile(page, "route navigation")
 
+                page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
+                _assert_shared_shell(page, "transactions shell")
+                filter_button = page.locator("#txn-filter-form button[type='submit']")
+                for swap_number in (1, 2):
+                    with page.expect_response(
+                        lambda response: "/transactions/partial" in response.url
+                    ) as response_info:
+                        filter_button.click()
+                    _check(
+                        response_info.value.status == 200,
+                        f"HTMX swap {swap_number}: transaction partial must return 200",
+                    )
+                    page.wait_for_timeout(50)
+                    _check(
+                        page.locator("#txn-results").count() == 1,
+                        f"HTMX swap {swap_number}: transaction results target must remain",
+                    )
+                    _assert_shared_shell(page, f"HTMX swap {swap_number}")
+
+                page.locator("body").press("/")
+                _check(
+                    page.evaluate("document.activeElement === document.getElementById('q')"),
+                    "migrated keyboard shortcut must focus transaction search after repeated swaps",
+                )
+
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
                 with page.expect_navigation(wait_until="networkidle"):
@@ -240,6 +453,90 @@ def main() -> None:
 
                 _check(not blocked_urls, f"browser attempted external requests: {blocked_urls}")
                 _check(not console_errors, f"browser console errors: {console_errors}")
+                _check(not page_errors, f"browser page errors: {page_errors}")
+
+                context.close()
+                browser.close()
+
+            server.shutdown()
+            server_thread.join(timeout=5)
+            server.server_close()
+            server = None
+            server_thread = None
+
+            from werkzeug.security import generate_password_hash
+
+            auth_password = "synthetic-shared-shell-password"
+            os.environ["APP_PASSWORD_HASH"] = generate_password_hash(auth_password)
+            auth_app = create_app()
+            auth_app.config.update(TESTING=True)
+            server = make_server(
+                "127.0.0.1", 0, auth_app, request_handler=_QuietRequestHandler
+            )
+            port = server.server_port
+            server_thread = threading.Thread(target=server.serve_forever, daemon=True)
+            server_thread.start()
+            base_url = f"http://127.0.0.1:{port}"
+            auth_blocked_urls: list[str] = []
+            auth_console_errors: list[str] = []
+            auth_page_errors: list[str] = []
+
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch(channel="chrome", headless=True)
+                context = browser.new_context(viewport={"width": 390, "height": 844})
+                page = context.new_page()
+
+                def route_auth_request(route) -> None:
+                    url = route.request.url
+                    if url.startswith(base_url) or url.startswith("data:"):
+                        route.continue_()
+                    else:
+                        auth_blocked_urls.append(url)
+                        route.abort()
+
+                page.route("**/*", route_auth_request)
+                page.on(
+                    "console",
+                    lambda message: auth_console_errors.append(message.text)
+                    if message.type == "error"
+                    else None,
+                )
+                page.on("pageerror", lambda error: auth_page_errors.append(str(error)))
+
+                page.goto(base_url, wait_until="networkidle")
+                _check(
+                    "/auth/login" in page.url,
+                    "configured-auth shell must redirect to the standalone login first",
+                )
+                page.locator("#password").fill(auth_password)
+                with page.expect_navigation(wait_until="networkidle"):
+                    page.get_by_role("button", name="Sign in", exact=True).click()
+
+                _check(page.url.rstrip("/") == base_url, "configured-auth login must return to the app shell")
+                _assert_shared_shell(page, "configured-auth shell")
+                _assert_closed_mobile(page, "configured-auth phone state")
+                page.locator("#hamburger-btn").click()
+                _assert_open_mobile(page, "configured-auth drawer open")
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(350)
+                _assert_closed_mobile(page, "configured-auth drawer close")
+                page.evaluate("window.toggleTheme()")
+                _check(
+                    page.evaluate("document.documentElement.getAttribute('data-theme')") == "light",
+                    "configured-auth shell must retain migrated theme behavior",
+                )
+                _check(
+                    not auth_blocked_urls,
+                    f"configured-auth browser attempted external requests: {auth_blocked_urls}",
+                )
+                _check(
+                    not auth_console_errors,
+                    f"configured-auth browser console errors: {auth_console_errors}",
+                )
+                _check(
+                    not auth_page_errors,
+                    f"configured-auth browser page errors: {auth_page_errors}",
+                )
 
                 context.close()
                 browser.close()
@@ -260,7 +557,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Mobile drawer browser test passed: focus, ARIA, scrim, scroll, navigation, breakpoint, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

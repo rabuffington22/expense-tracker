@@ -9,16 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="The Ledger">
     <meta name="mobile-web-app-capable" content="yes">
     <title>{% block title %}The Ledger{% endblock %}</title>
-    <script>
-    /* Theme init — runs before CSS/paint to prevent flash */
-    (function(){
-        var t = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', t);
-        /* Update theme-color meta for mobile browsers */
-        var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = t === 'light' ? '#F7F9FC' : '#000000';
-    })();
-    </script>
+    <script src="{{ url_for('static', filename='theme-init.js') }}?v={{ cache_bust }}"></script>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}?v=2" sizes="any">
     <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='favicon-64x64.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
@@ -26,7 +17,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
+    <meta name="htmx-config" content='{"includeIndicatorStyles":false,"allowEval":true,"allowScriptTags":true}'>
     <script src="{{ url_for('static', filename='htmx.min.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='app-shell.js') }}?v={{ cache_bust }}"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {% block head %}{% endblock %}
 </head>
@@ -35,7 +28,7 @@
 
     <!-- Mobile header -->
     <div class="mobile-header">
-        <button class="hamburger" onclick="toggleSidebar()" aria-label="Open navigation" aria-controls="sidebar-nav" aria-expanded="false" id="hamburger-btn">
+        <button class="hamburger" aria-label="Open navigation" aria-controls="sidebar-nav" aria-expanded="false" id="hamburger-btn">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                 <line x1="3" y1="6" x2="19" y2="6"/>
                 <line x1="3" y1="11" x2="19" y2="11"/>
@@ -47,7 +40,7 @@
     </div>
 
     <!-- Scrim overlay for mobile sidebar -->
-    <div class="sidebar-scrim" id="sidebar-scrim" onclick="closeSidebar()" hidden></div>
+    <div class="sidebar-scrim" id="sidebar-scrim" hidden></div>
 
     {% include "components/sidebar.html" %}
 
@@ -63,180 +56,16 @@
         {% block content %}{% endblock %}
     </div>
 
-    <script>
-    /* ── Theme — single source of truth for UI sync ────────────────── */
-    function _syncThemeUI(theme) {
-        var icon = document.querySelector('.theme-toggle-icon');
-        if (icon) icon.textContent = theme === 'dark' ? '\u263E' : '\u2600\uFE0F';
-        var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = theme === 'light' ? '#F7F9FC' : '#000000';
-    }
-    function toggleTheme() {
-        var html = document.documentElement;
-        var current = html.getAttribute('data-theme') || 'dark';
-        var next = current === 'dark' ? 'light' : 'dark';
-        html.setAttribute('data-theme', next);
-        localStorage.setItem('theme', next);
-        _syncThemeUI(next);
-    }
-    /* Sync toggle label on initial page load */
-    document.addEventListener('DOMContentLoaded', function() {
-        _syncThemeUI(document.documentElement.getAttribute('data-theme') || 'dark');
-    });
-
-    var _drawerMedia = window.matchMedia('(max-width: 768px)');
-    var _drawerCloseTimer = null;
-
-    function _drawerElements() {
-        return {
-            sidebar: document.getElementById('sidebar-nav'),
-            scrim: document.getElementById('sidebar-scrim'),
-            button: document.getElementById('hamburger-btn')
-        };
-    }
-
-    function _drawerFocusable(sidebar) {
-        return Array.prototype.filter.call(
-            sidebar.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'),
-            function(el) { return !el.hidden && el.getAttribute('aria-hidden') !== 'true'; }
-        );
-    }
-
-    function _setClosedDrawerSemantics(isMobile) {
-        var els = _drawerElements();
-        if (!els.sidebar || !els.scrim || !els.button) return;
-
-        els.sidebar.classList.remove('open');
-        els.scrim.classList.remove('visible');
-        els.scrim.hidden = true;
-        els.button.setAttribute('aria-expanded', 'false');
-        els.button.setAttribute('aria-label', 'Open navigation');
-        document.body.classList.remove('mobile-drawer-open');
-
-        if (isMobile) {
-            els.sidebar.setAttribute('aria-hidden', 'true');
-            els.sidebar.setAttribute('inert', '');
-        } else {
-            els.sidebar.removeAttribute('aria-hidden');
-            els.sidebar.removeAttribute('inert');
-        }
-    }
-
-    function openSidebar() {
-        if (!_drawerMedia.matches) return;
-        var els = _drawerElements();
-        if (!els.sidebar || !els.scrim || !els.button) return;
-
-        if (_drawerCloseTimer) {
-            window.clearTimeout(_drawerCloseTimer);
-            _drawerCloseTimer = null;
-        }
-        els.sidebar.removeAttribute('aria-hidden');
-        els.sidebar.removeAttribute('inert');
-        els.sidebar.classList.add('open');
-        els.scrim.hidden = false;
-        void els.scrim.offsetWidth;
-        els.scrim.classList.add('visible');
-        els.button.setAttribute('aria-expanded', 'true');
-        els.button.setAttribute('aria-label', 'Close navigation');
-        document.body.classList.add('mobile-drawer-open');
-
-        var firstPrimaryLink = els.sidebar.querySelector('.sb-nav a[href]');
-        if (firstPrimaryLink) firstPrimaryLink.focus();
-    }
-
-    function closeSidebar(options) {
-        options = options || {};
-        if (!_drawerMedia.matches) {
-            _setClosedDrawerSemantics(false);
-            return;
-        }
-        var els = _drawerElements();
-        if (!els.sidebar || !els.scrim || !els.button) return;
-        var wasOpen = els.sidebar.classList.contains('open');
-
-        els.sidebar.classList.remove('open');
-        els.sidebar.setAttribute('aria-hidden', 'true');
-        els.sidebar.setAttribute('inert', '');
-        els.button.setAttribute('aria-expanded', 'false');
-        els.button.setAttribute('aria-label', 'Open navigation');
-        els.scrim.classList.remove('visible');
-        document.body.classList.remove('mobile-drawer-open');
-
-        if (_drawerCloseTimer) window.clearTimeout(_drawerCloseTimer);
-        _drawerCloseTimer = window.setTimeout(function() {
-            els.scrim.hidden = true;
-            _drawerCloseTimer = null;
-        }, 300);
-
-        if (wasOpen && options.restoreFocus !== false && _drawerMedia.matches) {
-            els.button.focus();
-        }
-    }
-
-    function toggleSidebar() {
-        var els = _drawerElements();
-        if (!els.sidebar) return;
-        if (els.sidebar.classList.contains('open')) closeSidebar();
-        else openSidebar();
-    }
-
-    document.addEventListener('keydown', function(event) {
-        var els = _drawerElements();
-        if (!els.sidebar || !_drawerMedia.matches || !els.sidebar.classList.contains('open')) return;
-
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            closeSidebar();
-            return;
-        }
-        if (event.key !== 'Tab') return;
-
-        var focusable = _drawerFocusable(els.sidebar);
-        if (!focusable.length) {
-            event.preventDefault();
-            return;
-        }
-        var first = focusable[0];
-        var last = focusable[focusable.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
-        }
-    });
-
-    document.querySelectorAll('.sidebar a, .sidebar button[type="submit"]').forEach(function(el) {
-        el.addEventListener('click', function() {
-            if (_drawerMedia.matches) closeSidebar({restoreFocus: false});
-        });
-    });
-
-    function _syncDrawerBreakpoint() {
-        if (_drawerCloseTimer) {
-            window.clearTimeout(_drawerCloseTimer);
-            _drawerCloseTimer = null;
-        }
-        _setClosedDrawerSemantics(_drawerMedia.matches);
-    }
-    if (_drawerMedia.addEventListener) _drawerMedia.addEventListener('change', _syncDrawerBreakpoint);
-    else _drawerMedia.addListener(_syncDrawerBreakpoint);
-    _syncDrawerBreakpoint();
-
-    </script>
-
     {# ── Global AI Chat Modal ───────────────────────────────────────── #}
-    <div class="ai-chat-scrim" id="ai-chat-scrim" hidden onclick="aiChatClose(event)">
-        <div class="ai-chat-modal" role="dialog" aria-modal="true" onclick="event.stopPropagation()">
+    <div class="ai-chat-scrim" id="ai-chat-scrim" hidden>
+        <div class="ai-chat-modal" role="dialog" aria-modal="true">
             <div class="ai-chat-header">
                 <span class="ai-chat-title">Ask Opus</span>
                 <div class="ai-chat-header-actions">
                     <button type="button" class="ai-chat-clear" id="ai-chat-clear-btn"
                             hx-post="/ai/clear" hx-target="#ai-chat-thread" hx-swap="innerHTML"
                             title="Clear conversation">Clear</button>
-                    <button type="button" class="ai-chat-close" onclick="aiChatClose()" title="Close" aria-label="Close chat">&times;</button>
+                    <button type="button" class="ai-chat-close" data-ai-chat-close title="Close" aria-label="Close chat">&times;</button>
                 </div>
             </div>
             <div class="ai-chat-body">
@@ -253,9 +82,7 @@
                     <span class="ai-chat-thinking-dot"></span>
                 </div>
             </div>
-            <form class="ai-chat-form" id="ai-chat-form" hx-post="/ai/ask" hx-target="#ai-chat-thread" hx-swap="beforeend"
-                  hx-on::before-request="aiChatBeforeReq()"
-                  hx-on::after-request="aiChatAfterReq(event)">
+            <form class="ai-chat-form" id="ai-chat-form" hx-post="/ai/ask" hx-target="#ai-chat-thread" hx-swap="beforeend">
                 <input type="hidden" name="page" id="ai-chat-page" value="general">
                 <input type="text" name="question" class="ai-chat-input" id="ai-chat-input" placeholder="Ask about your finances..." autocomplete="off" required>
                 <button type="submit" class="ai-chat-send" aria-label="Send message">
@@ -264,225 +91,5 @@
             </form>
         </div>
     </div>
-
-    <script>
-    /* ── AI Chat Modal (global) ─────────────────────────────────── */
-    var _aiCurrentPage = 'general';
-    function aiChatOpen(page) {
-        page = page || 'general';
-        /* If switching pages, clear the thread UI */
-        if (page !== _aiCurrentPage) {
-            document.getElementById('ai-chat-thread').innerHTML = '';
-            document.getElementById('ai-chat-empty').hidden = false;
-            _aiCurrentPage = page;
-        }
-        document.getElementById('ai-chat-page').value = page;
-        /* Also set page on clear button */
-        var clearBtn = document.getElementById('ai-chat-clear-btn');
-        if (clearBtn) clearBtn.setAttribute('hx-vals', JSON.stringify({page: page}));
-        htmx.process(clearBtn);
-        document.getElementById('ai-chat-scrim').hidden = false;
-        document.body.style.overflow = 'hidden';
-        document.getElementById('ai-chat-input').focus();
-        _aiScrollThread();
-    }
-    function aiChatClose(evt) {
-        if (evt && evt.target !== document.getElementById('ai-chat-scrim')) return;
-        document.getElementById('ai-chat-scrim').hidden = true;
-        document.body.style.overflow = '';
-    }
-    function aiChatBeforeReq() {
-        document.getElementById('ai-chat-thinking').hidden = false;
-        document.getElementById('ai-chat-empty').hidden = true;
-        _aiScrollThread();
-    }
-    function aiChatAfterReq(evt) {
-        document.getElementById('ai-chat-thinking').hidden = true;
-        if (evt.detail.successful) {
-            document.getElementById('ai-chat-form').reset();
-            /* Restore hidden page field after form reset */
-            document.getElementById('ai-chat-page').value = _aiCurrentPage;
-            _aiScrollThread();
-            document.getElementById('ai-chat-input').focus();
-        }
-    }
-    function _aiScrollThread() {
-        requestAnimationFrame(function() {
-            var body = document.querySelector('.ai-chat-body');
-            if (body) body.scrollTop = body.scrollHeight;
-        });
-    }
-    /* Escape closes AI chat modal */
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !document.getElementById('ai-chat-scrim').hidden) {
-            aiChatClose();
-            e.stopImmediatePropagation();
-        }
-    });
-    </script>
-
-    <script>
-    /* ── Keyboard shortcuts ────────────────────────────────────── */
-    (function() {
-        var _gPending = false, _gTimer = null;
-
-        function _active(e) {
-            var t = e.target.tagName;
-            return t !== 'INPUT' && t !== 'TEXTAREA' && t !== 'SELECT'
-                && !e.target.isContentEditable;
-        }
-
-        function _txnRows() {
-            var c = document.getElementById('txn-results');
-            return c ? Array.from(c.querySelectorAll('tbody tr')) : [];
-        }
-
-        function _selectRow(rows, idx) {
-            rows.forEach(function(r) { r.classList.remove('is-selected'); });
-            if (idx >= 0 && idx < rows.length) {
-                rows[idx].classList.add('is-selected');
-                rows[idx].scrollIntoView({ block: 'nearest' });
-            }
-        }
-
-        document.addEventListener('keydown', function(e) {
-            if (!_active(e)) return;
-            var key = e.key;
-
-            /* "g" prefix for navigation */
-            if (_gPending) {
-                _gPending = false;
-                clearTimeout(_gTimer);
-                if (key === 't') { window.location.href = '/transactions/'; return; }
-                if (key === 'd') { window.location.href = '/'; return; }
-                return;
-            }
-            if (key === 'g') {
-                _gPending = true;
-                _gTimer = setTimeout(function() { _gPending = false; }, 1000);
-                return;
-            }
-
-            /* "/" — focus search or first date input */
-            if (key === '/') {
-                var q = document.getElementById('q');
-                var start = document.getElementById('start');
-                if (q) { e.preventDefault(); q.focus(); }
-                else if (start) { e.preventDefault(); start.focus(); }
-                return;
-            }
-
-            /* j/k — row navigation (transactions only) */
-            var rows = _txnRows();
-            if (rows.length && (key === 'j' || key === 'k')) {
-                var cur = rows.findIndex(function(r) {
-                    return r.classList.contains('is-selected');
-                });
-                if (key === 'j') cur = Math.min(cur + 1, rows.length - 1);
-                else cur = Math.max(cur - 1, 0);
-                _selectRow(rows, cur);
-                return;
-            }
-
-            /* Enter — open edit or submit edit form */
-            if (key === 'Enter' && rows.length) {
-                var sel = document.querySelector('#txn-results tr.is-selected');
-                if (!sel) return;
-                if (sel.classList.contains('txn-editing')) {
-                    var submit = sel.querySelector('button[type="submit"]');
-                    if (submit) submit.click();
-                } else {
-                    var edit = sel.querySelector('.btn-icon');
-                    if (edit) edit.click();
-                }
-                return;
-            }
-
-            /* Escape — cancel edit or clear selection */
-            if (key === 'Escape') {
-                var editing = document.querySelector('#txn-results tr.txn-editing');
-                if (editing) {
-                    var cancel = editing.querySelector('.btn-icon[title="Cancel"]');
-                    if (cancel) cancel.click();
-                    return;
-                }
-                var selected = document.querySelector('#txn-results tr.is-selected');
-                if (selected) selected.classList.remove('is-selected');
-                return;
-            }
-        });
-    })();
-    </script>
-
-    <script>
-    /* ── CSRF token injection ──────────────────────────────────── */
-    (function() {
-        var token = document.querySelector('meta[name="csrf-token"]').content;
-
-        /* Auto-inject hidden input into all POST forms */
-        document.querySelectorAll('form[method="post"], form[method="POST"]').forEach(function(form) {
-            if (!form.querySelector('input[name="_csrf_token"]')) {
-                var input = document.createElement('input');
-                input.type = 'hidden'; input.name = '_csrf_token'; input.value = token;
-                form.appendChild(input);
-            }
-        });
-
-        /* Also catch dynamically added forms (HTMX swaps) */
-        document.body.addEventListener('htmx:afterSettle', function() {
-            document.querySelectorAll('form[method="post"], form[method="POST"]').forEach(function(form) {
-                if (!form.querySelector('input[name="_csrf_token"]')) {
-                    var input = document.createElement('input');
-                    input.type = 'hidden'; input.name = '_csrf_token'; input.value = token;
-                    form.appendChild(input);
-                }
-            });
-        });
-
-        /* Set CSRF header for all HTMX requests (covers hx-post) */
-        document.body.addEventListener('htmx:configRequest', function(evt) {
-            evt.detail.headers['X-CSRF-Token'] = token;
-        });
-
-        /* Patch fetch() to auto-inject CSRF header on same-origin POST/PUT/DELETE */
-        var _origFetch = window.fetch;
-        window.fetch = function(url, opts) {
-            opts = opts || {};
-            var method = (opts.method || 'GET').toUpperCase();
-            if (method !== 'GET' && method !== 'HEAD') {
-                opts.headers = opts.headers || {};
-                if (opts.headers instanceof Headers) {
-                    if (!opts.headers.has('X-CSRF-Token')) opts.headers.set('X-CSRF-Token', token);
-                } else {
-                    if (!opts.headers['X-CSRF-Token']) opts.headers['X-CSRF-Token'] = token;
-                }
-            }
-            return _origFetch.call(this, url, opts);
-        };
-    })();
-    </script>
-
-    <script>
-    /* ── Service Worker registration ───────────────────────────── */
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/sw.js').then(function(reg) {
-                /* Auto-activate new SW versions */
-                reg.addEventListener('updatefound', function() {
-                    var newWorker = reg.installing;
-                    if (newWorker) {
-                        newWorker.addEventListener('statechange', function() {
-                            if (newWorker.state === 'activated') {
-                                console.log('[SW] New version activated');
-                            }
-                        });
-                    }
-                });
-            }).catch(function(err) {
-                console.log('[SW] Registration failed:', err);
-            });
-        });
-    }
-    </script>
 </body>
 </html>

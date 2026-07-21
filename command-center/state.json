@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-21 1:42 PM CST",
+    "lastUpdated": "2026-07-21 5:25 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,71 +22,71 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4AE-R source commit d749700 is durable on main GitHub Actions returned zero runs because skip actions was honored and no Fly deployment occurred; this command-center-only closeout also uses skip actions"
+    "durabilityStatus": "Work block 4AF-R is actively publishing the verified 4AF set from codex/csp-shared-execution-foundation to main with automatic release verification"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4AE-R made the completed Task 1P.4.1 CSP contract durable on main without deployment; proposed 4AF remains unconfirmed.",
+    "summary": "Work block 4AF-R is publishing the locally verified Task 1P.4.2a result to main under an exact durability and automatic-release boundary.",
     "progress": 95
   },
   "currentTask": {
-    "title": "Task 1P.4.2a: Migrate the shared execution foundation",
-    "owner": "Ryan for confirmation; Codex Desktop recommended for execution",
-    "status": "planned",
-    "supportingAgent": "An independent security reviewer is optional before implementation",
-    "nextAction": "Review the durable 4AE contract then confirm revise or defer proposed work block 4AF.",
-    "blocker": "Proposed 4AF is not confirmed."
+    "title": "Task 1P.4.2a-R: Publish and verify the shared CSP execution foundation",
+    "owner": "Codex Desktop",
+    "status": "active",
+    "supportingAgent": "None; Codex Desktop owns exact Git durability release observation health verification and closeout",
+    "nextAction": "Stage and commit the exact verified fifteen-path 4AF set fast-forward main push observe the automatic deployment verify credential-free health and close with skip actions.",
+    "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-ae-r",
-    "label": "4AE-R",
-    "name": "CSP Contract Durability",
-    "status": "complete",
+    "id": "phase-4-block-af-r",
+    "label": "4AF-R",
+    "name": "Shared CSP Execution Foundation Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Task 1P.4.1-R durability complete; proposed Task 1P.4.2a remains unconfirmed",
+    "currentTask": "Task 1P.4.2a-R exact-path durability automatic release and credential-free health verification",
     "includedTasks": [
-      "Task 1P.4.1-R only",
-      "Exact nine-path command-center staging source commit direct-main push and remote SHA verification",
-      "Native skip-actions verification sanitized Runway OS closeout commit final push and alignment proof"
+      "Task 1P.4.2a-R only",
+      "Exact fifteen-path staging one source commit fast-forward local main and direct push to origin main without force or PR",
+      "Read-only automatic Fly deployment observation credential-free production health exact SHA proof and one sanitized skip-actions closeout"
     ],
     "excludedTasks": [
-      "Proposed Task 1P.4.2a and work block 4AF Tasks 1P.4.2b-1P.7 the remainder of Task 2 and Tasks 3-4",
-      "All product template JavaScript CSS maintained-test dependency runtime authentication header worker manifest and Plaid behavior changes",
-      "Credentials protected data real databases production or demo inspection workflow mutation Fly action PR force push and broader recovery",
+      "Task 1P.4.2b and later tasks plus all new product template JavaScript CSS test dependency runtime authentication header Plaid service-worker manifest responsive and financial mutations",
+      "Credentials protected data real databases retained uploads authenticated production pages manual workflow actions workflow edits non-automatic Fly changes downstream access or writes",
+      "PR creation force push broader recovery and any publication path outside the exact verified 4AF set or sanitized closeout",
       "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
     ],
     "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "The block requires exact-path Git stewardship sensitive-addition review direct-main safety skipped-workflow verification and final command-center closeout.",
-    "runnerPath": "Current Codex task without PR branch or delegation because Ryan directly instructed commit and push to main.",
+    "whyThisAgent": "The block requires exact-path Git stewardship sensitive-addition and protected-boundary checks direct-main safety read-only release observation credential-free health and Runway OS closeout.",
+    "runnerPath": "Current Codex task using codex/csp-shared-execution-foundation then a clean fast-forward to local main without PR or delegation.",
     "expectedFiles": [
-      "Exact nine verified 4AE command-center paths only",
-      "Existing Runway OS sources and generated dashboard for the sanitized closeout"
+      "Exact fifteen verified 4AF application static-asset maintained-test contract issue findings evidence and Runway OS paths",
+      "Existing Runway OS sources generated dashboard and one sanitized release evidence log for closeout"
     ],
     "defaults": [
-      "No PR branch force push product change deployment or production inspection",
-      "Explicit path staging and two skip-actions commits only",
-      "Verify GitHub natively skipped Actions for both commits",
-      "Preserve both unrelated untracked files and leave proposed 4AF unconfirmed"
+      "No PR force push new product mutation manual workflow action or non-automatic Fly mutation",
+      "Explicit path staging with verified temporary HTMX compatibility preserved exactly",
+      "Observe only the automatic main deployment and credential-free production health",
+      "Use skip actions only for the sanitized command-center closeout and preserve both unrelated untracked files"
     ],
     "stopConditions": [
-      "Unexpected path sensitive addition protected data or unrelated change",
-      "Local or remote main divergence failed verification or excluded staging",
-      "Push rejection or a workflow run despite the skip-actions directive",
-      "Recovery beyond a normal fetch-and-fast-forward decision"
+      "Unexpected or excluded path sensitive addition protected-boundary risk failed verification or excluded staging",
+      "Local or remote main divergence push rejection or recovery beyond a clean fast-forward",
+      "Automatic deployment or credential-free health failure requiring mutation or broader diagnosis",
+      "Command-center checks fail or either preserved untracked file overlaps"
     ],
     "verification": [
-      "Exact nine-path product-boundary protected-path and sensitive-addition review",
-      "JSON dashboard refresh health whitespace rendered dashboard and staged-set checks",
-      "Commit content main ancestry exact remote SHA and native Actions-skip verification after each push",
-      "Final tracked cleanliness with both preserved untracked files untouched"
+      "Exact path staged-set protected-boundary and high-confidence sensitive-addition checks",
+      "Maintained synthetic smoke isolated-browser shared-shell coverage and relevant Python JavaScript and JSON syntax",
+      "Dashboard refresh health whitespace rendered inspection commit content main ancestry and exact remote SHA",
+      "Automatic deployment run and job credential-free production health final alignment and preserved untracked files"
     ],
-    "nextReportPoint": "Ryan reviews the durable contract and independently confirms revises or defers proposed 4AF.",
-    "durability": "Source commit d749700 is durable on main; GitHub Actions returned zero runs because skip actions was honored; no Fly deployment occurred; this command-center-only closeout also uses skip actions.",
-    "result": "Exact nine-path source commit d749700 is durable on main with exact remote SHA verification zero Actions runs no deployment and both unrelated untracked files excluded.",
+    "nextReportPoint": "Return source and closeout SHAs exact paths automatic deployment result credential-free health final alignment preserved exclusions and Task 1P.4.2b still separately gated.",
+    "durability": "active; local branch starts exactly from main and origin main with no push performed yet",
+    "result": null,
     "evidence": [
       "command-center/csp-compatibility-contract.md",
-      "command-center/logs/2026-07-21-csp-compatibility-contract-4ae.md"
+      "command-center/logs/2026-07-21-shared-csp-execution-foundation-4af.md"
     ]
   },
   "routerHealth": {
@@ -112,36 +112,20 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Review the durable 4AE CSP contract and decide proposed work block 4AF",
-    "status": "waiting-for-ryan",
-    "owner": "Ryan",
-    "why": "Task 1P.4.1 and its durability task are complete and every CSP product mutation remains separately gated.",
-    "action": "Approve the contract or request an independent review then confirm revise or defer Task 1P.4.2a as proposed 4AF.",
+    "title": "Publish and verify work block 4AF-R",
+    "status": "in-progress",
+    "owner": "Codex Desktop",
+    "why": "Ryan explicitly authorized commit and push to main for the complete locally verified 4AF set.",
+    "action": "Commit the exact set fast-forward and push main observe the automatic deployment verify credential-free health and close with skip actions.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [
-    {
-      "decision": "Approve or independently review the CSP contract",
-      "status": "open",
-      "whyItMatters": "Work block 4AE freezes strict core and narrow Plaid route-family policies plus the complete migration and proof sequence.",
-      "workaround": "Keep all CSP product mutation unconfirmed until Ryan accepts the contract or requests review."
-    },
-    {
-      "decision": "Decide proposed work block 4AF",
-      "status": "open",
-      "whyItMatters": "Task 1P.4.2a is the smallest dependency-first execution slice: shared shell behavior and HTMX configuration foundation only.",
-      "workaround": "Leave Task 1P.4.2a planned; completed 4AE planning does not authorize implementation."
-    }
-  ],
+  "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Task 1P.4.1 is durable on main; CSP product work waits for Ryan's contract-review and next-block decision.",
-    "items": [
-      "Approve or independently review command-center/csp-compatibility-contract.md.",
-      "Confirm revise or defer proposed 4AF for the shared execution foundation only."
-    ]
+    "summary": "Nothing is waiting on Ryan during the bounded 4AF-R release unless a stop condition appears.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Decide the durable 4AE CSP contract reviewer path and whether proposed 4AF should become active.",
+    "phaseQuestions": "Task 1P.4.2b remains unconfirmed and outside 4AF-R; only a release stop condition requires Ryan during this block.",
     "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -4316,6 +4300,109 @@
         "command-center/csp-compatibility-contract.md",
         "command-center/logs/2026-07-21-csp-compatibility-contract-4ae.md"
       ]
+    },
+    {
+      "id": "phase-4-block-af",
+      "phaseId": "phase-4",
+      "label": "4AF",
+      "name": "Shared CSP Execution Foundation",
+      "status": "complete",
+      "includedTasks": [
+        "Task 1P.4.2a only",
+        "Move six executable base application blocks five native handlers and two base hx-on handlers to maintained local JavaScript and delegated listeners",
+        "Move HTMX indicator rules to local CSS set only includeIndicatorStyles false add focused synthetic and isolated-browser proof and close Runway OS locally"
+      ],
+      "excludedTasks": [
+        "Tasks 1P.4.2b-1P.7 the remainder of Task 2 and Tasks 3-4",
+        "Remaining page or fragment execution global HTMX eval or swapped-script disablement broader inline-style migration CSP headers nonces and route-family enforcement",
+        "Plaid login offline errors standalone k worker manifest authentication cookie CSRF responsive redesign new dependencies protected or live access GitHub durability publication and deployment",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block tightly couples shared-shell browser behavior synthetic verification security-boundary control and Runway OS stewardship in a sensitive retrofit.",
+      "runnerPath": "Current Codex task on codex/csp-shared-execution-foundation without delegation.",
+      "expectedFiles": [
+        "web/templates/base.html maintained web/static JavaScript and web/static/style.css",
+        "Focused scripts/smoke_test.py and scripts/mobile_drawer_browser_test.py coverage",
+        "CSP contract findings issues evidence and Runway OS sources plus generated dashboard"
+      ],
+      "defaults": [
+        "Preserve visual and behavioral parity using maintained local assets inert data delegation and htmx load where needed",
+        "Set only includeIndicatorStyles false and explicitly retain allowEval and allowScriptTags until Task 1P.4.2b",
+        "Use temporary synthetic all-entity data localhost disposable browser state denied external networking and exact cleanup",
+        "Keep durability local-only and preserve both unrelated untracked files"
+      ],
+      "stopConditions": [
+        "Shared-shell parity requires reaching a fragment or page outside Task 1P.4.2a or prematurely disabling remaining HTMX dependencies",
+        "A broader product design authentication security-policy or new runtime dependency decision appears",
+        "Protected live or external access another Task 1P item plan-changing verification or cleanup failure appears",
+        "Command-center checks fail or either preserved untracked file overlaps"
+      ],
+      "verification": [
+        "Baseline and final full synthetic smoke plus focused shared-shell request and source assertions",
+        "Configured-auth and no-password isolated Chrome across desktop phone boundaries repeated HTMX swaps shared behavior denied external requests errors and cleanup",
+        "Explicit temporary HTMX dependency assertions and relevant Python JavaScript and JSON syntax",
+        "Dashboard refresh health whitespace rendered inspection exact product boundary and preserved untracked files"
+      ],
+      "reportBack": "Return exact shared behaviors migrated local asset structure temporary HTMX dependency status verification changed paths cleanup residual Task 1P.4.2b dependencies and local-only branch state.",
+      "durability": "complete and local-only on codex/csp-shared-execution-foundation; no commit push PR merge deployment production inspection or live action occurred",
+      "result": "Shared base execution migrated to maintained local assets with local HTMX indicator CSS and maintained synthetic plus isolated-browser proof; base has zero executable inline application blocks native handlers or hx-on handlers while allowEval and allowScriptTags remain explicitly enabled for Task 1P.4.2b dependencies.",
+      "evidence": [
+        "command-center/csp-compatibility-contract.md",
+        "command-center/logs/2026-07-21-shared-csp-execution-foundation-4af.md"
+      ]
+    },
+    {
+      "id": "phase-4-block-af-r",
+      "phaseId": "phase-4",
+      "label": "4AF-R",
+      "name": "Shared CSP Execution Foundation Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1P.4.2a-R only",
+        "Exact fifteen-path staging one source commit fast-forward local main and direct push to origin main without force or PR",
+        "Read-only automatic Fly deployment observation credential-free production health exact SHA proof and one sanitized skip-actions closeout"
+      ],
+      "excludedTasks": [
+        "Task 1P.4.2b and later tasks plus all new product test dependency runtime authentication header Plaid service-worker manifest responsive and financial mutations",
+        "Credentials protected data real databases retained uploads authenticated production pages manual workflow actions workflow edits non-automatic Fly changes downstream access or writes",
+        "PR creation force push broader recovery and any publication path outside the exact verified 4AF set or sanitized closeout",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block requires exact-path Git stewardship sensitive-addition and protected-boundary checks direct-main safety read-only release observation credential-free health and Runway OS closeout.",
+      "runnerPath": "Current Codex task using codex/csp-shared-execution-foundation then a clean fast-forward to local main without PR or delegation.",
+      "expectedFiles": [
+        "Exact fifteen verified 4AF application static-asset maintained-test contract issue findings evidence and Runway OS paths",
+        "Existing Runway OS sources generated dashboard and one sanitized release evidence log for closeout"
+      ],
+      "defaults": [
+        "No PR force push new product mutation manual workflow action or non-automatic Fly mutation",
+        "Explicit path staging with verified temporary HTMX compatibility preserved exactly",
+        "Observe only the automatic main deployment and credential-free production health",
+        "Use skip actions only for the sanitized command-center closeout and preserve both unrelated untracked files"
+      ],
+      "stopConditions": [
+        "Unexpected or excluded path sensitive addition protected-boundary risk failed verification or excluded staging",
+        "Local or remote main divergence push rejection or recovery beyond a clean fast-forward",
+        "Automatic deployment or credential-free health failure requiring mutation or broader diagnosis",
+        "Command-center checks fail or either preserved untracked file overlaps"
+      ],
+      "verification": [
+        "Exact path staged-set protected-boundary and high-confidence sensitive-addition checks",
+        "Maintained synthetic smoke isolated-browser shared-shell coverage and relevant Python JavaScript and JSON syntax",
+        "Dashboard refresh health whitespace rendered inspection commit content main ancestry and exact remote SHA",
+        "Automatic deployment run and job credential-free production health final alignment and preserved untracked files"
+      ],
+      "reportBack": "Return source and closeout SHAs exact paths automatic deployment result credential-free health final alignment preserved exclusions and Task 1P.4.2b still separately gated.",
+      "durability": "active; local branch starts exactly from main and origin main with no push performed yet",
+      "result": null,
+      "evidence": [
+        "command-center/csp-compatibility-contract.md",
+        "command-center/logs/2026-07-21-shared-csp-execution-foundation-4af.md"
+      ]
     }
   ],
   "phaseTasks": [
@@ -5269,8 +5356,8 @@
       "status": "active",
       "owner": "Ryan and Codex Desktop",
       "summary": "Resolve the CSP half of P3-3J-06 through the durable Tasks 1P.4.1-1P.4.4 without weakening the policy merely to avoid template work.",
-      "nextAction": "Review the completed Task 1P.4.1 contract then separately confirm revise or defer proposed Task 1P.4.2a work block 4AF.",
-      "blocker": "No CSP product implementation work block is confirmed."
+      "nextAction": "Complete confirmed local-only work block 4AF for Task 1P.4.2a then size the residual fragment slice separately.",
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -5306,7 +5393,7 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P42",
       "title": "Task 1P.4.2: Remove inline executable markup and HTMX eval dependencies",
-      "status": "planned",
+      "status": "active",
       "owner": "Codex Desktop",
       "summary": "Move executable inline scripts native event handlers and hx-on behavior into maintained local static JavaScript and delegated listeners carry server values through inert data and disable HTMX eval and swapped-script execution only after focused proof; decomposed into Tasks 1P.4.2a-1P.4.2c."
     },
@@ -5314,11 +5401,26 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P42A",
       "title": "Task 1P.4.2a: Migrate the shared execution foundation",
-      "status": "current",
-      "owner": "Ryan for confirmation; Codex Desktop recommended for execution",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Move shared-shell executable blocks and native or HTMX handlers to local JavaScript move HTMX indicator rules to local CSS disable only injected indicator styles and prove the shell while retaining eval and swapped scripts until Task 1P.4.2b removes their remaining dependencies.",
-      "nextAction": "Review the 4AE contract then confirm revise or defer proposed work block 4AF.",
-      "blocker": "Proposed 4AF is not confirmed."
+      "nextAction": "Complete locally; Task 1P.4.2b remains separately gated.",
+      "blocker": null,
+      "result": "Shared base execution moved to maintained local assets with local indicator CSS and full synthetic plus isolated-browser proof while temporary HTMX eval and swapped-script compatibility remains explicit.",
+      "evidence": [
+        "command-center/csp-compatibility-contract.md",
+        "command-center/logs/2026-07-21-shared-csp-execution-foundation-4af.md"
+      ]
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1P42AR",
+      "title": "Task 1P.4.2a-R: Publish and verify the shared CSP execution foundation",
+      "status": "current",
+      "owner": "Codex Desktop",
+      "summary": "Publish the exact verified 4AF set to main observe the automatic Fly deployment verify credential-free production health and close with one sanitized skip-actions commit.",
+      "nextAction": "Stage the exact fifteen paths commit fast-forward main push verify release and health then close Runway OS.",
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -5326,7 +5428,9 @@
       "title": "Task 1P.4.2b: Migrate HTMX-swapped fragment execution",
       "status": "planned",
       "owner": "Codex Desktop",
-      "summary": "Remove executable scripts inline handlers and remaining hx-on behavior from directly returned fragments carry server state through inert data initialize repeated swaps through delegated listeners or htmx load then disable HTMX eval and swapped-script execution."
+      "summary": "Remove executable scripts inline handlers and remaining hx-on behavior from directly returned fragments carry server state through inert data initialize repeated swaps through delegated listeners or htmx load then disable HTMX eval and swapped-script execution.",
+      "nextAction": "Run a separate just-in-time sizing pass and return a confirmable proposal without implementation.",
+      "blocker": "No Task 1P.4.2b implementation work block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -6671,6 +6775,9 @@
     "description": "Review the durable 4AE contract then confirm revise or defer Task 1P.4.2a without inferring product authorization from completed planning and durability."
   },
   "verification": {
+    "phase4SharedExecutionFoundation": "pass locally; base has zero executable inline application blocks native inline handlers or hx-on handlers and maintained local theme-init plus app-shell assets preserve shared behavior with HTMX indicator CSS local",
+    "phase4SharedExecutionCoverage": "pass; full synthetic smoke and configured-auth plus no-password isolated Chrome cover theme HTMX AI CSRF service worker accessible drawer responsive boundaries repeated swaps keyboard errors denied external requests and exact cleanup",
+    "phase4SharedExecutionBoundaries": "pass; allowEval and allowScriptTags remain explicitly enabled for residual Task 1P.4.2b dependencies and no fragment remaining-page style-policy Plaid auth protected data real database external live GitHub publication deployment or preserved untracked-file change occurred",
     "phase4CspContractRelease": "pass; exact nine-path source commit d749700 is durable on main local and remote SHAs matched and GitHub Actions returned zero runs because skip actions was honored",
     "phase4CspContractDurability": "pass; exact-path no-product-diff protected-path sensitive-addition JSON dashboard health whitespace rendered inspection staged-set commit-content ancestry remote-alignment and preserved-exclusion checks passed with no deployment",
     "phase4CspCompatibilityContract": "pass locally; strict core and narrow Plaid document policies exact origins full template inventory migration sub-slices prohibited exceptions and synthetic request or isolated-browser proof contract are frozen through 4AE",

@@ -1,6 +1,14 @@
 /* ── Reset & Base ───────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* HTMX indicator rules are local so strict CSP need not permit injected styles. */
+.htmx-indicator { opacity: 0; }
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+}
+
 /* Theme-invariant tokens */
 :root {
     --radius:      10px;

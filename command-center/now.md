@@ -2,27 +2,54 @@
 
 ## Active Objective
 
-Review the durable 4AE CSP compatibility contract and separately decide whether to confirm proposed work block 4AF.
+Publish the exact verified 4AF artifact set to `main`, observe the automatic Fly deployment, verify credential-free production health, and close the release without widening product scope.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4AE-R made Task 1P.4.1 planning durable without triggering deployment.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4AF-R is publishing the locally verified Task 1P.4.2a result to `main` under an exact release boundary.
 
 ## Current Work Block
 
-No active work block. Work block 4AE-R is complete and durable; proposed 4AF remains unconfirmed.
+Work block 4AF-R: Shared CSP Execution Foundation Durability And Release — active.
 
 ## Current Task
 
-Task 1P.4.2a: Migrate the shared execution foundation — planned and awaiting separate Ryan confirmation as proposed work block 4AF.
+Task 1P.4.2a-R: Publish and verify the shared CSP execution foundation — active.
 
 ## Owner
 
-Ryan owns the contract-review and 4AF decision. Codex Desktop completed 4AE-R durability and remains the recommended implementation and verification owner if 4AF is confirmed.
+Codex Desktop owns implementation, synthetic and isolated-browser verification, scope control, and Runway OS closeout. Ryan owns scope changes, publication, deployment, and live actions.
 
 ## Current Action
 
-Review `command-center/csp-compatibility-contract.md`; optionally request an independent security review; then confirm, revise, or defer proposed 4AF. No product mutation is authorized by 4AE-R.
+Stage the exact fifteen 4AF application, static-asset, test, contract, evidence, and Runway OS paths; commit on `codex/csp-shared-execution-foundation`; fast-forward local `main`; push `main` without force; observe the automatic Fly deployment; verify credential-free `/health`; then publish a sanitized `[skip actions]` closeout.
+
+## Work Block 4AF-R Contract
+
+- Include Task 1P.4.2a-R only: exact-path staging of the fifteen verified 4AF paths; one intentional source commit; fast-forward local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.2b and later tasks, any new product or test mutation, credentials, protected data, real databases, retained uploads, authenticated production pages, manual workflow dispatch or rerun, workflow edits, non-automatic Fly actions, downstream access or writes, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Preserve the verified behavior and temporary `allowEval`/`allowScriptTags` compatibility state exactly; publication does not authorize fragment migration or final CSP enforcement.
+- Stop for an unexpected path, sensitive addition, protected-path change, verification failure, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, failed credential-free health, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact path and staged sets, high-confidence sensitive additions, protected boundaries, Python and JavaScript syntax, maintained smoke and isolated-browser suites, JSON, whitespace, dashboard refresh and health, commit contents, main ancestry, exact remote SHA, automatic deployment result, credential-free production health, final tracked cleanliness, and both preserved untracked files.
+- Report the source and closeout commit SHAs, published paths, deployment run/job and result, production-health result, final local/remote alignment, preserved exclusions, and Task 1P.4.2b still separately gated.
+
+## Work Block 4AF Result
+
+- Complete and verified locally on `codex/csp-shared-execution-foundation`; no commit, push, PR, merge, deployment, production inspection, or live action occurred.
+- The six executable shared application blocks, five native handlers, and two base `hx-on` handlers moved from `web/templates/base.html` into maintained local `theme-init.js` and `app-shell.js` behavior; HTMX indicator styling moved to local CSS.
+- The shared shell preserves theme, accessible navigation, AI lifecycle, keyboard, CSRF/HTMX header, service-worker, and repeated-swap behavior under maintained synthetic and isolated-browser proof.
+- HTMX `includeIndicatorStyles` is false; `allowEval` and `allowScriptTags` remain true only because Task 1P.4.2b still owns two fragment `hx-on` attributes and fragment scripts.
+- The verified residual tracked-template inventory is 42 script elements: 32 executable inline, five external, and five inert JSON; 156 native inline event handlers; and two `hx-on` attributes.
+- Evidence: `command-center/logs/2026-07-21-shared-csp-execution-foundation-4af.md`.
+
+## Work Block 4AF Contract
+
+- Include Task 1P.4.2a only: move the six executable inline application blocks, five native event handlers, and two `hx-on` handlers in `web/templates/base.html` to maintained local JavaScript and delegated or HTMX event listeners; carry shared server values through inert data; move HTMX indicator rules to local CSS; set only `includeIndicatorStyles=false`; add focused synthetic and isolated-browser coverage; reconcile the contract, issue state, findings, and Runway OS; and close locally.
+- Keep Tasks 1P.4.2b-1P.7, the remainder of Task 2, Tasks 3-4, remaining page or fragment execution, `allowEval=false`, `allowScriptTags=false`, inline-style migration outside the indicator extraction, CSP headers or nonces, Plaid, login, offline/errors, `/k/`, worker/manifest, authentication, cookies, CSRF, responsive redesign, new dependencies, protected data, credentials, real databases, retained uploads, external networking, production/demo, GitHub durability, publication, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop in the current task on `codex/csp-shared-execution-foundation` without delegation. Preserve visual and behavioral parity, use inert data and maintained local assets, add no runtime dependency, keep HTMX eval and swapped-script processing temporarily enabled with explicit assertions, use temporary synthetic all-entity data and disposable localhost browser state, deny non-localhost requests, and keep durability local-only.
+- Stop if parity requires reaching a fragment or page outside Task 1P.4.2a; disabling eval or swapped scripts becomes necessary before their remaining dependencies migrate; a broader product, design, authentication, or security-policy decision appears; a new dependency, protected/live access, another Task 1P item, external request, plan-changing verification failure, cleanup failure, command-center failure, or preserved-file overlap appears.
+- Verify baseline and final full smoke; focused shared-shell request/source assertions; configured-auth and no-password isolated Chrome at desktop, phone, and responsive boundaries; repeated representative HTMX swaps; theme, navigation/drawer, AI chat, service-worker registration, CSRF/HTMX headers, denied external requests, console/page errors, and cleanup; temporary HTMX dependency assertions; relevant syntax; JSON; dashboard refresh and health; whitespace; rendered-dashboard inspection; exact product boundary; and preserved untracked files.
+- Report exact migrated behavior and local asset structure, temporary HTMX dependency status, focused and full verification, changed paths, cleanup, residual Task 1P.4.2b dependencies, local-only branch state, and a separately confirmable next block.
 
 ## Work Block 4AE-R Result
 
