@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-21 12:07 PM CST",
+    "lastUpdated": "2026-07-21 12:55 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,70 +27,62 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4AC-R is durable automatically deployed and credential-free production health verified; Task 1P.3 is the current planning gate.",
+    "summary": "Work block 4AD-R is the confirmed publication block; Task 1P.4 remains the next separate planning gate.",
     "progress": 95
   },
   "currentTask": {
-    "title": "Task 1P.3: Complete mobile-drawer accessibility",
-    "owner": "Ryan",
-    "status": "waiting-decision",
-    "supportingAgent": "Codex Desktop can plan the next bounded local-only block after Ryan confirms or revises the scope",
-    "nextAction": "Confirm or revise one bounded local-only Task 1P.3 planning block.",
-    "blocker": "Implementation remains unconfirmed."
+    "title": "Task 4: Publish and verify explicitly approved repairs",
+    "owner": "Codex Desktop",
+    "status": "active",
+    "supportingAgent": "Codex Desktop owns exact-path Git stewardship automatic deployment observation credential-free health verification and sanitized closeout",
+    "nextAction": "Verify stage commit fast-forward and push the exact 4AD source set then attribute the automatic Fly run verify health and publish a skip-actions closeout.",
+    "blocker": "Stop for path drift sensitive additions main divergence failed verification unattributable deployment failed health or recovery beyond the authorized fast-forward path."
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-ac-release",
-    "label": "4AC-R",
-    "name": "Session-Cookie Policy Durability And Release",
-    "status": "done",
+    "id": "phase-4-block-ad-release",
+    "label": "4AD-R",
+    "name": "Mobile Drawer Accessibility Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Completed exact-scope publication for the verified 4AC source set",
+    "currentTask": "Publish the exact verified 4AD source set and close the automatic release safely",
     "includedTasks": [
-      "Exact verified twelve-path 4AC application maintained-test README contract issue findings evidence and Runway OS source set",
-      "Explicit staging one source commit local-main fast-forward and direct origin/main push",
-      "Automatic Fly deployment observation credential-free production health and sanitized skip-actions closeout"
+      "Exact verified fifteen-path 4AD source set",
+      "Explicit staging source commit local-main fast-forward and direct origin/main push",
+      "Automatic Fly observation credential-free production health and sanitized skip-actions closeout"
     ],
     "excludedTasks": [
-      "Tasks 1P.3-1P.7 broader Task 2 unrelated repairs migrations and downstream access or writes",
-      "Credentials protected data real databases retained uploads authenticated production pages and manual workflow actions",
-      "PR creation force push non-automatic Fly changes and recovery beyond the exact fast-forward path",
+      "Tasks 1P.4-1P.7 broader Task 2 unrelated repairs and migrations",
+      "Credentials protected data real databases authenticated production pages manual workflow actions and non-automatic Fly changes",
+      "PR creation force push and recovery beyond the exact fast-forward path",
       "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
     ],
     "recommendedAgent": "Codex Desktop",
     "whyThisAgent": "The release requires exact-path Git stewardship sensitive-addition review direct-main fast-forward safety automatic Fly observation credential-free health verification and final Runway OS closeout.",
     "runnerPath": "Current Codex task without PR or delegation because Ryan directly instructed commit and push to main.",
     "expectedFiles": [
-      "Exact verified twelve-path 4AC source set",
+      "Exact verified fifteen-path 4AD source set",
       "Sanitized command-center release log state sources and generated dashboard closeout"
     ],
     "defaults": [
       "No PR or force push",
-      "Only one automatic deployment caused by the source push",
+      "One automatic deployment caused by the source push",
       "Credential-free production health only",
-      "Closeout commit uses skip actions to prevent a second deployment",
-      "Task 1P.3 remains a separate planning gate"
+      "Closeout commit uses skip actions to prevent a second deployment"
     ],
     "stopConditions": [
-      "Unexpected path sensitive addition protected data or unrelated user change",
-      "Local or remote main divergence failed maintained verification or excluded staging",
+      "Unexpected path sensitive addition protected data or unrelated change",
+      "Main divergence failed verification or excluded staging",
       "Unattributable or failed automatic deployment or failed credential-free health",
       "Second closeout deployment or recovery beyond the authorized fast-forward path"
     ],
     "verification": [
-      "Exact path staged-set high-confidence sensitive-addition branch-ancestry GitHub-authentication and remote-alignment review",
-      "Maintained synthetic smoke Python compilation JSON dashboard refresh health and whitespace checks",
-      "Explicit staging source commit and direct-main fast-forward push",
-      "Exact automatic Fly run and job attribution plus credential-free production health",
-      "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
+      "Exact path staged-set sensitive-addition ancestry and remote-alignment review",
+      "Maintained smoke focused isolated-browser coverage compilation JSON dashboard refresh health and whitespace checks",
+      "Source commit direct-main fast-forward push automatic Fly attribution and credential-free health",
+      "Final main alignment preserved exclusions and skip-actions closeout publication"
     ],
-    "nextReportPoint": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1P.3 planning gate.",
-    "durability": "Source commit 07c2026 is durable on main; automatic Fly run 29851220888 and job 88704299424 passed; credential-free production health returned HTTP 200; sanitized closeout uses skip actions.",
-    "result": "Exact twelve-path source commit 07c2026 was pushed to main without force or PR; the exact automatic Fly run and deploy job passed and credential-free production health returned HTTP 200.",
-    "evidence": [
-      "command-center/logs/2026-07-21-session-cookie-policy-release-4ac-r.md",
-      "command-center/logs/2026-07-21-session-cookie-policy-4ac.md",
-      "command-center/session-cookie-policy-contract.md"
-    ]
+    "nextReportPoint": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1P.4 planning gate.",
+    "durability": "Publication active under Ryan's direct instruction; source and closeout commits are not yet durable on main."
   },
   "routerHealth": {
     "status": "healthy",
@@ -115,21 +107,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 1P.3 mobile-drawer accessibility",
-    "status": "waiting-decision",
-    "owner": "Ryan",
-    "why": "Work block 4AC-R is complete and Task 1P.3 is the next prioritized repair family.",
-    "action": "Confirm or revise one bounded local-only Task 1P.3 block while keeping CSP broader browser and PWA work live inspection and publication separate.",
+    "title": "Publish and verify 4AD-R",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized commit and push to main for the verified 4AD source set.",
+    "action": "Complete exact-path publication automatic Fly attribution credential-free health and skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Confirm or revise the next bounded local-only Task 1P.3 planning block.",
+    "summary": "No current decision is needed unless publication hits a defined stop condition.",
     "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Confirm the next bounded Task 1P.3 planning block before implementation.",
-    "decisionQueue": "Task 1P.3 implementation CSP broader browser-coverage read-model and live-sensitive actions remain later separate Ryan gates.",
+    "phaseQuestions": "Task 1P.4 CSP planning remains separate until 4AD-R closes.",
+    "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -4092,6 +4084,106 @@
         "command-center/logs/2026-07-21-session-cookie-policy-4ac.md",
         "command-center/session-cookie-policy-contract.md"
       ]
+    },
+    {
+      "id": "phase-4-block-ad",
+      "phaseId": "phase-4",
+      "label": "4AD",
+      "name": "Mobile Drawer Accessibility And Responsive Coverage",
+      "status": "done",
+      "includedTasks": [
+        "Task 1P.3",
+        "Focused Task 2 responsive-navigation coverage for P3-3J-C01"
+      ],
+      "excludedTasks": [
+        "Tasks 1P.4-1P.7 the remainder of Task 2 and Tasks 3-4",
+        "CSP Upload copy manifest service-worker offline configured-auth exact-k and generalized browser or PWA coverage",
+        "Migrations credentials protected data real databases external networking production inspection live actions GitHub durability and deployment",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block combines accessibility judgment template CSS and JavaScript integration focused browser-test setup synthetic isolation cleanup issue disposition and Runway OS stewardship.",
+      "runnerPath": "Current Codex task on local branch codex/mobile-drawer-accessibility without delegation or second opinion.",
+      "expectedFiles": [
+        "web/templates/base.html and only related sidebar semantics if needed",
+        "web/static/style.css",
+        "Focused maintained isolated-browser test and development-only dependency surface if required",
+        "Issue contract evidence Runway OS sources and generated dashboard"
+      ],
+      "defaults": [
+        "Mobile uses the maintained max-width 768px breakpoint",
+        "Focus the first usable primary navigation link and contain Tab focus while open",
+        "Restore focus on non-navigation close but not during route or form navigation",
+        "Lock background scrolling only while open and clean state on breakpoint changes",
+        "Keep desktop visual authentication cookie service-worker production and publication behavior unchanged"
+      ],
+      "stopConditions": [
+        "Correct behavior requires a broader navigation redesign CSP or authentication change",
+        "Generalized PWA or browser infrastructure or a new production dependency becomes necessary",
+        "Protected data credentials external or live access or another Task 1P item is required",
+        "Plan-changing verification failure failed cleanup command-center failure or overlap with a preserved untracked file"
+      ],
+      "verification": [
+        "Baseline and final maintained synthetic smoke",
+        "Focused phone and breakpoint-adjacent isolated-browser checks for closed and open semantics focus Escape scrim scroll route and resize behavior",
+        "Temporary synthetic data disposable browser state denied outbound networking and exact cleanup",
+        "Python and relevant test-script validation JSON whitespace dashboard refresh health rendered inspection and final scoped worktree review"
+      ],
+      "reportBack": "Return the exact drawer contract focused and full results browser runtime setup changed paths cleanup issue disposition preserved exclusions branch state and separate publication gate.",
+      "durability": "local-only; no commit push PR merge workflow deployment production inspection or live action",
+      "result": "Closed mobile navigation is inert and assistive-hidden; opening synchronizes state focuses Dashboard contains Tab focus shows the scrim and locks scroll; Escape scrim and toggle restore focus; route and entity navigation avoid stale restoration; exact 768px and 769px behavior passes maintained isolated-Chrome coverage with denied external requests and exact cleanup.",
+      "evidence": [
+        "command-center/mobile-drawer-accessibility-contract.md",
+        "command-center/logs/2026-07-21-mobile-drawer-accessibility-4ad.md"
+      ],
+      "nextBlock": "4AD-R exact-scope durability and automatic release only if separately authorized; otherwise plan 4AE for Task 1P.4 CSP compatibility."
+    },
+    {
+      "id": "phase-4-block-ad-release",
+      "phaseId": "phase-4",
+      "label": "4AD-R",
+      "name": "Mobile Drawer Accessibility Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Exact verified fifteen-path 4AD source set",
+        "Explicit staging source commit local-main fast-forward and direct origin/main push",
+        "Automatic Fly observation credential-free production health and sanitized skip-actions closeout"
+      ],
+      "excludedTasks": [
+        "Tasks 1P.4-1P.7 broader Task 2 unrelated repairs and migrations",
+        "Credentials protected data real databases authenticated production pages manual workflow actions and non-automatic Fly changes",
+        "PR creation force push and recovery beyond the exact fast-forward path",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release requires exact-path Git stewardship sensitive-addition review direct-main fast-forward safety automatic Fly observation credential-free health verification and final Runway OS closeout.",
+      "runnerPath": "Current Codex task without PR or delegation because Ryan directly instructed commit and push to main.",
+      "expectedFiles": [
+        "Exact verified fifteen-path 4AD source set",
+        "Sanitized command-center release log state sources and generated dashboard closeout"
+      ],
+      "defaults": [
+        "No PR or force push",
+        "One automatic deployment caused by the source push",
+        "Credential-free production health only",
+        "Closeout commit uses skip actions to prevent a second deployment"
+      ],
+      "stopConditions": [
+        "Unexpected path sensitive addition protected data or unrelated change",
+        "Main divergence failed verification or excluded staging",
+        "Unattributable or failed automatic deployment or failed credential-free health",
+        "Second closeout deployment or recovery beyond the authorized fast-forward path"
+      ],
+      "verification": [
+        "Exact path staged-set sensitive-addition ancestry and remote-alignment review",
+        "Maintained smoke focused isolated-browser coverage compilation JSON dashboard refresh health and whitespace checks",
+        "Source commit direct-main fast-forward push automatic Fly attribution and credential-free health",
+        "Final main alignment preserved exclusions and skip-actions closeout publication"
+      ],
+      "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1P.4 planning gate.",
+      "durability": "Publication active under Ryan's direct instruction; source and closeout commits are not yet durable on main."
     }
   ],
   "phaseTasks": [
@@ -5026,19 +5118,26 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P3",
       "title": "Task 1P.3: Complete mobile-drawer accessibility",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Resolve P3-3J-05 and its responsive P3-3J-C01 slice with focus placement and restoration Escape and scrim closing open-only scroll lock route-click consistency and maintained browser coverage.",
-      "nextAction": "Confirm or revise the next bounded local-only Task 1P.3 block.",
-      "blocker": "Implementation remains unconfirmed."
+      "nextAction": null,
+      "blocker": null,
+      "result": "Complete and verified locally through work block 4AD; publication remains separate.",
+      "evidence": [
+        "command-center/mobile-drawer-accessibility-contract.md",
+        "command-center/logs/2026-07-21-mobile-drawer-accessibility-4ad.md"
+      ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P4",
       "title": "Task 1P.4: Design and enforce a compatible Content Security Policy",
       "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Resolve the CSP half of P3-3J-06 after inventorying HTMX inline script and style local asset login and standalone /k/ compatibility."
+      "owner": "Ryan",
+      "summary": "Resolve the CSP half of P3-3J-06 after inventorying HTMX inline script and style local asset login and standalone /k/ compatibility.",
+      "nextAction": "Confirm or revise a separately proposed bounded local-only CSP compatibility block.",
+      "blocker": "Implementation remains unconfirmed."
     },
     {
       "phaseId": "phase-4",
@@ -5084,11 +5183,11 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "done",
+      "status": "current",
       "owner": "Codex Desktop",
       "summary": "Publish and verify only explicitly approved repairs through exact-scope direct-main release blocks.",
-      "nextAction": null,
-      "blocker": null,
+      "nextAction": "Complete confirmed work block 4AD-R through exact-path source publication automatic Fly attribution credential-free health and skip-actions closeout.",
+      "blocker": "Stop for path drift sensitive additions main divergence failed verification unattributable deployment failed health or recovery beyond the authorized fast-forward path.",
       "result": "Releases through 4AC-R completed successfully; source commit 07c2026 is durable on main automatic Fly run 29851220888 and job 88704299424 passed and credential-free production health returned HTTP 200.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
@@ -6316,8 +6415,8 @@
     },
     {
       "title": "Mobile sidebar lacks complete keyboard, focus, and scroll handling",
-      "summary": "The drawer opens and closes from its scrim but does not move focus, lock background scrolling, or close on Escape.",
-      "status": "open",
+      "summary": "Work block 4AD resolves closed-state semantics focus placement and containment restoration Escape and scrim close open-only scroll lock navigation consistency exact breakpoint behavior and maintained isolated-browser coverage locally; publication remains separate.",
+      "status": "resolved-locally",
       "severity": "medium",
       "source": "command-center/issues.md"
     },
@@ -6330,7 +6429,7 @@
     },
     {
       "title": "PWA, public, auth, and responsive boundaries lack tracked regression coverage",
-      "summary": "Work block 4A added tracked auth, CSRF, safe-redirect, no-store, public/exempt route, and service-worker source contracts; maintained browser, manifest, exact public-field, and responsive-navigation coverage remains.",
+      "summary": "Work block 4A added tracked auth CSRF redirect no-store public/exempt route and service-worker source contracts; 4AD adds maintained isolated-browser responsive-navigation coverage while manifest icon service-worker installation offline isolation configured-auth and exact-k browser slices remain.",
       "status": "partly-addressed",
       "severity": "medium",
       "source": "command-center/issues.md"
@@ -6338,13 +6437,16 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Confirm the next Task 1P.3 work block",
-    "description": "Plan one bounded local-only mobile-drawer accessibility block while keeping CSP broader browser and PWA work live inspection and publication separate."
+    "name": "Choose 4AD publication or plan Task 1P.4",
+    "description": "Keep publication separate from the completed local drawer repair and confirm the next exact bounded action."
   },
   "verification": {
     "dashboardRefresh": "pass",
     "healthCheck": "pass",
     "browserSmoke": "pass; configured-auth Chromium passed 19/19 and no-password Chromium 2/2 with zero external requests; production credential-free root/login and service-worker v4 checks passed after deployment",
+    "phase4MobileDrawerAccessibility": "pass locally; closed mobile navigation is assistive-hidden and inert open state synchronizes ARIA label scrim and scroll focus moves to Dashboard Tab remains contained Escape scrim and toggle restore focus route and entity navigation avoid stale restoration and desktop transition cleanup passes",
+    "phase4MobileDrawerCoverage": "pass; maintained Playwright coverage uses installed Chrome temporary synthetic all-entity databases fake or empty integration configuration localhost only denied non-localhost requests disposable browser state phone exact 768px and 769px desktop-transition widths zero console errors and exact cleanup",
+    "phase4MobileDrawerBoundaries": "pass; baseline and final smoke compilation JSON whitespace dashboard health rendered inspection and scoped review pass with no CSP auth cookie service-worker manifest broad PWA migration protected data external live GitHub durability deployment or preserved untracked-file change",
     "applicationSmoke": "pass; baseline and final maintained synthetic suites including explicit local and Fly session-cookie coverage Waterfall tax-input section 8a8 Weekly date and bill section 8a5 payroll peer-comparison section 8b4 and existing deterministic category-domain and auth/cache contracts passed",
     "phase4SessionCookiePolicy": "pass locally; HttpOnly and SameSite Lax are explicit everywhere Secure is enabled by non-empty Fly runtime identity ordinary local HTTP remains usable and host-only application-root non-permanent session behavior is preserved",
     "phase4SessionCookieBoundaries": "pass; exact local and Fly-simulated Set-Cookie attributes secure authenticated root and focused-dashboard continuity configured-auth no-password CSRF environment restoration cleanup and preserved exclusions passed without external or live access",

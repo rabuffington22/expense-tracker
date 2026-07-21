@@ -235,7 +235,15 @@ a:hover { text-decoration: underline; }
     transition: opacity 0.3s ease;
 }
 .sidebar-scrim.visible {
+    display: block;
     opacity: 1;
+}
+.sidebar-scrim[hidden] {
+    display: none;
+}
+
+body.mobile-drawer-open {
+    overflow: hidden;
 }
 
 .sidebar {

@@ -1680,7 +1680,7 @@ Work block 4A removed independent client auth state. Configured legacy and Werkz
 
 ## Mobile Sidebar Lacks Complete Keyboard Focus And Scroll Handling
 
-Status: open; discovered in work block 3J
+Status: resolved locally through work block 4AD; publication is not authorized
 
 Severity: medium navigation-accessibility risk
 
@@ -1688,7 +1688,7 @@ Captured: 2026-07-18
 
 Where seen: `web/templates/base.html`, `web/static/style.css`, and the repeated 390px isolated Chromium probe
 
-Revisit: Phase 4 Task 1 if paired with security work, otherwise Phase 5 Task 2
+Revisit: only for separately authorized 4AD publication or new contrary evidence
 
 Summary:
 
@@ -1705,9 +1705,9 @@ Acceptance checks:
 - Background scrolling is locked only while open.
 - Keyboard, touch, ARIA state, and route-click behavior remain consistent.
 
-Why not fixed now:
+Resolution:
 
-Product changes were excluded from work block 3J.
+Work block 4AD gives the hamburger an explicit drawer relationship and synchronized open/close label, keeps the closed mobile navigation inert and assistive-hidden, focuses the first primary link on open, contains Tab focus while open, restores the hamburger on non-navigation close, closes on Escape or scrim, locks body scrolling only while open, preserves route and entity-submit navigation without stale focus restoration, and resets transient state when crossing the `768px` breakpoint. A maintained Playwright check uses temporary all-entity databases, the installed Chrome channel, localhost only, denied non-localhost requests, disposable browser state, console-error detection, and exact cleanup to prove phone, exact-boundary, and desktop-transition behavior. The full synthetic suite and compilation also pass. Publication remains separate.
 
 ## Session Cookie And Browser Security Policy Need Explicit Hardening
 
@@ -1741,7 +1741,7 @@ The cookie half is complete and verified locally through 4AC. CSP remains a sepa
 
 ## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
 
-Status: partly addressed in work block 4A; browser/public/navigation coverage remains
+Status: partly addressed through work blocks 4A and 4AD; responsive-navigation coverage is maintained locally and broader browser/public coverage remains
 
 Severity: medium regression-confidence risk
 
@@ -1753,7 +1753,7 @@ Revisit: Phase 4 Task 2 alongside the selected authentication, cache, public-rou
 
 Summary:
 
-Work block 4A added maintained configured/no-password authentication, CSRF, safe redirect, exempt/public route, no-store, and service-worker source-contract coverage. Disposable isolated-browser probes also verified installation, old-cache deletion, offline cross-entity isolation, and public entity scope, but those browser, manifest, and responsive-navigation checks are not yet tracked.
+Work block 4A added maintained configured/no-password authentication, CSRF, safe redirect, exempt/public route, no-store, and service-worker source-contract coverage. Work block 4AD adds a maintained isolated-Chrome layer for mobile responsive navigation, including closed/open semantics, focus, Escape, scrim, body scroll lock, route and entity actions, exact `768px` behavior, desktop transition, denied external requests, console health, and cleanup. Manifest/icon, service-worker installation/offline isolation, and the remaining exact public/auth browser slices are still not maintained.
 
 Impact:
 
@@ -1767,4 +1767,4 @@ Acceptance checks:
 
 Remaining work:
 
-Add a maintained isolated-browser layer for service-worker installation/offline isolation, exact public `/k/` fields after Ryan decides its contract, manifest/icons, and responsive keyboard/navigation state. Do not treat the new request-level coverage as closing those browser and product-policy boundaries.
+Add maintained isolated-browser coverage for service-worker installation/offline isolation, exact authenticated `/k/` fields, manifest/icons, and the remaining configured-auth/public browser boundaries. Responsive keyboard/navigation state is complete locally through 4AD; do not treat that focused slice as closing the broader PWA/browser item.

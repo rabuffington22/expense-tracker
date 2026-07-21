@@ -1,0 +1,4 @@
+-r requirements.txt
+
+# Focused local browser regression checks. Production does not install this file.
+playwright>=1.50.0,<2.0.0

@@ -2,27 +2,56 @@
 
 ## Active Objective
 
-Plan the next bounded Phase 4 block for Task 1P.3 after the completed 4AC-R release.
+Publish the exact verified 4AD mobile-drawer accessibility source set to `main`, observe its automatic Fly deployment, verify credential-free production health, and close the release without starting a second deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4AC-R is durable, automatically deployed, and credential-free production health verified, and Task 1P.3 is the current planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; 4AD-R is the confirmed publication block and Task 1P.4 remains the next separate planning gate.
 
 ## Current Work Block
 
-Work block 4AC-R: Session-Cookie Policy Durability And Release — complete.
+Work block 4AD-R: Mobile Drawer Accessibility Durability And Release — active under Ryan's direct instruction to commit and push to `main`.
 
 ## Current Task
 
-Task 1P.3: Complete mobile-drawer accessibility — current for a separate just-in-time planning pass; implementation is not authorized.
+Task 4 publication for the exact verified 4AD source set — active. Task 1P.4 implementation remains unauthorized.
 
 ## Owner
 
-Ryan owns confirmation or revision of the next bounded Task 1P.3 work block. Codex Desktop owns planning and Runway OS stewardship; implementation remains unconfirmed.
+Codex Desktop owns exact-path Git stewardship, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan owns any scope expansion or recovery beyond the authorized fast-forward path.
 
 ## Current Action
 
-Plan one bounded local-only Task 1P.3 mobile-drawer accessibility block while keeping CSP, broader browser/PWA work, live inspection, and publication separate.
+Verify the exact fifteen-path source set, stage only those paths, commit on `codex/mobile-drawer-accessibility`, fast-forward local `main`, push `origin/main`, attribute the automatic Fly run to the source SHA, verify `/health`, then publish a command-center-only `[skip actions]` closeout.
+
+## Work Block 4AD-R Contract
+
+- Include the exact verified fifteen-path 4AD application, template, CSS, maintained browser test, development-only dependency surface, README, contract, issue, findings, evidence, and Runway OS source set; explicit staging; one source commit; fast-forward local `main`; direct `origin/main` push; automatic Fly observation; credential-free production `/health`; and one sanitized `[skip actions]` closeout commit and push.
+- Keep both preserved untracked files, protected data, real databases, retained uploads, credentials, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access or writes, migrations, Tasks 1P.4-1P.7, broader Task 2, unrelated work, PR creation, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; trigger only the automatic deployment caused by the source push and ensure the closeout cannot start a second deployment.
+- Stop for an unexpected path, sensitive addition, protected data, unrelated change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized path.
+- Verify exact scope, sensitive additions, branch ancestry, remote alignment, maintained smoke, focused isolated-browser coverage, compilation, JSON, dashboard refresh and health, whitespace, staged set, source commit, automatic run/job attribution, credential-free health, final `main` alignment, preserved exclusions, and `[skip actions]` closeout publication.
+
+## Work Block 4AD Result
+
+- The hamburger explicitly controls `sidebar-nav`; closed mobile navigation is assistive-hidden and inert; open and close labels and ARIA state stay synchronized.
+- Opening focuses Dashboard, contains Tab focus, shows the scrim, and locks body scroll. Escape, scrim, and toggle closure restore the hamburger; route and entity-submit navigation avoid stale focus restoration.
+- The exact `768px` mobile boundary and `769px` desktop transition clear transient state, release scroll, and preserve the persistent desktop sidebar.
+- `scripts/mobile_drawer_browser_test.py` provides maintained isolated-Chrome coverage using synthetic temporary all-entity databases, localhost only, denied non-localhost requests, disposable browser state, console health, and exact cleanup. Browser dependencies remain development-only.
+- Baseline and final full smoke suites, focused browser coverage, compilation, JSON, whitespace, dashboard refresh, health, rendered inspection, and scope review pass locally.
+- The first browser run exposed a missing visual scrim display after semantic refactoring; explicit visible-scrim CSS fixed it before the full matrix passed.
+- No CSP, authentication, cookie, service-worker, manifest/icon, broader browser/PWA, migration, protected/live access, GitHub durability, publication, deployment, or preserved-untracked-file change occurred.
+
+## Work Block 4AD Contract
+
+- Include Task 1P.3 and only the responsive-navigation slice of Task 2 finding `P3-3J-C01`.
+- At mobile widths, keep closed drawer content out of normal keyboard and assistive navigation; synchronize button, drawer, and scrim state; move focus into the opened drawer; contain focus while open; restore focus on non-navigation close; close on Escape and scrim; lock background scrolling only while open; and clean up state across route actions and breakpoint changes.
+- Preserve desktop navigation, routes, entity selection, theme behavior, configured-auth and no-password behavior, existing cookie and service-worker contracts, and current visual design outside any focused accessibility styling needed for the drawer.
+- Keep Tasks 1P.4-1P.7, the remainder of Task 2, Tasks 3-4, CSP, Upload copy, manifest/service-worker work, generalized browser/PWA infrastructure, broad financial read-model coverage, migrations, credentials, protected data, real databases, external networking, production inspection, live actions, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Use Codex Desktop in the current task on local branch `codex/mobile-drawer-accessibility`; no delegation or second opinion is needed. Prefer a separate development-only browser-test dependency surface if a focused maintained browser runner requires one; do not expand the production dependency graph by default.
+- Stop if correct behavior requires a broader navigation redesign, CSP or authentication work, generalized PWA/browser infrastructure, a new production dependency, protected or live access, another Task 1P item, plan-changing verification failure, failed cleanup, command-center failure, or overlap with either preserved untracked file.
+- Verify baseline and final maintained smoke; focused phone and breakpoint-adjacent browser behavior; ARIA and closed-state semantics; focus placement, containment, and restoration; Escape, scrim, scroll lock, route/entity actions, and resize cleanup; temporary synthetic data; disposable browser storage; denied outbound networking; exact cleanup; compilation; JSON; whitespace; dashboard refresh and health; rendered inspection; and final worktree scope.
+- Keep durability local-only. Report the exact drawer contract, focused and full results, browser/runtime setup, changed paths, cleanup, issue disposition, preserved boundaries, branch state, and separate publication gate.
 
 ## Work Block 4AC-R Result
 

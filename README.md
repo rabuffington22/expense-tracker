@@ -88,6 +88,17 @@ Open [http://127.0.0.1:8501](http://127.0.0.1:8501). `run.py` loads the project-
 
 The smoke suite creates a temporary `DATA_DIR` and uses synthetic fixtures. It does not need a live server, production credentials, or real financial data.
 
+### Focused browser regression checks
+
+Install the separate local development dependencies and run the maintained mobile-drawer browser check with the installed Google Chrome channel:
+
+```bash
+.venv/bin/pip install -r requirements-dev.txt
+.venv/bin/python scripts/mobile_drawer_browser_test.py
+```
+
+The browser check starts the Flask app on an ephemeral localhost port with temporary synthetic Personal, BFM, and Luxe Legacy databases. It blocks non-localhost browser requests and verifies the mobile drawer's closed/open semantics, focus placement and containment, Escape and scrim closing, scroll lock, route and entity navigation, breakpoint cleanup, console health, and exact temporary-data cleanup. Browser dependencies are not installed in production.
+
 ## Configuration
 
 Never place real secret values in tracked files, documentation, test fixtures, command-center artifacts, or issue/PR text.
