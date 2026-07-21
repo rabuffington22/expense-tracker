@@ -2,27 +2,37 @@
 
 ## Active Objective
 
-Publish and verify the exact completed 4AC source set through confirmed work block 4AC-R.
+Plan the next bounded Phase 4 block for Task 1P.3 after the completed 4AC-R release.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4AC is complete locally and 4AC-R is the authorized durability and release block.
+Phase 4: Core Repairs And Regression Coverage — active; 4AC-R is durable, automatically deployed, and credential-free production health verified, and Task 1P.3 is the current planning gate.
 
 ## Current Work Block
 
-Work block 4AC-R: Session-Cookie Policy Durability And Release — active.
+Work block 4AC-R: Session-Cookie Policy Durability And Release — complete.
 
 ## Current Task
 
-Task 4: Publish and verify the exact completed 4AC repair — active through confirmed work block 4AC-R.
+Task 1P.3: Complete mobile-drawer accessibility — current for a separate just-in-time planning pass; implementation is not authorized.
 
 ## Owner
 
-Codex Desktop owns exact-scope staging, source commit, fast-forward publication to `main`, automatic Fly observation, credential-free health verification, and sanitized closeout. Ryan retains all excluded live and recovery decisions.
+Ryan owns confirmation or revision of the next bounded Task 1P.3 work block. Codex Desktop owns planning and Runway OS stewardship; implementation remains unconfirmed.
 
 ## Current Action
 
-Verify the exact 4AC source set, commit it on `codex/session-cookie-policy`, fast-forward local `main`, push directly to `origin/main`, observe only the resulting automatic Fly deployment, verify credential-free `/health`, and publish one `[skip actions]` command-center closeout that cannot trigger a second deployment.
+Plan one bounded local-only Task 1P.3 mobile-drawer accessibility block while keeping CSP, broader browser/PWA work, live inspection, and publication separate.
+
+## Work Block 4AC-R Result
+
+- Exact twelve-path source commit `07c2026` was fast-forwarded and pushed directly to `main` without force or PR.
+- Automatic Fly Deploy run `29851220888` and deploy job `88704299424` passed for exact source SHA `07c20265b359f52262ecba6447a24b71a6290eea`.
+- Credential-free production `/health` returned HTTP 200.
+- The staged high-confidence sensitive-addition and protected-path scans returned zero, and both preserved untracked files remained excluded.
+- GitHub reported the non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24; deployment still succeeded.
+- No protected data, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1P.3 implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it cannot start a second deployment.
 
 ## Work Block 4AC-R Contract
 

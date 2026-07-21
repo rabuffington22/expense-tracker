@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; 4AC is complete locally and 4AC-R is the authorized durability and release block
+Status: active; 4AC-R is durable, automatically deployed, and credential-free production health verified, and Task 1P.3 is the current planning gate
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -932,7 +932,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1O.4: Complete maintained synthetic downstream-mirror coverage.** Pair Tasks 1O.2-1O.3 with the remaining `P3-3I-C01` no-op, request-shape, malformed-key, duplicate-key, failure-isolation, and entity-preservation checks using temporary databases, mocked HTTP, and denied outbound sockets. Status: done and verified locally through work block 4AA; publication remains separate.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: active and decomposed into the execution-sized tasks below; implementation remains unconfirmed.
   - **Task 1P.1: Authenticate `/k/` through the existing server-side gate.** Resolve `P3-3J-03` and its exact request/public-field slice of `P3-3J-C01` by requiring the configured application session before route execution while preserving no-password mode, Personal/Luxe Legacy scope, BFM exclusion, and the route's self-managed database context. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4AB and 4AB-R.
-  - **Task 1P.2: Make the session-cookie policy explicit.** Resolve the cookie half of `P3-3J-06` with a production-safe Secure, HttpOnly, and SameSite contract that preserves local and synthetic-test usability. Status: done and verified locally through work block 4AC; durability and release are active through 4AC-R.
+  - **Task 1P.2: Make the session-cookie policy explicit.** Resolve the cookie half of `P3-3J-06` with a production-safe Secure, HttpOnly, and SameSite contract that preserves local and synthetic-test usability. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4AC and 4AC-R.
   - **Task 1P.3: Complete mobile-drawer accessibility.** Resolve `P3-3J-05` and its responsive-navigation slice of `P3-3J-C01` with focus placement and restoration, Escape and scrim closing, open-only scroll lock, route-click consistency, and maintained browser coverage. Status: current for a separate just-in-time planning pass; implementation is not authorized.
   - **Task 1P.4: Design and enforce a compatible Content Security Policy.** Resolve the CSP half of `P3-3J-06` only after inventorying HTMX, inline script/style, local asset, login, and standalone `/k/` compatibility; do not weaken the policy merely to avoid template work. Status: planned after the `/k/` and cookie contracts are stable.
   - **Task 1P.5: Clarify Upload `Undo` as status-only.** Resolve `P3-3B-04` with explicit operator language that resetting checklist state does not remove imported ledger rows, plus focused rendered/request coverage. Status: planned as an independent copy-only repair.
@@ -940,11 +940,11 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1P.7: Finish the remaining broad financial read-model regression coverage.** Consume the unpaired remainder of `P3-3C-C01` through one separately scoped synthetic verification block; do not mix it into public-route, mobile, or browser-policy implementation. Status: planned after the higher-risk Task 1P boundary work.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, and 4W completed the `P3-3E-04` Weekly/Waterfall validation slice of `P3-3E-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: active through confirmed work block 4AC-R for the exact verified 4AC source set.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4AC-R for every explicitly released repair to date; future publication remains separately gated.
 
 ### Confirmed Work Block 4AC-R: Session-Cookie Policy Durability And Release
 
-Status: active
+Status: complete, durable, automatically deployed, and credential-free production health verified
 
 Parent task: Phase 4 Task 4 for the exact verified 4AC source set.
 
@@ -959,6 +959,8 @@ Stop conditions: unexpected paths, sensitive additions, protected data, unrelate
 Verification: exact path and staged-set review; high-confidence sensitive-addition scan; branch ancestry and remote alignment; maintained synthetic smoke; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; source commit; direct-main fast-forward push; exact automatic Fly run and job attribution; credential-free production `/health`; final `main` alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1P.3 planning gate.
+
+Result: exact twelve-path source commit `07c2026` was fast-forwarded and pushed directly to `main` without force or PR. Automatic Fly Deploy run `29851220888` and deploy job `88704299424` passed for exact source SHA `07c20265b359f52262ecba6447a24b71a6290eea`, and credential-free production `/health` returned HTTP 200. The staged high-confidence sensitive-addition and protected-path scans returned zero; both preserved untracked files remained excluded; GitHub's non-blocking Node 20 deprecation annotation did not affect deployment; and this sanitized command-center-only closeout uses `[skip actions]` to prevent a second deployment. Task 1P.3 returns as the separate planning gate.
 
 ### Confirmed Work Block 4AC: Explicit Session-Cookie Policy
 
