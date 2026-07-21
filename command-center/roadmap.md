@@ -1082,7 +1082,7 @@ Result: Waterfall now parses the optional tax query once with finite decimal sem
 
 ### Confirmed Work Block 4Y-R: Waterfall Tax Input Truthfulness Durability And Release
 
-Status: active on 2026-07-21
+Status: complete, durable, automatically deployed, and credential-free production health verified on 2026-07-21
 
 Parent task: Phase 4 Task 4 for the exact verified 4Y source set only.
 
@@ -1099,6 +1099,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and sensitive-addition review; maintained synthetic suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job result; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1O planning gate.
+
+Result: the exact eleven-path 4Y source set was committed as `b5c862b`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29833970537` and deploy job `88645453012` passed for exact source SHA `b5c862b002dbb5d2831a8cebf4cbf71705008c1d`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, the staged high-confidence sensitive-addition scan returned zero, and no PR or unauthorized live action occurred. This command-center-only closeout uses `[skip actions]` to prevent a second deployment. Evidence: `command-center/logs/2026-07-21-waterfall-tax-input-truthfulness-release-4y-r.md`.
 
 ### Confirmed Work Block 4X: Waterfall Payoff Truthfulness
 

@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4Y source set through bounded direct-main release block 4Y-R.
+Plan Task 1O separately after completing and verifying work block 4Y-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4Y-R is authorized and active.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4Y-R is complete, durable, automatically deployed, and credential-free production health verified.
 
 ## Current Work Block
 
-Work block 4Y-R: Waterfall Tax Input Truthfulness Durability And Release — active.
+Work block 4Y-R: Waterfall Tax Input Truthfulness Durability And Release — complete.
 
 ## Current Task
 
-Publish the exact verified 4Y source set, observe the resulting automatic Fly deployment, verify credential-free production health, and publish a sanitized `[skip actions]` closeout.
+Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract — current for a separate planning and confirmation pass; implementation is not authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path Git stewardship, deployment attribution, credential-free health verification, and sanitized Runway OS closeout. Ryan directly authorized the release.
+Ryan owns the separate Task 1O planning confirmation. Codex Desktop completed the exact-path 4Y-R release, deployment attribution, health verification, and sanitized closeout.
 
 ## Current Action
 
-Record 4Y-R durably, rerun release checks, stage and commit only the verified source set, fast-forward and push `main`, observe the exact automatic deployment, verify `/health`, then publish the command-center-only closeout with `[skip actions]`.
+Propose a bounded Task 1O work block before any implementation or live downstream access.
 
 ## Work Block 4Y-R Contract
 
@@ -32,6 +32,16 @@ Record 4Y-R durably, rerun release checks, stage and commit only the verified so
 - Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
 - Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
 - Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1O planning gate.
+
+## Work Block 4Y-R Result
+
+- Exact eleven-path source commit `b5c862b` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29833970537` and deploy job `88645453012` passed for exact source SHA `b5c862b002dbb5d2831a8cebf4cbf71705008c1d`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the staged high-confidence sensitive-addition scan returned zero.
+- GitHub reported the non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24; deployment still succeeded.
+- No PR, protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1O implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4Y Contract
 
