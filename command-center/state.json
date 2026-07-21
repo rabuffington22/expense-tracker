@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-21 1:38 PM CST",
+    "lastUpdated": "2026-07-21 1:42 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,29 +22,29 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4AD-R source commit 0459372 is durable on main automatic Fly run 29855162229 and job 88717551145 passed and credential-free production health returned HTTP 200; this command-center-only closeout uses skip actions"
+    "durabilityStatus": "Work block 4AE-R source commit d749700 is durable on main GitHub Actions returned zero runs because skip actions was honored and no Fly deployment occurred; this command-center-only closeout also uses skip actions"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4AE-R is active for command-center-only durability of the completed Task 1P.4.1 CSP contract; proposed 4AF remains unconfirmed.",
+    "summary": "Work block 4AE-R made the completed Task 1P.4.1 CSP contract durable on main without deployment; proposed 4AF remains unconfirmed.",
     "progress": 95
   },
   "currentTask": {
-    "title": "Task 1P.4.1-R: Publish the CSP contract and planning closeout",
-    "owner": "Codex Desktop",
-    "status": "in-progress",
-    "supportingAgent": "Ryan retains every 4AF product reviewer deployment and live-action decision",
-    "nextAction": "Verify and publish the exact nine-path command-center set with skip-actions commits then record final main alignment.",
-    "blocker": null
+    "title": "Task 1P.4.2a: Migrate the shared execution foundation",
+    "owner": "Ryan for confirmation; Codex Desktop recommended for execution",
+    "status": "planned",
+    "supportingAgent": "An independent security reviewer is optional before implementation",
+    "nextAction": "Review the durable 4AE contract then confirm revise or defer proposed work block 4AF.",
+    "blocker": "Proposed 4AF is not confirmed."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-ae-r",
     "label": "4AE-R",
     "name": "CSP Contract Durability",
-    "status": "active",
+    "status": "complete",
     "owner": "Codex Desktop",
-    "currentTask": "Publish the exact verified 4AE command-center artifacts directly to main without triggering deployment",
+    "currentTask": "Task 1P.4.1-R durability complete; proposed Task 1P.4.2a remains unconfirmed",
     "includedTasks": [
       "Task 1P.4.1-R only",
       "Exact nine-path command-center staging source commit direct-main push and remote SHA verification",
@@ -81,8 +81,13 @@
       "Commit content main ancestry exact remote SHA and native Actions-skip verification after each push",
       "Final tracked cleanliness with both preserved untracked files untouched"
     ],
-    "nextReportPoint": "Return source and closeout SHAs exact published paths skipped Actions final alignment preserved exclusions no deployment and proposed 4AF as the separate next gate.",
-    "durability": "publication authorized and in progress; no commit or push completed yet"
+    "nextReportPoint": "Ryan reviews the durable contract and independently confirms revises or defers proposed 4AF.",
+    "durability": "Source commit d749700 is durable on main; GitHub Actions returned zero runs because skip actions was honored; no Fly deployment occurred; this command-center-only closeout also uses skip actions.",
+    "result": "Exact nine-path source commit d749700 is durable on main with exact remote SHA verification zero Actions runs no deployment and both unrelated untracked files excluded.",
+    "evidence": [
+      "command-center/csp-compatibility-contract.md",
+      "command-center/logs/2026-07-21-csp-compatibility-contract-4ae.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -107,11 +112,11 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Complete 4AE-R direct-main CSP contract durability",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan explicitly authorized commit and push to main for the completed command-center-only 4AE artifact set.",
-    "action": "Verify stage commit and push the exact nine paths with skip actions then publish the sanitized closeout and restore the 4AF decision gate.",
+    "title": "Review the durable 4AE CSP contract and decide proposed work block 4AF",
+    "status": "waiting-for-ryan",
+    "owner": "Ryan",
+    "why": "Task 1P.4.1 and its durability task are complete and every CSP product mutation remains separately gated.",
+    "action": "Approve the contract or request an independent review then confirm revise or defer Task 1P.4.2a as proposed 4AF.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
@@ -129,11 +134,14 @@
     }
   ],
   "waitingOnRyan": {
-    "summary": "No current blocker; 4AE-R durability is authorized and proposed 4AF remains separately gated.",
-    "items": []
+    "summary": "Task 1P.4.1 is durable on main; CSP product work waits for Ryan's contract-review and next-block decision.",
+    "items": [
+      "Approve or independently review command-center/csp-compatibility-contract.md.",
+      "Confirm revise or defer proposed 4AF for the shared execution foundation only."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "After 4AE-R closes decide the 4AE CSP contract reviewer path and whether proposed 4AF should become active.",
+    "phaseQuestions": "Decide the durable 4AE CSP contract reviewer path and whether proposed 4AF should become active.",
     "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -4263,7 +4271,7 @@
       "phaseId": "phase-4",
       "label": "4AE-R",
       "name": "CSP Contract Durability",
-      "status": "active",
+      "status": "complete",
       "includedTasks": [
         "Task 1P.4.1-R only",
         "Exact nine-path command-center staging source commit direct-main push and remote SHA verification",
@@ -4301,8 +4309,13 @@
         "Commit content main ancestry exact remote SHA and native Actions-skip verification after each push",
         "Final tracked cleanliness with both preserved untracked files untouched"
       ],
-      "reportBack": "Return source and closeout SHAs exact published paths skipped Actions final alignment preserved exclusions no deployment and proposed 4AF as the separate next gate.",
-      "durability": "publication authorized and in progress; no commit or push completed yet"
+      "reportBack": "Ryan reviews the durable contract and independently confirms revises or defers proposed 4AF.",
+      "durability": "Source commit d749700 is durable on main; GitHub Actions returned zero runs because skip actions was honored; no Fly deployment occurred; this command-center-only closeout also uses skip actions.",
+      "result": "Exact nine-path source commit d749700 is durable on main with exact remote SHA verification zero Actions runs no deployment and both unrelated untracked files excluded.",
+      "evidence": [
+        "command-center/csp-compatibility-contract.md",
+        "command-center/logs/2026-07-21-csp-compatibility-contract-4ae.md"
+      ]
     }
   ],
   "phaseTasks": [
@@ -5278,11 +5291,16 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P41R",
       "title": "Task 1P.4.1-R: Publish the CSP contract and planning closeout",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Make the exact nine-path 4AE command-center artifact set durable on main through native skip-actions commits exact remote-SHA verification and a sanitized closeout without triggering deployment.",
-      "nextAction": "Complete confirmed work block 4AE-R and restore proposed Task 1P.4.2a as the separate unconfirmed next gate.",
-      "blocker": null
+      "nextAction": null,
+      "blocker": null,
+      "result": "Complete and durable on main through source commit d749700 with exact remote SHA verification zero GitHub Actions runs no deployment and a skip-actions closeout.",
+      "evidence": [
+        "command-center/csp-compatibility-contract.md",
+        "command-center/logs/2026-07-21-csp-compatibility-contract-4ae.md"
+      ]
     },
     {
       "phaseId": "phase-4",
@@ -5296,7 +5314,7 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P42A",
       "title": "Task 1P.4.2a: Migrate the shared execution foundation",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan for confirmation; Codex Desktop recommended for execution",
       "summary": "Move shared-shell executable blocks and native or HTMX handlers to local JavaScript move HTMX indicator rules to local CSS disable only injected indicator styles and prove the shell while retaining eval and swapped scripts until Task 1P.4.2b removes their remaining dependencies.",
       "nextAction": "Review the 4AE contract then confirm revise or defer proposed work block 4AF.",
@@ -6649,10 +6667,12 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete work block 4AE-R CSP contract durability",
-    "description": "Publish the exact verified command-center-only 4AE artifacts with skip-actions commits then restore proposed 4AF as the separate decision gate."
+    "name": "Decide proposed work block 4AF shared CSP execution foundation",
+    "description": "Review the durable 4AE contract then confirm revise or defer Task 1P.4.2a without inferring product authorization from completed planning and durability."
   },
   "verification": {
+    "phase4CspContractRelease": "pass; exact nine-path source commit d749700 is durable on main local and remote SHAs matched and GitHub Actions returned zero runs because skip actions was honored",
+    "phase4CspContractDurability": "pass; exact-path no-product-diff protected-path sensitive-addition JSON dashboard health whitespace rendered inspection staged-set commit-content ancestry remote-alignment and preserved-exclusion checks passed with no deployment",
     "phase4CspCompatibilityContract": "pass locally; strict core and narrow Plaid document policies exact origins full template inventory migration sub-slices prohibited exceptions and synthetic request or isolated-browser proof contract are frozen through 4AE",
     "phase4CspPlanningBoundaries": "pass; no application template JavaScript CSS maintained-test dependency runtime configuration authentication header worker manifest Plaid behavior protected data live system GitHub publication deployment or preserved untracked-file change occurred",
     "phase4CspDashboard": "pass; JSON refresh health whitespace and localhost Chromium inspection show 4AE complete Task 1P.4.1 done Task 1P.4.2a planned proposed 4AF unconfirmed named Ryan decisions no horizontal overflow and zero console errors",

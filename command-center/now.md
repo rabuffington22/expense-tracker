@@ -2,27 +2,35 @@
 
 ## Active Objective
 
-Publish the exact verified 4AE command-center artifact set directly to `main` through confirmed work block 4AE-R without triggering deployment.
+Review the durable 4AE CSP compatibility contract and separately decide whether to confirm proposed work block 4AF.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4AE-R is active for Task 1P.4.1 durability only.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4AE-R made Task 1P.4.1 planning durable without triggering deployment.
 
 ## Current Work Block
 
-Work block 4AE-R: CSP Contract Durability — active and command-center-only.
+No active work block. Work block 4AE-R is complete and durable; proposed 4AF remains unconfirmed.
 
 ## Current Task
 
-Task 1P.4.1-R: Publish the CSP contract and planning closeout — active; proposed Task 1P.4.2a remains unconfirmed.
+Task 1P.4.2a: Migrate the shared execution foundation — planned and awaiting separate Ryan confirmation as proposed work block 4AF.
 
 ## Owner
 
-Codex Desktop owns exact-path Git verification, staging, two command-center-only `[skip actions]` commits, direct-main pushes, remote-SHA verification, and final Runway OS closeout. Ryan retains every 4AF, product, reviewer, deployment, and live-action decision.
+Ryan owns the contract-review and 4AF decision. Codex Desktop completed 4AE-R durability and remains the recommended implementation and verification owner if 4AF is confirmed.
 
 ## Current Action
 
-Publish only the exact nine verified 4AE command-center paths, verify `main` alignment and native Actions skipping, then record the durable commit and restore proposed 4AF as the unconfirmed next gate.
+Review `command-center/csp-compatibility-contract.md`; optionally request an independent security review; then confirm, revise, or defer proposed 4AF. No product mutation is authorized by 4AE-R.
+
+## Work Block 4AE-R Result
+
+- Exact nine-path commit `d749700` (`Publish 4AE CSP compatibility contract [skip actions]`) is durable on `main`; local and remote exact SHA verification passed.
+- GitHub Actions reported zero workflow runs for source SHA `d7497007657e1c4c688b965224caeb2f5f52a205`, so no Fly deployment was triggered.
+- Exact-path, no-product-diff, protected-path, high-confidence sensitive-addition, JSON, dashboard refresh, health, new-file whitespace, rendered-dashboard, staged-set, commit-content, ancestry, and remote-alignment checks passed.
+- Both unrelated untracked files remained excluded. No product, test, dependency, runtime, protected-data, credential, production/demo, workflow mutation, Fly action, PR, force push, or unrelated change occurred.
+- This sanitized Runway OS closeout uses `[skip actions]`; proposed 4AF remains unchanged and separately gated.
 
 ## Work Block 4AE-R Contract
 

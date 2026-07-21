@@ -954,7 +954,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 
 ### Confirmed Work Block 4AE-R: CSP Contract Durability
 
-Status: active and command-center-only
+Status: complete and durable on `main` without deployment
 
 Parent task: Phase 4 Task 1P.4.1-R only.
 
@@ -977,6 +977,8 @@ Verification: exact nine-path scope; no application/product/test/dependency diff
 Dashboard closeout: after the first push, update human-readable sources with the durable source commit, align `state.json`, refresh and health-check, inspect the rendered closeout, commit only existing command-center paths with `[skip actions]`, push, and verify final alignment.
 
 Report point: return source and closeout SHAs, exact published paths, GitHub Actions skip result, final branch alignment, preserved exclusions, no deployment, and proposed 4AF as the separately confirmable next block.
+
+Result: exact nine-path source commit `d749700` is durable on `main`; local and remote SHA matched; GitHub Actions returned zero runs for the source SHA because `[skip actions]` was honored; no Fly deployment occurred; exact-scope, sensitive-addition, protected-path, JSON, dashboard, health, whitespace, rendered inspection, staged-set, commit-content, ancestry, remote-alignment, and exclusion checks passed. This sanitized command-center-only closeout also uses `[skip actions]`.
 
 Suggested next work block: proposed 4AF remains unchanged and unconfirmed after 4AE-R.
 
