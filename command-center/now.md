@@ -2,27 +2,36 @@
 
 ## Active Objective
 
-Publish and verify the exact locally verified 4AB source set through the authorized direct-main 4AB-R release path.
+Plan the next bounded Phase 4 block for Task 1P.2 after the completed 4AB-R release.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4AB-R is authorized and active for exact-scope durability and release.
+Phase 4: Core Repairs And Regression Coverage — active; 4AB-R is durable, deployed, and health verified, and Task 1P.2 is the current planning gate.
 
 ## Current Work Block
 
-Work block 4AB-R: Focused Dashboard Authentication Durability And Release — active.
+Work block 4AB-R: Focused Dashboard Authentication Durability And Release — complete.
 
 ## Current Task
 
-Task 4: Publish and verify explicitly approved repairs — current for the exact 4AB source set only.
+Task 1P.2: Make the session-cookie policy explicit — current for a separate just-in-time planning pass; implementation is not authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, direct-main fast-forward push, automatic Fly observation, credential-free health verification, sanitized `[skip actions]` closeout, and final intake. Ryan retains every excluded live or product scope.
+Ryan owns confirmation or revision of the next bounded Task 1P.2 work block. Codex Desktop owns planning and Runway OS stewardship; implementation remains unconfirmed.
 
 ## Current Action
 
-Revalidate the exact twelve-path source set, stage explicitly, commit on `codex/k-dashboard-auth-boundary`, fast-forward local `main`, push without force, observe only the resulting automatic Fly deployment, verify credential-free `/health`, then publish a command-center-only `[skip actions]` closeout without starting a second deployment.
+Plan one bounded local-only Task 1P.2 block covering the explicit session-cookie policy and its focused synthetic coverage, while keeping CSP, mobile, broader browser coverage, live inspection, and publication separate.
+
+## Work Block 4AB-R Result
+
+- Exact twelve-path source commit `e20555d` was fast-forwarded and pushed directly to `main` without force or PR.
+- Automatic Fly Deploy run `29849025459` and deploy job `88696866487` passed for exact source SHA `e20555d7785e3becbf2eabede548007284d2d765`.
+- Credential-free production `/health` returned HTTP 200.
+- Local `main` matched `origin/main`, the staged high-confidence sensitive-addition scan returned zero, and both preserved untracked files remained excluded.
+- No protected data, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it cannot start a second deployment.
 
 ## Work Block 4AB-R Contract
 

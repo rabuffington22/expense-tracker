@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-21 11:31 AM CST",
+    "lastUpdated": "2026-07-21 11:36 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,29 +22,29 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4AA-R source commit 9d10e25 is durable on main automatic Fly run 29839016474 and job 88662740219 passed and credential-free production health returned HTTP 200; this command-center-only closeout uses skip actions"
+    "durabilityStatus": "Work block 4AB-R source commit e20555d is durable on main automatic Fly run 29849025459 and job 88696866487 passed and credential-free production health returned HTTP 200; this command-center-only closeout uses skip actions"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4AB-R is authorized and active for exact-scope direct-main durability automatic deployment observation and credential-free production health verification.",
+    "summary": "Work block 4AB-R is durable deployed and credential-free production health verified; Task 1P.2 is the current separate planning gate.",
     "progress": 94
   },
   "currentTask": {
-    "title": "Task 4: Publish and verify explicitly approved repairs",
-    "owner": "Codex Desktop",
-    "status": "active",
-    "supportingAgent": "Ryan directly authorized the exact 4AB source set for commit and push to main",
-    "nextAction": "Revalidate stage explicitly commit fast-forward main push observe the automatic Fly deployment verify credential-free health and publish a skip-actions closeout.",
-    "blocker": "None; stop for scope drift sensitive additions main divergence failed verification deployment or health."
+    "title": "Task 1P.2: Make the session-cookie policy explicit",
+    "owner": "Ryan",
+    "status": "waiting-decision",
+    "supportingAgent": "Codex Desktop can prepare one bounded local-only cookie-policy block after confirmation",
+    "nextAction": "Confirm or revise a just-in-time Task 1P.2 work block before implementation.",
+    "blocker": "Implementation is not authorized; cookie policy and focused coverage require a separate confirmed block."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-ab-release",
     "label": "4AB-R",
     "name": "Focused Dashboard Authentication Durability And Release",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
-    "currentTask": "Task 4 exact-scope publication for the verified 4AB source set",
+    "currentTask": "Task 4 exact-scope publication for the verified 4AB source set complete",
     "includedTasks": [
       "Exact verified twelve-path 4AB application route documentation maintained-test README contract issue evidence and Runway OS source set",
       "Explicit staging one source commit local-main fast-forward and direct origin/main push",
@@ -84,7 +84,13 @@
       "Final main and origin alignment preserved exclusions and sanitized skip-actions closeout publication"
     ],
     "nextReportPoint": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1P.2 planning gate.",
-    "durability": "Authorized for one exact-scope source commit direct-main fast-forward push automatic Fly observation credential-free health and one skip-actions closeout; no PR or force push."
+    "durability": "Source commit e20555d is durable on main; automatic Fly run 29849025459 and job 88696866487 passed; credential-free production health returned HTTP 200; this command-center-only closeout uses skip actions.",
+    "result": "Exact twelve-path source commit e20555d was fast-forwarded and pushed directly to main without force or PR. The exact automatic Fly run and deploy job passed, production health returned HTTP 200, the sensitive-addition scan returned zero, and both preserved untracked files remained excluded.",
+    "evidence": [
+      "command-center/logs/2026-07-21-focused-dashboard-auth-release-4ab-r.md",
+      "command-center/focused-dashboard-auth-contract.md",
+      "command-center/logs/2026-07-21-focused-dashboard-auth-boundary-4ab.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -109,21 +115,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute authorized 4AB-R direct-main release",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized the exact verified 4AB source set for commit and push to main.",
-    "action": "Revalidate stage explicitly commit fast-forward main push observe automatic Fly verify credential-free health and publish a skip-actions closeout.",
+    "title": "Plan Task 1P.2 session-cookie hardening",
+    "status": "waiting-decision",
+    "owner": "Ryan",
+    "why": "4AB-R is complete and Task 1P.2 is the next bounded public-boundary repair in the accepted Phase 4 sequence.",
+    "action": "Confirm or revise one local-only block for the explicit session-cookie policy and focused synthetic coverage.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "No Ryan input is required inside the exact 4AB-R path.",
-    "items": []
+    "summary": "Ryan confirmation is required before Task 1P.2 implementation begins.",
+    "items": [
+      "Confirm or revise the proposed Task 1P.2 session-cookie hardening block."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "None for the exact authorized 4AB-R path.",
-    "decisionQueue": "Task 1P.2 and every later cookie CSP mobile browser-coverage read-model or live-sensitive action remain separate Ryan gates.",
+    "phaseQuestions": "Confirm or revise the next bounded Task 1P.2 work block before implementation.",
+    "decisionQueue": "Task 1P.2 is current; CSP mobile browser-coverage read-model publication and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -3935,7 +3943,7 @@
       "phaseId": "phase-4",
       "label": "4AB-R",
       "name": "Focused Dashboard Authentication Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Exact verified twelve-path 4AB source set",
         "Explicit staging source commit local-main fast-forward and direct origin/main push",
@@ -3974,7 +3982,13 @@
         "Final main alignment preserved exclusions and skip-actions closeout publication"
       ],
       "reportBack": "Return source and closeout commits exact published paths automatic Fly result credential-free health final main alignment preserved exclusions and separate Task 1P.2 planning gate.",
-      "durability": "Active under Ryan's direct commit-and-push instruction."
+      "durability": "Source commit e20555d is durable on main; automatic Fly run 29849025459 and job 88696866487 passed; credential-free production health returned HTTP 200; this command-center-only closeout uses skip actions.",
+      "result": "Exact twelve-path source commit e20555d was fast-forwarded and pushed directly to main without force or PR. Automatic Fly run 29849025459 and job 88696866487 passed for the exact source SHA and credential-free production health returned HTTP 200. Both preserved untracked files remained excluded.",
+      "evidence": [
+        "command-center/logs/2026-07-21-focused-dashboard-auth-release-4ab-r.md",
+        "command-center/focused-dashboard-auth-contract.md",
+        "command-center/logs/2026-07-21-focused-dashboard-auth-boundary-4ab.md"
+      ]
     }
   ],
   "phaseTasks": [
@@ -4883,7 +4897,7 @@
       "summary": "Resolve P3-3J-03 and its exact P3-3J-C01 slice by requiring the configured application session before /k/ route execution while preserving no-password mode Personal and Luxe Legacy scope BFM exclusion and self-managed database context.",
       "nextAction": null,
       "blocker": null,
-      "result": "Complete and verified locally through work block 4AB; publication remains separate.",
+      "result": "Complete durable automatically deployed and credential-free production health verified through work blocks 4AB and 4AB-R.",
       "evidence": [
         "command-center/focused-dashboard-auth-contract.md",
         "command-center/logs/2026-07-21-focused-dashboard-auth-boundary-4ab.md"
@@ -4893,11 +4907,11 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P2",
       "title": "Task 1P.2: Make the session-cookie policy explicit",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Resolve the cookie half of P3-3J-06 with an explicit production-safe Secure HttpOnly and SameSite contract that preserves local and synthetic-test usability.",
-      "nextAction": "Resume as current after 4AB-R closes.",
-      "blocker": "4AB-R release is active; Task 1P.2 scope remains unconfirmed."
+      "nextAction": "Confirm or revise one bounded local-only session-cookie policy and focused-coverage block.",
+      "blocker": "Implementation remains unconfirmed."
     },
     {
       "phaseId": "phase-4",
@@ -4959,12 +4973,12 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Publish and verify the exact 4AB source set under the authorized 4AB-R direct-main path.",
-      "nextAction": "Execute exact staging source commit fast-forward main push automatic Fly observation health verification and skip-actions closeout.",
-      "blocker": "None inside the exact authorized fast-forward path.",
-      "result": "Releases through 4AA-R completed successfully; 4AB-R is active.",
+      "summary": "Published and verified the exact 4AB source set through the authorized 4AB-R direct-main path.",
+      "nextAction": null,
+      "blocker": null,
+      "result": "Releases through 4AB-R completed successfully; source commit e20555d is on main automatic Fly run 29849025459 and job 88696866487 passed and credential-free health returned HTTP 200.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -5323,9 +5337,25 @@
     {
       "name": "Work Block 4U-R Negative Appreciation Truthfulness Release Closeout",
       "path": "command-center/logs/2026-07-20-negative-appreciation-truthfulness-release-4u-r.md"
+    },
+    {
+      "name": "Focused Dashboard Authentication Contract",
+      "path": "command-center/focused-dashboard-auth-contract.md"
+    },
+    {
+      "name": "Work Block 4AB Focused Dashboard Authentication Closeout",
+      "path": "command-center/logs/2026-07-21-focused-dashboard-auth-boundary-4ab.md"
+    },
+    {
+      "name": "Work Block 4AB-R Focused Dashboard Authentication Release Closeout",
+      "path": "command-center/logs/2026-07-21-focused-dashboard-auth-release-4ab-r.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-21",
+      "text": "Completed work block 4AB-R: exact source commit e20555d was fast-forwarded and pushed to main automatic Fly run 29849025459 and job 88696866487 passed credential-free production health returned HTTP 200 both preserved untracked files remained excluded and the sanitized skip-actions closeout was prepared."
+    },
     {
       "time": "2026-07-21",
       "text": "Completed work block 4AA-R: exact source commit 9d10e25 was fast-forwarded and pushed to main automatic Fly run 29839016474 and job 88662740219 passed credential-free production health returned HTTP 200 and the sanitized skip-actions closeout was prepared."
@@ -6172,8 +6202,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Decide whether to publish work block 4Y",
-    "description": "The tax-input repair and maintained coverage are complete locally; publication and deployment remain separately gated."
+    "name": "Confirm Task 1P.2 session-cookie hardening",
+    "description": "4AB-R is durable deployed and health verified; the next step is a separately confirmed local-only cookie-policy and focused-coverage block."
   },
   "verification": {
     "dashboardRefresh": "pass",
@@ -6345,6 +6375,8 @@
     "phase4WeeklyDateContext": "pass locally; the selected ISO week Monday owns total and category pace last-week comparison warnings MTD burn and displayed month while MTD cannot cross the anchor-month boundary",
     "phase4WeeklyBillAmounts": "pass; viewed-week recurring manual card and BFM payroll dates reconcile in order positive scheduled card payments drive rows and totals missing or zero scheduled amounts stay unavailable and zero-balance cards stay excluded",
     "phase4WeeklyCoverage": "pass; maintained current historical February cross-month cross-year invalid-week rendered Personal BFM Luxe Legacy denial denied-network unrelated-row-preservation and exact-cleanup checks pass",
-    "phase4WeeklyBoundaries": "pass; existing Cash Flow and Short-Term Planning today-based callers still render and no template migration schema historical remediation protected data external action GitHub durability deployment live action or preserved untracked-file change occurred"
+    "phase4WeeklyBoundaries": "pass; existing Cash Flow and Short-Term Planning today-based callers still render and no template migration schema historical remediation protected data external action GitHub durability deployment live action or preserved untracked-file change occurred",
+    "phase4FocusedDashboardAuthRelease": "pass; source commit e20555d is on main automatic Fly run 29849025459 and deploy job 88696866487 passed for the exact source SHA and credential-free production health returned HTTP 200",
+    "phase4FocusedDashboardAuthDurability": "pass; local main matched origin/main at source commit e20555d before this command-center-only skip-actions closeout with both preserved untracked files excluded"
   }
 }

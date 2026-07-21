@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; work block 4AB-R is authorized for exact-scope direct-main durability, automatic deployment observation, and credential-free production health verification
+Status: active; 4AB-R is durable, deployed, and credential-free production health verified, and Task 1P.2 is the current planning gate
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -931,7 +931,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1O.3: Make the mirror conflict target explicit in tracked contracts.** After Task 1O.1, align the Ledger request with `plaid_transaction_id` as the explicit PostgREST conflict target. Status: done and verified locally through work block 4AA without a downstream schema change; downstream writes, production inspection, and deployment remain separately gated.
   - **Task 1O.4: Complete maintained synthetic downstream-mirror coverage.** Pair Tasks 1O.2-1O.3 with the remaining `P3-3I-C01` no-op, request-shape, malformed-key, duplicate-key, failure-isolation, and entity-preservation checks using temporary databases, mocked HTTP, and denied outbound sockets. Status: done and verified locally through work block 4AA; publication remains separate.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: active and decomposed into the execution-sized tasks below; implementation remains unconfirmed.
-  - **Task 1P.1: Authenticate `/k/` through the existing server-side gate.** Resolve `P3-3J-03` and its exact request/public-field slice of `P3-3J-C01` by requiring the configured application session before route execution while preserving no-password mode, Personal/Luxe Legacy scope, BFM exclusion, and the route's self-managed database context. Status: done and verified locally through work block 4AB; publication remains separate.
+  - **Task 1P.1: Authenticate `/k/` through the existing server-side gate.** Resolve `P3-3J-03` and its exact request/public-field slice of `P3-3J-C01` by requiring the configured application session before route execution while preserving no-password mode, Personal/Luxe Legacy scope, BFM exclusion, and the route's self-managed database context. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4AB and 4AB-R.
   - **Task 1P.2: Make the session-cookie policy explicit.** Resolve the cookie half of `P3-3J-06` with a production-safe Secure, HttpOnly, and SameSite contract that preserves local and synthetic-test usability. Status: current for a separate just-in-time planning pass; implementation is not authorized.
   - **Task 1P.3: Complete mobile-drawer accessibility.** Resolve `P3-3J-05` and its responsive-navigation slice of `P3-3J-C01` with focus placement and restoration, Escape and scrim closing, open-only scroll lock, route-click consistency, and maintained browser coverage. Status: planned as a separate UX block.
   - **Task 1P.4: Design and enforce a compatible Content Security Policy.** Resolve the CSP half of `P3-3J-06` only after inventorying HTMX, inline script/style, local asset, login, and standalone `/k/` compatibility; do not weaken the policy merely to avoid template work. Status: planned after the `/k/` and cookie contracts are stable.
@@ -940,11 +940,11 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1P.7: Finish the remaining broad financial read-model regression coverage.** Consume the unpaired remainder of `P3-3C-C01` through one separately scoped synthetic verification block; do not mix it into public-route, mobile, or browser-policy implementation. Status: planned after the higher-risk Task 1P boundary work.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, and 4W completed the `P3-3E-04` Weekly/Waterfall validation slice of `P3-3E-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: active for the exact 4AB-R source set under Ryan's direct instruction to commit and push to `main`; all other releases remain separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4AB-R for every explicitly released repair to date; future publication remains separately gated.
 
 ### Confirmed Work Block 4AB: `/k/` Authentication Boundary
 
-Status: complete and verified locally on 2026-07-21; publication remains separately gated
+Status: complete, durable, automatically deployed, and credential-free production health verified through 4AB-R
 
 Parent tasks: Phase 4 Task 1P.1 and only the focused Task 2 coverage for `P3-3J-03` and its request/public-field slice of `P3-3J-C01`.
 
@@ -968,17 +968,17 @@ Stop conditions: correct behavior requires real credentials, protected data, a s
 
 Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; configured-auth `/k` and `/k/` redirect, safe-return, HTMX/JSON 401, authenticated-rendering, and pre-auth-body checks; fail-fast proof that unauthorized requests initialize no route database and launch no background sync; authenticated Personal/Luxe Legacy scope and BFM exclusion; no-password availability; unchanged exempt surfaces; denied networking; unchanged temporary all-entity data; exact cleanup; targeted Python compilation; JSON validation; `git diff --check`; dashboard refresh; command-center health; generated-dashboard inspection; and explicit-path worktree review.
 
-Dashboard closeout: keep 4AB active during implementation; update human-readable sources before `state.json`; refresh and health-check after meaningful state changes; mark Task 1P.1 done only when all required verification passes; preserve 4AB-R publication as a separate authorization gate.
+Dashboard closeout: 4AB and 4AB-R are complete; human-readable sources and `state.json` are aligned; the generated dashboard is refreshed and health checked; Task 1P.2 is the next separate planning gate.
 
 Report point: return the exact authentication/exemption contract, pre-route no-side-effect proof, configured/no-password results, authenticated field/entity behavior, changed paths, cleanup proof, preserved exclusions, local branch state, and separate publication gate.
 
-Suggested next work block: 4AB-R exact-scope durability and automatic release only if separately authorized; otherwise plan 4AC for Task 1P.2 session-cookie hardening.
+Suggested next work block: plan 4AC for Task 1P.2 session-cookie hardening; implementation remains unconfirmed.
 
 Result: authentication exemptions and entity-setup exemptions are now separate. Configured unauthenticated `/k` and `/k/` full-page requests redirect safely to login, HTMX and JSON receive 401, and maintained fail-fast checks prove no global or route-specific database initialization or background-sync launch occurs first. Authenticated and no-password requests preserve the standalone route, Personal/Luxe Legacy fields, BFM exclusion, and its own sync seam. Baseline and final full smoke suites, compilation, logical database preservation, denied networking, exact synthetic cleanup, JSON, whitespace, dashboard refresh, health, generated inspection, and worktree review pass locally. One initial test assertion assumed cent rendering; the existing template intentionally uses whole dollars, so the assertion was corrected without changing product behavior. No credential, protected data, real database, external request, live action, GitHub durability, or deployment occurred. Evidence: `command-center/focused-dashboard-auth-contract.md` and `command-center/logs/2026-07-21-focused-dashboard-auth-boundary-4ab.md`.
 
 ### Confirmed Work Block 4AB-R: Focused Dashboard Authentication Durability And Release
 
-Status: active under Ryan's direct instruction to commit and push to `main`
+Status: complete, durable, automatically deployed, and credential-free production health verified on 2026-07-21
 
 Parent task: Phase 4 Task 4 for the exact verified 4AB source set only.
 
@@ -995,6 +995,8 @@ Stop conditions: the intended diff contains an unexpected path, sensitive value,
 Verification: exact path and sensitive-addition review; maintained synthetic smoke suite; Python compilation; JSON validation; dashboard refresh and health; `git diff --check`; explicit staged-set review; source commit and direct-main fast-forward push; automatic Fly run/job attribution; credential-free production `/health`; final local-main/origin-main alignment; preserved exclusions; and sanitized `[skip actions]` closeout publication.
 
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and separate Task 1P.2 planning gate.
+
+Result: exact twelve-path source commit `e20555d` was fast-forwarded and pushed directly to `main` without force or PR. Automatic Fly Deploy run `29849025459` and deploy job `88696866487` passed for exact source SHA `e20555d7785e3becbf2eabede548007284d2d765`, and credential-free production `/health` returned HTTP 200. Local `main` matched `origin/main`; the staged high-confidence sensitive-addition scan returned zero; both preserved untracked files remained excluded; and this command-center-only closeout uses `[skip actions]` to prevent a second deployment. Task 1P.2 is now the separate planning gate.
 
 ### Confirmed Work Block 4V: Weekly Date And Bill Truthfulness
 
