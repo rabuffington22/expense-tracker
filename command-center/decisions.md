@@ -666,3 +666,7 @@ Tracked downstream sources identify `/Users/ryanbuffington/Documents/GitHub/luxu
 ### 2026-07-21 — Authorize direct-main durability for the 4Z closeout
 
 Ryan authorized committing and pushing the completed 4Z command-center closeout directly to `main`. Publication is limited to the eight intended command-center paths, uses `[skip actions]` because no application or workflow source changed, and preserves untracked `scripts/sync_prod_to_local.sh` and `command-center/now 2.md`. No PR, deployment, workflow dispatch, live downstream action, product implementation, credential, protected data, or unrelated change is authorized.
+
+### 2026-07-21 — Record 4Z as durable on main without an Actions run
+
+Exact eight-path closeout commit `88a8c52` is on local `main` and `origin/main`. GitHub reported no workflow run for the commit, confirming `[skip actions]` prevented a Fly deployment. Both preserved untracked files remained unstaged and untouched; no PR, force push, product change, live downstream action, credential, protected data, or unrelated mutation occurred.

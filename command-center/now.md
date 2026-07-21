@@ -42,7 +42,7 @@ Propose a bounded local-only 4AA work block for Tasks 1O.2-1O.4 using `plaid_tra
 - The Ledger bridge is contract-compatible in intent but locally admits empty and repeated keys and leaves the REST conflict target implicit. No downstream schema change is indicated.
 - Tasks 1O.2-1O.4 are ready for separate local-only planning; deployed-schema and live behavior remain intentionally unverified.
 - An initial broad tracked-source search returned credential-related history from a tracked memory file. No value is reproduced; the search was narrowed immediately. No environment file, keychain, database, row data, untracked payload, network, Supabase surface, downstream mutation, or live action occurred.
-- Ryan separately authorized direct-main durability for the exact eight-path command-center closeout with `[skip actions]`; publication verification is pending.
+- Exact eight-path closeout commit `88a8c52` is on local `main` and `origin/main`; GitHub reported no workflow run for the `[skip actions]` commit, and both preserved untracked files remain untouched.
 
 ## Work Block 4Y-R Contract
 
