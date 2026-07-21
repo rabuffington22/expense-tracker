@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4U source set through authorized work block 4U-R and verify its automatic release.
+Plan and confirm the next bounded repair for Task 1N.4 without beginning implementation.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4U-R is authorized and active.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4U-R is complete, durable, automatically deployed, and health verified.
 
 ## Current Work Block
 
-Work block 4U-R: Negative Appreciation Truthfulness Durability And Release — active.
+No implementation work block is active. Work block 4U-R is complete; Task 1N.4 is at its separate planning and confirmation gate.
 
 ## Current Task
 
-Task 1N.3: Compound negative asset appreciation as depreciation — complete locally; exact-scope durability and automatic release are active through 4U-R.
+Task 1N.4: Unify Weekly date context and scheduled card-bill amounts — current for planning only; no implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, direct-main fast-forward, push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan retains every recovery or scope-expansion gate.
+Ryan owns confirmation of the next bounded work block. Codex Desktop may inspect current repo truth and propose Task 1N.4 scope, exclusions, stops, and verification, but may not implement it without confirmation.
 
 ## Current Action
 
-Reverify the exact ten-path 4U source set, commit it on `codex/negative-asset-depreciation`, fast-forward local `main`, push `main` without force, verify the attributable automatic Fly deployment and credential-free `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+Define and confirm a bounded Task 1N.4 Weekly date-context and scheduled-card-bill repair block before any product, test, GitHub, deployment, protected-data, or live action.
 
 ## Work Block 4U-R Contract
 
@@ -32,6 +32,16 @@ Reverify the exact ten-path 4U source set, commit it on `codex/negative-asset-de
 - Stop for an unexpected path, sensitive addition, protected data, unrelated user change, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed automatic deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized fast-forward path.
 - Verify exact paths, branch ancestry, remote alignment, staged sensitive additions, maintained smoke and compilation, JSON, dashboard refresh and health, whitespace, automatic run/job attribution, credential-free production health, final `main` alignment, preserved exclusions, and sanitized `[skip actions]` closeout publication.
 - Report the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1N.4 planning gate.
+
+## Work Block 4U-R Result
+
+- Exact ten-path source commit `0222d30` was fast-forwarded and pushed directly to `main` without force.
+- Automatic Fly Deploy run `29802647208` and deploy job `88546571143` passed for exact source SHA `0222d301f4e952e755ad6321666ce2f4c93e96e6`.
+- Credential-free production `/health` returned HTTP 200.
+- Both preserved untracked files remained untouched and unstaged; the staged high-confidence sensitive-addition scan returned zero.
+- GitHub repeated the non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24; deployment still succeeded.
+- No protected data, retained upload, credential, authenticated production page, manual workflow action, non-automatic Fly change, downstream access/write, migration, Task 1N.4 implementation, force push, or unrelated action occurred.
+- This command-center-only closeout uses `[skip actions]` so it must not start a second Fly deployment.
 
 ## Work Block 4U Contract
 
