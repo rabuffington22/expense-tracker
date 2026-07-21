@@ -8089,10 +8089,24 @@ def main() -> None:
             _check(match is not None, "auth login: missing CSRF token")
             return match.group(1)
 
+        def _session_cookie_header(response) -> str:
+            for value in response.headers.getlist("Set-Cookie"):
+                if value.startswith("session="):
+                    return value
+            _check(False, "auth cookie: response should set the Flask session cookie")
+            return ""
+
         legacy_password = "synthetic-legacy-password"
         legacy_hash = _hashlib.sha256(legacy_password.encode("utf-8")).hexdigest()
+        original_fly_app_name = os.environ.pop("FLY_APP_NAME", None)
         os.environ["APP_PASSWORD_HASH"] = legacy_hash
         auth_app = create_app()
+        _check(
+            auth_app.config["SESSION_COOKIE_HTTPONLY"] is True
+            and auth_app.config["SESSION_COOKIE_SAMESITE"] == "Lax"
+            and auth_app.config["SESSION_COOKIE_SECURE"] is False,
+            "auth cookie local: explicit policy should preserve ordinary HTTP development",
+        )
 
         with auth_app.test_client() as auth_client:
             auth_boundary_before = {
@@ -8114,6 +8128,20 @@ def main() -> None:
             _check(login_resp.headers.get("Cache-Control") == "no-store", "auth: login page should be no-store")
             _check(legacy_hash not in login_body, "auth: configured digest must not appear in login HTML")
             _check("/auth/verify" not in login_body and "atlas-auth" not in login_body, "auth: legacy digest replay client must be absent")
+            local_cookie = _session_cookie_header(login_resp)
+            _check(
+                "HttpOnly" in local_cookie
+                and "SameSite=Lax" in local_cookie
+                and "Secure" not in local_cookie,
+                "auth cookie local: session should be HttpOnly and SameSite Lax without Secure",
+            )
+            _check(
+                "Path=/" in local_cookie
+                and "Domain=" not in local_cookie
+                and "Expires=" not in local_cookie
+                and "Max-Age=" not in local_cookie,
+                "auth cookie local: host-only application-root browser-session contract should remain",
+            )
             csrf_token = _csrf_from(login_body)
 
             with patch("web.init_db") as global_init, patch(
@@ -8254,6 +8282,69 @@ def main() -> None:
             _check(auth_client.get("/offline").status_code == 200, "auth: offline page should remain exempt")
             _check(auth_client.get("/k/").status_code == 200, "auth: public k route should remain unchanged")
 
+        os.environ["FLY_APP_NAME"] = "synthetic-ledger-oak"
+        os.environ["APP_PASSWORD_HASH"] = legacy_hash
+        fly_auth_app = create_app()
+        _check(
+            fly_auth_app.config["SESSION_COOKIE_HTTPONLY"] is True
+            and fly_auth_app.config["SESSION_COOKIE_SAMESITE"] == "Lax"
+            and fly_auth_app.config["SESSION_COOKIE_SECURE"] is True,
+            "auth cookie Fly: explicit policy should require HTTPS-only transport",
+        )
+        with fly_auth_app.test_client() as fly_auth_client:
+            fly_login = fly_auth_client.get(
+                "/auth/login?next=/", base_url="https://synthetic-ledger-oak.fly.dev"
+            )
+            fly_login_body = fly_login.get_data(as_text=True)
+            fly_cookie = _session_cookie_header(fly_login)
+            _check(
+                "Secure" in fly_cookie
+                and "HttpOnly" in fly_cookie
+                and "SameSite=Lax" in fly_cookie,
+                "auth cookie Fly: session should be Secure HttpOnly and SameSite Lax",
+            )
+            _check(
+                "Path=/" in fly_cookie
+                and "Domain=" not in fly_cookie
+                and "Expires=" not in fly_cookie
+                and "Max-Age=" not in fly_cookie,
+                "auth cookie Fly: host-only application-root browser-session contract should remain",
+            )
+            fly_csrf_token = _csrf_from(fly_login_body)
+            fly_correct = fly_auth_client.post(
+                "/auth/login",
+                data={
+                    "_csrf_token": fly_csrf_token,
+                    "password": legacy_password,
+                    "next": "/",
+                },
+                base_url="https://synthetic-ledger-oak.fly.dev",
+                follow_redirects=False,
+            )
+            _check(
+                fly_correct.status_code == 302
+                and fly_correct.headers.get("Location", "").endswith("/"),
+                "auth cookie Fly: HTTPS login should establish the secure session",
+            )
+            _check(
+                fly_auth_client.get(
+                    "/", base_url="https://synthetic-ledger-oak.fly.dev"
+                ).status_code == 200,
+                "auth cookie Fly: secure session should authorize the protected root",
+            )
+            with patch(
+                "web.routes.kristine._start_background_sync", return_value=False
+            ):
+                fly_focused = fly_auth_client.get(
+                    "/k/", base_url="https://synthetic-ledger-oak.fly.dev"
+                )
+            _check(
+                fly_focused.status_code == 200,
+                "auth cookie Fly: secure session should preserve focused-dashboard access",
+            )
+
+        os.environ.pop("FLY_APP_NAME", None)
+
         modern_password = "synthetic-modern-password"
         os.environ["APP_PASSWORD_HASH"] = generate_password_hash(modern_password)
         modern_app = create_app()
@@ -8321,7 +8412,12 @@ def main() -> None:
         _check(sw_source.count("caches.match(request)") == 1, "service worker: only static cache-first may match the request URL")
         _check(sw_source.count("cache.put(request") == 1, "service worker: only static assets may be cached at runtime")
 
-        print("   ✅ Server auth, focused-dashboard boundary, no-password mode, exemptions, CSRF, and protected-cache contracts passed")
+        if original_fly_app_name is None:
+            os.environ.pop("FLY_APP_NAME", None)
+        else:
+            os.environ["FLY_APP_NAME"] = original_fly_app_name
+
+        print("   ✅ Server auth, explicit local/Fly cookies, focused-dashboard boundary, no-password mode, exemptions, CSRF, and protected-cache contracts passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

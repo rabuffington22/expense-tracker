@@ -2,27 +2,54 @@
 
 ## Active Objective
 
-Plan the next bounded Phase 4 block for Task 1P.2 after the completed 4AB-R release.
+Publish and verify the exact completed 4AC source set through confirmed work block 4AC-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4AB-R is durable, deployed, and health verified, and Task 1P.2 is the current planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; 4AC is complete locally and 4AC-R is the authorized durability and release block.
 
 ## Current Work Block
 
-Work block 4AB-R: Focused Dashboard Authentication Durability And Release — complete.
+Work block 4AC-R: Session-Cookie Policy Durability And Release — active.
 
 ## Current Task
 
-Task 1P.2: Make the session-cookie policy explicit — current for a separate just-in-time planning pass; implementation is not authorized.
+Task 4: Publish and verify the exact completed 4AC repair — active through confirmed work block 4AC-R.
 
 ## Owner
 
-Ryan owns confirmation or revision of the next bounded Task 1P.2 work block. Codex Desktop owns planning and Runway OS stewardship; implementation remains unconfirmed.
+Codex Desktop owns exact-scope staging, source commit, fast-forward publication to `main`, automatic Fly observation, credential-free health verification, and sanitized closeout. Ryan retains all excluded live and recovery decisions.
 
 ## Current Action
 
-Plan one bounded local-only Task 1P.2 block covering the explicit session-cookie policy and its focused synthetic coverage, while keeping CSP, mobile, broader browser coverage, live inspection, and publication separate.
+Verify the exact 4AC source set, commit it on `codex/session-cookie-policy`, fast-forward local `main`, push directly to `origin/main`, observe only the resulting automatic Fly deployment, verify credential-free `/health`, and publish one `[skip actions]` command-center closeout that cannot trigger a second deployment.
+
+## Work Block 4AC-R Contract
+
+- Include the exact verified twelve-path 4AC application, maintained-test, README, contract, issue, findings, evidence, and Runway OS source set; explicit staging; one source commit; fast-forward local `main`; direct `origin/main` push; automatic Fly observation; credential-free production `/health`; and one sanitized `[skip actions]` closeout commit and push.
+- Keep both preserved untracked files, protected data, real databases, retained uploads, credentials, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly changes, downstream access/writes, migrations, Tasks 1P.3-1P.7, broader Task 2, unrelated work, PR creation, force push, and recovery beyond the exact fast-forward path outside scope.
+- Use no PR because Ryan directly instructed commit and push to `main`; trigger only the automatic deployment caused by the source push and ensure the closeout cannot start a second deployment.
+- Stop for unexpected paths, sensitive additions, protected data, unrelated changes, local or remote `main` divergence, failed maintained verification, excluded staging, unattributable or failed deployment, failed credential-free health, a second closeout deployment, or recovery beyond the authorized path.
+- Verify exact scope, sensitive additions, branch ancestry, remote alignment, maintained smoke, compilation, JSON, dashboard refresh and health, whitespace, staged set, source commit, automatic run/job attribution, credential-free health, final `main` alignment, preserved exclusions, and `[skip actions]` closeout publication.
+
+## Work Block 4AC Result
+
+- The Flask factory explicitly sets the session cookie to HttpOnly and SameSite Lax everywhere and adds Secure when Fly provides a non-empty `FLY_APP_NAME`; ordinary local HTTP remains usable.
+- The cookie remains host-only, application-root scoped, named `session`, and non-permanent; configured-auth, no-password, CSRF, exempt-route, protected-cache, root, and `/k/` behavior remain intact.
+- Maintained coverage proves exact local and Fly-simulated HTTPS cookie attributes, secure authenticated root and `/k/` continuity, environment restoration, and cleanup.
+- Baseline and final full smoke suites, Python compilation, JSON, whitespace, dashboard refresh, health, rendered inspection, and scope review pass locally.
+- No CSP, entity-cookie, session-lifetime, mobile/PWA, broad browser, migration, credential, protected data, real database, external request, production inspection, Fly mutation, GitHub durability, publication, deployment, or live action occurred. Both preserved untracked files remain untouched.
+
+## Work Block 4AC Contract
+
+- Include Task 1P.2 and only the focused Task 2 coverage for the cookie half of `P3-3J-06`.
+- Make the Flask session cookie explicitly `HttpOnly` and `SameSite=Lax` everywhere; make it `Secure` on Fly through the infrastructure-provided `FLY_APP_NAME` signal while preserving ordinary local HTTP and controlled synthetic-test usability.
+- Preserve the host-only, application-root, non-permanent session contract, cookie name, configured-auth and no-password behavior, CSRF behavior, and existing `/k/` authentication boundary.
+- Keep Tasks 1P.3-1P.7, the remainder of Task 2, Tasks 3-4, CSP, entity-cookie changes, mobile and generalized browser work, session lifetime/name/domain/path changes, migrations, credentials, protected data, real databases, production inspection, Fly mutation, GitHub durability, deployment, and both preserved untracked files outside scope.
+- Use Codex Desktop in the current task on local branch `codex/session-cookie-policy`; no delegation or second opinion is needed. Codex owns implementation, verification, cleanup, issue disposition, dashboard currency, and final intake.
+- Stop if correct behavior requires a secret, Fly configuration mutation, live inspection, proxy-trust redesign, authentication-flow change, entity-cookie or CSP work, another Task 1P item, protected/live access, scope expansion, plan-changing verification failure, failed cleanup, command-center failure, or overlap with either preserved untracked file.
+- Verify baseline and final maintained smoke; local and Fly-simulated cookie attributes; authenticated HTTPS session continuity for the root and `/k/`; configured-auth, no-password, CSRF, and non-permanent-session preservation; environment restoration; no external networking; Python compilation; JSON; whitespace; dashboard refresh and health; rendered inspection; and final worktree scope.
+- Keep durability local-only. Report the exact cookie contract, focused and full synthetic results, changed paths, cleanup, preserved boundaries, local branch state, and separate publication gate.
 
 ## Work Block 4AB-R Result
 

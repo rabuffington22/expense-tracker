@@ -272,6 +272,11 @@ def create_app():
             "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
         )
     app.secret_key = _secret
+    app.config.update(
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE="Lax",
+        SESSION_COOKIE_SECURE=bool(os.environ.get("FLY_APP_NAME", "").strip()),
+    )
 
     # Validate that hardcoded category references match categories.md
     from core.categories import validate_references
