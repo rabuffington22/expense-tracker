@@ -1467,7 +1467,7 @@ Work block 4F replaced the nonexistent LL `Owner Contribution` mirror exclusion 
 
 ## Luxe Legacy Mirror Idempotency Contract Permits Duplicate Conflict Keys
 
-Status: open; discovered in work block 3I
+Status: open for local repair; tracked downstream contract verified in work block 4Z
 
 Severity: high downstream correctness and availability risk
 
@@ -1475,11 +1475,11 @@ Captured: 2026-07-18
 
 Where seen: `core/db.py`, `core/luxury_bridge.py`, and a repeated mocked duplicate-Plaid-ID probe
 
-Revisit: Phase 4 Task 1 for local and downstream contract repair; Phase 4 Task 2 for duplicate-key coverage
+Revisit: Tasks 1O.2-1O.4 for local key handling, explicit request semantics, and duplicate-key coverage
 
 Summary:
 
-The local transaction schema creates a non-unique index on `plaid_transaction_id`. Two synthetic rows with the same Plaid ID were accepted and submitted in one bridge request. The request declares merge-duplicates but does not explicitly name `plaid_transaction_id` as its conflict target. The actual remote unique constraint and response were intentionally not inspected.
+The local transaction schema creates a non-unique index on `plaid_transaction_id`. Two synthetic rows with the same Plaid ID were accepted and submitted in one bridge request. The request declares merge-duplicates but does not explicitly name `plaid_transaction_id` as its conflict target. Work block 4Z verified from tracked downstream sources that `ledger_transactions.plaid_transaction_id` is the primary key and that the downstream importer explicitly uses it as `onConflict`; deployed-schema and live-response behavior remain intentionally uninspected.
 
 Impact:
 
@@ -1492,9 +1492,9 @@ Acceptance checks:
 - Duplicate handling is deterministic, preserves the Ledger source of truth, and cannot silently drop an unrelated eligible row.
 - Failure and recovery behavior has synthetic regression coverage without live downstream access.
 
-Why not fixed now:
+4Z disposition:
 
-Schema, bridge, downstream-contract, and tracked-test changes were excluded from work block 3I.
+The tracked-contract gate is satisfied without a downstream schema change: the required explicit conflict target is `plaid_transaction_id`. Local malformed/duplicate handling, explicit request semantics, and maintained coverage remain unimplemented and require a separately confirmed Task 1O.2-1O.4 block.
 
 ## Luxe Legacy Mirror Accepts Empty Plaid Transaction IDs
 

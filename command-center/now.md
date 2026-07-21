@@ -2,27 +2,47 @@
 
 ## Active Objective
 
-Plan Task 1O separately after completing and verifying work block 4Y-R.
+Plan and confirm work block 4AA for the locally provable Luxe Legacy mirror repair after 4Z satisfied the tracked downstream contract gate.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4Y-R is complete, durable, automatically deployed, and credential-free production health verified.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4Z is complete from tracked local sources and Tasks 1O.2-1O.4 remain separately gated.
 
 ## Current Work Block
 
-Work block 4Y-R: Waterfall Tax Input Truthfulness Durability And Release — complete.
+Work block 4Z: Downstream Idempotency Contract Discovery — complete.
 
 ## Current Task
 
-Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract — current for a separate planning and confirmation pass; implementation is not authorized.
+Task 1O.2: Reject malformed and duplicate mirror keys deterministically — current for a separate 4AA planning and confirmation pass; implementation and live downstream access remain unauthorized.
 
 ## Owner
 
-Ryan owns the separate Task 1O planning confirmation. Codex Desktop completed the exact-path 4Y-R release, deployment attribution, health verification, and sanitized closeout.
+Ryan owns the next 4AA work-block confirmation. Codex Desktop completed 4Z, recorded the sanitized contract verdict, and remains responsible for planning, Runway OS stewardship, and final intake.
 
 ## Current Action
 
-Propose a bounded Task 1O work block before any implementation or live downstream access.
+Propose a bounded local-only 4AA work block for Tasks 1O.2-1O.4 using `plaid_transaction_id` as the established tracked conflict target; do not implement or access live downstream systems before confirmation.
+
+## Work Block 4Z Contract
+
+- Include Task 1O.1 only: verify from tracked local sources whether `ledger_transactions.plaid_transaction_id` is uniquely constrained and which explicit PostgREST conflict target the Ledger mirror must use.
+- Read the downstream repository's agent instructions before inspection; inspect tracked files only; do not fetch, pull, open secrets, databases, row data, or untracked payloads; and make no downstream-repository changes.
+- Allow only a sanitized Expense Tracker command-center discovery artifact, issue/task disposition, state closeout, and generated dashboard refresh. Make no application, migration, schema, test, or downstream product change.
+- Keep Tasks 1O.2-1O.4, Task 1P, Tasks 2-4, implementation, credentials, protected data, networking, Supabase, live requests, downstream writes, Plaid, workflows, Fly, GitHub publication, deployment, and both preserved untracked files outside scope.
+- Use Codex Desktop in the current task without delegation or second opinion. Codex owns evidence reconciliation, boundary enforcement, dashboard currency, and final intake.
+- Stop if the target repository cannot be established from tracked source; the contract is absent, stale, or contradictory; proof requires credentials, row data, networking, a database, or a live request; a migration or product decision is needed; scope reaches another task; or command-center verification fails.
+- Verify repository identity, branch, commit, and tracked-file scope; cite exact tracked evidence; confirm zero downstream mutation, secret access, row-data access, networking, or live action; validate JSON and whitespace; refresh and health-check the dashboard; inspect the rendered result; and review the final worktree.
+- Report the proven conflict key and request semantics, exact tracked evidence, compatibility verdict, remaining uncertainty, preserved boundaries, and the recommended readiness or blocker for a separately confirmed implementation block.
+
+## Work Block 4Z Result
+
+- The intended local downstream repository is confirmed by tracked README and Ledger references; it was inspected at `main` commit `089d15c3db69bf00b00bec6a35fdd95ead61e2db` without fetch, pull, or mutation.
+- Tracked `src/lib/db/schema.sql` declares `ledger_transactions.plaid_transaction_id` as the primary key, and the tracked Apple Card importer explicitly upserts on `plaid_transaction_id`.
+- The Ledger bridge is contract-compatible in intent but locally admits empty and repeated keys and leaves the REST conflict target implicit. No downstream schema change is indicated.
+- Tasks 1O.2-1O.4 are ready for separate local-only planning; deployed-schema and live behavior remain intentionally unverified.
+- An initial broad tracked-source search returned credential-related history from a tracked memory file. No value is reproduced; the search was narrowed immediately. No environment file, keychain, database, row data, untracked payload, network, Supabase surface, downstream mutation, or live action occurred.
+- Ryan separately authorized direct-main durability for the exact eight-path command-center closeout with `[skip actions]`; publication verification is pending.
 
 ## Work Block 4Y-R Contract
 

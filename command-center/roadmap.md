@@ -916,7 +916,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1M.3: Normalize malformed payroll-workbook failures.** Convert corrupt, mislabeled, empty, unsupported, and headerless upload failures into sanitized controlled outcomes without retaining a payload, while preserving valid multi-section preview/save behavior for `P3-3F-06` with focused coverage. Status: done and verified locally through work block 4P; release remains separate.
   - **Task 1M.4: Validate employee roster writes atomically.** Enforce maintained role, pay-type, status, date, identifier, and finite non-negative rate rules before create/update mutation; preserve valid rate-history behavior and pair `P3-3F-04` with focused coverage. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4Q and 4Q-R.
   - **Task 1M.5: Separate payroll peer comparisons by compensation unit.** Compute and display like-for-like hourly and salary cohorts, including mixed, single-member, inactive, zero-rate, and empty cases, for `P3-3F-03` with focused coverage. Status: done and verified locally through work block 4R; release remains separate.
-- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: complete locally across Tasks 1N.1-1N.8; Tasks 1N.1-1N.7 are released and Task 1N.8 publication remains separate.
+- **Task 1N: Repair planning, Weekly, and Waterfall calculation truthfulness.** Status: complete, released, automatically deployed, and credential-free production health verified across Tasks 1N.1-1N.8 through work blocks 4S-4Y and their release blocks.
   - **Task 1N.1: Use stored APRs in locked payoff schedules.** Pass each linked card's maintained `apr_bps` value into payoff calculation, define missing or invalid APR behavior explicitly, and reconcile avalanche/snowball order, narrative, and saved schedule for `P3-3D-01`. Status: done, durable, automatically deployed, and credential-free production health verified through work blocks 4S and 4S-R.
   - **Task 1N.2: Preserve manual goal-review notes during automatic snapshots.** Update same-day balances without replacing the snapshot identity or erasing a manual note, while preserving intentional later manual-note replacement for `P3-3D-03`. Status: done, durable, automatically deployed, and credential-free production health verified through 4T and 4T-R.
   - **Task 1N.3: Compound negative asset appreciation as depreciation.** Preserve negative projection rates instead of clamping them to zero and reconcile future asset and net-worth results for `P3-3D-04`. Status: complete, durable, automatically deployed, and health verified through 4U-R.
@@ -924,12 +924,16 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 1N.5: Validate Weekly paydown dates and read stored goals defensively.** Reject invalid target dates without changing the prior goal and prevent malformed stored values from breaking Weekly or Waterfall for `P3-3E-04`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4W and 4W-R.
   - **Task 1N.6: Include deficit months in Waterfall payoff inputs.** Define the rolling period and signed-surplus rule so every included month contributes to the displayed average and payoff estimate for `P3-3E-03`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4X and 4X-R.
   - **Task 1N.7: Keep Waterfall payoff duration truthful while debt remains.** Apply a documented rounding rule so positive debt with positive surplus cannot render as zero payoff months for `P3-3E-05`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4X and 4X-R.
-  - **Task 1N.8: Normalize Waterfall tax input once.** Require one finite, range-checked value to drive calculation and rendering without direct-input crashes for `P3-3E-06`. Status: complete and verified locally through 4Y; publication remains separate.
-- **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: planned after Task 1E; downstream idempotency remains parked pending an authorized read-only contract check.
+  - **Task 1N.8: Normalize Waterfall tax input once.** Require one finite, range-checked value to drive calculation and rendering without direct-input crashes for `P3-3E-06`. Status: complete, durable, automatically deployed, and credential-free production health verified through 4Y and 4Y-R.
+- **Task 1O: Repair the locally provable Luxe Legacy downstream-mirror contract.** Status: active as a decomposed umbrella; work block 4Z satisfied the tracked-contract gate without implementation or live downstream access.
+  - **Task 1O.1: Verify the tracked downstream conflict contract read-only.** Inspect only tracked schema, migration, and request-contract sources in the local downstream repository to determine whether `ledger_transactions.plaid_transaction_id` is uniquely constrained and which explicit PostgREST conflict target the mirror must use. Do not open credentials, databases, row data, network surfaces, or make changes. Status: done through 4Z; tracked schema and importer establish `plaid_transaction_id` as the primary key and explicit conflict target.
+  - **Task 1O.2: Reject malformed and duplicate mirror keys deterministically.** After Task 1O.1, define and implement a local payload-selection rule for empty, whitespace-only, and repeated Plaid transaction IDs without changing Ledger source rows or dropping unrelated eligible rows. Status: current for a separate 4AA planning and confirmation pass.
+  - **Task 1O.3: Make the mirror conflict target explicit in tracked contracts.** After Task 1O.1, align the Ledger request and any tracked downstream schema or migration needed to establish `plaid_transaction_id` as the idempotency key. Status: planned; downstream writes, production inspection, and deployment remain separately gated.
+  - **Task 1O.4: Complete maintained synthetic downstream-mirror coverage.** Pair Tasks 1O.2-1O.3 with the remaining `P3-3I-C01` no-op, request-shape, malformed-key, duplicate-key, failure-isolation, and entity-preservation checks using temporary databases, mocked HTTP, and denied outbound sockets. Status: planned.
 - **Task 1P: Resolve the remaining public, mobile, browser-hardening, availability, and operator-clarity findings.** Status: planned; authenticate `/k/`, keep cookie flags separate from later CSP compatibility, and preserve separately scoped UX decisions.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, and 4W completed the `P3-3E-04` Weekly/Waterfall validation slice of `P3-3E-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4X-R; all future releases remain separately gated.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4Y-R; all future releases remain separately gated.
 
 ### Confirmed Work Block 4V: Weekly Date And Bill Truthfulness
 
@@ -1101,6 +1105,42 @@ Verification: exact path and sensitive-addition review; maintained synthetic sui
 Report point: return the source and closeout commits, exact published paths, automatic Fly result, credential-free health, final `main` alignment, preserved exclusions, and the separate Task 1O planning gate.
 
 Result: the exact eleven-path 4Y source set was committed as `b5c862b`, fast-forwarded to local `main`, and pushed directly to `origin/main` without force. Automatic Fly Deploy run `29833970537` and deploy job `88645453012` passed for exact source SHA `b5c862b002dbb5d2831a8cebf4cbf71705008c1d`; credential-free production `/health` returned HTTP 200. Both preserved untracked files remained excluded, the staged high-confidence sensitive-addition scan returned zero, and no PR or unauthorized live action occurred. This command-center-only closeout uses `[skip actions]` to prevent a second deployment. Evidence: `command-center/logs/2026-07-21-waterfall-tax-input-truthfulness-release-4y-r.md`.
+
+### Confirmed Work Block 4Z: Downstream Idempotency Contract Discovery
+
+Status: complete on 2026-07-21
+
+Included: Task 1O.1 only. Verify from tracked local sources whether the intended downstream `ledger_transactions.plaid_transaction_id` column is uniquely constrained and which explicit PostgREST conflict target the Ledger mirror must use. Read the downstream repository's agent instructions first, confirm repository identity, and compare exact tracked schema, migration, test, and request-contract evidence with `core/luxury_bridge.py` and the existing 3I findings.
+
+Excluded: Tasks 1O.2-1O.4; Task 1P; Tasks 2-4; application, test, schema, or migration implementation; downstream-repository changes; credentials; protected or row-level data; databases; untracked payloads; network or Supabase access; live requests or downstream writes; Plaid; workflows; Fly; GitHub publication; deployment; pre-existing untracked `scripts/sync_prod_to_local.sh`; and unrelated untracked `command-center/now 2.md`.
+
+Why this grouping: Task 1O.1 is the read-only prerequisite for every remaining downstream-mirror repair. Tasks 1O.2-1O.4 depend on the discovered uniqueness and conflict contract, so including them now would require guessing behavior that the audit explicitly left unverified.
+
+Owner and recommended agent: Codex Desktop in the current task. The block couples sensitive cross-repository boundary control, exact tracked-source reconciliation, sanitized evidence, and Runway OS stewardship. No delegation or second opinion is needed.
+
+Defaults: treat `/Users/ryanbuffington/Documents/GitHub/luxurious luxury` as the intended target only if tracked Ledger and downstream sources establish that identity; inspect tracked files only without fetch or pull; do not open secret files, databases, row data, or untracked payloads; write only a sanitized Expense Tracker command-center verdict and state closeout; and keep all implementation separately gated.
+
+Stop conditions:
+
+- Tracked evidence cannot establish the intended downstream repository.
+- The uniqueness or PostgREST conflict contract is absent, stale, or contradictory.
+- Proof requires credentials, protected data, row data, a database, networking, Supabase, or a live request.
+- A downstream migration, product decision, implementation, or another Phase 4 task becomes necessary.
+- Scope reaches Tasks 1O.2-1O.4, verification changes the plan, command-center checks fail, or either preserved untracked file would be touched.
+
+Verification:
+
+- Record the downstream repository identity, branch, commit, worktree status, and exact tracked-file scope without mutation or remote fetch.
+- Cite exact tracked schema, migration, test, and request-contract sources supporting or contradicting uniqueness and conflict behavior.
+- Confirm no secret, database, row-data, untracked-payload, network, Supabase, live-request, or downstream-write access occurred.
+- Validate `command-center/state.json`, run dashboard refresh and health check, run `git diff --check`, inspect the rendered dashboard, and review the final worktree with both preserved untracked files untouched.
+- Do not run the application smoke suite because this block changes no application or maintained test code.
+
+Durability: Ryan separately authorized direct-main publication of the exact eight-path command-center closeout with `[skip actions]`; the commit, push, remote-alignment, and no-run verification are pending. No PR, deployment, workflow dispatch, credential, protected-data, product implementation, live downstream action, or preserved-untracked-file change is authorized.
+
+Report point: return the proven conflict key and request semantics, exact tracked evidence, compatibility verdict, remaining uncertainty, preserved boundaries, and the recommended readiness or blocker for a separately confirmed Task 1O.2-1O.4 implementation block.
+
+Result: tracked downstream sources identify `/Users/ryanbuffington/Documents/GitHub/luxurious luxury` as the intended Supabase consumer, direct operators to `src/lib/db/schema.sql`, define `ledger_transactions.plaid_transaction_id` as the table primary key, and explicitly upsert the tracked Apple Card importer on that column. The Ledger bridge names the same intended key but its local index is non-unique, its eligibility predicate admits empty strings, its payload builder does not handle repeated keys, and its REST request leaves the conflict target implicit. No downstream schema change is indicated. Tasks 1O.2-1O.4 are ready for separate local-only planning; deployed-schema and live behavior remain intentionally unverified. The initial broad tracked-source search returned credential-related history from a tracked memory file; no value is reproduced, the search was narrowed immediately, and no environment file, keychain, database, row data, untracked payload, network, Supabase surface, downstream mutation, or live action occurred. Evidence: `command-center/luxe-legacy-downstream-contract-discovery.md`.
 
 ### Confirmed Work Block 4X: Waterfall Payoff Truthfulness
 

@@ -52,7 +52,7 @@ These facts strengthen the recommendation to settle a written source-aware ident
 5. Vendor import-to-categorization — `P3-3B-01` through `P3-3B-03` with `P3-3B-C01`.
 6. Payroll integrity and retention — `P3-3F-02` through `P3-3F-06` with `P3-3F-C01`, after the BFM-only guard and compensation-unit decision.
 7. Planning, Weekly, and Waterfall correctness — remaining `P3-3D` and `P3-3E` findings with paired coverage.
-8. Luxe Legacy downstream mirror — `P3-3I-03` with focused coverage; `P3-3I-02` remains parked behind a read-only remote-contract authorization.
+8. Luxe Legacy downstream mirror — `P3-3I-02`, `P3-3I-03`, and focused `P3-3I-C01` coverage are ready for a separately confirmed local block after 4Z verified the tracked downstream contract.
 9. Public/browser security and UX — authenticated or minimized `/k/` contract, cookie flags, later CSP compatibility, mobile navigation, and paired `P3-3J-C01` coverage.
 10. Remaining isolated availability, operator copy, and broad read-model coverage — `P3-3B-04` plus the unconsumed portion of `P3-3C-C01`.
 
@@ -87,7 +87,7 @@ Ryan must confirm or revise this source contract before 4C implementation can st
 - Classification: 42 unresolved behavior or policy findings, ten coverage items, and three resolved findings.
 - Severity: 25 high, 29 medium, and one low across the full catalog.
 - Most findings were reproduced only with synthetic databases, generated files, mocked integrations, or isolated browsers. Their possible impact is proven; actual production occurrence is not.
-- `P3-3I-02` does not prove the remote downstream uniqueness or merge contract.
+- Work block 4Z later verified the tracked downstream uniqueness contract and explicit conflict target as `plaid_transaction_id`; deployed-schema and live merge behavior remain intentionally unverified.
 - `P3-3J-03` proves the current detailed-public `/k/` behavior but cannot decide whether Ryan intends to retain it.
 
 ## Prioritization Rules
@@ -162,9 +162,9 @@ Why seventh: these findings can materially distort guidance, but they are derive
 
 ### Order 8 — Luxe Legacy Downstream Mirror
 
-IDs: `P3-3I-03`, paired with the relevant portion of `P3-3I-C01`; `P3-3I-02` remains behind a remote-contract decision. `P3-3I-01` is handled earlier as a sensitive-selection boundary.
+IDs: `P3-3I-02`, `P3-3I-03`, and the relevant portion of `P3-3I-C01`. Work block 4Z satisfied the tracked-contract gate; `P3-3I-01` was handled earlier as a sensitive-selection boundary.
 
-Why eighth: empty identifier validation is locally provable, but idempotency implementation must not guess the downstream conflict target or merge behavior. Any live schema inspection or downstream write requires a later target-specific block.
+Why eighth: empty identifier validation and deterministic duplicate handling are locally provable, and 4Z established `plaid_transaction_id` as the tracked downstream primary key and explicit conflict target. Live schema inspection and downstream writes remain separately gated and unnecessary for the local repair block.
 
 ### Order 9 — Isolated Availability, UX, And Operator Clarity
 
@@ -190,7 +190,7 @@ Recommended default: handle this in a dedicated browser-security block after doc
 
 ### Downstream Idempotency — `P3-3I-02`
 
-Recommended default: keep implementation parked until the remote uniqueness/conflict contract can be established through an explicitly authorized read-only contract check or maintained downstream documentation.
+Recommended default: gate satisfied by 4Z. Plan one local-only block for deterministic malformed/duplicate key handling, explicit `plaid_transaction_id` request semantics, and the remaining maintained mirror coverage; keep live schema inspection and downstream writes separate.
 
 ## Coverage Disposition
 
