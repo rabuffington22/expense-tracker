@@ -2,27 +2,37 @@
 
 ## Active Objective
 
-Publish the exact verified 4AG source set to `main`, observe the resulting automatic deployment read-only, verify credential-free production health, and record the durable result through confirmed work block 4AG-R.
+Hold the durable, deployed, and health-verified Task 1P.4.2b.1 result and await Ryan's decision on proposed work block 4AH for the separately gated transaction-and-supporting-modal fragment slice.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.1 implementation is complete locally and work block 4AG-R is publishing that exact verified result while later fragment slices remain separate gates.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.1 is durable, automatically deployed, and credential-free health verified through work block 4AG-R while later fragment slices remain separate gates.
 
 ## Current Work Block
 
-Work block 4AG-R: Dashboard And Report Fragment Durability And Release — active.
+Work block 4AG-R: Dashboard And Report Fragment Durability And Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.2b.1-R: Publish and verify the completed dashboard/report fragment execution slice — active through confirmed work block 4AG-R.
+Task 1P.4.2b.2: Migrate transaction and supporting modal fragment execution — proposed as work block 4AH and awaiting separate confirmation.
 
 ## Owner
 
-Codex Desktop owns exact-path Git stewardship, direct-main publication, read-only automatic-deployment observation, credential-free health verification, and Runway OS closeout. Ryan owns recovery decisions, future implementation, and every non-automatic live mutation.
+Ryan owns confirmation, revision, or deferral of proposed work block 4AH plus future publication and live decisions. Codex Desktop owns the durable verified 4AG-R record and future implementation only after a new confirmation.
 
 ## Current Action
 
-Verify the exact 4AG source and staged sets, commit on `codex/csp-dashboard-report-fragments`, fast-forward local `main`, push directly to `origin/main` without force or PR, observe only the automatic Fly workflow, verify credential-free `/health`, then publish one sanitized command-center-only closeout with `[skip actions]`.
+Decide proposed work block 4AH for Task 1P.4.2b.2 only. Do not infer authorization for transaction/editor/supporting-modal migration or final HTMX execution disablement from completed 4AG-R durability.
+
+## Work Block 4AG-R Result
+
+- Exact source commit `2ea23d1a6399be5e37d96275e84d45519105846c` contains the twenty-three approved 4AG paths and is durable on `main` and `origin/main` before this closeout.
+- Automatic Fly Deploy run `29895902768` and deploy job `88845905269` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with `{"status":"ok"}` after deployment.
+- Exact-path, staged-set, protected-path, high-confidence sensitive-addition, full smoke, isolated-browser, Python/JavaScript syntax, JSON, whitespace, dashboard, health, rendered-state, ancestry, and remote-alignment checks passed.
+- GitHub reported only the existing non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24.
+- No PR, force push, protected data, credential, real database, authenticated production page, manual workflow action, non-automatic Fly mutation, downstream access/write, Task 1P.4.2b.2 implementation, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-dashboard-report-fragment-execution-release-4ag-r.md`.
 
 ## Work Block 4AG-R Contract
 
@@ -35,7 +45,7 @@ Verify the exact 4AG source and staged sets, commit on `codex/csp-dashboard-repo
 
 ## Work Block 4AG Result
 
-- Complete and verified locally on `codex/csp-dashboard-report-fragments`; no commit, push, PR, merge, workflow action, deployment, production/demo inspection, or live action occurred.
+- Source commit `2ea23d1` is durable on `main`; automatic Fly run `29895902768` and job `88845905269` passed, and credential-free production health returned HTTP 200 through work block 4AG-R.
 - Nine executable dashboard/report fragment scripts, twelve template-native handlers, and one Python-rendered insight-detail handler moved to `web/static/dashboard-fragments.js`, inert data attributes/JSON, delegated actions, and idempotent `htmx:load` initialization.
 - Repeated dashboard body/KPI/category/insight/AI/chart and report swaps preserve chart rendering, dependent fragment loads, category/report expansion, insight modal open/close/dismiss behavior, and AI row toggles.
 - The nine included templates now contain zero executable inline scripts, zero native inline handlers, and zero `hx-on` attributes. Deferred Task 1P.4.2b.2 contains one executable script, twenty-eight native handlers, and two `hx-on` attributes.

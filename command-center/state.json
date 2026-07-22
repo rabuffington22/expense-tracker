@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-22 1:09 AM CST",
+    "lastUpdated": "2026-07-22 1:13 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,27 +22,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4AF-R is complete; source commit 80dd776 is durable on main automatic Fly run 29873831453 passed and credential-free production health returned 200"
+    "durabilityStatus": "Work block 4AG-R is complete; source commit 2ea23d1 is durable on main automatic Fly run 29895902768 passed and credential-free production health returned 200"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4AG-R is publishing the exact verified Task 1P.4.2b.1 dashboard and report fragment result to main while later fragment slices remain separate gates.",
+    "summary": "Task 1P.4.2b.1 dashboard and report fragments are durable automatically deployed and credential-free health verified through 4AG-R; later fragment slices remain separate gates.",
     "progress": 95
   },
   "currentTask": {
-    "title": "Task 1P.4.2b.1-R: Publish and verify dashboard and report fragment execution",
-    "owner": "Codex Desktop",
-    "status": "active",
-    "supportingAgent": "None; Codex Desktop owns exact-path Git release verification and Runway OS closeout",
-    "nextAction": "Commit the exact verified 4AG set fast-forward main push without force observe automatic deployment verify credential-free health and publish a sanitized skip-actions closeout.",
-    "blocker": "None within confirmed work block 4AG-R; stop on divergence verification failure or release failure requiring mutation."
+    "title": "Task 1P.4.2b.2: Migrate transaction and supporting modal fragment execution",
+    "owner": "Ryan for confirmation; Codex Desktop if confirmed",
+    "status": "awaiting-confirmation",
+    "supportingAgent": "None proposed; 4AG-R is complete durable deployed and health verified",
+    "nextAction": "Confirm revise or defer proposed work block 4AH for Task 1P.4.2b.2 only.",
+    "blocker": "Task 1P.4.2b.2 is a separate authorization gate after completed 4AG-R."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-ag-r",
     "label": "4AG-R",
     "name": "Dashboard And Report Fragment Durability And Release",
-    "status": "active",
+    "status": "complete",
     "owner": "Codex Desktop",
     "currentTask": "Task 1P.4.2b.1-R direct-main durability automatic release and verification",
     "includedTasks": [
@@ -82,8 +82,13 @@
       "Automatic deployment run and job credential-free production health final alignment and preserved untracked files"
     ],
     "nextReportPoint": "Return source and closeout SHAs exact paths automatic deployment result credential-free health final alignment preserved exclusions and proposed 4AH still separately gated.",
-    "durability": "active release block; source remains local until exact-path commit fast-forward direct-main push automatic deployment proof health verification and sanitized closeout complete",
-    "result": "In progress"
+    "durability": "source commit 2ea23d1 is durable on main and origin main automatic Fly run 29895902768 and job 88845905269 passed and credential-free production health returned 200; this command-center-only closeout uses skip actions",
+    "result": "Exact twenty-three-path 4AG source commit 2ea23d1 is durable on main with successful automatic deployment and credential-free production health; protected-path sensitive-addition verification and all maintained local checks passed with no PR force push manual live mutation or preserved-file change.",
+    "evidence": [
+      "command-center/logs/2026-07-22-dashboard-report-fragment-execution-4ag.md",
+      "command-center/logs/2026-07-22-dashboard-report-fragment-execution-release-4ag-r.md",
+      "command-center/csp-compatibility-contract.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -108,20 +113,22 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute confirmed work block 4AG-R direct-main durability and release",
-    "status": "current",
-    "owner": "Codex Desktop",
-    "why": "Ryan explicitly authorized commit and direct push to main for the exact verified 4AG source set.",
-    "action": "Verify stage commit fast-forward push observe automatic deployment verify credential-free health and close Runway OS without a PR or force push.",
+    "title": "Decide proposed work block 4AH transaction and supporting modal fragments",
+    "status": "awaiting-confirmation",
+    "owner": "Ryan",
+    "why": "Work block 4AG-R is complete durable deployed and health verified while the remaining transaction modal surface uses a separate mutation and cleanup verification path.",
+    "action": "Confirm revise or defer Task 1P.4.2b.2 only while preserving final HTMX disablement as Task 1P.4.2b.3.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Nothing is waiting on Ryan while confirmed work block 4AG-R executes; proposed 4AH remains a later separate gate.",
-    "items": []
+    "summary": "Proposed work block 4AH requires Ryan confirmation before transaction or supporting modal fragment implementation.",
+    "items": [
+      "Confirm revise or defer proposed local-only work block 4AH for Task 1P.4.2b.2."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4AG-R is active for durability only; proposed 4AH and Task 1P.4.2b.3 remain later separate gates.",
+    "phaseQuestions": "Task 1P.4.2b.2 is proposed as work block 4AH and Task 1P.4.2b.3 remains a later separate gate after completed 4AG-R.",
     "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -4457,7 +4464,7 @@
       "phaseId": "phase-4",
       "label": "4AG-R",
       "name": "Dashboard And Report Fragment Durability And Release",
-      "status": "active",
+      "status": "complete",
       "includedTasks": [
         "Task 1P.4.2b.1-R only",
         "Exact twenty-three-path staging one source commit fast-forward local main and direct push to origin main without force or PR",
@@ -4496,8 +4503,13 @@
         "Automatic deployment run and job credential-free production health final alignment and preserved untracked files"
       ],
       "reportBack": "Return source and closeout SHAs exact paths automatic deployment result credential-free health final alignment preserved exclusions and proposed 4AH still separately gated.",
-      "durability": "active release block; source remains local until exact-path commit fast-forward direct-main push automatic deployment proof health verification and sanitized closeout complete",
-      "result": "In progress"
+      "durability": "source commit 2ea23d1 is durable on main and origin main automatic Fly run 29895902768 and job 88845905269 passed and credential-free production health returned 200; this command-center-only closeout uses skip actions",
+      "result": "Exact twenty-three-path 4AG source commit 2ea23d1 is durable on main with successful automatic deployment and credential-free production health; protected-path sensitive-addition verification and all maintained checks passed with no PR force push manual live mutation or preserved-file change.",
+      "evidence": [
+        "command-center/logs/2026-07-22-dashboard-report-fragment-execution-4ag.md",
+        "command-center/logs/2026-07-22-dashboard-report-fragment-execution-release-4ag-r.md",
+        "command-center/csp-compatibility-contract.md"
+      ]
     }
   ],
   "phaseTasks": [
@@ -5530,7 +5542,7 @@
       "owner": "Codex Desktop",
       "summary": "Remove executable scripts inline handlers and remaining hx-on behavior from directly returned fragments carry server state through inert data initialize repeated swaps through delegated listeners or htmx load then disable HTMX eval and swapped-script execution; decomposed into Tasks 1P.4.2b.1-1P.4.2b.3.",
       "nextAction": "Decide proposed work block 4AH for Task 1P.4.2b.2 only.",
-      "blocker": "Task 1P.4.2b.2 remains separately gated after completed local-only 4AG."
+      "blocker": "Task 1P.4.2b.2 remains separately gated after completed durable 4AG-R."
     },
     {
       "phaseId": "phase-4",
@@ -5539,32 +5551,37 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "Move nine executable template scripts twelve template-native inline handlers and one Python-rendered insight-detail inline handler from the included dashboard analysis category KPI insight and report responses into maintained local JavaScript and inert data then prove repeated swaps charts drilldowns modals and report expansion.",
-      "nextAction": "Preserve the verified local result and publish only through a separately authorized durability block.",
-      "blocker": "None; implementation and local verification are complete.",
-      "result": "Nine executable template scripts twelve template handlers and one Python-rendered handler migrated to maintained local delegated or htmx-load behavior with full synthetic and auth-mode browser proof.",
+      "nextAction": "Preserve the durable deployed result and keep later fragment slices separately gated.",
+      "blocker": "None; implementation local verification durability deployment and credential-free health proof are complete.",
+      "result": "Nine executable template scripts twelve template handlers and one Python-rendered handler migrated with full synthetic and auth-mode browser proof; source commit 2ea23d1 is durable on main automatic deployment passed and production health returned 200.",
       "evidence": [
-        "command-center/logs/2026-07-22-dashboard-report-fragment-execution-4ag.md"
+        "command-center/logs/2026-07-22-dashboard-report-fragment-execution-4ag.md",
+        "command-center/logs/2026-07-22-dashboard-report-fragment-execution-release-4ag-r.md"
       ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P42B1R",
       "title": "Task 1P.4.2b.1-R: Publish and verify dashboard and report fragment execution",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Stage and commit the exact verified 4AG paths fast-forward and push main observe the automatic deployment read-only verify credential-free production health and publish one sanitized skip-actions closeout.",
-      "nextAction": "Complete confirmed work block 4AG-R without PR force push manual workflow action or non-automatic Fly mutation.",
-      "blocker": "None within the confirmed 4AG-R durability boundary."
+      "nextAction": "Preserve the durable release result and keep future fragment work separately gated.",
+      "blocker": "None; source durability automatic deployment and credential-free health verification are complete.",
+      "result": "Exact source commit 2ea23d1 is durable on main automatic Fly run 29895902768 and job 88845905269 passed and production health returned HTTP 200.",
+      "evidence": [
+        "command-center/logs/2026-07-22-dashboard-report-fragment-execution-release-4ag-r.md"
+      ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P42B2",
       "title": "Task 1P.4.2b.2: Migrate transaction and supporting modal fragment execution",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan for confirmation; Codex Desktop if confirmed",
       "summary": "Move one executable script twenty-eight native inline handlers and two hx-on handlers in transaction results row editing split editing and supporting popup or queue fragments into maintained local JavaScript and declarative data.",
       "nextAction": "Confirm revise or defer proposed local-only work block 4AH.",
-      "blocker": "Implementation requires separate Ryan confirmation after completed 4AG."
+      "blocker": "Implementation requires separate Ryan confirmation after completed durable 4AG-R."
     },
     {
       "phaseId": "phase-4",
@@ -6898,7 +6915,7 @@
     },
     {
       "title": "Session cookie and browser security policy need explicit hardening",
-      "summary": "Cookie policy and CSP planning or shared execution are durable through 4AF-R and work block 4AG completes the dashboard/report fragment slice locally; transaction modal page style header publication and production proof remain while protected HTML still lacks CSP.",
+      "summary": "Cookie policy CSP planning shared execution and the dashboard/report fragment slice are durable and deployed through 4AG-R; transaction modal page style header and final production proof remain while protected HTML still lacks CSP.",
       "status": "partly-addressed",
       "severity": "medium",
       "source": "command-center/issues.md"
@@ -6913,10 +6930,12 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete work block 4AG-R dashboard and report fragment release",
-    "description": "Publish the exact verified 4AG set to main verify the automatic deployment and credential-free health then close with a sanitized skip-actions command-center commit."
+    "name": "Decide proposed work block 4AH transaction and supporting modal fragments",
+    "description": "Review the durable deployed and health-verified 4AG-R result then confirm revise or defer Task 1P.4.2b.2 without inferring final HTMX disablement or future publication authorization."
   },
   "verification": {
+    "phase4DashboardReportRelease": "pass; exact twenty-three-path source commit 2ea23d1 is durable on main automatic Fly run 29895902768 and deploy job 88845905269 passed for the exact SHA and credential-free production health returned HTTP 200",
+    "phase4DashboardReportDurability": "pass; exact-path staged-set protected-path sensitive-addition maintained smoke isolated-browser syntax JSON whitespace dashboard health rendered-state ancestry remote-alignment and preserved-exclusion checks passed with no PR force push manual mutation or Task 1P.4.2b.2 work",
     "phase4DashboardReportFragments": "pass locally; nine included templates have zero executable inline scripts zero native handlers and zero hx-on attributes and the Python insight response uses the delegated dismissal contract",
     "phase4DashboardReportCoverage": "pass; full synthetic smoke and configured-auth plus no-password isolated Chrome cover repeated dashboard KPI category insight AI chart and report swaps denied external requests zero console or page errors and exact all-entity cleanup",
     "phase4DashboardReportBoundaries": "pass; allowEval and allowScriptTags remain true deferred Task 1P.4.2b.2 retains one executable script twenty-eight native handlers and two hx-on attributes and no excluded live GitHub publication deployment protected data real database or preserved-file mutation occurred",

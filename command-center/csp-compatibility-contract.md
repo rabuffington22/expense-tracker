@@ -1,6 +1,6 @@
 # Content Security Policy Compatibility Contract
 
-Status: Task 1P.4.1 and Task 1P.4.2a are durable; Task 1P.4.2b.1 is implemented and verified locally through work block 4AG; transaction/modal fragments, final HTMX disablement, page, style/document, header, publication, and live proof remain separately gated.
+Status: Task 1P.4.1, Task 1P.4.2a, and Task 1P.4.2b.1 are durable and automatically deployed through work block 4AG-R; transaction/modal fragments, final HTMX disablement, page, style/document, header enforcement, and later proof remain separately gated.
 
 Parent: Phase 4 Task 1P.4 / finding `P3-3J-06`.
 
