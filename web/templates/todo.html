@@ -95,8 +95,8 @@
         <div class="todo-row todo-row--link" tabindex="0" role="button"
              hx-get="{{ url_for('todo.queue_large_txns') }}"
              hx-target="#tq-modal-body" hx-swap="innerHTML"
-             onclick="tqOpenModal()"
-             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+             data-transaction-fragment-action="open-todo-queue"
+             data-transaction-fragment-keydown="activate">
             <span class="todo-name">Large transactions</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
@@ -110,8 +110,8 @@
         <div class="todo-row todo-row--link" tabindex="0" role="button"
              hx-get="{{ url_for('todo.queue_new_merchants') }}"
              hx-target="#tq-modal-body" hx-swap="innerHTML"
-             onclick="tqOpenModal()"
-             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+             data-transaction-fragment-action="open-todo-queue"
+             data-transaction-fragment-keydown="activate">
             <span class="todo-name">New merchants</span>
             <span class="text-muted todo-queue-hint">last 30 days</span>
             <span class="todo-row-right">
@@ -226,11 +226,11 @@
 </div>{# .todo-page #}
 
 {# ── Queue Detail Modal ─────────────────────────────────────────── #}
-<div class="tq-modal-scrim" id="tq-modal-scrim" hidden>
+<div class="tq-modal-scrim" id="tq-modal-scrim" data-transaction-fragment-action="close-todo-queue-on-backdrop" hidden>
     <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
         <div class="tq-modal-top">
             <button type="button" class="cf-edit-btn tq-modal-close"
-                    onclick="tqCloseModal()" title="Close" aria-label="Close">&times;</button>
+                    data-transaction-fragment-action="close-todo-queue" title="Close" aria-label="Close">&times;</button>
         </div>
         <div id="tq-modal-body" class="tq-modal-body">
             <div class="tq-loading">Loading&hellip;</div>
@@ -238,26 +238,4 @@
     </div>
 </div>
 
-<script>
-function tqOpenModal() {
-    document.getElementById('tq-modal-scrim').hidden = false;
-    document.getElementById('tq-modal-body').innerHTML =
-        '<div class="tq-loading">Loading\u2026</div>';
-}
-
-function tqCloseModal() {
-    document.getElementById('tq-modal-scrim').hidden = true;
-    document.getElementById('tq-modal-body').innerHTML = '';
-}
-
-document.getElementById('tq-modal-scrim').addEventListener('click', function(e) {
-    if (e.target === this) tqCloseModal();
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !document.getElementById('tq-modal-scrim').hidden) {
-        tqCloseModal();
-    }
-});
-</script>
 {% endblock %}

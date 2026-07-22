@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-title-row">
   <h1 class="rpt-title">Reports</h1>
-  <button type="button" class="joker-btn" onclick="aiChatOpen('reports')" title="Ask Opus" aria-label="Ask Opus">
+  <button type="button" class="joker-btn" data-app-shell-action="open-ai-chat" data-ai-page="reports" title="Ask Opus" aria-label="Ask Opus">
     <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
   </button>
 </div>
@@ -16,11 +16,11 @@
 <!-- ================================================================= -->
 <!-- Report Builder                                                     -->
 <!-- ================================================================= -->
-<form class="rpt-builder-form" id="rpt-form">
+<form class="rpt-builder-form" id="rpt-form" data-report-page-controller data-export-url="{{ url_for('reports.export') }}">
     <div class="form-row">
         <div class="form-group" style="flex:0 0 200px;">
             <label class="text-xs text-muted" for="report_type">Report</label>
-            <select id="report_type" name="report_type" class="input-sm" style="width:100%;">
+            <select id="report_type" name="report_type" class="input-sm" style="width:100%;" data-dashboard-page-change="report-type">
                 <option value="transactions">Transactions</option>
                 <option value="categories">Category Summary</option>
                 <option value="merchants">Merchant Summary</option>
@@ -49,11 +49,11 @@
         </div>
         <div class="form-group rpt-export-wrap" style="flex:0 0 auto;">
             <label class="text-xs text-muted">&nbsp;</label>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="rptToggleExport(this)">Export</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-dashboard-page-action="toggle-export">Export</button>
             <div class="rpt-export-menu" hidden>
-                <button type="button" class="rpt-export-opt" onclick="rptExport('csv')">CSV</button>
-                <button type="button" class="rpt-export-opt" onclick="rptExport('pdf')">PDF</button>
-                <button type="button" class="rpt-export-opt rpt-export-qbo" onclick="rptExport('qbo')">QBO</button>
+                <button type="button" class="rpt-export-opt" data-dashboard-page-action="export" data-export-format="csv">CSV</button>
+                <button type="button" class="rpt-export-opt" data-dashboard-page-action="export" data-export-format="pdf">PDF</button>
+                <button type="button" class="rpt-export-opt rpt-export-qbo" data-dashboard-page-action="export" data-export-format="qbo">QBO</button>
             </div>
         </div>
     </div>
@@ -72,62 +72,6 @@
 
 <!-- Results area (HTMX target) -->
 <div id="rpt-results" class="rpt-results"></div>
-
-<script>
-/* Show description for selected report type */
-(function() {
-    var sel = document.getElementById('report_type');
-    var descs = document.querySelectorAll('.rpt-desc');
-    function update() {
-        descs.forEach(function(d) {
-            d.style.display = d.getAttribute('data-report') === sel.value ? 'block' : 'none';
-        });
-        /* QBO only available for Transactions — hide/show option */
-        var qboBtn = document.querySelector('.rpt-export-qbo');
-        if (qboBtn) qboBtn.style.display = sel.value === 'transactions' ? '' : 'none';
-    }
-    sel.addEventListener('change', update);
-    update();
-})();
-
-/* Export popover */
-function rptToggleExport(btn) {
-    var menu = btn.parentElement.querySelector('.rpt-export-menu');
-    menu.hidden = !menu.hidden;
-}
-function rptExport(fmt) {
-    var form = document.getElementById('rpt-form');
-    var params = new URLSearchParams(new FormData(form));
-    params.set('format', fmt);
-    window.location.href = '{{ url_for("reports.export") }}?' + params.toString();
-    /* Close the menu */
-    document.querySelector('.rpt-export-menu').hidden = true;
-}
-/* Close export menu on outside click / Escape */
-document.addEventListener('click', function(e) {
-    var wrap = document.querySelector('.rpt-export-wrap');
-    var menu = document.querySelector('.rpt-export-menu');
-    if (menu && !menu.hidden && wrap && !wrap.contains(e.target)) menu.hidden = true;
-});
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        var menu = document.querySelector('.rpt-export-menu');
-        if (menu) menu.hidden = true;
-    }
-});
-
-/* Loading state for HTMX results */
-document.body.addEventListener('htmx:beforeRequest', function(e) {
-    if (e.detail.target && e.detail.target.id === 'rpt-results') {
-        e.detail.target.classList.add('rpt-loading-state');
-    }
-});
-document.body.addEventListener('htmx:afterRequest', function(e) {
-    if (e.detail.target && e.detail.target.id === 'rpt-results') {
-        e.detail.target.classList.remove('rpt-loading-state');
-    }
-});
-</script>
 
 {% endif %}
 {% endblock %}

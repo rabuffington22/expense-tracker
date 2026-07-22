@@ -397,6 +397,24 @@
         });
     }
 
+    function handleAppShellAction(event) {
+        if (!(event.target instanceof Element)) {
+            return;
+        }
+        var control = event.target.closest("[data-app-shell-action]");
+        if (!control) {
+            return;
+        }
+        var action = control.dataset.appShellAction;
+        if (action === "toggle-brand") {
+            control.classList.toggle("sb-heath-open");
+        } else if (action === "toggle-theme") {
+            toggleTheme();
+        } else if (action === "open-ai-chat") {
+            aiChatOpen(control.dataset.aiPage || "general");
+        }
+    }
+
     function initialize() {
         if (initialized) {
             return;
@@ -483,6 +501,7 @@
             }
         });
         document.addEventListener("keydown", keyboardShortcuts);
+        document.addEventListener("click", handleAppShellAction);
 
         document.querySelectorAll('.sidebar a, .sidebar button[type="submit"]').forEach(function (element) {
             element.addEventListener("click", function () {

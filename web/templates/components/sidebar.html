@@ -1,7 +1,7 @@
 <nav class="sidebar" id="sidebar-nav" aria-label="Main navigation" style="--sb-accent: {{ accent }};">
     <!-- Brand -->
     <div class="sb-brand">
-        <div class="sb-brand-icon-wrap" onclick="this.classList.toggle('sb-heath-open')">
+        <div class="sb-brand-icon-wrap" data-app-shell-action="toggle-brand">
             <div class="sb-brand-icon-flip">
                 <img src="{{ url_for('static', filename='the-ledger-logo-lockup.png') }}" alt="The Ledger" class="sb-brand-logo">
                 <img src="{{ url_for('static', filename='heath-standing.png') }}" alt="" class="sb-heath-img">
@@ -52,7 +52,7 @@
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
             </svg>
         </a>
-        <button type="button" class="sb-bottom-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <button type="button" class="sb-bottom-btn" data-app-shell-action="toggle-theme" aria-label="Toggle theme">
             <span class="theme-toggle-icon">&#x263E;</span>
         </button>
     </div>

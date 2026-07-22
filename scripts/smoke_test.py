@@ -8729,8 +8729,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (31, 22, 7, 2, 116, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the post-4AI CSP contract",
+            == (26, 17, 7, 2, 98, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the post-4AJ CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8738,6 +8738,62 @@ def main() -> None:
         )
 
         print("   ✅ Migrated sources, rendered fragments, declarative controller, aggregate inventory, and disabled HTMX switches passed")
+
+        # ── 11e. Core review-page execution ─────────────────────────────
+        print("\n11e. Core review-page execution…")
+
+        core_review_paths = (
+            templates_root / "components" / "sidebar.html",
+            templates_root / "dashboard.html",
+            templates_root / "reports.html",
+            templates_root / "transactions.html",
+            templates_root / "todo.html",
+        )
+        core_review_sources = [path.read_text() for path in core_review_paths]
+        _check(
+            all(not executable_script_pattern.search(source) for source in core_review_sources),
+            "core review pages: confirmed templates must contain no executable inline scripts",
+        )
+        _check(
+            all(not native_handler_pattern.search(source) for source in core_review_sources),
+            "core review pages: confirmed templates must contain no native inline handlers",
+        )
+        _check(
+            all("hx-on" not in source for source in core_review_sources),
+            "core review pages: confirmed templates must contain no HTMX inline handlers",
+        )
+        _check(
+            'data-app-shell-action="toggle-theme"' in core_review_sources[0]
+            and 'data-dashboard-page-action="set-view"' in core_review_sources[1]
+            and 'data-report-page-controller' in core_review_sources[2]
+            and 'data-transaction-page-controller' in core_review_sources[3]
+            and 'data-transaction-fragment-action="open-todo-queue"' in core_review_sources[4],
+            "core review pages: each template must expose its delegated static-controller contract",
+        )
+        _check(
+            'action === "toggle-theme"' in shell_source
+            and 'pageAction === "set-view"' in fragment_source
+            and 'pageAction === "export"' in fragment_source
+            and 'action === "open-todo-queue"' in transaction_fragment_source
+            and 'function suggestCategory(transactionId)' in transaction_fragment_source,
+            "core review pages: maintained assets must own the migrated behavior",
+        )
+        rendered_core_review_pages = (
+            fragment_client.get("/").get_data(as_text=True),
+            fragment_client.get("/reports/").get_data(as_text=True),
+            fragment_client.get("/transactions/").get_data(as_text=True),
+            fragment_client.get("/todo/").get_data(as_text=True),
+        )
+        _check(
+            all(not native_handler_pattern.search(source) for source in rendered_core_review_pages),
+            "core review pages: rendered routes must contain no native inline handlers",
+        )
+        _check(
+            all("hx-on" not in source for source in rendered_core_review_pages),
+            "core review pages: rendered routes must contain no HTMX inline handlers",
+        )
+
+        print("   ✅ Five source templates, rendered routes, delegated controller seams, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

@@ -110,7 +110,120 @@
         button.remove();
     }
 
+    function loadDashboardCompare() {
+        if (!window.htmx) {
+            return;
+        }
+        document.querySelectorAll('#dash-compare [hx-trigger="compare-load"]').forEach(function (panel) {
+            window.htmx.trigger(panel, "compare-load");
+        });
+    }
+
+    function setDashboardView(view) {
+        var compare = document.getElementById("dash-compare");
+        var details = document.getElementById("dash-details");
+        if (!compare || !details) {
+            return;
+        }
+        compare.hidden = view !== "compare";
+        details.hidden = view !== "details";
+        document.querySelectorAll(".dash-view-toggle .seg-item").forEach(function (button) {
+            button.classList.toggle("active", button.dataset.view === view);
+        });
+        window.localStorage.setItem("dash_view", view);
+        if (view === "compare" && !document.getElementById("kpi-left")) {
+            loadDashboardCompare();
+        }
+    }
+
+    function openSubcategoryPopup() {
+        var scrim = document.getElementById("dcat-popup-scrim");
+        var body = document.getElementById("dcat-popup-body");
+        if (scrim) {
+            scrim.hidden = false;
+        }
+        if (body) {
+            body.innerHTML = '<div class="tq-loading">Loading…</div>';
+        }
+    }
+
+    function closeSubcategoryPopup() {
+        var scrim = document.getElementById("dcat-popup-scrim");
+        var body = document.getElementById("dcat-popup-body");
+        if (scrim) {
+            scrim.hidden = true;
+        }
+        if (body) {
+            body.innerHTML = "";
+        }
+    }
+
+    function updateReportPage(form) {
+        var select = form ? form.querySelector("#report_type") : null;
+        if (!select) {
+            return;
+        }
+        document.querySelectorAll(".rpt-desc").forEach(function (description) {
+            description.style.display = description.dataset.report === select.value ? "block" : "none";
+        });
+        var qboButton = form.querySelector(".rpt-export-qbo");
+        if (qboButton) {
+            qboButton.style.display = select.value === "transactions" ? "" : "none";
+        }
+    }
+
+    function closeReportExportMenu() {
+        var menu = document.querySelector(".rpt-export-menu");
+        if (menu) {
+            menu.hidden = true;
+        }
+    }
+
+    function toggleReportExport(button) {
+        var wrap = button.closest(".rpt-export-wrap");
+        var menu = wrap ? wrap.querySelector(".rpt-export-menu") : null;
+        if (menu) {
+            menu.hidden = !menu.hidden;
+        }
+    }
+
+    function exportReport(button) {
+        var form = button.closest("[data-report-page-controller]");
+        if (!form || !form.dataset.exportUrl) {
+            return;
+        }
+        var params = new URLSearchParams(new FormData(form));
+        params.set("format", button.dataset.exportFormat || "csv");
+        closeReportExportMenu();
+        window.location.href = form.dataset.exportUrl + "?" + params.toString();
+    }
+
     function onClick(event) {
+        if (!(event.target instanceof Element)) {
+            return;
+        }
+        var pageControl = event.target.closest("[data-dashboard-page-action]");
+        if (pageControl) {
+            var pageAction = pageControl.dataset.dashboardPageAction;
+            if (pageAction === "set-view") {
+                setDashboardView(pageControl.dataset.view || "details");
+            } else if (pageAction === "close-subcategory-popup") {
+                closeSubcategoryPopup();
+            } else if (pageAction === "close-subcategory-popup-on-backdrop") {
+                if (event.target === pageControl) {
+                    closeSubcategoryPopup();
+                }
+            } else if (pageAction === "toggle-export") {
+                toggleReportExport(pageControl);
+            } else if (pageAction === "export") {
+                exportReport(pageControl);
+            }
+            return;
+        }
+        var reportWrap = document.querySelector(".rpt-export-wrap");
+        if (reportWrap && !reportWrap.contains(event.target)) {
+            closeReportExportMenu();
+        }
         var control = event.target.closest("[data-fragment-action]");
         if (!control) {
             return;
@@ -121,9 +234,7 @@
         } else if (action === "toggle-category") {
             toggleCategoryGroup(control);
         } else if (action === "open-subcategory-popup") {
-            if (typeof window.dcatOpenPopup === "function") {
-                window.dcatOpenPopup();
-            }
+            openSubcategoryPopup();
         } else if (action === "open-insight-modal") {
             openInsightModal(control.dataset.fragmentModal || "compare");
         } else if (action === "close-insight-modal") {
@@ -137,6 +248,23 @@
             toggleReportGroup(control);
         } else if (action === "show-more-report-rows") {
             showMoreReportRows(control);
+        }
+    }
+
+    function onChange(event) {
+        if (!(event.target instanceof Element)) {
+            return;
+        }
+        var control = event.target.closest("[data-dashboard-page-change]");
+        if (control && control.dataset.dashboardPageChange === "report-type") {
+            updateReportPage(control.closest("[data-report-page-controller]"));
+        }
+    }
+
+    function updateReportLoading(event, loading) {
+        var target = event.detail && event.detail.target;
+        if (target && target.id === "rpt-results") {
+            target.classList.toggle("rpt-loading-state", loading);
         }
     }
 
@@ -413,9 +541,19 @@
     function initialize(root) {
         matchingElements(root, '[data-fragment-controller="income-expense-chart"]').forEach(initializeIncomeExpenseChart);
         matchingElements(root, '[data-fragment-controller="kpi-panel"]').forEach(initializeKpiPanel);
+        matchingElements(root, "[data-report-page-controller]").forEach(function (form) {
+            if (form.dataset.dashboardPageInitialized !== "true") {
+                form.dataset.dashboardPageInitialized = "true";
+                updateReportPage(form);
+            }
+        });
+        if (document.querySelector(".dash-view-toggle") && window.localStorage.getItem("dash_view") === "compare") {
+            setDashboardView("compare");
+        }
     }
 
     document.addEventListener("click", onClick);
+    document.addEventListener("change", onChange);
     document.addEventListener("keydown", function (event) {
         if (event.key !== "Escape") {
             return;
@@ -426,6 +564,17 @@
                 closeInsightModal(kind);
             }
         });
+        var subcategoryScrim = document.getElementById("dcat-popup-scrim");
+        if (subcategoryScrim && !subcategoryScrim.hidden) {
+            closeSubcategoryPopup();
+        }
+        closeReportExportMenu();
+    });
+    document.addEventListener("htmx:beforeRequest", function (event) {
+        updateReportLoading(event, true);
+    });
+    document.addEventListener("htmx:afterRequest", function (event) {
+        updateReportLoading(event, false);
     });
     document.addEventListener("htmx:load", function (event) {
         initialize(event.detail && event.detail.elt ? event.detail.elt : event.target);
@@ -437,4 +586,5 @@
     } else {
         initialize(document);
     }
+    window.dashToggleView = setDashboardView;
 })();

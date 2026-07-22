@@ -1,6 +1,6 @@
 # Content Security Policy Compatibility Contract
 
-Status: Task 1P.4.1, Task 1P.4.2a, both Task 1P.4.2b migration slices, and final HTMX disablement plus cross-route proof are durable, automatically deployed, and credential-free health verified through work block 4AI-R. Page, style/document, header enforcement, and later proof remain separately gated.
+Status: Task 1P.4.1, Task 1P.4.2a, both Task 1P.4.2b migration slices, and final HTMX disablement plus cross-route proof are durable, automatically deployed, and credential-free health verified through work block 4AI-R. The first full-page route cluster is complete and verified locally through work block 4AJ; its durability and every later page, style/document, header-enforcement, publication, and proof slice remain separately gated.
 
 Parent: Phase 4 Task 1P.4 / finding `P3-3J-06`.
 
@@ -19,15 +19,15 @@ Protected data, credentials, real databases, live Plaid Link, production/demo in
 
 ## Inventory Summary
 
-The tracked surface contains 46 HTML templates and seven standalone document roots: the shared `base.html` shell, login, three error documents, offline, and standalone `/k/`. After 4AI, the source inventory contains:
+The tracked surface contains 46 HTML templates and seven standalone document roots: the shared `base.html` shell, login, three error documents, offline, and standalone `/k/`. After local work block 4AJ, the source inventory contains:
 
 | Surface | Count | Contract consequence |
 | --- | ---: | --- |
-| All `<script>` elements | 31 | Must distinguish local/external executable scripts from the two remaining full-page inert JSON blocks. |
-| Executable inline scripts | 22 | Move to maintained local static JavaScript; a nonce is not a migration substitute. The former shared-shell, dashboard/report fragment, and transaction/modal fragment blocks are now local assets. |
+| All `<script>` elements | 26 | Must distinguish local/external executable scripts from the two remaining full-page inert JSON blocks. |
+| Executable inline scripts | 17 | Move to maintained local static JavaScript; a nonce is not a migration substitute. Shared-shell, migrated fragment, and core review-page behavior now use local assets. |
 | External executable scripts | 7 | Local theme, HTMX, app-shell, dashboard-fragment, and transaction-fragment assets plus two exact Plaid Link initializer tags. |
 | Inert `application/json` scripts | 2 | The three directly swapped carriers moved to non-script `<template>` data in 4AI because HTMX removes every script when `allowScriptTags=false`; the two remaining full-page carriers belong to Task 1P.4.2c. |
-| Native inline event-handler attributes | 116 | Replace with delegated or initialized listeners before `script-src-attr 'none'`; the former base, dashboard/report fragment, and transaction/modal fragment handlers are removed. |
+| Native inline event-handler attributes | 98 | Replace with delegated or initialized listeners before `script-src-attr 'none'`; shared-shell, migrated fragment, and core review-page handlers are removed. |
 | `hx-on` attributes | 0 | All dependencies remain removed and 4AI proves the configured-auth/no-password cross-route matrix with HTMX eval and swapped-script processing disabled. |
 | Inline `<style>` blocks | 7 | Move to local CSS before strict `style-src-elem`. |
 | Element `style` attributes | 221 | Replace with classes, data-driven classes, custom-property classes, or stylesheet-backed state before strict application policy. |
@@ -94,12 +94,25 @@ For `PLAID_ENV=production`, replace the sandbox connect origin with `https://pro
 | --- | --- | --- | --- |
 | Shared execution foundation | Move `base.html` executable blocks and five native handlers to local JS; replace two base `hx-on` handlers; move indicator CSS to the tracked stylesheet; set only `includeIndicatorStyles=false`; and establish the declarative HTMX configuration point. Keep `allowEval` and `allowScriptTags` at their current values until the remaining fragment dependencies are removed. | Complete locally through 4AF: maintained source assertions and configured-auth/no-password isolated Chrome prove shared navigation, themes, AI chat, service-worker registration, CSRF/HTMX behavior, repeated representative swaps, and responsive drawer behavior with no executable inline shell markup. | Task 1P.4.2a / work block 4AF complete locally. |
 | Swapped-fragment execution | Remove executable scripts and inline handlers from all directly returned HTMX components; replace the remaining two fragment `hx-on` handlers; carry swapped server values through non-script inert data; initialize through local static JS and `htmx:load`/delegation; then set `allowEval=false` and `allowScriptTags=false`. | Durable and deployed through 4AI-R. Configured-auth/no-password isolated Chrome preserves repeated swaps, charts, KPI/category/insight/AI behavior, reports, transaction sorting/copy/edit/splits, popup/queue controls, and cleanup with both switches false and no directly returned script elements. | Tasks 1P.4.2b.1-1P.4.2b.3 / work blocks 4AG-4AI-R complete, durable, deployed, and credential-free health verified. |
-| Full-page execution | Migrate remaining page-level executable inline scripts and native handlers, including both Plaid entry pages; preserve page-specific initialization through local modules/data. | Every full-page route works with `script-src-attr 'none'` and no inline application script. | Task 1P.4.2c after fragment foundation; split by route cluster if needed. |
+| Full-page execution | Migrate the remaining 17 executable inline scripts, 98 native handlers, and two full-page inert JSON carriers, including both Plaid entry pages; preserve page-specific initialization through local modules/data. | Every full-page route works with `script-src-attr 'none'` and no inline application script. | Task 1P.4.2c.1 is complete locally through 4AJ; Tasks 1P.4.2c.2-1P.4.2c.8 remain separate. |
 | Application style compatibility | Move seven inline style blocks, 221 attributes, and runtime style writes to static CSS/classes or explicitly bounded data-driven states. | Core pages run under `style-src-attr 'none'`; responsive and visualization behavior passes at maintained breakpoints. | Task 1P.4.3a; likely split into shell/components and page clusters. |
 | Exceptional documents and Plaid | Reconcile login, offline/errors, `/k/`, local SVG data images, worker/manifest, and Plaid route-specific behavior; preserve Plaid's narrow documented style-attribute exception only on Link documents. | Strict families have no exception leakage; mocked Plaid document proves exact policy/header/tag wiring without live Plaid. | Task 1P.4.3b. |
 | Header enforcement and proof | Add route-family header generation and optional Plaid nonce plumbing only after migration gates pass; add maintained request and isolated-browser contracts. | No CSP violations on the required matrix; exact prohibited source probes are blocked; no protected/live dependency. | Task 1P.4.4. |
 
-Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must use the sub-slices above. Work block 4AF completed the shared foundation, work block 4AG completed the dashboard/report fragment slice, work block 4AH completed the transaction/supporting-modal fragment slice, and work blocks 4AI and 4AI-R made global HTMX disablement and cross-route proof durable, automatically deployed, and credential-free health verified. Task 1P.4.2c remains separately gated and requires just-in-time route-cluster decomposition.
+Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must use the sub-slices above. Work block 4AF completed the shared foundation, work block 4AG completed the dashboard/report fragment slice, work block 4AH completed the transaction/supporting-modal fragment slice, and work blocks 4AI and 4AI-R made global HTMX disablement and cross-route proof durable, automatically deployed, and credential-free health verified. The 2026-07-22 just-in-time source pass decomposed Task 1P.4.2c into the route clusters below before any work block could reference them.
+
+| Task | Route cluster | Verified residual execution inventory | Boundary and sequencing reason |
+| --- | --- | ---: | --- |
+| 1P.4.2c.1 | Core review pages: shared sidebar, dashboard, reports, transactions, To Do | 0 inline scripts; 0 native handlers after 4AJ | Reuses the maintained shared, dashboard-fragment, and transaction-fragment asset seams plus one repeated-HTMX browser path; complete and verified locally through 4AJ. |
+| 1P.4.2c.2 | Categorization and upload | 3 inline scripts; 7 native handlers | Form, subcategory, navigation, and confirmation behavior needs its own mutation-preservation checks. |
+| 1P.4.2c.3 | Cash flow and long-/short-term planning | 3 inline scripts; 47 native handlers; 1 inert JSON carrier | High-interaction planning state and transaction editing require a dedicated local module and broader modal/browser proof. |
+| 1P.4.2c.4 | Weekly and Waterfall | 1 inline script; 13 native handlers | Calculation-view toggles, URL-driven targets/tax, tooltips, and keyboard behavior share one planning-review path. |
+| 1P.4.2c.5 | Subscriptions | 1 inline script; 15 native handlers; 1 inert JSON carrier | One large standalone interaction controller with detail, account-info, tips, clipboard, and modal behavior. |
+| 1P.4.2c.6 | Payroll | 1 inline script; 9 native handlers | BFM-only payroll and employee mutation boundaries require a separate risk class and verification path. |
+| 1P.4.2c.7 | Data Sources and Connected Accounts | 3 inline application scripts; 6 native handlers; 2 retained external Plaid initializers | The exact mocked Plaid Link and later route-specific CSP exception form a separate integration boundary. |
+| 1P.4.2c.8 | Offline, errors, and standalone `/k/` | 5 inline scripts; 1 native handler | Standalone documents do not inherit the authenticated shell and require document-family, auth, and no-exception-leakage proof. |
+
+The original eight-cluster inventory reconciled exactly to 22 executable inline scripts, 116 native handlers, and two full-page inert JSON carriers. After local 4AJ, Tasks 1P.4.2c.2-1P.4.2c.8 reconcile to the seventeen remaining executable inline scripts, ninety-eight native handlers, and two inert JSON carriers; all remain planned and unauthorized.
 
 ## Template Surface Inventory
 
@@ -123,7 +136,7 @@ Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSO
 | `components/kpi_panel.html` | 0 | 0 | 0 | 0 | 0 | 0 |
 | `components/match_card.html` | 0 | 0 | 0 | 0 | 5 | 0 |
 | `components/rpt_view.html` | 0 | 0 | 0 | 0 | 3 | 0 |
-| `components/sidebar.html` | 0 | 0 | 0 | 2 | 1 | 0 |
+| `components/sidebar.html` | 0 | 0 | 0 | 0 | 1 | 0 |
 | `components/subcat_txns_popup.html` | 0 | 0 | 0 | 0 | 0 | 0 |
 | `components/todo_queue_detail.html` | 0 | 0 | 0 | 0 | 0 | 0 |
 | `components/txn_results.html` | 0 | 0 | 0 | 0 | 6 | 0 |
@@ -131,7 +144,7 @@ Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSO
 | `components/txn_row_edit.html` | 0 | 0 | 0 | 0 | 4 | 0 |
 | `components/txn_split_editor.html` | 0 | 0 | 0 | 0 | 35 | 0 |
 | `components/vendor_card.html` | 0 | 0 | 0 | 0 | 2 | 0 |
-| `dashboard.html` | 2 | 0 | 0 | 4 | 0 | 0 |
+| `dashboard.html` | 0 | 0 | 0 | 0 | 0 | 0 |
 | `data_sources.html` | 3 | 0 | 1 | 3 | 7 | 0 |
 | `errors/403.html` | 1 | 0 | 1 | 0 | 0 | 0 |
 | `errors/404.html` | 1 | 0 | 1 | 0 | 0 | 0 |
@@ -142,11 +155,11 @@ Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSO
 | `payroll.html` | 1 | 0 | 0 | 9 | 3 | 0 |
 | `plaid.html` | 2 | 0 | 0 | 3 | 27 | 0 |
 | `planning.html` | 1 | 0 | 0 | 10 | 1 | 0 |
-| `reports.html` | 1 | 0 | 0 | 5 | 8 | 0 |
+| `reports.html` | 0 | 0 | 0 | 0 | 8 | 0 |
 | `short_term_planning.html` | 2 | 1 | 0 | 22 | 10 | 0 |
 | `subscriptions.html` | 2 | 1 | 0 | 15 | 0 | 0 |
-| `todo.html` | 1 | 0 | 0 | 5 | 0 | 0 |
-| `transactions.html` | 1 | 0 | 0 | 2 | 14 | 0 |
+| `todo.html` | 0 | 0 | 0 | 0 | 0 | 0 |
+| `transactions.html` | 0 | 0 | 0 | 0 | 14 | 0 |
 | `upload.html` | 0 | 0 | 0 | 3 | 9 | 0 |
 | `upload_dialog.html` | 0 | 0 | 0 | 0 | 11 | 0 |
 | `waterfall.html` | 1 | 0 | 0 | 12 | 9 | 0 |

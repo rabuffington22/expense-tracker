@@ -2,27 +2,59 @@
 
 ## Active Objective
 
-Preserve the durable, automatically deployed, and credential-free health-verified 4AI HTMX execution-switch result while awaiting Ryan's separate Task 1P.4.2c planning decision.
+Publish the exact verified 4AJ source set to `main`, observe only the automatic Fly deployment, verify credential-free production health, and close the separately authorized 4AJ-R release block without widening scope.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.3 is complete, durable, automatically deployed, and credential-free health verified through 4AI and 4AI-R; Task 1P.4.2c is the next separate planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.1 is complete and locally verified through 4AJ, and its exact durability/release is active through Ryan-authorized work block 4AJ-R; Task 1P.4.2c.2 remains separately gated.
 
 ## Current Work Block
 
-Work block 4AI-R: Final HTMX Execution-Switch Durability And Release — complete, durable, automatically deployed, and credential-free production health verified.
+Work block 4AJ-R: Core Review-Page Durability And Release — active and directly authorized by Ryan.
 
 ## Current Task
 
-Task 1P.4.2c: Migrate remaining full-page execution — current planning gate; implementation is not authorized and requires just-in-time route-cluster decomposition.
+Task 1P.4.2c.1-R: Publish and verify the exact completed 4AJ source set — current and release-authorized only inside 4AJ-R.
 
 ## Owner
 
-Ryan owns the next decision: request Task 1P.4.2c decomposition and a bounded 4AJ proposal or pause. Codex owns no further mutation without that direction.
+Codex Desktop owns exact staging, commit, fast-forward, direct-main push, read-only automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan owns every scope expansion or recovery action.
 
 ## Current Action
 
-Report the durable 4AI-R release result and await Ryan's separate Task 1P.4.2c decomposition or pause decision.
+Stage only the exact verified 4AJ paths, create one source commit, fast-forward local `main`, push directly without force or PR, observe the automatic deployment, verify `/health`, then push a command-center-only `[skip actions]` closeout.
+
+## Task 1P.4.2c Decomposition Result
+
+- The tracked source inventory contains 22 remaining executable inline scripts, 116 native handlers, and two full-page inert JSON carriers; the eight route clusters reconcile exactly to that total.
+- Task 1P.4.2c.1 covers the shared sidebar plus dashboard, reports, transactions, and To Do: five executable inline scripts and eighteen native handlers using the already-maintained shared, dashboard-fragment, and transaction-fragment asset seams.
+- Tasks 1P.4.2c.2-1P.4.2c.8 separately cover categorization/upload; cash-flow/planning; Weekly/Waterfall; subscriptions; payroll; Plaid entry pages; and standalone offline/error/`/k/` documents.
+- The decomposition itself authorized no implementation; Ryan's later 4AJ confirmation authorizes only Task 1P.4.2c.1 local implementation and verification, with commit, publication, deployment, live access, credentials, protected data, and preserved-file mutation still excluded.
+
+## Work Block 4AJ Contract
+
+- Include Task 1P.4.2c.1 plus only its focused Task 2 regression slice: move five executable inline scripts and eighteen native handlers from `components/sidebar.html`, `dashboard.html`, `reports.html`, `transactions.html`, and `todo.html` into the already-loaded `app-shell.js`, `dashboard-fragments.js`, and `transaction-fragments.js` seams while preserving behavior.
+- Keep Tasks 1P.4.2c.2-1P.7, the remainder of Task 2, Tasks 3-4, style migration, CSP headers/nonces/enforcement, Plaid, authentication, product/financial changes, dependencies, protected/live access, GitHub durability, publication, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use temporary synthetic all-entity data, both authentication modes, localhost-only disposable Chrome, denied non-localhost requests, zero unexpected console/page errors, exact cleanup, and the existing false HTMX execution-switch contract; keep durability local-only.
+- Stop if parity requires another route cluster, style work, CSP enforcement, authentication, Plaid, financial behavior, a new dependency, protected/live access, cross-route helper migration beyond the five surfaces, plan-changing verification failure, cleanup failure, command-center failure, or preserved-file overlap.
+- Verify baseline and final full smoke, exact included and residual source inventories, configured-auth/no-password isolated Chrome across all included workflows, denied external requests, console/page health, cleanup, syntax, JSON, whitespace, dashboard refresh/health/generated state, exact scope, and both preserved untracked files.
+- Report exact migrated behavior, static-controller structure, included and residual counts, verification, cleanup, changed paths, branch state, preserved exclusions, and the separate publication plus Task 1P.4.2c.2 gates.
+
+## Work Block 4AJ Result
+
+- The five included source templates now contain zero executable inline scripts, zero native inline handlers, and zero `hx-on` attributes; their five scripts and eighteen handlers moved into the existing shared, dashboard-fragment, and transaction-fragment static assets.
+- Shared theme/brand/AI entry, dashboard view and popup, report type/export state, transaction filter/sort/copy/edit/suggestion behavior, and To Do modal/keyboard behavior now use delegated controls and inert `data-*` route values.
+- The residual tracked template inventory is seventeen executable inline scripts, seven external scripts, two inert JSON carriers, ninety-eight native handlers, and zero `hx-on` attributes; HTMX `allowEval` and `allowScriptTags` remain false.
+- Baseline and final full smoke, configured-auth and no-password isolated Chrome, denied external requests, zero unexpected console/page errors, exact synthetic all-entity cleanup, JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, exact scope, and preserved-file checks pass.
+- No commit, push, PR, merge, publication, deployment, protected data, credential, real database, retained upload, external request, live action, dependency change, later route-cluster work, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-core-review-page-execution-4aj.md`.
+
+## Work Block 4AJ-R Contract
+
+- Include exact-path staging of the verified 4AJ application, static-controller, maintained-test, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-core-review-pages`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep new product or test edits beyond the verified set, workflow edits or manual dispatch/rerun, non-automatic Fly actions, credentials, protected data, real databases, retained uploads, authenticated production pages, downstream access/writes, Task 1P.4.2c.2, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths, sensitive/protected boundaries, full smoke and isolated-browser results, Python/JavaScript/JSON syntax, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, production health, and preservation of both untracked files.
 
 ## Work Block 4AI-R Result
 

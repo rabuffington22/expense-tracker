@@ -16,10 +16,195 @@
         return matches;
     }
 
-    function callPageHelper(name, args) {
-        if (typeof window[name] === "function") {
-            window[name].apply(window, args || []);
+    function transactionPageRoot() {
+        return document.querySelector("[data-transaction-page-controller]");
+    }
+
+    function allSubcategoriesUrl() {
+        var root = transactionPageRoot();
+        return root && root.dataset.allSubcategoriesUrl
+            ? root.dataset.allSubcategoriesUrl
+            : "/transactions/all-subcategories";
+    }
+
+    function ensureSubcategoryCache(callback) {
+        if (splitSubcategoryCache) {
+            callback();
+            return;
         }
+        window.fetch(allSubcategoriesUrl())
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                splitSubcategoryCache = data;
+                callback();
+            });
+    }
+
+    function buildEditableOptions(subcategories) {
+        return subcategories.map(function (subcategory) {
+            var escaped = escapeHtml(subcategory);
+            return '<option value="' + escaped + '">' + escaped + "</option>";
+        }).join("") + '<option value="__new__">+ New…</option>';
+    }
+
+    function copyTransactionList(button) {
+        var rows = document.querySelectorAll("#txn-results tbody tr.txn-clickable");
+        if (!rows.length) {
+            return;
+        }
+        var lines = [];
+        rows.forEach(function (row, index) {
+            var cells = row.querySelectorAll("td");
+            var date = cells[0].textContent.trim();
+            var description = cells[1].textContent.replace(/\s+/g, " ").trim()
+                .replace(/ NEW$/, "").replace(/ \d+%$/, "").trim();
+            var rawAmount = cells[2].textContent.trim();
+            var amount = rawAmount.replace(/[^$0-9.,]/g, "");
+            var direction = rawAmount.indexOf("-") >= 0 ? "paid" : "received";
+            lines.push((index + 1) + ".  " + date + "  -  " + description + "  -  " + amount + " " + direction);
+        });
+        window.navigator.clipboard.writeText(lines.join("\n")).then(function () {
+            var original = button.textContent;
+            button.textContent = "Copied!";
+            window.setTimeout(function () {
+                button.textContent = original;
+            }, 1500);
+        });
+    }
+
+    function sortTransactions(column) {
+        var sortField = document.getElementById("sort-field");
+        var directionField = document.getElementById("dir-field");
+        var form = document.getElementById("txn-filter-form");
+        if (!sortField || !directionField || !form) {
+            return;
+        }
+        if (sortField.value === column) {
+            directionField.value = directionField.value === "asc" ? "desc" : "asc";
+        } else {
+            sortField.value = column;
+            directionField.value = column === "date" ? "desc" : "asc";
+        }
+        form.requestSubmit();
+    }
+
+    function filterSubcategories() {
+        var categorySelect = document.getElementById("category_id");
+        var subcategorySelect = document.getElementById("subcategory");
+        if (!categorySelect || !subcategorySelect) {
+            return;
+        }
+        if (!categorySelect.value) {
+            subcategorySelect.innerHTML = '<option value="">All</option>';
+            return;
+        }
+        var categoryName = categorySelect.options[categorySelect.selectedIndex].text;
+        ensureSubcategoryCache(function () {
+            var current = subcategorySelect.dataset.current || "";
+            subcategorySelect.innerHTML = '<option value="">All</option>'
+                + (splitSubcategoryCache[categoryName] || []).map(function (subcategory) {
+                    var escaped = escapeHtml(subcategory);
+                    var selected = subcategory === current ? " selected" : "";
+                    return '<option value="' + escaped + '"' + selected + ">" + escaped + "</option>";
+                }).join("");
+        });
+    }
+
+    function loadEditSubcategories(categorySelect, transactionId) {
+        var subcategorySelect = document.getElementById("txn-subcat-" + transactionId);
+        if (!subcategorySelect) {
+            return;
+        }
+        subcategorySelect.dataset.current = "";
+        var input = document.getElementById("txn-subcat-input-" + transactionId);
+        if (input) {
+            input.hidden = true;
+        }
+        ensureSubcategoryCache(function () {
+            var subcategories = splitSubcategoryCache[categorySelect.value];
+            subcategorySelect.innerHTML = subcategories
+                ? buildEditableOptions(subcategories)
+                : '<option value="Unknown">Unknown</option><option value="__new__">+ Add New…</option>';
+        });
+    }
+
+    function changeEditSubcategory(select, transactionId) {
+        var input = document.getElementById("txn-subcat-input-" + transactionId);
+        if (!input) {
+            return;
+        }
+        input.hidden = select.value !== "__new__";
+        if (!input.hidden) {
+            input.value = "";
+            input.focus();
+        }
+    }
+
+    function addEditSubcategory(transactionId) {
+        var input = document.getElementById("txn-subcat-input-" + transactionId);
+        var select = document.getElementById("txn-subcat-" + transactionId);
+        if (!input || !select || !input.value.trim()) {
+            return;
+        }
+        var option = document.createElement("option");
+        option.value = input.value.trim();
+        option.textContent = input.value.trim();
+        select.insertBefore(option, select.querySelector('option[value="__new__"]'));
+        select.value = option.value;
+        input.hidden = true;
+        input.value = "";
+    }
+
+    function suggestCategory(transactionId) {
+        var button = document.getElementById("txn-suggest-" + transactionId);
+        var root = transactionPageRoot();
+        if (!button || !root || !root.dataset.suggestUrlTemplate) {
+            return;
+        }
+        var originalText = button.textContent;
+        var reason = document.getElementById("txn-ai-reason-" + transactionId);
+        button.textContent = "Thinking…";
+        button.disabled = true;
+        window.fetch(root.dataset.suggestUrlTemplate.replace("__TXN__", transactionId), { method: "POST" })
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                if (data.error) {
+                    button.textContent = "No idea";
+                    button.disabled = false;
+                    window.setTimeout(function () { button.textContent = originalText; }, 1500);
+                    return;
+                }
+                var modal = button.closest(".txn-modal-card");
+                var categorySelect = modal ? modal.querySelector('select[name="category"]') : null;
+                if (categorySelect && data.category) {
+                    categorySelect.value = data.category;
+                }
+                var input = document.getElementById("txn-subcat-input-" + transactionId);
+                if (input) {
+                    input.hidden = true;
+                    input.value = "";
+                }
+                var subcategorySelect = document.getElementById("txn-subcat-" + transactionId);
+                ensureSubcategoryCache(function () {
+                    if (subcategorySelect && data.category && splitSubcategoryCache[data.category]) {
+                        subcategorySelect.innerHTML = buildEditableOptions(splitSubcategoryCache[data.category]);
+                        if (data.subcategory) {
+                            subcategorySelect.value = data.subcategory;
+                        }
+                    }
+                    if (reason && data.reason) {
+                        reason.textContent = data.reason;
+                        reason.hidden = false;
+                    }
+                    button.textContent = originalText;
+                    button.disabled = false;
+                });
+            })
+            .catch(function () {
+                button.textContent = "Error";
+                button.disabled = false;
+                window.setTimeout(function () { button.textContent = originalText; }, 1500);
+            });
     }
 
     function closeTransactionModal() {
@@ -48,6 +233,17 @@
         }
         if (body) {
             body.innerHTML = "";
+        }
+    }
+
+    function openTodoQueue() {
+        var scrim = document.getElementById("tq-modal-scrim");
+        var body = document.getElementById("tq-modal-body");
+        if (scrim) {
+            scrim.hidden = false;
+        }
+        if (body) {
+            body.innerHTML = '<div class="tq-loading">Loading…</div>';
         }
     }
 
@@ -84,7 +280,7 @@
             return splitSubcategoryCache[category];
         }
         try {
-            var response = await window.fetch("/transactions/all-subcategories");
+            var response = await window.fetch(allSubcategoriesUrl());
             var data = await response.json();
             splitSubcategoryCache = data;
             return data[category] || ["General"];
@@ -312,9 +508,9 @@
         }
         var action = control.dataset.transactionFragmentAction;
         if (action === "copy-list") {
-            callPageHelper("txnCopyList", [control]);
+            copyTransactionList(control);
         } else if (action === "sort") {
-            callPageHelper("sortBy", [control.dataset.sortColumn]);
+            sortTransactions(control.dataset.sortColumn);
         } else if (action === "close-transaction-modal") {
             closeTransactionModal();
         } else if (action === "close-transaction-modal-on-backdrop") {
@@ -322,11 +518,17 @@
                 closeTransactionModal();
             }
         } else if (action === "suggest-category") {
-            callPageHelper("txnSuggestCategory", [control.dataset.transactionId]);
+            suggestCategory(control.dataset.transactionId);
         } else if (action === "close-subcategory-popup") {
             closeSubcategoryPopup();
         } else if (action === "close-todo-queue") {
             closeTodoQueue();
+        } else if (action === "open-todo-queue") {
+            openTodoQueue();
+        } else if (action === "close-todo-queue-on-backdrop") {
+            if (event.target === control) {
+                closeTodoQueue();
+            }
         } else if (action === "split-add-line") {
             addSplitLine(splitRoot(control));
         } else if (action === "split-remove-line") {
@@ -344,30 +546,43 @@
         if (!(event.target instanceof Element)) {
             return;
         }
+        var pageControl = event.target.closest("[data-transaction-page-change]");
+        if (pageControl && pageControl.dataset.transactionPageChange === "filter-subcategories") {
+            filterSubcategories();
+            return;
+        }
         var control = event.target.closest("[data-transaction-fragment-change]");
         if (!control) {
             return;
         }
         var action = control.dataset.transactionFragmentChange;
         if (action === "edit-category") {
-            callPageHelper("txnLoadSubcats", [control, control.dataset.transactionId]);
+            loadEditSubcategories(control, control.dataset.transactionId);
         } else if (action === "edit-subcategory") {
-            callPageHelper("txnSubcatChange", [control, control.dataset.transactionId]);
+            changeEditSubcategory(control, control.dataset.transactionId);
         } else if (action === "split-category") {
             changeSplitCategory(control);
         }
     }
 
     function onKeydown(event) {
-        if (event.key !== "Enter" || !(event.target instanceof Element)) {
+        if (!(event.target instanceof Element)) {
             return;
         }
         var control = event.target.closest("[data-transaction-fragment-keydown]");
-        if (!control || control.dataset.transactionFragmentKeydown !== "add-subcategory") {
+        if (!control) {
             return;
         }
-        event.preventDefault();
-        callPageHelper("txnSubcatAdd", [control.dataset.transactionId]);
+        if (control.dataset.transactionFragmentKeydown === "add-subcategory" && event.key === "Enter") {
+            event.preventDefault();
+            addEditSubcategory(control.dataset.transactionId);
+        } else if (
+            control.dataset.transactionFragmentKeydown === "activate"
+            && (event.key === "Enter" || event.key === " ")
+        ) {
+            event.preventDefault();
+            control.click();
+        }
     }
 
     function onInput(event) {
@@ -388,9 +603,42 @@
         }
     }
 
+    function onConfigRequest(event) {
+        var requestElement = event.detail && event.detail.elt;
+        var form = requestElement && requestElement.closest ? requestElement.closest("form") : null;
+        if (!form) {
+            return;
+        }
+        var select = form.querySelector('select[name="subcategory"]');
+        if (!select || select.value !== "__new__") {
+            return;
+        }
+        var input = form.querySelector(".txn-subcat-add");
+        if (input && input.value.trim()) {
+            var option = document.createElement("option");
+            option.value = input.value.trim();
+            option.textContent = input.value.trim();
+            select.insertBefore(option, select.querySelector('option[value="__new__"]'));
+            select.value = option.value;
+            input.hidden = true;
+            input.value = "";
+        } else {
+            select.value = "General";
+        }
+    }
+
     function initialize(root) {
         matchingElements(root, '[data-transaction-fragment-controller="split-editor"]')
             .forEach(initializeSplitEditor);
+        matchingElements(root, "[data-transaction-page-controller]").forEach(function (pageRoot) {
+            if (pageRoot.dataset.transactionPageInitialized !== "true") {
+                pageRoot.dataset.transactionPageInitialized = "true";
+                var categorySelect = document.getElementById("category_id");
+                if (categorySelect && categorySelect.value) {
+                    filterSubcategories();
+                }
+            }
+        });
     }
 
     document.addEventListener("click", onClick);
@@ -398,6 +646,18 @@
     document.addEventListener("keydown", onKeydown);
     document.addEventListener("input", onInput);
     document.addEventListener("htmx:afterRequest", onAfterRequest);
+    document.addEventListener("htmx:configRequest", onConfigRequest);
+    document.body.addEventListener("subcatCacheInvalidate", function () {
+        splitSubcategoryCache = null;
+    });
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            var scrim = document.getElementById("tq-modal-scrim");
+            if (scrim && !scrim.hidden) {
+                closeTodoQueue();
+            }
+        }
+    });
     document.addEventListener("htmx:load", function (event) {
         initialize(event.detail && event.detail.elt ? event.detail.elt : event.target);
     });

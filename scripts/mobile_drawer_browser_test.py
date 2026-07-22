@@ -309,7 +309,7 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
         f"{label}: delegated AI analysis rows must expand and collapse",
     )
 
-    page.evaluate("window.dashToggleView('compare')")
+    page.locator('[data-dashboard-page-action="set-view"][data-view="compare"]').click()
     page.wait_for_selector('#kpi-left[data-fragment-initialized="true"]')
     page.wait_for_selector('#kpi-right[data-fragment-initialized="true"]')
     page.wait_for_selector('#categories-compare [data-fragment-action="toggle-category"]')
@@ -322,7 +322,7 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
     _check(compare_subcategories.is_visible(), f"{label}: compare category must expand")
     compare_category.click()
     _check(compare_subcategories.is_hidden(), f"{label}: compare category must collapse")
-    page.evaluate("window.dashToggleView('details')")
+    page.locator('[data-dashboard-page-action="set-view"][data-view="details"]').click()
 
     for swap_number in (1, 2):
         with page.expect_response(
@@ -360,7 +360,18 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
 
     page.goto(f"{base_url}/reports/", wait_until="networkidle")
     _assert_shared_shell(page, f"{label} reports shell")
+    export_menu = page.locator(".rpt-export-menu")
+    _check(export_menu.is_hidden(), f"{label}: report export menu must start closed")
+    page.locator('[data-dashboard-page-action="toggle-export"]').click()
+    _check(export_menu.is_visible(), f"{label}: delegated report export control must open the menu")
+    page.keyboard.press("Escape")
+    _check(export_menu.is_hidden(), f"{label}: Escape must close the report export menu")
     page.locator("#report_type").select_option("merchants")
+    _check(
+        page.locator('.rpt-desc[data-report="merchants"]').is_visible()
+        and page.locator(".rpt-export-qbo").is_hidden(),
+        f"{label}: delegated report-type change must update description and QBO visibility",
+    )
     with page.expect_response(lambda response: "/reports/view" in response.url) as response_info:
         page.get_by_role("button", name="View", exact=True).click()
     _check(response_info.value.status == 200, f"{label} merchant report swap must return 200")
@@ -408,6 +419,13 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
 def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None:
     page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
     _assert_shared_shell(page, f"{label} transactions shell")
+    page.locator("#category_id").select_option(index=1)
+    page.wait_for_function("document.querySelectorAll('#subcategory option').length > 1")
+    _check(
+        page.locator("#subcategory option").count() > 1,
+        f"{label}: delegated transaction category filter must populate subcategories",
+    )
+    page.locator("#category_id").select_option("")
     initial = page.evaluate(
         """() => ({
             asset: Boolean(document.querySelector('script[src*="transaction-fragments.js"]')),
@@ -686,6 +704,17 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
         page.locator("#tq-modal-body").inner_html() == "",
         f"{label}: todo queue close must clear the swapped fragment",
     )
+    queue_control = page.locator('[hx-get="/todo/queue/large-txns"]')
+    queue_control.focus()
+    with page.expect_response(
+        lambda response: "/todo/queue/large-txns" in response.url
+    ) as response_info:
+        page.keyboard.press("Enter")
+    _check(response_info.value.status == 200, f"{label}: keyboard todo queue request must return 200")
+    page.wait_for_selector('#tq-modal-body [data-transaction-fragment-action="close-todo-queue"]')
+    _check(todo_modal.is_visible(), f"{label}: delegated keyboard activation must open the todo modal")
+    page.keyboard.press("Escape")
+    _check(todo_modal.is_hidden(), f"{label}: Escape must close the todo queue modal")
     page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
     page.wait_for_selector("#txn-results tr.txn-clickable")
 
@@ -791,7 +820,7 @@ def main() -> None:
                     and theme_state["icon"] == "☾",
                     "initial theme must reconcile before interaction",
                 )
-                page.evaluate("window.toggleTheme()")
+                page.locator('[data-app-shell-action="toggle-theme"]').evaluate("element => element.click()")
                 light_state = page.evaluate(
                     """() => ({
                         theme: document.documentElement.getAttribute('data-theme'),
@@ -815,7 +844,7 @@ def main() -> None:
                     page.evaluate("document.documentElement.getAttribute('data-theme')") == "light",
                     "early local theme asset must restore the saved theme before app-shell initialization",
                 )
-                page.evaluate("window.toggleTheme()")
+                page.locator('[data-app-shell-action="toggle-theme"]').evaluate("element => element.click()")
 
                 csrf_state = page.evaluate(
                     """() => {
@@ -851,7 +880,7 @@ def main() -> None:
                     "CSRF inputs and HTMX headers must remain wired for initial and swapped forms",
                 )
 
-                page.evaluate("window.aiChatOpen('dashboard')")
+                page.locator('[data-app-shell-action="open-ai-chat"][data-ai-page="dashboard"]').click()
                 ai_open = page.evaluate(
                     """() => ({
                         hidden: document.getElementById('ai-chat-scrim').hidden,
@@ -1089,7 +1118,7 @@ def main() -> None:
                 page.keyboard.press("Escape")
                 page.wait_for_timeout(350)
                 _assert_closed_mobile(page, "configured-auth drawer close")
-                page.evaluate("window.toggleTheme()")
+                page.locator('[data-app-shell-action="toggle-theme"]').evaluate("element => element.click()")
                 _check(
                     page.evaluate("document.documentElement.getAttribute('data-theme')") == "light",
                     "configured-auth shell must retain migrated theme behavior",
