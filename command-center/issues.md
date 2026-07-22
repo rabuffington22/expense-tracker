@@ -1711,7 +1711,7 @@ Work block 4AD gives the hamburger an explicit drawer relationship and synchroni
 
 ## Session Cookie And Browser Security Policy Need Explicit Hardening
 
-Status: partly addressed; cookie policy, CSP planning, Task 1P.4.2a, and the Task 1P.4.2b.1 dashboard/report fragment slice are durable and deployed through 4AG-R; Task 1P.4.2b.2 transaction/modal fragments are complete and locally verified through 4AH
+Status: partly addressed; cookie policy, CSP planning, Task 1P.4.2a, and both Task 1P.4.2b fragment migration slices are durable and deployed through 4AH-R
 
 Severity: medium defense-in-depth risk
 
@@ -1737,7 +1737,7 @@ Acceptance checks:
 
 Why not fixed now:
 
-The cookie half is durable through 4AC-R, the CSP compatibility contract is durable through 4AE-R, the shared execution foundation is durable through 4AF-R, and the dashboard/report fragment slice is durable, deployed, and health verified through 4AG-R. Transaction/supporting-modal fragments are complete and locally verified through 4AH. Final HTMX execution disablement, remaining page execution, style/document compatibility, header enforcement, publication, and final production proof remain separately confirmed Task 1P.4 gates.
+The cookie half is durable through 4AC-R, the CSP compatibility contract is durable through 4AE-R, the shared execution foundation is durable through 4AF-R, the dashboard/report fragment slice is durable through 4AG-R, and transaction/supporting-modal fragments are durable, deployed, and health verified through 4AH-R. Final HTMX execution disablement, remaining page execution, style/document compatibility, header enforcement, and final production proof remain separately confirmed Task 1P.4 gates.
 
 ## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
 

@@ -2,27 +2,37 @@
 
 ## Active Objective
 
-Publish and release the exact verified 4AH transaction/modal fragment result through confirmed work block 4AH-R while keeping Task 1P.4.2b.3 separately gated.
+Preserve the durable, automatically deployed, and health-verified 4AH transaction/modal fragment result and await Ryan's separate decision on proposed 4AI.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; work block 4AH-R owns exact-scope durability, automatic release observation, and credential-free health verification for completed 4AH.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.2 is durable, automatically deployed, and credential-free health verified through 4AH-R, while Task 1P.4.2b.3 remains separately gated.
 
 ## Current Work Block
 
-Work block 4AH-R: Transaction And Supporting Modal Fragment Durability And Release — active and confirmed.
+Work block 4AH-R: Transaction And Supporting Modal Fragment Durability And Release — complete, durable, automatically deployed, and credential-free production health verified.
 
 ## Current Task
 
-Task 1P.4.2b.2-R: Publish and verify transaction and supporting modal fragment execution — active through confirmed work block 4AH-R.
+Task 1P.4.2b.3: Disable and prove HTMX eval and swapped-script processing — current decision gate and awaiting separate Ryan confirmation; no implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns exact staging, Git safety, source commit creation, clean fast-forward to `main`, direct push, read-only automatic-deployment observation, credential-free health verification, and sanitized closeout. Ryan owns every scope expansion, manual live mutation, failure recovery, and Task 1P.4.2b.3 decision.
+Ryan owns the next decision: confirm proposed 4AI or choose another bounded block. Codex owns no further mutation without that direction.
 
 ## Current Action
 
-Verify the exact eighteen-path 4AH source set, commit it on `codex/csp-transaction-modal-fragments`, fast-forward local `main`, push directly to `origin/main`, observe the resulting automatic Fly deployment read-only, verify credential-free production `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+Publish this sanitized command-center-only 4AH-R closeout with `[skip actions]`, verify local and remote `main` alignment without a second deployment, then await Ryan's decision on proposed 4AI.
+
+## Work Block 4AH-R Result
+
+- Exact source commit `ec27736b50a79ab24d3f0d5c2fa115a60e7c44da` contains the eighteen approved 4AH paths and is durable on `main` and `origin/main` before this closeout.
+- Automatic Fly Deploy run `29926538588` and deploy job `88945038809` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with `{"status":"ok"}` after deployment.
+- Exact-path, staged-set, protected-path, high-confidence sensitive-addition, full smoke, isolated-browser, Python/JavaScript syntax, JSON, whitespace, dashboard, health, rendered-state, ancestry, and remote-alignment checks passed.
+- GitHub reported only the existing non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24.
+- No PR, force push, protected data, credential, real database, authenticated production page, manual workflow action, non-automatic Fly mutation, downstream access/write, Task 1P.4.2b.3 implementation, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-transaction-modal-fragment-execution-release-4ah-r.md`.
 
 ## Work Block 4AH-R Contract
 
