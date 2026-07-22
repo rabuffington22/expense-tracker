@@ -1,12 +1,12 @@
 # Content Security Policy Compatibility Contract
 
-Status: Task 1P.4.1 is complete and durable; Task 1P.4.2a is implemented and verified locally through work block 4AF; fragment, page, style/document, header, publication, and live proof remain separately gated.
+Status: Task 1P.4.1 and Task 1P.4.2a are durable; Task 1P.4.2b.1 is implemented and verified locally through work block 4AG; transaction/modal fragments, final HTMX disablement, page, style/document, header, publication, and live proof remain separately gated.
 
 Parent: Phase 4 Task 1P.4 / finding `P3-3J-06`.
 
 ## Purpose And Boundary
 
-This contract defines the target browser policy, the application surfaces that must be migrated before enforcement, and the maintained proof required to close the CSP half of `P3-3J-06`. Work block 4AE created the contract without product mutation. Confirmed work block 4AF then implemented only the shared execution foundation described below; it did not add a CSP header, change authentication or Plaid behavior, or touch any live system.
+This contract defines the target browser policy, the application surfaces that must be migrated before enforcement, and the maintained proof required to close the CSP half of `P3-3J-06`. Work block 4AE created the contract without product mutation. Work block 4AF implemented the shared execution foundation, and work block 4AG implemented only the dashboard/report fragment slice described below. Neither added a CSP header, changed authentication or Plaid behavior, or touched any live system.
 
 Protected data, credentials, real databases, live Plaid Link, production/demo inspection, publication, deployment, and both preserved untracked files remain outside this planning artifact.
 
@@ -19,16 +19,16 @@ Protected data, credentials, real databases, live Plaid Link, production/demo in
 
 ## Inventory Summary
 
-The tracked surface contains 46 HTML templates and seven standalone document roots: the shared `base.html` shell, login, three error documents, offline, and standalone `/k/`. After 4AF, the source inventory contains:
+The tracked surface contains 46 HTML templates and seven standalone document roots: the shared `base.html` shell, login, three error documents, offline, and standalone `/k/`. After 4AG, the source inventory contains:
 
 | Surface | Count | Contract consequence |
 | --- | ---: | --- |
-| All `<script>` elements | 42 | Must distinguish local/external executable scripts from inert JSON data. |
-| Executable inline scripts | 32 | Move to maintained local static JavaScript; a nonce is not a migration substitute. The six former shared-shell blocks are now local assets. |
-| External executable scripts | 5 | Local theme, HTMX, and app-shell assets plus two exact Plaid Link initializer tags. |
+| All `<script>` elements | 34 | Must distinguish local/external executable scripts from inert JSON data. |
+| Executable inline scripts | 23 | Move to maintained local static JavaScript; a nonce is not a migration substitute. The former shared-shell and dashboard/report fragment blocks are now local assets. |
+| External executable scripts | 6 | Local theme, HTMX, app-shell, and dashboard-fragment assets plus two exact Plaid Link initializer tags. |
 | Inert `application/json` scripts | 5 | Move to `<template>` or encoded data attributes where practical; never execute swapped data blocks. |
-| Native inline event-handler attributes | 156 | Replace with delegated or initialized listeners before `script-src-attr 'none'`; the five former base handlers are removed. |
-| `hx-on` attributes | 2 | Both remaining attributes are swapped-fragment dependencies owned by Task 1P.4.2b. |
+| Native inline event-handler attributes | 144 | Replace with delegated or initialized listeners before `script-src-attr 'none'`; the former base and dashboard/report fragment handlers are removed. |
+| `hx-on` attributes | 2 | Both remaining attributes are transaction/editor fragment dependencies owned by Task 1P.4.2b.2. |
 | Inline `<style>` blocks | 7 | Move to local CSS before strict `style-src-elem`. |
 | Element `style` attributes | 221 | Replace with classes, data-driven classes, custom-property classes, or stylesheet-backed state before strict application policy. |
 | Runtime JavaScript style mutations | At least 33 call sites | Replace `element.style`, `cssText`, or equivalent attribute writes on strict application documents. |
@@ -93,13 +93,13 @@ For `PLAID_ENV=production`, replace the sandbox connect origin with `https://pro
 | Migration slice | Exact work | Completion gate | Suggested bounded task/block |
 | --- | --- | --- | --- |
 | Shared execution foundation | Move `base.html` executable blocks and five native handlers to local JS; replace two base `hx-on` handlers; move indicator CSS to the tracked stylesheet; set only `includeIndicatorStyles=false`; and establish the declarative HTMX configuration point. Keep `allowEval` and `allowScriptTags` at their current values until the remaining fragment dependencies are removed. | Complete locally through 4AF: maintained source assertions and configured-auth/no-password isolated Chrome prove shared navigation, themes, AI chat, service-worker registration, CSRF/HTMX behavior, repeated representative swaps, and responsive drawer behavior with no executable inline shell markup. | Task 1P.4.2a / work block 4AF complete locally. |
-| Swapped-fragment execution | Remove executable scripts and inline handlers from all directly returned HTMX components; replace the remaining two fragment `hx-on` handlers; move server values to inert data; initialize through local static JS and `htmx:load`/delegation; then set `allowEval=false` and `allowScriptTags=false`. | Repeated swaps preserve charts, transaction editing/splitting, dashboard details, AI panels, reports, and cleanup without fragment script execution or eval-backed HTMX attributes. | Task 1P.4.2b after 4AF. |
+| Swapped-fragment execution | Remove executable scripts and inline handlers from all directly returned HTMX components; replace the remaining two fragment `hx-on` handlers; move server values to inert data; initialize through local static JS and `htmx:load`/delegation; then set `allowEval=false` and `allowScriptTags=false`. | Dashboard/report slice complete locally through 4AG; repeated configured-auth/no-password swaps preserve charts, KPI/category/insight/AI behavior, reports, and cleanup. Transaction editing/splitting and final disabled-switch proof remain. | Task 1P.4.2b.1 / work block 4AG complete locally; Tasks 1P.4.2b.2-1P.4.2b.3 remain separately gated. |
 | Full-page execution | Migrate remaining page-level executable inline scripts and native handlers, including both Plaid entry pages; preserve page-specific initialization through local modules/data. | Every full-page route works with `script-src-attr 'none'` and no inline application script. | Task 1P.4.2c after fragment foundation; split by route cluster if needed. |
 | Application style compatibility | Move seven inline style blocks, 221 attributes, and runtime style writes to static CSS/classes or explicitly bounded data-driven states. | Core pages run under `style-src-attr 'none'`; responsive and visualization behavior passes at maintained breakpoints. | Task 1P.4.3a; likely split into shell/components and page clusters. |
 | Exceptional documents and Plaid | Reconcile login, offline/errors, `/k/`, local SVG data images, worker/manifest, and Plaid route-specific behavior; preserve Plaid's narrow documented style-attribute exception only on Link documents. | Strict families have no exception leakage; mocked Plaid document proves exact policy/header/tag wiring without live Plaid. | Task 1P.4.3b. |
 | Header enforcement and proof | Add route-family header generation and optional Plaid nonce plumbing only after migration gates pass; add maintained request and isolated-browser contracts. | No CSP violations on the required matrix; exact prohibited source probes are blocked; no protected/live dependency. | Task 1P.4.4. |
 
-Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must use the sub-slices above. Work block 4AF completes only the shared foundation; Task 1P.4.2b must be sized and confirmed separately from the residual fragment inventory.
+Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must use the sub-slices above. Work block 4AF completed the shared foundation and work block 4AG completed the dashboard/report fragment slice locally. Transaction/supporting-modal migration and final global HTMX disablement/proof each require separate confirmation.
 
 ## Template Surface Inventory
 
@@ -108,28 +108,28 @@ Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSO
 | Template | Script | JSON | `<style>` | Event | Style | `hx-on` |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | `auth/login.html` | 0 | 0 | 1 | 0 | 0 | 0 |
-| `base.html` | 3 | 0 | 0 | 0 | 1 | 0 |
+| `base.html` | 4 | 0 | 0 | 0 | 1 | 0 |
 | `cashflow.html` | 1 | 0 | 0 | 15 | 2 | 0 |
 | `categorize.html` | 2 | 0 | 1 | 3 | 26 | 0 |
 | `categorize_orphans.html` | 1 | 0 | 0 | 1 | 10 | 0 |
-| `components/ai_analysis.html` | 1 | 0 | 0 | 1 | 0 | 0 |
-| `components/categories_compare.html` | 1 | 0 | 0 | 1 | 4 | 0 |
-| `components/dashboard_body.html` | 2 | 1 | 0 | 0 | 6 | 0 |
-| `components/dashboard_detail_cats.html` | 1 | 0 | 0 | 2 | 1 | 0 |
-| `components/dashboard_detail_insights.html` | 1 | 0 | 0 | 2 | 2 | 0 |
+| `components/ai_analysis.html` | 0 | 0 | 0 | 0 | 0 | 0 |
+| `components/categories_compare.html` | 0 | 0 | 0 | 0 | 4 | 0 |
+| `components/dashboard_body.html` | 0 | 1 | 0 | 0 | 6 | 0 |
+| `components/dashboard_detail_cats.html` | 0 | 0 | 0 | 0 | 1 | 0 |
+| `components/dashboard_detail_insights.html` | 0 | 0 | 0 | 0 | 2 | 0 |
 | `components/dashboard_ie_insights.html` | 0 | 0 | 0 | 0 | 1 | 0 |
-| `components/ie_ai_analysis.html` | 1 | 0 | 0 | 1 | 0 | 0 |
-| `components/insights_upcoming.html` | 1 | 0 | 0 | 3 | 2 | 0 |
-| `components/kpi_panel.html` | 1 | 0 | 0 | 0 | 0 | 0 |
+| `components/ie_ai_analysis.html` | 0 | 0 | 0 | 0 | 0 | 0 |
+| `components/insights_upcoming.html` | 0 | 0 | 0 | 0 | 2 | 0 |
+| `components/kpi_panel.html` | 0 | 0 | 0 | 0 | 0 | 0 |
 | `components/match_card.html` | 0 | 0 | 0 | 0 | 5 | 0 |
-| `components/rpt_view.html` | 1 | 0 | 0 | 2 | 3 | 0 |
+| `components/rpt_view.html` | 0 | 0 | 0 | 0 | 3 | 0 |
 | `components/sidebar.html` | 0 | 0 | 0 | 2 | 1 | 0 |
 | `components/subcat_txns_popup.html` | 0 | 0 | 0 | 1 | 0 | 0 |
 | `components/todo_queue_detail.html` | 0 | 0 | 0 | 1 | 0 | 0 |
 | `components/txn_results.html` | 0 | 0 | 0 | 6 | 6 | 0 |
 | `components/txn_row.html` | 0 | 0 | 0 | 0 | 3 | 0 |
 | `components/txn_row_edit.html` | 0 | 0 | 0 | 6 | 4 | 2 |
-| `components/txn_split_editor.html` | 3 | 2 | 0 | 14 | 35 | 0 |
+| `components/txn_split_editor.html` | 1 | 2 | 0 | 14 | 35 | 0 |
 | `components/vendor_card.html` | 0 | 0 | 0 | 0 | 2 | 0 |
 | `dashboard.html` | 2 | 0 | 0 | 4 | 0 | 0 |
 | `data_sources.html` | 3 | 0 | 1 | 3 | 7 | 0 |
@@ -183,6 +183,6 @@ Required repository checks after each implementation slice remain the focused te
 4. Core documents target `style-src-attr 'none'`; Plaid's documented style-attribute exception is route-family-specific and cannot leak to login, `/k/`, offline/errors, or ordinary authenticated pages.
 5. Only one Plaid API environment is allowed per response, selected from validated tracked environment behavior.
 6. Trusted Types, CSP reporting infrastructure, and Fly-only request upgrading are not bundled into Task 1P.4.
-7. Task 1P.4.2 and 1P.4.3 require smaller execution blocks; 4AF completed the shared foundation locally, and no later slice is authorized by that completion.
+7. Task 1P.4.2 and 1P.4.3 require smaller execution blocks; 4AF completed the shared foundation and 4AG completed the dashboard/report fragment slice locally, and no later slice is authorized by those completions.
 
 Any wish to allow broader inline behavior, both Plaid environments, another external origin, live Plaid testing, public-route redesign, or Trusted Types is a plan-changing decision and requires Ryan's explicit direction.

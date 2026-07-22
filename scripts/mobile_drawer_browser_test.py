@@ -14,6 +14,7 @@ import os
 import sys
 import tempfile
 import threading
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from werkzeug.serving import WSGIRequestHandler, make_server
@@ -127,6 +128,240 @@ def _assert_shared_shell(page, label: str) -> None:
     _check(state["shellFunctions"], f"{label}: compatibility globals must remain available")
 
 
+def _seed_dashboard_data(entity_key: str) -> None:
+    from core.db import get_connection
+
+    today = date.today().isoformat()
+    imported_at = datetime.now(timezone.utc).isoformat()
+    rows = []
+    for index in range(25):
+        amount_cents = -(1000 + index * 25)
+        rows.append(
+            (
+                f"4ag-{entity_key}-expense-{index:02d}",
+                today,
+                f"SYNTHETIC 4AG EXPENSE {index:02d}",
+                f"Synthetic Merchant {index:02d}",
+                f"Synthetic Merchant {index:02d}",
+                amount_cents / 100,
+                amount_cents,
+                "Synthetic Checking",
+                "Office Supplies",
+                "General" if index % 2 == 0 else "Equipment",
+                1.0,
+                "synthetic-4ag.csv",
+                imported_at,
+            )
+        )
+    rows.append(
+        (
+            f"4ag-{entity_key}-income",
+            today,
+            "SYNTHETIC 4AG INCOME",
+            "Synthetic Income",
+            "Synthetic Income",
+            1000.0,
+            100000,
+            "Synthetic Checking",
+            "Income",
+            "General",
+            1.0,
+            "synthetic-4ag.csv",
+            imported_at,
+        )
+    )
+    conn = get_connection(entity_key)
+    conn.executemany(
+        "INSERT INTO transactions "
+        "(transaction_id, date, description_raw, merchant_raw, merchant_canonical, "
+        "amount, amount_cents, account, category, subcategory, confidence, "
+        "source_filename, imported_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        rows,
+    )
+    conn.commit()
+    conn.close()
+
+
+def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
+    page.goto(base_url, wait_until="networkidle")
+    page.wait_for_selector('#kpi-detail[data-fragment-initialized="true"]')
+    page.wait_for_selector('#ie-line-chart[data-fragment-initialized="true"] svg')
+
+    initial = page.evaluate(
+        """() => ({
+            asset: Boolean(document.querySelector('script[src*="dashboard-fragments.js"]')),
+            chartCount: document.querySelectorAll('#ie-line-chart svg').length,
+            detailCategories: Boolean(document.getElementById('detail-categories')),
+            detailInsights: Boolean(document.getElementById('detail-insights')),
+            ieInsights: Boolean(document.getElementById('ie-insights')),
+            allowEval: window.htmx.config.allowEval,
+            allowScriptTags: window.htmx.config.allowScriptTags,
+        })"""
+    )
+    _check(initial["asset"], f"{label}: dashboard fragment controller must load")
+    _check(initial["chartCount"] == 1, f"{label}: static controller must render one income/expense chart")
+    _check(
+        initial["detailCategories"] and initial["detailInsights"] and initial["ieInsights"],
+        f"{label}: KPI dependent fragment targets must remain available",
+    )
+    _check(
+        initial["allowEval"] is True and initial["allowScriptTags"] is True,
+        f"{label}: final global HTMX execution switches must remain deferred",
+    )
+
+    detail_category = page.locator(
+        '#detail-categories [data-fragment-action="toggle-category"]'
+    ).first
+    page.wait_for_selector('#detail-categories [data-fragment-action="toggle-category"]')
+    detail_subcategories = detail_category.locator("xpath=following-sibling::*[1]")
+    _check(detail_subcategories.is_hidden(), f"{label}: detail subcategories must start collapsed")
+    detail_category.click()
+    _check(detail_subcategories.is_visible(), f"{label}: delegated category control must expand")
+    detail_category.click()
+    _check(detail_subcategories.is_hidden(), f"{label}: delegated category control must collapse")
+
+    page.wait_for_selector('#detail-insights [data-fragment-action="open-insight-modal"]')
+    with page.expect_response(
+        lambda response: "/dashboard/insight-detail" in response.url
+    ) as response_info:
+        page.locator(
+            '#detail-insights [data-fragment-action="open-insight-modal"]'
+        ).first.click()
+    _check(response_info.value.status == 200, f"{label}: insight detail request must return 200")
+    detail_modal = page.locator("#detail-iu-modal-scrim")
+    _check(detail_modal.is_visible(), f"{label}: delegated insight control must open the modal")
+    page.locator(
+        '#detail-iu-modal-scrim [data-fragment-action="close-insight-modal"]'
+    ).click()
+    _check(detail_modal.is_hidden(), f"{label}: delegated insight control must close the modal")
+
+    with page.expect_response(
+        lambda response: "/dashboard/ai-analysis" in response.url
+    ) as response_info:
+        page.locator("#detail-ai-analysis-section .iu-ai-btn").click()
+    _check(response_info.value.status == 200, f"{label}: AI analysis fragment request must return 200")
+    page.wait_for_selector("#detail-ai-analysis-section .iu-ai-label")
+    ai_toggle_state = page.evaluate(
+        """() => {
+            const host = document.createElement('div');
+            host.id = 'synthetic-ai-fragment';
+            host.innerHTML = '<div class="iu-row iu-ai-row iu-ai-row--expandable" '
+                + 'data-fragment-action="toggle-ai"><span class="iu-chevron">›</span></div>'
+                + '<div class="iu-ai-detail" hidden>Synthetic detail</div>';
+            document.body.appendChild(host);
+            const row = host.firstElementChild;
+            const detail = row.nextElementSibling;
+            row.click();
+            const expanded = !detail.hidden;
+            row.click();
+            const collapsed = detail.hidden;
+            host.remove();
+            return { expanded, collapsed };
+        }"""
+    )
+    _check(
+        ai_toggle_state == {"expanded": True, "collapsed": True},
+        f"{label}: delegated AI analysis rows must expand and collapse",
+    )
+
+    page.evaluate("window.dashToggleView('compare')")
+    page.wait_for_selector('#kpi-left[data-fragment-initialized="true"]')
+    page.wait_for_selector('#kpi-right[data-fragment-initialized="true"]')
+    page.wait_for_selector('#categories-compare [data-fragment-action="toggle-category"]')
+    compare_category = page.locator(
+        '#categories-compare [data-fragment-action="toggle-category"]'
+    ).first
+    compare_subcategories = compare_category.locator("xpath=following-sibling::*[1]")
+    _check(compare_subcategories.is_hidden(), f"{label}: compare subcategories must start collapsed")
+    compare_category.click()
+    _check(compare_subcategories.is_visible(), f"{label}: compare category must expand")
+    compare_category.click()
+    _check(compare_subcategories.is_hidden(), f"{label}: compare category must collapse")
+    page.evaluate("window.dashToggleView('details')")
+
+    for swap_number in (1, 2):
+        with page.expect_response(
+            lambda response: "/dashboard/partial" in response.url
+        ) as response_info:
+            page.evaluate(
+                """() => window.htmx.ajax('GET', '/dashboard/partial', {
+                    target: '#dashboard-body', swap: 'innerHTML'
+                })"""
+            )
+        _check(
+            response_info.value.status == 200,
+            f"{label} dashboard swap {swap_number}: partial must return 200",
+        )
+        page.wait_for_selector('#kpi-detail[data-fragment-initialized="true"]')
+        page.wait_for_selector('#ie-line-chart[data-fragment-initialized="true"] svg')
+        fragment_state = page.evaluate(
+            """() => {
+                const root = document.getElementById('dashboard-body');
+                const elements = [root, ...root.querySelectorAll('*')];
+                return {
+                    charts: root.querySelectorAll('#ie-line-chart svg').length,
+                    executableScripts: root.querySelectorAll(
+                        'script:not([type="application/json"]):not([src])'
+                    ).length,
+                    nativeHandlers: elements.reduce((count, element) => count +
+                        Array.from(element.attributes || []).filter(
+                            (attribute) => /^on[a-z]/i.test(attribute.name)
+                        ).length, 0),
+                };
+            }"""
+        )
+        _check(
+            fragment_state == {"charts": 1, "executableScripts": 0, "nativeHandlers": 0},
+            f"{label} dashboard swap {swap_number}: migrated fragments must reinitialize without inline execution",
+        )
+
+    page.goto(f"{base_url}/reports/", wait_until="networkidle")
+    _assert_shared_shell(page, f"{label} reports shell")
+    page.locator("#report_type").select_option("merchants")
+    with page.expect_response(lambda response: "/reports/view" in response.url) as response_info:
+        page.get_by_role("button", name="View", exact=True).click()
+    _check(response_info.value.status == 200, f"{label} merchant report swap must return 200")
+    page.wait_for_selector('#rpt-results [data-fragment-action="show-more-report-rows"]')
+    more_rows = page.locator("#rpt-more-merchants")
+    _check(more_rows.is_hidden(), f"{label}: extra merchant rows must start hidden")
+    page.locator('[data-fragment-action="show-more-report-rows"]').click()
+    _check(more_rows.is_visible(), f"{label}: delegated report control must reveal extra merchant rows")
+
+    page.locator("#report_type").select_option("tax_summary")
+    with page.expect_response(lambda response: "/reports/view" in response.url) as response_info:
+        page.get_by_role("button", name="View", exact=True).click()
+    _check(response_info.value.status == 200, f"{label} tax report swap must return 200")
+    page.wait_for_selector('#rpt-results [data-fragment-action="toggle-report-group"]')
+    group_button = page.locator('[data-fragment-action="toggle-report-group"]').first
+    target_id = group_button.get_attribute("data-target")
+    group_rows = page.locator(f"#{target_id}")
+    _check(group_rows.is_visible(), f"{label}: tax group rows must start expanded")
+    group_button.click()
+    _check(group_rows.is_hidden(), f"{label}: delegated report control must collapse tax group rows")
+    group_button.click()
+    _check(group_rows.is_visible(), f"{label}: delegated report control must re-expand tax group rows")
+
+    report_state = page.evaluate(
+        """() => {
+            const root = document.getElementById('rpt-results');
+            const elements = [root, ...root.querySelectorAll('*')];
+            return {
+                executableScripts: root.querySelectorAll(
+                    'script:not([type="application/json"]):not([src])'
+                ).length,
+                nativeHandlers: elements.reduce((count, element) => count +
+                    Array.from(element.attributes || []).filter(
+                        (attribute) => /^on[a-z]/i.test(attribute.name)
+                    ).length, 0),
+            };
+        }"""
+    )
+    _check(
+        report_state == {"executableScripts": 0, "nativeHandlers": 0},
+        f"{label}: repeated report swaps must contain no inline execution",
+    )
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -167,6 +402,7 @@ def main() -> None:
 
             for entity_key in ("personal", "company", "luxelegacy"):
                 init_db(entity_key)
+                _seed_dashboard_data(entity_key)
 
             app = create_app()
             app.config.update(TESTING=True)
@@ -402,6 +638,10 @@ def main() -> None:
                     page.locator("#sidebar-nav .sb-nav a[href='/']").click()
                 _assert_closed_mobile(page, "route navigation")
 
+                _assert_dashboard_report_fragments(
+                    page, base_url, "no-password fragment execution"
+                )
+
                 page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
                 _assert_shared_shell(page, "transactions shell")
                 filter_button = page.locator("#txn-filter-form button[type='submit']")
@@ -514,6 +754,9 @@ def main() -> None:
 
                 _check(page.url.rstrip("/") == base_url, "configured-auth login must return to the app shell")
                 _assert_shared_shell(page, "configured-auth shell")
+                _assert_dashboard_report_fragments(
+                    page, base_url, "configured-auth fragment execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -557,7 +800,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report fragments, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

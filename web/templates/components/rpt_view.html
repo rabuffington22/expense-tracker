@@ -97,7 +97,8 @@
             </div>
             {% endfor %}
         </div>
-        <div class="rpt-more-toggle" onclick="rptShowMore(this)">Show {{ extra_rows|length }} more &rsaquo;</div>
+        <div class="rpt-more-toggle" data-fragment-action="show-more-report-rows"
+             data-target="rpt-more-merchants">Show {{ extra_rows|length }} more &rsaquo;</div>
         {% endif %}
         <div class="rpt-hbar-row rpt-total-row">
             <span class="rpt-hbar-name rpt-hbar-name--total">Total</span>
@@ -264,7 +265,8 @@
                 </thead>
                 {% for cat_name, grp in groups.items() %}
                 <tbody>
-                    <tr class="rpt-tax-group-hdr" onclick="rptToggleTaxGroup(this)" data-target="rpt-tax-{{ loop.index }}">
+                    <tr class="rpt-tax-group-hdr" data-fragment-action="toggle-report-group"
+                        data-target="rpt-tax-{{ loop.index }}">
                         <td>
                             <span class="rpt-tax-chevron">&#x2304;</span>
                             {{ cat_name }}
@@ -349,21 +351,3 @@
     </div>
 </div>
 {% endif %}
-
-<script>
-/* Tax summary expand/collapse */
-function rptToggleTaxGroup(el) {
-    var target = document.getElementById(el.getAttribute('data-target'));
-    if (!target) return;
-    target.hidden = !target.hidden;
-    var chevron = el.querySelector('.rpt-tax-chevron');
-    if (chevron) chevron.textContent = target.hidden ? '\u203A' : '\u2304';
-}
-
-/* Merchant "show more" */
-function rptShowMore(btn) {
-    var hidden = document.getElementById('rpt-more-merchants');
-    if (hidden) hidden.hidden = false;
-    btn.remove();
-}
-</script>

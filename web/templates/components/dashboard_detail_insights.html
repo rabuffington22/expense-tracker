@@ -14,7 +14,7 @@
           <div class="iu-row iu-row--clickable" data-insight-key="{{ ins.insight_key }}"
                hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, insight_key=ins.insight_key, **ins.detail_params) }}"
                hx-target="#detail-iu-modal-body" hx-swap="innerHTML"
-               onclick="detailIuOpenModal()">
+               data-fragment-action="open-insight-modal" data-fragment-modal="detail">
             <span class="iu-text">{{ ins.text }}</span>
             <span class="iu-chevron">&#x203A;</span>
           </div>
@@ -68,37 +68,16 @@
 </div>
 
 <!-- ── Insight detail modal (Detail view) ────────────────────────────────── -->
-<div class="tq-modal-scrim" id="detail-iu-modal-scrim" hidden>
+<div class="tq-modal-scrim" id="detail-iu-modal-scrim" hidden
+     data-fragment-action="close-insight-modal" data-fragment-modal="detail">
   <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
     <div class="tq-modal-top">
       <button type="button" class="cf-edit-btn tq-modal-close"
-              onclick="detailIuCloseModal()" title="Close">&times;</button>
+              data-fragment-action="close-insight-modal" data-fragment-modal="detail"
+              title="Close">&times;</button>
     </div>
     <div id="detail-iu-modal-body" class="tq-modal-body">
       <p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading&hellip;</p>
     </div>
   </div>
 </div>
-
-<script>
-function detailIuOpenModal() {
-    document.getElementById('detail-iu-modal-scrim').hidden = false;
-    document.getElementById('detail-iu-modal-body').innerHTML =
-        '<p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading\u2026</p>';
-}
-function detailIuCloseModal() {
-    document.getElementById('detail-iu-modal-scrim').hidden = true;
-    document.getElementById('detail-iu-modal-body').innerHTML = '';
-}
-document.getElementById('detail-iu-modal-scrim').addEventListener('click', function(e) {
-    if (e.target === this) detailIuCloseModal();
-});
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        var scrim = document.getElementById('detail-iu-modal-scrim');
-        if (scrim && !scrim.hidden) {
-            detailIuCloseModal();
-        }
-    }
-});
-</script>

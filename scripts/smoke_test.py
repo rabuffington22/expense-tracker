@@ -8506,6 +8506,139 @@ def main() -> None:
 
         print("   ✅ Local shell assets, handler removal, indicator CSS, HTMX config, rendered assets, and residual dependency assertions passed")
 
+        # ── 11c. Dashboard and report fragment execution ─────────────────
+        print("\n11c. Dashboard and report fragment execution…")
+
+        fragment_asset = PROJECT_ROOT / "web" / "static" / "dashboard-fragments.js"
+        fragment_source = fragment_asset.read_text()
+        migrated_fragment_paths = [
+            templates_root / "components" / name
+            for name in (
+                "ai_analysis.html",
+                "ie_ai_analysis.html",
+                "categories_compare.html",
+                "dashboard_body.html",
+                "dashboard_detail_cats.html",
+                "dashboard_detail_insights.html",
+                "insights_upcoming.html",
+                "kpi_panel.html",
+                "rpt_view.html",
+            )
+        ]
+        executable_script_pattern = _re.compile(
+            r"<script(?![^>]*\btype=[\"']application/json[\"'])[^>]*>",
+            flags=_re.IGNORECASE,
+        )
+        native_handler_pattern = _re.compile(
+            r"\son[a-z][a-z0-9_-]*\s*=", flags=_re.IGNORECASE
+        )
+        migrated_sources = [path.read_text() for path in migrated_fragment_paths]
+        _check(
+            all(not executable_script_pattern.search(source) for source in migrated_sources),
+            "dashboard/report fragments: migrated templates must have no executable script blocks",
+        )
+        _check(
+            all(not native_handler_pattern.search(source) for source in migrated_sources),
+            "dashboard/report fragments: migrated templates must have no native inline event handlers",
+        )
+        _check(
+            all("hx-on" not in source for source in migrated_sources),
+            "dashboard/report fragments: migrated templates must have no HTMX inline event handlers",
+        )
+        _check(
+            "dashboard-fragments.js" in base_source
+            and "/static/dashboard-fragments.js" in rendered_shell,
+            "dashboard/report fragments: the maintained static controller must load from the shared shell",
+        )
+        _check(
+            "{{" not in fragment_source
+            and "{%" not in fragment_source
+            and 'document.addEventListener("htmx:load"' in fragment_source
+            and 'income-expense-chart' in fragment_source
+            and 'kpi-panel' in fragment_source,
+            "dashboard/report fragments: the static controller must stay template-free and reinitialize swapped fragments",
+        )
+
+        dashboard_route_source = (PROJECT_ROOT / "web" / "routes" / "dashboard.py").read_text()
+        _check(
+            'data-fragment-action="dismiss-insight"' in dashboard_route_source
+            and "iuDismissAndClose" not in dashboard_route_source,
+            "dashboard insight detail: Python-rendered modal controls must use the delegated action contract",
+        )
+
+        remaining_fragment_paths = [
+            templates_root / "components" / name
+            for name in (
+                "txn_results.html",
+                "txn_row_edit.html",
+                "txn_split_editor.html",
+                "subcat_txns_popup.html",
+                "todo_queue_detail.html",
+            )
+        ]
+        remaining_fragment_sources = [path.read_text() for path in remaining_fragment_paths]
+        remaining_fragment_scripts = sum(
+            len(executable_script_pattern.findall(source))
+            for source in remaining_fragment_sources
+        )
+        remaining_fragment_handlers = sum(
+            len(native_handler_pattern.findall(source))
+            for source in remaining_fragment_sources
+        )
+        remaining_fragment_hx_on = sum(
+            source.count("hx-on") for source in remaining_fragment_sources
+        )
+        _check(
+            (remaining_fragment_scripts, remaining_fragment_handlers, remaining_fragment_hx_on)
+            == (1, 28, 2),
+            "dashboard/report fragments: deferred transaction/supporting modal inventory must remain 1 script, 28 handlers, and 2 hx-on attributes",
+        )
+        all_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        all_script_count = len(
+            _re.findall(r"<script\b[^>]*>", all_template_source, flags=_re.IGNORECASE)
+        )
+        inert_script_count = len(
+            _re.findall(
+                r"<script\b[^>]*\btype=[\"']application/json[\"'][^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        external_script_count = len(
+            _re.findall(
+                r"<script\b(?=[^>]*\bsrc=)[^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        inline_executable_count = (
+            all_script_count - inert_script_count - external_script_count
+        )
+        all_native_handler_count = len(
+            native_handler_pattern.findall(all_template_source)
+        )
+        all_hx_on_count = all_template_source.count("hx-on")
+        _check(
+            (
+                all_script_count,
+                inline_executable_count,
+                external_script_count,
+                inert_script_count,
+                all_native_handler_count,
+                all_hx_on_count,
+            )
+            == (34, 23, 6, 5, 144, 2),
+            "dashboard/report fragments: maintained aggregate inventory must match the post-4AG CSP contract",
+        )
+        _check(
+            '"allowEval":true' in base_source and '"allowScriptTags":true' in base_source,
+            "dashboard/report fragments: global HTMX execution switches remain deferred to Task 1P.4.2b.3",
+        )
+
+        print("   ✅ Migrated fragment sources, delegated controller, rendered asset, Python response, residual inventory, and deferred HTMX switches passed")
+
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
     print("=" * 60 + "\n")

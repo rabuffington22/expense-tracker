@@ -1711,7 +1711,7 @@ Work block 4AD gives the hamburger an explicit drawer relationship and synchroni
 
 ## Session Cookie And Browser Security Policy Need Explicit Hardening
 
-Status: partly addressed; cookie policy is durable, CSP planning is durable, and the Task 1P.4.2a shared execution foundation is complete locally through 4AF
+Status: partly addressed; cookie policy and CSP planning are durable, Task 1P.4.2a is durable, and the Task 1P.4.2b.1 dashboard/report fragment slice is complete locally through 4AG
 
 Severity: medium defense-in-depth risk
 
@@ -1719,11 +1719,11 @@ Captured: 2026-07-18
 
 Where seen: `web/__init__.py` and the repeated synthetic HTTPS response probe
 
-Revisit: Phase 4 Task 1P.4.2b for the separately sized swapped-fragment migration slice
+Revisit: Phase 4 Task 1P.4.2b.2 for the separately gated transaction/supporting-modal fragment slice
 
 Summary:
 
-Work block 4AC made the Flask session cookie explicitly HttpOnly and SameSite Lax everywhere and Secure on Fly while preserving ordinary local HTTP. Work block 4AE froze the compatible route-family policy and migration/proof sequence. Work block 4AF moves all six executable shared-shell blocks, five native handlers, and two base `hx-on` handlers into maintained local behavior, supplies HTMX indicator CSS locally, and disables only injected indicator styles while explicitly retaining the two fragment-owned HTMX dependencies. Protected HTML still does not emit Content-Security-Policy. Existing MIME, frame, referrer, XSS, and HTTPS HSTS headers continue to pass.
+Work block 4AC made the Flask session cookie explicitly HttpOnly and SameSite Lax everywhere and Secure on Fly while preserving ordinary local HTTP. Work block 4AE froze the compatible route-family policy and migration/proof sequence. Work block 4AF moved the shared-shell execution surface into maintained local behavior. Work block 4AG now moves nine dashboard/report fragment scripts, twelve template handlers, and one Python-rendered handler into maintained static/declarative behavior with repeated-swap proof. The deferred fragment surface retains one executable script, twenty-eight native handlers, and two `hx-on` attributes, so `allowEval` and `allowScriptTags` remain enabled. Protected HTML still does not emit Content-Security-Policy. Existing MIME, frame, referrer, XSS, and HTTPS HSTS headers continue to pass.
 
 Impact:
 
@@ -1737,7 +1737,7 @@ Acceptance checks:
 
 Why not fixed now:
 
-The cookie half is durable through 4AC-R, the CSP compatibility contract is durable through 4AE-R, and the shared execution foundation is complete locally through 4AF. Swapped-fragment execution, remaining page execution, style/document compatibility, header enforcement, publication, and production verification remain separately confirmed Task 1P.4 gates.
+The cookie half is durable through 4AC-R, the CSP compatibility contract is durable through 4AE-R, the shared execution foundation is durable through 4AF-R, and the dashboard/report fragment slice is complete locally through 4AG. Transaction/supporting-modal fragments, final HTMX execution disablement, remaining page execution, style/document compatibility, header enforcement, publication, and production verification remain separately confirmed Task 1P.4 gates.
 
 ## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
 

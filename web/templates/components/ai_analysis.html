@@ -1,7 +1,7 @@
 <div class="iu-half-label iu-ai-label">AI Analysis</div>
 {% if insights %}
   {% for ins in insights %}
-  <div class="iu-row iu-ai-row iu-ai-row--expandable" onclick="iuToggleAi(this)">
+  <div class="iu-row iu-ai-row iu-ai-row--expandable" data-fragment-action="toggle-ai">
     <span class="iu-text iu-ai-summary">{{ ins.text | truncate(60, True, '...') }}</span>
     <span class="iu-chevron">&#x203A;</span>
   </div>
@@ -15,12 +15,3 @@
 {% else %}
   <div class="iu-empty-sm">AI analysis unavailable</div>
 {% endif %}
-<script>
-function iuToggleAi(row) {
-    var detail = row.nextElementSibling;
-    if (!detail) return;
-    var show = detail.hidden;
-    detail.hidden = !show;
-    row.querySelector('.iu-chevron').style.transform = show ? 'rotate(90deg)' : '';
-}
-</script>

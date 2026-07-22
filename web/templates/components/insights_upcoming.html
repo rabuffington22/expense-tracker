@@ -14,7 +14,7 @@
           <div class="iu-row iu-row--clickable" data-insight-key="{{ ins.insight_key }}"
                hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, insight_key=ins.insight_key, **ins.detail_params) }}"
                hx-target="#iu-modal-body" hx-swap="innerHTML"
-               onclick="iuOpenModal()">
+               data-fragment-action="open-insight-modal" data-fragment-modal="compare">
             <span class="iu-text">{{ ins.text }}</span>
             <span class="iu-chevron">&#x203A;</span>
           </div>
@@ -40,7 +40,7 @@
           <div class="iu-row iu-row--clickable" data-insight-key="{{ ins.insight_key }}"
                hx-get="{{ url_for('dashboard.insight_detail', type=ins.insight_type, insight_key=ins.insight_key, **ins.detail_params) }}"
                hx-target="#iu-modal-body" hx-swap="innerHTML"
-               onclick="iuOpenModal()">
+               data-fragment-action="open-insight-modal" data-fragment-modal="compare">
             <span class="iu-text">{{ ins.text }}</span>
             <span class="iu-chevron">&#x203A;</span>
           </div>
@@ -109,50 +109,16 @@
 </div>
 
 <!-- ── Insight detail modal ────────────────────────────────────────────── -->
-<div class="tq-modal-scrim" id="iu-modal-scrim" hidden>
+<div class="tq-modal-scrim" id="iu-modal-scrim" hidden
+     data-fragment-action="close-insight-modal" data-fragment-modal="compare">
   <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
     <div class="tq-modal-top">
       <button type="button" class="cf-edit-btn tq-modal-close"
-              onclick="iuCloseModal()" title="Close">&times;</button>
+              data-fragment-action="close-insight-modal" data-fragment-modal="compare"
+              title="Close">&times;</button>
     </div>
     <div id="iu-modal-body" class="tq-modal-body">
       <p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading&hellip;</p>
     </div>
   </div>
 </div>
-
-<script>
-function iuOpenModal() {
-    document.getElementById('iu-modal-scrim').hidden = false;
-    document.getElementById('iu-modal-body').innerHTML =
-        '<p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading\u2026</p>';
-}
-function iuCloseModal() {
-    document.getElementById('iu-modal-scrim').hidden = true;
-    document.getElementById('iu-modal-body').innerHTML = '';
-}
-function iuDismissAndClose(key) {
-    /* Hide the insight row, show "All caught up" if section is empty */
-    var row = document.querySelector('[data-insight-key="' + key + '"]');
-    if (row) {
-        row.style.display = 'none';
-        var section = row.closest('.iu-section');
-        if (section) {
-            var visible = section.querySelectorAll('.iu-row:not([style*="display: none"])');
-            if (visible.length === 0) {
-                var msg = section.querySelector('.iu-caught-up');
-                if (msg) msg.hidden = false;
-            }
-        }
-    }
-    iuCloseModal();
-}
-document.getElementById('iu-modal-scrim').addEventListener('click', function(e) {
-    if (e.target === this) iuCloseModal();
-});
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !document.getElementById('iu-modal-scrim').hidden) {
-        iuCloseModal();
-    }
-});
-</script>

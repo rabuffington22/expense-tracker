@@ -1817,7 +1817,8 @@ def insight_detail():
             f'<button type="button" class="btn btn-secondary btn-sm"'
             f' hx-post="{dismiss_url}" hx-vals=\'{{"insight_key": "{insight_key}"}}\''
             f' hx-swap="none"'
-            f' onclick="iuDismissAndClose(\'{insight_key}\')">Got it</button>'
+            f' data-fragment-action="dismiss-insight"'
+            f' data-insight-key="{insight_key}">Got it</button>'
             f'</div>'
         )
 
