@@ -2,27 +2,37 @@
 
 ## Active Objective
 
-Publish the exact locally verified 4AI HTMX execution-switch result to `main`, observe the automatic Fly deployment read-only, verify credential-free production health, and close with one sanitized `[skip actions]` command-center commit.
+Preserve the durable, automatically deployed, and credential-free health-verified 4AI HTMX execution-switch result while awaiting Ryan's separate Task 1P.4.2c planning decision.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.3 is complete and verified locally through 4AI, and its exact-scope durability and automatic release are active through 4AI-R; Task 1P.4.2c remains a separate later planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.3 is complete, durable, automatically deployed, and credential-free health verified through 4AI and 4AI-R; Task 1P.4.2c is the next separate planning gate.
 
 ## Current Work Block
 
-Work block 4AI-R: Final HTMX Execution-Switch Durability And Release — active and explicitly authorized.
+Work block 4AI-R: Final HTMX Execution-Switch Durability And Release — complete, durable, automatically deployed, and credential-free production health verified.
 
 ## Current Task
 
-Task 1P.4.2b.3-R: Publish and verify final HTMX execution-switch disablement — active; source commit, direct-main fast-forward, automatic deployment observation, credential-free health, and sanitized closeout remain.
+Task 1P.4.2c: Migrate remaining full-page execution — current planning gate; implementation is not authorized and requires just-in-time route-cluster decomposition.
 
 ## Owner
 
-Codex owns the exact-scope 4AI-R release path. Ryan retains every scope expansion, manual workflow or Fly action, protected-data boundary, recovery beyond clean fast-forward/read-only diagnosis, and the later Task 1P.4.2c decision.
+Ryan owns the next decision: request Task 1P.4.2c decomposition and a bounded 4AJ proposal or pause. Codex owns no further mutation without that direction.
 
 ## Current Action
 
-Re-run the maintained release checks, stage only the sixteen verified 4AI paths, commit on `codex/csp-htmx-disablement`, fast-forward and push `main`, observe the automatic Fly deployment read-only, verify credential-free `/health`, then publish the sanitized `[skip actions]` closeout.
+Report the durable 4AI-R release result and await Ryan's separate Task 1P.4.2c decomposition or pause decision.
+
+## Work Block 4AI-R Result
+
+- Exact sixteen-path source commit `3fb0d74966bed7806e13efa65e15609ff173e817` is durable on `main` and `origin/main` before this closeout.
+- Automatic Fly Deploy run `29954953878` and deploy job `89041537857` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with `{"status":"ok"}` after deployment.
+- Exact-path, staged-set, protected-path, high-confidence sensitive-addition, full smoke, isolated-browser, Python/JavaScript syntax, JSON, whitespace, dashboard, health, rendered-state, ancestry, remote-alignment, and preserved-exclusion checks passed.
+- GitHub reported only the existing non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24.
+- No PR, force push, protected data, credential, real database, authenticated production page, manual workflow action, non-automatic Fly mutation, downstream access/write, Task 1P.4.2c implementation, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-htmx-execution-switch-disablement-release-4ai-r.md`.
 
 ## Work Block 4AI-R Contract
 

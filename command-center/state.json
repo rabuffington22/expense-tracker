@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-22 3:22 PM CST",
+    "lastUpdated": "2026-07-22 3:29 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,27 +22,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4AH-R is complete; source commit ec27736 is durable on main automatic Fly run 29926538588 passed and credential-free production health returned 200"
+    "durabilityStatus": "Work block 4AI-R is complete; source commit 3fb0d74 is durable on main automatic Fly run 29954953878 passed and credential-free production health returned 200"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4AI and Task 1P.4.2b.3 are complete and verified locally; exact-scope durability and automatic release are active through 4AI-R while Task 1P.4.2c remains a separate later gate.",
+    "summary": "Work block 4AI and Task 1P.4.2b.3 are complete durable automatically deployed and credential-free health verified through 4AI-R; Task 1P.4.2c is the next separate Ryan planning gate.",
     "progress": 96
   },
   "currentTask": {
-    "title": "Task 1P.4.2b.3-R: Publish and verify final HTMX execution-switch disablement",
-    "owner": "Codex Desktop",
-    "status": "in-progress",
-    "supportingAgent": "None; exact-scope Git stewardship release observation and Runway OS closeout remain with Codex",
-    "nextAction": "Re-run release checks stage the exact sixteen verified paths commit fast-forward and push main observe automatic deployment verify credential-free health and publish a skip-actions closeout.",
-    "blocker": "Stop for any unexpected path sensitive addition divergence failed verification release failure requiring mutation or preserved-file overlap."
+    "title": "Task 1P.4.2c: Migrate remaining full-page execution",
+    "owner": "Ryan",
+    "status": "waiting-on-ryan",
+    "supportingAgent": "None; Task 1P.4.2c requires just-in-time route-cluster decomposition before a 4AJ proposal",
+    "nextAction": "Request just-in-time Task 1P.4.2c route-cluster decomposition and a bounded 4AJ proposal or pause.",
+    "blocker": "No Task 1P.4.2c implementation is authorized; route-cluster decomposition and work-block confirmation are required first."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-ai-r",
     "label": "4AI-R",
     "name": "Final HTMX Execution-Switch Durability And Release",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
     "currentTask": "Task 1P.4.2b.3-R publish and verify final HTMX execution-switch disablement",
     "includedTasks": [
@@ -82,11 +82,13 @@
       "Automatic deployment run and job credential-free production health final alignment and preserved untracked files"
     ],
     "nextReportPoint": "Return source and closeout commit SHAs exact published paths automatic deployment and credential-free health results final alignment preserved exclusions and Task 1P.4.2c still separately gated.",
-    "durability": "Active; exact source durability automatic deployment observation credential-free health and sanitized skip-actions closeout remain.",
-    "result": "Pending source commit push automatic deployment credential-free health and sanitized closeout.",
+    "durability": "Source commit 3fb0d74 is durable on main and origin main; automatic Fly run 29954953878 and job 89041537857 passed and credential-free production health returned 200; this command-center-only closeout uses skip actions.",
+    "result": "Published exact sixteen-path source commit 3fb0d74 directly to main by clean fast-forward observed successful automatic Fly deployment verified credential-free production health preserved both unrelated untracked files and prepared the sanitized skip-actions closeout.",
     "evidence": [
       "command-center/logs/2026-07-22-htmx-execution-switch-disablement-4ai.md",
-      "command-center/csp-compatibility-contract.md"
+      "command-center/logs/2026-07-22-htmx-execution-switch-disablement-release-4ai-r.md",
+      "GitHub Actions run 29954953878",
+      "Fly deploy job 89041537857"
     ]
   },
   "routerHealth": {
@@ -112,20 +114,24 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Complete 4AI-R durability release and health proof",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan explicitly authorized the exact verified 4AI result to be committed and pushed directly to main.",
-    "action": "Verify and publish the exact source set observe only the automatic deployment verify credential-free health and close with skip actions.",
+    "title": "Request Task 1P.4.2c decomposition when ready",
+    "status": "waiting-on-ryan",
+    "owner": "Ryan",
+    "why": "4AI-R is complete durable deployed and health verified while the broad remaining full-page execution task still needs route-cluster decomposition.",
+    "action": "Request just-in-time Task 1P.4.2c route-cluster decomposition and a bounded 4AJ proposal or pause.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    "Choose whether to request Task 1P.4.2c route-cluster decomposition and a bounded 4AJ proposal."
+  ],
   "waitingOnRyan": {
-    "summary": "No current Ryan action; 4AI-R is authorized and active.",
-    "items": []
+    "summary": "4AI-R is complete; Ryan owns the separate Task 1P.4.2c planning decision.",
+    "items": [
+      "Request Task 1P.4.2c decomposition and a bounded 4AJ proposal or pause."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4AI-R authorizes exact-scope durability automatic deployment observation and credential-free health only; Task 1P.4.2c and every later CSP slice remain separately gated.",
+    "phaseQuestions": "Work block 4AI-R is complete durable deployed and health verified; Task 1P.4.2c and every later CSP slice remain separately gated.",
     "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -4666,7 +4672,7 @@
       "phaseId": "phase-4",
       "label": "4AI-R",
       "name": "Final HTMX Execution-Switch Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1P.4.2b.3-R only",
         "Explicitly stage and commit the exact sixteen verified 4AI source paths then fast-forward local main and push directly to origin main without force or PR",
@@ -4705,11 +4711,13 @@
         "Automatic deployment run and job credential-free production health final alignment and preserved untracked files"
       ],
       "reportBack": "Return source and closeout commit SHAs exact published paths automatic deployment and credential-free health results final alignment preserved exclusions and Task 1P.4.2c still separately gated.",
-      "durability": "Active; exact source durability automatic deployment observation credential-free health and sanitized skip-actions closeout remain.",
-      "result": "Pending source commit push automatic deployment credential-free health and sanitized closeout.",
+      "durability": "Source commit 3fb0d74 is durable on main and origin main; automatic Fly run 29954953878 and job 89041537857 passed and credential-free production health returned 200; this command-center-only closeout uses skip actions.",
+      "result": "Published exact sixteen-path source commit 3fb0d74 directly to main by clean fast-forward observed successful automatic Fly deployment verified credential-free production health preserved both unrelated untracked files and prepared the sanitized skip-actions closeout.",
       "evidence": [
         "command-center/logs/2026-07-22-htmx-execution-switch-disablement-4ai.md",
-        "command-center/csp-compatibility-contract.md"
+        "command-center/logs/2026-07-22-htmx-execution-switch-disablement-release-4ai-r.md",
+        "GitHub Actions run 29954953878",
+        "Fly deploy job 89041537857"
       ]
     }
   ],
@@ -5742,9 +5750,9 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "Remove executable scripts inline handlers and remaining hx-on behavior from directly returned fragments carry server state through inert data initialize repeated swaps through delegated listeners or htmx load then disable HTMX eval and swapped-script execution; decomposed into Tasks 1P.4.2b.1-1P.4.2b.3.",
-      "nextAction": "Preserve the complete local 4AI result; publication and Task 1P.4.2c remain separate gates.",
+      "nextAction": "Preserve the durable 4AI-R result; Task 1P.4.2c remains a separate Ryan planning gate.",
       "blocker": "None; all three Task 1P.4.2b slices are complete at their recorded durability levels.",
-      "result": "Both fragment migrations are durable and deployed and final HTMX eval plus swapped-script disablement passes the maintained cross-route matrix locally through 4AI.",
+      "result": "Both fragment migrations and final HTMX eval plus swapped-script disablement are durable automatically deployed and credential-free health verified through 4AI-R.",
       "evidence": [
         "command-center/logs/2026-07-22-htmx-execution-switch-disablement-4ai.md",
         "command-center/csp-compatibility-contract.md"
@@ -5814,32 +5822,37 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "After both migration slices leave no directly returned executable fragment or eval-backed attribute set allowEval and allowScriptTags false assert the residual inventory is zero and run cross-route repeated-swap proof.",
-      "nextAction": "Preserve the complete local result; publication remains separate.",
-      "blocker": "None; local implementation verification cleanup and closeout are complete.",
-      "result": "Both HTMX execution switches are false zero eval-backed template attributes and zero directly returned script elements are maintained three swapped inert JSON carriers use non-script template data and full smoke plus both auth-mode browser matrices pass.",
+      "nextAction": "Preserve the durable release result; Task 1P.4.2c remains separate.",
+      "blocker": "None; implementation verification durability deployment health proof and closeout are complete.",
+      "result": "Both HTMX execution switches are false zero eval-backed template attributes and zero directly returned script elements are maintained three swapped inert JSON carriers use non-script template data full smoke plus both auth-mode browser matrices pass and the exact source is durable and deployed through 4AI-R.",
       "evidence": [
-        "command-center/logs/2026-07-22-htmx-execution-switch-disablement-4ai.md"
+        "command-center/logs/2026-07-22-htmx-execution-switch-disablement-4ai.md",
+        "command-center/logs/2026-07-22-htmx-execution-switch-disablement-release-4ai-r.md"
       ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P42B3R",
       "title": "Task 1P.4.2b.3-R: Publish and verify final HTMX execution-switch disablement",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Stage and commit the exact verified 4AI paths fast-forward and push main observe the automatic deployment read-only verify credential-free production health and publish one sanitized skip-actions closeout.",
-      "nextAction": "Re-run release checks stage the exact sixteen paths commit fast-forward and push main observe automatic deployment verify credential-free health and close with skip actions.",
-      "blocker": "Stop for any unexpected path sensitive addition divergence failed verification release failure requiring mutation or preserved-file overlap."
+      "nextAction": "Preserve the durable release result; Task 1P.4.2c remains a separate Ryan planning decision.",
+      "blocker": "None; Task 1P.4.2c and any broader recovery remain separate Ryan gates.",
+      "result": "Exact source commit 3fb0d74 is durable on main automatic Fly run 29954953878 and job 89041537857 passed and credential-free production health returned HTTP 200.",
+      "evidence": [
+        "command-center/logs/2026-07-22-htmx-execution-switch-disablement-release-4ai-r.md"
+      ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C",
       "title": "Task 1P.4.2c: Migrate remaining full-page execution",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Move remaining page-level scripts and handlers including both Plaid entry pages to local static behavior and inert server data; split by route cluster before execution if still broad.",
-      "nextAction": "After 4AI-R closes request just-in-time route-cluster decomposition and a bounded 4AJ proposal if desired.",
-      "blocker": "No Task 1P.4.2c implementation is authorized; 4AI-R must close and route-cluster decomposition plus work-block confirmation are required first."
+      "nextAction": "Request just-in-time route-cluster decomposition and a bounded 4AJ proposal if desired.",
+      "blocker": "No Task 1P.4.2c implementation is authorized; route-cluster decomposition and work-block confirmation are required first."
     },
     {
       "phaseId": "phase-4",
@@ -6311,9 +6324,17 @@
     {
       "name": "Work Block 4AI Final HTMX Execution-Switch Closeout",
       "path": "command-center/logs/2026-07-22-htmx-execution-switch-disablement-4ai.md"
+    },
+    {
+      "name": "Work Block 4AI-R Final HTMX Execution-Switch Release Closeout",
+      "path": "command-center/logs/2026-07-22-htmx-execution-switch-disablement-release-4ai-r.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-22",
+      "text": "Completed work block 4AI-R: exact source commit 3fb0d74 was fast-forwarded and pushed to main automatic Fly run 29954953878 and job 89041537857 passed credential-free production health returned HTTP 200 both preserved untracked files remained excluded and the sanitized skip-actions closeout was prepared."
+    },
     {
       "time": "2026-07-22",
       "text": "Ryan authorized work block 4AI-R to stage and commit the exact sixteen verified 4AI paths fast-forward and push main observe only the automatic Fly deployment verify credential-free production health and publish one sanitized skip-actions closeout while later CSP work protected data manual live actions and both preserved untracked files remain excluded."
@@ -7173,7 +7194,7 @@
     },
     {
       "title": "Session cookie and browser security policy need explicit hardening",
-      "summary": "Cookie policy CSP planning shared execution and the dashboard/report fragment slice are durable and deployed through 4AG-R; transaction modal page style header and final production proof remain while protected HTML still lacks CSP.",
+      "summary": "Cookie policy CSP planning shared execution both fragment migrations and final HTMX execution disablement are durable and deployed through 4AI-R; remaining page style header and final production proof remain while protected HTML still lacks CSP.",
       "status": "partly-addressed",
       "severity": "medium",
       "source": "command-center/issues.md"
@@ -7188,11 +7209,11 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete 4AI-R durability release and health proof",
-    "description": "Publish the exact verified 4AI result observe only the automatic deployment verify credential-free production health and close with skip actions."
+    "name": "Request Task 1P.4.2c decomposition when ready",
+    "description": "4AI-R is complete durable deployed and health verified; the remaining full-page execution task requires separate route-cluster decomposition and work-block confirmation."
   },
   "verification": {
-    "phase4HtmxDisablementRelease": "active; exact source commit direct-main fast-forward automatic Fly deployment observation credential-free health and sanitized skip-actions closeout remain",
+    "phase4HtmxDisablementRelease": "pass; exact sixteen-path source commit 3fb0d74 is durable on main automatic Fly run 29954953878 and deploy job 89041537857 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4HtmxDisablement": "pass locally; allowEval and allowScriptTags are false zero eval-backed template attributes and zero directly returned script elements are maintained and three swapped inert JSON carriers use non-script template data",
     "phase4HtmxDisablementCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover shared shell repeated dashboard-report and transaction-modal behavior with denied external traffic zero unexpected console or page errors and exact all-entity cleanup",
     "phase4HtmxDisablementBoundaries": "pass; no vendored HTMX edit Task 1P.4.2c style or CSP-header work protected data credential real database external request live action GitHub durability publication deployment or preserved untracked-file mutation occurred",
