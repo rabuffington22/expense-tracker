@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4AJ source set to `main`, observe only the automatic Fly deployment, verify credential-free production health, and close the separately authorized 4AJ-R release block without widening scope.
+Preserve the durable, automatically deployed, and credential-free health-verified 4AJ-R result while Ryan separately decides whether to request a bounded Task 1P.4.2c.2 work block or pause.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.1 is complete and locally verified through 4AJ, and its exact durability/release is active through Ryan-authorized work block 4AJ-R; Task 1P.4.2c.2 remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.1 is complete, durable, automatically deployed, and credential-free health verified through 4AJ-R; Task 1P.4.2c.2 remains separately gated.
 
 ## Current Work Block
 
-Work block 4AJ-R: Core Review-Page Durability And Release — active and directly authorized by Ryan.
+Work block 4AJ-R: Core Review-Page Durability And Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.2c.1-R: Publish and verify the exact completed 4AJ source set — current and release-authorized only inside 4AJ-R.
+Task 1P.4.2c.2: Migrate categorization and upload execution — current only as a separate Ryan confirmation gate; no implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns exact staging, commit, fast-forward, direct-main push, read-only automatic deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan owns every scope expansion or recovery action.
+Ryan owns the next decision to request a bounded Task 1P.4.2c.2 proposal or pause. Codex has no active implementation or release authority after this closeout.
 
 ## Current Action
 
-Stage only the exact verified 4AJ paths, create one source commit, fast-forward local `main`, push directly without force or PR, observe the automatic deployment, verify `/health`, then push a command-center-only `[skip actions]` closeout.
+Review the complete 4AJ-R closeout and separately confirm, adjust, or pause the next bounded block; do not infer Task 1P.4.2c.2 authority.
 
 ## Task 1P.4.2c Decomposition Result
 
@@ -55,6 +55,15 @@ Stage only the exact verified 4AJ paths, create one source commit, fast-forward 
 - Keep new product or test edits beyond the verified set, workflow edits or manual dispatch/rerun, non-automatic Fly actions, credentials, protected data, real databases, retained uploads, authenticated production pages, downstream access/writes, Task 1P.4.2c.2, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths, sensitive/protected boundaries, full smoke and isolated-browser results, Python/JavaScript/JSON syntax, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, production health, and preservation of both untracked files.
+
+## Work Block 4AJ-R Result
+
+- Exact seventeen-path source commit `f8dfa803d0f7162240a8438fd53d8e0038966ee0` is durable on local and remote `main` before this sanitized closeout.
+- Automatic Fly Deploy run `29959060928` and deploy job `89055358673` passed every reported step for the exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with `{"status":"ok"}` after deployment.
+- Exact-path, staged-set, protected-path, sensitive-addition, maintained smoke, isolated-browser, syntax, JSON, whitespace, dashboard, generated-state, commit-content, ancestry, remote-alignment, automatic-release, production-health, and preserved-file checks passed.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, authenticated production page, credential, protected data, real database, downstream action, later route-cluster work, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-core-review-page-execution-release-4aj-r.md`.
 
 ## Work Block 4AI-R Result
 

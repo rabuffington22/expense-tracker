@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-22 4:23 PM CST",
+    "lastUpdated": "2026-07-22 4:33 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,27 +22,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4AI-R is complete; source commit 3fb0d74 is durable on main automatic Fly run 29954953878 passed and credential-free production health returned 200"
+    "durabilityStatus": "Work block 4AJ-R is complete; source commit f8dfa80 is durable on main automatic Fly run 29959060928 passed and credential-free production health returned 200"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.2c.1 is complete and locally verified through 4AJ and its exact durability release is active through Ryan-authorized work block 4AJ-R; Task 1P.4.2c.2 remains separately gated.",
+    "summary": "Task 1P.4.2c.1 is complete durable automatically deployed and credential-free health verified through 4AJ-R; Task 1P.4.2c.2 remains separately gated.",
     "progress": 96
   },
   "currentTask": {
-    "title": "Task 1P.4.2c.1-R: Publish and verify core review-page execution",
-    "owner": "Codex Desktop",
-    "status": "in-progress",
-    "supportingAgent": "None; 4AJ-R remains in the current Codex task without delegation or second opinion",
-    "nextAction": "Commit the exact verified 4AJ set fast-forward main push directly observe the automatic deployment verify credential-free health and close 4AJ-R.",
-    "blocker": "None; unexpected scope main divergence release failure requiring mutation or preserved-file overlap triggers a stop."
+    "title": "Task 1P.4.2c.2: Migrate categorization and upload execution",
+    "owner": "Ryan",
+    "status": "waiting-on-ryan",
+    "supportingAgent": "None; 4AJ-R is closed and no later route cluster is authorized",
+    "nextAction": "Choose whether to request a bounded 4AK proposal for Task 1P.4.2c.2 or pause.",
+    "blocker": "Ryan confirmation is required before Task 1P.4.2c.2 implementation."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-aj-r",
     "label": "4AJ-R",
     "name": "Core Review-Page Durability And Release",
-    "status": "active",
+    "status": "complete",
     "owner": "Codex Desktop",
     "currentTask": "Task 1P.4.2c.1-R publish and verify the exact completed 4AJ source set",
     "includedTasks": [
@@ -80,10 +80,13 @@
       "Automatic deployment run and job credential-free production health final alignment and preserved untracked files"
     ],
     "nextReportPoint": "Return source and closeout commit SHAs exact published paths automatic deployment and credential-free health results final alignment preserved exclusions and Task 1P.4.2c.2 still separately gated.",
-    "durability": "active; source commit push deployment observation health verification and closeout remain in progress",
-    "result": null,
+    "durability": "Source commit f8dfa80 is durable on local and remote main; automatic Fly run 29959060928 and job 89055358673 passed and credential-free production health returned 200; this command-center-only closeout uses skip actions.",
+    "result": "Published the exact seventeen-path 4AJ source directly to main by clean fast-forward observed the successful automatic Fly deployment verified credential-free production health and preserved both unrelated untracked files with no PR force push manual workflow action non-automatic Fly mutation or later route-cluster work.",
     "evidence": [
-      "command-center/logs/2026-07-22-core-review-page-execution-4aj.md"
+      "command-center/logs/2026-07-22-core-review-page-execution-4aj.md",
+      "command-center/logs/2026-07-22-core-review-page-execution-release-4aj-r.md",
+      "GitHub Actions run 29959060928",
+      "Fly deploy job 89055358673"
     ]
   },
   "routerHealth": {
@@ -109,20 +112,24 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish and verify exact 4AJ source",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized the complete locally verified 4AJ set for commit and push to main.",
-    "action": "Use exact-path staging create the source commit fast-forward and push main observe the automatic deployment verify credential-free health and close with skip actions.",
+    "title": "Decide whether to request Task 1P.4.2c.2",
+    "status": "waiting-on-ryan",
+    "owner": "Ryan",
+    "why": "4AJ-R is complete durable deployed and health verified while the categorization and upload route cluster remains separately gated.",
+    "action": "Request a bounded 4AK proposal for Task 1P.4.2c.2 or pause.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    "Choose whether to request a bounded 4AK proposal for Task 1P.4.2c.2 or pause."
+  ],
   "waitingOnRyan": {
-    "summary": "No active Ryan decision; 4AJ-R is authorized and executing while Task 1P.4.2c.2 remains separately gated.",
-    "items": []
+    "summary": "4AJ-R is complete; Ryan owns the separate Task 1P.4.2c.2 planning decision.",
+    "items": [
+      "Request a bounded 4AK proposal for Task 1P.4.2c.2 or pause."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4AJ-R is active only for exact durability release of completed Task 1P.4.2c.1; Task 1P.4.2c.2 and every later CSP slice remain separately gated.",
+    "phaseQuestions": "Work block 4AJ-R is complete durable deployed and health verified; Task 1P.4.2c.2 and every later CSP slice remain separately gated.",
     "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -4766,7 +4773,7 @@
       "phaseId": "phase-4",
       "label": "4AJ-R",
       "name": "Core Review-Page Durability And Release",
-      "status": "active",
+      "status": "complete",
       "includedTasks": [
         "Explicitly stage the exact verified 4AJ source set",
         "Create one source commit fast-forward local main and push directly without force or PR",
@@ -4799,10 +4806,13 @@
         "Maintained smoke browser syntax JSON whitespace dashboard health commit ancestry remote deployment and health proof"
       ],
       "reportBack": "Return source and closeout SHAs published paths deployment and health results final alignment preserved exclusions and Task 1P.4.2c.2 separately gated.",
-      "durability": "active; source commit push deployment observation health verification and closeout remain in progress",
-      "result": null,
+      "durability": "Source commit f8dfa80 is durable on local and remote main; automatic Fly run 29959060928 and job 89055358673 passed and credential-free production health returned 200; this command-center-only closeout uses skip actions.",
+      "result": "Published the exact seventeen-path 4AJ source directly to main by clean fast-forward observed the successful automatic Fly deployment verified credential-free production health and preserved both unrelated untracked files with no PR force push manual workflow action non-automatic Fly mutation or later route-cluster work.",
       "evidence": [
-        "command-center/logs/2026-07-22-core-review-page-execution-4aj.md"
+        "command-center/logs/2026-07-22-core-review-page-execution-4aj.md",
+        "command-center/logs/2026-07-22-core-review-page-execution-release-4aj-r.md",
+        "GitHub Actions run 29959060928",
+        "Fly deploy job 89055358673"
       ]
     }
   ],
@@ -5953,20 +5963,20 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C1R",
       "title": "Task 1P.4.2c.1-R: Publish and verify core review-page execution",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Commit the exact verified 4AJ source set push it directly to main observe the automatic Fly deployment verify credential-free health and close with sanitized skip-actions state.",
-      "nextAction": "Execute active 4AJ-R with exact staging and stop at any release anomaly requiring mutation.",
+      "nextAction": "Preserve the durable deployed health-verified 4AJ-R result.",
       "blocker": "None; Task 1P.4.2c.2 remains separately gated."
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C2",
       "title": "Task 1P.4.2c.2: Migrate categorization and upload execution",
-      "status": "planned",
-      "owner": "Codex Desktop",
+      "status": "current",
+      "owner": "Ryan",
       "summary": "Move three executable inline scripts and seven native handlers from categorize categorize-orphans and upload pages into maintained local behavior while preserving alias category subcategory navigation and confirmation workflows.",
-      "nextAction": "Wait for 4AJ-R closeout and a separate Ryan confirmation.",
+      "nextAction": "Request a bounded 4AK proposal or pause.",
       "blocker": "No Task 1P.4.2c.2 implementation is authorized without a separate confirmed work block."
     },
     {
@@ -7372,15 +7382,15 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete 4AJ-R durability and automatic release proof",
-    "description": "Publish the exact verified 4AJ source observe only the automatic deployment verify credential-free health and close without widening into Task 1P.4.2c.2."
+    "name": "Decide whether to request Task 1P.4.2c.2",
+    "description": "Preserve the durable deployed health-verified 4AJ-R result and separately request a bounded 4AK proposal or pause."
   },
   "verification": {
-    "phase4CoreReviewPageRelease": "active; Ryan authorized exact 4AJ source durability direct-main push automatic Fly deployment observation credential-free health and sanitized skip-actions closeout through 4AJ-R",
+    "phase4CoreReviewPageRelease": "pass; exact seventeen-path source commit f8dfa80 is durable on main automatic Fly run 29959060928 and deploy job 89055358673 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4CoreReviewPageBlock": "pass locally; 4AJ removed five executable inline scripts and eighteen native handlers from the five confirmed sources through existing static controllers with included execution at zero and residual inventory seventeen inline scripts seven external scripts two inert carriers ninety-eight native handlers and zero hx-on",
     "phase4CoreReviewPageCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome preserve included workflows repeated HTMX behavior denied external traffic zero unexpected console or page errors and exact all-entity cleanup",
     "phase4CoreReviewPageBoundaries": "pass; no later route cluster style CSP-header Plaid authentication financial dependency protected data credential real database external live GitHub publication deployment or preserved-file mutation occurred",
-    "phase4FullPageDecomposition": "pass; the tracked source inventory remains decomposed into eight route clusters with Task 1P.4.2c.1 complete locally and Task 1P.4.2c.2 current only as a separate Ryan confirmation gate",
+    "phase4FullPageDecomposition": "pass; the tracked source inventory remains decomposed into eight route clusters with Task 1P.4.2c.1 durable through 4AJ-R and Task 1P.4.2c.2 current only as a separate Ryan confirmation gate",
     "phase4HtmxDisablementRelease": "pass; exact sixteen-path source commit 3fb0d74 is durable on main automatic Fly run 29954953878 and deploy job 89041537857 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4HtmxDisablement": "pass locally; allowEval and allowScriptTags are false zero eval-backed template attributes and zero directly returned script elements are maintained and three swapped inert JSON carriers use non-script template data",
     "phase4HtmxDisablementCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover shared shell repeated dashboard-report and transaction-modal behavior with denied external traffic zero unexpected console or page errors and exact all-entity cleanup",

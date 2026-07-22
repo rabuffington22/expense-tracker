@@ -1,6 +1,6 @@
 # Content Security Policy Compatibility Contract
 
-Status: Task 1P.4.1, Task 1P.4.2a, both Task 1P.4.2b migration slices, and final HTMX disablement plus cross-route proof are durable, automatically deployed, and credential-free health verified through work block 4AI-R. The first full-page route cluster is complete and verified locally through work block 4AJ; its durability and every later page, style/document, header-enforcement, publication, and proof slice remain separately gated.
+Status: Task 1P.4.1, Task 1P.4.2a, both Task 1P.4.2b migration slices, final HTMX disablement, and the first full-page route cluster are durable, automatically deployed, and credential-free health verified through work block 4AJ-R. Every later page, style/document, header-enforcement, publication, and proof slice remains separately gated.
 
 Parent: Phase 4 Task 1P.4 / finding `P3-3J-06`.
 
