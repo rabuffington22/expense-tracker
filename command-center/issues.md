@@ -1711,7 +1711,7 @@ Work block 4AD gives the hamburger an explicit drawer relationship and synchroni
 
 ## Session Cookie And Browser Security Policy Need Explicit Hardening
 
-Status: partly addressed; cookie policy, CSP planning, Task 1P.4.2a, and both Task 1P.4.2b fragment migration slices are durable and deployed through 4AH-R
+Status: partly addressed; cookie policy, CSP planning, Task 1P.4.2a, and both Task 1P.4.2b fragment migration slices are durable and deployed through 4AH-R, while final HTMX disablement is complete locally through 4AI
 
 Severity: medium defense-in-depth risk
 
@@ -1719,11 +1719,11 @@ Captured: 2026-07-18
 
 Where seen: `web/__init__.py` and the repeated synthetic HTTPS response probe
 
-Revisit: Phase 4 Task 1P.4.2b.3 for separately gated final HTMX execution disablement and cross-route proof
+Revisit: Phase 4 Task 1P.4.2c for separately gated remaining full-page execution migration
 
 Summary:
 
-Work block 4AC made the Flask session cookie explicitly HttpOnly and SameSite Lax everywhere and Secure on Fly while preserving ordinary local HTTP. Work block 4AE froze the compatible route-family policy and migration/proof sequence. Work block 4AF moved the shared-shell execution surface into maintained local behavior. Work block 4AG moved nine dashboard/report fragment scripts, twelve template handlers, and one Python-rendered handler into maintained static/declarative behavior. Work block 4AH now moves the final fragment executable script, twenty-eight native handlers, and two `hx-on` attributes into `transaction-fragments.js` and declarative controls. The directly returned fragment inventory is zero, while `allowEval` and `allowScriptTags` remain enabled until the separately gated cross-route proof in Task 1P.4.2b.3. Protected HTML still does not emit Content-Security-Policy. Existing MIME, frame, referrer, XSS, and HTTPS HSTS headers continue to pass.
+Work block 4AC made the Flask session cookie explicitly HttpOnly and SameSite Lax everywhere and Secure on Fly while preserving ordinary local HTTP. Work block 4AE froze the compatible route-family policy and migration/proof sequence. Work block 4AF moved the shared-shell execution surface into maintained local behavior. Work block 4AG moved nine dashboard/report fragment scripts, twelve template handlers, and one Python-rendered handler into maintained static/declarative behavior. Work block 4AH moved the final fragment executable script, twenty-eight native handlers, and two `hx-on` attributes into `transaction-fragments.js` and declarative controls. Work block 4AI sets `allowEval=false` and `allowScriptTags=false`, replaces three directly swapped inert JSON script carriers with non-script template data, proves zero eval-backed HTMX attributes and zero directly returned script elements, and passes the configured-auth/no-password cross-route browser matrix locally. Protected HTML still does not emit Content-Security-Policy. Existing MIME, frame, referrer, XSS, and HTTPS HSTS headers continue to pass.
 
 Impact:
 
@@ -1737,7 +1737,7 @@ Acceptance checks:
 
 Why not fixed now:
 
-The cookie half is durable through 4AC-R, the CSP compatibility contract is durable through 4AE-R, the shared execution foundation is durable through 4AF-R, the dashboard/report fragment slice is durable through 4AG-R, and transaction/supporting-modal fragments are durable, deployed, and health verified through 4AH-R. Final HTMX execution disablement, remaining page execution, style/document compatibility, header enforcement, and final production proof remain separately confirmed Task 1P.4 gates.
+The cookie half is durable through 4AC-R, the CSP compatibility contract is durable through 4AE-R, the shared execution foundation is durable through 4AF-R, and both fragment migration slices are durable and deployed through 4AH-R. Final HTMX execution disablement and cross-route proof are complete locally through 4AI. Publication, remaining page execution, style/document compatibility, header enforcement, and final production proof remain separately confirmed Task 1P.4 gates.
 
 ## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
 

@@ -17,7 +17,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
-    <meta name="htmx-config" content='{"includeIndicatorStyles":false,"allowEval":true,"allowScriptTags":true}'>
+    <meta name="htmx-config" content='{"includeIndicatorStyles":false,"allowEval":false,"allowScriptTags":false}'>
     <script src="{{ url_for('static', filename='htmx.min.js') }}"></script>
     <script defer src="{{ url_for('static', filename='app-shell.js') }}?v={{ cache_bust }}"></script>
     <script defer src="{{ url_for('static', filename='dashboard-fragments.js') }}?v={{ cache_bust }}"></script>

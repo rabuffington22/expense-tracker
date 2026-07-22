@@ -8451,9 +8451,9 @@ def main() -> None:
             "shared shell CSP: base.html must load both maintained local shell assets",
         )
         _check(
-            'content=\'{"includeIndicatorStyles":false,"allowEval":true,"allowScriptTags":true}\''
+            'content=\'{"includeIndicatorStyles":false,"allowEval":false,"allowScriptTags":false}\''
             in base_source,
-            "shared shell CSP: declarative HTMX config must disable only injected indicator styles",
+            "shared shell CSP: declarative HTMX config must disable injected indicator styles, eval, and swapped scripts",
         )
         _check(
             "{{" not in theme_source
@@ -8478,16 +8478,34 @@ def main() -> None:
         _check(
             'name="htmx-config"' in rendered_shell
             and '"includeIndicatorStyles":false' in rendered_shell
-            and '"allowEval":true' in rendered_shell
-            and '"allowScriptTags":true' in rendered_shell,
-            "shared shell CSP: rendered shell must retain the explicit temporary HTMX dependency contract",
+            and '"allowEval":false' in rendered_shell
+            and '"allowScriptTags":false' in rendered_shell,
+            "shared shell CSP: rendered shell must enforce the final HTMX execution-switch contract",
         )
 
-        template_sources = [
-            path.read_text()
-            for path in templates_root.rglob("*.html")
-            if path.name != "base.html"
-        ]
+        template_paths = list(templates_root.rglob("*.html"))
+        template_sources = [path.read_text() for path in template_paths if path.name != "base.html"]
+        template_tags = "\n".join(
+            tag
+            for path in template_paths
+            for tag in _re.findall(r"<[^>]+>", path.read_text(), flags=_re.DOTALL)
+        )
+        eval_backed_attribute_patterns = (
+            _re.compile(r"\s(?:data-)?hx-on(?::[^\s=]+)?\s*=", flags=_re.IGNORECASE),
+            _re.compile(r"\s(?:data-)?hx-vars\s*=", flags=_re.IGNORECASE),
+            _re.compile(
+                r"\s(?:data-)?hx-(?:vals|headers)\s*=\s*([\"'])\s*(?:js|javascript):",
+                flags=_re.IGNORECASE,
+            ),
+            _re.compile(
+                r"\s(?:data-)?hx-trigger\s*=\s*([\"'])[^\"']*\[[^\]]+\][^\"']*\1",
+                flags=_re.IGNORECASE,
+            ),
+        )
+        _check(
+            all(not pattern.search(template_tags) for pattern in eval_backed_attribute_patterns),
+            "shared shell CSP: tracked template tags must contain no eval-backed HTMX attributes",
+        )
         remaining_hx_on = sum(source.count("hx-on") for source in template_sources)
         remaining_inline_scripts = sum(
             len(
@@ -8534,6 +8552,10 @@ def main() -> None:
         )
         migrated_sources = [path.read_text() for path in migrated_fragment_paths]
         _check(
+            all("<script" not in source.lower() for source in migrated_sources),
+            "dashboard/report fragments: migrated templates must have no script elements of any type",
+        )
+        _check(
             all(not executable_script_pattern.search(source) for source in migrated_sources),
             "dashboard/report fragments: migrated templates must have no executable script blocks",
         )
@@ -8567,11 +8589,11 @@ def main() -> None:
         )
 
         _check(
-            '"allowEval":true' in base_source and '"allowScriptTags":true' in base_source,
-            "dashboard/report fragments: global HTMX execution switches remain deferred to Task 1P.4.2b.3",
+            '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
+            "dashboard/report fragments: global HTMX execution switches must be disabled",
         )
 
-        print("   ✅ Migrated fragment sources, delegated controller, rendered asset, Python response, and deferred HTMX switches passed")
+        print("   ✅ Migrated fragment sources, delegated controller, rendered asset, Python response, and disabled HTMX switches passed")
 
         # ── 11d. Transaction and supporting modal fragment execution ────────────────
         print("\n11d. Transaction and supporting modal fragment execution…")
@@ -8589,6 +8611,10 @@ def main() -> None:
             )
         ]
         transaction_fragment_sources = [path.read_text() for path in transaction_fragment_paths]
+        _check(
+            all("<script" not in source.lower() for source in transaction_fragment_sources),
+            "transaction/modal fragments: migrated templates must have no script elements of any type",
+        )
         _check(
             all(not executable_script_pattern.search(source) for source in transaction_fragment_sources),
             "transaction/modal fragments: migrated templates must have no executable script blocks",
@@ -8616,9 +8642,10 @@ def main() -> None:
         )
         split_editor_source = (templates_root / "components" / "txn_split_editor.html").read_text()
         _check(
-            split_editor_source.count('type="application/json"') == 2
+            split_editor_source.count("<template") == 2
+            and split_editor_source.count("data-json") == 2
             and 'data-transaction-fragment-controller="split-editor"' in split_editor_source,
-            "transaction split editor: inert JSON data and the declarative controller contract must remain explicit",
+            "transaction split editor: non-script JSON templates and the declarative controller contract must remain explicit",
         )
 
         fragment_conn = get_connection("personal")
@@ -8702,15 +8729,15 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (34, 22, 7, 5, 116, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the post-4AH CSP contract",
+            == (31, 22, 7, 2, 116, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the post-4AI CSP contract",
         )
         _check(
-            '"allowEval":true' in base_source and '"allowScriptTags":true' in base_source,
-            "transaction/modal fragments: global HTMX execution switches remain deferred to Task 1P.4.2b.3",
+            '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
+            "transaction/modal fragments: global HTMX execution switches must be disabled",
         )
 
-        print("   ✅ Migrated sources, rendered fragments, declarative controller, aggregate inventory, and deferred HTMX switches passed")
+        print("   ✅ Migrated sources, rendered fragments, declarative controller, aggregate inventory, and disabled HTMX switches passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

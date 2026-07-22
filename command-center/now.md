@@ -2,27 +2,56 @@
 
 ## Active Objective
 
-Preserve the durable, automatically deployed, and health-verified 4AH transaction/modal fragment result and await Ryan's separate decision on proposed 4AI.
+Publish the exact locally verified 4AI HTMX execution-switch result to `main`, observe the automatic Fly deployment read-only, verify credential-free production health, and close with one sanitized `[skip actions]` command-center commit.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.2 is durable, automatically deployed, and credential-free health verified through 4AH-R, while Task 1P.4.2b.3 remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.3 is complete and verified locally through 4AI, and its exact-scope durability and automatic release are active through 4AI-R; Task 1P.4.2c remains a separate later planning gate.
 
 ## Current Work Block
 
-Work block 4AH-R: Transaction And Supporting Modal Fragment Durability And Release — complete, durable, automatically deployed, and credential-free production health verified.
+Work block 4AI-R: Final HTMX Execution-Switch Durability And Release — active and explicitly authorized.
 
 ## Current Task
 
-Task 1P.4.2b.3: Disable and prove HTMX eval and swapped-script processing — current decision gate and awaiting separate Ryan confirmation; no implementation is authorized.
+Task 1P.4.2b.3-R: Publish and verify final HTMX execution-switch disablement — active; source commit, direct-main fast-forward, automatic deployment observation, credential-free health, and sanitized closeout remain.
 
 ## Owner
 
-Ryan owns the next decision: confirm proposed 4AI or choose another bounded block. Codex owns no further mutation without that direction.
+Codex owns the exact-scope 4AI-R release path. Ryan retains every scope expansion, manual workflow or Fly action, protected-data boundary, recovery beyond clean fast-forward/read-only diagnosis, and the later Task 1P.4.2c decision.
 
 ## Current Action
 
-Publish this sanitized command-center-only 4AH-R closeout with `[skip actions]`, verify local and remote `main` alignment without a second deployment, then await Ryan's decision on proposed 4AI.
+Re-run the maintained release checks, stage only the sixteen verified 4AI paths, commit on `codex/csp-htmx-disablement`, fast-forward and push `main`, observe the automatic Fly deployment read-only, verify credential-free `/health`, then publish the sanitized `[skip actions]` closeout.
+
+## Work Block 4AI-R Contract
+
+- Include Task 1P.4.2b.3-R only: explicitly stage the exact sixteen verified 4AI application, static-asset, maintained-test, CSP contract, issue, findings, evidence, and Runway OS paths; create one intentional source commit on `codex/csp-htmx-disablement`; fast-forward local `main`; push directly to `origin/main` without force or PR; observe the resulting automatic Fly deployment read-only; verify credential-free production `/health`; verify exact source-SHA durability; and create and push one sanitized command-center-only `[skip actions]` closeout commit.
+- Keep Task 1P.4.2c and later tasks, new product or test mutation beyond the verified 4AI set, workflow edits or manual dispatch/rerun, non-automatic Fly actions, credentials, protected data, real databases, retained uploads, authenticated production pages, downstream access or writes, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop in the current task without delegation. Stage explicit paths only, preserve the verified false-switch behavior, observe only the automatic deployment and credential-free health, and use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact path and staged sets, protected paths, high-confidence sensitive additions, full smoke and isolated-browser matrices, Python/JavaScript/JSON syntax, whitespace, dashboard refresh/health/rendered state, commit contents, `main` ancestry, exact remote SHA, automatic workflow result, credential-free production health, final tracked cleanliness, and both preserved untracked files.
+- Report source and closeout commit SHAs, published paths, automatic deployment result, production-health result, local/remote alignment, preserved exclusions, and Task 1P.4.2c still separately gated.
+
+## Work Block 4AI Result
+
+- `allowEval=false` and `allowScriptTags=false` are active through the declarative shared-shell configuration; the vendored HTMX library is unchanged.
+- Tracked template tags contain zero eval-backed HTMX attributes, and the directly returned dashboard/report and transaction/supporting-modal fragments contain zero script elements and zero native inline handlers.
+- HTMX removes inert JSON scripts from swapped content when swapped-script processing is disabled, so the one dashboard chart payload and two split-editor payloads moved to non-script template data read by the existing maintained controllers.
+- The aggregate source inventory is 31 script elements: 22 executable inline scripts, seven external scripts, and two full-page inert JSON scripts; native handlers remain 116 and `hx-on` remains zero. Remaining full-page execution belongs to Task 1P.4.2c.
+- Baseline and final full smoke pass. Configured-auth and no-password isolated Chrome pass shared-shell, repeated dashboard/report, transaction/modal, AI, CSRF, service-worker, drawer, keyboard, denied-network, zero-error, and exact-cleanup checks with both switches false.
+- Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/rendered inspection, exact scope, and both preserved-file checks pass locally.
+- No commit, push, PR, merge, publication, deployment, protected data, credential, real database, external request, live action, vendored HTMX change, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-htmx-execution-switch-disablement-4ai.md`.
+
+## Work Block 4AI Contract
+
+- Include Task 1P.4.2b.3 only: set the declarative HTMX `allowEval` and `allowScriptTags` switches to `false`; replace the three directly swapped inert JSON `<script>` carriers with non-script template carriers because HTMX removes every script when swapped-script processing is disabled; prove there are no `hx-on`, `hx-vars`, JavaScript-valued `hx-vals` or `hx-headers`, trigger-filter, or directly returned script dependencies; and preserve shared-shell, dashboard/report, and transaction/modal behavior across repeated swaps.
+- Keep Task 1P.4.2c, Tasks 1P.4.3-1P.7, the remainder of Task 2, Tasks 3-4, remaining full-page execution, style migration, CSP headers/nonces/enforcement, Plaid, authentication, cookies, CSRF, worker/manifest behavior, product or financial changes, new dependencies, credentials, protected data, real databases, retained uploads, external networking, production/demo, GitHub durability, publication, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop on `codex/csp-htmx-disablement` without delegation or second opinion. Preserve behavior, edit no vendored HTMX library, use temporary synthetic all-entity data and disposable localhost browser state, deny non-localhost requests, require exact cleanup and zero unexpected console/page errors, and keep durability local-only.
+- Stop if an eval-backed HTMX dependency appears; correct behavior requires Task 1P.4.2c or a product/security-policy change; protected data, credentials, real databases, external/live access, a new dependency, plan-changing verification failure, cleanup failure, command-center failure, or preserved-file overlap appears.
+- Verify baseline and final full smoke; source and rendered-response zero-dependency inventory; configured-auth and no-password isolated Chrome across shared shell, repeated dashboard/report swaps, and repeated transaction/modal workflows; runtime false-switch assertions; denied external requests; console/page health; exact cleanup; relevant Python/JavaScript/JSON syntax; whitespace; dashboard refresh/health/rendered inspection; exact scope; and both preserved untracked files.
+- Report the exact switch contract, zero-dependency inventory, cross-route proof, changed paths, cleanup, local branch state, preserved exclusions, and separate publication plus Task 1P.4.2c gates.
 
 ## Work Block 4AH-R Result
 
@@ -52,12 +81,6 @@ Publish this sanitized command-center-only 4AH-R closeout with `[skip actions]`,
 - `allowEval=true` and `allowScriptTags=true` remain intentionally unchanged for separately gated Task 1P.4.2b.3.
 - No commit, push, PR, deployment, production/demo inspection, protected data, credential, real database, retained upload, workflow action, downstream access/write, live action, or preserved-file mutation occurred.
 - Evidence: `command-center/logs/2026-07-22-transaction-modal-fragment-execution-4ah.md`.
-
-## Proposed Work Block 4AI
-
-- Task 1P.4.2b.3 only: set HTMX `allowEval=false` and `allowScriptTags=false`, prove the directly returned fragment inventory remains zero, and run the maintained cross-route synthetic and configured-auth/no-password isolated-browser matrix.
-- Keep Task 1P.4.2c, Tasks 1P.4.3-1P.7, publication/deployment, CSP headers/nonces, Plaid, authentication, protected data, live systems, and both preserved untracked files outside scope.
-- This proposal is not confirmed and authorizes no mutation.
 
 ## Work Block 4AH Contract
 

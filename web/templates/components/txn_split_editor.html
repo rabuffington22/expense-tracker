@@ -128,9 +128,9 @@
 </div>
 
 <!-- Store parent amount and categories for JS -->
-<script type="application/json" id="split-parent-data">
+<template id="split-parent-data" data-json>
 {{ {"amount_cents": parent.amount_cents, "transaction_id": parent.transaction_id} | tojson }}
-</script>
-<script type="application/json" id="split-categories-data">
+</template>
+<template id="split-categories-data" data-json>
 {{ categories | tojson }}
-</script>
+</template>

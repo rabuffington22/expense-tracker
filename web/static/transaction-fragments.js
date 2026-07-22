@@ -63,7 +63,8 @@
             return fallback;
         }
         try {
-            return JSON.parse(element.textContent);
+            var dataSource = element.content || element;
+            return JSON.parse(dataSource.textContent);
         } catch (error) {
             return fallback;
         }

@@ -1,12 +1,12 @@
 # Content Security Policy Compatibility Contract
 
-Status: Task 1P.4.1, Task 1P.4.2a, and both Task 1P.4.2b migration slices are durable and automatically deployed through work block 4AH-R. Final HTMX disablement, page, style/document, header enforcement, and later proof remain separately gated.
+Status: Task 1P.4.1, Task 1P.4.2a, and both Task 1P.4.2b migration slices are durable and automatically deployed through work block 4AH-R. Final HTMX disablement and cross-route proof are complete locally through 4AI; page, style/document, header enforcement, publication, and later proof remain separately gated.
 
 Parent: Phase 4 Task 1P.4 / finding `P3-3J-06`.
 
 ## Purpose And Boundary
 
-This contract defines the target browser policy, the application surfaces that must be migrated before enforcement, and the maintained proof required to close the CSP half of `P3-3J-06`. Work block 4AE created the contract without product mutation. Work block 4AF implemented the shared execution foundation, work block 4AG implemented the dashboard/report fragment slice, and work block 4AH implemented the transaction and supporting-modal fragment slice described below. None added a CSP header, changed authentication or Plaid behavior, or touched any live system.
+This contract defines the target browser policy, the application surfaces that must be migrated before enforcement, and the maintained proof required to close the CSP half of `P3-3J-06`. Work block 4AE created the contract without product mutation. Work block 4AF implemented the shared execution foundation, work block 4AG implemented the dashboard/report fragment slice, work block 4AH implemented the transaction and supporting-modal fragment slice, and work block 4AI disabled HTMX eval and swapped-script processing after replacing three swapped inert JSON script carriers with non-script template data. None added a CSP header, changed authentication or Plaid behavior, or touched any live system.
 
 Protected data, credentials, real databases, live Plaid Link, production/demo inspection, publication, deployment, and both preserved untracked files remain outside this planning artifact.
 
@@ -19,16 +19,16 @@ Protected data, credentials, real databases, live Plaid Link, production/demo in
 
 ## Inventory Summary
 
-The tracked surface contains 46 HTML templates and seven standalone document roots: the shared `base.html` shell, login, three error documents, offline, and standalone `/k/`. After 4AH, the source inventory contains:
+The tracked surface contains 46 HTML templates and seven standalone document roots: the shared `base.html` shell, login, three error documents, offline, and standalone `/k/`. After 4AI, the source inventory contains:
 
 | Surface | Count | Contract consequence |
 | --- | ---: | --- |
-| All `<script>` elements | 34 | Must distinguish local/external executable scripts from inert JSON data. |
+| All `<script>` elements | 31 | Must distinguish local/external executable scripts from the two remaining full-page inert JSON blocks. |
 | Executable inline scripts | 22 | Move to maintained local static JavaScript; a nonce is not a migration substitute. The former shared-shell, dashboard/report fragment, and transaction/modal fragment blocks are now local assets. |
 | External executable scripts | 7 | Local theme, HTMX, app-shell, dashboard-fragment, and transaction-fragment assets plus two exact Plaid Link initializer tags. |
-| Inert `application/json` scripts | 5 | Move to `<template>` or encoded data attributes where practical; never execute swapped data blocks. |
+| Inert `application/json` scripts | 2 | The three directly swapped carriers moved to non-script `<template>` data in 4AI because HTMX removes every script when `allowScriptTags=false`; the two remaining full-page carriers belong to Task 1P.4.2c. |
 | Native inline event-handler attributes | 116 | Replace with delegated or initialized listeners before `script-src-attr 'none'`; the former base, dashboard/report fragment, and transaction/modal fragment handlers are removed. |
-| `hx-on` attributes | 0 | All fragment `hx-on` dependencies are removed; Task 1P.4.2b.3 still owns the isolated cross-route proof before disabling HTMX eval and swapped-script execution. |
+| `hx-on` attributes | 0 | All dependencies remain removed and 4AI proves the configured-auth/no-password cross-route matrix with HTMX eval and swapped-script processing disabled. |
 | Inline `<style>` blocks | 7 | Move to local CSS before strict `style-src-elem`. |
 | Element `style` attributes | 221 | Replace with classes, data-driven classes, custom-property classes, or stylesheet-backed state before strict application policy. |
 | Runtime JavaScript style mutations | At least 33 call sites | Replace `element.style`, `cssText`, or equivalent attribute writes on strict application documents. |
@@ -93,13 +93,13 @@ For `PLAID_ENV=production`, replace the sandbox connect origin with `https://pro
 | Migration slice | Exact work | Completion gate | Suggested bounded task/block |
 | --- | --- | --- | --- |
 | Shared execution foundation | Move `base.html` executable blocks and five native handlers to local JS; replace two base `hx-on` handlers; move indicator CSS to the tracked stylesheet; set only `includeIndicatorStyles=false`; and establish the declarative HTMX configuration point. Keep `allowEval` and `allowScriptTags` at their current values until the remaining fragment dependencies are removed. | Complete locally through 4AF: maintained source assertions and configured-auth/no-password isolated Chrome prove shared navigation, themes, AI chat, service-worker registration, CSRF/HTMX behavior, repeated representative swaps, and responsive drawer behavior with no executable inline shell markup. | Task 1P.4.2a / work block 4AF complete locally. |
-| Swapped-fragment execution | Remove executable scripts and inline handlers from all directly returned HTMX components; replace the remaining two fragment `hx-on` handlers; move server values to inert data; initialize through local static JS and `htmx:load`/delegation; then set `allowEval=false` and `allowScriptTags=false`. | Dashboard/report and transaction/modal slices are complete locally through 4AH. Configured-auth/no-password isolated Chrome preserves repeated swaps, charts, KPI/category/insight/AI behavior, reports, transaction sorting/copy/edit/splits, popup/queue controls, and cleanup. Final disabled-switch cross-route proof remains separately gated. | Tasks 1P.4.2b.1-1P.4.2b.2 / work blocks 4AG-4AH complete locally; Task 1P.4.2b.3 remains separately gated. |
+| Swapped-fragment execution | Remove executable scripts and inline handlers from all directly returned HTMX components; replace the remaining two fragment `hx-on` handlers; carry swapped server values through non-script inert data; initialize through local static JS and `htmx:load`/delegation; then set `allowEval=false` and `allowScriptTags=false`. | Complete locally through 4AI. Configured-auth/no-password isolated Chrome preserves repeated swaps, charts, KPI/category/insight/AI behavior, reports, transaction sorting/copy/edit/splits, popup/queue controls, and cleanup with both switches false and no directly returned script elements. | Tasks 1P.4.2b.1-1P.4.2b.3 / work blocks 4AG-4AI complete locally; 4AI publication remains separate. |
 | Full-page execution | Migrate remaining page-level executable inline scripts and native handlers, including both Plaid entry pages; preserve page-specific initialization through local modules/data. | Every full-page route works with `script-src-attr 'none'` and no inline application script. | Task 1P.4.2c after fragment foundation; split by route cluster if needed. |
 | Application style compatibility | Move seven inline style blocks, 221 attributes, and runtime style writes to static CSS/classes or explicitly bounded data-driven states. | Core pages run under `style-src-attr 'none'`; responsive and visualization behavior passes at maintained breakpoints. | Task 1P.4.3a; likely split into shell/components and page clusters. |
 | Exceptional documents and Plaid | Reconcile login, offline/errors, `/k/`, local SVG data images, worker/manifest, and Plaid route-specific behavior; preserve Plaid's narrow documented style-attribute exception only on Link documents. | Strict families have no exception leakage; mocked Plaid document proves exact policy/header/tag wiring without live Plaid. | Task 1P.4.3b. |
 | Header enforcement and proof | Add route-family header generation and optional Plaid nonce plumbing only after migration gates pass; add maintained request and isolated-browser contracts. | No CSP violations on the required matrix; exact prohibited source probes are blocked; no protected/live dependency. | Task 1P.4.4. |
 
-Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must use the sub-slices above. Work block 4AF completed the shared foundation, work block 4AG completed the dashboard/report fragment slice, and work block 4AH completed the transaction/supporting-modal fragment slice locally. Final global HTMX disablement/proof requires separate confirmation.
+Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must use the sub-slices above. Work block 4AF completed the shared foundation, work block 4AG completed the dashboard/report fragment slice, work block 4AH completed the transaction/supporting-modal fragment slice, and work block 4AI completed global HTMX disablement and cross-route proof locally. Task 1P.4.2c remains separately gated and requires just-in-time route-cluster decomposition.
 
 ## Template Surface Inventory
 
@@ -114,7 +114,7 @@ Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSO
 | `categorize_orphans.html` | 1 | 0 | 0 | 1 | 10 | 0 |
 | `components/ai_analysis.html` | 0 | 0 | 0 | 0 | 0 | 0 |
 | `components/categories_compare.html` | 0 | 0 | 0 | 0 | 4 | 0 |
-| `components/dashboard_body.html` | 0 | 1 | 0 | 0 | 6 | 0 |
+| `components/dashboard_body.html` | 0 | 0 | 0 | 0 | 6 | 0 |
 | `components/dashboard_detail_cats.html` | 0 | 0 | 0 | 0 | 1 | 0 |
 | `components/dashboard_detail_insights.html` | 0 | 0 | 0 | 0 | 2 | 0 |
 | `components/dashboard_ie_insights.html` | 0 | 0 | 0 | 0 | 1 | 0 |
@@ -129,7 +129,7 @@ Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSO
 | `components/txn_results.html` | 0 | 0 | 0 | 0 | 6 | 0 |
 | `components/txn_row.html` | 0 | 0 | 0 | 0 | 3 | 0 |
 | `components/txn_row_edit.html` | 0 | 0 | 0 | 0 | 4 | 0 |
-| `components/txn_split_editor.html` | 0 | 2 | 0 | 0 | 35 | 0 |
+| `components/txn_split_editor.html` | 0 | 0 | 0 | 0 | 35 | 0 |
 | `components/vendor_card.html` | 0 | 0 | 0 | 0 | 2 | 0 |
 | `dashboard.html` | 2 | 0 | 0 | 4 | 0 | 0 |
 | `data_sources.html` | 3 | 0 | 1 | 3 | 7 | 0 |

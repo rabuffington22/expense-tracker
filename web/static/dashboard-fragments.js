@@ -176,7 +176,8 @@
         }
         var points;
         try {
-            points = JSON.parse(dataElement.textContent);
+            var dataSource = dataElement.content || dataElement;
+            points = JSON.parse(dataSource.textContent);
         } catch (error) {
             chart.innerHTML = '<div class="ie-empty">No data</div>';
             return;

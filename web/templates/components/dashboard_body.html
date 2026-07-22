@@ -40,7 +40,7 @@
     {% if ie_max_val == 0 %}
     <div class="ie-empty">No data in last 12 months</div>
     {% else %}
-    <script type="application/json" id="ie-chart-data">{{ ie_points|tojson }}</script>
+    <template id="ie-chart-data" data-json>{{ ie_points|tojson }}</template>
     <div class="ie-chart-wrap">
       <div class="ie-chart" id="ie-line-chart"
            data-fragment-controller="income-expense-chart"

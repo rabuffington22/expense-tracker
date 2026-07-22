@@ -122,8 +122,8 @@ def _assert_shared_shell(page, label: str) -> None:
     )
     _check(state["themeAsset"] and state["shellAsset"], f"{label}: local shell assets must load")
     _check(state["includeIndicatorStyles"] is False, f"{label}: HTMX must not inject indicator CSS")
-    _check(state["allowEval"] is True, f"{label}: HTMX eval must remain temporarily enabled")
-    _check(state["allowScriptTags"] is True, f"{label}: HTMX swapped scripts must remain temporarily enabled")
+    _check(state["allowEval"] is False, f"{label}: HTMX eval must be disabled")
+    _check(state["allowScriptTags"] is False, f"{label}: HTMX swapped scripts must be disabled")
     _check(not state["injectedIndicatorStyle"], f"{label}: HTMX indicator style tag must be absent")
     _check(state["hiddenOpacity"] == "0" and state["requestOpacity"] == "1", f"{label}: local indicator CSS must preserve behavior")
     _check(state["shellFunctions"], f"{label}: compatibility globals must remain available")
@@ -228,8 +228,8 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
         f"{label}: KPI dependent fragment targets must remain available",
     )
     _check(
-        initial["allowEval"] is True and initial["allowScriptTags"] is True,
-        f"{label}: final global HTMX execution switches must remain deferred",
+        initial["allowEval"] is False and initial["allowScriptTags"] is False,
+        f"{label}: final global HTMX execution switches must be disabled",
     )
 
     detail_category = page.locator(
@@ -345,9 +345,7 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
                 const elements = [root, ...root.querySelectorAll('*')];
                 return {
                     charts: root.querySelectorAll('#ie-line-chart svg').length,
-                    executableScripts: root.querySelectorAll(
-                        'script:not([type="application/json"]):not([src])'
-                    ).length,
+                    scriptElements: root.querySelectorAll('script').length,
                     nativeHandlers: elements.reduce((count, element) => count +
                         Array.from(element.attributes || []).filter(
                             (attribute) => /^on[a-z]/i.test(attribute.name)
@@ -356,8 +354,8 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
             }"""
         )
         _check(
-            fragment_state == {"charts": 1, "executableScripts": 0, "nativeHandlers": 0},
-            f"{label} dashboard swap {swap_number}: migrated fragments must reinitialize without inline execution",
+            fragment_state == {"charts": 1, "scriptElements": 0, "nativeHandlers": 0},
+            f"{label} dashboard swap {swap_number}: migrated fragments must reinitialize without script elements or inline execution",
         )
 
     page.goto(f"{base_url}/reports/", wait_until="networkidle")
@@ -421,8 +419,8 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
     _check(initial["asset"], f"{label}: transaction fragment controller must load")
     _check(initial["rows"] > 0, f"{label}: synthetic transaction rows must render")
     _check(
-        initial["allowEval"] is True and initial["allowScriptTags"] is True,
-        f"{label}: final global HTMX execution switches must remain deferred",
+        initial["allowEval"] is False and initial["allowScriptTags"] is False,
+        f"{label}: final global HTMX execution switches must be disabled",
     )
 
     filter_button = page.locator("#txn-filter-form button[type='submit']")
@@ -442,9 +440,7 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
                 const elements = [root, ...root.querySelectorAll('*')];
                 return {
                     targets: document.querySelectorAll('#txn-results').length,
-                    executableScripts: root.querySelectorAll(
-                        'script:not([type="application/json"]):not([src])'
-                    ).length,
+                    scriptElements: root.querySelectorAll('script').length,
                     nativeHandlers: elements.reduce((count, element) => count +
                         Array.from(element.attributes || []).filter(
                             (attribute) => /^on[a-z]/i.test(attribute.name)
@@ -459,7 +455,7 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
         _check(
             fragment_state == {
                 "targets": 1,
-                "executableScripts": 0,
+                "scriptElements": 0,
                 "nativeHandlers": 0,
                 "hxOn": 0,
             },
@@ -582,6 +578,11 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
         '[data-transaction-fragment-initialized="true"]'
     )
     split_root = page.locator('#txn-modal [data-transaction-fragment-controller="split-editor"]')
+    _check(split_root.locator("script").count() == 0, f"{label}: split editor must contain no script elements")
+    _check(
+        page.locator("#txn-modal template[data-json]").count() == 2,
+        f"{label}: split editor must retain both non-script JSON carriers",
+    )
     initial_line_count = split_root.locator(".split-line").count()
     _check(initial_line_count == 2, f"{label}: unsplit transaction must start with two split lines")
     with page.expect_response(
