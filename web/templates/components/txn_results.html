@@ -4,30 +4,36 @@
     {% if category_name %} in <strong>{{ category_name }}</strong>{% endif %}
   </span>
   <button type="button" class="btn btn-secondary btn-sm"
-          onclick="txnCopyList(this)" title="Copy list to clipboard">Copy List</button>
+          data-transaction-fragment-action="copy-list"
+          title="Copy list to clipboard">Copy List</button>
 </div>
 
 <div class="table-wrap">
   <table>
     <thead>
       <tr>
-        <th style="width:85px;cursor:pointer;" onclick="sortBy('date')">
+        <th style="width:85px;cursor:pointer;"
+            data-transaction-fragment-action="sort" data-sort-column="date">
           Date
           {% if params.sort == 'date' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="cursor:pointer;" onclick="sortBy('merchant')">
+        <th style="cursor:pointer;"
+            data-transaction-fragment-action="sort" data-sort-column="merchant">
           Description
           {% if params.sort == 'merchant' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:120px;padding-right:2rem;cursor:pointer;" class="text-right" onclick="sortBy('amount')">
+        <th style="width:120px;padding-right:2rem;cursor:pointer;" class="text-right"
+            data-transaction-fragment-action="sort" data-sort-column="amount">
           Amount
           {% if params.sort == 'amount' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:155px;cursor:pointer;" onclick="sortBy('category')">
+        <th style="width:155px;cursor:pointer;"
+            data-transaction-fragment-action="sort" data-sort-column="category">
           Category
           {% if params.sort == 'category' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:155px;cursor:pointer;" onclick="sortBy('subcategory')">
+        <th style="width:155px;cursor:pointer;"
+            data-transaction-fragment-action="sort" data-sort-column="subcategory">
           Subcategory
           {% if params.sort == 'subcategory' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>

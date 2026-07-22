@@ -5,7 +5,8 @@ Uses a temporary synthetic DATA_DIR, the installed Google Chrome channel, and
 blocked non-localhost browser requests. No production credentials or data are
 required. Covers the mobile drawer plus theme, HTMX configuration and swaps,
 AI modal listeners, CSRF wiring, service-worker registration, and configured-
-auth/no-password shell loading.
+auth/no-password shell loading. Transaction and supporting modal fragment
+controls run only against the temporary synthetic databases.
 """
 
 from __future__ import annotations
@@ -178,6 +179,28 @@ def _seed_dashboard_data(entity_key: str) -> None:
         "source_filename, imported_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         rows,
     )
+    auto_split_txn_id = f"4ag-{entity_key}-expense-00"
+    order_cursor = conn.execute(
+        "INSERT INTO amazon_orders "
+        "(order_id, order_date, product_summary, order_total, order_total_cents, "
+        "matched_transaction_id, imported_at) VALUES (?, ?, ?, 10.00, 1000, ?, ?)",
+        (
+            f"4ah-{entity_key}-auto-split-order",
+            today,
+            "Synthetic browser split fixtures",
+            auto_split_txn_id,
+            imported_at,
+        ),
+    )
+    conn.executemany(
+        "INSERT INTO order_line_items "
+        "(amazon_order_id, product_name, quantity, unit_price_cents, item_total_cents, "
+        "category, subcategory, created_at) VALUES (?, ?, 1, ?, ?, ?, 'General', ?)",
+        (
+            (order_cursor.lastrowid, "Synthetic office item", 400, 400, "Office Supplies", imported_at),
+            (order_cursor.lastrowid, "Synthetic food item", 600, 600, "Food", imported_at),
+        ),
+    )
     conn.commit()
     conn.close()
 
@@ -219,6 +242,28 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
     _check(detail_subcategories.is_visible(), f"{label}: delegated category control must expand")
     detail_category.click()
     _check(detail_subcategories.is_hidden(), f"{label}: delegated category control must collapse")
+    detail_category.click()
+    subcategory_row = detail_subcategories.locator(
+        '[data-fragment-action="open-subcategory-popup"]'
+    ).first
+    with page.expect_response(
+        lambda response: "/dashboard/subcategory-txns" in response.url
+    ) as response_info:
+        subcategory_row.click()
+    _check(response_info.value.status == 200, f"{label}: subcategory popup request must return 200")
+    page.wait_for_selector(
+        '#dcat-popup-body [data-transaction-fragment-action="close-subcategory-popup"]'
+    )
+    subcategory_popup = page.locator("#dcat-popup-scrim")
+    _check(subcategory_popup.is_visible(), f"{label}: subcategory popup must open")
+    page.locator(
+        '#dcat-popup-body [data-transaction-fragment-action="close-subcategory-popup"]'
+    ).click()
+    _check(subcategory_popup.is_hidden(), f"{label}: delegated subcategory popup control must close")
+    _check(
+        page.locator("#dcat-popup-body").inner_html() == "",
+        f"{label}: subcategory popup close must clear the swapped fragment",
+    )
 
     page.wait_for_selector('#detail-insights [data-fragment-action="open-insight-modal"]')
     with page.expect_response(
@@ -362,6 +407,288 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
     )
 
 
+def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None:
+    page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
+    _assert_shared_shell(page, f"{label} transactions shell")
+    initial = page.evaluate(
+        """() => ({
+            asset: Boolean(document.querySelector('script[src*="transaction-fragments.js"]')),
+            rows: document.querySelectorAll('#txn-results tr.txn-clickable').length,
+            allowEval: window.htmx.config.allowEval,
+            allowScriptTags: window.htmx.config.allowScriptTags,
+        })"""
+    )
+    _check(initial["asset"], f"{label}: transaction fragment controller must load")
+    _check(initial["rows"] > 0, f"{label}: synthetic transaction rows must render")
+    _check(
+        initial["allowEval"] is True and initial["allowScriptTags"] is True,
+        f"{label}: final global HTMX execution switches must remain deferred",
+    )
+
+    filter_button = page.locator("#txn-filter-form button[type='submit']")
+    for swap_number in (1, 2):
+        with page.expect_response(
+            lambda response: "/transactions/partial" in response.url
+        ) as response_info:
+            filter_button.click()
+        _check(
+            response_info.value.status == 200,
+            f"{label} transaction swap {swap_number}: partial must return 200",
+        )
+        page.wait_for_selector("#txn-results tr.txn-clickable")
+        fragment_state = page.evaluate(
+            """() => {
+                const root = document.getElementById('txn-results');
+                const elements = [root, ...root.querySelectorAll('*')];
+                return {
+                    targets: document.querySelectorAll('#txn-results').length,
+                    executableScripts: root.querySelectorAll(
+                        'script:not([type="application/json"]):not([src])'
+                    ).length,
+                    nativeHandlers: elements.reduce((count, element) => count +
+                        Array.from(element.attributes || []).filter(
+                            (attribute) => /^on[a-z]/i.test(attribute.name)
+                        ).length, 0),
+                    hxOn: elements.reduce((count, element) => count +
+                        Array.from(element.attributes || []).filter(
+                            (attribute) => attribute.name.startsWith('hx-on')
+                        ).length, 0),
+                };
+            }"""
+        )
+        _check(
+            fragment_state == {
+                "targets": 1,
+                "executableScripts": 0,
+                "nativeHandlers": 0,
+                "hxOn": 0,
+            },
+            f"{label} transaction swap {swap_number}: result fragment must remain execution-free",
+        )
+
+    with page.expect_response(
+        lambda response: "/transactions/partial" in response.url
+    ) as response_info:
+        page.locator(
+            '#txn-results [data-transaction-fragment-action="sort"][data-sort-column="amount"]'
+        ).click()
+    _check(response_info.value.status == 200, f"{label}: delegated transaction sort must return 200")
+    _check(
+        page.locator("#sort-field").input_value() == "amount",
+        f"{label}: delegated transaction sort must update the filter state",
+    )
+
+    page.evaluate(
+        """() => {
+            navigator.clipboard.writeText = (text) => {
+                window.__transactionFragmentClipboard = text;
+                return Promise.resolve();
+            };
+        }"""
+    )
+    copy_button = page.locator(
+        '#txn-results [data-transaction-fragment-action="copy-list"]'
+    )
+    copy_button.click()
+    page.wait_for_function(
+        "document.querySelector('[data-transaction-fragment-action=\"copy-list\"]').textContent.trim() === 'Copied!'"
+    )
+    _check(
+        bool(page.evaluate("window.__transactionFragmentClipboard")),
+        f"{label}: delegated copy control must produce a visible transaction list",
+    )
+
+    first_row = page.locator('#txn-results tr[id^="txn-4ag-personal-expense-00"]').first
+    first_row.click()
+    page.wait_for_selector("#txn-modal .txn-modal-backdrop")
+    page.locator(
+        '#txn-modal [data-transaction-fragment-action="close-transaction-modal"]'
+    ).click()
+    _check(page.locator("#txn-modal").inner_html() == "", f"{label}: modal close button must clear the fragment")
+
+    first_row.click()
+    page.wait_for_selector("#txn-modal .txn-modal-backdrop")
+    page.locator("#txn-modal .txn-modal-backdrop").click(position={"x": 4, "y": 4})
+    _check(page.locator("#txn-modal").inner_html() == "", f"{label}: backdrop click must close the modal")
+
+    first_row.click()
+    page.wait_for_selector("#txn-modal .txn-modal-form")
+    with page.expect_response(
+        lambda response: "/transactions/suggest/" in response.url
+    ) as response_info:
+        page.locator(
+            '#txn-modal [data-transaction-fragment-action="suggest-category"]'
+        ).click()
+    _check(response_info.value.status == 200, f"{label}: synthetic AI suggestion must return 200")
+    page.wait_for_function(
+        "!document.querySelector('[data-transaction-fragment-action=\"suggest-category\"]').disabled"
+    )
+    _check(
+        page.locator("#txn-modal .txn-ai-reason").text_content()
+        == "Synthetic local-only browser suggestion",
+        f"{label}: delegated suggestion control must render the synthetic reason",
+    )
+    subcategory_select = page.locator('#txn-modal select[name="subcategory"]')
+    subcategory_select.select_option("__new__")
+    subcategory_input = page.locator("#txn-modal .txn-subcat-add")
+    _check(subcategory_input.is_visible(), f"{label}: delegated subcategory change must expose the input")
+    subcategory_input.fill("Synthetic Browser Subcategory")
+    subcategory_input.press("Enter")
+    _check(
+        subcategory_select.input_value() == "Synthetic Browser Subcategory"
+        and subcategory_input.is_hidden(),
+        f"{label}: delegated Enter handler must add and select the new subcategory",
+    )
+    page.locator('#txn-modal input[name="notes"]').fill("synthetic fragment browser verification")
+    with page.expect_response(
+        lambda response: "/transactions/update/" in response.url
+    ) as response_info:
+        page.locator('#txn-modal button[type="submit"]').click()
+    _check(response_info.value.status == 200, f"{label}: transaction edit save must return 200")
+    page.wait_for_function("document.getElementById('txn-modal').innerHTML === ''")
+
+    page.evaluate(
+        """() => window.htmx.ajax(
+            'GET', '/transactions/edit-row/4ag-personal-expense-00',
+            {target: '#txn-modal', swap: 'innerHTML'}
+        )"""
+    )
+    page.wait_for_selector("#txn-modal .txn-modal-form")
+    page.wait_for_timeout(100)
+    with page.expect_response(
+        lambda response: "/transactions/create-rule/" in response.url
+    ) as response_info:
+        page.locator('#txn-modal button[hx-post*="/transactions/create-rule/"]').click()
+    _check(response_info.value.status == 200, f"{label}: delegated rule action must return 200")
+    page.wait_for_function("document.getElementById('txn-modal').innerHTML === ''")
+
+    page.evaluate(
+        """() => window.htmx.ajax(
+            'GET', '/transactions/edit-row/4ag-personal-expense-00',
+            {target: '#txn-modal', swap: 'innerHTML'}
+        )"""
+    )
+    page.wait_for_selector("#txn-modal .txn-modal-form")
+    page.wait_for_timeout(100)
+    with page.expect_response(
+        lambda response: response.url.endswith("/transactions/splits/4ag-personal-expense-00")
+    ) as response_info:
+        page.locator(
+            '#txn-modal button[hx-get="/transactions/splits/4ag-personal-expense-00"]'
+        ).click()
+    _check(response_info.value.status == 200, f"{label}: split editor request must return 200")
+    page.wait_for_selector(
+        '#txn-modal [data-transaction-fragment-controller="split-editor"]'
+        '[data-transaction-fragment-initialized="true"]'
+    )
+    split_root = page.locator('#txn-modal [data-transaction-fragment-controller="split-editor"]')
+    initial_line_count = split_root.locator(".split-line").count()
+    _check(initial_line_count == 2, f"{label}: unsplit transaction must start with two split lines")
+    with page.expect_response(
+        lambda response: "/splits/" in response.url and response.url.endswith("/auto")
+    ) as response_info:
+        split_root.locator('[data-transaction-fragment-action="split-auto"]').click()
+    _check(response_info.value.status == 200, f"{label}: delegated auto-split must return 200")
+    page.wait_for_selector(
+        '#txn-modal [data-transaction-fragment-controller="split-editor"]'
+        '[data-transaction-fragment-initialized="true"] '
+        '[data-transaction-fragment-action="split-delete-all"]'
+    )
+    page.once("dialog", lambda dialog: dialog.accept())
+    with page.expect_response(
+        lambda response: "/splits/" in response.url and response.url.endswith("/delete")
+    ) as response_info:
+        page.locator(
+            '#txn-modal [data-transaction-fragment-action="split-delete-all"]'
+        ).click()
+    _check(response_info.value.status == 200, f"{label}: auto-split cleanup must return 200")
+    page.wait_for_function("document.getElementById('txn-modal').innerHTML === ''")
+
+    page.evaluate(
+        """() => window.htmx.ajax(
+            'GET', '/transactions/edit-row/4ag-personal-expense-00',
+            {target: '#txn-modal', swap: 'innerHTML'}
+        )"""
+    )
+    page.wait_for_selector("#txn-modal .txn-modal-form")
+    page.wait_for_timeout(100)
+    with page.expect_response(
+        lambda response: response.url.endswith("/transactions/splits/4ag-personal-expense-00")
+    ) as response_info:
+        page.locator(
+            '#txn-modal button[hx-get="/transactions/splits/4ag-personal-expense-00"]'
+        ).click()
+    _check(response_info.value.status == 200, f"{label}: manual split editor request must return 200")
+    page.wait_for_selector(
+        '#txn-modal [data-transaction-fragment-controller="split-editor"]'
+        '[data-transaction-fragment-initialized="true"]'
+    )
+    split_root = page.locator('#txn-modal [data-transaction-fragment-controller="split-editor"]')
+    split_root.locator('[data-transaction-fragment-action="split-add-line"]').click()
+    _check(split_root.locator(".split-line").count() == 3, f"{label}: delegated split add must append a line")
+    split_root.locator('[data-transaction-fragment-action="split-remove-line"]').last.click()
+    _check(split_root.locator(".split-line").count() == 2, f"{label}: delegated split remove must remove a line")
+    parent_cents = int(split_root.get_attribute("data-parent-cents"))
+    first_cents = int(parent_cents / 2)
+    second_cents = parent_cents - first_cents
+    amount_inputs = split_root.locator(".split-amount")
+    amount_inputs.nth(0).fill(str(first_cents))
+    amount_inputs.nth(1).fill(str(second_cents))
+    expected_total = f"{'\u2212' if parent_cents < 0 else ''}${abs(parent_cents) / 100:,.2f}"
+    _check(
+        split_root.locator("#split-total-display").text_content() == expected_total,
+        f"{label}: split running total must track delegated amount input",
+    )
+    with page.expect_response(
+        lambda response: "/splits/" in response.url and response.url.endswith("/save")
+    ) as response_info:
+        split_root.locator('[data-transaction-fragment-action="split-save"]').click()
+    _check(response_info.value.status == 200, f"{label}: split save must return 200")
+    page.wait_for_function("document.getElementById('txn-modal').innerHTML === ''")
+    page.wait_for_selector("#txn-results tr.txn-clickable")
+    page.evaluate(
+        """() => window.htmx.ajax(
+            'GET', '/transactions/splits/4ag-personal-expense-00',
+            {target: '#txn-modal', swap: 'innerHTML'}
+        )"""
+    )
+    page.wait_for_selector(
+        '#txn-modal [data-transaction-fragment-action="split-delete-all"]'
+    )
+    page.once("dialog", lambda dialog: dialog.accept())
+    with page.expect_response(
+        lambda response: "/splits/" in response.url and response.url.endswith("/delete")
+    ) as response_info:
+        page.locator(
+            '#txn-modal [data-transaction-fragment-action="split-delete-all"]'
+        ).click()
+    _check(response_info.value.status == 200, f"{label}: manual split cleanup must return 200")
+    page.wait_for_function("document.getElementById('txn-modal').innerHTML === ''")
+
+    page.goto(f"{base_url}/todo/", wait_until="networkidle")
+    _assert_shared_shell(page, f"{label} todo shell")
+    with page.expect_response(
+        lambda response: "/todo/queue/large-txns" in response.url
+    ) as response_info:
+        page.locator('[hx-get="/todo/queue/large-txns"]').click()
+    _check(response_info.value.status == 200, f"{label}: todo queue fragment must return 200")
+    page.wait_for_selector(
+        '#tq-modal-body [data-transaction-fragment-action="close-todo-queue"]'
+    )
+    todo_modal = page.locator("#tq-modal-scrim")
+    _check(todo_modal.is_visible(), f"{label}: todo queue modal must open")
+    page.locator(
+        '#tq-modal-body [data-transaction-fragment-action="close-todo-queue"]'
+    ).click()
+    _check(todo_modal.is_hidden(), f"{label}: delegated todo queue control must close")
+    _check(
+        page.locator("#tq-modal-body").inner_html() == "",
+        f"{label}: todo queue close must clear the swapped fragment",
+    )
+    page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
+    page.wait_for_selector("#txn-results tr.txn-clickable")
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -378,6 +705,8 @@ def main() -> None:
     blocked_urls: list[str] = []
     console_errors: list[str] = []
     page_errors: list[str] = []
+    ai_client_module = None
+    original_category_suggestion = None
 
     try:
         with tempfile.TemporaryDirectory(prefix="expense_drawer_browser_") as temp_root:
@@ -398,7 +727,15 @@ def main() -> None:
             )
 
             from core.db import init_db
+            from core import ai_client as ai_client_module
             from web import create_app
+
+            original_category_suggestion = ai_client_module.generate_category_suggestion
+            ai_client_module.generate_category_suggestion = lambda **_kwargs: {
+                "category": "Office Supplies",
+                "subcategory": "General",
+                "reason": "Synthetic local-only browser suggestion",
+            }
 
             for entity_key in ("personal", "company", "luxelegacy"):
                 init_db(entity_key)
@@ -642,24 +979,9 @@ def main() -> None:
                     page, base_url, "no-password fragment execution"
                 )
 
-                page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
-                _assert_shared_shell(page, "transactions shell")
-                filter_button = page.locator("#txn-filter-form button[type='submit']")
-                for swap_number in (1, 2):
-                    with page.expect_response(
-                        lambda response: "/transactions/partial" in response.url
-                    ) as response_info:
-                        filter_button.click()
-                    _check(
-                        response_info.value.status == 200,
-                        f"HTMX swap {swap_number}: transaction partial must return 200",
-                    )
-                    page.wait_for_timeout(50)
-                    _check(
-                        page.locator("#txn-results").count() == 1,
-                        f"HTMX swap {swap_number}: transaction results target must remain",
-                    )
-                    _assert_shared_shell(page, f"HTMX swap {swap_number}")
+                _assert_transaction_modal_fragments(
+                    page, base_url, "no-password fragment execution"
+                )
 
                 page.locator("body").press("/")
                 _check(
@@ -757,6 +1079,9 @@ def main() -> None:
                 _assert_dashboard_report_fragments(
                     page, base_url, "configured-auth fragment execution"
                 )
+                _assert_transaction_modal_fragments(
+                    page, base_url, "configured-auth fragment execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -797,10 +1122,12 @@ def main() -> None:
             server.server_close()
         if server_thread is not None:
             server_thread.join(timeout=5)
+        if ai_client_module is not None and original_category_suggestion is not None:
+            ai_client_module.generate_category_suggestion = original_category_suggestion
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report fragments, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, split save/delete, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

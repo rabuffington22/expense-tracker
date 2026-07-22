@@ -1,22 +1,26 @@
-<div class="txn-modal-backdrop" onclick="if(event.target===this)this.parentElement.innerHTML=''">
+<div class="txn-modal-backdrop"
+     data-transaction-fragment-action="close-transaction-modal-on-backdrop">
   <div class="txn-modal-card">
     <div class="txn-modal-header">
       <div>
         <div class="txn-modal-merchant">{{ txn.merchant_canonical or (txn.description_raw[:60] if txn.description_raw else '—') }}</div>
         <div class="txn-modal-meta">{{ fmt_date(txn.date) }} · {{ fmt_cents(txn.amount_cents) }}</div>
       </div>
-      <button type="button" class="btn-icon" onclick="document.getElementById('txn-modal').innerHTML=''" title="Close" aria-label="Close">&#10005;</button>
+      <button type="button" class="btn-icon"
+              data-transaction-fragment-action="close-transaction-modal"
+              title="Close" aria-label="Close">&#10005;</button>
     </div>
 
     <form class="txn-modal-form"
           hx-post="{{ url_for('transactions.update', txn_id=txn.transaction_id) }}"
           hx-target="#txn-{{ txn.transaction_id }}"
           hx-swap="outerHTML"
-          hx-on::after-request="document.getElementById('txn-modal').innerHTML=''">
+          data-close-transaction-modal-after-request>
 
       <label class="text-xs text-muted">Category</label>
       <select name="category" class="input-sm txn-edit-cat"
-              onchange="txnLoadSubcats(this, '{{ txn.transaction_id }}')">
+              data-transaction-fragment-change="edit-category"
+              data-transaction-id="{{ txn.transaction_id|e }}">
         {% for cat in categories %}
         <option value="{{ cat }}" {% if cat == (txn.category or '') %}selected{% endif %}>{{ cat }}</option>
         {% endfor %}
@@ -26,7 +30,8 @@
       <select name="subcategory" class="input-sm"
               id="txn-subcat-{{ txn.transaction_id }}"
               data-current="{{ txn.subcategory or '' }}"
-              onchange="txnSubcatChange(this, '{{ txn.transaction_id }}')">
+              data-transaction-fragment-change="edit-subcategory"
+              data-transaction-id="{{ txn.transaction_id|e }}">
         {% for sub in subcategories %}
         <option value="{{ sub }}" {% if sub == (txn.subcategory or 'Unknown') %}selected{% endif %}>{{ sub }}</option>
         {% endfor %}
@@ -34,7 +39,8 @@
       </select>
       <input type="text" class="input-sm txn-subcat-add" placeholder="Type name, press Enter…"
              id="txn-subcat-input-{{ txn.transaction_id }}" hidden
-             onkeydown="if(event.key==='Enter'){event.preventDefault();txnSubcatAdd('{{ txn.transaction_id }}');}">
+             data-transaction-fragment-keydown="add-subcategory"
+             data-transaction-id="{{ txn.transaction_id|e }}">
 
       <label class="text-xs text-muted">Notes</label>
       <input type="text" name="notes" class="input-sm" placeholder="Notes..."
@@ -63,13 +69,14 @@
         <button type="submit" class="btn btn-primary btn-sm">Save</button>
         <button type="button" class="btn btn-secondary btn-sm"
                 id="txn-suggest-{{ txn.transaction_id }}"
-                onclick="txnSuggestCategory('{{ txn.transaction_id }}')">AI Suggest</button>
+                data-transaction-fragment-action="suggest-category"
+                data-transaction-id="{{ txn.transaction_id|e }}">AI Suggest</button>
         <button type="button" class="btn btn-secondary btn-sm"
                 hx-post="{{ url_for('transactions.create_rule', txn_id=txn.transaction_id) }}"
                 hx-include="closest form"
                 hx-target="#txn-{{ txn.transaction_id }}"
                 hx-swap="outerHTML"
-                hx-on::after-request="document.getElementById('txn-modal').innerHTML=''">Always This Category</button>
+                data-close-transaction-modal-after-request>Always This Category</button>
       </div>
       <div style="margin-top:0.5rem; border-top: 1px solid var(--border); padding-top: 0.5rem;">
         <button type="button" class="btn btn-sm"

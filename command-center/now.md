@@ -2,27 +2,61 @@
 
 ## Active Objective
 
-Hold the durable, deployed, and health-verified Task 1P.4.2b.1 result and await Ryan's decision on proposed work block 4AH for the separately gated transaction-and-supporting-modal fragment slice.
+Publish and release the exact verified 4AH transaction/modal fragment result through confirmed work block 4AH-R while keeping Task 1P.4.2b.3 separately gated.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2b.1 is durable, automatically deployed, and credential-free health verified through work block 4AG-R while later fragment slices remain separate gates.
+Phase 4: Core Repairs And Regression Coverage — active; work block 4AH-R owns exact-scope durability, automatic release observation, and credential-free health verification for completed 4AH.
 
 ## Current Work Block
 
-Work block 4AG-R: Dashboard And Report Fragment Durability And Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AH-R: Transaction And Supporting Modal Fragment Durability And Release — active and confirmed.
 
 ## Current Task
 
-Task 1P.4.2b.2: Migrate transaction and supporting modal fragment execution — proposed as work block 4AH and awaiting separate confirmation.
+Task 1P.4.2b.2-R: Publish and verify transaction and supporting modal fragment execution — active through confirmed work block 4AH-R.
 
 ## Owner
 
-Ryan owns confirmation, revision, or deferral of proposed work block 4AH plus future publication and live decisions. Codex Desktop owns the durable verified 4AG-R record and future implementation only after a new confirmation.
+Codex Desktop owns exact staging, Git safety, source commit creation, clean fast-forward to `main`, direct push, read-only automatic-deployment observation, credential-free health verification, and sanitized closeout. Ryan owns every scope expansion, manual live mutation, failure recovery, and Task 1P.4.2b.3 decision.
 
 ## Current Action
 
-Decide proposed work block 4AH for Task 1P.4.2b.2 only. Do not infer authorization for transaction/editor/supporting-modal migration or final HTMX execution disablement from completed 4AG-R durability.
+Verify the exact eighteen-path 4AH source set, commit it on `codex/csp-transaction-modal-fragments`, fast-forward local `main`, push directly to `origin/main`, observe the resulting automatic Fly deployment read-only, verify credential-free production `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+
+## Work Block 4AH-R Contract
+
+- Include Task 1P.4.2b.2-R only: publish the exact eighteen verified 4AH application, static-asset, maintained-test, CSP contract, issue, findings, evidence, and Runway OS paths; create one intentional source commit on `codex/csp-transaction-modal-fragments`; fast-forward local `main`; push directly to `origin/main` without force or PR; observe the resulting automatic Fly deployment read-only; verify credential-free production `/health`; verify exact source-SHA durability; and create and push one sanitized command-center-only `[skip actions]` closeout commit.
+- Keep Task 1P.4.2b.3 and later tasks, new product or test mutation beyond the verified 4AH set, workflow edits or manual dispatch/rerun, non-automatic Fly actions, credentials, protected data, real databases, retained uploads, authenticated production pages, downstream access or writes, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Stage explicit paths only. Preserve `allowEval=true`, `allowScriptTags=true`, the verified 4AH behavior, both unrelated untracked files, and proposed 4AI as unconfirmed after release.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify the exact path and staged sets, protected paths, high-confidence sensitive additions, full smoke and isolated-browser suites, Python/JavaScript/JSON syntax, whitespace, dashboard refresh/health/rendered state, commit contents, `main` ancestry, exact remote SHA, automatic workflow result, credential-free production health, final tracked cleanliness, and both preserved untracked files.
+- Report source and closeout commit SHAs, published paths, automatic deployment result, production-health result, local/remote alignment, preserved exclusions, and proposed 4AI still separately gated.
+
+## Work Block 4AH Result
+
+- The five included fragments contain zero executable inline scripts, zero native inline handlers, and zero `hx-on` attributes. The repository aggregate is now 22 executable inline scripts, seven external executable scripts, five inert JSON blocks, 116 native handlers, and zero `hx-on` attributes.
+- `web/static/transaction-fragments.js` owns delegated transaction sorting/copy, edit/subcategory, suggestion/rule, modal, popup/queue, and split behavior with idempotent `htmx:load` initialization. Existing full-page transaction helpers remain unchanged for Task 1P.4.2c.
+- Baseline and final full smoke passed. Configured-auth and no-password isolated Chrome passed repeated swaps, sort/copy, edit/save, synthetic suggestion, rule, split add/remove/auto/save/delete, popup/queue closure, denied external traffic, zero console/page errors, and exact temporary all-entity cleanup.
+- Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/rendered inspection, exact scope, and both preserved-file checks passed.
+- `allowEval=true` and `allowScriptTags=true` remain intentionally unchanged for separately gated Task 1P.4.2b.3.
+- No commit, push, PR, deployment, production/demo inspection, protected data, credential, real database, retained upload, workflow action, downstream access/write, live action, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-transaction-modal-fragment-execution-4ah.md`.
+
+## Proposed Work Block 4AI
+
+- Task 1P.4.2b.3 only: set HTMX `allowEval=false` and `allowScriptTags=false`, prove the directly returned fragment inventory remains zero, and run the maintained cross-route synthetic and configured-auth/no-password isolated-browser matrix.
+- Keep Task 1P.4.2c, Tasks 1P.4.3-1P.7, publication/deployment, CSP headers/nonces, Plaid, authentication, protected data, live systems, and both preserved untracked files outside scope.
+- This proposal is not confirmed and authorizes no mutation.
+
+## Work Block 4AH Contract
+
+- Include Task 1P.4.2b.2 only: move the one executable script, twenty-eight native inline handlers, and two `hx-on` handlers from `txn_results.html`, `txn_row_edit.html`, `txn_split_editor.html`, `subcat_txns_popup.html`, and `todo_queue_detail.html` into maintained local JavaScript and declarative data; preserve sorting, copy, edit, suggestion, rule, split, popup, queue, modal, and cleanup behavior across repeated swaps.
+- Keep Task 1P.4.2b.3, Task 1P.4.2c, Tasks 1P.4.3-1P.7, the remainder of Task 2, Tasks 3-4, global `allowEval=false` or `allowScriptTags=false`, remaining full-page execution, style-policy migration, CSP headers or nonces, Plaid, authentication, cookies, CSRF, service-worker/manifest behavior, responsive redesign, financial behavior, new dependencies, protected data, credentials, real databases, retained uploads, external networking, production/demo, GitHub durability, publication, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use Codex Desktop in the current task on `codex/csp-transaction-modal-fragments` without delegation or second opinion. Preserve visual and behavioral parity, use inert data and delegated or idempotent HTMX initialization, add no runtime dependency, keep `allowEval=true` and `allowScriptTags=true`, use temporary synthetic all-entity data and disposable localhost browser state, deny non-localhost requests, clean up exactly, and keep durability local-only.
+- Stop if parity requires migrating full-page execution or changing global HTMX compatibility; a product/design, authentication, CSP-header, style-policy, Plaid, financial-behavior, or new-dependency decision appears; protected data, credentials, real databases, external/live access, another task, plan-changing verification failure, cleanup failure, command-center failure, or preserved-file overlap appears.
+- Verify baseline and final full synthetic smoke; source inventory proving the five included fragments contain zero executable scripts, zero native inline handlers, and zero `hx-on` attributes; configured-auth and no-password isolated Chrome across repeated transaction filtering/sorting/copy, edit/cancel/save, suggestion/rule, split, popup, queue, modal, and cleanup behavior; denied external requests, console/page health, entity isolation, exact cleanup, relevant Python/JavaScript/JSON syntax, whitespace, dashboard refresh/health/rendered inspection, exact product boundary, and both preserved untracked files.
+- Report exact migrated behavior, local asset structure, zeroed fragment inventory, continued temporary HTMX settings, focused and full verification, changed paths, cleanup, local-only branch state, and a separately confirmable Task 1P.4.2b.3 work block.
 
 ## Work Block 4AG-R Result
 
@@ -49,7 +83,7 @@ Decide proposed work block 4AH for Task 1P.4.2b.2 only. Do not infer authorizati
 - Nine executable dashboard/report fragment scripts, twelve template-native handlers, and one Python-rendered insight-detail handler moved to `web/static/dashboard-fragments.js`, inert data attributes/JSON, delegated actions, and idempotent `htmx:load` initialization.
 - Repeated dashboard body/KPI/category/insight/AI/chart and report swaps preserve chart rendering, dependent fragment loads, category/report expansion, insight modal open/close/dismiss behavior, and AI row toggles.
 - The nine included templates now contain zero executable inline scripts, zero native inline handlers, and zero `hx-on` attributes. Deferred Task 1P.4.2b.2 contains one executable script, twenty-eight native handlers, and two `hx-on` attributes.
-- `allowEval=true` and `allowScriptTags=true` remain intentionally unchanged until separately gated Tasks 1P.4.2b.2-1P.4.2b.3 remove the remaining fragment dependencies and run final cross-route proof.
+- `allowEval=true` and `allowScriptTags=true` remain intentionally unchanged; Task 1P.4.2b.2 is now complete locally through 4AH, and separately gated Task 1P.4.2b.3 owns final cross-route proof and disablement.
 - Full synthetic smoke, configured-auth and no-password isolated Chrome, repeated swaps, Python/JavaScript syntax, JSON, whitespace, denied external networking, zero console/page errors, temporary all-entity cleanup, dashboard refresh/health, and rendered inspection pass.
 - Both unrelated untracked files remain preserved. Evidence: `command-center/logs/2026-07-22-dashboard-report-fragment-execution-4ag.md`.
 

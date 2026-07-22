@@ -8500,8 +8500,8 @@ def main() -> None:
             for source in template_sources
         )
         _check(
-            remaining_hx_on == 2 and remaining_inline_scripts > 0,
-            "shared shell CSP: fragment/page dependencies must remain explicit until Tasks 1P.4.2b-1P.4.2c",
+            remaining_hx_on == 0 and remaining_inline_scripts > 0,
+            "shared shell CSP: fragment hx-on dependencies must be removed while full-page script migration remains deferred to Task 1P.4.2c",
         )
 
         print("   ✅ Local shell assets, handler removal, indicator CSS, HTMX config, rendered assets, and residual dependency assertions passed")
@@ -8566,7 +8566,19 @@ def main() -> None:
             "dashboard insight detail: Python-rendered modal controls must use the delegated action contract",
         )
 
-        remaining_fragment_paths = [
+        _check(
+            '"allowEval":true' in base_source and '"allowScriptTags":true' in base_source,
+            "dashboard/report fragments: global HTMX execution switches remain deferred to Task 1P.4.2b.3",
+        )
+
+        print("   ✅ Migrated fragment sources, delegated controller, rendered asset, Python response, and deferred HTMX switches passed")
+
+        # ── 11d. Transaction and supporting modal fragment execution ────────────────
+        print("\n11d. Transaction and supporting modal fragment execution…")
+
+        transaction_fragment_asset = PROJECT_ROOT / "web" / "static" / "transaction-fragments.js"
+        transaction_fragment_source = transaction_fragment_asset.read_text()
+        transaction_fragment_paths = [
             templates_root / "components" / name
             for name in (
                 "txn_results.html",
@@ -8576,22 +8588,83 @@ def main() -> None:
                 "todo_queue_detail.html",
             )
         ]
-        remaining_fragment_sources = [path.read_text() for path in remaining_fragment_paths]
-        remaining_fragment_scripts = sum(
-            len(executable_script_pattern.findall(source))
-            for source in remaining_fragment_sources
-        )
-        remaining_fragment_handlers = sum(
-            len(native_handler_pattern.findall(source))
-            for source in remaining_fragment_sources
-        )
-        remaining_fragment_hx_on = sum(
-            source.count("hx-on") for source in remaining_fragment_sources
+        transaction_fragment_sources = [path.read_text() for path in transaction_fragment_paths]
+        _check(
+            all(not executable_script_pattern.search(source) for source in transaction_fragment_sources),
+            "transaction/modal fragments: migrated templates must have no executable script blocks",
         )
         _check(
-            (remaining_fragment_scripts, remaining_fragment_handlers, remaining_fragment_hx_on)
-            == (1, 28, 2),
-            "dashboard/report fragments: deferred transaction/supporting modal inventory must remain 1 script, 28 handlers, and 2 hx-on attributes",
+            all(not native_handler_pattern.search(source) for source in transaction_fragment_sources),
+            "transaction/modal fragments: migrated templates must have no native inline event handlers",
+        )
+        _check(
+            all("hx-on" not in source for source in transaction_fragment_sources),
+            "transaction/modal fragments: migrated templates must have no HTMX inline event handlers",
+        )
+        _check(
+            "transaction-fragments.js" in base_source
+            and "/static/transaction-fragments.js" in rendered_shell,
+            "transaction/modal fragments: the maintained static controller must load from the shared shell",
+        )
+        _check(
+            "{{" not in transaction_fragment_source
+            and "{%" not in transaction_fragment_source
+            and 'document.addEventListener("htmx:load"' in transaction_fragment_source
+            and 'action === "split-save"' in transaction_fragment_source
+            and 'action === "split-category"' in transaction_fragment_source,
+            "transaction/modal fragments: the static controller must stay template-free and reinitialize swapped split editors",
+        )
+        split_editor_source = (templates_root / "components" / "txn_split_editor.html").read_text()
+        _check(
+            split_editor_source.count('type="application/json"') == 2
+            and 'data-transaction-fragment-controller="split-editor"' in split_editor_source,
+            "transaction split editor: inert JSON data and the declarative controller contract must remain explicit",
+        )
+
+        fragment_conn = get_connection("personal")
+        try:
+            fragment_txn = fragment_conn.execute(
+                "SELECT transaction_id FROM transactions ORDER BY date DESC LIMIT 1"
+            ).fetchone()
+        finally:
+            fragment_conn.close()
+        _check(fragment_txn is not None, "transaction/modal fragments: synthetic transaction fixture must exist")
+        fragment_txn_id = fragment_txn["transaction_id"]
+        fragment_client = no_auth_app.test_client()
+        rendered_transaction_results = fragment_client.get("/transactions/partial").get_data(as_text=True)
+        rendered_transaction_edit = fragment_client.get(
+            f"/transactions/edit-row/{fragment_txn_id}"
+        ).get_data(as_text=True)
+        rendered_split_editor = fragment_client.get(
+            f"/transactions/splits/{fragment_txn_id}"
+        ).get_data(as_text=True)
+        rendered_subcategory_popup = fragment_client.get(
+            "/dashboard/subcategory-txns?subcategory=General"
+        ).get_data(as_text=True)
+        rendered_todo_queue = fragment_client.get("/todo/queue/large-txns").get_data(as_text=True)
+        rendered_transaction_fragments = (
+            rendered_transaction_results,
+            rendered_transaction_edit,
+            rendered_split_editor,
+            rendered_subcategory_popup,
+            rendered_todo_queue,
+        )
+        _check(
+            all(not executable_script_pattern.search(source) for source in rendered_transaction_fragments),
+            "transaction/modal fragments: rendered responses must contain no executable script blocks",
+        )
+        _check(
+            all(not native_handler_pattern.search(source) for source in rendered_transaction_fragments)
+            and all("hx-on" not in source for source in rendered_transaction_fragments),
+            "transaction/modal fragments: rendered responses must contain no inline execution attributes",
+        )
+        _check(
+            'data-transaction-fragment-action="sort"' in rendered_transaction_results
+            and 'data-close-transaction-modal-after-request' in rendered_transaction_edit
+            and 'data-transaction-fragment-controller="split-editor"' in rendered_split_editor
+            and 'data-transaction-fragment-action="close-subcategory-popup"' in rendered_subcategory_popup
+            and 'data-transaction-fragment-action="close-todo-queue"' in rendered_todo_queue,
+            "transaction/modal fragments: rendered responses must preserve every delegated interaction contract",
         )
         all_template_source = "\n".join(
             path.read_text() for path in templates_root.rglob("*.html")
@@ -8629,15 +8702,15 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (34, 23, 6, 5, 144, 2),
-            "dashboard/report fragments: maintained aggregate inventory must match the post-4AG CSP contract",
+            == (34, 22, 7, 5, 116, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the post-4AH CSP contract",
         )
         _check(
             '"allowEval":true' in base_source and '"allowScriptTags":true' in base_source,
-            "dashboard/report fragments: global HTMX execution switches remain deferred to Task 1P.4.2b.3",
+            "transaction/modal fragments: global HTMX execution switches remain deferred to Task 1P.4.2b.3",
         )
 
-        print("   ✅ Migrated fragment sources, delegated controller, rendered asset, Python response, residual inventory, and deferred HTMX switches passed")
+        print("   ✅ Migrated sources, rendered fragments, declarative controller, aggregate inventory, and deferred HTMX switches passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
