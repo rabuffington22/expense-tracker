@@ -2,7 +2,8 @@
 {% block title %}Categorize — The Ledger{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Categorize Remaining</h1>
+<h1 class="page-title" data-categorization-controller
+    data-all-subcategories-url="{{ url_for('categorize.all_subcategories') }}">Categorize Remaining</h1>
 
 <!-- Tabs: Review / Settings -->
 <div class="tabs">
@@ -56,14 +57,16 @@
                         {% endif %}
                         <input type="hidden" name="txn_id" value="{{ txn.transaction_id }}">
                         <input type="hidden" name="desc_{{ txn.transaction_id }}" value="{{ txn.description_raw }}">
-                        <a href="#" class="alias-link text-xs" style="display: none; margin-left: 0.3rem;"
-                           onclick="prefillAlias({{ txn.description_raw|tojson }}); return false;">+ Alias</a>
+                        <a href="#alias-details" class="alias-link text-xs" style="display: none; margin-left: 0.3rem;"
+                           data-categorization-action="prefill-alias"
+                           data-description="{{ txn.description_raw|e }}">+ Alias</a>
                     </td>
                     <td class="text-sm text-right">${{ "{:,.2f}".format(txn.amount|abs) }}</td>
                     <td>
                         <select name="cat_{{ txn.transaction_id }}"
                                 style="font-size: 0.8rem; padding: 0.3rem;"
-                                onchange="loadSubcats(this, '{{ txn.transaction_id }}')">
+                                data-categorization-change="category"
+                                data-transaction-id="{{ txn.transaction_id }}">
                             {% for cat in categories %}
                             <option value="{{ cat }}" {% if cat == (txn.category or 'Uncategorized') %}selected{% endif %}>{{ cat }}</option>
                             {% endfor %}
@@ -120,66 +123,6 @@
 tr:hover .alias-link { display: inline !important; }
 </style>
 
-<script>
-// Cache of all subcategories — loaded once, used for all rows
-var _subcatCache = null;
-
-function _escapeHtml(str) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
-}
-
-function _buildOptions(subs) {
-    return subs.map(function(s) {
-        var escaped = _escapeHtml(s);
-        return '<option value="' + escaped + '">' + escaped + '</option>';
-    }).join('');
-}
-
-function _populateSubcat(subSelect, cat) {
-    if (!_subcatCache || !cat || cat === 'Uncategorized') {
-        subSelect.innerHTML = '<option value="Unknown">Unknown</option>';
-        return;
-    }
-    var subs = _subcatCache[cat] || ['Unknown'];
-    subSelect.innerHTML = _buildOptions(subs);
-    // Restore saved value
-    var current = subSelect.getAttribute('data-current');
-    if (current) {
-        for (var i = 0; i < subSelect.options.length; i++) {
-            if (subSelect.options[i].value === current) {
-                subSelect.selectedIndex = i;
-                break;
-            }
-        }
-    }
-}
-
-function loadSubcats(catSelect, txnId) {
-    var cat = catSelect.value;
-    var subSelect = document.getElementById('subcat_' + txnId);
-    // Clear data-current since user changed category
-    subSelect.setAttribute('data-current', '');
-    _populateSubcat(subSelect, cat);
-}
-
-// Load all subcategories in one request, then populate all rows
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('{{ url_for("categorize.all_subcategories") }}')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            _subcatCache = data;
-            var catSelects = document.querySelectorAll('select[name^="cat_"]');
-            catSelects.forEach(function(sel) {
-                var txnId = sel.name.replace('cat_', '');
-                var subSelect = document.getElementById('subcat_' + txnId);
-                _populateSubcat(subSelect, sel.value);
-            });
-        });
-});
-</script>
-
 <!-- Quick alias from transaction -->
 <details class="mt-2" id="alias-details">
     <summary>Create merchant alias from a transaction</summary>
@@ -210,22 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
         </form>
     </div>
 </details>
-
-<script>
-function prefillAlias(desc) {
-    // Strip platform prefixes and trailing location info
-    var pattern = desc.replace(/^(paypal\s*\*|venmo\s*\*|zelle\s*\*|sq\s*\*|tst\s*\*|sp\s*\*)\s*/i, '');
-    pattern = pattern.replace(/\s+\w{2}\s*$/, '').trim();
-
-    document.getElementById('alias-pattern').value = pattern;
-    document.getElementById('alias-canonical').value = pattern;
-
-    // Open the details and scroll to it
-    var details = document.getElementById('alias-details');
-    details.open = true;
-    details.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-</script>
 
 {% else %}
 <!-- ═══════════ SETTINGS TAB ═══════════ -->
@@ -291,7 +218,7 @@ function prefillAlias(desc) {
                     </form>
                     <form method="post" action="{{ url_for('categorize.delete_alias', alias_id=a.id) }}" style="display:inline;">
                         <button type="submit" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Delete this alias?')">Delete</button>
+                                data-confirm-message="Delete this alias?">Delete</button>
                     </form>
                 </td>
             </tr>

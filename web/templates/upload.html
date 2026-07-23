@@ -2,7 +2,8 @@
 {% block title %}Upload — The Ledger{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Upload from Bank / CC</h1>
+<h1 class="page-title" data-upload-controller
+    data-upload-index-url="{{ url_for('upload.index') }}">Upload from Bank / CC</h1>
 
 <!-- Tabs: Import / Settings -->
 <div class="tabs">
@@ -18,7 +19,7 @@
 <!-- Month selector -->
 <div class="form-group" style="max-width: 200px; margin-bottom: 0.8rem;">
     <label>Month</label>
-    <select onchange="window.location.href='{{ url_for('upload.index') }}?month='+this.value">
+    <select data-upload-change="month">
         {% for m in months %}
         <option value="{{ m }}" {% if m == selected_month %}selected{% endif %}>{{ format_month(m) }}</option>
         {% endfor %}
@@ -59,7 +60,8 @@
         {% if is_done %}
         <form method="post" action="{{ url_for('upload.undo', item_id=item.id) }}">
             <input type="hidden" name="month" value="{{ selected_month }}">
-            <button type="submit" class="btn btn-sm btn-secondary">Undo</button>
+            <button type="submit" class="btn btn-sm btn-secondary"
+                    data-confirm-message="Mark this source incomplete? Imported transactions will remain in the ledger.">Mark incomplete</button>
         </form>
         {% else %}
         <a href="{{ url_for('upload.import_file', item_id=item.id, month=selected_month) }}"
@@ -104,7 +106,7 @@
             <td class="text-right">
                 <form method="post" action="{{ url_for('upload.delete_source', item_id=item.id) }}" style="display:inline;">
                     <button type="submit" class="btn btn-sm btn-danger"
-                            onclick="return confirm('Delete this source?')">Delete</button>
+                            data-confirm-message="Delete this source?">Delete</button>
                 </form>
             </td>
         </tr>
@@ -185,7 +187,7 @@
             <td class="text-right">
                 <form method="post" action="{{ url_for('upload.delete_profile', name=p.name) }}" style="display:inline;">
                     <button type="submit" class="btn btn-sm btn-danger"
-                            onclick="return confirm('Delete this profile?')">Delete</button>
+                            data-confirm-message="Delete this profile?">Delete</button>
                 </form>
             </td>
         </tr>

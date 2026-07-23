@@ -2,27 +2,54 @@
 
 ## Active Objective
 
-Preserve the durable, automatically deployed, and credential-free health-verified 4AJ-R result while Ryan separately decides whether to request a bounded Task 1P.4.2c.2 work block or pause.
+Publish and verify only the exact complete 4AK source set through confirmed work block 4AK-R while preserving every protected, live, later-task, and unrelated-worktree boundary.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.1 is complete, durable, automatically deployed, and credential-free health verified through 4AJ-R; Task 1P.4.2c.2 remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; 4AK is complete locally and exact-scope durability/release is active through 4AK-R; Task 1P.4.2c.3 remains separately gated.
 
 ## Current Work Block
 
-Work block 4AJ-R: Core Review-Page Durability And Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AK-R: Categorization And Upload Durability And Release — active.
 
 ## Current Task
 
-Task 1P.4.2c.2: Migrate categorization and upload execution — current only as a separate Ryan confirmation gate; no implementation is authorized.
+Task 1P.4.2c.2-R: Publish and verify categorization and upload execution — active for the exact verified 4AK source set only.
 
 ## Owner
 
-Ryan owns the next decision to request a bounded Task 1P.4.2c.2 proposal or pause. Codex has no active implementation or release authority after this closeout.
+Codex Desktop owns exact-path staging, sensitive/protected-boundary review, one source commit, clean fast-forward to local `main`, direct push without force or PR, read-only automatic deployment observation, credential-free production health, and sanitized `[skip actions]` closeout. Ryan owns every expansion or recovery beyond this path.
 
 ## Current Action
 
-Review the complete 4AJ-R closeout and separately confirm, adjust, or pause the next bounded block; do not infer Task 1P.4.2c.2 authority.
+Re-run the maintained verification, stage only the exact fifteen-path 4AK source set, commit it on `codex/csp-categorization-upload`, fast-forward local `main`, push directly, observe the automatic Fly deployment, verify credential-free `/health`, and publish one sanitized command-center-only closeout with `[skip actions]`.
+
+## Work Block 4AK-R Contract
+
+- Include explicit staging of the exact fifteen verified 4AK application, static-controller, maintained-test, CSP contract, issue, evidence, and Runway OS paths; one intentional source commit on `codex/csp-categorization-upload`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.2c.3 and later tasks, any new product/template/JavaScript/CSS/test/dependency/runtime/authentication/header/worker/manifest/Plaid mutation beyond the verified 4AK set, credentials, protected data, real databases, retained uploads, authenticated production pages, workflow edits, manual dispatch/rerun, non-automatic Fly actions, downstream access/writes, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified controller, status-only wording, false HTMX execution switches, test contracts, and both unrelated untracked files exactly; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python/JavaScript/JSON syntax, whitespace, dashboard refresh/health/rendered state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
+- Report source and closeout commit SHAs, published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.3 still separately gated.
+
+## Work Block 4AK Contract
+
+- Include Task 1P.4.2c.2, Task 1P.5, and only their focused Task 2 regression slices: move three executable inline scripts and seven native handlers from `categorize.html`, `categorize_orphans.html`, and `upload.html` into one maintained local controller; preserve alias prefill, category/subcategory loading, month navigation, and destructive confirmations; and relabel status-only Upload `Undo` as `Mark incomplete` with explicit confirmation that imported transactions remain.
+- Keep Tasks 1P.4.2c.3-1P.4.2c.8, Tasks 1P.4.3-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, style migration, CSP headers/nonces/enforcement, Plaid, authentication, product or financial-logic changes, new dependencies, protected/live access, GitHub durability, publication, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use delegated listeners and inert `data-*` values in a template-free dedicated static controller, keep `allowEval=false`, `allowScriptTags=false`, and `hx-on` at zero, preserve visual and behavioral parity, and use temporary synthetic all-entity data, configured-auth and no-password modes, localhost-only disposable Chrome, denied non-localhost requests, zero unexpected console/page errors, and exact cleanup.
+- Stop if parity requires categorization/import/deletion business-logic changes, true import reversal, another route cluster, style or CSP enforcement, authentication, Plaid, a dependency, protected data, credentials, real databases, retained uploads, external/live access, plan-changing verification or cleanup failure, command-center failure, or preserved-file overlap.
+- Verify baseline and final full smoke; source and rendered-response zero-execution assertions for all three templates; exact residual inventory of fourteen executable inline scripts, eight external scripts including the new maintained controller, two inert JSON carriers, ninety-one native handlers, and zero `hx-on`; both-auth-mode isolated Chrome covering alias prefill, category/subcategory loading, orphan reassignment controls, upload month navigation, deletion confirmations, and status-only `Mark incomplete`; denied external requests; zero browser errors; exact cleanup; relevant Python/JavaScript/JSON syntax; whitespace; dashboard refresh/health/generated state; exact scope; and both preserved untracked files.
+- Report exact migrated behavior, controller organization, Task 1P.5 wording, source/rendered inventories, focused and full verification, cleanup, changed paths, local branch state, preserved exclusions, and separate 4AK-R plus Task 1P.4.2c.3 gates.
+
+## Work Block 4AK Result
+
+- The three included templates now contain zero executable inline scripts, zero native inline handlers, and zero `hx-on` attributes; `categorization-upload.js` owns category/subcategory loading, orphan controls, alias prefill, upload month navigation, and included confirmations through delegated behavior and inert route data.
+- Upload `Undo` is now `Mark incomplete`; its confirmation explicitly says imported transactions remain, and maintained request proof resets only checklist status while preserving the exact transaction count.
+- The residual tracked template inventory is fourteen executable inline scripts, eight external executable scripts including the new controller, two inert JSON carriers, ninety-one native handlers, and zero `hx-on`; HTMX `allowEval` and `allowScriptTags` remain false.
+- Baseline and final full smoke plus configured-auth/no-password isolated Chrome pass the included workflows with denied external requests, zero unexpected console/page errors, and exact synthetic all-entity cleanup. Python/JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, exact scope, and preserved-file checks pass.
+- No commit, push, PR, merge, publication, deployment, protected data, credential, real database, retained upload, external request, live action, dependency change, later route-cluster work, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-categorization-upload-execution-4ak.md`.
 
 ## Task 1P.4.2c Decomposition Result
 

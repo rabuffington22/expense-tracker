@@ -8729,8 +8729,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (26, 17, 7, 2, 98, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the post-4AJ CSP contract",
+            == (24, 14, 8, 2, 91, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AK CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8794,6 +8794,168 @@ def main() -> None:
         )
 
         print("   ✅ Five source templates, rendered routes, delegated controller seams, and exact residual inventory passed")
+
+        # ── 11f. Categorization and upload execution ────────────────────
+        print("\n11f. Categorization and upload execution…")
+
+        categorization_upload_paths = (
+            templates_root / "categorize.html",
+            templates_root / "categorize_orphans.html",
+            templates_root / "upload.html",
+        )
+        categorization_upload_sources = [path.read_text() for path in categorization_upload_paths]
+        categorization_upload_asset = PROJECT_ROOT / "web" / "static" / "categorization-upload.js"
+        categorization_upload_source = categorization_upload_asset.read_text()
+        _check(
+            all(not executable_script_pattern.search(source) for source in categorization_upload_sources),
+            "categorization/upload pages: confirmed templates must contain no executable inline scripts",
+        )
+        _check(
+            all(not native_handler_pattern.search(source) for source in categorization_upload_sources),
+            "categorization/upload pages: confirmed templates must contain no native inline handlers",
+        )
+        _check(
+            all("hx-on" not in source for source in categorization_upload_sources),
+            "categorization/upload pages: confirmed templates must contain no HTMX inline handlers",
+        )
+        _check(
+            "categorization-upload.js" in base_source
+            and "/static/categorization-upload.js" in rendered_shell,
+            "categorization/upload pages: the maintained static controller must load from the shared shell",
+        )
+        _check(
+            "{{" not in categorization_upload_source
+            and "{%" not in categorization_upload_source
+            and 'data-categorization-action="prefill-alias"' in categorization_upload_sources[0]
+            and 'data-categorization-change="category"' in categorization_upload_sources[0]
+            and 'data-categorization-change="orphan-category"' in categorization_upload_sources[1]
+            and 'data-upload-change="month"' in categorization_upload_sources[2]
+            and "Imported transactions will remain in the ledger." in categorization_upload_sources[2]
+            and 'control.dataset.uploadChange === "month"' in categorization_upload_source,
+            "categorization/upload pages: templates and controller must expose the complete delegated behavior contract",
+        )
+
+        rendered_categorization = fragment_client.get("/categorize/").get_data(as_text=True)
+        rendered_orphans = fragment_client.get("/categorize/orphans").get_data(as_text=True)
+        rendered_upload = fragment_client.get("/upload/?month=2026-07").get_data(as_text=True)
+        rendered_categorization_upload = (
+            rendered_categorization,
+            rendered_orphans,
+            rendered_upload,
+        )
+        _check(
+            all(not native_handler_pattern.search(source) for source in rendered_categorization_upload),
+            "categorization/upload pages: rendered routes must contain no native inline handlers",
+        )
+        _check(
+            all("hx-on" not in source for source in rendered_categorization_upload)
+            and 'data-categorization-controller' in rendered_categorization
+            and 'data-categorization-orphans-controller' in rendered_orphans
+            and 'data-upload-controller' in rendered_upload,
+            "categorization/upload pages: rendered routes must preserve delegated controller markers",
+        )
+
+        upload_conn = get_connection("personal")
+        try:
+            transaction_count_before = upload_conn.execute(
+                "SELECT COUNT(*) FROM transactions"
+            ).fetchone()[0]
+            checklist_cursor = upload_conn.execute(
+                "INSERT INTO import_checklist "
+                "(label, filename_pattern, profile_name, url, notes, sort_order, created_at, entity) "
+                "VALUES (?, ?, NULL, NULL, ?, 0, ?, 'personal')",
+                (
+                    "Synthetic status-only source",
+                    "synthetic-status-only",
+                    "4AK status-only proof",
+                    "2026-07-22T00:00:00+00:00",
+                ),
+            )
+            checklist_id = checklist_cursor.lastrowid
+            upload_conn.execute(
+                "INSERT INTO import_checklist_status "
+                "(checklist_item_id, month, completed, completed_at, source_filename) "
+                "VALUES (?, '2026-07', 1, ?, 'synthetic-status-only.csv')",
+                (checklist_id, "2026-07-22T00:00:00+00:00"),
+            )
+            upload_conn.commit()
+        finally:
+            upload_conn.close()
+
+        status_page = fragment_client.get("/upload/?month=2026-07").get_data(as_text=True)
+        _check(
+            "Mark incomplete" in status_page
+            and "Imported transactions will remain in the ledger." in status_page,
+            "upload status-only action: rendered UI must name the action and preserve imported-row warning",
+        )
+        status_response = fragment_client.post(
+            f"/upload/undo/{checklist_id}",
+            data={"month": "2026-07"},
+        )
+        _check(status_response.status_code == 302, "upload status-only action: request must redirect")
+        upload_conn = get_connection("personal")
+        try:
+            checklist_status = upload_conn.execute(
+                "SELECT completed, completed_at, source_filename FROM import_checklist_status "
+                "WHERE checklist_item_id=? AND month='2026-07'",
+                (checklist_id,),
+            ).fetchone()
+            transaction_count_after = upload_conn.execute(
+                "SELECT COUNT(*) FROM transactions"
+            ).fetchone()[0]
+            _check(
+                checklist_status["completed"] == 0
+                and checklist_status["completed_at"] is None
+                and checklist_status["source_filename"] == ""
+                and transaction_count_after == transaction_count_before,
+                "upload status-only action: checklist reset must leave imported transactions unchanged",
+            )
+            upload_conn.execute(
+                "DELETE FROM import_checklist_status WHERE checklist_item_id=?",
+                (checklist_id,),
+            )
+            upload_conn.execute("DELETE FROM import_checklist WHERE id=?", (checklist_id,))
+            upload_conn.commit()
+        finally:
+            upload_conn.close()
+
+        all_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        all_script_count = len(
+            _re.findall(r"<script\b[^>]*>", all_template_source, flags=_re.IGNORECASE)
+        )
+        inert_script_count = len(
+            _re.findall(
+                r"<script\b[^>]*\btype=[\"']application/json[\"'][^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        external_script_count = len(
+            _re.findall(
+                r"<script\b(?=[^>]*\bsrc=)[^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        inline_executable_count = all_script_count - inert_script_count - external_script_count
+        all_native_handler_count = len(native_handler_pattern.findall(all_template_source))
+        all_hx_on_count = all_template_source.count("hx-on")
+        _check(
+            (
+                all_script_count,
+                inline_executable_count,
+                external_script_count,
+                inert_script_count,
+                all_native_handler_count,
+                all_hx_on_count,
+            )
+            == (24, 14, 8, 2, 91, 0),
+            "categorization/upload pages: maintained aggregate inventory must match the post-4AK CSP contract",
+        )
+
+        print("   ✅ Three source templates, delegated controller, rendered routes, status-only reset, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

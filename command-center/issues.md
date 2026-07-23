@@ -330,7 +330,7 @@ Work block 4M removed the nonexistent bank-side column dependency without a migr
 
 ## Vendor-Order Imports Discard Parsed Line Items
 
-Status: open; discovered in work block 3B
+Status: resolved locally through work block 4AK; publication remains separate
 
 Severity: high vendor-detail completeness risk
 
@@ -436,7 +436,7 @@ Captured: 2026-07-18
 
 Where seen: `web/routes/upload.py`, `web/templates/upload.html`, and synthetic route reproduction
 
-Revisit: Phase 5 Task 2 unless a related Phase 4 import repair makes the distinction urgent
+Revisit: separately gated 4AK-R durability/release only
 
 Summary:
 
@@ -452,9 +452,9 @@ Acceptance checks:
 - If status-only, confirmation text explicitly says imported transactions remain.
 - If true reversal is chosen later, it has an exact source/batch identity, preview, safety gate, and regression coverage.
 
-Why not changed now:
+Resolution:
 
-User-facing wording or destructive reversal behavior is implementation and UX scope outside the 3B audit.
+Work block 4AK relabels the status-only action as `Mark incomplete` and presents an explicit confirmation that imported transactions remain in the ledger. Maintained synthetic request proof resets only `import_checklist_status` fields while preserving the exact transaction count, and configured-auth/no-password isolated Chrome verifies the label and confirmation with denied external requests, zero unexpected console/page errors, and exact temporary cleanup. True import reversal remains outside scope.
 
 ## Recurring Charges Report Executes An Uninterpolated SQL Helper
 

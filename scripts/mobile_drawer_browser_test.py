@@ -5,8 +5,8 @@ Uses a temporary synthetic DATA_DIR, the installed Google Chrome channel, and
 blocked non-localhost browser requests. No production credentials or data are
 required. Covers the mobile drawer plus theme, HTMX configuration and swaps,
 AI modal listeners, CSRF wiring, service-worker registration, and configured-
-auth/no-password shell loading. Transaction and supporting modal fragment
-controls run only against the temporary synthetic databases.
+auth/no-password shell loading. Transaction and supporting modal fragments plus
+categorization and upload controls run only against temporary synthetic databases.
 """
 
 from __future__ import annotations
@@ -178,6 +178,55 @@ def _seed_dashboard_data(entity_key: str) -> None:
         "amount, amount_cents, account, category, subcategory, confidence, "
         "source_filename, imported_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         rows,
+    )
+    conn.execute(
+        "UPDATE transactions SET description_raw=?, merchant_raw=?, merchant_canonical=?, "
+        "category=NULL, subcategory=NULL, confidence=0.1 WHERE transaction_id=?",
+        (
+            "PAYPAL * SYNTHETIC ALIAS TX",
+            "PAYPAL * SYNTHETIC ALIAS TX",
+            "PAYPAL * SYNTHETIC ALIAS TX",
+            f"4ag-{entity_key}-expense-23",
+        ),
+    )
+    conn.execute(
+        "UPDATE transactions SET category='Legacy Category', "
+        "subcategory='Legacy Subcategory', confidence=1.0 WHERE transaction_id=?",
+        (f"4ag-{entity_key}-expense-24",),
+    )
+    conn.execute(
+        "INSERT INTO categories (name, created_at) VALUES ('Legacy Category', ?)",
+        (imported_at,),
+    )
+    conn.execute(
+        "INSERT INTO subcategories (category_name, name, created_at) "
+        "VALUES ('Legacy Category', 'Legacy Subcategory', ?)",
+        (imported_at,),
+    )
+    conn.execute(
+        "INSERT INTO merchant_aliases "
+        "(pattern_type, pattern, merchant_canonical, default_category, active, created_at) "
+        "VALUES ('contains', 'SYNTHETIC DELETE ALIAS', 'Synthetic Delete Alias', "
+        "'Office Supplies', 1, ?)",
+        (imported_at,),
+    )
+    checklist_cursor = conn.execute(
+        "INSERT INTO import_checklist "
+        "(label, filename_pattern, profile_name, url, notes, sort_order, created_at, entity) "
+        "VALUES (?, ?, 'Amex Credit Card', NULL, ?, 0, ?, ?)",
+        (
+            "Synthetic Browser Source",
+            "synthetic-browser",
+            "Local-only 4AK browser fixture",
+            imported_at,
+            entity_key,
+        ),
+    )
+    conn.execute(
+        "INSERT INTO import_checklist_status "
+        "(checklist_item_id, month, completed, completed_at, source_filename) "
+        "VALUES (?, ?, 1, ?, 'synthetic-browser.csv')",
+        (checklist_cursor.lastrowid, today[:7], imported_at),
     )
     auto_split_txn_id = f"4ag-{entity_key}-expense-00"
     order_cursor = conn.execute(
@@ -719,6 +768,134 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
     page.wait_for_selector("#txn-results tr.txn-clickable")
 
 
+def _assert_categorization_upload_pages(page, base_url: str, label: str) -> None:
+    page.goto(f"{base_url}/categorize/", wait_until="networkidle")
+    page.wait_for_function(
+        "document.querySelector('[data-categorization-controller]')?.dataset.initialized === 'true'"
+    )
+    page.wait_for_selector('[data-categorization-change="category"]')
+    category_select = page.locator('[data-categorization-change="category"]').first
+    subcategory_select = page.locator('select[name^="subcat_"]').first
+    initial = page.evaluate(
+        """() => ({
+            asset: Boolean(document.querySelector('script[src*="categorization-upload.js"]')),
+            inlineHandlers: document.querySelectorAll(
+                '#main-content [onclick], #main-content [onchange], #main-content [onsubmit], #main-content [onkeydown]'
+            ).length,
+            allowEval: window.htmx.config.allowEval,
+            allowScriptTags: window.htmx.config.allowScriptTags,
+        })"""
+    )
+    _check(initial["asset"], f"{label}: categorization/upload controller must load")
+    _check(initial["inlineHandlers"] == 0, f"{label}: included page must expose no native inline handlers")
+    _check(
+        initial["allowEval"] is False and initial["allowScriptTags"] is False,
+        f"{label}: HTMX execution switches must remain disabled",
+    )
+
+    alias_control = page.locator(
+        '[data-categorization-action="prefill-alias"]'
+        '[data-description="PAYPAL * SYNTHETIC ALIAS TX"]'
+    )
+    _check(alias_control.count() == 1, f"{label}: synthetic alias prefill control must render")
+    alias_control.evaluate("element => element.click()")
+    alias_state = page.evaluate(
+        """() => ({
+            pattern: document.getElementById('alias-pattern').value,
+            canonical: document.getElementById('alias-canonical').value,
+            open: document.getElementById('alias-details').open,
+        })"""
+    )
+    _check(
+        alias_state == {
+            "pattern": "SYNTHETIC ALIAS",
+            "canonical": "SYNTHETIC ALIAS",
+            "open": True,
+        },
+        f"{label}: delegated alias prefill must preserve prefix stripping and details expansion",
+    )
+
+    category_select.select_option("Food")
+    page.wait_for_function(
+        "Array.from(document.querySelector('select[name^=\"subcat_\"]')?.options || [])"
+        ".some((option) => option.value === 'Coffee')"
+    )
+    _check(
+        "Coffee" in subcategory_select.locator("option").all_text_contents(),
+        f"{label}: delegated category change must populate maintained subcategories",
+    )
+
+    page.goto(f"{base_url}/categorize/?tab=settings", wait_until="networkidle")
+    alias_dialogs: list[str] = []
+
+    def dismiss_alias_dialog(dialog) -> None:
+        alias_dialogs.append(dialog.message)
+        dialog.dismiss()
+
+    page.once("dialog", dismiss_alias_dialog)
+    page.locator('form[action*="/categorize/delete-alias/"] [data-confirm-message]').first.click()
+    _check(alias_dialogs == ["Delete this alias?"], f"{label}: alias delete confirmation must be delegated")
+
+    page.goto(f"{base_url}/categorize/orphans", wait_until="networkidle")
+    orphan_category = page.locator('[data-categorization-change="orphan-category"]').first
+    _check(orphan_category.count() == 1, f"{label}: synthetic orphan reassignment control must render")
+    with page.expect_response(
+        lambda response: "/categorize/subcategories" in response.url
+    ) as response_info:
+        orphan_category.select_option("Food")
+    _check(response_info.value.status == 200, f"{label}: orphan subcategory request must return 200")
+    _check(
+        "Coffee" in page.locator(".orphan-sub").first.locator("option").all_text_contents(),
+        f"{label}: delegated orphan category change must populate subcategories",
+    )
+
+    page.goto(f"{base_url}/upload/", wait_until="networkidle")
+    mark_incomplete = page.get_by_role("button", name="Mark incomplete", exact=True)
+    _check(mark_incomplete.count() == 1, f"{label}: status-only action must use the explicit label")
+    status_dialogs: list[str] = []
+
+    def dismiss_status_dialog(dialog) -> None:
+        status_dialogs.append(dialog.message)
+        dialog.dismiss()
+
+    page.once("dialog", dismiss_status_dialog)
+    mark_incomplete.click()
+    _check(
+        status_dialogs == [
+            "Mark this source incomplete? Imported transactions will remain in the ledger."
+        ],
+        f"{label}: status-only confirmation must say imported transactions remain",
+    )
+
+    month_select = page.locator('[data-upload-change="month"]')
+    second_month = month_select.locator("option").nth(1).get_attribute("value")
+    with page.expect_navigation(wait_until="networkidle"):
+        month_select.select_option(index=1)
+    _check(
+        page.url.endswith("?month=" + second_month),
+        f"{label}: delegated upload month navigation must preserve the selected month",
+    )
+
+    page.goto(f"{base_url}/upload/?tab=settings", wait_until="networkidle")
+    source_dialogs: list[str] = []
+    profile_dialogs: list[str] = []
+
+    def dismiss_source_dialog(dialog) -> None:
+        source_dialogs.append(dialog.message)
+        dialog.dismiss()
+
+    def dismiss_profile_dialog(dialog) -> None:
+        profile_dialogs.append(dialog.message)
+        dialog.dismiss()
+
+    page.once("dialog", dismiss_source_dialog)
+    page.locator('form[action*="/upload/delete-source/"] [data-confirm-message]').first.click()
+    page.once("dialog", dismiss_profile_dialog)
+    page.locator('form[action*="/upload/delete-profile/"] [data-confirm-message]').first.click()
+    _check(source_dialogs == ["Delete this source?"], f"{label}: source delete confirmation must be delegated")
+    _check(profile_dialogs == ["Delete this profile?"], f"{label}: profile delete confirmation must be delegated")
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -1019,6 +1196,10 @@ def main() -> None:
                     "migrated keyboard shortcut must focus transaction search after repeated swaps",
                 )
 
+                _assert_categorization_upload_pages(
+                    page, base_url, "no-password categorization/upload execution"
+                )
+
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
                 with page.expect_navigation(wait_until="networkidle"):
@@ -1112,6 +1293,9 @@ def main() -> None:
                 _assert_transaction_modal_fragments(
                     page, base_url, "configured-auth fragment execution"
                 )
+                _assert_categorization_upload_pages(
+                    page, base_url, "configured-auth categorization/upload execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -1157,7 +1341,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, split save/delete, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload workflows, status-only wording, split save/delete, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

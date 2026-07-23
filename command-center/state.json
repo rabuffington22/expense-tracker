@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-22 4:33 PM CST",
+    "lastUpdated": "2026-07-22 9:31 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,45 +27,45 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.2c.1 is complete durable automatically deployed and credential-free health verified through 4AJ-R; Task 1P.4.2c.2 remains separately gated.",
+    "summary": "Task 1P.4.2c.2 and Task 1P.5 are complete locally through 4AK and exact-scope direct-main durability release is active through 4AK-R; Task 1P.4.2c.3 remains separate.",
     "progress": 96
   },
   "currentTask": {
-    "title": "Task 1P.4.2c.2: Migrate categorization and upload execution",
-    "owner": "Ryan",
-    "status": "waiting-on-ryan",
-    "supportingAgent": "None; 4AJ-R is closed and no later route cluster is authorized",
-    "nextAction": "Choose whether to request a bounded 4AK proposal for Task 1P.4.2c.2 or pause.",
-    "blocker": "Ryan confirmation is required before Task 1P.4.2c.2 implementation."
+    "title": "Task 1P.4.2c.2-R: Publish and verify categorization and upload execution",
+    "owner": "Codex Desktop",
+    "status": "in-progress",
+    "supportingAgent": "None; Codex owns exact-path direct-main release verification and sanitized closeout",
+    "nextAction": "Verify stage commit fast-forward main push observe the automatic deployment verify credential-free health and publish a skip-actions closeout.",
+    "blocker": "None inside the exact 4AK-R path; divergence failure recovery and every scope expansion stop for Ryan."
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-aj-r",
-    "label": "4AJ-R",
-    "name": "Core Review-Page Durability And Release",
-    "status": "complete",
+    "id": "phase-4-block-ak-r",
+    "label": "4AK-R",
+    "name": "Categorization And Upload Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Task 1P.4.2c.1-R publish and verify the exact completed 4AJ source set",
+    "currentTask": "Task 1P.4.2c.2-R publish and verify the exact completed 4AK source set",
     "includedTasks": [
-      "Explicitly stage the exact verified 4AJ application static-controller maintained-test CSP contract evidence and Runway OS paths",
-      "Create one source commit on codex/csp-core-review-pages fast-forward local main and push directly to origin main without force or PR",
+      "Explicitly stage the exact fifteen verified 4AK application static-controller maintained-test CSP contract issue evidence and Runway OS paths",
+      "Create one source commit on codex/csp-categorization-upload fast-forward local main and push directly to origin main without force or PR",
       "Observe only the automatic Fly deployment verify credential-free production health and push one sanitized command-center-only skip-actions closeout"
     ],
     "excludedTasks": [
-      "Task 1P.4.2c.2 and later tasks plus any new product template JavaScript CSS test dependency runtime authentication header worker manifest or Plaid mutation",
+      "Task 1P.4.2c.3 and later tasks plus any new product template JavaScript CSS test dependency runtime authentication header worker manifest or Plaid mutation beyond verified 4AK",
       "Credentials protected data real databases retained uploads authenticated production pages workflow edits manual dispatches reruns non-automatic Fly actions and downstream access or writes",
       "PR creation force push broader recovery pre-existing scripts/sync_prod_to_local.sh and unrelated command-center/now 2.md"
     ],
     "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "The exact verified source set release observation health proof and Runway OS closeout share one deterministic durability boundary.",
-    "runnerPath": "Current Codex task on codex/csp-core-review-pages then a clean fast-forward of local main without delegation or second opinion.",
+    "whyThisAgent": "The exact verified source release automatic deployment observation health proof and Runway OS closeout share one deterministic durability boundary.",
+    "runnerPath": "Current Codex task on codex/csp-categorization-upload then a clean fast-forward of local main without delegation or PR.",
     "expectedFiles": [
-      "Exact verified 4AJ source set only for the source commit",
+      "Exact verified fifteen-path 4AK source set only for the source commit",
       "Sanitized command-center sources generated dashboard and release evidence only for the skip-actions closeout"
     ],
     "defaults": [
-      "Explicit path staging only no PR no force push and no new application mutation",
+      "Explicit-path staging only no PR no force push and no new application mutation",
       "Observe only the automatic main deployment and credential-free health",
-      "Preserve both unrelated untracked files and keep Task 1P.4.2c.2 separately gated"
+      "Preserve the verified 4AK behavior both false HTMX switches and both unrelated untracked files"
     ],
     "stopConditions": [
       "Unexpected or excluded path sensitive addition protected-boundary risk or failed maintained verification",
@@ -75,19 +75,13 @@
     ],
     "verification": [
       "Exact changed and staged paths plus protected-boundary and high-confidence sensitive-addition checks",
-      "Full smoke isolated-browser matrix relevant Python JavaScript and JSON syntax and whitespace",
-      "Dashboard refresh health generated state commit content main ancestry and exact remote SHA",
+      "Full smoke configured-auth and no-password isolated-browser matrix relevant Python JavaScript and JSON syntax and whitespace",
+      "Dashboard refresh health rendered state commit content main ancestry and exact remote SHA",
       "Automatic deployment run and job credential-free production health final alignment and preserved untracked files"
     ],
-    "nextReportPoint": "Return source and closeout commit SHAs exact published paths automatic deployment and credential-free health results final alignment preserved exclusions and Task 1P.4.2c.2 still separately gated.",
-    "durability": "Source commit f8dfa80 is durable on local and remote main; automatic Fly run 29959060928 and job 89055358673 passed and credential-free production health returned 200; this command-center-only closeout uses skip actions.",
-    "result": "Published the exact seventeen-path 4AJ source directly to main by clean fast-forward observed the successful automatic Fly deployment verified credential-free production health and preserved both unrelated untracked files with no PR force push manual workflow action non-automatic Fly mutation or later route-cluster work.",
-    "evidence": [
-      "command-center/logs/2026-07-22-core-review-page-execution-4aj.md",
-      "command-center/logs/2026-07-22-core-review-page-execution-release-4aj-r.md",
-      "GitHub Actions run 29959060928",
-      "Fly deploy job 89055358673"
-    ]
+    "nextReportPoint": "Return source and closeout commit SHAs exact published paths automatic deployment and credential-free health results final alignment preserved exclusions and Task 1P.4.2c.3 still separately gated.",
+    "durability": "Active exact-scope direct-main release; no source commit or push has occurred yet.",
+    "evidence": []
   },
   "routerHealth": {
     "status": "healthy",
@@ -112,24 +106,20 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Decide whether to request Task 1P.4.2c.2",
-    "status": "waiting-on-ryan",
-    "owner": "Ryan",
-    "why": "4AJ-R is complete durable deployed and health verified while the categorization and upload route cluster remains separately gated.",
-    "action": "Request a bounded 4AK proposal for Task 1P.4.2c.2 or pause.",
+    "title": "Publish and verify exact-scope work block 4AK-R",
+    "status": "in-progress",
+    "owner": "Codex Desktop",
+    "why": "Ryan explicitly authorized commit and push of the complete verified 4AK source to main.",
+    "action": "Verify stage commit fast-forward push observe automatic deployment verify health and publish sanitized closeout.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [
-    "Choose whether to request a bounded 4AK proposal for Task 1P.4.2c.2 or pause."
-  ],
+  "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "4AJ-R is complete; Ryan owns the separate Task 1P.4.2c.2 planning decision.",
-    "items": [
-      "Request a bounded 4AK proposal for Task 1P.4.2c.2 or pause."
-    ]
+    "summary": "No Ryan input is required inside the exact 4AK-R release path unless a stop condition or recovery decision appears.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4AJ-R is complete durable deployed and health verified; Task 1P.4.2c.2 and every later CSP slice remain separately gated.",
+    "phaseQuestions": "Work block 4AK-R is active for exact-source durability and automatic release; Task 1P.4.2c.3 and every later CSP slice remain separately gated.",
     "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -4814,6 +4804,96 @@
         "GitHub Actions run 29959060928",
         "Fly deploy job 89055358673"
       ]
+    },
+    {
+      "id": "phase-4-block-ak",
+      "phaseId": "phase-4",
+      "label": "4AK",
+      "name": "Categorization And Upload Execution",
+      "status": "complete",
+      "includedTasks": [
+        "Task 1P.4.2c.2 Task 1P.5 and only their focused Task 2 regression slices",
+        "Move three executable inline scripts and seven native handlers from categorize categorize-orphans and upload into one maintained local controller",
+        "Preserve included behavior relabel status-only Undo as Mark incomplete add maintained proof and close locally"
+      ],
+      "excludedTasks": [
+        "Tasks 1P.4.2c.3-1P.4.4 Tasks 1P.6-1P.7 remainder of Task 2 and Tasks 3-4",
+        "Style CSP enforcement Plaid authentication cookie CSRF worker manifest categorization import deletion product financial and dependency changes",
+        "Credentials protected data real databases retained uploads external live GitHub durability publication deployment workflows downstream access or writes",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The deterministic static-controller migration browser proof exact cleanup inventory reconciliation and Runway OS closeout share one local boundary.",
+      "runnerPath": "Current Codex task on local branch codex/csp-categorization-upload without delegation or second opinion.",
+      "expectedFiles": [
+        "categorize categorize-orphans upload and base templates plus a dedicated categorization-upload static controller",
+        "Focused smoke and isolated-browser coverage CSP contract issue evidence Runway OS sources and generated dashboard"
+      ],
+      "defaults": [
+        "Preserve visual and behavioral parity use delegated listeners and inert data values introduce no runtime dependency and keep HTMX execution switches false",
+        "Use Mark incomplete with explicit imported-transactions-remain confirmation",
+        "Use temporary synthetic all-entity data both auth modes localhost denied external requests zero browser errors exact cleanup and preserve both unrelated untracked files"
+      ],
+      "stopConditions": [
+        "Parity requires categorization import deletion true-reversal another route-cluster style CSP enforcement authentication Plaid product financial or dependency work",
+        "Protected data credentials real databases retained uploads external or live access appears",
+        "Verification changes the plan exact cleanup fails scope expands command-center checks fail or either preserved file overlaps"
+      ],
+      "verification": [
+        "Baseline and final full smoke exact included zero-execution and residual fourteen-inline-script eight-external-script ninety-one-handler two-inert-carrier zero-hx-on inventory",
+        "Configured-auth and no-password isolated Chrome for alias subcategory orphan month deletion and Mark incomplete behavior with denied external traffic zero errors and exact cleanup",
+        "Relevant syntax JSON whitespace dashboard refresh health generated-state inspection exact scope and preserved files"
+      ],
+      "reportBack": "Return exact migrated behavior controller organization Task 1P.5 wording inventories focused and full verification cleanup changed paths local branch state preserved exclusions and separate 4AK-R plus Task 1P.4.2c.3 gates.",
+      "durability": "complete and verified locally on codex/csp-categorization-upload; no commit push PR publication deployment or live action occurred",
+      "result": "Removed three executable inline scripts and seven native handlers from categorization and upload templates into one maintained controller preserved included behavior relabeled status-only Undo as Mark incomplete proved imported transactions remain and reconciled the residual inventory to fourteen inline scripts eight external scripts two inert carriers ninety-one handlers and zero hx-on.",
+      "evidence": [
+        "command-center/csp-compatibility-contract.md",
+        "command-center/logs/2026-07-22-categorization-upload-execution-4ak.md"
+      ]
+    },
+    {
+      "id": "phase-4-block-ak-r",
+      "phaseId": "phase-4",
+      "label": "4AK-R",
+      "name": "Categorization And Upload Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Explicitly stage the exact fifteen verified 4AK source paths",
+        "Create one source commit fast-forward local main and push directly to origin main without force or PR",
+        "Observe the automatic Fly deployment verify credential-free production health and publish one sanitized skip-actions closeout"
+      ],
+      "excludedTasks": [
+        "Task 1P.4.2c.3 and later tasks plus every new application or runtime mutation beyond verified 4AK",
+        "Credentials protected data real databases retained uploads authenticated production pages manual workflow actions and non-automatic Fly mutations",
+        "PR creation force push broader recovery scripts/sync_prod_to_local.sh and command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The exact source release automatic deployment observation health proof and sanitized closeout share one deterministic durability boundary.",
+      "runnerPath": "Current Codex task on codex/csp-categorization-upload followed by a clean fast-forward of local main.",
+      "expectedFiles": [
+        "Exact verified fifteen-path 4AK source set for the source commit",
+        "Sanitized command-center sources generated dashboard and release evidence for the skip-actions closeout"
+      ],
+      "defaults": [
+        "Explicit-path staging only no PR no force push and no new application mutation",
+        "Observe only the automatic main deployment and credential-free health",
+        "Preserve both unrelated untracked files"
+      ],
+      "stopConditions": [
+        "Unexpected path sensitive addition protected-boundary risk or failed maintained verification",
+        "Main divergence push rejection or recovery beyond a clean fast-forward",
+        "Automatic deployment or health failure that requires mutation or broader diagnosis"
+      ],
+      "verification": [
+        "Exact staged paths protected-boundary review full smoke browser matrices syntax JSON whitespace dashboard and rendered state",
+        "Commit content main ancestry exact remote SHA automatic deployment run and job credential-free health and final alignment"
+      ],
+      "reportBack": "Return source and closeout SHAs published paths deployment and health results final alignment preserved exclusions and the separate Task 1P.4.2c.3 gate.",
+      "durability": "active; no source commit or push has occurred yet",
+      "evidence": []
     }
   ],
   "phaseTasks": [
@@ -5946,8 +6026,8 @@
       "status": "active",
       "owner": "Codex Desktop",
       "summary": "Move the remaining 22 executable inline scripts 116 native handlers and two full-page inert JSON carriers to maintained local behavior and inert server data; decomposed into Tasks 1P.4.2c.1-1P.4.2c.8 after the tracked route-cluster inventory.",
-      "nextAction": "Choose whether to authorize 4AJ durability request a bounded 4AK proposal for Task 1P.4.2c.2 or pause.",
-      "blocker": "No additional route-cluster implementation or durability work is authorized until separately confirmed."
+      "nextAction": "Complete exact-scope 4AK-R durability before returning to a fresh Task 1P.4.2c.3 re-sizing decision.",
+      "blocker": "Every later route cluster remains separately gated."
     },
     {
       "phaseId": "phase-4",
@@ -5956,8 +6036,8 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "Move five executable inline scripts and eighteen native handlers from the shared sidebar dashboard reports transactions and To Do pages into the maintained shared dashboard-fragment and transaction-fragment asset seams while preserving repeated HTMX and page behavior.",
-      "nextAction": "Publish and verify the exact completed source only through active work block 4AJ-R.",
-      "blocker": "No new implementation is authorized."
+      "nextAction": "Preserve the durable deployed health-verified 4AJ-R result.",
+      "blocker": "None; later route clusters remain separately gated."
     },
     {
       "phaseId": "phase-4",
@@ -5973,11 +6053,21 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C2",
       "title": "Task 1P.4.2c.2: Migrate categorization and upload execution",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Move three executable inline scripts and seven native handlers from categorize categorize-orphans and upload pages into maintained local behavior while preserving alias category subcategory navigation and confirmation workflows.",
-      "nextAction": "Request a bounded 4AK proposal or pause.",
-      "blocker": "No Task 1P.4.2c.2 implementation is authorized without a separate confirmed work block."
+      "nextAction": "Preserve the complete locally verified 4AK source while its exact release runs through Task 1P.4.2c.2-R.",
+      "blocker": "None; later route clusters remain separately gated."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1P42C2R",
+      "title": "Task 1P.4.2c.2-R: Publish and verify categorization and upload execution",
+      "status": "current",
+      "owner": "Codex Desktop",
+      "summary": "Stage and commit the exact verified 4AK paths fast-forward and push main observe the automatic deployment read-only verify credential-free production health and publish one sanitized skip-actions closeout.",
+      "nextAction": "Verify stage commit fast-forward main push observe automatic deployment verify health and publish sanitized closeout.",
+      "blocker": "None inside the exact 4AK-R path; divergence failure recovery and every scope expansion stop for Ryan."
     },
     {
       "phaseId": "phase-4",
@@ -5985,7 +6075,9 @@
       "title": "Task 1P.4.2c.3: Migrate cash-flow and planning execution",
       "status": "planned",
       "owner": "Codex Desktop",
-      "summary": "Move three executable inline scripts forty-seven native handlers and one inert JSON carrier from cash-flow long-term planning and short-term planning into maintained local behavior and non-script inert data with dedicated modal projection goal budget and transaction-edit proof."
+      "summary": "Move three executable inline scripts forty-seven native handlers and one inert JSON carrier from cash-flow long-term planning and short-term planning into maintained local behavior and non-script inert data with dedicated modal projection goal budget and transaction-edit proof.",
+      "nextAction": "Wait for 4AK-R closeout and a fresh bounded re-sizing proposal.",
+      "blocker": "No Task 1P.4.2c.3 implementation is authorized and the cluster remains separately gated."
     },
     {
       "phaseId": "phase-4",
@@ -6063,9 +6155,11 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P5",
       "title": "Task 1P.5: Clarify Upload Undo as status-only",
-      "status": "planned",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Resolve P3-3B-04 with explicit operator language that resetting checklist state does not remove imported ledger rows plus focused coverage."
+      "summary": "Resolve P3-3B-04 inside confirmed 4AK with Mark incomplete wording explicit imported-transactions-remain confirmation and focused coverage.",
+      "nextAction": "Preserve the complete locally verified status-only wording and request durability only through 4AK-R.",
+      "blocker": "None; true import reversal remains outside scope."
     },
     {
       "phaseId": "phase-4",
@@ -7045,8 +7139,8 @@
     },
     {
       "title": "Upload Undo label does not explain its status-only effect",
-      "summary": "The action marks the monthly checklist incomplete but leaves imported transactions intact, while the interface labels it only Undo.",
-      "status": "open",
+      "summary": "Work block 4AK relabels the status-only action Mark incomplete adds explicit imported-transactions-remain confirmation and proves checklist reset leaves transaction rows unchanged.",
+      "status": "resolved-locally",
       "severity": "low",
       "source": "command-center/issues.md"
     },
@@ -7382,15 +7476,19 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Decide whether to request Task 1P.4.2c.2",
-    "description": "Preserve the durable deployed health-verified 4AJ-R result and separately request a bounded 4AK proposal or pause."
+    "name": "Complete exact-scope 4AK-R release",
+    "description": "Publish the verified 4AK source by clean direct-main fast-forward observe the automatic deployment verify credential-free health and close with sanitized state."
   },
   "verification": {
+    "phase4CategorizationUploadRelease": "active; exact-source staging direct-main durability automatic deployment observation credential-free health and sanitized closeout remain to run",
     "phase4CoreReviewPageRelease": "pass; exact seventeen-path source commit f8dfa80 is durable on main automatic Fly run 29959060928 and deploy job 89055358673 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4CoreReviewPageBlock": "pass locally; 4AJ removed five executable inline scripts and eighteen native handlers from the five confirmed sources through existing static controllers with included execution at zero and residual inventory seventeen inline scripts seven external scripts two inert carriers ninety-eight native handlers and zero hx-on",
     "phase4CoreReviewPageCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome preserve included workflows repeated HTMX behavior denied external traffic zero unexpected console or page errors and exact all-entity cleanup",
     "phase4CoreReviewPageBoundaries": "pass; no later route cluster style CSP-header Plaid authentication financial dependency protected data credential real database external live GitHub publication deployment or preserved-file mutation occurred",
-    "phase4FullPageDecomposition": "pass; the tracked source inventory remains decomposed into eight route clusters with Task 1P.4.2c.1 durable through 4AJ-R and Task 1P.4.2c.2 current only as a separate Ryan confirmation gate",
+    "phase4CategorizationUploadBlock": "pass locally; 4AK removed three executable inline scripts and seven native handlers from the three included templates into one maintained controller relabeled status-only Undo as Mark incomplete and left residual inventory fourteen inline scripts eight external scripts two inert carriers ninety-one handlers and zero hx-on",
+    "phase4CategorizationUploadCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover alias category subcategory orphan month deletion and status-only behavior with denied external traffic zero unexpected browser errors and exact all-entity cleanup",
+    "phase4CategorizationUploadBoundaries": "pass; no style CSP-header Plaid authentication financial dependency protected data credential real database external live GitHub publication deployment later-route or preserved-file mutation occurred",
+    "phase4FullPageDecomposition": "pass; the tracked source inventory remains decomposed into eight route clusters with Task 1P.4.2c.1 durable through 4AJ-R Task 1P.4.2c.2 complete locally through 4AK and later clusters separately gated",
     "phase4HtmxDisablementRelease": "pass; exact sixteen-path source commit 3fb0d74 is durable on main automatic Fly run 29954953878 and deploy job 89041537857 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4HtmxDisablement": "pass locally; allowEval and allowScriptTags are false zero eval-backed template attributes and zero directly returned script elements are maintained and three swapped inert JSON carriers use non-script template data",
     "phase4HtmxDisablementCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover shared shell repeated dashboard-report and transaction-modal behavior with denied external traffic zero unexpected console or page errors and exact all-entity cleanup",
