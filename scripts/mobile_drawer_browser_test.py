@@ -9,7 +9,9 @@ auth/no-password shell loading. Transaction and supporting modal fragments,
 categorization/upload controls, Cash Flow/Long-Term Planning, Short-Term
 Planning, and Weekly/Waterfall interactions run only against temporary
 synthetic databases. Subscription and BFM-only payroll interactions use the
-same local-only fixture and cleanup boundary.
+same local-only fixture and cleanup boundary. Standalone offline/error and
+`/k/` execution proof uses synthetic status routes and the same denied-network,
+temporary-data, and exact-cleanup boundary.
 """
 
 from __future__ import annotations
@@ -130,7 +132,7 @@ def _assert_shared_shell(page, label: str) -> None:
             document.body.appendChild(indicator);
             const hiddenOpacity = getComputedStyle(indicator).opacity;
             indicator.classList.add('htmx-request');
-            await new Promise((resolve) => setTimeout(resolve, 250));
+            await new Promise((resolve) => setTimeout(resolve, 400));
             const requestOpacity = getComputedStyle(indicator).opacity;
             indicator.remove();
             return {
@@ -2477,6 +2479,186 @@ def _assert_plaid_entry_pages(page, base_url: str, label: str) -> None:
     page.goto(base_url, wait_until="networkidle")
 
 
+def _register_standalone_test_routes(app) -> None:
+    from flask import abort
+
+    def synthetic_forbidden():
+        abort(403)
+
+    def synthetic_not_found():
+        abort(404)
+
+    def synthetic_server_error():
+        raise RuntimeError("SYNTHETIC_4AR_EXCEPTION_MARKER")
+
+    app.add_url_rule(
+        "/__synthetic-4ar/403",
+        "synthetic_4ar_403",
+        synthetic_forbidden,
+    )
+    app.add_url_rule(
+        "/__synthetic-4ar/404",
+        "synthetic_4ar_404",
+        synthetic_not_found,
+    )
+    app.add_url_rule(
+        "/__synthetic-4ar/500",
+        "synthetic_4ar_500",
+        synthetic_server_error,
+    )
+    app.add_url_rule(
+        "/favicon.ico",
+        "synthetic_4ar_favicon",
+        lambda: ("", 204),
+    )
+
+
+def _assert_standalone_documents(
+    page,
+    base_url: str,
+    label: str,
+    console_errors: list[str],
+) -> None:
+    console_error_start = len(console_errors)
+    page.goto(base_url, wait_until="networkidle")
+    page.evaluate("localStorage.setItem('theme', 'light')")
+
+    offline_response = page.goto(f"{base_url}/offline", wait_until="networkidle")
+    _check(
+        offline_response is not None and offline_response.status == 200,
+        f"{label}: offline document must retain HTTP 200",
+    )
+    offline_state = page.evaluate(
+        """() => ({
+            theme: document.documentElement.getAttribute("data-theme"),
+            color: document.querySelector('meta[name="theme-color"]').content,
+            assetCount: document.querySelectorAll(
+                'script[src*="standalone-documents.js"]'
+            ).length,
+            inlineCount: Array.from(document.scripts).filter(
+                (script) => !script.src
+            ).length,
+            retryAction: document.querySelector(".offline-btn").dataset.standaloneAction,
+        })"""
+    )
+    _check(
+        offline_state
+        == {
+            "theme": "light",
+            "color": "#F7F9FC",
+            "assetCount": 1,
+            "inlineCount": 0,
+            "retryAction": "retry",
+        },
+        f"{label}: offline document must initialize theme and delegated retry from one local asset",
+    )
+    with page.expect_navigation(wait_until="networkidle"):
+        page.get_by_role("button", name="Retry", exact=True).click()
+    _check(
+        page.url == f"{base_url}/offline",
+        f"{label}: offline retry must reload the same data-free document",
+    )
+
+    for status in (403, 404, 500):
+        response = page.goto(
+            f"{base_url}/__synthetic-4ar/{status}",
+            wait_until="networkidle",
+        )
+        _check(
+            response is not None and response.status == status,
+            f"{label}: synthetic {status} document must retain its exact status",
+        )
+        error_state = page.evaluate(
+            """() => ({
+                theme: document.documentElement.getAttribute("data-theme"),
+                color: document.querySelector('meta[name="theme-color"]').content,
+                assetCount: document.querySelectorAll(
+                    'script[src*="standalone-documents.js"]'
+                ).length,
+                inlineCount: Array.from(document.scripts).filter(
+                    (script) => !script.src
+                ).length,
+                body: document.body.innerText,
+            })"""
+        )
+        _check(
+            error_state["theme"] == "light"
+            and error_state["color"] == "#F7F9FC"
+            and error_state["assetCount"] == 1
+            and error_state["inlineCount"] == 0,
+            f"{label}: {status} document must use the local early-theme controller",
+        )
+        _check(
+            "SYNTHETIC_4AR_EXCEPTION_MARKER" not in error_state["body"],
+            f"{label}: {status} document must not leak exception detail",
+        )
+
+    focused_response = page.goto(f"{base_url}/k/", wait_until="networkidle")
+    _check(
+        focused_response is not None and focused_response.status == 200,
+        f"{label}: authenticated or no-password /k/ document must render",
+    )
+    focused_state = page.evaluate(
+        """() => ({
+            assetCount: document.querySelectorAll('script[src*="kristine.js"]').length,
+            inlineCount: Array.from(document.scripts).filter(
+                (script) => !script.src
+            ).length,
+            bfmLeak: document.body.innerText.includes("4AL BFM Checking"),
+            focusVisible: document.body.innerText.includes("FOCUS SPENDING")
+                && document.body.innerText.includes("Food"),
+        })"""
+    )
+    _check(
+        focused_state["assetCount"] == 1
+        and focused_state["inlineCount"] == 0
+        and not focused_state["bfmLeak"]
+        and focused_state["focusVisible"],
+        f"{label}: /k/ must load its local controller and preserve Personal plus LL without BFM",
+    )
+
+    toggles = page.locator('[data-kristine-action="toggle-category"]')
+    _check(
+        toggles.count() > 0,
+        f"{label}: synthetic /k/ fixture must expose a delegated drill-down control",
+    )
+    toggle = toggles.first
+    drill = toggle.locator(".kd-drill")
+    _check(
+        drill.count() == 1 and drill.evaluate("element => element.hidden"),
+        f"{label}: /k/ drill-down must start closed",
+    )
+    toggle.click()
+    _check(
+        not drill.evaluate("element => element.hidden")
+        and toggle.evaluate(
+            "element => element.classList.contains('kd-cat-row--open')"
+        ),
+        f"{label}: delegated /k/ click must open the drill-down",
+    )
+    toggle.click()
+    _check(
+        drill.evaluate("element => element.hidden"),
+        f"{label}: delegated /k/ click must close the drill-down",
+    )
+
+    page.evaluate("localStorage.setItem('theme', 'dark')")
+    page.goto(base_url, wait_until="networkidle")
+    expected_status_errors = sorted(
+        [
+            "Failed to load resource: the server responded with a status of 403 (FORBIDDEN)",
+            "Failed to load resource: the server responded with a status of 404 (NOT FOUND)",
+            "Failed to load resource: the server responded with a status of 500 (INTERNAL SERVER ERROR)",
+        ]
+    )
+    observed_status_errors = sorted(console_errors[console_error_start:])
+    _check(
+        observed_status_errors == expected_status_errors,
+        f"{label}: only exact synthetic error-status console entries are expected",
+    )
+    del console_errors[console_error_start:]
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -2504,6 +2686,8 @@ def main() -> None:
     original_get_accounts = None
     crypto_module = None
     original_encrypt_token = None
+    kristine_routes_module = None
+    original_start_background_sync = None
 
     try:
         with tempfile.TemporaryDirectory(prefix="expense_drawer_browser_") as temp_root:
@@ -2528,6 +2712,7 @@ def main() -> None:
             from core import crypto as crypto_module
             from core import plaid_client as plaid_client_module
             from web import create_app
+            from web.routes import kristine as kristine_routes_module
             from web.routes import payroll as payroll_routes_module
 
             original_category_suggestion = ai_client_module.generate_category_suggestion
@@ -2539,6 +2724,9 @@ def main() -> None:
             )
             original_get_accounts = plaid_client_module.get_accounts
             original_encrypt_token = crypto_module.encrypt_token
+            original_start_background_sync = (
+                kristine_routes_module._start_background_sync
+            )
             ai_client_module.generate_category_suggestion = lambda **_kwargs: {
                 "category": "Office Supplies",
                 "subcategory": "General",
@@ -2599,6 +2787,7 @@ def main() -> None:
             crypto_module.encrypt_token = (
                 lambda token: f"synthetic-encrypted-{token}"
             )
+            kristine_routes_module._start_background_sync = lambda: False
 
             for entity_key in ("personal", "company", "luxelegacy"):
                 init_db(entity_key)
@@ -2610,7 +2799,9 @@ def main() -> None:
                 _seed_plaid_entry_data(entity_key)
 
             app = create_app()
-            app.config.update(TESTING=True)
+            app.config.update(TESTING=True, PROPAGATE_EXCEPTIONS=False)
+            app.logger.disabled = True
+            _register_standalone_test_routes(app)
             server = make_server(
                 "127.0.0.1", 0, app, request_handler=_QuietRequestHandler
             )
@@ -2884,6 +3075,12 @@ def main() -> None:
                 _assert_plaid_entry_pages(
                     page, base_url, "no-password Plaid entry execution"
                 )
+                _assert_standalone_documents(
+                    page,
+                    base_url,
+                    "no-password standalone execution",
+                    console_errors,
+                )
 
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
@@ -2927,7 +3124,9 @@ def main() -> None:
             auth_password = "synthetic-shared-shell-password"
             os.environ["APP_PASSWORD_HASH"] = generate_password_hash(auth_password)
             auth_app = create_app()
-            auth_app.config.update(TESTING=True)
+            auth_app.config.update(TESTING=True, PROPAGATE_EXCEPTIONS=False)
+            auth_app.logger.disabled = True
+            _register_standalone_test_routes(auth_app)
             server = make_server(
                 "127.0.0.1", 0, auth_app, request_handler=_QuietRequestHandler
             )
@@ -3005,6 +3204,12 @@ def main() -> None:
                 _assert_plaid_entry_pages(
                     page, base_url, "configured-auth Plaid entry execution"
                 )
+                _assert_standalone_documents(
+                    page,
+                    base_url,
+                    "configured-auth standalone execution",
+                    auth_console_errors,
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -3059,10 +3264,17 @@ def main() -> None:
             plaid_client_module.get_accounts = original_get_accounts
         if crypto_module is not None and original_encrypt_token is not None:
             crypto_module.encrypt_token = original_encrypt_token
+        if (
+            kristine_routes_module is not None
+            and original_start_background_sync is not None
+        ):
+            kristine_routes_module._start_background_sync = (
+                original_start_background_sync
+            )
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, and mocked Plaid entry workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, mocked Plaid entry, and standalone offline/error/k workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

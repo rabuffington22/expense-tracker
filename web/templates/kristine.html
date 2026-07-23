@@ -12,6 +12,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
+  <script defer src="{{ url_for('static', filename='kristine.js') }}?v={{ cache_bust }}"></script>
 </head>
 <body>
   <div class="kd-wrap">
@@ -104,7 +105,7 @@
         {# Per-category rows #}
         <div class="kd-cats">
           {% for item in focus_items %}
-          <div class="kd-cat-row {% if item.transactions %}kd-cat-row--tap{% endif %}" {% if item.transactions %}onclick="kdToggle(this)"{% endif %}>
+          <div class="kd-cat-row {% if item.transactions %}kd-cat-row--tap{% endif %}"{% if item.transactions %} data-kristine-action="toggle-category"{% endif %}>
             <div class="kd-cat-head">
               <span class="kd-cat-name">{{ item.category }}</span>
               <span class="kd-cat-spent">
@@ -217,15 +218,5 @@
       Updated {{ now }}
     </div>
   </div>
-
-  <script>
-    function kdToggle(row) {
-      var drill = row.querySelector('.kd-drill');
-      if (!drill) return;
-      var open = !drill.hidden;
-      drill.hidden = open;
-      row.classList.toggle('kd-cat-row--open', !open);
-    }
-  </script>
 </body>
 </html>

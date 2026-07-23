@@ -5,14 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
     <title>Offline — The Ledger</title>
-    <script>
-    (function(){
-        var t = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', t);
-        var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = t === 'light' ? '#F7F9FC' : '#000000';
-    })();
-    </script>
+    <script src="{{ url_for('static', filename='standalone-documents.js') }}?v={{ cache_bust }}"></script>
     <style>
         :root[data-theme="dark"] {
             --bg: #000; --text: #f5f5f7; --text-muted: rgba(255,255,255,0.5);
@@ -45,7 +38,7 @@
         <div class="offline-icon">&#x1F50C;</div>
         <div class="offline-title">You're Offline</div>
         <p class="offline-msg">The Ledger needs an internet connection to load your financial data. Please check your connection and try again.</p>
-        <button class="offline-btn" onclick="window.location.reload()">Retry</button>
+        <button class="offline-btn" data-standalone-action="retry">Retry</button>
     </div>
 </body>
 </html>

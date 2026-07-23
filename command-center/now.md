@@ -2,27 +2,56 @@
 
 ## Active Objective
 
-Preserve the durable, deployed, health-verified Plaid entry-page execution result while Task 1P.4.2c.8 and every later policy or product mutation remain separately gated.
+Publish and verify only the exact locally verified standalone and error-document execution result through the confirmed 4AR-R direct-main release boundary.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.7 is durable, automatically deployed, and credential-free health verified through work block 4AQ-R.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.8 is complete locally through 4AR and exact-scope 4AR-R release is active, while Tasks 1P.4.2c.1-1P.4.2c.7 are durable through 4AQ-R.
 
 ## Current Work Block
 
-Work block 4AQ-R: Plaid Entry-Page Execution Release — complete.
+Work block 4AR-R: Standalone And Error-Document Execution Release — active.
 
 ## Current Task
 
-Task 1P.4.2c.8: Migrate standalone and error-document execution — waiting for a fresh proposal and confirmation; not authorized.
+Task 1P.4.2c.8-R: Publish and verify standalone and error-document execution — active and authorized for the exact verified 4AR source set.
 
 ## Owner
 
-Ryan owns the next Task 1P.4.2c.8 decision and every expansion, live mutation, or recovery. Codex Desktop owns preservation of the durable verified result.
+Codex Desktop owns exact staging, maintained verification, direct-main durability, read-only automatic-deployment observation, credential-free health, and sanitized closeout. Ryan owns every expansion, non-automatic live mutation, failure recovery, and the later Task 1P.4.3a decomposition decision.
 
 ## Current Action
 
-Preserve exact source commit `993506b25d37c452471ea9ea413e734efe25d122`, successful automatic Fly run `30027699965` and deploy job `89276216665`, and credential-free production health while awaiting a fresh bounded Task 1P.4.2c.8 proposal.
+Verify and explicitly stage the exact 4AR paths, commit on `codex/csp-standalone-documents`, cleanly fast-forward and push `main`, observe only the automatic Fly deployment, verify credential-free production health and exact source SHA, then publish one sanitized command-center-only `[skip actions]` closeout while preserving both unrelated untracked files.
+
+## Work Block 4AR-R Contract
+
+- Include explicit staging of the exact verified 4AR application, controllers, maintained tests, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-standalone-documents`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Tasks 1P.4.3a-1P.4.4 and every later task; new application, runtime, style, or CSP-policy mutation beyond verified 4AR; credentials; protected data; real databases; retained uploads; authenticated production pages; manual workflow actions; workflow edits; non-automatic Fly mutations; downstream access or writes; PR creation; force push; broader recovery; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified controllers, templates, tests, final zero-inline/zero-handler inventory, false HTMX execution switches, exact error/status/auth/entity behavior, and both unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and the separately gated Task 1P.4.3a just-in-time decomposition.
+
+## Work Block 4AR Contract
+
+- Include Task 1P.4.2c.8 plus only its focused Task 2 regression slice: move the five executable inline scripts and all source or rendered native handlers from `offline.html`, `errors/403.html`, `errors/404.html`, `errors/500.html`, and `kristine.html` into local document-family controllers while preserving data-free error/offline rendering, early theme initialization, retry behavior, `/k/` drill-down interaction, configured-auth and no-password boundaries, entity isolation, and no exception leakage.
+- Treat the maintained one-native-handler aggregate as source-pattern output and explicitly include the Jinja-conditional `/k/` `onclick` seam that appears in rendered output but is missed by that aggregate regex; remove and prove both handler seams without changing the durable task number.
+- Keep Tasks 1P.4.3a-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, style or runtime-style migration, CSP headers/nonces/enforcement, route, authentication, cache, CSRF, service-worker, manifest, financial, database, product, dependency, credential, protected-data, real-database, retained-upload, external/live, GitHub, publication, deployment, workflow, downstream, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` changes outside scope.
+- Default to a blocking local standalone-document initializer for error/offline theme behavior and delegated retry plus a deferred page-owned `/k/` controller; preserve current styles, copy, status codes, URLs, cache/auth boundaries, false HTMX execution switches, temporary synthetic all-entity data, denied non-localhost traffic, both auth modes, zero unexpected browser errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if parity requires an excluded route, authentication, cache, service-worker, style-policy, CSP-enforcement, financial, database, product, dependency, protected/live, destructive, or later-task change; error behavior leaks exception detail; a pre-existing defect makes parity ambiguous; verification changes the plan; cleanup fails; command-center checks fail; scope expands; or either preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-inline-execution and zero-native-handler assertions for all five documents, including the conditional `/k/` seam; exact post-4AR aggregate execution inventory; configured-auth and no-password isolated Chrome covering theme, offline retry, 403/404/500 rendering and status, no exception leakage, `/k/` authentication/entity/drill-down behavior, denied networking, zero unexpected console/page errors, and exact cleanup; relevant Python/JavaScript/JSON syntax; whitespace; dashboard refresh/health/rendered state; exact scope; and both preserved files.
+- Report exact migrated behavior, corrected and final inventory, controller organization, focused/full/auth/error/offline browser proof, cleanup, changed paths, local branch state, preserved exclusions, and the separate 4AR-R durability gate.
+
+## Work Block 4AR Result
+
+- `offline.html` and all three error templates now load blocking template-free `standalone-documents.js`, which preserves stored-theme initialization before paint and owns delegated offline retry behavior.
+- `kristine.html` now loads deferred template-free `kristine.js`, and its conditional category drill-down uses delegated `data-kristine-action` behavior with no inline handler.
+- All five included source templates and rendered responses contain zero executable inline scripts, zero native handlers, and zero `hx-on`; the final tracked-template execution inventory is 0 inline executable scripts, 21 external executable script occurrences, 0 inert JSON script carriers, 0 source-recognized native handlers, and 0 `hx-on`.
+- The fresh proof confirmed that the prior one-handler aggregate missed the Jinja-adjacent conditional `/k/` handler; both the counted offline seam and formerly omitted rendered `/k/` seam are now removed and explicitly covered.
+- Baseline and final full smoke, configured-auth and no-password isolated Chrome, exact 200/403/404/500 status behavior, no exception leakage, early theme, retry, `/k/` auth/entity/drill-down behavior, denied networking, expected synthetic status console entries only, zero unexpected browser/page errors, relevant syntax, JSON, whitespace, dashboard refresh/health/generated state, exact scope, and exact cleanup pass.
+- No route, authentication, cache, CSRF, service-worker, manifest, style, CSP policy/header/enforcement, financial, database, product, dependency, credential, protected-data, real-database, retained-upload, external/live, GitHub, publication, deployment, workflow, downstream, destructive, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-standalone-error-document-execution-4ar.md`.
 
 ## Work Block 4AQ-R Contract
 

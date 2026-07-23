@@ -8739,8 +8739,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (21, 5, 16, 0, 1, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AQ CSP contract",
+            == (21, 0, 21, 0, 0, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AR CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8961,8 +8961,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (21, 5, 16, 0, 1, 0),
-            "categorization/upload pages: maintained aggregate inventory must match the post-4AQ CSP contract",
+            == (21, 0, 21, 0, 0, 0),
+            "categorization/upload pages: maintained aggregate inventory must match the post-4AR CSP contract",
         )
 
         print("   ✅ Three source templates, delegated controller, rendered routes, status-only reset, and exact residual inventory passed")
@@ -9083,8 +9083,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (21, 5, 16, 0, 1, 0),
-            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AQ CSP contract",
+            == (21, 0, 21, 0, 0, 0),
+            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AR CSP contract",
         )
 
         print("   ✅ Two source templates, page-owned controllers, rendered routes, and exact residual inventory passed")
@@ -9225,8 +9225,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (21, 5, 16, 0, 1, 0),
-            "short-term planning: maintained aggregate inventory must match the post-4AQ CSP contract",
+            == (21, 0, 21, 0, 0, 0),
+            "short-term planning: maintained aggregate inventory must match the post-4AR CSP contract",
         )
 
         print("   ✅ Source template, page controller, rendered response markup, inert data, cleanup, and exact residual inventory passed")
@@ -9329,8 +9329,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (21, 5, 16, 0, 1, 0),
-            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AQ CSP contract",
+            == (21, 0, 21, 0, 0, 0),
+            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AR CSP contract",
         )
 
         print("   ✅ Two source templates, rendered routes, page controller, AI seams, and exact residual inventory passed")
@@ -9426,8 +9426,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (21, 5, 16, 0, 1, 0),
-            "subscriptions: maintained aggregate inventory must match the post-4AQ CSP contract",
+            == (21, 0, 21, 0, 0, 0),
+            "subscriptions: maintained aggregate inventory must match the post-4AR CSP contract",
         )
 
         print("   ✅ Source template, rendered route, page controller, inert data, AI seam, and exact residual inventory passed")
@@ -9521,8 +9521,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (21, 5, 16, 0, 1, 0),
-            "payroll: maintained aggregate inventory must match the post-4AQ CSP contract",
+            == (21, 0, 21, 0, 0, 0),
+            "payroll: maintained aggregate inventory must match the post-4AR CSP contract",
         )
 
         print("   ✅ Source template, rendered BFM route, page controller, inert data, valid forms, and exact residual inventory passed")
@@ -9807,11 +9807,146 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (21, 5, 16, 0, 1, 0),
-            "Plaid entry pages: maintained aggregate inventory must match the post-4AQ CSP contract",
+            == (21, 0, 21, 0, 0, 0),
+            "Plaid entry pages: maintained aggregate inventory must match the post-4AR CSP contract",
         )
 
         print("   ✅ Source, rendered, mocked request, exchange-format, entity-isolation, cleanup, and exact residual inventory passed")
+
+        # ── 11m. Standalone and error-document execution ────────────────
+        print("\n11m. Standalone and error-document execution…")
+
+        standalone_paths = (
+            templates_root / "offline.html",
+            templates_root / "errors" / "403.html",
+            templates_root / "errors" / "404.html",
+            templates_root / "errors" / "500.html",
+            templates_root / "kristine.html",
+        )
+        standalone_sources = [path.read_text() for path in standalone_paths]
+        standalone_asset = (
+            PROJECT_ROOT / "web" / "static" / "standalone-documents.js"
+        ).read_text()
+        kristine_asset = (
+            PROJECT_ROOT / "web" / "static" / "kristine.js"
+        ).read_text()
+
+        _check(
+            all(
+                not inline_executable_script_pattern.search(source)
+                and not native_handler_pattern.search(source)
+                and "hx-on" not in source
+                for source in standalone_sources
+            ),
+            "standalone documents: source templates must contain no inline execution",
+        )
+        _check(
+            all(
+                "standalone-documents.js" in source
+                for source in standalone_sources[:4]
+            )
+            and "kristine.js" in standalone_sources[4]
+            and 'data-standalone-action="retry"' in standalone_sources[0]
+            and 'data-kristine-action="toggle-category"' in standalone_sources[4],
+            "standalone documents: family controllers and delegated actions must be explicit",
+        )
+        _check(
+            "{{" not in standalone_asset
+            and "{%" not in standalone_asset
+            and "{{" not in kristine_asset
+            and "{%" not in kristine_asset,
+            "standalone documents: maintained JavaScript must be template-free",
+        )
+
+        from flask import abort
+
+        standalone_app = create_app()
+        standalone_app.config.update(
+            TESTING=False,
+            PROPAGATE_EXCEPTIONS=False,
+        )
+        standalone_app.logger.disabled = True
+
+        def _synthetic_forbidden():
+            abort(403)
+
+        def _synthetic_not_found():
+            abort(404)
+
+        def _synthetic_server_error():
+            raise RuntimeError("SYNTHETIC_4AR_EXCEPTION_MARKER")
+
+        standalone_app.add_url_rule(
+            "/__synthetic-4ar/403",
+            "synthetic_4ar_403",
+            _synthetic_forbidden,
+        )
+        standalone_app.add_url_rule(
+            "/__synthetic-4ar/404",
+            "synthetic_4ar_404",
+            _synthetic_not_found,
+        )
+        standalone_app.add_url_rule(
+            "/__synthetic-4ar/500",
+            "synthetic_4ar_500",
+            _synthetic_server_error,
+        )
+        standalone_client = standalone_app.test_client()
+
+        rendered_standalone = []
+        offline_response = standalone_client.get("/offline")
+        rendered_standalone.append(offline_response.get_data(as_text=True))
+        _check(
+            offline_response.status_code == 200,
+            "standalone documents: offline route must remain data-free and available",
+        )
+
+        for path, expected_status in (
+            ("/__synthetic-4ar/403", 403),
+            ("/__synthetic-4ar/404", 404),
+            ("/__synthetic-4ar/500", 500),
+        ):
+            response = standalone_client.get(path)
+            body = response.get_data(as_text=True)
+            rendered_standalone.append(body)
+            _check(
+                response.status_code == expected_status,
+                f"standalone documents: {expected_status} status must remain exact",
+            )
+            _check(
+                "SYNTHETIC_4AR_EXCEPTION_MARKER" not in body,
+                "standalone documents: error responses must not leak exception detail",
+            )
+
+        with patch(
+            "web.routes.kristine._start_background_sync",
+            return_value=False,
+        ):
+            rendered_kristine = standalone_client.get("/k/")
+        rendered_standalone.append(rendered_kristine.get_data(as_text=True))
+        _check(
+            rendered_kristine.status_code == 200,
+            "standalone documents: no-password /k/ must remain available",
+        )
+        _check(
+            all(
+                not inline_executable_script_pattern.search(source)
+                and not native_handler_pattern.search(source)
+                and "hx-on" not in source
+                for source in rendered_standalone
+            ),
+            "standalone documents: rendered responses must contain no inline execution",
+        )
+        _check(
+            all(
+                "/static/standalone-documents.js" in source
+                for source in rendered_standalone[:4]
+            )
+            and "/static/kristine.js" in rendered_standalone[4],
+            "standalone documents: rendered responses must load their local controllers",
+        )
+
+        print("   ✅ Five source templates, local controllers, exact statuses, no exception leakage, rendered responses, and final aggregate inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
