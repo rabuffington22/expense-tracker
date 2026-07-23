@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact locally verified 4AP payroll-page result to `main`, observe its automatic Fly deployment read-only, verify credential-free production health, and close the release with sanitized Runway OS state.
+Preserve the durable, automatically deployed, and credential-free health-verified payroll-page result while Ryan chooses the next separately bounded route cluster.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.6-R is active through confirmed work block 4AP-R, while Task 1P.4.2c.7 and every broader mutation remain separate Ryan gates.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.6 is durable, automatically deployed, and credential-free health verified through 4AP-R, while Task 1P.4.2c.7 remains a separate Ryan planning gate.
 
 ## Current Work Block
 
-Work block 4AP-R: Payroll Page Durability And Release — active.
+Work block 4AP-R: Payroll Page Durability And Release — complete.
 
 ## Current Task
 
-Task 1P.4.2c.6-R: Publish and verify payroll-page execution — active.
+Task 1P.4.2c.7: Migrate Plaid entry-page execution — current planning gate; implementation is not authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, release verification, one source commit, clean fast-forward, direct-main push, read-only automatic-deployment observation, credential-free production health, and sanitized closeout. Ryan owns every expansion, manual live mutation, failure recovery, and Task 1P.4.2c.7.
+Ryan owns Task 1P.4.2c.7, every expansion, live action, product decision, and recovery. Codex Desktop owns Runway OS currency and no further mutation until a fresh work block is proposed and confirmed.
 
 ## Current Action
 
-Verify and stage only the exact 4AP source set, commit it on `codex/csp-payroll`, fast-forward and push `main`, observe only the resulting automatic Fly deployment, verify exact source SHA and credential-free `/health`, then publish one command-center-only `[skip actions]` closeout.
+Preserve the exact durable 4AP-R result. If Ryan asks to continue, freshly recheck and propose a bounded Task 1P.4.2c.7 Plaid entry-page block without inferring implementation authorization.
 
 ## Work Block 4AP-R Contract
 
@@ -32,6 +32,15 @@ Verify and stage only the exact 4AP source set, commit it on `codex/csp-payroll`
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
 - Report source and closeout commit SHAs, exact published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.7 still separately gated.
+
+## Work Block 4AP-R Result
+
+- Exact twelve-path source commit `5d331cf2c4a39a71fc8338c0396d85f8b6d449de` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30018319510` and deploy job `89244106601` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}` after deployment.
+- Exact-path and staged-set checks, protected-boundary and high-confidence sensitive-addition scans, maintained smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated-state assertions, commit content, clean fast-forward, ancestry, exact remote SHA, automatic release, production health, and preserved-file checks passed.
+- No PR, force push, credential, protected data, real database, retained upload, authenticated production page, manual workflow action, workflow edit, non-automatic Fly mutation, downstream access/write, Task 1P.4.2c.7 implementation, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-payroll-page-execution-release-4ap-r.md`.
 
 ## Work Block 4AP Contract
 
