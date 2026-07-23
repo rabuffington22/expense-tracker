@@ -9948,6 +9948,132 @@ def main() -> None:
 
         print("   ✅ Five source templates, local controllers, exact statuses, no exception leakage, rendered responses, and final aggregate inventory passed")
 
+        # ── 11n. Shared shell and dashboard/report style compatibility ───
+        print("\n11n. Shared shell and dashboard/report style compatibility…")
+
+        included_style_paths = (
+            templates_root / "base.html",
+            templates_root / "reports.html",
+            templates_root / "components" / "sidebar.html",
+            templates_root / "components" / "dashboard_body.html",
+            templates_root / "components" / "dashboard_detail_cats.html",
+            templates_root / "components" / "dashboard_detail_insights.html",
+            templates_root / "components" / "dashboard_ie_insights.html",
+            templates_root / "components" / "insights_upcoming.html",
+            templates_root / "components" / "categories_compare.html",
+            templates_root / "components" / "rpt_view.html",
+        )
+        included_style_sources = [path.read_text() for path in included_style_paths]
+        style_attribute_pattern = _re.compile(
+            r"\sstyle\s*=", flags=_re.IGNORECASE
+        )
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in included_style_sources
+            ),
+            "shared/dashboard styles: included source templates must contain no style attributes",
+        )
+
+        app_shell_source = (
+            PROJECT_ROOT / "web" / "static" / "app-shell.js"
+        ).read_text()
+        dashboard_fragment_source = (
+            PROJECT_ROOT / "web" / "static" / "dashboard-fragments.js"
+        ).read_text()
+        included_controller_source = (
+            app_shell_source + "\n" + dashboard_fragment_source
+        )
+        _check(
+            "style=" not in included_controller_source
+            and ".style." not in included_controller_source
+            and ".style =" not in included_controller_source,
+            "shared/dashboard styles: included controllers must emit no style attributes or runtime style writes",
+        )
+        _check(
+            'classList.add("body-scroll-locked")' in app_shell_source
+            and 'classList.remove("body-scroll-locked")' in app_shell_source
+            and 'description.hidden = description.dataset.report !== select.value'
+            in dashboard_fragment_source
+            and 'qboButton.hidden = select.value !== "transactions"'
+            in dashboard_fragment_source
+            and 'guide.classList.add("ie-guide--visible")'
+            in dashboard_fragment_source
+            and "setBoundedPercentClass(tip" in dashboard_fragment_source,
+            "shared/dashboard styles: maintained class, hidden-state, guide, and bounded tooltip contracts must remain explicit",
+        )
+
+        style_source = (PROJECT_ROOT / "web" / "static" / "style.css").read_text()
+        percent_classes = {
+            int(value)
+            for value in _re.findall(r"\.u-pct-(\d+)\s*\{", style_source)
+        }
+        _check(
+            percent_classes == set(range(101))
+            and ".u-width-pct" in style_source
+            and ".u-height-pct" in style_source
+            and ".u-left-pct" in style_source
+            and ".body-scroll-locked" in style_source
+            and ".ie-guide--visible" in style_source,
+            "shared/dashboard styles: local CSS must provide the complete bounded percentage and state-class contract",
+        )
+
+        style_client = no_auth_app.test_client()
+        rendered_style_responses = []
+        for path in (
+            "/",
+            "/reports/",
+            "/dashboard/partial",
+            "/dashboard/categories-compare",
+            "/dashboard/detail-categories",
+            "/dashboard/detail-insights",
+            "/dashboard/insights-upcoming",
+            "/dashboard/ie-insights",
+            "/reports/view?report_type=categories&start=2000-01-01&end=2100-01-01",
+        ):
+            response = style_client.get(path)
+            _check(
+                response.status_code == 200,
+                f"shared/dashboard styles: {path} must render successfully",
+            )
+            rendered_style_responses.append(response.get_data(as_text=True))
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in rendered_style_responses
+            ),
+            "shared/dashboard styles: included rendered pages and fragments must contain no style attributes",
+        )
+
+        current_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        app_js_source = "\n".join(
+            path.read_text()
+            for path in (PROJECT_ROOT / "web" / "static").glob("*.js")
+            if path.name != "htmx.min.js"
+        )
+        current_style_blocks = len(
+            _re.findall(r"<style(?:\s|>)", current_template_source, flags=_re.IGNORECASE)
+        )
+        current_style_attributes = len(
+            style_attribute_pattern.findall(current_template_source)
+        )
+        current_generated_style_attributes = app_js_source.count("style=")
+        current_runtime_style_writes = app_js_source.count(".style.")
+        _check(
+            (
+                current_style_blocks,
+                current_style_attributes,
+                current_generated_style_attributes,
+                current_runtime_style_writes,
+            )
+            == (7, 185, 7, 21),
+            "shared/dashboard styles: residual application inventory must match the post-4AS contract",
+        )
+
+        print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and exact residual inventory passed")
+
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
     print("=" * 60 + "\n")

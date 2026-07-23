@@ -17,7 +17,7 @@
       <a class="dcat-name" href="{{ drill(category_id=cat.cat_id) }}"
          data-fragment-action="ignore">{{ cat.name }}</a>
       <div class="dcat-track">
-        <div class="dcat-fill{% if cat.bar_color is defined %} dcat-fill--{{ cat.bar_color }}{% endif %}{% if cat.pct < 15 %} dcat-fill--narrow{% endif %}" style="width: {{ cat.pct }}%;">
+        <div class="dcat-fill u-width-pct u-pct-{{ [0, [cat.pct|int, 100]|min]|max }}{% if cat.bar_color is defined %} dcat-fill--{{ cat.bar_color }}{% endif %}{% if cat.pct < 15 %} dcat-fill--narrow{% endif %}">
           {% if cat.total_cents > 0 %}<span class="dcat-bar-label">${{ "{:,.0f}".format(cat.total_cents / 100) }}</span>{% endif %}
         </div>
       </div>

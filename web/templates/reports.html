@@ -18,9 +18,9 @@
 <!-- ================================================================= -->
 <form class="rpt-builder-form" id="rpt-form" data-report-page-controller data-export-url="{{ url_for('reports.export') }}">
     <div class="form-row">
-        <div class="form-group" style="flex:0 0 200px;">
+        <div class="form-group rpt-form-group--report">
             <label class="text-xs text-muted" for="report_type">Report</label>
-            <select id="report_type" name="report_type" class="input-sm" style="width:100%;" data-dashboard-page-change="report-type">
+            <select id="report_type" name="report_type" class="input-sm rpt-form-control--full" data-dashboard-page-change="report-type">
                 <option value="transactions">Transactions</option>
                 <option value="categories">Category Summary</option>
                 <option value="merchants">Merchant Summary</option>
@@ -31,15 +31,15 @@
                 <option value="accounts">Account Summary</option>
             </select>
         </div>
-        <div class="form-group" style="flex:0 0 140px;">
+        <div class="form-group rpt-form-group--date">
             <label class="text-xs text-muted" for="rpt-start">From</label>
-            <input type="date" id="rpt-start" name="start" class="input-sm" style="width:100%;" value="{{ default_start }}">
+            <input type="date" id="rpt-start" name="start" class="input-sm rpt-form-control--full" value="{{ default_start }}">
         </div>
-        <div class="form-group" style="flex:0 0 140px;">
+        <div class="form-group rpt-form-group--date">
             <label class="text-xs text-muted" for="rpt-end">To</label>
-            <input type="date" id="rpt-end" name="end" class="input-sm" style="width:100%;" value="{{ default_end }}">
+            <input type="date" id="rpt-end" name="end" class="input-sm rpt-form-control--full" value="{{ default_end }}">
         </div>
-        <div class="form-group" style="flex:0 0 auto;">
+        <div class="form-group rpt-form-group--action">
             <label class="text-xs text-muted">&nbsp;</label>
             <button type="button" class="btn btn-primary btn-sm"
                     hx-get="{{ url_for('reports.view') }}"
@@ -47,7 +47,7 @@
                     hx-target="#rpt-results"
                     hx-swap="innerHTML">View</button>
         </div>
-        <div class="form-group rpt-export-wrap" style="flex:0 0 auto;">
+        <div class="form-group rpt-export-wrap rpt-form-group--action">
             <label class="text-xs text-muted">&nbsp;</label>
             <button type="button" class="btn btn-secondary btn-sm" data-dashboard-page-action="toggle-export">Export</button>
             <div class="rpt-export-menu" hidden>
@@ -61,13 +61,13 @@
 
 <div class="rpt-builder-descriptions">
     <div class="rpt-desc" data-report="transactions">All transactions with dates, amounts, merchants, categories, subcategories, and notes.</div>
-    <div class="rpt-desc" data-report="categories">Spending totals grouped by category with transaction counts.</div>
-    <div class="rpt-desc" data-report="merchants">Spending totals grouped by merchant with transaction counts.</div>
-    <div class="rpt-desc" data-report="month_over_month">Category spending broken down by month — one column per month, one row per category.</div>
-    <div class="rpt-desc" data-report="income_expenses">Monthly income, expenses, and net totals side by side.</div>
-    <div class="rpt-desc" data-report="recurring">Merchants with 2+ charges — average, min, max amounts and date range.</div>
-    <div class="rpt-desc" data-report="tax_summary">Spending by category and subcategory — detailed breakdown for tax preparation.</div>
-    <div class="rpt-desc" data-report="accounts">Spending, income, and net totals by account.</div>
+    <div class="rpt-desc" data-report="categories" hidden>Spending totals grouped by category with transaction counts.</div>
+    <div class="rpt-desc" data-report="merchants" hidden>Spending totals grouped by merchant with transaction counts.</div>
+    <div class="rpt-desc" data-report="month_over_month" hidden>Category spending broken down by month — one column per month, one row per category.</div>
+    <div class="rpt-desc" data-report="income_expenses" hidden>Monthly income, expenses, and net totals side by side.</div>
+    <div class="rpt-desc" data-report="recurring" hidden>Merchants with 2+ charges — average, min, max amounts and date range.</div>
+    <div class="rpt-desc" data-report="tax_summary" hidden>Spending by category and subcategory — detailed breakdown for tax preparation.</div>
+    <div class="rpt-desc" data-report="accounts" hidden>Spending, income, and net totals by account.</div>
 </div>
 
 <!-- Results area (HTMX target) -->

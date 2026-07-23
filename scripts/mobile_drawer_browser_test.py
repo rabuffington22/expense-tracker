@@ -587,6 +587,14 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
             detailCategories: Boolean(document.getElementById('detail-categories')),
             detailInsights: Boolean(document.getElementById('detail-insights')),
             ieInsights: Boolean(document.getElementById('ie-insights')),
+            styleAttributes: document.querySelectorAll('[style]').length,
+            boundedBars: document.querySelectorAll(
+                '.u-width-pct[class*="u-pct-"], .u-height-pct[class*="u-pct-"]'
+            ).length,
+            sidebarClass: document.getElementById('sidebar-nav').className,
+            sidebarAccent: getComputedStyle(
+                document.getElementById('sidebar-nav')
+            ).getPropertyValue('--sb-accent').trim(),
             allowEval: window.htmx.config.allowEval,
             allowScriptTags: window.htmx.config.allowScriptTags,
         })"""
@@ -601,6 +609,43 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
         initial["allowEval"] is False and initial["allowScriptTags"] is False,
         f"{label}: final global HTMX execution switches must be disabled",
     )
+    _check(
+        initial["styleAttributes"] == 0
+        and initial["boundedBars"] > 0
+        and "sidebar--personal" in initial["sidebarClass"]
+        and initial["sidebarAccent"] == "#003eb6",
+        f"{label}: dashboard shell and fragments must use local bounded classes with no style attributes",
+    )
+
+    hover_column = page.locator("#ie-line-chart .ie-hover-col").first
+    hover_column.hover()
+    tooltip_state = page.evaluate(
+        """() => {
+            const guide = document.querySelector('#ie-line-chart [data-ie-guide]');
+            const tip = document.querySelector('#ie-line-chart [data-ie-tip]');
+            return {
+                guideVisible: guide.classList.contains('ie-guide--visible'),
+                tipVisible: !tip.hidden,
+                tipPercentClass: Array.from(tip.classList).some(
+                    (className) => /^u-pct-\\d+$/.test(className)
+                ),
+                tipInlineStyle: tip.hasAttribute('style'),
+                tipTop: getComputedStyle(tip).top,
+            };
+        }"""
+    )
+    _check(
+        tooltip_state
+        == {
+            "guideVisible": True,
+            "tipVisible": True,
+            "tipPercentClass": True,
+            "tipInlineStyle": False,
+            "tipTop": "16px",
+        },
+        f"{label}: chart tooltip must preserve positioned guide behavior through local state classes",
+    )
+    page.mouse.move(0, 0)
 
     detail_category = page.locator(
         '#detail-categories [data-fragment-action="toggle-category"]'
@@ -716,6 +761,7 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
                 return {
                     charts: root.querySelectorAll('#ie-line-chart svg').length,
                     scriptElements: root.querySelectorAll('script').length,
+                    styleAttributes: root.querySelectorAll('[style]').length,
                     nativeHandlers: elements.reduce((count, element) => count +
                         Array.from(element.attributes || []).filter(
                             (attribute) => /^on[a-z]/i.test(attribute.name)
@@ -724,12 +770,22 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
             }"""
         )
         _check(
-            fragment_state == {"charts": 1, "scriptElements": 0, "nativeHandlers": 0},
-            f"{label} dashboard swap {swap_number}: migrated fragments must reinitialize without script elements or inline execution",
+            fragment_state
+            == {
+                "charts": 1,
+                "scriptElements": 0,
+                "styleAttributes": 0,
+                "nativeHandlers": 0,
+            },
+            f"{label} dashboard swap {swap_number}: migrated fragments must reinitialize without inline execution or style attributes",
         )
 
     page.goto(f"{base_url}/reports/", wait_until="networkidle")
     _assert_shared_shell(page, f"{label} reports shell")
+    _check(
+        page.locator("[style]").count() == 0,
+        f"{label}: reports shell must render with no style attributes",
+    )
     export_menu = page.locator(".rpt-export-menu")
     _check(export_menu.is_hidden(), f"{label}: report export menu must start closed")
     page.locator('[data-dashboard-page-action="toggle-export"]').click()
@@ -773,6 +829,7 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
                 executableScripts: root.querySelectorAll(
                     'script:not([type="application/json"]):not([src])'
                 ).length,
+                styleAttributes: root.querySelectorAll('[style]').length,
                 nativeHandlers: elements.reduce((count, element) => count +
                     Array.from(element.attributes || []).filter(
                         (attribute) => /^on[a-z]/i.test(attribute.name)
@@ -781,8 +838,13 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
         }"""
     )
     _check(
-        report_state == {"executableScripts": 0, "nativeHandlers": 0},
-        f"{label}: repeated report swaps must contain no inline execution",
+        report_state
+        == {
+            "executableScripts": 0,
+            "styleAttributes": 0,
+            "nativeHandlers": 0,
+        },
+        f"{label}: repeated report swaps must contain no inline execution or style attributes",
     )
 
 
@@ -2922,7 +2984,9 @@ def main() -> None:
                         page: document.getElementById('ai-chat-page').value,
                         clearValues: document.getElementById('ai-chat-clear-btn').getAttribute('hx-vals'),
                         focused: document.activeElement === document.getElementById('ai-chat-input'),
-                        overflow: document.body.style.overflow,
+                        bodyClass: document.body.classList.contains('body-scroll-locked'),
+                        inlineStyle: document.body.hasAttribute('style'),
+                        overflow: getComputedStyle(document.body).overflow,
                     })"""
                 )
                 _check(
@@ -2931,6 +2995,8 @@ def main() -> None:
                         "page": "dashboard",
                         "clearValues": '{"page":"dashboard"}',
                         "focused": True,
+                        "bodyClass": True,
+                        "inlineStyle": False,
                         "overflow": "hidden",
                     },
                     "AI modal open behavior must survive handler migration",
@@ -2969,9 +3035,12 @@ def main() -> None:
                 page.locator("[data-ai-chat-close]").click()
                 _check(
                     page.evaluate(
-                        "document.getElementById('ai-chat-scrim').hidden && document.body.style.overflow === ''"
+                        """document.getElementById('ai-chat-scrim').hidden
+                        && !document.body.classList.contains('body-scroll-locked')
+                        && !document.body.hasAttribute('style')
+                        && getComputedStyle(document.body).overflow !== 'hidden'"""
                     ),
-                    "AI close control must hide the modal and release body scrolling",
+                    "AI close control must hide the modal and release body scrolling without runtime styles",
                 )
 
                 worker_url = page.evaluate(
@@ -3091,6 +3160,12 @@ def main() -> None:
                 page.set_viewport_size({"width": 768, "height": 844})
                 page.wait_for_timeout(50)
                 _assert_closed_mobile(page, "exact mobile breakpoint")
+                _check(
+                    page.locator("[style]").count() == 0
+                    and "sidebar--company"
+                    in page.locator("#sidebar-nav").get_attribute("class"),
+                    "BFM exact-768 shell must preserve entity styling without style attributes",
+                )
                 hamburger.click()
                 _assert_open_mobile(page, "exact mobile breakpoint open")
                 page.set_viewport_size({"width": 769, "height": 844})
@@ -3101,10 +3176,26 @@ def main() -> None:
                 _check(not desktop_state["sidebarInert"], "desktop sidebar must not remain inert")
                 _check(desktop_state["scrimHidden"], "desktop transition must hide the scrim")
                 _check(not desktop_state["bodyLocked"], "desktop transition must release body lock")
+                _check(
+                    page.locator("[style]").count() == 0,
+                    "BFM desktop shell must remain free of style attributes",
+                )
 
                 page.set_viewport_size({"width": 390, "height": 844})
                 page.wait_for_timeout(50)
                 _assert_closed_mobile(page, "return to phone")
+
+                context.add_cookies(
+                    [{"name": "entity", "value": "LL", "url": base_url}]
+                )
+                page.goto(base_url, wait_until="networkidle")
+                page.wait_for_selector('#ie-line-chart[data-fragment-initialized="true"] svg')
+                _check(
+                    page.locator("[style]").count() == 0
+                    and "sidebar--luxelegacy"
+                    in page.locator("#sidebar-nav").get_attribute("class"),
+                    "Luxe Legacy phone shell must preserve entity styling without style attributes",
+                )
 
                 _check(not blocked_urls, f"browser attempted external requests: {blocked_urls}")
                 _check(not console_errors, f"browser console errors: {console_errors}")

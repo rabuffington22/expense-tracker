@@ -52,7 +52,7 @@
         <div class="rpt-hbar-row">
             <a class="rpt-hbar-name" href="/transactions?category={{ r.category|urlencode }}&start={{ start }}&end={{ end }}">{{ r.category }}</a>
             <div class="rpt-hbar-track">
-                <div class="rpt-hbar-fill" style="width: {{ r.pct }}%;"></div>
+                <div class="rpt-hbar-fill u-width-pct u-pct-{{ [0, [r.pct|int, 100]|min]|max }}"></div>
             </div>
             <span class="rpt-hbar-value">{{ fmt_dollars(r.total_amount) }}</span>
             <span class="rpt-hbar-count">{{ r.count|int }}</span>
@@ -78,7 +78,7 @@
         <div class="rpt-hbar-row">
             <a class="rpt-hbar-name" href="/transactions?q={{ r.merchant|urlencode }}&start={{ start }}&end={{ end }}">{{ r.merchant }}</a>
             <div class="rpt-hbar-track">
-                <div class="rpt-hbar-fill" style="width: {{ r.pct }}%;"></div>
+                <div class="rpt-hbar-fill u-width-pct u-pct-{{ [0, [r.pct|int, 100]|min]|max }}"></div>
             </div>
             <span class="rpt-hbar-value">{{ fmt_dollars(r.total_amount) }}</span>
             <span class="rpt-hbar-count">{{ r.count|int }}</span>
@@ -90,7 +90,7 @@
             <div class="rpt-hbar-row">
                 <a class="rpt-hbar-name" href="/transactions?q={{ r.merchant|urlencode }}&start={{ start }}&end={{ end }}">{{ r.merchant }}</a>
                 <div class="rpt-hbar-track">
-                    <div class="rpt-hbar-fill" style="width: {{ r.pct }}%;"></div>
+                    <div class="rpt-hbar-fill u-width-pct u-pct-{{ [0, [r.pct|int, 100]|min]|max }}"></div>
                 </div>
                 <span class="rpt-hbar-value">{{ fmt_dollars(r.total_amount) }}</span>
                 <span class="rpt-hbar-count">{{ r.count|int }}</span>

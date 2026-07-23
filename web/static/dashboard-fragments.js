@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var loadingMarkup = '<p class="text-sm text-muted" style="text-align:center;padding:2rem 0;">Loading\u2026</p>';
+    var loadingMarkup = '<p class="text-sm text-muted fragment-loading-state">Loading\u2026</p>';
 
     function matchingElements(root, selector) {
         var matches = [];
@@ -16,6 +16,16 @@
         return matches;
     }
 
+    function setBoundedPercentClass(element, value) {
+        var percent = Math.max(0, Math.min(100, Math.round(value)));
+        Array.from(element.classList).forEach(function (className) {
+            if (/^u-pct-\d+$/.test(className)) {
+                element.classList.remove(className);
+            }
+        });
+        element.classList.add("u-pct-" + percent);
+    }
+
     function toggleAiDetail(row) {
         var detail = row.nextElementSibling;
         if (!detail) {
@@ -25,7 +35,7 @@
         detail.hidden = !show;
         var chevron = row.querySelector(".iu-chevron");
         if (chevron) {
-            chevron.style.transform = show ? "rotate(90deg)" : "";
+            chevron.classList.toggle("iu-chevron--open", show);
         }
     }
 
@@ -74,11 +84,11 @@
             }
         });
         if (row) {
-            row.style.display = "none";
+            row.hidden = true;
             var section = row.closest(".iu-section");
             if (section) {
                 var visible = Array.from(section.querySelectorAll(".iu-row")).some(function (candidate) {
-                    return candidate.style.display !== "none";
+                    return !candidate.hidden;
                 });
                 var message = section.querySelector(".iu-caught-up");
                 if (message && !visible) {
@@ -164,11 +174,11 @@
             return;
         }
         document.querySelectorAll(".rpt-desc").forEach(function (description) {
-            description.style.display = description.dataset.report === select.value ? "block" : "none";
+            description.hidden = description.dataset.report !== select.value;
         });
         var qboButton = form.querySelector(".rpt-export-qbo");
         if (qboButton) {
-            qboButton.style.display = select.value === "transactions" ? "" : "none";
+            qboButton.hidden = select.value !== "transactions";
         }
     }
 
@@ -407,8 +417,8 @@
                 + columnWidth.toFixed(1) + '" height="' + contentHeight + '" fill="transparent"/>';
         });
         svg += '<line class="ie-guide" data-ie-guide x1="0" x2="0" y1="' + padTop
-            + '" y2="' + (padTop + contentHeight) + '" style="display:none"/></svg>';
-        svg += '<div class="ie-tip" data-ie-tip hidden></div>';
+            + '" y2="' + (padTop + contentHeight) + '"/></svg>';
+        svg += '<div class="ie-tip u-left-pct u-pct-0" data-ie-tip hidden></div>';
         chart.innerHTML = svg;
 
         var guide = chart.querySelector("[data-ie-guide]");
@@ -429,7 +439,7 @@
             var guideX = xPosition(index);
             guide.setAttribute("x1", guideX);
             guide.setAttribute("x2", guideX);
-            guide.style.display = "";
+            guide.classList.add("ie-guide--visible");
             dots.forEach(function (dot) {
                 dot.classList.toggle("ie-dot--active", parseInt(dot.dataset.idx, 10) === index);
             });
@@ -441,17 +451,12 @@
             tip.hidden = false;
             var chartRect = chart.getBoundingClientRect();
             var left = chartRect.width * (guideX / width);
-            if (left + tip.offsetWidth + 8 > chartRect.width) {
-                left = left - tip.offsetWidth - 12;
-            } else {
-                left += 12;
-            }
-            tip.style.left = Math.max(0, left) + "px";
-            tip.style.top = "16px";
+            tip.classList.toggle("ie-tip--before", left + tip.offsetWidth + 8 > chartRect.width);
+            setBoundedPercentClass(tip, guideX / width * 100);
         }
 
         function hideTooltip() {
-            guide.style.display = "none";
+            guide.classList.remove("ie-guide--visible");
             tip.hidden = true;
             dots.forEach(function (dot) {
                 dot.classList.remove("ie-dot--active");

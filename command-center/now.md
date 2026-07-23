@@ -2,27 +2,67 @@
 
 ## Active Objective
 
-Preserve the complete durable standalone and error-document execution result while Task 1P.4.3a awaits fresh just-in-time decomposition before any style-policy implementation.
+Make the exact verified shared-shell and dashboard/report style-compatibility result durable on `main`, observe the automatic deployment, verify credential-free production health, and close the release without widening scope.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2 and every full-page execution cluster are durable, automatically deployed, and credential-free health verified through 4AR-R.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2 is durable through 4AR-R, and Task 1P.4.3a.1 is complete and verified locally through 4AS.
 
 ## Current Work Block
 
-Work block 4AR-R: Standalone And Error-Document Execution Release — complete.
+Work block 4AS-R: Shared Shell And Dashboard/Report Style Compatibility Release — active.
 
 ## Current Task
 
-Task 1P.4.3a: Make application styles strict-policy compatible — waiting for fresh just-in-time decomposition before any proposal or implementation.
+Task 1P.4.3a.1-R: Publish and verify shared-shell and dashboard/report style compatibility — active.
 
 ## Owner
 
-Ryan owns the decision to invoke fresh Task 1P.4.3a work-block planning and every expansion or live mutation. Codex Desktop owns preservation of the durable 4AR-R result and may run the planning pass only after Ryan requests it.
+Codex Desktop owns the exact 4AS-R staging, source commit, clean fast-forward, direct-main push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan owns every expansion and recovery beyond the confirmed boundary.
 
 ## Current Action
 
-Preserve the aligned local and remote `main` result and both unrelated untracked files. Do not begin Task 1P.4.3a until a fresh just-in-time decomposition is requested, written into Runway OS, and separately confirmed.
+Verify and explicitly stage only the exact 4AS paths, commit on `codex/csp-shared-dashboard-styles`, fast-forward local `main`, push `origin/main` without force, observe the automatic Fly deployment, verify the exact source SHA and credential-free production `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+
+## Work Block 4AS-R Contract
+
+- Include explicit staging of the exact verified 4AS application, controllers, templates, maintained tests, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-shared-dashboard-styles`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.3a.2 and every later task; new application, runtime, style, route, authentication, financial, database, product, dependency, CSP-header/nonce/exception/enforcement, or policy mutation beyond verified 4AS; credentials; protected data; real databases; retained uploads; authenticated production pages; manual workflow actions; workflow edits; non-automatic Fly mutations; downstream access or writes; PR creation; force push; broader recovery; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified 26/2/10 migration, residual 7/185/7/21 inventory, configured-auth/no-password all-entity responsive browser proof, and both unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths; protected-boundary and high-confidence sensitive-addition scans; full smoke; configured-auth/no-password isolated Chrome; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and both preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and the separately gated Task 1P.4.3a.2.
+
+## Work Block 4AS Contract
+
+- Include Task 1P.4.3a.1 plus only its focused Task 2 regression slice: remove 26 template style attributes, two generated-markup style attributes, and ten application runtime style writes from the shared shell, sidebar, dashboard/report pages and fragments while preserving responsive navigation, AI-chat scroll locking, report controls, repeated HTMX swaps, charts, drilldowns, tooltip positioning, visibility state, and entity accents.
+- Keep Tasks 1P.4.3a.2-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, application styling outside the included shell/dashboard/report family, CSP headers/nonces/enforcement, authentication, route, cache, financial, database, product, dependency, protected-data, external/live, GitHub, publication, deployment, workflow, downstream, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` changes outside scope.
+- Preserve appearance and behavior rather than redesigning; prefer static CSS classes, semantic `hidden`/ARIA/state attributes, and bounded validated numeric classes; do not add a style exception or enforce CSP yet; use temporary synthetic all-entity data, configured-auth and no-password modes, localhost-only disposable browser state, denied non-localhost requests, zero unexpected browser errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if parity requires route, authentication, financial, database, product, policy-enforcement, unbounded dynamic styling, or style exceptions; desktop, phone, or exact 768px behavior becomes ambiguous; verification changes the plan; cleanup fails; command-center checks fail; scope expands; or either preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-style-attribute proof for included templates; zero generated style attributes and runtime style writes in included controllers; exact residual inventory of seven style blocks, 185 template attributes, seven generated attributes, and 21 runtime writes; configured-auth and no-password isolated Chrome across all entities at desktop, phone, and 768px with repeated swaps, reports, charts, drilldowns, tooltips, navigation, AI overlay, denied networking, zero unexpected errors, and cleanup; relevant syntax; JSON; whitespace; dashboard refresh/health/generated state; exact scope; and both preserved files.
+- Report exact migrated surfaces and patterns, final inventory, responsive/browser parity, cleanup, changed paths, branch state, preserved exclusions, and the separate 4AS-R durability gate.
+
+## Work Block 4AS Result
+
+- All 26 included template style attributes, both generated-markup style attributes, and all ten included runtime style writes are removed through static classes, semantic `hidden` and body-lock state, entity classes, and bounded percentage classes.
+- The exact residual tracked inventory is seven inline style blocks, 185 template style attributes, seven generated-markup style attributes, and 21 application runtime style writes.
+- Full smoke and configured-auth/no-password isolated Chrome passed across Personal, BFM, and Luxe Legacy at desktop, phone, and exact 768px with repeated swaps, reports, charts, drilldowns, tooltips, responsive navigation, AI overlay, denied networking, zero unexpected browser/page errors, and exact cleanup.
+- Relevant syntax, JSON, whitespace, dashboard refresh/health/generated state, exact scope, and both preserved-file checks passed.
+- No CSP header/enforcement, route, authentication, financial, database, product, live, GitHub, publication, deployment, workflow, downstream, destructive, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-shared-dashboard-style-compatibility-4as.md`.
+
+## Task 1P.4.3a Just-In-Time Decomposition
+
+- Fresh tracked-source inventory: seven inline style blocks, 211 template style attributes, nine JavaScript-generated style attributes, and 31 application runtime style writes. The original 4AE count of 221 template attributes remains historical baseline evidence.
+- Task 1P.4.3a.1: shared shell and dashboard/report pages/fragments — complete and verified locally through 4AS; durability remains separate.
+- Task 1P.4.3a.2: transactions, matching, vendor cards, and supporting fragments — planned after the shared patterns are proven.
+- Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — planned.
+- Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — planned.
+- Task 1P.4.3a.5: Weekly and Waterfall — planned.
+- Task 1P.4.3a.6: Subscriptions and Payroll — planned.
+- Task 1P.4.3a.7: Data Sources and Connected Accounts — planned; the third-party Plaid exception remains Task 1P.4.3b.
+- Task 1P.4.3a.8: login, offline/errors, and standalone `/k/` — planned; exceptional-document policy reconciliation remains Task 1P.4.3b.
+- No application, runtime, policy, header, live, GitHub, publication, or deployment mutation is authorized by this planning pass.
 
 ## Work Block 4AR-R Contract
 

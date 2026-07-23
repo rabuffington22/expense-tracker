@@ -116,6 +116,23 @@ Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must u
 
 The original eight-cluster inventory reconciled exactly to 22 executable inline scripts, 116 template-native handlers, and two full-page inert JSON carriers. The 4AM recheck additionally found and removed two Python-rendered Short-Term Planning handlers inside the same confirmed route family. The 4AR recheck found that the maintained one-handler source aggregate omitted a Jinja-adjacent conditional `/k/` `onclick` visible after rendering; 4AR removed and proved both handler seams. The final tracked-template execution inventory is 0 executable inline scripts, 21 external executable script occurrences, 0 inert JSON script carriers, 0 source-recognized native handlers, and 0 `hx-on`, with separate rendered assertions covering the formerly omitted `/k/` seam.
 
+### Current Style-Migration Inventory
+
+The 2026-07-23 just-in-time source pass reconciled the application-owned style surface after the execution migrations. The 4AE baseline of 221 template style attributes remains the historical contract count. Work block 4AS then removed the complete shared-shell and dashboard/report slice: 26 template style attributes, two style attributes emitted by maintained JavaScript markup, and ten application runtime style writes. The verified residual source now contains seven inline style blocks, 185 template style attributes, seven generated-markup style attributes, and 21 application runtime style writes.
+
+| Task | Route cluster | Current residual inventory | Boundary and sequencing reason |
+| --- | --- | ---: | --- |
+| 1P.4.3a.1 | Shared shell and dashboard/report pages/fragments | 0 included style attributes or runtime writes after 4AS | Static classes, semantic hidden state, entity classes, body-lock state, and bounded percentage classes preserve the responsive, HTMX-swap, chart, tooltip, and shell behavior; complete and verified locally through 4AS. |
+| 1P.4.3a.2 | Transactions, matching, vendor cards, and supporting fragments | 63 template attributes; 7 generated attributes; transaction runtime writes | Reuses the fragment controller and repeated-swap path but has a separate dense editing, matching, dynamic split-line, and total-state verification surface. |
+| 1P.4.3a.3 | Categorization, orphan reassignment, upload, and upload dialog | 1 style block; 56 template attributes | Shares compact form/table/dialog layout and the categorization-upload controller; preserves the separately validated status-only Undo contract. |
+| 1P.4.3a.4 | Cash Flow, Long-Term Planning, and Short-Term Planning | 13 template attributes; cash-flow/planning runtime writes | Shares modal-origin, progress, visibility, sizing, responsive, and planning-boundary behavior with one synthetic planning verification path. |
+| 1P.4.3a.5 | Weekly and Waterfall | 13 template attributes; Waterfall runtime writes | Shares the validated calculation output and data-driven bar, timeline, tooltip, animation, and responsive visualization path. |
+| 1P.4.3a.6 | Subscriptions and Payroll | 3 template attributes; subscription/payroll runtime writes | Small page-controller slice with clipboard, disclosure, role-color, conditional-control, dialog, keyboard, and BFM-only verification. |
+| 1P.4.3a.7 | Data Sources and Connected Accounts | 1 style block; 34 template attributes | Keeps application-owned style cleanup with the exact mocked Plaid wiring while leaving the third-party Link exception and route-family policy to Task 1P.4.3b. |
+| 1P.4.3a.8 | Login, offline/errors, and standalone `/k/` | 5 style blocks; 3 template attributes | Uses document-family local assets and exact auth/status/no-leakage/mobile proof; policy selection and exceptional-document reconciliation remain Task 1P.4.3b. |
+
+After 4AS, the remaining seven clusters reconcile exactly to seven style blocks, 185 template attributes, seven generated attributes, and 21 runtime writes. The proven shell, semantic-state, bounded-percentage-class, and browser-proof patterns are available to the denser transaction and page-family clusters. Header generation, nonce plumbing, policy enforcement, the Plaid third-party exception, and live or publication work remain separate.
+
 ## Template Surface Inventory
 
 Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSON` is `type="application/json"`; `Event` is a native inline event attribute; `Style` is an element style attribute.

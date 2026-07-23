@@ -7,7 +7,7 @@
          hx-trigger="load" hx-swap="innerHTML"></div>
     <div id="detail-categories"></div>
   </div>
-  <div id="detail-insights" style="margin-top: 1.5rem;"></div>
+  <div id="detail-insights" class="dashboard-fragment-gap"></div>
 </div>
 
 <!-- ── Compare View ────────────────────────────────────────────────────── -->
@@ -24,13 +24,13 @@
     <div id="categories-compare"></div>
   </div>
   <!-- ── Insights + Upcoming (populated by KPI panel scripts) ────────── -->
-  <div id="insights-upcoming" style="margin-top: 1.5rem;"></div>
+  <div id="insights-upcoming" class="dashboard-fragment-gap"></div>
 </div>
 
 <!-- ── Income vs Expenses (12 months) ────────────────────────────────── -->
 {% set ie_max = ie_points|map(attribute='income_cents')|list + ie_points|map(attribute='expense_cents')|list %}
 {% set ie_max_val = ie_max|max if ie_max|max > 0 else 0 %}
-<div class="outline-band" style="margin-top: 4.5rem;">
+<div class="outline-band dashboard-band--income-expense">
   <div class="band-label">Income vs Expenses</div>
   <div class="ie-legend">
     <span class="ie-legend-item"><span class="ie-legend-dot ie-legend-dot--income"></span>Income</span>
@@ -57,7 +57,7 @@
 
 <!-- ── Spend Trend (6-month bar chart) ─────────────────────────────────── -->
 {% if chart_bars %}
-<div class="outline-band" style="margin-top: 2rem;">
+<div class="outline-band dashboard-band--trend">
   <div class="band-label">Spend Trend</div>
   <div class="band-body">
     <div class="plot-area trend-chart">
@@ -66,8 +66,8 @@
         <div class="chart-col{% if bar.is_current %} chart-col--selected{% endif %}" title="{{ bar.label }}: {{ bar.display }}">
           <div class="chart-value">{{ bar.display }}</div>
           <div class="chart-track">
-            <div class="chart-fill{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_current %} chart-fill--selected{% endif %}"
-                 style="height:{{ bar.pct if bar.has_data else 8 }}%;"></div>
+            {% set bar_height = bar.pct if bar.has_data else 8 %}
+            <div class="chart-fill u-height-pct u-pct-{{ [0, [bar_height|int, 100]|min]|max }}{% if not bar.has_data %} chart-fill--empty{% endif %}{% if bar.is_current %} chart-fill--selected{% endif %}"></div>
           </div>
           <div class="chart-label">{{ bar.label }}</div>
         </div>

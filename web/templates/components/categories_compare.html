@@ -19,13 +19,13 @@
       <div class="ccat-bars">
         <div class="ccat-bar-row">
           <div class="dcat-track">
-            <div class="dcat-fill ccat-fill--left" style="width: {{ cat.left_pct }}%;"></div>
+            <div class="dcat-fill ccat-fill--left u-width-pct u-pct-{{ [0, [cat.left_pct|int, 100]|min]|max }}"></div>
           </div>
           <span class="ccat-bar-amt ccat-bar-amt--left">${{ "{:,.0f}".format(cat.left_cents / 100) }}</span>
         </div>
         <div class="ccat-bar-row">
           <div class="dcat-track">
-            <div class="dcat-fill ccat-fill--right" style="width: {{ cat.right_pct }}%;"></div>
+            <div class="dcat-fill ccat-fill--right u-width-pct u-pct-{{ [0, [cat.right_pct|int, 100]|min]|max }}"></div>
           </div>
           <span class="ccat-bar-amt ccat-bar-amt--right">${{ "{:,.0f}".format(cat.right_cents / 100) }}</span>
         </div>
@@ -48,15 +48,15 @@
         <div class="ccat-bars ccat-bars--sub">
           <div class="ccat-bar-row">
             <div class="dcat-track dcat-track--sub">
-              <div class="dcat-fill ccat-fill--left"
-                   style="width: {{ (s.left_cents / max_cents * 100)|int if max_cents else 0 }}%;"></div>
+              {% set left_sub_pct = (s.left_cents / max_cents * 100)|int if max_cents else 0 %}
+              <div class="dcat-fill ccat-fill--left u-width-pct u-pct-{{ [0, [left_sub_pct, 100]|min]|max }}"></div>
             </div>
             <span class="ccat-bar-amt ccat-bar-amt--left">${{ "{:,.0f}".format(s.left_cents / 100) }}</span>
           </div>
           <div class="ccat-bar-row">
             <div class="dcat-track dcat-track--sub">
-              <div class="dcat-fill ccat-fill--right"
-                   style="width: {{ (s.right_cents / max_cents * 100)|int if max_cents else 0 }}%;"></div>
+              {% set right_sub_pct = (s.right_cents / max_cents * 100)|int if max_cents else 0 %}
+              <div class="dcat-fill ccat-fill--right u-width-pct u-pct-{{ [0, [right_sub_pct, 100]|min]|max }}"></div>
             </div>
             <span class="ccat-bar-amt ccat-bar-amt--right">${{ "{:,.0f}".format(s.right_cents / 100) }}</span>
           </div>
