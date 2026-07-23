@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; Task 1P.4.2c.5 is complete locally through 4AO, exact-scope 4AO-R durability/release is active, and Task 1P.4.2c.6 remains separate
+Status: active; Task 1P.4.2c.5 is durable, automatically deployed, and credential-free health verified through 4AO-R, while Task 1P.4.2c.6 is the next separate planning gate
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -951,8 +951,8 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
           - **Task 1P.4.2c.3b: Migrate Long-Term Planning execution.** Move the one executable inline script and ten native handlers in `planning.html` into a maintained page-owned local controller while preserving asset/liability add, edit, source switching, delete confirmation, birthday editing, projection display, modal/scrim/Escape behavior, AI entry, Personal/BFM sharing, and Luxe Legacy denial. Status: complete and locally verified through 4AL; durability/release remains separate.
           - **Task 1P.4.2c.3c: Migrate Short-Term Planning execution.** Move the one executable inline script, twenty-two template-source native-handler occurrences, one inert JSON carrier in `short_term_planning.html`, and two Python-rendered native handlers in the same budget drill-down route family into maintained local behavior and non-script inert data while preserving goal and plan dialogs, progress, budgets, action items, category drill-downs, dynamic transaction editing, fetch behavior, and keyboard/modal behavior. Status: done, durable, automatically deployed, and credential-free health verified through work blocks 4AM and 4AM-R with only its focused Task 2 regression slice.
         - **Task 1P.4.2c.4: Migrate Weekly and Waterfall execution.** Move the one executable inline script and thirteen native handlers in `weekly.html` and `waterfall.html` into maintained local behavior while preserving weekly AI entry, waterfall mode, breakdown, target, tax, tooltip, and keyboard behavior. Status: complete, durable, automatically deployed, and credential-free health verified through 4AN-R.
-        - **Task 1P.4.2c.5: Migrate subscription-page execution.** Move the one executable inline script, fifteen native handlers, one runtime `onclick` assignment, and one inert JSON carrier in `subscriptions.html` into maintained local behavior and non-script inert data while preserving suggestion, watchlist, detail, account-info, copy, tips, modal, and keyboard workflows. Status: complete and verified locally through work block 4AO with only its focused Task 2 regression slice; durability remains separate.
-        - **Task 1P.4.2c.5-R: Publish and verify subscription-page execution.** Make only the exact verified 4AO source set durable, then observe the automatic deployment and verify credential-free production health under a separately confirmed release contract. Status: active through confirmed work block 4AO-R.
+        - **Task 1P.4.2c.5: Migrate subscription-page execution.** Move the one executable inline script, fifteen native handlers, one runtime `onclick` assignment, and one inert JSON carrier in `subscriptions.html` into maintained local behavior and non-script inert data while preserving suggestion, watchlist, detail, account-info, copy, tips, modal, and keyboard workflows. Status: complete, durable, automatically deployed, and credential-free health verified through 4AO-R with only its focused Task 2 regression slice.
+        - **Task 1P.4.2c.5-R: Publish and verify subscription-page execution.** Make only the exact verified 4AO source set durable, then observe the automatic deployment and verify credential-free production health under a separately confirmed release contract. Status: complete through work block 4AO-R.
         - **Task 1P.4.2c.6: Migrate payroll-page execution.** Move the one executable inline script and nine native handlers in `payroll.html` into maintained local behavior while preserving add/edit/detail, spending-period, new-role, deletion-confirmation, modal, and keyboard workflows. Status: planned as a separate BFM-only payroll boundary.
         - **Task 1P.4.2c.7: Migrate Plaid entry-page execution.** Move the three executable inline application scripts and six native handlers in `data_sources.html` and `plaid.html` into maintained local behavior and inert server data while retaining the two exact external Plaid initializer tags for the later narrow policy; prove Link wiring only with fake configuration, mocked Plaid, denied outbound networking, and temporary synthetic data. Status: planned as a separate integration and CSP-exception boundary.
         - **Task 1P.4.2c.8: Migrate standalone and error-document execution.** Move the five executable inline scripts and one native handler in `offline.html`, `errors/403.html`, `errors/404.html`, `errors/500.html`, and `kristine.html` into document-family-specific local behavior while preserving data-free error/offline rendering, retry behavior, `/k/` interaction, authentication boundaries, and no exception leakage. Status: planned as a separate standalone-document verification family.
@@ -1001,7 +1001,7 @@ Result: `subscriptions.html` loads page-owned template-free `subscriptions.js`, 
 
 ### Confirmed Work Block 4AO-R: Subscription Page Durability And Release
 
-Status: active.
+Status: complete.
 
 Parent task: Phase 4 Task 1P.4.2c.5-R for the exact verified 4AO source set only.
 
@@ -1028,6 +1028,8 @@ Dashboard closeout: record the source commit, automatic workflow run and deploy 
 Report point: return source and closeout SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.6 still separately gated.
 
 Suggested next work block: after 4AO-R closes, recheck Task 1P.4.2c.6 before proposing payroll-page work; do not infer implementation authorization.
+
+Result: exact eleven-path source commit `55ec28abaeee8abfe300bcd1ab2489fb393aee54` is durable on local and remote `main`. Automatic Fly Deploy run `30015264505` and deploy job `89233474666` passed every reported step for the exact source SHA, and credential-free production `/health` returned HTTP 200 with `{"status":"ok"}`. Exact-path, staged-set, protected-boundary, sensitive-addition, maintained verification, syntax, dashboard, generated-state, ancestry, remote-alignment, automatic-release, production-health, and preserved-file checks passed. No PR, force push, manual workflow action, non-automatic Fly mutation, authenticated production page, credential, protected data, real database, downstream action, payroll-page work, broader recovery, or preserved-file mutation occurred. Task 1P.4.2c.6 remains separately gated. Evidence: `command-center/logs/2026-07-23-subscription-page-execution-release-4ao-r.md`.
 
 ### Confirmed Work Block 4AN: Weekly And Waterfall Execution
 

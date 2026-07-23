@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify only the exact locally validated 4AO subscription-page source set through confirmed work block 4AO-R while keeping Task 1P.4.2c.6 and every broader mutation separate.
+Preserve the durable, automatically deployed, and credential-free health-verified 4AO-R subscription-page result while Ryan chooses the next separate gate.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.5-R is authorized through exact-scope work block 4AO-R after 4AO completed local implementation and verification.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.5-R is complete, durable, automatically deployed, and credential-free production health verified through 4AO-R, while Task 1P.4.2c.6 remains separately gated.
 
 ## Current Work Block
 
-Work block 4AO-R: Subscription Page Durability And Release — active.
+Work block 4AO-R: Subscription Page Durability And Release — complete.
 
 ## Current Task
 
-Task 1P.4.2c.5-R: publish and verify the exact 4AO source set — active.
+Task 1P.4.2c.6: Migrate payroll-page execution — current planning gate; implementation is not authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, clean fast-forward, direct-main push, read-only automatic-deployment observation, credential-free health verification, and sanitized closeout. Ryan owns every expansion, recovery, and later-task decision.
+Ryan owns the next task and every expansion or live-action decision. Codex Desktop owns Runway OS currency and no further mutation until a fresh work block is proposed and confirmed.
 
 ## Current Action
 
-Execute the confirmed 4AO-R release path and report exact source/closeout SHAs, deployment and health results, final alignment, exclusions, and the still-separate Task 1P.4.2c.6 gate.
+Preserve the exact 4AO-R result. Recheck Task 1P.4.2c.6 source inventory and propose a fresh bounded payroll-page block only if Ryan asks to continue.
 
 ## Work Block 4AO-R Contract
 
@@ -32,6 +32,15 @@ Execute the confirmed 4AO-R release path and report exact source/closeout SHAs, 
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
 - Report source and closeout commit SHAs, exact published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.6 still separately gated.
+
+## Work Block 4AO-R Result
+
+- Exact eleven-path source commit `55ec28abaeee8abfe300bcd1ab2489fb393aee54` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30015264505` and deploy job `89233474666` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with `{"status":"ok"}` after deployment.
+- Exact-path and staged-set checks, protected-boundary and high-confidence sensitive-addition scans, maintained smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit content, clean fast-forward, ancestry, exact remote SHA, automatic release, production health, and preserved-file checks passed.
+- No PR, force push, credential, protected data, real database, retained upload, authenticated production page, manual workflow action, workflow edit, non-automatic Fly mutation, downstream access/write, Task 1P.4.2c.6 implementation, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-subscription-page-execution-release-4ao-r.md`.
 
 ## Work Block 4AO Contract
 
