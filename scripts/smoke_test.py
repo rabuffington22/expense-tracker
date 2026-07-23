@@ -3849,9 +3849,16 @@ def main() -> None:
                     == int(expected_owner_gross * (10000 - 1234) / 10000),
                     f"waterfall 4Y {entity_display}: take-home mode should use the same normalized tax rate for gross revenue and rendered take-home",
                 )
+                waterfall_controller_source = (
+                    PROJECT_ROOT / "web" / "static" / "waterfall.js"
+                ).read_text()
+                waterfall_tax_handler = waterfall_controller_source.split(
+                    "function applyTaxRate", 1
+                )[1].split("function initialize", 1)[0]
                 _check(
-                    "val = val.trim();" in takehome_response.get_data(as_text=True)
-                    and "val.replace(/[^0-9.]/g, '')" not in takehome_response.get_data(as_text=True),
+                    "input.value.trim()" in waterfall_tax_handler
+                    and ".replace(" not in waterfall_tax_handler
+                    and 'url.searchParams.set("tax_rate", value)' in waterfall_tax_handler,
                     "waterfall 4Y: browser input should reach server normalization without reinterpretation",
                 )
 
@@ -8729,8 +8736,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 11, 11, 1, 44, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AM CSP contract",
+            == (23, 10, 12, 1, 31, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AN CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8951,8 +8958,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 11, 11, 1, 44, 0),
-            "categorization/upload pages: maintained aggregate inventory must match the post-4AM CSP contract",
+            == (23, 10, 12, 1, 31, 0),
+            "categorization/upload pages: maintained aggregate inventory must match the post-4AN CSP contract",
         )
 
         print("   ✅ Three source templates, delegated controller, rendered routes, status-only reset, and exact residual inventory passed")
@@ -9073,8 +9080,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 11, 11, 1, 44, 0),
-            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AM CSP contract",
+            == (23, 10, 12, 1, 31, 0),
+            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AN CSP contract",
         )
 
         print("   ✅ Two source templates, page-owned controllers, rendered routes, and exact residual inventory passed")
@@ -9215,11 +9222,115 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 11, 11, 1, 44, 0),
-            "short-term planning: maintained aggregate inventory must match the post-4AM CSP contract",
+            == (23, 10, 12, 1, 31, 0),
+            "short-term planning: maintained aggregate inventory must match the post-4AN CSP contract",
         )
 
         print("   ✅ Source template, page controller, rendered response markup, inert data, cleanup, and exact residual inventory passed")
+
+        # ── 11i. Weekly and Waterfall execution ───────────────────────
+        print("\n11i. Weekly and Waterfall execution…")
+
+        weekly_template = templates_root / "weekly.html"
+        waterfall_template = templates_root / "waterfall.html"
+        weekly_source = weekly_template.read_text()
+        waterfall_source = waterfall_template.read_text()
+        waterfall_asset_source = (
+            PROJECT_ROOT / "web" / "static" / "waterfall.js"
+        ).read_text()
+        weekly_waterfall_sources = (weekly_source, waterfall_source)
+        _check(
+            all(
+                not inline_executable_script_pattern.search(source)
+                and not native_handler_pattern.search(source)
+                and "hx-on" not in source
+                for source in weekly_waterfall_sources
+            ),
+            "Weekly/Waterfall: source templates must contain no inline execution",
+        )
+        _check(
+            'data-app-shell-action="open-ai-chat"' in weekly_source
+            and 'data-ai-page="weekly"' in weekly_source
+            and "waterfall.js" in waterfall_source
+            and "data-waterfall-controller" in waterfall_source
+            and 'data-app-shell-action="open-ai-chat"' in waterfall_source
+            and 'data-ai-page="waterfall"' in waterfall_source
+            and 'data-waterfall-action="switch-view"' in waterfall_source
+            and 'data-waterfall-action="toggle-breakdown"' in waterfall_source
+            and 'data-waterfall-action="set-mode"' in waterfall_source
+            and 'data-waterfall-enter="apply-targets"' in waterfall_source
+            and 'data-waterfall-enter="apply-tax-rate"' in waterfall_source,
+            "Weekly/Waterfall: templates must expose the complete delegated controller contract",
+        )
+        _check(
+            "{{" not in waterfall_asset_source
+            and "{%" not in waterfall_asset_source
+            and "data-waterfall-action" in waterfall_asset_source
+            and "waterfallEnter" in waterfall_asset_source,
+            "Weekly/Waterfall: page controller must remain template-free and own delegated actions",
+        )
+
+        fragment_client.set_cookie("entity", "Personal")
+        rendered_weekly = fragment_client.get("/weekly/").get_data(as_text=True)
+        rendered_waterfall = fragment_client.get("/waterfall/").get_data(as_text=True)
+        _check(
+            all(
+                not inline_executable_script_pattern.search(source)
+                and not native_handler_pattern.search(source)
+                and "hx-on" not in source
+                for source in (rendered_weekly, rendered_waterfall)
+            ),
+            "Weekly/Waterfall: rendered routes must contain no inline execution",
+        )
+        _check(
+            'data-app-shell-action="open-ai-chat"' in rendered_weekly
+            and 'data-ai-page="weekly"' in rendered_weekly
+            and "/static/waterfall.js" in rendered_waterfall
+            and "data-waterfall-controller" in rendered_waterfall,
+            "Weekly/Waterfall: rendered routes must expose maintained AI and controller assets",
+        )
+
+        all_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        all_script_count = len(
+            _re.findall(r"<script\b[^>]*>", all_template_source, flags=_re.IGNORECASE)
+        )
+        inert_script_count = len(
+            _re.findall(
+                r"<script\b[^>]*\btype=[\"']application/json[\"'][^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        external_script_count = len(
+            _re.findall(
+                r"<script\b(?=[^>]*\bsrc=)[^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        inline_executable_count = (
+            all_script_count - inert_script_count - external_script_count
+        )
+        all_native_handler_count = len(
+            native_handler_pattern.findall(all_template_source)
+        )
+        all_hx_on_count = all_template_source.count("hx-on")
+        _check(
+            (
+                all_script_count,
+                inline_executable_count,
+                external_script_count,
+                inert_script_count,
+                all_native_handler_count,
+                all_hx_on_count,
+            )
+            == (23, 10, 12, 1, 31, 0),
+            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AN CSP contract",
+        )
+
+        print("   ✅ Two source templates, rendered routes, page controller, AI seams, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

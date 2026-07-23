@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active; work block 4AF completed Task 1P.4.2a locally and Task 1P.4.2b remains separately gated
+Status: active; Task 1P.4.2c.4 is complete locally through work block 4AN, Task 1P.4.2c.5 is the next planning gate, and publication remains separate
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -950,8 +950,8 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
           - **Task 1P.4.2c.3a: Migrate Cash Flow execution.** Move the one executable inline script and fifteen native handlers in `cashflow.html` into a maintained page-owned local controller while preserving account/card opening, modal population, balance/limit/APR/payment sizing, due-day parsing, recurring-entry setup, scrim/Escape closure, AI entry, and Personal/BFM/LL visibility. Status: complete and locally verified through 4AL; durability/release remains separate.
           - **Task 1P.4.2c.3b: Migrate Long-Term Planning execution.** Move the one executable inline script and ten native handlers in `planning.html` into a maintained page-owned local controller while preserving asset/liability add, edit, source switching, delete confirmation, birthday editing, projection display, modal/scrim/Escape behavior, AI entry, Personal/BFM sharing, and Luxe Legacy denial. Status: complete and locally verified through 4AL; durability/release remains separate.
           - **Task 1P.4.2c.3c: Migrate Short-Term Planning execution.** Move the one executable inline script, twenty-two template-source native-handler occurrences, one inert JSON carrier in `short_term_planning.html`, and two Python-rendered native handlers in the same budget drill-down route family into maintained local behavior and non-script inert data while preserving goal and plan dialogs, progress, budgets, action items, category drill-downs, dynamic transaction editing, fetch behavior, and keyboard/modal behavior. Status: done, durable, automatically deployed, and credential-free health verified through work blocks 4AM and 4AM-R with only its focused Task 2 regression slice.
-        - **Task 1P.4.2c.4: Migrate Weekly and Waterfall execution.** Move the one executable inline script and thirteen native handlers in `weekly.html` and `waterfall.html` into maintained local behavior while preserving weekly AI entry, waterfall mode, breakdown, target, tax, tooltip, and keyboard behavior. Status: planned.
-        - **Task 1P.4.2c.5: Migrate subscription-page execution.** Move the one executable inline script, fifteen native handlers, and one inert JSON carrier in `subscriptions.html` into maintained local behavior and non-script inert data while preserving suggestion, watchlist, detail, account-info, copy, tips, modal, and keyboard workflows. Status: planned as a standalone high-interaction page cluster.
+        - **Task 1P.4.2c.4: Migrate Weekly and Waterfall execution.** Move the one executable inline script and thirteen native handlers in `weekly.html` and `waterfall.html` into maintained local behavior while preserving weekly AI entry, waterfall mode, breakdown, target, tax, tooltip, and keyboard behavior. Status: complete and verified locally through work block 4AN; publication remains separate.
+        - **Task 1P.4.2c.5: Migrate subscription-page execution.** Move the one executable inline script, fifteen native handlers, and one inert JSON carrier in `subscriptions.html` into maintained local behavior and non-script inert data while preserving suggestion, watchlist, detail, account-info, copy, tips, modal, and keyboard workflows. Status: current planning gate; implementation requires a fresh confirmed work block.
         - **Task 1P.4.2c.6: Migrate payroll-page execution.** Move the one executable inline script and nine native handlers in `payroll.html` into maintained local behavior while preserving add/edit/detail, spending-period, new-role, deletion-confirmation, modal, and keyboard workflows. Status: planned as a separate BFM-only payroll boundary.
         - **Task 1P.4.2c.7: Migrate Plaid entry-page execution.** Move the three executable inline application scripts and six native handlers in `data_sources.html` and `plaid.html` into maintained local behavior and inert server data while retaining the two exact external Plaid initializer tags for the later narrow policy; prove Link wiring only with fake configuration, mocked Plaid, denied outbound networking, and temporary synthetic data. Status: planned as a separate integration and CSP-exception boundary.
         - **Task 1P.4.2c.8: Migrate standalone and error-document execution.** Move the five executable inline scripts and one native handler in `offline.html`, `errors/403.html`, `errors/404.html`, `errors/500.html`, and `kristine.html` into document-family-specific local behavior while preserving data-free error/offline rendering, retry behavior, `/k/` interaction, authentication boundaries, and no exception leakage. Status: planned as a separate standalone-document verification family.
@@ -965,6 +965,62 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, 4W completed the `P3-3E-04` Weekly/Waterfall validation slice, and 4AD completed the responsive-navigation slice of `P3-3J-C01`.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
 - **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4AD-R for every explicitly released repair to date; future publication remains separately gated.
+
+### Confirmed Work Block 4AN: Weekly And Waterfall Execution
+
+Status: complete and locally verified
+
+Parent task: Phase 4 Task 1P.4.2c.4 plus only its focused Task 2 regression slice.
+
+Included: move Weekly AI entry to the existing maintained app-shell action; move Waterfall's one executable inline script and remaining native handlers into a page-owned local controller; preserve actual/target switching, breakdown controls, revenue/take-home modes, target and tax Enter-key handling, tooltips, click-away closure, bar animations, URL semantics, AI entry, and entity boundaries; add focused source/rendered and configured-auth/no-password isolated-browser proof; reconcile the CSP inventory and sanitized evidence; and close Runway OS locally after verification.
+
+Excluded: Tasks 1P.4.2c.5-1P.4.4; Tasks 1P.6-1P.7; the remainder of Task 2; Tasks 3-4; route calculations; financial logic; database queries; style migration; CSP headers, nonces, or enforcement; authentication; CSRF; Plaid; dependencies; credentials; protected data; real databases; retained uploads; external or live access; GitHub durability; publication; deployment; workflows; downstream access or writes; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md`.
+
+Why this grouping: Weekly and Waterfall are the existing planning-consumer route cluster, share the same entity and synthetic-fixture boundaries, and can be proven in one browser matrix. Weekly needs only the maintained app-shell AI seam, while Waterfall needs one page-owned controller. Subscriptions has a separate high-interaction modal, suggestion, clipboard, and inert-data boundary and remains later.
+
+Owner and recommended agent: Codex Desktop in the current task without delegation or second opinion. Codex owns implementation, synthetic and browser proof, exact cleanup, CSP inventory reconciliation, dashboard currency, and final intake. Ryan owns every expansion and publication decision.
+
+Defaults: reuse `app-shell.js` for both AI buttons without creating `weekly.js`; create template-free `waterfall.js` with delegated `data-*` actions and inert controller state; preserve current URL, keyboard, tooltip, animation, and runtime-style behavior exactly; keep both HTMX execution switches false; use temporary synthetic Personal, BFM, and Luxe Legacy data with localhost-only browser state, denied non-localhost requests, zero unexpected console/page errors, and exact cleanup; preserve both unrelated untracked files; keep durability local-only.
+
+Stop conditions: parity requires route, database-query, financial, product-direction, style-policy, CSP-enforcement, authentication, Plaid, dependency, protected/live, destructive, or later-task work; verification changes the plan; exact temporary cleanup fails; command-center checks fail; scope expands; or either preserved untracked file overlaps.
+
+Verification: baseline and final full smoke; source and rendered Weekly/Waterfall zero-execution assertions; exact residual aggregate inventory of ten executable inline scripts, twelve external scripts, one inert JSON carrier, thirty-one native handlers, and zero `hx-on`; configured-auth and no-password isolated Chrome covering AI entry, actual/target switching, breakdowns, mode, target and tax Enter behavior, tooltips, outside-click closure, animation, entity boundaries, denied external traffic, zero unexpected browser errors, and exact cleanup; relevant Python, JavaScript, and JSON syntax; whitespace; dashboard refresh, health, and rendered-state inspection; exact worktree scope; and preserved files.
+
+Report point: return exact migrated behavior and inventory, controller organization, focused and full verification, browser and cleanup results, changed paths, local branch state, preserved exclusions, and the separate 4AN-R publication plus Task 1P.4.2c.5 gates.
+
+Suggested next work block: after 4AN closes locally, decide separately whether to authorize exact-scope 4AN-R durability and release; Task 1P.4.2c.5 still requires its own fresh proposal.
+
+Result: Weekly and Waterfall AI entry now uses the maintained app-shell action, and page-owned template-free `waterfall.js` preserves actual/target switching, nested breakdowns, revenue/take-home mode, target and tax Enter handling, tooltips, click-away closure, bar animation, URL semantics, and Personal/BFM versus Luxe Legacy boundaries. Both included templates contain zero executable inline scripts, native handlers, or `hx-on`; the residual tracked-template inventory is ten executable inline scripts, twelve external scripts, one inert JSON carrier, thirty-one native handlers, and zero `hx-on`. Baseline and final full smoke plus configured-auth/no-password isolated Chrome, focused source/rendered coverage, syntax, JSON, whitespace, dashboard, scope, and exact-cleanup checks pass. The result remains local-only on `codex/csp-weekly-waterfall`; no commit, push, PR, merge, publication, deployment, protected access, credential use, real database, or live action occurred. Evidence: `command-center/logs/2026-07-23-weekly-waterfall-execution-4an.md`.
+
+### Confirmed Work Block 4AN-R: Weekly And Waterfall Durability And Release
+
+Status: active.
+
+Parent task: Phase 4 Task 1P.4.2c.4-R for the exact verified 4AN source set only.
+
+Included: stage the exact verified 4AN application, controller, maintained-test, CSP contract, evidence, and Runway OS source paths; create one intentional source commit on `codex/csp-weekly-waterfall`; fast-forward local `main`; push directly to `origin/main` without force or PR; observe the resulting automatic Fly deployment read-only; verify credential-free production `/health`; verify the exact source SHA is durable; create one sanitized command-center-only `[skip actions]` closeout commit; push it to `main`; and prove final local/remote alignment.
+
+Excluded: Task 1P.4.2c.5 and every later task; every new application, template, JavaScript, CSS, test, dependency, runtime, authentication, header, worker, manifest, Plaid, route, database-query, or financial mutation beyond the verified 4AN set; credentials; protected data; real databases; retained uploads; authenticated production pages; manual workflow actions; workflow edits; non-automatic Fly mutations; downstream access or writes; PR creation; force push; broader recovery; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md`.
+
+Why this grouping: Ryan explicitly requested commit and push to `main`. The complete 4AN set is already locally verified, so exact durability, automatic release observation, credential-free health, and sanitized closeout form one bounded publication block without reopening implementation.
+
+Owner and recommended agent: Codex Desktop in the current task without delegation. Codex owns exact staging, Git safety, sensitive-addition and protected-boundary review, direct-main durability, read-only automatic-deployment observation, credential-free health, and Runway OS closeout. Ryan owns every expansion, live mutation, failure recovery, and Task 1P.4.2c.5 decision.
+
+Runner path: source commit on `codex/csp-weekly-waterfall`; clean fast-forward of local `main`; direct push to `origin/main`; automatic-deployment observation; credential-free health; sanitized `[skip actions]` closeout on `main`.
+
+Expected surfaces: the exact verified 4AN paths for the source commit; then only `command-center/now.md`, `command-center/roadmap.md`, `command-center/decisions.md`, `command-center/state.json`, generated `command-center/index.html`, and one sanitized 4AN-R evidence log for closeout.
+
+Defaults: explicit-path staging only; no PR or force push; no new application mutation; preserve the verified controller, templates, tests, inventory, and false HTMX execution switches; observe only the automatic `main` deployment and credential-free health; use `[skip actions]` only for the final command-center closeout; preserve both unrelated untracked files.
+
+Stop conditions: unexpected or excluded path; sensitive addition or protected-data risk; failed verification; local or remote `main` divergence; excluded staging; push rejection; automatic deployment or health failure that requires mutation or broader diagnosis; workflow behavior inconsistent with the expected automatic release; preserved-file overlap; or recovery beyond clean fast-forward and read-only diagnosis.
+
+Verification: exact changed and staged paths; protected-path and high-confidence sensitive-addition scans; full smoke; configured-auth/no-password isolated Chrome; Python/JavaScript/JSON syntax; whitespace; dashboard refresh, health, and rendered state; commit content; clean fast-forward; `main` ancestry; exact remote SHA; automatic deployment run/job result; credential-free production `/health`; final tracked cleanliness; and both preserved untracked files.
+
+Dashboard closeout: after source durability and release proof, update human-readable sources with exact commit/run/health results, align `state.json`, refresh and health-check, inspect generated state, commit only sanitized command-center paths with `[skip actions]`, push, and verify final local/remote alignment without triggering another deployment.
+
+Report point: return source and closeout SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.5 still separately gated.
+
+Suggested next work block: after 4AN-R closes, recheck Task 1P.4.2c.5 before proposing a separate subscription-page block; do not infer implementation authorization.
 
 ### Confirmed Work Block 4AE-R: CSP Contract Durability
 

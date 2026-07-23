@@ -6,8 +6,9 @@ blocked non-localhost browser requests. No production credentials or data are
 required. Covers the mobile drawer plus theme, HTMX configuration and swaps,
 AI modal listeners, CSRF wiring, service-worker registration, and configured-
 auth/no-password shell loading. Transaction and supporting modal fragments,
-categorization/upload controls, Cash Flow/Long-Term Planning, and Short-Term
-Planning interactions run only against temporary synthetic databases.
+categorization/upload controls, Cash Flow/Long-Term Planning, Short-Term
+Planning, and Weekly/Waterfall interactions run only against temporary
+synthetic databases.
 """
 
 from __future__ import annotations
@@ -1506,6 +1507,175 @@ def _assert_short_term_planning_page(page, base_url: str, label: str) -> None:
     page.goto(base_url, wait_until="networkidle")
 
 
+def _assert_weekly_waterfall_pages(page, base_url: str, label: str) -> None:
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(f"{base_url}/weekly/", wait_until="networkidle")
+    weekly_ai = page.locator(
+        '[data-app-shell-action="open-ai-chat"][data-ai-page="weekly"]'
+    )
+    _check(
+        weekly_ai.count() == 1,
+        f"{label}: Weekly must expose the maintained app-shell AI action",
+    )
+    weekly_ai.click()
+    _check(
+        page.locator("#ai-chat-scrim").is_visible()
+        and page.locator("#ai-chat-page").input_value() == "weekly",
+        f"{label}: Weekly AI entry must preserve its page context",
+    )
+    page.locator("[data-ai-chat-close]").click()
+
+    page.goto(f"{base_url}/waterfall/", wait_until="networkidle")
+    _check(
+        page.locator("[data-waterfall-controller]").count() == 1
+        and page.locator('script[src*="waterfall.js"]').count() == 1,
+        f"{label}: Waterfall must load one page-owned controller",
+    )
+    waterfall_ai = page.locator(
+        '[data-app-shell-action="open-ai-chat"][data-ai-page="waterfall"]'
+    )
+    waterfall_ai.click()
+    _check(
+        page.locator("#ai-chat-scrim").is_visible()
+        and page.locator("#ai-chat-page").input_value() == "waterfall",
+        f"{label}: Waterfall AI entry must preserve its page context",
+    )
+    page.locator("[data-ai-chat-close]").click()
+
+    actual_view = page.locator("#wf-view-actual")
+    target_view = page.locator("#wf-view-target")
+    _check(
+        actual_view.is_visible() and target_view.is_hidden(),
+        f"{label}: Waterfall must start on the actual view without target params",
+    )
+    actual_bar = actual_view.locator(".wf-wf-bar-anim").first
+    _check(
+        actual_bar.count() == 1
+        and "wf-bar-animate" in (actual_bar.get_attribute("class") or ""),
+        f"{label}: actual-view bars must animate on initial load",
+    )
+
+    page.locator(
+        '[data-waterfall-action="toggle-breakdown"][data-section="details"]'
+    ).click()
+    _check(
+        page.locator("#wf-detail-details").is_visible()
+        and page.locator("#wf-chevron-details").evaluate(
+            "element => element.classList.contains('wf-chevron--open')"
+        ),
+        f"{label}: delegated breakdown control must open details",
+    )
+    page.locator(
+        '[data-waterfall-action="toggle-breakdown"][data-section="fixed"]'
+    ).click()
+    _check(
+        page.locator("#wf-detail-fixed").evaluate("element => !element.hidden"),
+        f"{label}: nested breakdown controls must remain interactive",
+    )
+
+    tooltip_row = actual_view.locator(".wf-wf-row[data-tip]").first
+    tooltip_row.click(position={"x": 24, "y": 20})
+    _check(
+        page.locator("#wf-tip").is_visible()
+        and page.locator("#wf-tip .wf-tip-row").count() >= 1,
+        f"{label}: delegated Waterfall row click must show its tooltip",
+    )
+    tooltip_row.click(position={"x": 24, "y": 20})
+    _check(
+        page.locator("#wf-tip").is_hidden(),
+        f"{label}: clicking the active Waterfall row must toggle its tooltip off",
+    )
+    tooltip_row.click(position={"x": 24, "y": 20})
+    page.locator(".page-title-row h1").click()
+    _check(
+        page.locator("#wf-tip").is_hidden(),
+        f"{label}: outside click must close the Waterfall tooltip",
+    )
+
+    page.locator(
+        '[data-waterfall-action="switch-view"][data-view="target"]'
+    ).click()
+    _check(
+        actual_view.is_hidden()
+        and target_view.is_visible()
+        and page.locator("#wf-seg-target").evaluate(
+            "element => element.classList.contains('wf-seg-btn--active')"
+        ),
+        f"{label}: delegated target-view switching must preserve active state",
+    )
+    target_bar = target_view.locator(".wf-wf-bar-anim").first
+    _check(
+        target_bar.count() == 1
+        and "wf-bar-animate" in (target_bar.get_attribute("class") or ""),
+        f"{label}: newly visible target bars must re-animate",
+    )
+
+    takehome_mode = page.locator(
+        '[data-waterfall-action="set-mode"][data-mode="takehome"]'
+    )
+    takehome_mode.click()
+    target_input = page.locator("#wf-input-value")
+    _check(
+        takehome_mode.evaluate(
+            "element => element.classList.contains('wf-seg-btn--active')"
+        )
+        and target_input.input_value() == ""
+        and target_input.evaluate("element => document.activeElement === element"),
+        f"{label}: delegated mode switching must clear and focus the target input",
+    )
+    target_input.fill("12,345")
+    with page.expect_navigation(wait_until="networkidle"):
+        target_input.press("Enter")
+    _check(
+        "take_home=12345" in page.url
+        and "mode=takehome" in page.url
+        and page.locator("#wf-view-target").is_visible(),
+        f"{label}: target Enter handling must preserve take-home URL semantics",
+    )
+
+    tax_input = page.locator("#wf-tax-rate")
+    tax_input.fill("23.5")
+    with page.expect_navigation(wait_until="networkidle"):
+        tax_input.press("Enter")
+    _check(
+        "tax_rate=23.5" in page.url
+        and page.locator("#wf-view-target").is_visible(),
+        f"{label}: tax Enter handling must preserve normalized-route URL semantics",
+    )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "BFM", "url": base_url}]
+    )
+    page.goto(f"{base_url}/waterfall/", wait_until="networkidle")
+    _check(
+        page.locator("[data-waterfall-controller]").count() == 1,
+        f"{label}: BFM Waterfall must remain available",
+    )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "LL", "url": base_url}]
+    )
+    page.goto(f"{base_url}/weekly/", wait_until="networkidle")
+    _check(
+        page.url.rstrip("/") == base_url
+        and page.locator("[data-ai-page='weekly']").count() == 0,
+        f"{label}: Luxe Legacy must remain denied before Weekly execution",
+    )
+    page.goto(f"{base_url}/waterfall/", wait_until="networkidle")
+    _check(
+        page.url.rstrip("/") == base_url
+        and page.locator("[data-waterfall-controller]").count() == 0,
+        f"{label}: Luxe Legacy must remain denied before Waterfall execution",
+    )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -1817,6 +1987,9 @@ def main() -> None:
                 _assert_short_term_planning_page(
                     page, base_url, "no-password Short-Term Planning execution"
                 )
+                _assert_weekly_waterfall_pages(
+                    page, base_url, "no-password Weekly/Waterfall execution"
+                )
 
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
@@ -1920,6 +2093,9 @@ def main() -> None:
                 _assert_short_term_planning_page(
                     page, base_url, "configured-auth Short-Term Planning execution"
                 )
+                _assert_weekly_waterfall_pages(
+                    page, base_url, "configured-auth Weekly/Waterfall execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -1965,7 +2141,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, and Short-Term Planning workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, and Weekly/Waterfall workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

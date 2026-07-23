@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Waterfall — The Ledger{% endblock %}
+{% block head %}
+<script defer src="{{ url_for('static', filename='waterfall.js') }}?v={{ cache_bust }}"></script>
+{% endblock %}
 
 {% block content %}
-<div class="page-title-row">
+<div class="page-title-row"
+     data-waterfall-controller
+     data-target-mode="{{ target_mode|default('revenue') }}">
   <h1>Waterfall</h1>
-  <button type="button" class="joker-btn" onclick="aiChatOpen('waterfall')" title="Ask Opus" aria-label="Ask Opus">
+  <button type="button" class="joker-btn"
+          data-app-shell-action="open-ai-chat" data-ai-page="waterfall"
+          title="Ask Opus" aria-label="Ask Opus">
     <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
   </button>
 </div>
@@ -33,8 +40,10 @@
 <!-- ── Actual / Target Toggle ────────────────────────────────────────── -->
 <div class="wf-toggle-row">
   <div class="wf-segmented">
-    <button type="button" class="wf-seg-btn wf-seg-btn--active" id="wf-seg-actual" onclick="wfSwitch('actual')">Actual</button>
-    <button type="button" class="wf-seg-btn" id="wf-seg-target" onclick="wfSwitch('target')">Target</button>
+    <button type="button" class="wf-seg-btn wf-seg-btn--active" id="wf-seg-actual"
+            data-waterfall-action="switch-view" data-view="actual">Actual</button>
+    <button type="button" class="wf-seg-btn" id="wf-seg-target"
+            data-waterfall-action="switch-view" data-view="target">Target</button>
   </div>
 </div>
 
@@ -101,14 +110,16 @@
 
     <!-- Collapsible breakdown -->
     <div class="wf-breakdown">
-      <div class="wf-breakdown-toggle" onclick="wfToggle('details')">
+      <div class="wf-breakdown-toggle"
+           data-waterfall-action="toggle-breakdown" data-section="details">
         <span class="wf-chevron" id="wf-chevron-details">&#9654;</span>
         <span class="wf-breakdown-toggle-text">View Breakdown</span>
       </div>
       <div id="wf-detail-details" hidden>
         <!-- Fixed Costs -->
         <div class="wf-breakdown-group">
-          <div class="wf-breakdown-header" onclick="wfToggle('fixed')">
+          <div class="wf-breakdown-header"
+               data-waterfall-action="toggle-breakdown" data-section="fixed">
             <span class="wf-chevron" id="wf-chevron-fixed">&#9654;</span>
             <span class="wf-breakdown-name">Fixed Costs</span>
             <span class="wf-breakdown-val wf-negative">{{ fmt_dollars(fixed_total) }}</span>
@@ -124,7 +135,8 @@
         </div>
         <!-- Focus -->
         <div class="wf-breakdown-group">
-          <div class="wf-breakdown-header" onclick="wfToggle('focus')">
+          <div class="wf-breakdown-header"
+               data-waterfall-action="toggle-breakdown" data-section="focus">
             <span class="wf-chevron" id="wf-chevron-focus">&#9654;</span>
             <span class="wf-breakdown-name">Focus</span>
             <span class="wf-breakdown-val wf-negative">{{ fmt_dollars(focus_total) }}</span>
@@ -140,7 +152,8 @@
         </div>
         <!-- Everything Else -->
         <div class="wf-breakdown-group">
-          <div class="wf-breakdown-header" onclick="wfToggle('other')">
+          <div class="wf-breakdown-header"
+               data-waterfall-action="toggle-breakdown" data-section="other">
             <span class="wf-chevron" id="wf-chevron-other">&#9654;</span>
             <span class="wf-breakdown-name">Everything Else</span>
             <span class="wf-breakdown-val wf-negative">{{ fmt_dollars(other_total) }}</span>
@@ -170,7 +183,7 @@
       &nbsp;@&nbsp;<input type="text" class="wf-tax-input" id="wf-tax-rate-actual"
              value="{{ tax_rate_display }}"
              size="3" inputmode="decimal"
-             onkeydown="if(event.key==='Enter'){wfApplyTaxRate();}">%
+             data-waterfall-enter="apply-tax-rate">%
       &nbsp;→&nbsp; {{ fmt_dollars(actual_take_home) }} take-home</span>
   </div>
   <div class="wf-bridge-line"></div>
@@ -222,14 +235,14 @@
 <div class="wf-mode-section">
   <div class="wf-segmented wf-mode-toggle">
     <button type="button" class="wf-seg-btn {% if target_mode == 'revenue' %}wf-seg-btn--active{% endif %}"
-            onclick="wfSetMode('revenue')">Revenue Target</button>
+            data-waterfall-action="set-mode" data-mode="revenue">Revenue Target</button>
     <button type="button" class="wf-seg-btn {% if target_mode == 'takehome' %}wf-seg-btn--active{% endif %}"
-            onclick="wfSetMode('takehome')">Desired Take-Home</button>
+            data-waterfall-action="set-mode" data-mode="takehome">Desired Take-Home</button>
   </div>
   <div class="wf-target-input-group">
     <span class="wf-target-input-wrap">$<input type="text" class="wf-target-input" id="wf-input-value"
            value="{% if target_mode == 'takehome' %}{{ '{:,.0f}'.format(owner_take_home / 100) }}{% else %}{{ '{:,.0f}'.format(target_revenue / 100) }}{% endif %}"
-           onkeydown="if(event.key==='Enter'){wfApplyTargets();}"
+           data-waterfall-enter="apply-targets"
            inputmode="numeric"></span>
   </div>
   <div class="wf-target-summary" id="wf-target-summary">
@@ -284,7 +297,7 @@
       &nbsp;@&nbsp;<input type="text" class="wf-tax-input" id="wf-tax-rate"
              value="{{ tax_rate_display }}"
              size="3" inputmode="decimal"
-             onkeydown="if(event.key==='Enter'){wfApplyTaxRate();}">%
+             data-waterfall-enter="apply-tax-rate">%
       &nbsp;→&nbsp; {{ fmt_dollars(owner_take_home) }} take-home</span>
   </div>
   <div class="wf-bridge-line"></div>
@@ -414,179 +427,6 @@
 
 <!-- Shared tooltip -->
 <div class="wf-tip" id="wf-tip" hidden></div>
-
-<script>
-/* ── Bar click tooltips ─────────────────────────────────────────── */
-(function() {
-    var tip = document.getElementById('wf-tip');
-    var activeRow = null;
-
-    function fmtDollars(cents) {
-        var d = Math.round(Math.abs(cents) / 100);
-        return '$' + d.toLocaleString('en-US');
-    }
-
-    function showTip(el, evt) {
-        var data;
-        try { data = JSON.parse(el.getAttribute('data-tip')); } catch(e) { return; }
-        if (!data || !data.length) return;
-        /* If clicking same row, toggle off */
-        if (activeRow === el) { hideTip(); return; }
-        activeRow = el;
-        var html = '';
-        for (var i = 0; i < data.length; i++) {
-            html += '<div class="wf-tip-row"><span class="wf-tip-cat">' +
-                data[i].c + '</span><span class="wf-tip-val">' +
-                fmtDollars(data[i].v) + '</span></div>';
-        }
-        tip.innerHTML = html;
-        /* Position near click point */
-        tip.style.position = 'fixed';
-        tip.removeAttribute('hidden');
-        var tipW = tip.offsetWidth;
-        var tipH = tip.offsetHeight;
-        var cx = evt.clientX;
-        var cy = evt.clientY;
-        /* Horizontal: try right of click, flip left if overflow */
-        var left = cx + 12;
-        if (left + tipW > window.innerWidth - 8) left = cx - tipW - 12;
-        if (left < 8) left = 8;
-        /* Vertical: try below click, flip above if overflow */
-        var top = cy + 8;
-        if (top + tipH > window.innerHeight - 8) top = cy - tipH - 8;
-        if (top < 8) top = 8;
-        tip.style.left = left + 'px';
-        tip.style.top = top + 'px';
-    }
-
-    function hideTip() {
-        tip.setAttribute('hidden', '');
-        activeRow = null;
-    }
-
-    document.querySelectorAll('.wf-wf-row[data-tip]').forEach(function(row) {
-        row.addEventListener('click', function(e) { showTip(row, e); });
-    });
-
-    /* Close on click outside */
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.wf-wf-row[data-tip]') && !e.target.closest('.wf-tip')) {
-            hideTip();
-        }
-    });
-})();
-
-function wfToggle(section) {
-    var detail = document.getElementById('wf-detail-' + section);
-    var chevron = document.getElementById('wf-chevron-' + section);
-    if (detail.hidden) {
-        detail.hidden = false;
-        chevron.classList.add('wf-chevron--open');
-    } else {
-        detail.hidden = true;
-        chevron.classList.remove('wf-chevron--open');
-    }
-}
-
-/* ── Actual / Target toggle ──────────────────────────────────────── */
-function wfSwitch(mode) {
-    var actualView = document.getElementById('wf-view-actual');
-    var targetView = document.getElementById('wf-view-target');
-    var btnActual = document.getElementById('wf-seg-actual');
-    var btnTarget = document.getElementById('wf-seg-target');
-
-    if (mode === 'target') {
-        actualView.hidden = true;
-        targetView.hidden = false;
-        btnActual.classList.remove('wf-seg-btn--active');
-        btnTarget.classList.add('wf-seg-btn--active');
-    } else {
-        actualView.hidden = false;
-        targetView.hidden = true;
-        btnActual.classList.add('wf-seg-btn--active');
-        btnTarget.classList.remove('wf-seg-btn--active');
-    }
-
-    /* Re-animate bars in the newly visible view */
-    var visibleView = mode === 'target' ? targetView : actualView;
-    var bars = visibleView.querySelectorAll('.wf-wf-bar-anim');
-    bars.forEach(function(bar) {
-        bar.classList.remove('wf-bar-animate');
-        void bar.offsetWidth; /* trigger reflow */
-        var delay = parseInt(bar.getAttribute('data-delay') || '0', 10);
-        bar.style.animationDelay = (delay * 0.15) + 's';
-        bar.classList.add('wf-bar-animate');
-    });
-}
-
-/* ── Mode toggle (Revenue / Take-Home) ─────────────────────────── */
-var _wfMode = '{{ target_mode }}';
-
-function wfSetMode(mode) {
-    _wfMode = mode;
-    /* Toggle active seg button */
-    document.querySelectorAll('.wf-mode-toggle .wf-seg-btn').forEach(function(btn) {
-        btn.classList.toggle('wf-seg-btn--active', btn.textContent.trim() ===
-            (mode === 'takehome' ? 'Desired Take-Home' : 'Revenue Target'));
-    });
-    /* Swap input value — clear and focus */
-    var inp = document.getElementById('wf-input-value');
-    inp.value = '';
-    inp.focus();
-}
-
-/* ── Apply target input ────────────────────────────────────────── */
-function wfApplyTargets() {
-    var val = document.getElementById('wf-input-value').value.replace(/[^0-9.]/g, '');
-    if (!val) return;
-    var url = new URL(window.location);
-    /* Clear both params, set only the active one */
-    url.searchParams.delete('target_revenue');
-    url.searchParams.delete('take_home');
-    if (_wfMode === 'takehome') {
-        url.searchParams.set('take_home', val);
-        url.searchParams.set('mode', 'takehome');
-    } else {
-        url.searchParams.set('target_revenue', val);
-        url.searchParams.set('mode', 'revenue');
-    }
-    window.location = url.toString();
-}
-
-/* ── Apply tax rate change ────────────────────────────────────── */
-function wfApplyTaxRate() {
-    /* Read from whichever tax input was edited (actual or target) */
-    var elTarget = document.getElementById('wf-tax-rate');
-    var elActual = document.getElementById('wf-tax-rate-actual');
-    var val = '';
-    if (elActual && document.activeElement === elActual) {
-        val = elActual.value;
-    } else if (elTarget) {
-        val = elTarget.value;
-    }
-    val = val.trim();
-    if (!val) return;
-    var url = new URL(window.location);
-    url.searchParams.set('tax_rate', val);
-    window.location = url.toString();
-}
-
-/* Animate bars on load — auto-open Target if URL has target params */
-document.addEventListener('DOMContentLoaded', function() {
-    var params = new URLSearchParams(window.location.search);
-    var startView = (params.has('target_revenue') || params.has('take_home') || params.has('mode')) ? 'target' : 'actual';
-    if (startView === 'target') {
-        wfSwitch('target');
-    } else {
-        var bars = document.querySelectorAll('#wf-view-actual .wf-wf-bar-anim');
-        bars.forEach(function(bar) {
-            var delay = parseInt(bar.getAttribute('data-delay') || '0', 10);
-            bar.style.animationDelay = (delay * 0.15) + 's';
-            bar.classList.add('wf-bar-animate');
-        });
-    }
-});
-</script>
 
 {% endif %}
 {% endblock %}

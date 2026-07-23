@@ -4,7 +4,9 @@
 {% block content %}
 <div class="page-title-row">
   <h1>Weekly Check-In</h1>
-  <button type="button" class="joker-btn" onclick="aiChatOpen('weekly')" title="Ask Opus" aria-label="Ask Opus">
+  <button type="button" class="joker-btn"
+          data-app-shell-action="open-ai-chat" data-ai-page="weekly"
+          title="Ask Opus" aria-label="Ask Opus">
     <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
   </button>
 </div>
