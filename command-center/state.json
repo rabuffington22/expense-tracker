@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-23 12:01 PM CST",
+    "lastUpdated": "2026-07-23 12:06 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,27 +22,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Tasks 1P.4.2c.3a-1P.4.2c.6 are durable deployed and health verified through 4AL-R 4AM-R 4AN-R 4AO-R and 4AP-R while Task 1P.4.2c.7 is complete locally through 4AQ and later gates remain separate"
+    "durabilityStatus": "Tasks 1P.4.2c.3a-1P.4.2c.7 are durable deployed and health verified through 4AL-R 4AM-R 4AN-R 4AO-R 4AP-R and 4AQ-R while later gates remain separate"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.2c.7-R is active through confirmed exact-scope work block 4AQ-R after local 4AQ verification.",
+    "summary": "Task 1P.4.2c.7 is durable automatically deployed and credential-free health verified through work block 4AQ-R; Task 1P.4.2c.8 remains separately gated.",
     "progress": 98
   },
   "currentTask": {
-    "title": "Task 1P.4.2c.7-R: Publish and verify Plaid entry-page execution",
-    "owner": "Codex Desktop",
-    "status": "current",
-    "supportingAgent": "None; Codex Desktop owns the exact release path without delegation",
-    "nextAction": "Verify and stage only the 4AQ source set commit on codex/csp-plaid-entry fast-forward main push observe automatic deployment verify credential-free health and publish sanitized closeout.",
-    "blocker": "None; stop for divergence verification failure excluded staging deployment failure requiring mutation health failure or broader recovery."
+    "title": "Task 1P.4.2c.8: Migrate standalone and error-document execution",
+    "owner": "Ryan",
+    "status": "waiting",
+    "supportingAgent": "Codex Desktop may recheck sources and propose a bounded block only after Ryan requests or confirms the next planning step",
+    "nextAction": "Preserve the durable 4AQ-R result and decide whether to request a fresh bounded Task 1P.4.2c.8 proposal.",
+    "blocker": "Task 1P.4.2c.8 implementation is not authorized."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-aq-r",
     "label": "4AQ-R",
     "name": "Plaid Entry-Page Execution Release",
-    "status": "active",
+    "status": "complete",
     "owner": "Codex Desktop",
     "currentTask": "Task 1P.4.2c.7-R plus the exact verified 4AQ source set",
     "includedTasks": [
@@ -79,7 +79,12 @@
       "Python JavaScript JSON syntax whitespace dashboard refresh health generated state commit content ancestry remote alignment and preserved files",
       "Automatic Fly workflow and deploy-job result for the exact source SHA plus credential-free production health"
     ],
-    "nextReportPoint": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions the separately gated empty-vendor edge and Task 1P.4.2c.8."
+    "nextReportPoint": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions the separately gated empty-vendor edge and Task 1P.4.2c.8.",
+    "durability": "Exact source commit 993506b is durable on local and remote main; automatic Fly run 30027699965 and deploy job 89276216665 passed and credential-free production health returned HTTP 200.",
+    "result": "The exact thirteen-path 4AQ source set is durable deployed and health verified with no PR force push live Plaid manual workflow action non-automatic Fly mutation protected access empty-vendor route repair broader recovery or preserved-file overlap.",
+    "evidence": [
+      "command-center/logs/2026-07-23-plaid-entry-page-execution-release-4aq-r.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -104,20 +109,24 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute exact-scope 4AQ-R release",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized committing and pushing the complete verified 4AQ work to main.",
-    "action": "Verify stage commit fast-forward push observe automatic deployment verify health and publish sanitized closeout without expanding scope.",
+    "title": "Decide whether to plan Task 1P.4.2c.8",
+    "status": "waiting-on-ryan",
+    "owner": "Ryan",
+    "why": "The Plaid entry-page slice is durable deployed and health verified through 4AQ-R; standalone and error documents form the next separately gated verification family.",
+    "action": "Preserve the 4AQ-R result and request a fresh source recheck and bounded proposal before any Task 1P.4.2c.8 implementation.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    "Decide whether to request a fresh bounded Task 1P.4.2c.8 proposal."
+  ],
   "waitingOnRyan": {
-    "summary": "No current decision blocks 4AQ-R; later routes style CSP policy live mutations and recovery beyond the clean release path remain Ryan decisions.",
-    "items": []
+    "summary": "4AQ-R is complete; Task 1P.4.2c.8 later style and CSP policy work live mutations and broader recovery remain Ryan decisions.",
+    "items": [
+      "Decide whether to request a fresh bounded Task 1P.4.2c.8 proposal."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1P.4.2c.7-R is active through 4AQ-R; Task 1P.4.2c.8 style and CSP policy work and every broader route cluster remain separate gates.",
+    "phaseQuestions": "Task 1P.4.2c.7 is durable through 4AQ-R; Task 1P.4.2c.8 style and CSP policy work and every broader route cluster remain separate gates.",
     "decisionQueue": "Task 1P.4.2c.8 later CSP policy work live-sensitive actions failure recovery and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -5382,7 +5391,7 @@
       "phaseId": "phase-4",
       "label": "4AQ-R",
       "name": "Plaid Entry-Page Execution Release",
-      "status": "active",
+      "status": "complete",
       "includedTasks": [
         "Explicit staging and one source commit of the exact verified 4AQ application controller test CSP evidence and Runway OS paths",
         "Clean fast-forward of local main direct non-force push to origin/main read-only automatic Fly deployment observation and credential-free production health",
@@ -5418,7 +5427,12 @@
         "Python JavaScript JSON syntax whitespace dashboard refresh health generated state commit content ancestry remote alignment and preserved files",
         "Automatic Fly workflow and deploy-job result for the exact source SHA plus credential-free production health"
       ],
-      "reportBack": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions the separately gated empty-vendor edge and Task 1P.4.2c.8."
+      "reportBack": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions the separately gated empty-vendor edge and Task 1P.4.2c.8.",
+      "durability": "Exact source commit 993506b is durable on local and remote main; automatic Fly run 30027699965 and deploy job 89276216665 passed and credential-free production health returned HTTP 200.",
+      "result": "The exact thirteen-path 4AQ source set is durable deployed and health verified with no PR force push live Plaid manual workflow action non-automatic Fly mutation protected access empty-vendor route repair broader recovery or preserved-file overlap.",
+      "evidence": [
+        "command-center/logs/2026-07-23-plaid-entry-page-execution-release-4aq-r.md"
+      ]
     }
   ],
   "phaseTasks": [
@@ -6775,8 +6789,8 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "Move three executable inline application scripts and six native handlers from Data Sources and Connected Accounts into maintained local behavior and inert data while retaining the two exact external Plaid initializers and proving only mocked denied-network Link wiring.",
-      "nextAction": "Preserve the verified local result while Ryan decides the separate 4AQ-R durability gate.",
-      "blocker": "None for local scope; publication and every expansion remain separately gated.",
+      "nextAction": "Preserve the durable deployed health-verified 4AQ-R result while Task 1P.4.2c.8 remains separately gated.",
+      "blocker": "None; later work requires a fresh bounded proposal and confirmation.",
       "result": "Two page-owned controllers remove three inline application scripts and six native handlers while preserving exact initializer tags Link flows distinct payload formats vendor controls button states entity isolation denied networking and cleanup.",
       "evidence": [
         "command-center/logs/2026-07-23-plaid-entry-page-execution-4aq.md"
@@ -6786,19 +6800,25 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C7R",
       "title": "Task 1P.4.2c.7-R: Publish and verify Plaid entry-page execution",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Make only the exact locally verified 4AQ source set durable then observe the automatic deployment and verify credential-free production health under a separately confirmed release block.",
-      "nextAction": "Execute confirmed exact-scope 4AQ-R through explicit staging direct-main durability read-only automatic-deployment observation health and sanitized closeout.",
-      "blocker": "None; stop for divergence failed verification excluded staging deployment or health failure preserved-file overlap or broader recovery."
+      "nextAction": "Preserve the durable deployed health-verified 4AQ-R result while Task 1P.4.2c.8 remains separately gated.",
+      "blocker": "None; later work requires a fresh bounded proposal and confirmation.",
+      "result": "Exact source commit 993506b is durable on main automatic Fly run 30027699965 and job 89276216665 passed and credential-free production health returned HTTP 200.",
+      "evidence": [
+        "command-center/logs/2026-07-23-plaid-entry-page-execution-release-4aq-r.md"
+      ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C8",
       "title": "Task 1P.4.2c.8: Migrate standalone and error-document execution",
-      "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Move five executable inline scripts and one native handler from offline 403 404 500 and standalone k documents into family-specific local behavior while preserving data-free rendering retry interaction authentication and no exception leakage."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Move five executable inline scripts and one native handler from offline 403 404 500 and standalone k documents into family-specific local behavior while preserving data-free rendering retry interaction authentication and no exception leakage.",
+      "nextAction": "Decide whether to request a fresh source recheck and bounded Task 1P.4.2c.8 proposal.",
+      "blocker": "Implementation is not authorized."
     },
     {
       "phaseId": "phase-4",
@@ -8197,10 +8217,11 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete exact-scope work block 4AQ-R",
-    "description": "Make the exact verified Plaid entry-page source set durable on main then observe automatic deployment verify credential-free health and publish sanitized closeout."
+    "name": "Decide whether to plan Task 1P.4.2c.8",
+    "description": "Preserve the durable 4AQ-R result and decide whether to request a fresh bounded standalone and error-document execution proposal."
   },
   "verification": {
+    "phase4PlaidEntryRelease": "pass; exact thirteen-path source commit 993506b is durable on main automatic Fly run 30027699965 and deploy job 89276216665 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4PlaidEntryBlock": "pass locally; 4AQ moved three executable inline application scripts and six native handlers into page-owned data-sources.js and plaid.js delegated controls non-script order-date data and inert endpoint attributes while retaining both exact initializer tags leaving residual inventory five inline sixteen external zero inert one handler and zero hx-on",
     "phase4PlaidEntryCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover vendor selection preview-date count confirmations Link open success exit error form and JSON exchange entity isolation denied external traffic zero unexpected browser errors and exact browser payload and all-entity cleanup",
     "phase4PlaidEntryBoundaries": "pass; no style CSP header nonce exception enforcement route API query financial product authentication CSRF dependency service-worker credential protected data real database retained upload live external GitHub publication deployment workflow downstream later-task or preserved-file mutation occurred",

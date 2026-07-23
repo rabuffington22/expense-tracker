@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Make only the verified 4AQ Plaid entry-page source set durable on `main`, observe its automatic deployment, and verify credential-free production health while preserving every later-task and protected boundary.
+Preserve the durable, deployed, health-verified Plaid entry-page execution result while Task 1P.4.2c.8 and every later policy or product mutation remain separately gated.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.7-R is active through confirmed exact-scope work block 4AQ-R.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.7 is durable, automatically deployed, and credential-free health verified through work block 4AQ-R.
 
 ## Current Work Block
 
-Work block 4AQ-R: Plaid Entry-Page Execution Release — active.
+Work block 4AQ-R: Plaid Entry-Page Execution Release — complete.
 
 ## Current Task
 
-Task 1P.4.2c.7-R: Publish and verify Plaid entry-page execution — active.
+Task 1P.4.2c.8: Migrate standalone and error-document execution — waiting for a fresh proposal and confirmation; not authorized.
 
 ## Owner
 
-Codex Desktop owns exact staging, verification, commit, clean fast-forward, direct-main push, read-only automatic-deployment observation, credential-free health, and sanitized closeout. Ryan owns every expansion, live mutation, and recovery beyond the confirmed path.
+Ryan owns the next Task 1P.4.2c.8 decision and every expansion, live mutation, or recovery. Codex Desktop owns preservation of the durable verified result.
 
 ## Current Action
 
-Verify and stage only the exact 4AQ source set, commit on `codex/csp-plaid-entry`, cleanly fast-forward `main`, push without force or PR, observe only the resulting automatic deployment, verify credential-free `/health`, and publish a sanitized `[skip actions]` closeout.
+Preserve exact source commit `993506b25d37c452471ea9ea413e734efe25d122`, successful automatic Fly run `30027699965` and deploy job `89276216665`, and credential-free production health while awaiting a fresh bounded Task 1P.4.2c.8 proposal.
 
 ## Work Block 4AQ-R Contract
 
@@ -32,6 +32,15 @@ Verify and stage only the exact 4AQ source set, commit on `codex/csp-plaid-entry
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
 - Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, the separately gated empty-vendor route edge, and Task 1P.4.2c.8.
+
+## Work Block 4AQ-R Result
+
+- Exact thirteen-path source commit `993506b25d37c452471ea9ea413e734efe25d122` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30027699965` and deploy job `89276216665` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}` after deployment.
+- Exact-path and staged-set checks, protected-boundary and high-confidence sensitive-addition scans, maintained smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated-state assertions, commit content, clean fast-forward, ancestry, exact remote SHA, automatic release, production health, and preserved-file checks passed.
+- No PR, force push, credential, protected data, real database, retained upload, authenticated production page, live Plaid, manual workflow action, workflow edit, non-automatic Fly mutation, downstream access/write, empty-vendor route repair, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-plaid-entry-page-execution-release-4aq-r.md`.
 
 ## Work Block 4AQ Contract
 
