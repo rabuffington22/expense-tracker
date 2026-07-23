@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Cash Flow — The Ledger{% endblock %}
+{% block head %}
+<script defer src="{{ url_for('static', filename='cashflow.js') }}?v={{ cache_bust }}"></script>
+{% endblock %}
 
 {# ── Macros ────────────────────────────────────────────────────────────── #}
 
@@ -14,7 +17,7 @@
     data-due-day="{{ acct.payment_due_day or '' }}"
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.2f}'.format(acct.payment_amount_cents / 100) }}"
-    onclick="cfOpenModal(this, event)">
+    data-cashflow-action="open-modal">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
     </svg>
@@ -66,7 +69,7 @@
     data-due-day="{{ acct.payment_due_day or '' }}"
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
-    onclick="cfFlipAndOpen(this, event)">
+    data-cashflow-action="flip-open">
     <div class="card-flip-inner">
         <div class="card-flip-front">
             <div class="cf-box-name-area">
@@ -110,7 +113,7 @@
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
     data-apr="{{ '{:.2f}'.format(acct.apr_bps / 100) if acct.apr_bps else '' }}"
-    onclick="cfFlipAndOpen(this, event)">
+    data-cashflow-action="flip-open">
     <div class="card-flip-inner">
         <div class="card-flip-front">
             <div class="cf-box-name-area">
@@ -177,9 +180,9 @@
 
 
 {% block content %}
-<div class="page-title-row">
+<div class="page-title-row" data-cashflow-controller>
   <h1 class="cf-title">Cash Flow</h1>
-  <button type="button" class="joker-btn" onclick="aiChatOpen('cashflow')" title="Ask Opus" aria-label="Ask Opus">
+  <button type="button" class="joker-btn" data-app-shell-action="open-ai-chat" data-ai-page="cashflow" title="Ask Opus" aria-label="Ask Opus">
     <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
   </button>
 </div>
@@ -200,7 +203,7 @@
 {% endfor %}
 
 {# ── Edit Modal (Apple Settings sheet style) ─────────────────────────── #}
-<div class="cf-modal-scrim" id="cf-modal-scrim" hidden>
+<div class="cf-modal-scrim" id="cf-modal-scrim" data-cashflow-action="close-on-scrim" hidden>
     <div class="cfm" role="dialog" aria-modal="true">
         <form method="post" id="cf-modal-form">
             <input type="hidden" name="entity_key" id="cf-modal-entity">
@@ -210,7 +213,7 @@
                 <span class="cfm-title" id="cf-modal-title"></span>
                 <div class="cfm-balance">
                     <span class="cfm-dollar">$</span>
-                    <input type="text" name="balance" id="cf-modal-balance" class="cfm-input cfm-input--hero" onfocus="this.select()" oninput="cfSizeInput(this)">
+                    <input type="text" name="balance" id="cf-modal-balance" class="cfm-input cfm-input--hero" data-cashflow-select-on-focus data-cashflow-input="size">
                 </div>
             </div>
 
@@ -220,13 +223,13 @@
                     <span class="cfm-label">Credit Limit</span>
                     <div class="cfm-value">
                         <span class="cfm-unit">$</span>
-                        <input type="text" name="credit_limit" id="cf-modal-limit" class="cfm-input" onfocus="this.select()" oninput="cfSizeInput(this)">
+                        <input type="text" name="credit_limit" id="cf-modal-limit" class="cfm-input" data-cashflow-select-on-focus data-cashflow-input="size">
                     </div>
                 </div>
                 <div class="cfm-row" id="cf-modal-apr-wrap">
                     <span class="cfm-label">APR</span>
                     <div class="cfm-value">
-                        <input type="text" name="apr" id="cf-modal-apr" class="cfm-input cfm-input--right" onfocus="this.select()" oninput="cfSizeInput(this)">
+                        <input type="text" name="apr" id="cf-modal-apr" class="cfm-input cfm-input--right" data-cashflow-select-on-focus data-cashflow-input="size">
                         <span class="cfm-unit">%</span>
                     </div>
                 </div>
@@ -234,10 +237,10 @@
                     <span class="cfm-label">Payment Due</span>
                     <div class="cfm-value">
                         <span class="cfm-unit">$</span>
-                        <input type="text" name="payment_amount" id="cf-modal-payment" class="cfm-input" onfocus="this.select()" oninput="cfSizeInput(this)">
+                        <input type="text" name="payment_amount" id="cf-modal-payment" class="cfm-input" data-cashflow-select-on-focus data-cashflow-input="size">
                         <span class="cfm-due-sep">on</span>
                         <input type="hidden" name="payment_due_day" id="cf-modal-due-day-hidden">
-                        <input type="text" id="cf-modal-due-display" class="cfm-input cfm-input--date" placeholder="Day" onfocus="this.select()" oninput="cfParseDueDay(this)">
+                        <input type="text" id="cf-modal-due-display" class="cfm-input cfm-input--date" placeholder="Day" data-cashflow-select-on-focus data-cashflow-input="due-day">
                     </div>
                 </div>
             </div>
@@ -274,149 +277,10 @@
 
         {# Footer #}
         <div class="cfm-footer">
-            <button type="button" class="cfm-btn cfm-btn--cancel" onclick="cfCloseModal()">Cancel</button>
+            <button type="button" class="cfm-btn cfm-btn--cancel" data-cashflow-action="close-modal">Cancel</button>
             <button type="submit" form="cf-modal-form" class="cfm-btn cfm-btn--save">Save</button>
         </div>
     </div>
 </div>
 
-<script>
-var _MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-function cfFormatDate(isoStr) {
-    /* Format YYYY-MM-DD as "Mar 20" */
-    if (!isoStr) return '';
-    var parts = isoStr.split('-');
-    if (parts.length !== 3) return isoStr;
-    var m = parseInt(parts[1], 10) - 1;
-    var d = parseInt(parts[2], 10);
-    return _MONTHS[m] + ' ' + d;
-}
-
-function cfParseDueDay(el) {
-    /* When user types in the due date display, extract day number for hidden field */
-    var val = el.value.replace(/[^0-9]/g, '');
-    var day = parseInt(val, 10);
-    if (day >= 1 && day <= 31) {
-        document.getElementById('cf-modal-due-day-hidden').value = day;
-    } else {
-        document.getElementById('cf-modal-due-day-hidden').value = '';
-    }
-    cfSizeInput(el);
-}
-
-function cfSizeInput(el) {
-    el.style.width = Math.max(2, el.value.length + 1) + 'ch';
-}
-
-var _cfFlippedCard = null;
-
-function _cfSetGenieOrigin(cardEl) {
-    var rect = cardEl.getBoundingClientRect();
-    var cx = rect.left + rect.width / 2;
-    var cy = rect.top + rect.height / 2;
-    var vw = window.innerWidth / 2;
-    var vh = window.innerHeight / 2;
-    var modal = document.querySelector('.cfm');
-    modal.style.setProperty('--genie-x', (cx - vw) + 'px');
-    modal.style.setProperty('--genie-y', (cy - vh) + 'px');
-}
-
-function cfFlipAndOpen(btn, evt) {
-    if (evt && (evt.target.closest('button') || evt.target.closest('form') || evt.target.closest('a'))) return;
-    btn.classList.add('card-flipped');
-    _cfFlippedCard = btn;
-    _cfSetGenieOrigin(btn);
-    setTimeout(function() { cfOpenModal(btn, null); }, 250);
-}
-
-function cfOpenModal(btn, evt) {
-    /* Don't open modal when clicking interactive elements inside the card */
-    if (evt && (evt.target.closest('button') || evt.target.closest('form') || evt.target.closest('a'))) return;
-    var d = btn.dataset;
-    var isCard = d.acctType === 'credit_card';
-    var action = isCard
-        ? '/cashflow/accounts/update-card/' + d.acctId
-        : '/cashflow/accounts/update/' + d.acctId;
-
-    /* Toggle playing card suit class */
-    var modal = document.querySelector('.cfm');
-    modal.classList.remove('cfm--bank', 'cfm--card');
-    modal.classList.add(isCard ? 'cfm--card' : 'cfm--bank');
-
-    document.getElementById('cf-modal-title').textContent = d.acctName;
-    document.getElementById('cf-modal-form').action = action;
-    document.getElementById('cf-modal-entity').value = d.entityKey;
-    var balInput = document.getElementById('cf-modal-balance');
-    balInput.value = d.balance;
-    cfSizeInput(balInput);
-
-    /* Credit card fields */
-    var cardGroup = document.getElementById('cf-modal-card-group');
-    if (isCard) {
-        cardGroup.hidden = false;
-        var limitInput = document.getElementById('cf-modal-limit');
-        limitInput.value = d.limit;
-        cfSizeInput(limitInput);
-        var aprInput = document.getElementById('cf-modal-apr');
-        aprInput.value = d.apr || '';
-        cfSizeInput(aprInput);
-        document.getElementById('cf-modal-due-day-hidden').value = d.dueDay;
-        var dueDisplay = document.getElementById('cf-modal-due-display');
-        dueDisplay.value = d.dueDate ? cfFormatDate(d.dueDate) : (d.dueDay || '');
-        cfSizeInput(dueDisplay);
-        var payInput = document.getElementById('cf-modal-payment');
-        payInput.value = d.payment;
-        cfSizeInput(payInput);
-    } else {
-        cardGroup.hidden = true;
-    }
-
-    /* Upcoming charges — rendered server-side on the card, copy into modal */
-    var listTarget = document.getElementById('cf-modal-upcoming-list');
-    var upcomingLabel = document.getElementById('cf-modal-upcoming-label');
-    listTarget.innerHTML = '';
-    /* Upcoming rows live on the hidden cf-upcoming div inside the card (kept in DOM for data) */
-    var hasUpcoming = false;
-    /* For now, show "No upcoming charges" — upcoming data removed from cards */
-    upcomingLabel.hidden = true;
-    listTarget.innerHTML = '<span class="cfm-empty">No upcoming charges</span>';
-
-    /* Set up add-recurring form */
-    document.getElementById('cf-add-entity').value = d.entityKey;
-    document.getElementById('cf-add-acct-id').value = d.acctId;
-    document.getElementById('cf-add-recurring-section').hidden = false;
-
-    document.getElementById('cf-modal-scrim').hidden = false;
-}
-
-function cfCloseModal() {
-    var scrim = document.getElementById('cf-modal-scrim');
-    var modal = document.querySelector('.cfm');
-    /* Re-read card position in case of scroll/resize */
-    if (_cfFlippedCard) _cfSetGenieOrigin(_cfFlippedCard);
-    scrim.classList.add('cf-modal-scrim--closing');
-    modal.classList.add('cfm--closing');
-    setTimeout(function() {
-        scrim.hidden = true;
-        scrim.classList.remove('cf-modal-scrim--closing');
-        modal.classList.remove('cfm--closing');
-        document.getElementById('cf-add-recurring-section').hidden = true;
-        if (_cfFlippedCard) {
-            _cfFlippedCard.classList.remove('card-flipped');
-            _cfFlippedCard = null;
-        }
-    }, 300);
-}
-
-/* Close on scrim click */
-document.getElementById('cf-modal-scrim').addEventListener('click', function(e) {
-    if (e.target === this) cfCloseModal();
-});
-
-/* Close on Escape */
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') cfCloseModal();
-});
-</script>
 {% endblock %}

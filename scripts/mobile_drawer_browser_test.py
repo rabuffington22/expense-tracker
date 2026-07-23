@@ -5,8 +5,9 @@ Uses a temporary synthetic DATA_DIR, the installed Google Chrome channel, and
 blocked non-localhost browser requests. No production credentials or data are
 required. Covers the mobile drawer plus theme, HTMX configuration and swaps,
 AI modal listeners, CSRF wiring, service-worker registration, and configured-
-auth/no-password shell loading. Transaction and supporting modal fragments plus
-categorization and upload controls run only against temporary synthetic databases.
+auth/no-password shell loading. Transaction and supporting modal fragments,
+categorization/upload controls, and Cash Flow/Long-Term Planning interactions run
+only against temporary synthetic databases.
 """
 
 from __future__ import annotations
@@ -248,6 +249,75 @@ def _seed_dashboard_data(entity_key: str) -> None:
         (
             (order_cursor.lastrowid, "Synthetic office item", 400, 400, "Office Supplies", imported_at),
             (order_cursor.lastrowid, "Synthetic food item", 600, 600, "Food", imported_at),
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+
+def _seed_cashflow_planning_data(entity_key: str) -> None:
+    from core.db import get_connection
+
+    display_name = {
+        "personal": "Personal",
+        "company": "BFM",
+        "luxelegacy": "LL",
+    }[entity_key]
+    updated_at = datetime.now(timezone.utc).isoformat()
+    conn = get_connection(entity_key)
+    conn.execute(
+        "INSERT INTO account_balances "
+        "(account_name, balance_cents, balance_source, low_threshold_cents, "
+        "updated_at, created_at, account_type, credit_limit_cents, "
+        "payment_due_day, payment_amount_cents, sort_order, payment_due_date, apr_bps) "
+        "VALUES (?, ?, 'manual', 50000, ?, ?, 'bank', 0, NULL, 0, 0, NULL, NULL)",
+        (
+            f"4AL {display_name} Checking",
+            425000,
+            updated_at,
+            updated_at,
+        ),
+    )
+    conn.execute(
+        "INSERT INTO account_balances "
+        "(account_name, balance_cents, balance_source, low_threshold_cents, "
+        "updated_at, created_at, account_type, credit_limit_cents, "
+        "payment_due_day, payment_amount_cents, sort_order, payment_due_date, apr_bps) "
+        "VALUES (?, ?, 'manual', 50000, ?, ?, 'credit_card', ?, 17, ?, 1, ?, ?)",
+        (
+            f"4AL {display_name} Credit",
+            123400,
+            updated_at,
+            updated_at,
+            900000,
+            27500,
+            "2026-08-17",
+            1999,
+        ),
+    )
+    conn.execute(
+        "INSERT INTO planning_items "
+        "(item_type, name, current_value_cents, annual_rate_bps, "
+        "monthly_contrib_cents, monthly_payment_cents, source, "
+        "cashflow_account_name, sort_order, created_at, updated_at) "
+        "VALUES ('asset', ?, 15000000, 500, 50000, 0, 'cashflow', ?, 0, ?, ?)",
+        (
+            f"4AL {display_name} Asset",
+            f"4AL {display_name} Checking",
+            updated_at,
+            updated_at,
+        ),
+    )
+    conn.execute(
+        "INSERT INTO planning_items "
+        "(item_type, name, current_value_cents, annual_rate_bps, "
+        "monthly_contrib_cents, monthly_payment_cents, source, "
+        "cashflow_account_name, sort_order, created_at, updated_at) "
+        "VALUES ('liability', ?, 4200000, 650, 0, 45000, 'manual', NULL, 0, ?, ?)",
+        (
+            f"4AL {display_name} Liability",
+            updated_at,
+            updated_at,
         ),
     )
     conn.commit()
@@ -896,6 +966,248 @@ def _assert_categorization_upload_pages(page, base_url: str, label: str) -> None
     _check(profile_dialogs == ["Delete this profile?"], f"{label}: profile delete confirmation must be delegated")
 
 
+def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(f"{base_url}/cashflow/", wait_until="networkidle")
+    page.wait_for_function(
+        "document.querySelector('[data-cashflow-controller]')?.dataset.initialized === 'true'"
+    )
+    cashflow_state = page.evaluate(
+        """() => ({
+            asset: Boolean(document.querySelector('script[src*="cashflow.js"]')),
+            inlineHandlers: document.querySelectorAll(
+                '#main-content [onclick], #main-content [onchange], #main-content [onfocus], '
+                + '#main-content [oninput], #main-content [onblur], #main-content [onsubmit], '
+                + '#main-content [onkeydown]'
+            ).length,
+            personal: Boolean(document.querySelector('[data-acct-name="4AL Personal Checking"]')),
+            company: Boolean(document.querySelector('[data-acct-name="4AL BFM Checking"]')),
+        })"""
+    )
+    _check(cashflow_state["asset"], f"{label}: Cash Flow controller must load")
+    _check(
+        cashflow_state["inlineHandlers"] == 0,
+        f"{label}: Cash Flow must expose no native inline handlers",
+    )
+    _check(
+        cashflow_state["personal"] and cashflow_state["company"],
+        f"{label}: Cash Flow must preserve Personal/BFM shared visibility",
+    )
+
+    credit_card = page.locator(
+        '.cf-box--card[data-cashflow-action="flip-open"]'
+    ).first
+    credit_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    page.wait_for_function("!document.getElementById('cf-modal-scrim').hidden")
+    card_modal = page.evaluate(
+        """() => ({
+            title: document.getElementById('cf-modal-title').textContent,
+            action: document.getElementById('cf-modal-form').action,
+            cardClass: document.querySelector('.cfm').classList.contains('cfm--card'),
+            cardFieldsVisible: !document.getElementById('cf-modal-card-group').hidden,
+            dueDisplay: document.getElementById('cf-modal-due-display').value,
+            dueHidden: document.getElementById('cf-modal-due-day-hidden').value,
+            payment: document.getElementById('cf-modal-payment').value,
+        })"""
+    )
+    _check(
+        card_modal["title"] == "4AL Personal Credit"
+        and card_modal["action"].endswith("/cashflow/accounts/update-card/2")
+        and card_modal["cardClass"]
+        and card_modal["cardFieldsVisible"]
+        and card_modal["dueDisplay"] == "Aug 17"
+        and card_modal["dueHidden"] == "17"
+        and card_modal["payment"] == "275",
+        f"{label}: delegated credit-card modal must preserve populated card fields",
+    )
+    due_display = page.locator("#cf-modal-due-display")
+    due_display.fill("31")
+    _check(
+        page.locator("#cf-modal-due-day-hidden").input_value() == "31",
+        f"{label}: delegated due-day parsing must preserve valid days",
+    )
+    due_display.fill("32")
+    _check(
+        page.locator("#cf-modal-due-day-hidden").input_value() == "",
+        f"{label}: delegated due-day parsing must reject invalid days",
+    )
+    due_display.fill("17")
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(350)
+    _check(
+        page.locator("#cf-modal-scrim").is_hidden(),
+        f"{label}: Escape must close the Cash Flow modal",
+    )
+
+    bank_card = page.locator(
+        '.cf-grid--banks [data-cashflow-action="flip-open"]'
+    ).first
+    bank_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    bank_modal = page.evaluate(
+        """() => ({
+            title: document.getElementById('cf-modal-title').textContent,
+            action: document.getElementById('cf-modal-form').action,
+            bankClass: document.querySelector('.cfm').classList.contains('cfm--bank'),
+            cardFieldsHidden: document.getElementById('cf-modal-card-group').hidden,
+        })"""
+    )
+    _check(
+        bank_modal["title"] == "4AL Personal Checking"
+        and "/cashflow/accounts/update/" in bank_modal["action"]
+        and bank_modal["bankClass"]
+        and bank_modal["cardFieldsHidden"],
+        f"{label}: delegated bank modal must preserve account-specific behavior",
+    )
+    page.locator('[data-cashflow-action="close-modal"]').click()
+    page.wait_for_timeout(350)
+
+    page.locator(
+        '[data-app-shell-action="open-ai-chat"][data-ai-page="cashflow"]'
+    ).click()
+    _check(
+        page.locator("#ai-chat-scrim").is_visible()
+        and page.locator("#ai-chat-page").input_value() == "cashflow",
+        f"{label}: Cash Flow AI entry must use the maintained app-shell action",
+    )
+    page.locator("[data-ai-chat-close]").click()
+
+    page.goto(f"{base_url}/planning/", wait_until="networkidle")
+    page.wait_for_function(
+        "document.querySelector('[data-planning-controller]')?.dataset.initialized === 'true'"
+    )
+    planning_state = page.evaluate(
+        """() => ({
+            asset: Boolean(document.querySelector('script[src*="planning.js"]')),
+            inlineHandlers: document.querySelectorAll(
+                '#main-content [onclick], #main-content [onchange], #main-content [onfocus], '
+                + '#main-content [oninput], #main-content [onblur], #main-content [onsubmit], '
+                + '#main-content [onkeydown]'
+            ).length,
+            personal: Boolean(document.querySelector('#pl-card-1')),
+            company: Array.from(document.querySelectorAll('.pl-cross .pl-box-name')).some(
+                (element) => element.textContent.includes('4AL BFM')
+            ),
+        })"""
+    )
+    _check(planning_state["asset"], f"{label}: Planning controller must load")
+    _check(
+        planning_state["inlineHandlers"] == 0,
+        f"{label}: Long-Term Planning must expose no native inline handlers",
+    )
+    _check(
+        planning_state["personal"] and planning_state["company"],
+        f"{label}: Long-Term Planning must preserve Personal/BFM shared visibility",
+    )
+
+    primary_card = page.locator(
+        '.pl-entity-section:not(.pl-cross) [data-planning-action="flip-open"]'
+    ).first
+    primary_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    visible_edit = page.locator(".pl-modal-form:not([hidden])")
+    _check(
+        visible_edit.count() == 1
+        and visible_edit.locator(".pl-box-projections").count() == 1,
+        f"{label}: delegated item-card opening must preserve projections and one visible edit form",
+    )
+    source_select = visible_edit.locator('[data-planning-change="source"]')
+    source_select.select_option("manual")
+    _check(
+        not visible_edit.locator('input[name="current_value"]').is_disabled()
+        and visible_edit.locator(".pl-g-cfaccount").is_hidden(),
+        f"{label}: manual source selection must enable the maintained value input",
+    )
+    source_select.select_option("cashflow")
+    _check(
+        visible_edit.locator('input[name="current_value"]').is_disabled()
+        and visible_edit.locator(".pl-g-cfaccount").is_visible(),
+        f"{label}: Cash Flow source selection must expose the linked-account control",
+    )
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(350)
+    _check(
+        page.locator("#pl-modal-scrim").is_hidden(),
+        f"{label}: Escape must close the Long-Term Planning modal",
+    )
+
+    add_asset = page.locator(
+        '[data-planning-action="open-add"][data-item-type="asset"]'
+    ).first
+    add_asset.click()
+    add_form = page.locator("#pl-add-form-personal-asset")
+    _check(add_form.is_visible(), f"{label}: delegated add-asset control must open")
+    add_form.locator('input[name="name"]').fill("4AL Browser Added Asset")
+    add_form.locator('input[name="current_value"]').fill("1,234")
+    add_form.locator('input[name="annual_rate"]').fill("5.5")
+    add_form.locator('[data-planning-change="source"]').select_option("manual")
+    with page.expect_navigation(wait_until="networkidle"):
+        add_form.locator('button[type="submit"]').click()
+    added_card = page.locator(".pl-box", has_text="4AL Browser Added Asset")
+    _check(added_card.count() == 1, f"{label}: add form must create the synthetic asset")
+
+    added_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    edit_form = page.locator(".pl-modal-form:not([hidden])")
+    edit_form.locator('input[name="name"]').fill("4AL Browser Updated Asset")
+    edit_form.locator('input[name="current_value"]').fill("2,345")
+    with page.expect_navigation(wait_until="networkidle"):
+        edit_form.locator('button[type="submit"]').click()
+    updated_card = page.locator(".pl-box", has_text="4AL Browser Updated Asset")
+    _check(updated_card.count() == 1, f"{label}: edit form must update the synthetic asset")
+
+    updated_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    delete_dialogs: list[str] = []
+
+    def dismiss_delete(dialog) -> None:
+        delete_dialogs.append(dialog.message)
+        dialog.dismiss()
+
+    page.once("dialog", dismiss_delete)
+    page.locator(".pl-modal-form:not([hidden]) [data-planning-action='delete-item']").click()
+    _check(
+        delete_dialogs == ["Delete this item?"]
+        and page.locator(".pl-box", has_text="4AL Browser Updated Asset").count() == 1,
+        f"{label}: delegated delete confirmation must preserve the item when dismissed",
+    )
+    page.once("dialog", lambda dialog: dialog.accept())
+    with page.expect_navigation(wait_until="networkidle"):
+        page.locator(".pl-modal-form:not([hidden]) [data-planning-action='delete-item']").click()
+    _check(
+        page.locator(".pl-box", has_text="4AL Browser Updated Asset").count() == 0,
+        f"{label}: accepted delete confirmation must remove only the synthetic item",
+    )
+
+    page.locator('[data-planning-action="edit-age"]').click()
+    birth_date = page.locator("#pl-birth-date")
+    _check(birth_date.is_visible(), f"{label}: birthday editor must become visible")
+    with page.expect_navigation(wait_until="networkidle"):
+        birth_date.evaluate(
+            """element => {
+                element.value = '1980-01-01';
+                element.dispatchEvent(new Event('change', {bubbles: true}));
+            }"""
+        )
+    _check(
+        page.locator("#pl-birth-date").input_value() == "1980-01-01",
+        f"{label}: delegated birthday save must persist through the maintained settings route",
+    )
+
+    page.locator(
+        '[data-app-shell-action="open-ai-chat"][data-ai-page="planning"]'
+    ).click()
+    _check(
+        page.locator("#ai-chat-scrim").is_visible()
+        and page.locator("#ai-chat-page").input_value() == "planning",
+        f"{label}: Planning AI entry must use the maintained app-shell action",
+    )
+    page.locator("[data-ai-chat-close]").click()
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -947,6 +1259,7 @@ def main() -> None:
             for entity_key in ("personal", "company", "luxelegacy"):
                 init_db(entity_key)
                 _seed_dashboard_data(entity_key)
+                _seed_cashflow_planning_data(entity_key)
 
             app = create_app()
             app.config.update(TESTING=True)
@@ -1199,6 +1512,9 @@ def main() -> None:
                 _assert_categorization_upload_pages(
                     page, base_url, "no-password categorization/upload execution"
                 )
+                _assert_cashflow_planning_pages(
+                    page, base_url, "no-password Cash Flow/Planning execution"
+                )
 
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
@@ -1296,6 +1612,9 @@ def main() -> None:
                 _assert_categorization_upload_pages(
                     page, base_url, "configured-auth categorization/upload execution"
                 )
+                _assert_cashflow_planning_pages(
+                    page, base_url, "configured-auth Cash Flow/Planning execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -1341,7 +1660,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload workflows, status-only wording, split save/delete, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload and Cash Flow/Long-Term Planning workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

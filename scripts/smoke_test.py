@@ -8729,8 +8729,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (24, 14, 8, 2, 91, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AK CSP contract",
+            == (24, 12, 10, 2, 66, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AL CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8951,11 +8951,133 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (24, 14, 8, 2, 91, 0),
-            "categorization/upload pages: maintained aggregate inventory must match the post-4AK CSP contract",
+            == (24, 12, 10, 2, 66, 0),
+            "categorization/upload pages: maintained aggregate inventory must match the post-4AL CSP contract",
         )
 
         print("   ✅ Three source templates, delegated controller, rendered routes, status-only reset, and exact residual inventory passed")
+
+        # ── 11g. Cash Flow and Long-Term Planning execution ────────────
+        print("\n11g. Cash Flow and Long-Term Planning execution…")
+
+        cashflow_planning_paths = (
+            templates_root / "cashflow.html",
+            templates_root / "planning.html",
+        )
+        cashflow_planning_sources = [
+            path.read_text() for path in cashflow_planning_paths
+        ]
+        inline_executable_script_pattern = _re.compile(
+            r"<script(?![^>]*\bsrc=)(?![^>]*\btype=[\"']application/json[\"'])[^>]*>",
+            flags=_re.IGNORECASE,
+        )
+        cashflow_asset_source = (
+            PROJECT_ROOT / "web" / "static" / "cashflow.js"
+        ).read_text()
+        planning_asset_source = (
+            PROJECT_ROOT / "web" / "static" / "planning.js"
+        ).read_text()
+        _check(
+            all(
+                not inline_executable_script_pattern.search(source)
+                for source in cashflow_planning_sources
+            ),
+            "cash-flow/planning pages: confirmed templates must contain no executable inline scripts",
+        )
+        _check(
+            all(
+                not native_handler_pattern.search(source)
+                for source in cashflow_planning_sources
+            ),
+            "cash-flow/planning pages: confirmed templates must contain no native inline handlers",
+        )
+        _check(
+            all("hx-on" not in source for source in cashflow_planning_sources),
+            "cash-flow/planning pages: confirmed templates must contain no HTMX inline handlers",
+        )
+        _check(
+            "{{" not in cashflow_asset_source
+            and "{%" not in cashflow_asset_source
+            and "{{" not in planning_asset_source
+            and "{%" not in planning_asset_source
+            and "cashflow.js" in cashflow_planning_sources[0]
+            and 'data-cashflow-action="flip-open"' in cashflow_planning_sources[0]
+            and 'data-cashflow-input="due-day"' in cashflow_planning_sources[0]
+            and "planning.js" in cashflow_planning_sources[1]
+            and 'data-planning-action="flip-open"' in cashflow_planning_sources[1]
+            and 'data-planning-change="source"' in cashflow_planning_sources[1]
+            and 'data-planning-action="delete-item"' in cashflow_planning_sources[1],
+            "cash-flow/planning pages: templates and page-owned controllers must expose the complete delegated behavior contract",
+        )
+
+        fragment_client.set_cookie("entity", "Personal")
+        rendered_cashflow = fragment_client.get("/cashflow/").get_data(as_text=True)
+        rendered_planning = fragment_client.get("/planning/").get_data(as_text=True)
+        rendered_cashflow_planning = (rendered_cashflow, rendered_planning)
+        _check(
+            all(
+                not inline_executable_script_pattern.search(source)
+                for source in rendered_cashflow_planning
+            ),
+            "cash-flow/planning pages: rendered routes must contain no executable inline scripts",
+        )
+        _check(
+            all(
+                not native_handler_pattern.search(source)
+                for source in rendered_cashflow_planning
+            )
+            and all("hx-on" not in source for source in rendered_cashflow_planning),
+            "cash-flow/planning pages: rendered routes must contain no inline execution attributes",
+        )
+        _check(
+            "/static/cashflow.js" in rendered_cashflow
+            and "data-cashflow-controller" in rendered_cashflow
+            and "/static/planning.js" in rendered_planning
+            and "data-planning-controller" in rendered_planning,
+            "cash-flow/planning pages: rendered routes must load and expose both page-owned controllers",
+        )
+
+        all_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        all_script_count = len(
+            _re.findall(r"<script\b[^>]*>", all_template_source, flags=_re.IGNORECASE)
+        )
+        inert_script_count = len(
+            _re.findall(
+                r"<script\b[^>]*\btype=[\"']application/json[\"'][^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        external_script_count = len(
+            _re.findall(
+                r"<script\b(?=[^>]*\bsrc=)[^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        inline_executable_count = (
+            all_script_count - inert_script_count - external_script_count
+        )
+        all_native_handler_count = len(
+            native_handler_pattern.findall(all_template_source)
+        )
+        all_hx_on_count = all_template_source.count("hx-on")
+        _check(
+            (
+                all_script_count,
+                inline_executable_count,
+                external_script_count,
+                inert_script_count,
+                all_native_handler_count,
+                all_hx_on_count,
+            )
+            == (24, 12, 10, 2, 66, 0),
+            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AL CSP contract",
+        )
+
+        print("   ✅ Two source templates, page-owned controllers, rendered routes, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

@@ -2,27 +2,61 @@
 
 ## Active Objective
 
-Preserve the durable, automatically deployed, health-verified 4AK-R result and keep Task 1P.4.2c.3 at a fresh bounded re-sizing gate.
+Publish and verify the exact complete 4AL Cash Flow and Long-Term Planning execution result through confirmed work block 4AL-R while preserving the separately gated Short-Term Planning slice.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.2 and Task 1P.5 are durable, automatically deployed, and credential-free health verified through 4AK-R; Task 1P.4.2c.3 remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.2c.3a-1P.4.2c.3b are complete locally and publication is active through confirmed 4AL-R, while Task 1P.4.2c.3c and later work remain separately gated.
 
 ## Current Work Block
 
-Work block 4AK-R: Categorization And Upload Durability And Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AL-R: Cash Flow And Long-Term Planning Durability And Release — active.
 
 ## Current Task
 
-Task 1P.4.2c.3: Migrate cash-flow and planning execution — waiting for a fresh bounded re-sizing proposal or pause decision; no implementation is authorized.
+Task 1P.4.2c.3-R: Publish and verify Cash Flow and Long-Term Planning execution — current.
 
 ## Owner
 
-Ryan owns the next sizing decision. Codex Desktop may prepare a fresh bounded proposal only when requested; no implementation, publication, deployment, protected access, or live mutation is authorized.
+Codex Desktop owns exact staging, Git safety, direct-main durability, read-only automatic-deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan retains every expansion, live mutation, failure recovery, and Task 1P.4.2c.3c decision.
 
 ## Current Action
 
-Preserve source commit `85a42ec8abe3f5abbbc5fb783658ca2e1bc7129e`, automatic Fly run `29974641835`, deploy job `89103727566`, and the HTTP 200 production-health result; request a fresh Task 1P.4.2c.3 re-sizing proposal or pause.
+Stage and commit the exact verified 4AL source set; fast-forward local `main`; push directly to `origin/main`; observe only the automatic Fly deployment; verify the exact source SHA and credential-free production health; then publish one sanitized `[skip actions]` closeout.
+
+## Task 1P.4.2c.3 Re-sizing Result
+
+- Task 1P.4.2c.3 remains the active umbrella for three executable inline scripts, forty-seven native handlers, and one inert JSON carrier.
+- Task 1P.4.2c.3a covers Cash Flow: one executable inline script and fifteen native handlers.
+- Task 1P.4.2c.3b covers Long-Term Planning: one executable inline script and ten native handlers.
+- Task 1P.4.2c.3c covers Short-Term Planning: one executable inline script, twenty-two native handlers, and one inert JSON carrier.
+- Ryan confirmed that 4AL will include Tasks 1P.4.2c.3a-1P.4.2c.3b plus only their focused Task 2 regression slices after this task inventory is durable; Task 1P.4.2c.3c remains separately gated.
+
+## Work Block 4AL Contract
+
+- Include Tasks 1P.4.2c.3a-1P.4.2c.3b plus only their focused Task 2 regression slices: move the two executable inline scripts and twenty-five native handlers from `cashflow.html` and `planning.html` into maintained page-owned local controllers while preserving account/card modal, input sizing, due-day, recurring-entry, asset/liability, source-switching, birthday, projection, confirmation, AI-entry, keyboard, and entity-boundary behavior.
+- Keep Task 1P.4.2c.3c, Tasks 1P.4.2c.4-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, route or financial-business-logic changes, style migration, CSP headers/nonces/enforcement, Plaid, authentication, dependencies, credentials, protected data, real databases, retained uploads, external/live access, GitHub durability, publication, deployment, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use delegated listeners and inert `data-*` values; default to separate `cashflow.js` and `planning.js` page-owned controllers; keep `allowEval=false`, `allowScriptTags=false`, and `hx-on` at zero; preserve visual and behavioral parity; and use temporary synthetic all-entity data in configured-auth and no-password isolated Chrome with denied non-localhost requests, zero unexpected console/page errors, and exact cleanup.
+- Stop if parity requires route or financial-logic changes, Short-Term Planning, style/CSP enforcement, Plaid, authentication, a dependency, credentials, protected data, real databases, retained uploads, external/live access, plan-changing verification or cleanup failure, command-center failure, or preserved-file overlap.
+- Verify baseline and final full smoke; source and rendered-response zero-execution assertions for both included templates; exact residual inventory of twelve executable inline scripts, ten external executable assets, two inert JSON carriers, sixty-six native handlers, and zero `hx-on`; both-auth-mode isolated Chrome covering account/card modals, due-date handling, item add/edit/delete confirmation, source switching, birthday save, Escape/scrim closure, projections, denied external traffic, zero browser errors, and exact cleanup; relevant Python/JavaScript/JSON syntax; whitespace; dashboard refresh/health/rendered state; exact scope; and both preserved untracked files.
+- Report exact migrated behavior, controller organization, included and residual inventories, focused and full verification, cleanup, changed paths, local branch state, preserved exclusions, and separate 4AL-R publication plus Task 1P.4.2c.3c gates.
+
+## Work Block 4AL Result
+
+- `cashflow.html` and `planning.html` now contain zero executable inline scripts, zero native inline handlers, and zero `hx-on` attributes. Separate page-owned `cashflow.js` and `planning.js` controllers preserve the included account/card, recurring-entry, asset/liability, source, birthday, projection, confirmation, AI, keyboard, modal, and entity-boundary behavior through delegated listeners and inert `data-*` values.
+- The residual tracked-template inventory is twelve executable inline scripts, ten external executable assets, two inert JSON carriers, sixty-six native handlers, and zero `hx-on`; both HTMX execution switches remain false.
+- Full synthetic smoke and configured-auth/no-password isolated Chrome pass with denied external requests, zero unexpected console/page errors, and exact temporary all-entity cleanup. Focused Cash Flow and Long-Term Planning source/rendered assertions, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health, and rendered inspection pass.
+- No route, financial-business-logic, Short-Term Planning, style, CSP-header/enforcement, Plaid, authentication, dependency, credential, protected-data, real-database, retained-upload, external/live, GitHub durability, publication, deployment, downstream, or preserved-file mutation occurred.
+- The result is local-only on `codex/csp-cashflow-long-term-planning`; no commit, push, PR, merge, publication, or deployment occurred. Evidence: `command-center/logs/2026-07-22-cashflow-long-term-planning-execution-4al.md`.
+
+## Work Block 4AL-R Contract
+
+- Include explicit staging of the exact thirteen verified 4AL application, controller, maintained-test, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-cashflow-long-term-planning`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.2c.3c and every later task, new application or runtime mutation beyond verified 4AL, credentials, protected data, real databases, retained uploads, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly mutations, downstream access/writes, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified controllers, tests, residual inventory, false HTMX execution switches, and both unrelated untracked files exactly; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/rendered state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
+- Report source and closeout commit SHAs, published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.3c still separately gated.
 
 ## Work Block 4AK-R Contract
 
