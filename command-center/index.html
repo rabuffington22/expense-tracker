@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-23 4:12 PM CST",
+    "lastUpdated": "2026-07-23 4:19 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,27 +1619,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R and the first application-style cluster is durable through 4AS-R; the second cluster is complete locally through 4AT and its exact-scope release is active under 4AT-R"
+    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R and the first two application-style clusters are durable deployed and health verified through 4AS-R and 4AT-R while later style policy gates remain separate"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.3a.1 is durable through 4AS-R; Task 1P.4.3a.2-R is active under confirmed direct-main release work block 4AT-R for the exact verified 4AT result.",
+    "summary": "Tasks 1P.4.3a.1 and 1P.4.3a.2 are durable deployed and health verified through 4AS-R and 4AT-R; Task 1P.4.3a.3 is the next separately gated planning decision.",
     "progress": 98
   },
   "currentTask": {
-    "title": "Task 1P.4.3a.2-R: Publish and verify transaction and matching-fragment style compatibility",
-    "owner": "Codex Desktop",
-    "status": "active",
-    "supportingAgent": "Codex Desktop owns exact staging maintained verification direct-main durability read-only automatic-deployment observation credential-free health and sanitized closeout",
-    "nextAction": "Verify and publish the exact 19-path 4AT source set then observe automatic deployment verify health and publish a skip-actions closeout.",
-    "blocker": "None; any divergence failed verification or need for mutation beyond the confirmed release boundary triggers a stop."
+    "title": "Task 1P.4.3a.3: Make categorization and upload styles strict-policy compatible",
+    "owner": "Ryan",
+    "status": "waiting",
+    "supportingAgent": "Codex Desktop preserves the verified 4AT-R result and can propose a separate bounded work block when requested",
+    "nextAction": "Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3.",
+    "blocker": "No Task 1P.4.3a.3 work block is planned or confirmed."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-at-r",
     "label": "4AT-R",
     "name": "Transaction And Matching Style Compatibility Release",
-    "status": "active",
+    "status": "complete",
     "owner": "Codex Desktop",
     "currentTask": "Task 1P.4.3a.2-R",
     "includedTasks": [
@@ -1678,7 +1678,11 @@
       "Automatic Fly workflow and deploy-job result for the exact source SHA plus credential-free production health"
     ],
     "nextReportPoint": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and separately gated Task 1P.4.3a.3.",
-    "durability": "Active release; exact verified source and sanitized closeout are authorized for direct-main publication."
+    "durability": "Exact source commit 30236a7 is durable on local and remote main; automatic Fly run 30045444363 and deploy job 89335369654 passed and credential-free production health returned HTTP 200.",
+    "result": "The exact 19-path 4AT source set is durable deployed and health verified with no PR force push manual workflow action non-automatic Fly mutation Task 1P.4.3a.3 work broader recovery or preserved-file overlap.",
+    "evidence": [
+      "command-center/logs/2026-07-23-transaction-matching-style-compatibility-release-4at-r.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -1703,23 +1707,25 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute confirmed exact-scope 4AT-R release",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan explicitly authorized committing and pushing the complete verified 4AT result to main.",
-    "action": "Verify stage commit fast-forward and push the exact source set then observe automatic deployment verify health and publish the sanitized closeout.",
+    "title": "Plan Task 1P.4.3a.3 separately",
+    "status": "waiting-on-ryan",
+    "owner": "Ryan",
+    "why": "4AT-R is durable deployed and health verified; the categorization and upload style cluster has a distinct controller dialog pagination confidence-state and browser-proof boundary.",
+    "action": "Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3; do not infer implementation authority.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    "Decide whether to plan a separate Task 1P.4.3a.3 categorization and upload style-compatibility work block."
+  ],
   "waitingOnRyan": {
-    "summary": "4AT-R is active; later route clusters CSP enforcement manual live-sensitive actions broader recovery and every expansion remain Ryan decisions.",
+    "summary": "4AT-R is complete durable deployed and health verified; Task 1P.4.3a.3 later clusters CSP enforcement manual live-sensitive actions broader recovery and every expansion remain Ryan decisions.",
     "items": [
-      "No current release input is needed; any recovery or scope expansion will stop for Ryan."
+      "Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1P.4.3a.2-R is active under 4AT-R; later style clusters CSP policy installed-PWA and broad read-model work remain separate.",
-    "decisionQueue": "Later style clusters CSP enforcement manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
+    "phaseQuestions": "Task 1P.4.3a.2-R is complete through 4AT-R; Task 1P.4.3a.3 later style clusters CSP policy installed-PWA and broad read-model work remain separate.",
+    "decisionQueue": "Task 1P.4.3a.3 later style clusters CSP enforcement manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -7270,7 +7276,7 @@
       "phaseId": "phase-4",
       "label": "4AT-R",
       "name": "Transaction And Matching Style Compatibility Release",
-      "status": "active",
+      "status": "complete",
       "includedTasks": [
         "Explicitly stage and commit the exact 19 verified 4AT paths on codex/csp-transaction-matching-styles",
         "Cleanly fast-forward local main and push directly to origin/main without force or PR",
@@ -7308,7 +7314,11 @@
         "Automatic Fly workflow and deploy-job result for the exact source SHA plus credential-free production health"
       ],
       "reportBack": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and separately gated Task 1P.4.3a.3.",
-      "durability": "Active release; exact verified source and sanitized closeout are authorized for direct-main publication."
+      "durability": "Exact source commit 30236a7 is durable on local and remote main; automatic Fly run 30045444363 and deploy job 89335369654 passed and credential-free production health returned HTTP 200.",
+      "result": "The exact 19-path 4AT source set is durable deployed and health verified with no PR force push manual workflow action non-automatic Fly mutation Task 1P.4.3a.3 work broader recovery or preserved-file overlap.",
+      "evidence": [
+        "command-center/logs/2026-07-23-transaction-matching-style-compatibility-release-4at-r.md"
+      ]
     }
   ],
   "phaseTasks": [
@@ -8731,8 +8741,8 @@
       "status": "active",
       "owner": "Codex Desktop",
       "summary": "The 4AE baseline found seven style blocks and 221 template attributes; 4AS and 4AT completed the first two of eight route clusters and left a verified residual inventory of seven style blocks 122 template attributes zero generated attributes and 17 runtime writes.",
-      "nextAction": "Execute confirmed exact-scope 4AT-R durability and release.",
-      "blocker": "Every later route cluster remains separately gated."
+      "nextAction": "Decide whether to plan Task 1P.4.3a.3 separately.",
+      "blocker": "Task 1P.4.3a.3 and every later route cluster remain separately gated."
     },
     {
       "phaseId": "phase-4",
@@ -8780,19 +8790,25 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P43A2R",
       "title": "Task 1P.4.3a.2-R: Publish and verify transaction and matching-fragment style compatibility",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Make only the exact locally verified 4AT source set durable then observe the automatic deployment and verify credential-free production health under a separately confirmed release block.",
-      "nextAction": "Execute confirmed 4AT-R exact-source publication automatic-release observation health verification and sanitized closeout.",
-      "blocker": "None; divergence failed verification or recovery beyond the confirmed boundary triggers a stop."
+      "nextAction": null,
+      "blocker": null,
+      "result": "Exact source commit 30236a7def65d190fffc8ba89ce70cfab8ad5a09 is durable on main; automatic Fly run 30045444363 and deploy job 89335369654 passed and credential-free production health returned HTTP 200.",
+      "evidence": [
+        "command-center/logs/2026-07-23-transaction-matching-style-compatibility-release-4at-r.md"
+      ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P43A3",
       "title": "Task 1P.4.3a.3: Make categorization and upload styles strict-policy compatible",
-      "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Move one style block and 56 template style attributes into maintained CSS and classes while preserving categorization orphan reassignment upload dialogs compact layouts confidence states pagination responsive behavior and status-only Undo wording."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Move one style block and 56 template style attributes into maintained CSS and classes while preserving categorization orphan reassignment upload dialogs compact layouts confidence states pagination responsive behavior and status-only Undo wording.",
+      "nextAction": "Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3.",
+      "blocker": "No Task 1P.4.3a.3 work block is planned or confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -8987,6 +9003,10 @@
     }
   ],
   "artifacts": [
+    {
+      "name": "Work Block 4AT-R Transaction And Matching Style Compatibility Release Closeout",
+      "path": "command-center/logs/2026-07-23-transaction-matching-style-compatibility-release-4at-r.md"
+    },
     {
       "name": "Work Block 4AP-R Payroll Page Release Closeout",
       "path": "command-center/logs/2026-07-23-payroll-page-execution-release-4ap-r.md"
@@ -9313,6 +9333,10 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-23",
+      "text": "Completed work block 4AT-R: exact 19-path source commit 30236a7 was fast-forwarded and pushed to main automatic Fly run 30045444363 and deploy job 89335369654 passed credential-free production health returned HTTP 200 both preserved untracked files remained excluded and the sanitized skip-actions closeout was prepared."
+    },
     {
       "time": "2026-07-23",
       "text": "Ryan authorized work block 4AT-R to stage and commit the exact verified 4AT paths fast-forward and push main observe only the automatic Fly deployment verify the exact source SHA and credential-free production health and publish one sanitized skip-actions closeout while later tasks protected data manual live actions broader recovery and both preserved untracked files remain excluded."
@@ -10227,8 +10251,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete 4AT-R durability and release",
-    "description": "Publish only the exact verified 4AT result observe its automatic release verify health and close with a sanitized skip-actions commit."
+    "name": "Plan Task 1P.4.3a.3 separately",
+    "description": "Preserve the durable 4AT-R result and decide whether to invoke fresh work-block planning for the categorization and upload style cluster."
   },
   "verification": {
     "phase4StandaloneDocumentsBlock": "pass locally; 4AR moved five executable inline scripts and both source or rendered handler seams into blocking standalone-documents.js and deferred kristine.js leaving final tracked-template inventory zero inline twenty-one external zero inert zero source-recognized handlers and zero hx-on",
@@ -10242,6 +10266,8 @@
     "phase4TransactionMatchingStyleBlock": "pass locally; 4AT removed all 63 included template style attributes seven generated split-line style attributes and four transaction runtime style writes through semantic classes bounded percentage classes and explicit split-total state leaving residual inventory 7 style blocks 122 template attributes 0 generated attributes and 17 runtime writes",
     "phase4TransactionMatchingStyleCoverage": "pass; baseline and final full smoke source rendered proof and configured-auth/no-password isolated Chrome cover Personal BFM and Luxe Legacy desktop phone exact 768 transaction filters sorting copy edit matching vendor cards repeated swaps split lines totals auto manual lifecycle modals denied networking zero unexpected browser errors and exact cleanup",
     "phase4TransactionMatchingStyleBoundaries": "pass; no commit push PR publication deployment live protected route financial database matching-policy product authentication CSP enforcement later-cluster destructive downstream or preserved-file mutation occurred",
+    "phase4TransactionMatchingStyleRelease": "pass; exact 19-path source commit 30236a7 is durable on main automatic Fly run 30045444363 and deploy job 89335369654 passed for the exact SHA and credential-free production health returned HTTP 200",
+    "phase4TransactionMatchingStyleReleaseBoundaries": "pass; no PR force push manual workflow action non-automatic Fly mutation Task 1P.4.3a.3 work credential protected data real database retained upload authenticated production downstream broader recovery or preserved-file mutation occurred",
     "phase4PlaidEntryRelease": "pass; exact thirteen-path source commit 993506b is durable on main automatic Fly run 30027699965 and deploy job 89276216665 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4PlaidEntryBlock": "pass locally; 4AQ moved three executable inline application scripts and six native handlers into page-owned data-sources.js and plaid.js delegated controls non-script order-date data and inert endpoint attributes while retaining both exact initializer tags leaving residual inventory five inline sixteen external zero inert one handler and zero hx-on",
     "phase4PlaidEntryCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover vendor selection preview-date count confirmations Link open success exit error form and JSON exchange entity isolation denied external traffic zero unexpected browser errors and exact browser payload and all-entity cleanup",

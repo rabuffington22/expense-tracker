@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Make only the exact verified transaction and matching-fragment style-compatibility result durable on `main`, observe the resulting automatic release, verify the exact source SHA and credential-free production health, and publish a sanitized closeout.
+Preserve the durable, deployed, and health-verified 4AT-R result while Ryan decides whether to plan the separately gated categorization-and-upload style cluster.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.2-R is active under confirmed release work block 4AT-R after Task 1P.4.3a.2 completed locally through 4AT.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.2 is durable through 4AT-R, and Task 1P.4.3a.3 is the next separately gated planning decision.
 
 ## Current Work Block
 
-Work block 4AT-R: Transaction And Matching Style Compatibility Release — active.
+Work block 4AT-R: Transaction And Matching Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.3a.2-R: Publish and verify transaction and matching-fragment style compatibility — active.
+Task 1P.4.3a.3: Make categorization and upload styles strict-policy compatible — waiting for separate work-block planning and confirmation.
 
 ## Owner
 
-Codex Desktop owns exact staging, maintained verification, direct-main durability, read-only automatic-deployment observation, credential-free health verification, and sanitized closeout. Ryan owns every expansion, live mutation, and recovery beyond the confirmed boundary.
+Ryan owns the decision to plan or authorize Task 1P.4.3a.3 and every later expansion or live-sensitive action. Codex Desktop preserves the verified 4AT-R result and current Runway OS state.
 
 ## Current Action
 
-Verify and explicitly stage the exact 19-path 4AT set, commit it on `codex/csp-transaction-matching-styles`, require clean local/remote `main` alignment, fast-forward and push `main` without force, observe only the automatic Fly deployment for the exact source SHA, verify credential-free production `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3. No categorization/upload implementation, CSP enforcement, or other later work is pre-authorized.
 
 ## Work Block 4AT-R Contract
 
@@ -35,9 +35,12 @@ Verify and explicitly stage the exact 19-path 4AT set, commit it on `codex/csp-t
 
 ## Work Block 4AT-R Status
 
-- Ryan explicitly authorized commit and direct push to `main` on 2026-07-23.
-- The exact local 4AT result remains unchanged while active release state and verification are recorded.
-- No PR, force push, manual workflow action, non-automatic Fly mutation, broader recovery, later-task work, or preserved-file change is authorized.
+- Exact 19-path source commit `30236a7def65d190fffc8ba89ce70cfab8ad5a09` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30045444363` and deploy job `89335369654` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Exact scope, staging, sensitive-addition scan, maintained verification, clean fast-forward, remote alignment, automatic deployment, health, and both preserved-file checks passed.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, broader recovery, Task 1P.4.3a.3 work, or excluded mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-transaction-matching-style-compatibility-release-4at-r.md`.
 
 ## Work Block 4AT Contract
 
@@ -97,8 +100,8 @@ Verify and explicitly stage the exact 19-path 4AT set, commit it on `codex/csp-t
 - Fresh tracked-source inventory: seven inline style blocks, 211 template style attributes, nine JavaScript-generated style attributes, and 31 application runtime style writes. The original 4AE count of 221 template attributes remains historical baseline evidence.
 - Task 1P.4.3a.1: shared shell and dashboard/report pages/fragments — durable, automatically deployed, and credential-free health verified through 4AS-R.
 - Task 1P.4.3a.2: transactions, matching, vendor cards, and supporting fragments — complete and verified locally through 4AT.
-- Task 1P.4.3a.2-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — waiting for separate Ryan confirmation.
-- Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — planned.
+- Task 1P.4.3a.2-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — complete through 4AT-R.
+- Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — next separately gated planning decision.
 - Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — planned.
 - Task 1P.4.3a.5: Weekly and Waterfall — planned.
 - Task 1P.4.3a.6: Subscriptions and Payroll — planned.
