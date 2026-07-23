@@ -2,27 +2,59 @@
 
 ## Active Objective
 
-Preserve the durable, automatically deployed, and credential-free health-verified shared-shell and dashboard/report style result while Ryan decides whether to plan the next route cluster.
+Make only the exact verified transaction and matching-fragment style-compatibility result durable on `main`, observe the resulting automatic release, verify the exact source SHA and credential-free production health, and publish a sanitized closeout.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2 is durable through 4AR-R, and Task 1P.4.3a.1 is durable, automatically deployed, and credential-free health verified through 4AS-R.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.2-R is active under confirmed release work block 4AT-R after Task 1P.4.3a.2 completed locally through 4AT.
 
 ## Current Work Block
 
-Work block 4AS-R: Shared Shell And Dashboard/Report Style Compatibility Release — complete.
+Work block 4AT-R: Transaction And Matching Style Compatibility Release — active.
 
 ## Current Task
 
-Task 1P.4.3a.2: Make transaction and matching-fragment styles strict-policy compatible — awaiting a separately confirmed planning or implementation block.
+Task 1P.4.3a.2-R: Publish and verify transaction and matching-fragment style compatibility — active.
 
 ## Owner
 
-Ryan owns the decision whether to invoke fresh bounded planning for Task 1P.4.3a.2 and every later expansion. Codex Desktop preserves the durable 4AS-R evidence and exact residual inventory.
+Codex Desktop owns exact staging, maintained verification, direct-main durability, read-only automatic-deployment observation, credential-free health verification, and sanitized closeout. Ryan owns every expansion, live mutation, and recovery beyond the confirmed boundary.
 
 ## Current Action
 
-Preserve the completed 4AS-R result and decide whether to invoke the work-block planner for Task 1P.4.3a.2. No transaction/matching style implementation is authorized yet.
+Verify and explicitly stage the exact 19-path 4AT set, commit it on `codex/csp-transaction-matching-styles`, require clean local/remote `main` alignment, fast-forward and push `main` without force, observe only the automatic Fly deployment for the exact source SHA, verify credential-free production `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+
+## Work Block 4AT-R Contract
+
+- Include explicit staging of the exact 19 verified 4AT application, controller, template, maintained-test, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-transaction-matching-styles`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.3a.3 and every later task; new application, runtime, style, route, authentication, financial, database, matching-policy, product, dependency, CSP-header/nonce/exception/enforcement, or policy mutation beyond verified 4AT; credentials; protected data; real databases; retained uploads; authenticated production pages; manual workflow actions; workflow edits; non-automatic Fly mutations; downstream access or writes; PR creation; force push; broader recovery; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified 63/7/4 migration, residual 7/122/0/17 inventory, configured-auth/no-password all-entity responsive browser proof, and both unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths; protected-boundary and high-confidence sensitive-addition scans; full smoke; configured-auth/no-password isolated Chrome; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and both preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and separately gated Task 1P.4.3a.3.
+
+## Work Block 4AT-R Status
+
+- Ryan explicitly authorized commit and direct push to `main` on 2026-07-23.
+- The exact local 4AT result remains unchanged while active release state and verification are recorded.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, broader recovery, later-task work, or preserved-file change is authorized.
+
+## Work Block 4AT Contract
+
+- Include Task 1P.4.3a.2 plus only its focused Task 2 regression slice: remove 63 template style attributes, seven JavaScript-generated split-line style attributes, and four transaction runtime style writes across Transactions, matching/vendor cards, row editing, split editing, and supporting fragments while preserving filtering, sorting, copying, editing, matching, progress, repeated HTMX swaps, dynamic split-line creation, split totals, auto/manual split lifecycle, modal behavior, and responsive layout.
+- Keep Tasks 1P.4.3a.3-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, route, financial, database, matching-policy, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, category-domain, protected-data, credential, external/live, GitHub, publication, deployment, workflow, downstream, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` changes outside scope.
+- Preserve appearance and behavior rather than redesigning; reuse static semantic classes and the bounded `u-pct-0` through `u-pct-100` contract; replace split-total runtime colors with explicit balanced/unbalanced state classes; use temporary synthetic Personal/BFM/Luxe Legacy data, configured-auth and no-password modes, localhost-only disposable browser state, denied non-localhost requests, zero unexpected console/page errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if parity requires route, database, financial, matching-policy, product, authentication, CSP-enforcement, unbounded dynamic styling, or later-task work; desktop, phone, or exact 768px behavior becomes ambiguous; protected/live/destructive access appears; verification changes the plan; cleanup fails; command-center checks fail; scope expands; or either preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-style-attribute proof for all included templates and fragments; zero generated `style=` markup and zero runtime `.style.*` writes in `transaction-fragments.js`; exact residual inventory of seven style blocks, 122 template attributes, zero generated attributes, and 17 runtime writes; configured-auth and no-password isolated Chrome across Personal/BFM/Luxe Legacy at desktop, phone, and exact 768px for transaction filters, repeated swaps, sorting, copy, edit, matching/vendor cards, split totals, dynamic lines, auto/manual split lifecycle, modals, denied networking, zero unexpected errors, and exact cleanup; relevant syntax; JSON; whitespace; dashboard refresh/health/generated state; exact scope; and both preserved files.
+- Report exact migrated surfaces and patterns, final inventory, responsive/browser parity, cleanup, changed paths, branch state, preserved exclusions, and the separate 4AT-R durability gate.
+
+## Work Block 4AT Status
+
+- All 63 included template style attributes, seven generated split-line style attributes, and four transaction runtime style writes are removed through maintained semantic classes, bounded percentage classes, and explicit balanced/unbalanced split-total state.
+- The exact residual tracked inventory is seven inline style blocks, 122 template style attributes, zero generated-markup style attributes, and 17 application runtime style writes.
+- Baseline and final full smoke, source/rendered checks, configured-auth/no-password isolated Chrome across Personal, BFM, and Luxe Legacy at desktop, phone, and exact 768px, syntax, JSON, whitespace, dashboard, exact-scope, denied-networking, zero-unexpected-error, cleanup, and preserved-file checks passed.
+- No commit, push, PR, publication, deployment, live/protected access, route, financial, database, product, authentication, CSP enforcement, later-cluster, destructive, downstream, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-transaction-matching-style-compatibility-4at.md`.
 
 ## Work Block 4AS-R Contract
 
@@ -64,7 +96,8 @@ Preserve the completed 4AS-R result and decide whether to invoke the work-block 
 
 - Fresh tracked-source inventory: seven inline style blocks, 211 template style attributes, nine JavaScript-generated style attributes, and 31 application runtime style writes. The original 4AE count of 221 template attributes remains historical baseline evidence.
 - Task 1P.4.3a.1: shared shell and dashboard/report pages/fragments — durable, automatically deployed, and credential-free health verified through 4AS-R.
-- Task 1P.4.3a.2: transactions, matching, vendor cards, and supporting fragments — planned after the shared patterns are proven.
+- Task 1P.4.3a.2: transactions, matching, vendor cards, and supporting fragments — complete and verified locally through 4AT.
+- Task 1P.4.3a.2-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — waiting for separate Ryan confirmation.
 - Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — planned.
 - Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — planned.
 - Task 1P.4.3a.5: Weekly and Waterfall — planned.

@@ -862,12 +862,17 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
         """() => ({
             asset: Boolean(document.querySelector('script[src*="transaction-fragments.js"]')),
             rows: document.querySelectorAll('#txn-results tr.txn-clickable').length,
+            styleAttributes: document.querySelectorAll('#main-content [style]').length,
             allowEval: window.htmx.config.allowEval,
             allowScriptTags: window.htmx.config.allowScriptTags,
         })"""
     )
     _check(initial["asset"], f"{label}: transaction fragment controller must load")
     _check(initial["rows"] > 0, f"{label}: synthetic transaction rows must render")
+    _check(
+        initial["styleAttributes"] == 0,
+        f"{label}: transaction page must render without style attributes",
+    )
     _check(
         initial["allowEval"] is False and initial["allowScriptTags"] is False,
         f"{label}: final global HTMX execution switches must be disabled",
@@ -899,6 +904,7 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
                         Array.from(element.attributes || []).filter(
                             (attribute) => attribute.name.startsWith('hx-on')
                         ).length, 0),
+                    styleAttributes: root.querySelectorAll('[style]').length,
                 };
             }"""
         )
@@ -908,6 +914,7 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
                 "scriptElements": 0,
                 "nativeHandlers": 0,
                 "hxOn": 0,
+                "styleAttributes": 0,
             },
             f"{label} transaction swap {swap_number}: result fragment must remain execution-free",
         )
@@ -959,6 +966,10 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
 
     first_row.click()
     page.wait_for_selector("#txn-modal .txn-modal-form")
+    _check(
+        page.locator("#txn-modal [style]").count() == 0,
+        f"{label}: transaction edit fragment must contain no style attributes",
+    )
     with page.expect_response(
         lambda response: "/transactions/suggest/" in response.url
     ) as response_info:
@@ -1030,6 +1041,10 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
     split_root = page.locator('#txn-modal [data-transaction-fragment-controller="split-editor"]')
     _check(split_root.locator("script").count() == 0, f"{label}: split editor must contain no script elements")
     _check(
+        split_root.locator("[style]").count() == 0,
+        f"{label}: split editor must contain no style attributes",
+    )
+    _check(
         page.locator("#txn-modal template[data-json]").count() == 2,
         f"{label}: split editor must retain both non-script JSON carriers",
     )
@@ -1077,6 +1092,10 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
     split_root = page.locator('#txn-modal [data-transaction-fragment-controller="split-editor"]')
     split_root.locator('[data-transaction-fragment-action="split-add-line"]').click()
     _check(split_root.locator(".split-line").count() == 3, f"{label}: delegated split add must append a line")
+    _check(
+        split_root.locator("[style]").count() == 0,
+        f"{label}: generated split lines must remain style-attribute free",
+    )
     split_root.locator('[data-transaction-fragment-action="split-remove-line"]').last.click()
     _check(split_root.locator(".split-line").count() == 2, f"{label}: delegated split remove must remove a line")
     parent_cents = int(split_root.get_attribute("data-parent-cents"))
@@ -1089,6 +1108,11 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
     _check(
         split_root.locator("#split-total-display").text_content() == expected_total,
         f"{label}: split running total must track delegated amount input",
+    )
+    _check(
+        "txn-split-total--balanced"
+        in split_root.locator("#split-total-bar").get_attribute("class").split(),
+        f"{label}: balanced split total must use the maintained state class",
     )
     with page.expect_response(
         lambda response: "/splits/" in response.url and response.url.endswith("/save")
@@ -1149,6 +1173,125 @@ def _assert_transaction_modal_fragments(page, base_url: str, label: str) -> None
     _check(todo_modal.is_hidden(), f"{label}: Escape must close the todo queue modal")
     page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
     page.wait_for_selector("#txn-results tr.txn-clickable")
+
+
+def _assert_transaction_matching_styles(page, base_url: str, label: str) -> None:
+    entity_names = ("Personal", "BFM", "LL")
+    viewport_cases = (
+        (390, 844, "phone"),
+        (768, 900, "exact-768"),
+        (1280, 900, "desktop"),
+    )
+
+    for entity_name in entity_names:
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        for width, height, viewport_label in viewport_cases:
+            page.set_viewport_size({"width": width, "height": height})
+            page.goto(
+                f"{base_url}/transactions/?start=2025-01-01",
+                wait_until="networkidle",
+            )
+            responsive_state = page.evaluate(
+                """() => {
+                    const dateGroup = document.querySelector(".txn-filter-date");
+                    const filter = document.querySelector(".txn-filter-bar");
+                    return {
+                        styleAttributes: document.querySelectorAll(
+                            "#main-content [style]"
+                        ).length,
+                        dateWidth: dateGroup.getBoundingClientRect().width,
+                        filterWidth: filter.getBoundingClientRect().width,
+                        pageOverflow:
+                            document.documentElement.scrollWidth
+                            > window.innerWidth + 1,
+                    };
+                }"""
+            )
+            _check(
+                responsive_state["styleAttributes"] == 0,
+                f"{label}: {entity_name} {viewport_label} transactions must contain no style attributes",
+            )
+            _check(
+                not responsive_state["pageOverflow"],
+                f"{label}: {entity_name} {viewport_label} transactions must not overflow the page",
+            )
+            if viewport_label == "phone":
+                _check(
+                    responsive_state["dateWidth"]
+                    >= responsive_state["filterWidth"] - 40,
+                    f"{label}: {entity_name} phone filters must stack at full width",
+                )
+            elif viewport_label == "exact-768":
+                _check(
+                    responsive_state["filterWidth"] * 0.4
+                    <= responsive_state["dateWidth"]
+                    <= responsive_state["filterWidth"] * 0.6,
+                    f"{label}: {entity_name} exact-768 filters must preserve the two-column layout",
+                )
+            else:
+                _check(
+                    125 <= responsive_state["dateWidth"] <= 135,
+                    f"{label}: {entity_name} desktop date filters must preserve their fixed width",
+                )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.set_viewport_size({"width": 390, "height": 844})
+
+    page.goto(f"{base_url}/__synthetic-4at/match-card", wait_until="networkidle")
+    match_state = page.evaluate(
+        """() => ({
+            styleAttributes: document.querySelectorAll("#main-content [style]").length,
+            boundedProgress: Boolean(document.querySelector(
+                ".progress-fill.u-width-pct.u-pct-50"
+            )),
+            warningMetrics: document.querySelectorAll(
+                ".match-metric--warning"
+            ).length,
+            pageOverflow:
+                document.documentElement.scrollWidth > window.innerWidth + 1,
+        })"""
+    )
+    _check(
+        match_state
+        == {
+            "styleAttributes": 0,
+            "boundedProgress": True,
+            "warningMetrics": 2,
+            "pageOverflow": False,
+        },
+        f"{label}: synthetic matching card must preserve bounded progress warning state and phone layout without style attributes",
+    )
+
+    page.goto(f"{base_url}/__synthetic-4at/vendor-card", wait_until="networkidle")
+    vendor_state = page.evaluate(
+        """() => ({
+            styleAttributes: document.querySelectorAll("#main-content [style]").length,
+            boundedProgress: Boolean(document.querySelector(
+                ".progress-fill.u-width-pct.u-pct-60"
+            )),
+            formClass: Boolean(document.querySelector(
+                "form.vendor-card-form"
+            )),
+            pageOverflow:
+                document.documentElement.scrollWidth > window.innerWidth + 1,
+        })"""
+    )
+    _check(
+        vendor_state
+        == {
+            "styleAttributes": 0,
+            "boundedProgress": True,
+            "formClass": True,
+            "pageOverflow": False,
+        },
+        f"{label}: synthetic vendor card must preserve bounded progress form layout and phone width without style attributes",
+    )
+
+    page.goto(f"{base_url}/transactions/?start=2025-01-01", wait_until="networkidle")
 
 
 def _assert_categorization_upload_pages(page, base_url: str, label: str) -> None:
@@ -2542,7 +2685,7 @@ def _assert_plaid_entry_pages(page, base_url: str, label: str) -> None:
 
 
 def _register_standalone_test_routes(app) -> None:
-    from flask import abort
+    from flask import abort, render_template, render_template_string
 
     def synthetic_forbidden():
         abort(403)
@@ -2552,6 +2695,54 @@ def _register_standalone_test_routes(app) -> None:
 
     def synthetic_server_error():
         raise RuntimeError("SYNTHETIC_4AR_EXCEPTION_MARKER")
+
+    def synthetic_match_card():
+        synthetic_match = {
+            "txn_amount": -120.00,
+            "order_total": 100.00,
+            "txn_date": "2026-07-23",
+            "txn_description": "Synthetic browser style match",
+            "order_date": "2026-07-15",
+            "product_summary": "Synthetic browser order",
+            "suggested_category": "Office Supplies",
+            "suggested_subcategory": "General",
+            "date_gap": 8,
+        }
+        return render_template_string(
+            '{% extends "base.html" %}'
+            '{% block content %}{{ synthetic_body|safe }}{% endblock %}',
+            synthetic_body=render_template(
+                "components/match_card.html",
+                review=[synthetic_match, synthetic_match],
+                review_idx=1,
+                current_match=synthetic_match,
+                no_match=[],
+                source="orders",
+            ),
+        )
+
+    def synthetic_vendor_card():
+        return render_template_string(
+            '{% extends "base.html" %}'
+            '{% block content %}{{ synthetic_body|safe }}{% endblock %}',
+            synthetic_body=render_template(
+                "components/vendor_card.html",
+                order={
+                    "id": 1,
+                    "product_summary": "Synthetic browser vendor card",
+                    "order_date": "2026-07-23",
+                    "order_total": 42.00,
+                },
+                total=2,
+                initial=5,
+                completed=3,
+                progress_pct=60,
+                categories=["Office Supplies"],
+                subcategories=["General"],
+                inferred_cat="Office Supplies",
+                inferred_sub="General",
+            ),
+        )
 
     app.add_url_rule(
         "/__synthetic-4ar/403",
@@ -2567,6 +2758,16 @@ def _register_standalone_test_routes(app) -> None:
         "/__synthetic-4ar/500",
         "synthetic_4ar_500",
         synthetic_server_error,
+    )
+    app.add_url_rule(
+        "/__synthetic-4at/match-card",
+        "synthetic_4at_match_card",
+        synthetic_match_card,
+    )
+    app.add_url_rule(
+        "/__synthetic-4at/vendor-card",
+        "synthetic_4at_vendor_card",
+        synthetic_vendor_card,
     )
     app.add_url_rule(
         "/favicon.ico",
@@ -3116,6 +3317,9 @@ def main() -> None:
                 _assert_transaction_modal_fragments(
                     page, base_url, "no-password fragment execution"
                 )
+                _assert_transaction_matching_styles(
+                    page, base_url, "no-password transaction/matching styles"
+                )
 
                 page.locator("body").press("/")
                 _check(
@@ -3273,6 +3477,9 @@ def main() -> None:
                 )
                 _assert_transaction_modal_fragments(
                     page, base_url, "configured-auth fragment execution"
+                )
+                _assert_transaction_matching_styles(
+                    page, base_url, "configured-auth transaction/matching styles"
                 )
                 _assert_categorization_upload_pages(
                     page, base_url, "configured-auth categorization/upload execution"

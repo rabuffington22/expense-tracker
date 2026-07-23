@@ -12,27 +12,27 @@
   <table>
     <thead>
       <tr>
-        <th style="width:85px;cursor:pointer;"
+        <th class="txn-sort txn-col-date"
             data-transaction-fragment-action="sort" data-sort-column="date">
           Date
           {% if params.sort == 'date' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="cursor:pointer;"
+        <th class="txn-sort"
             data-transaction-fragment-action="sort" data-sort-column="merchant">
           Description
           {% if params.sort == 'merchant' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:120px;padding-right:2rem;cursor:pointer;" class="text-right"
+        <th class="text-right txn-sort txn-col-amount"
             data-transaction-fragment-action="sort" data-sort-column="amount">
           Amount
           {% if params.sort == 'amount' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:155px;cursor:pointer;"
+        <th class="txn-sort txn-col-category"
             data-transaction-fragment-action="sort" data-sort-column="category">
           Category
           {% if params.sort == 'category' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
         </th>
-        <th style="width:155px;cursor:pointer;"
+        <th class="txn-sort txn-col-category"
             data-transaction-fragment-action="sort" data-sort-column="subcategory">
           Subcategory
           {% if params.sort == 'subcategory' %}{{ '↑' if params.dir == 'asc' else '↓' }}{% endif %}
@@ -44,7 +44,7 @@
         {% include "components/txn_row.html" %}
       {% endfor %}
       {% if not txns %}
-      <tr><td colspan="5" class="text-sm text-muted" style="text-align:center;padding:2rem;">No transactions match your filters.</td></tr>
+      <tr><td colspan="5" class="text-sm text-muted txn-empty">No transactions match your filters.</td></tr>
       {% endif %}
     </tbody>
   </table>

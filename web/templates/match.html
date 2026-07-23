@@ -5,7 +5,7 @@
 <h1 class="page-title">Match</h1>
 
 {# ── Source toggle ───────────────────────────────────────────────────────── #}
-<div class="segmented mb-2" style="max-width: 360px;">
+<div class="segmented mb-2 match-source-toggle">
     <a href="{{ url_for('match.index') }}" class="segmented-item{% if source != 'vendor' %} active{% endif %}">Amazon / Henry Schein</a>
     <a href="{{ url_for('match.index', source='vendor') }}" class="segmented-item{% if source == 'vendor' %} active{% endif %}">Venmo / PayPal</a>
 </div>

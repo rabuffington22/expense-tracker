@@ -3,7 +3,7 @@
 
 <p class="mb-1"><strong>Match {{ review_idx + 1 }} of {{ review|length }}</strong></p>
 <div class="progress-bar mb-2">
-    <div class="progress-fill" style="width: {{ (review_idx / review|length * 100)|int }}%;"></div>
+    <div class="progress-fill u-width-pct u-pct-{{ [0, [((review_idx / review|length * 100)|int), 100]|min]|max }}"></div>
 </div>
 
 {% set m = current_match %}
@@ -14,13 +14,13 @@
 {% set is_vendor = m.get('is_vendor_match', false) if m.get is defined else false %}
 
 <div class="form-row">
-    <div class="card" style="flex:1;">
+    <div class="card match-card-panel">
         <h3>Bank Charge</h3>
         <p>Date: {{ m.txn_date }}</p>
         <p>Amount: <strong>${{ "{:,.2f}".format(txn_amt) }}</strong></p>
         <p class="text-sm text-muted">{{ m.txn_description[:60] }}</p>
     </div>
-    <div class="card" style="flex:1;">
+    <div class="card match-card-panel">
         {% if is_vendor %}
         <h3>Payment</h3>
         <p>Recipient: <strong>{{ m.get('recipient', '') if m.get is defined else '' }}</strong></p>
@@ -39,12 +39,12 @@
 </div>
 
 <p class="text-sm mb-1">
-    Amount diff: <strong style="color: {% if amt_pct > 3 %}var(--red){% else %}inherit{% endif %};">${{ "{:.2f}".format(amt_diff) }} ({{ "{:.1f}".format(amt_pct) }}%)</strong>
+    Amount diff: <strong{% if amt_pct > 3 %} class="match-metric--warning"{% endif %}>${{ "{:.2f}".format(amt_diff) }} ({{ "{:.1f}".format(amt_pct) }}%)</strong>
 </p>
 {% set date_gap = m.get('date_gap') if m.get is defined else none %}
 {% if date_gap is not none %}
 <p class="text-sm mb-2">
-    Date gap: <strong style="color: {% if date_gap > 5 or date_gap < -2 %}var(--red){% else %}inherit{% endif %};">{{ date_gap }} day{{ 's' if date_gap != 1 else '' }}</strong>
+    Date gap: <strong{% if date_gap > 5 or date_gap < -2 %} class="match-metric--warning"{% endif %}>{{ date_gap }} day{{ 's' if date_gap != 1 else '' }}</strong>
     <span class="text-muted">(bank charge {{ 'after' if date_gap >= 0 else 'before' }} {% if is_vendor %}payment{% else %}order{% endif %})</span>
 </p>
 {% endif %}

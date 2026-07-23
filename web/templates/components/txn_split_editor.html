@@ -3,7 +3,7 @@
      data-transaction-id="{{ parent.transaction_id|e }}"
      data-parent-cents="{{ parent.amount_cents }}"
      data-transaction-fragment-action="close-transaction-modal-on-backdrop">
-  <div class="txn-modal-card" style="width:480px;">
+  <div class="txn-modal-card txn-split-modal-card">
     <div class="txn-modal-header">
       <div>
         <div class="txn-modal-merchant">✂ Split Transaction</div>
@@ -17,30 +17,27 @@
               title="Close" aria-label="Close">&#10005;</button>
     </div>
 
-    <div id="split-lines" style="display:flex; flex-direction:column; gap:0.35rem; margin-bottom:0.5rem;">
+    <div id="split-lines" class="txn-split-lines">
       {% if splits %}
         {% for s in splits %}
         <div class="split-line" data-idx="{{ loop.index0 }}">
-          <div style="display:flex; gap:0.3rem; align-items:center;">
+          <div class="txn-split-line-main">
             <input type="number" class="input-sm split-amount" placeholder="Amount (cents)"
-                   value="{{ s.amount_cents }}" step="1"
-                   style="width:90px; text-align:right;">
+                   value="{{ s.amount_cents }}" step="1">
             <select class="input-sm split-cat"
-                    data-transaction-fragment-change="split-category"
-                    style="flex:1;">
+                    data-transaction-fragment-change="split-category">
               {% for cat in categories %}
               <option value="{{ cat }}" {% if cat == s.category %}selected{% endif %}>{{ cat }}</option>
               {% endfor %}
             </select>
             <button type="button" class="btn-icon"
                     data-transaction-fragment-action="split-remove-line"
-                    title="Remove" style="font-size:0.8rem; opacity:0.6;">&#10005;</button>
+                    title="Remove">&#10005;</button>
           </div>
-          <div style="display:flex; gap:0.3rem; margin-top:0.2rem;">
+          <div class="txn-split-line-details">
             <input type="text" class="input-sm split-desc" placeholder="Description..."
-                   value="{{ s.description or '' }}" style="flex:1;">
-            <select class="input-sm split-subcat" data-initial="{{ s.subcategory or 'General' }}"
-                    style="width:120px;">
+                   value="{{ s.description or '' }}">
+            <select class="input-sm split-subcat" data-initial="{{ s.subcategory or 'General' }}">
               <option value="{{ s.subcategory or 'General' }}" selected>{{ s.subcategory or 'General' }}</option>
             </select>
           </div>
@@ -48,45 +45,43 @@
         {% endfor %}
       {% else %}
         <div class="split-line" data-idx="0">
-          <div style="display:flex; gap:0.3rem; align-items:center;">
+          <div class="txn-split-line-main">
             <input type="number" class="input-sm split-amount" placeholder="Amount (cents)"
-                   step="1" style="width:90px; text-align:right;">
+                   step="1">
             <select class="input-sm split-cat"
-                    data-transaction-fragment-change="split-category" style="flex:1;">
+                    data-transaction-fragment-change="split-category">
               {% for cat in categories %}
               <option value="{{ cat }}">{{ cat }}</option>
               {% endfor %}
             </select>
             <button type="button" class="btn-icon"
                     data-transaction-fragment-action="split-remove-line"
-                    title="Remove" style="font-size:0.8rem; opacity:0.6;">&#10005;</button>
+                    title="Remove">&#10005;</button>
           </div>
-          <div style="display:flex; gap:0.3rem; margin-top:0.2rem;">
-            <input type="text" class="input-sm split-desc" placeholder="Description..."
-                   style="flex:1;">
-            <select class="input-sm split-subcat" style="width:120px;">
+          <div class="txn-split-line-details">
+            <input type="text" class="input-sm split-desc" placeholder="Description...">
+            <select class="input-sm split-subcat">
               <option value="General">General</option>
             </select>
           </div>
         </div>
         <div class="split-line" data-idx="1">
-          <div style="display:flex; gap:0.3rem; align-items:center;">
+          <div class="txn-split-line-main">
             <input type="number" class="input-sm split-amount" placeholder="Amount (cents)"
-                   step="1" style="width:90px; text-align:right;">
+                   step="1">
             <select class="input-sm split-cat"
-                    data-transaction-fragment-change="split-category" style="flex:1;">
+                    data-transaction-fragment-change="split-category">
               {% for cat in categories %}
               <option value="{{ cat }}">{{ cat }}</option>
               {% endfor %}
             </select>
             <button type="button" class="btn-icon"
                     data-transaction-fragment-action="split-remove-line"
-                    title="Remove" style="font-size:0.8rem; opacity:0.6;">&#10005;</button>
+                    title="Remove">&#10005;</button>
           </div>
-          <div style="display:flex; gap:0.3rem; margin-top:0.2rem;">
-            <input type="text" class="input-sm split-desc" placeholder="Description..."
-                   style="flex:1;">
-            <select class="input-sm split-subcat" style="width:120px;">
+          <div class="txn-split-line-details">
+            <input type="text" class="input-sm split-desc" placeholder="Description...">
+            <select class="input-sm split-subcat">
               <option value="General">General</option>
             </select>
           </div>
@@ -95,30 +90,25 @@
     </div>
 
     <!-- Running total -->
-    <div id="split-total-bar" style="display:flex; justify-content:space-between; align-items:center;
-         padding:0.3rem 0.5rem; border-radius:var(--ui-radius);
-         font-size:var(--ui-font-sm); font-weight:600;
-         background:rgba(255,69,58,0.10); color:var(--red);">
+    <div id="split-total-bar" class="txn-split-total txn-split-total--unbalanced">
       <span>Split total: <span id="split-total-display">$0.00</span></span>
       <span>Parent: {{ fmt_cents(parent.amount_cents) }}</span>
     </div>
 
     <!-- Actions -->
-    <div style="display:flex; gap:0.35rem; margin-top:0.5rem; flex-wrap:wrap;">
+    <div class="txn-split-actions">
       <button type="button" class="btn btn-sm btn-secondary"
               data-transaction-fragment-action="split-add-line">+ Add Line</button>
       {% if has_auto_split %}
-      <button type="button" class="btn btn-sm"
+      <button type="button" class="btn btn-sm txn-split-auto"
               id="split-auto-btn"
-              style="background:rgba(124,58,237,0.12); color:#a78bfa; border:1px solid rgba(124,58,237,0.25);"
               data-transaction-fragment-action="split-auto">
         Auto-split from Line Items
       </button>
       {% endif %}
-      <div style="flex:1;"></div>
+      <div class="txn-split-spacer"></div>
       {% if splits %}
-      <button type="button" class="btn btn-sm"
-              style="color:var(--red); border:1px solid rgba(255,69,58,0.25); background:transparent;"
+      <button type="button" class="btn btn-sm txn-split-delete"
               data-transaction-fragment-action="split-delete-all">Remove Splits</button>
       {% endif %}
       <button type="button" class="btn btn-primary btn-sm"

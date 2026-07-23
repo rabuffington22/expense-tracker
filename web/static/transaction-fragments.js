@@ -320,11 +320,11 @@
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         var parentCents = parseInt(root.dataset.parentCents, 10) || 0;
         if (total === parentCents) {
-            bar.style.background = "rgba(48,209,88,0.12)";
-            bar.style.color = "var(--green)";
+            bar.classList.add("txn-split-total--balanced");
+            bar.classList.remove("txn-split-total--unbalanced");
         } else {
-            bar.style.background = "rgba(255,69,58,0.10)";
-            bar.style.color = "var(--red)";
+            bar.classList.add("txn-split-total--unbalanced");
+            bar.classList.remove("txn-split-total--balanced");
         }
     }
 
@@ -350,18 +350,18 @@
             return '<option value="' + escaped + '">' + escaped + "</option>";
         }).join("");
         var html = '<div class="split-line" data-idx="' + index + '">'
-            + '<div style="display:flex; gap:0.3rem; align-items:center;">'
+            + '<div class="txn-split-line-main">'
             + '<input type="number" class="input-sm split-amount" placeholder="Amount (cents)" '
-            + 'step="1" style="width:90px; text-align:right;">'
+            + 'step="1">'
             + '<select class="input-sm split-cat" data-transaction-fragment-change="split-category" '
-            + 'style="flex:1;">' + options + "</select>"
+            + ">" + options + "</select>"
             + '<button type="button" class="btn-icon" '
             + 'data-transaction-fragment-action="split-remove-line" title="Remove" '
-            + 'style="font-size:0.8rem; opacity:0.6;">&#10005;</button>'
+            + ">&#10005;</button>"
             + "</div>"
-            + '<div style="display:flex; gap:0.3rem; margin-top:0.2rem;">'
-            + '<input type="text" class="input-sm split-desc" placeholder="Description..." style="flex:1;">'
-            + '<select class="input-sm split-subcat" style="width:120px;">'
+            + '<div class="txn-split-line-details">'
+            + '<input type="text" class="input-sm split-desc" placeholder="Description...">'
+            + '<select class="input-sm split-subcat">'
             + '<option value="General">General</option></select>'
             + "</div></div>";
         container.insertAdjacentHTML("beforeend", html);

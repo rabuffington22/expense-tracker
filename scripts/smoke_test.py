@@ -10068,11 +10068,164 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (7, 185, 7, 21),
-            "shared/dashboard styles: residual application inventory must match the post-4AS contract",
+            == (7, 122, 0, 17),
+            "shared/dashboard styles: current application inventory must match the post-4AT contract",
         )
 
-        print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and exact residual inventory passed")
+        print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and current residual inventory passed")
+
+        # ── 11o. Transaction and matching style compatibility ───────────
+        print("\n11o. Transaction and matching style compatibility…")
+
+        transaction_style_paths = (
+            templates_root / "transactions.html",
+            templates_root / "match.html",
+            templates_root / "components" / "match_card.html",
+            templates_root / "components" / "vendor_card.html",
+            templates_root / "components" / "txn_results.html",
+            templates_root / "components" / "txn_row.html",
+            templates_root / "components" / "txn_row_edit.html",
+            templates_root / "components" / "txn_split_editor.html",
+        )
+        transaction_style_sources = [
+            path.read_text() for path in transaction_style_paths
+        ]
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in transaction_style_sources
+            ),
+            "transaction/matching styles: included source templates must contain no style attributes",
+        )
+
+        transaction_fragment_source = (
+            PROJECT_ROOT / "web" / "static" / "transaction-fragments.js"
+        ).read_text()
+        _check(
+            "style=" not in transaction_fragment_source
+            and ".style." not in transaction_fragment_source
+            and ".style =" not in transaction_fragment_source,
+            "transaction/matching styles: controller must emit no style attributes or runtime style writes",
+        )
+        _check(
+            'bar.classList.add("txn-split-total--balanced")'
+            in transaction_fragment_source
+            and 'bar.classList.add("txn-split-total--unbalanced")'
+            in transaction_fragment_source
+            and '<div class="txn-split-line-main">' in transaction_fragment_source
+            and '<div class="txn-split-line-details">' in transaction_fragment_source,
+            "transaction/matching styles: split state and generated-line class contracts must remain explicit",
+        )
+        _check(
+            all(
+                selector in style_source
+                for selector in (
+                    ".match-source-toggle",
+                    ".match-card-panel",
+                    ".vendor-card-form",
+                    ".txn-filter-date",
+                    ".txn-filter-category",
+                    ".txn-filter-search",
+                    ".txn-sort",
+                    ".txn-split-modal-card",
+                    ".txn-split-line-main",
+                    ".txn-split-total--balanced",
+                    ".txn-split-total--unbalanced",
+                )
+            ),
+            "transaction/matching styles: maintained CSS must contain the fixed-layout and split-state contracts",
+        )
+
+        rendered_transaction_styles = []
+        first_style_transaction_id = norm_df.iloc[0]["transaction_id"]
+        for path in (
+            "/transactions/",
+            "/transactions/partial",
+            f"/transactions/edit-row/{first_style_transaction_id}",
+            f"/transactions/splits/{first_style_transaction_id}",
+            "/match/",
+        ):
+            response = style_client.get(path)
+            _check(
+                response.status_code == 200,
+                f"transaction/matching styles: {path} must render successfully",
+            )
+            rendered_transaction_styles.append(response.get_data(as_text=True))
+
+        from flask import render_template
+
+        synthetic_match = {
+            "txn_amount": -120.00,
+            "order_total": 100.00,
+            "txn_date": "2026-07-23",
+            "txn_description": "Synthetic style match",
+            "order_date": "2026-07-15",
+            "product_summary": "Synthetic order",
+            "suggested_category": "Office Supplies",
+            "suggested_subcategory": "General",
+            "date_gap": 8,
+        }
+        synthetic_order = {
+            "id": 1,
+            "product_summary": "Synthetic vendor card",
+            "order_date": "2026-07-23",
+            "order_total": 42.00,
+        }
+        with no_auth_app.test_request_context("/"):
+            rendered_transaction_styles.append(
+                render_template(
+                    "components/match_card.html",
+                    review=[synthetic_match, synthetic_match],
+                    review_idx=1,
+                    current_match=synthetic_match,
+                    no_match=[],
+                    source="orders",
+                )
+            )
+            rendered_transaction_styles.append(
+                render_template(
+                    "components/vendor_card.html",
+                    order=synthetic_order,
+                    total=2,
+                    initial=5,
+                    completed=3,
+                    progress_pct=60,
+                    categories=["Office Supplies"],
+                    subcategories=["General"],
+                    inferred_cat="Office Supplies",
+                    inferred_sub="General",
+                )
+            )
+
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in rendered_transaction_styles
+            ),
+            "transaction/matching styles: included rendered pages and fragments must contain no style attributes",
+        )
+        _check(
+            "u-pct-50" in rendered_transaction_styles[-2]
+            and rendered_transaction_styles[-2].count(
+                'class="match-metric--warning"'
+            )
+            == 2
+            and "u-pct-60" in rendered_transaction_styles[-1]
+            and 'class="vendor-card-form"' in rendered_transaction_styles[-1],
+            "transaction/matching styles: bounded progress and warning/form classes must render deterministically",
+        )
+        _check(
+            (
+                current_style_blocks,
+                current_style_attributes,
+                current_generated_style_attributes,
+                current_runtime_style_writes,
+            )
+            == (7, 122, 0, 17),
+            "transaction/matching styles: residual application inventory must match the post-4AT contract",
+        )
+
+        print("   ✅ Source, rendered, controller, bounded progress, split state, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

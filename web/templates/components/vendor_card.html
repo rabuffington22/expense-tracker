@@ -13,7 +13,7 @@
 <p class="mb-1"><strong>Order {{ completed + 1 }} of {{ initial }}</strong> — {{ total }} remaining</p>
 
 <div class="progress-bar mb-1">
-    <div class="progress-fill" style="width: {{ progress_pct }}%;"></div>
+    <div class="progress-fill u-width-pct u-pct-{{ [0, [progress_pct|int, 100]|min]|max }}"></div>
 </div>
 
 <div class="card">
@@ -23,7 +23,7 @@
     <form hx-post="{{ url_for('categorize_vendors.save') }}"
           hx-target="#card-container"
           hx-swap="innerHTML"
-          style="margin-top: 1rem; max-width: 480px;">
+          class="vendor-card-form">
         <input type="hidden" name="order_id" value="{{ order.id }}">
 
         <div class="form-row">

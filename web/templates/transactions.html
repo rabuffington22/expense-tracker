@@ -21,17 +21,17 @@
 
     <!-- Single row: filters (fixed) + search (fills remaining) -->
     <div class="form-row">
-      <div class="form-group" style="flex:0 0 130px;">
+      <div class="form-group txn-filter-date">
         <label class="text-xs text-muted" for="start">From</label>
-        <input type="date" id="start" name="start" value="{{ params.start }}" class="input-sm" style="width:100%;">
+        <input type="date" id="start" name="start" value="{{ params.start }}" class="input-sm txn-filter-control">
       </div>
-      <div class="form-group" style="flex:0 0 130px;">
+      <div class="form-group txn-filter-date">
         <label class="text-xs text-muted" for="end">To</label>
-        <input type="date" id="end" name="end" value="{{ params.end }}" class="input-sm" style="width:100%;">
+        <input type="date" id="end" name="end" value="{{ params.end }}" class="input-sm txn-filter-control">
       </div>
-      <div class="form-group" style="flex:0 0 140px;">
+      <div class="form-group txn-filter-category">
         <label class="text-xs text-muted" for="category_id">Category</label>
-        <select id="category_id" name="category_id" class="input-sm" style="width:100%;"
+        <select id="category_id" name="category_id" class="input-sm txn-filter-control"
                 data-transaction-page-change="filter-subcategories">
           <option value="">All</option>
           {% for cat in categories %}
@@ -39,29 +39,29 @@
           {% endfor %}
         </select>
       </div>
-      <div class="form-group" style="flex:0 0 140px;">
+      <div class="form-group txn-filter-category">
         <label class="text-xs text-muted" for="subcategory">Subcategory</label>
-        <select id="subcategory" name="subcategory" class="input-sm" style="width:100%;"
+        <select id="subcategory" name="subcategory" class="input-sm txn-filter-control"
                 data-current="{{ params.subcategory }}">
           <option value="">All</option>
         </select>
       </div>
-      <div class="form-group" style="flex:0 0 130px;">
+      <div class="form-group txn-filter-date">
         <label class="text-xs text-muted" for="account">Account</label>
-        <select id="account" name="account" class="input-sm" style="width:100%;">
+        <select id="account" name="account" class="input-sm txn-filter-control">
           <option value="">All</option>
           {% for acct in accounts %}
           <option value="{{ acct }}" {% if params.account == acct %}selected{% endif %}>{{ acct }}</option>
           {% endfor %}
         </select>
       </div>
-      <div class="form-group" style="flex:1 1 auto;align-self:flex-end;">
-        <input type="text" id="q" name="q" value="{{ params.q }}" placeholder="Search..." class="input-sm" style="width:100%;">
+      <div class="form-group txn-filter-search">
+        <input type="text" id="q" name="q" value="{{ params.q }}" placeholder="Search..." class="input-sm txn-filter-control">
       </div>
-      <div class="form-group" style="flex:0 0 auto;align-self:flex-end;">
+      <div class="form-group txn-filter-action">
         <button type="submit" class="btn btn-primary btn-sm">Apply</button>
       </div>
-      <div class="form-group" style="flex:0 0 auto;align-self:flex-end;">
+      <div class="form-group txn-filter-action">
         <a href="{{ url_for('transactions.index') }}" class="btn btn-secondary btn-sm">Clear</a>
       </div>
     </div>
