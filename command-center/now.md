@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Make the exact verified 4AU categorization-and-upload style result durable on `main`, observe the automatic deployment, and verify credential-free production health under confirmed work block 4AU-R.
+Preserve the durable, deployed, and health-verified 4AU-R result while Ryan decides whether to plan the next Cash Flow and planning style cluster.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.3 is complete and verified locally through 4AU, and exact-scope Task 1P.4.3a.3-R is active through confirmed work block 4AU-R.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.3 and its release are complete through 4AU-R, and Task 1P.4.3a.4 is the next separate planning gate.
 
 ## Current Work Block
 
-Work block 4AU-R: Categorization And Upload Style Compatibility Release — active.
+Work block 4AU-R: Categorization And Upload Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.3a.3-R: Publish and verify categorization and upload style compatibility — active.
+Task 1P.4.3a.4: Make Cash Flow and planning styles strict-policy compatible — waiting for fresh work-block planning and confirmation.
 
 ## Owner
 
-Codex Desktop owns exact-scope 4AU-R execution and verification. Ryan owns every expansion, manual live action, recovery beyond the confirmed boundary, and Task 1P.4.3a.4.
+Ryan owns the decision to plan or authorize Task 1P.4.3a.4 and every later expansion or live-sensitive action. Codex Desktop preserves the verified 4AU-R result and current Runway OS state.
 
 ## Current Action
 
-Verify and stage only the exact 4AU source set, commit it on `codex/csp-categorization-upload-styles`, cleanly fast-forward local `main`, push directly to `origin/main`, observe the automatic Fly deployment, verify its exact source SHA and credential-free production `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+Decide whether to invoke fresh work-block planning for Task 1P.4.3a.4. No Cash Flow/planning implementation, CSP enforcement, or later work is pre-authorized.
 
 ## Work Block 4AU-R Contract
 
@@ -32,6 +32,15 @@ Verify and stage only the exact 4AU source set, commit it on `codex/csp-categori
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths; protected-boundary and high-confidence sensitive-addition scans; full smoke and configured-auth/no-password isolated Chrome; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and both preserved untracked files.
 - Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and separately gated Task 1P.4.3a.4.
+
+## Work Block 4AU-R Status
+
+- Exact 14-path source commit `058016623d55723b13b32972403db792f245ef43` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30049142292` and deploy job `89347105219` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Exact scope, staging, sensitive-addition scan, maintained smoke, configured-auth/no-password isolated Chrome, syntax, JSON, whitespace, dashboard, clean fast-forward, remote alignment, automatic deployment, health, and both preserved-file checks passed.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, broader recovery, Task 1P.4.3a.4 work, or excluded mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-categorization-upload-style-compatibility-release-4au-r.md`.
 
 ## Work Block 4AU Contract
 
