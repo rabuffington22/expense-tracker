@@ -428,7 +428,7 @@ Tracked fixture and test expansion was explicitly excluded from audit work block
 
 ## Upload Undo Label Does Not Explain Its Status-Only Effect
 
-Status: open; discovered in work block 3B
+Status: resolved and released through work block 4AK-R
 
 Severity: low operator-clarity risk
 
@@ -436,7 +436,7 @@ Captured: 2026-07-18
 
 Where seen: `web/routes/upload.py`, `web/templates/upload.html`, and synthetic route reproduction
 
-Revisit: separately gated 4AK-R durability/release only
+Revisit: only if a separately authorized true import-reversal workflow is proposed
 
 Summary:
 
@@ -454,7 +454,7 @@ Acceptance checks:
 
 Resolution:
 
-Work block 4AK relabels the status-only action as `Mark incomplete` and presents an explicit confirmation that imported transactions remain in the ledger. Maintained synthetic request proof resets only `import_checklist_status` fields while preserving the exact transaction count, and configured-auth/no-password isolated Chrome verifies the label and confirmation with denied external requests, zero unexpected console/page errors, and exact temporary cleanup. True import reversal remains outside scope.
+Work block 4AK relabels the status-only action as `Mark incomplete` and presents an explicit confirmation that imported transactions remain in the ledger. Maintained synthetic request proof resets only `import_checklist_status` fields while preserving the exact transaction count, and configured-auth/no-password isolated Chrome verifies the label and confirmation with denied external requests, zero unexpected console/page errors, and exact temporary cleanup. Exact source commit `85a42ec8abe3f5abbbc5fb783658ca2e1bc7129e` is durable and automatically deployed through run `29974641835` and job `89103727566`, with credential-free production health returning HTTP 200. True import reversal remains outside scope.
 
 ## Recurring Charges Report Executes An Uninterpolated SQL Helper
 

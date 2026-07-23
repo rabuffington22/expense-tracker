@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify only the exact complete 4AK source set through confirmed work block 4AK-R while preserving every protected, live, later-task, and unrelated-worktree boundary.
+Preserve the durable, automatically deployed, health-verified 4AK-R result and keep Task 1P.4.2c.3 at a fresh bounded re-sizing gate.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4AK is complete locally and exact-scope durability/release is active through 4AK-R; Task 1P.4.2c.3 remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.2 and Task 1P.5 are durable, automatically deployed, and credential-free health verified through 4AK-R; Task 1P.4.2c.3 remains separately gated.
 
 ## Current Work Block
 
-Work block 4AK-R: Categorization And Upload Durability And Release — active.
+Work block 4AK-R: Categorization And Upload Durability And Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.2c.2-R: Publish and verify categorization and upload execution — active for the exact verified 4AK source set only.
+Task 1P.4.2c.3: Migrate cash-flow and planning execution — waiting for a fresh bounded re-sizing proposal or pause decision; no implementation is authorized.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, sensitive/protected-boundary review, one source commit, clean fast-forward to local `main`, direct push without force or PR, read-only automatic deployment observation, credential-free production health, and sanitized `[skip actions]` closeout. Ryan owns every expansion or recovery beyond this path.
+Ryan owns the next sizing decision. Codex Desktop may prepare a fresh bounded proposal only when requested; no implementation, publication, deployment, protected access, or live mutation is authorized.
 
 ## Current Action
 
-Re-run the maintained verification, stage only the exact fifteen-path 4AK source set, commit it on `codex/csp-categorization-upload`, fast-forward local `main`, push directly, observe the automatic Fly deployment, verify credential-free `/health`, and publish one sanitized command-center-only closeout with `[skip actions]`.
+Preserve source commit `85a42ec8abe3f5abbbc5fb783658ca2e1bc7129e`, automatic Fly run `29974641835`, deploy job `89103727566`, and the HTTP 200 production-health result; request a fresh Task 1P.4.2c.3 re-sizing proposal or pause.
 
 ## Work Block 4AK-R Contract
 
@@ -32,6 +32,15 @@ Re-run the maintained verification, stage only the exact fifteen-path 4AK source
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python/JavaScript/JSON syntax, whitespace, dashboard refresh/health/rendered state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
 - Report source and closeout commit SHAs, published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.3 still separately gated.
+
+## Work Block 4AK-R Result
+
+- Exact fifteen-path source commit `85a42ec8abe3f5abbbc5fb783658ca2e1bc7129e` is durable on local and remote `main` before this sanitized closeout.
+- Automatic Fly Deploy run `29974641835` and deploy job `89103727566` passed every reported step for the exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with `{"status":"ok"}` after deployment.
+- Exact-path and staged-set checks, protected-path and high-confidence sensitive-addition scans, maintained smoke, configured-auth/no-password isolated Chrome, syntax, JSON, whitespace, dashboard refresh/health/rendered state, commit content, clean fast-forward, ancestry, exact remote SHA, automatic release, production health, and preserved-file checks passed.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, authenticated production page, credential, protected data, real database, retained upload, downstream action, later route-cluster work, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-22-categorization-upload-execution-release-4ak-r.md`.
 
 ## Work Block 4AK Contract
 
