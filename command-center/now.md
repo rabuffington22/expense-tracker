@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Make the exact verified shared-shell and dashboard/report style-compatibility result durable on `main`, observe the automatic deployment, verify credential-free production health, and close the release without widening scope.
+Preserve the durable, automatically deployed, and credential-free health-verified shared-shell and dashboard/report style result while Ryan decides whether to plan the next route cluster.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2 is durable through 4AR-R, and Task 1P.4.3a.1 is complete and verified locally through 4AS.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2 is durable through 4AR-R, and Task 1P.4.3a.1 is durable, automatically deployed, and credential-free health verified through 4AS-R.
 
 ## Current Work Block
 
-Work block 4AS-R: Shared Shell And Dashboard/Report Style Compatibility Release — active.
+Work block 4AS-R: Shared Shell And Dashboard/Report Style Compatibility Release — complete.
 
 ## Current Task
 
-Task 1P.4.3a.1-R: Publish and verify shared-shell and dashboard/report style compatibility — active.
+Task 1P.4.3a.2: Make transaction and matching-fragment styles strict-policy compatible — awaiting a separately confirmed planning or implementation block.
 
 ## Owner
 
-Codex Desktop owns the exact 4AS-R staging, source commit, clean fast-forward, direct-main push, automatic deployment observation, credential-free health verification, and sanitized closeout. Ryan owns every expansion and recovery beyond the confirmed boundary.
+Ryan owns the decision whether to invoke fresh bounded planning for Task 1P.4.3a.2 and every later expansion. Codex Desktop preserves the durable 4AS-R evidence and exact residual inventory.
 
 ## Current Action
 
-Verify and explicitly stage only the exact 4AS paths, commit on `codex/csp-shared-dashboard-styles`, fast-forward local `main`, push `origin/main` without force, observe the automatic Fly deployment, verify the exact source SHA and credential-free production `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+Preserve the completed 4AS-R result and decide whether to invoke the work-block planner for Task 1P.4.3a.2. No transaction/matching style implementation is authorized yet.
 
 ## Work Block 4AS-R Contract
 
@@ -32,6 +32,15 @@ Verify and explicitly stage only the exact 4AS paths, commit on `codex/csp-share
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths; protected-boundary and high-confidence sensitive-addition scans; full smoke; configured-auth/no-password isolated Chrome; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and both preserved untracked files.
 - Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and the separately gated Task 1P.4.3a.2.
+
+## Work Block 4AS-R Result
+
+- Exact 22-path source commit `8b85c38845c2c9389ff3d17d5cbf1436540d23f9` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30040196919` and deploy job `89317958328` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Exact scope, staging, sensitive-addition scan, maintained verification, clean fast-forward, remote alignment, automatic deployment, health, and both preserved-file checks passed.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, broader recovery, Task 1P.4.3a.2 work, or excluded mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-shared-dashboard-style-compatibility-release-4as-r.md`.
 
 ## Work Block 4AS Contract
 
@@ -54,7 +63,7 @@ Verify and explicitly stage only the exact 4AS paths, commit on `codex/csp-share
 ## Task 1P.4.3a Just-In-Time Decomposition
 
 - Fresh tracked-source inventory: seven inline style blocks, 211 template style attributes, nine JavaScript-generated style attributes, and 31 application runtime style writes. The original 4AE count of 221 template attributes remains historical baseline evidence.
-- Task 1P.4.3a.1: shared shell and dashboard/report pages/fragments — complete and verified locally through 4AS; durability remains separate.
+- Task 1P.4.3a.1: shared shell and dashboard/report pages/fragments — durable, automatically deployed, and credential-free health verified through 4AS-R.
 - Task 1P.4.3a.2: transactions, matching, vendor cards, and supporting fragments — planned after the shared patterns are proven.
 - Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — planned.
 - Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — planned.
