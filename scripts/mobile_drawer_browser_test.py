@@ -8,7 +8,8 @@ AI modal listeners, CSRF wiring, service-worker registration, and configured-
 auth/no-password shell loading. Transaction and supporting modal fragments,
 categorization/upload controls, Cash Flow/Long-Term Planning, Short-Term
 Planning, and Weekly/Waterfall interactions run only against temporary
-synthetic databases.
+synthetic databases. Subscription and BFM-only payroll interactions use the
+same local-only fixture and cleanup boundary.
 """
 
 from __future__ import annotations
@@ -452,6 +453,39 @@ def _seed_subscription_data(entity_key: str) -> None:
                     imported_at,
                 ),
             )
+    conn.commit()
+    conn.close()
+
+
+def _seed_payroll_data(entity_key: str) -> None:
+    if entity_key != "company":
+        return
+
+    from core.db import get_connection
+
+    conn = get_connection(entity_key)
+    employee = conn.execute(
+        "INSERT INTO employees "
+        "(name, role, pay_type, pay_rate_cents, hire_date, status, notes) "
+        "VALUES ('4AP BFM Provider', 'Providers', 'salary', 12000000, "
+        "'2024-01-15', 'active', 'Synthetic 4AP detail notes')"
+    )
+    employee_id = employee.lastrowid
+    conn.execute(
+        "INSERT INTO employee_pay_changes "
+        "(employee_id, effective_date, old_rate_cents, new_rate_cents, notes) "
+        "VALUES (?, '2026-01-01', 11000000, 12000000, 'Synthetic 4AP raise')",
+        (employee_id,),
+    )
+    conn.executemany(
+        "INSERT INTO payroll_entries "
+        "(employee_id, paycheck_date, amount_cents, source_filename) "
+        "VALUES (?, ?, ?, 'synthetic-4ap.xlsx')",
+        (
+            (employee_id, "2026-06-15", 500000),
+            (employee_id, "2026-07-01", 600000),
+        ),
+    )
     conn.commit()
     conn.close()
 
@@ -1940,6 +1974,168 @@ def _assert_subscription_page(page, base_url: str, label: str) -> None:
     page.goto(base_url, wait_until="networkidle")
 
 
+def _assert_payroll_page(page, base_url: str, label: str) -> None:
+    from web.routes import payroll as payroll_routes
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "BFM", "url": base_url}]
+    )
+    page.goto(f"{base_url}/payroll/", wait_until="networkidle")
+    page.wait_for_function(
+        "document.querySelector('[data-payroll-controller]')"
+        "?.dataset.initialized === 'true'"
+    )
+    _check(
+        page.locator("[data-payroll-controller]").count() == 1
+        and page.locator('script[src*="payroll.js"]').count() == 1
+        and page.locator("#pr-role-colors-data").evaluate(
+            "element => element.tagName === 'TEMPLATE'"
+        )
+        and page.locator(
+            "#main-content [onclick], #main-content [onchange], "
+            "#main-content [onkeydown], #main-content [hx-on]"
+        ).count() == 0,
+        f"{label}: BFM payroll must load one handler-free page-owned controller",
+    )
+
+    page.locator('[data-payroll-action="show-add"]').click()
+    add_name = page.locator('#pr-add-form input[name="name"]')
+    _check(
+        page.locator("#pr-add-form").is_visible()
+        and add_name.evaluate("element => document.activeElement === element"),
+        f"{label}: delegated add control must reveal and focus the form",
+    )
+    add_name.fill("Synthetic unsaved 4AP")
+    page.locator('[data-payroll-action="hide-add"]').click()
+    _check(
+        page.locator("#pr-add-form").is_hidden(),
+        f"{label}: delegated add cancellation must hide the form",
+    )
+
+    roster_row = page.locator('[data-payroll-action="open-detail"]')
+    _check(
+        roster_row.count() == 1
+        and "4AP BFM Provider" in roster_row.inner_text(),
+        f"{label}: BFM payroll must render the synthetic roster row",
+    )
+    roster_row.focus()
+    roster_row.press("Enter")
+    page.wait_for_function(
+        "() => document.getElementById('pr-detail-name').textContent.includes('4AP BFM Provider')"
+    )
+    _check(
+        page.locator("#pr-detail-scrim").is_visible()
+        and page.locator("#pr-detail-timeline .pr-timeline-item").count() == 1
+        and page.locator("#pr-detail-paychecks .pr-paycheck-item").count() == 2
+        and page.locator("#pr-edit-form").get_attribute("action").endswith(
+            "/payroll/employees/update/1"
+        )
+        and page.locator("#pr-delete-form").get_attribute("action").endswith(
+            "/payroll/employees/delete/1"
+        ),
+        f"{label}: Enter detail must populate history paychecks and valid edit/delete forms",
+    )
+
+    page.once("dialog", lambda dialog: dialog.dismiss())
+    page.locator("#pr-delete-btn").click()
+    _check(
+        page.locator("#pr-detail-scrim").is_visible()
+        and page.locator('[data-payroll-action="open-detail"]').count() == 1,
+        f"{label}: dismissed deletion confirmation must preserve the employee",
+    )
+    page.locator(
+        '#pr-detail-scrim [data-payroll-action="close-detail"]'
+    ).first.click()
+    _check(
+        page.locator("#pr-detail-scrim").is_hidden(),
+        f"{label}: delegated close button must hide payroll detail",
+    )
+
+    roster_row.focus()
+    roster_row.press("Space")
+    page.wait_for_function(
+        "() => !document.getElementById('pr-detail-scrim').hidden"
+    )
+    page.locator("#pr-detail-scrim").click(position={"x": 2, "y": 2})
+    _check(
+        page.locator("#pr-detail-scrim").is_hidden(),
+        f"{label}: scrim click must close payroll detail",
+    )
+    roster_row.click()
+    page.wait_for_function(
+        "() => !document.getElementById('pr-detail-scrim').hidden"
+    )
+    page.keyboard.press("Escape")
+    _check(
+        page.locator("#pr-detail-scrim").is_hidden(),
+        f"{label}: Escape must close payroll detail",
+    )
+
+    spending = page.locator("#pr-spending-period")
+    spending.select_option("2026-06-15")
+    page.wait_for_function(
+        "() => document.getElementById('pr-spending-body').textContent.includes('$5,000')"
+    )
+    _check(
+        "4AP BFM Provider" in page.locator("#pr-spending-body").inner_text(),
+        f"{label}: delegated spending-period change must refresh synthetic BFM totals",
+    )
+
+    upload = page.locator('input[name="payroll_file"]')
+    upload.set_input_files(
+        {
+            "name": "synthetic-4ap.xlsx",
+            "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "buffer": b"synthetic local-only workbook",
+        }
+    )
+    with page.expect_navigation(wait_until="networkidle"):
+        page.get_by_role("button", name="Upload & Preview", exact=True).click()
+    assignment = page.locator(".pr-select--assign")
+    new_role = page.locator(".pr-select--role")
+    _check(
+        assignment.count() == 1
+        and new_role.is_visible()
+        and "4AP Preview Employee" in page.locator(".pr-import-table").inner_text(),
+        f"{label}: synthetic import preview must expose the new-role control",
+    )
+    assignment.select_option("1")
+    _check(
+        new_role.is_hidden(),
+        f"{label}: selecting an existing employee must hide the new-role control",
+    )
+    assignment.select_option("new")
+    _check(
+        new_role.is_visible(),
+        f"{label}: selecting new must reveal the new-role control",
+    )
+    temp_key = page.locator('input[name="temp_key"]').input_value()
+    temp_path = Path(payroll_routes._TEMP_DIR) / f"{temp_key}.json"
+    _check(temp_path.exists(), f"{label}: preview must create its exact temporary payload")
+    with page.expect_navigation(wait_until="networkidle"):
+        page.get_by_role("button", name="Cancel", exact=True).last.click()
+    _check(
+        not temp_path.exists(),
+        f"{label}: preview cancellation must remove its exact temporary payload",
+    )
+
+    for entity_name in ("Personal", "LL"):
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        page.goto(f"{base_url}/payroll/", wait_until="networkidle")
+        _check(
+            page.url.rstrip("/") == base_url
+            and page.locator("[data-payroll-controller]").count() == 0,
+            f"{label}: {entity_name} must remain denied before payroll execution",
+        )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -1959,6 +2155,8 @@ def main() -> None:
     ai_client_module = None
     original_category_suggestion = None
     original_cancellation_tips = None
+    payroll_routes_module = None
+    original_payroll_parser = None
 
     try:
         with tempfile.TemporaryDirectory(prefix="expense_drawer_browser_") as temp_root:
@@ -1981,9 +2179,11 @@ def main() -> None:
             from core.db import init_db
             from core import ai_client as ai_client_module
             from web import create_app
+            from web.routes import payroll as payroll_routes_module
 
             original_category_suggestion = ai_client_module.generate_category_suggestion
             original_cancellation_tips = ai_client_module.generate_cancellation_tips
+            original_payroll_parser = payroll_routes_module.parse_phoenix_per_payroll_costs
             ai_client_module.generate_category_suggestion = lambda **_kwargs: {
                 "category": "Office Supplies",
                 "subcategory": "General",
@@ -1992,6 +2192,19 @@ def main() -> None:
             ai_client_module.generate_cancellation_tips = (
                 lambda _merchant: "Synthetic 4AO cancellation tips. Use the local account portal."
             )
+            payroll_routes_module.parse_phoenix_per_payroll_costs = (
+                lambda _file: (
+                    [
+                        {
+                            "name": "4AP Preview Employee",
+                            "phoenix_job_code": "SYNTHETIC",
+                            "paycheck_date": "2026-07-15",
+                            "amount": 1234.56,
+                        }
+                    ],
+                    [],
+                )
+            )
 
             for entity_key in ("personal", "company", "luxelegacy"):
                 init_db(entity_key)
@@ -1999,6 +2212,7 @@ def main() -> None:
                 _seed_cashflow_planning_data(entity_key)
                 _seed_short_term_planning_data(entity_key)
                 _seed_subscription_data(entity_key)
+                _seed_payroll_data(entity_key)
 
             app = create_app()
             app.config.update(TESTING=True)
@@ -2263,6 +2477,9 @@ def main() -> None:
                 _assert_subscription_page(
                     page, base_url, "no-password subscription execution"
                 )
+                _assert_payroll_page(
+                    page, base_url, "no-password payroll execution"
+                )
 
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
@@ -2372,6 +2589,9 @@ def main() -> None:
                 _assert_subscription_page(
                     page, base_url, "configured-auth subscription execution"
                 )
+                _assert_payroll_page(
+                    page, base_url, "configured-auth payroll execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -2416,10 +2636,12 @@ def main() -> None:
             ai_client_module.generate_category_suggestion = original_category_suggestion
         if ai_client_module is not None and original_cancellation_tips is not None:
             ai_client_module.generate_cancellation_tips = original_cancellation_tips
+        if payroll_routes_module is not None and original_payroll_parser is not None:
+            payroll_routes_module.parse_phoenix_per_payroll_costs = original_payroll_parser
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, and subscription workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, and BFM-only payroll workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

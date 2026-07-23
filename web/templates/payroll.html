@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Payroll{% endblock %}
+{% block head %}
+<script defer src="{{ url_for('static', filename='payroll.js') }}?v={{ cache_bust }}"></script>
+{% endblock %}
 
 {% block content %}
+<div data-payroll-controller>
 <div class="pr-page">
 
 <div class="page-title-row">
@@ -14,7 +18,8 @@
 <div class="outline-panel">
   <div class="panel-header">
     <span>Team Roster</span>
-    <button type="button" class="btn btn-primary btn-sm" onclick="prShowAddForm()">+ Add Employee</button>
+    <button type="button" class="btn btn-primary btn-sm"
+            data-payroll-action="show-add">+ Add Employee</button>
   </div>
 
   {# ── Add employee form (hidden by default) ── #}
@@ -51,7 +56,8 @@
         </div>
         <div class="pr-add-field pr-add-actions">
           <button type="submit" class="btn btn-primary btn-sm">Save</button>
-          <button type="button" class="btn btn-secondary btn-sm" onclick="prHideAddForm()">Cancel</button>
+          <button type="button" class="btn btn-secondary btn-sm"
+                  data-payroll-action="hide-add">Cancel</button>
         </div>
       </div>
     </form>
@@ -74,8 +80,8 @@
       <tbody>
         {% for emp in employees %}
         <tr class="pr-roster-row {% if emp.status != 'active' %}pr-inactive{% endif %}"
-            onclick="prOpenDetail({{ emp.id }})" role="button" tabindex="0"
-            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+            data-payroll-action="open-detail" data-employee-id="{{ emp.id }}"
+            role="button" tabindex="0">
           <td class="pr-name">{{ emp.name }}</td>
           <td>
             <span class="pr-role-badge" style="background:{{ role_colors.get(emp.role, '#98989d') }}">
@@ -130,7 +136,7 @@
     <span>Spending by Role</span>
     <div class="pr-month-select">
       <select id="pr-spending-period"
-              onchange="prLoadSpending(this.value)"
+              data-payroll-action="load-spending"
               class="pr-input pr-select pr-select--month">
         {% if available_periods %}
           {% for p in available_periods %}
@@ -223,7 +229,7 @@
                 {% set matched_emp = ue.matched_employee %}
                 <div class="pr-import-assign">
                   <select name="assign_{{ ue.name }}" class="pr-input pr-select pr-select--assign"
-                          onchange="prToggleNewRole(this, '{{ ue.name|e }}')">
+                          data-payroll-action="toggle-new-role">
                     {% if not ue.exact_matches %}
                     <option value="new" selected>Create new employee</option>
                     {% elif ue.exact_matches|length > 1 %}
@@ -279,7 +285,8 @@
   <div class="outline-panel tq-modal-card pr-detail-card" role="dialog" aria-modal="true">
     <div class="tq-modal-top">
       <button type="button" class="cf-edit-btn tq-modal-close"
-              onclick="prCloseDetail()" title="Close" aria-label="Close">&times;</button>
+              data-payroll-action="close-detail"
+              title="Close" aria-label="Close">&times;</button>
     </div>
     <div class="pr-detail-body">
       <div class="pr-detail-header">
@@ -368,17 +375,19 @@
               <textarea name="notes" id="pr-edit-notes" class="pr-modal-input" rows="2"></textarea>
             </div>
           </div>
-          <div class="pr-detail-footer">
-            <form method="post" id="pr-delete-form">
-              <button type="submit" class="btn btn-danger btn-sm" id="pr-delete-btn"
-                      onclick="return confirm('Delete this employee? All pay history and payroll entries will also be deleted.')">Delete</button>
-            </form>
-            <div class="pr-detail-footer-right">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="prCloseDetail()">Cancel</button>
-              <button type="submit" class="btn btn-primary btn-sm">Save</button>
-            </div>
-          </div>
         </form>
+        <div class="pr-detail-footer">
+          <form method="post" id="pr-delete-form"
+                data-payroll-confirm="Delete this employee? All pay history and payroll entries will also be deleted.">
+            <button type="submit" class="btn btn-danger btn-sm" id="pr-delete-btn">Delete</button>
+          </form>
+          <div class="pr-detail-footer-right">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-payroll-action="close-detail">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm"
+                    form="pr-edit-form">Save</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -386,164 +395,8 @@
 
 </div>
 
-<script>
-/* ── Add employee form toggle ── */
-function prShowAddForm() {
-  document.getElementById('pr-add-form').hidden = false;
-  document.querySelector('#pr-add-form input[name="name"]').focus();
-}
-function prHideAddForm() {
-  document.getElementById('pr-add-form').hidden = true;
-}
-
-/* ── Detail modal ── */
-var _prCurrentId = null;
-
-function prOpenDetail(empId) {
-  _prCurrentId = empId;
-  var scrim = document.getElementById('pr-detail-scrim');
-  scrim.hidden = false;
-
-  // Fetch employee detail
-  fetch('/payroll/employees/detail/' + empId)
-    .then(function(r) { return r.json(); })
-    .then(function(d) { prPopulateDetail(d); })
-    .catch(function(err) { console.error('Detail fetch error:', err); });
-}
-
-function prCloseDetail() {
-  document.getElementById('pr-detail-scrim').hidden = true;
-  _prCurrentId = null;
-}
-
-// Close on click outside
-document.addEventListener('click', function(e) {
-  var scrim = document.getElementById('pr-detail-scrim');
-  if (!scrim.hidden && e.target === scrim) prCloseDetail();
-});
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') prCloseDetail();
-});
-
-var _roleColors = {{ role_colors|tojson }};
-
-function prPopulateDetail(d) {
-  document.getElementById('pr-detail-name').textContent = d.name;
-
-  var badge = document.getElementById('pr-detail-role-badge');
-  badge.textContent = d.role;
-  badge.style.background = _roleColors[d.role] || '#98989d';
-
-  var statusBadge = document.getElementById('pr-detail-status-badge');
-  statusBadge.textContent = d.status;
-  statusBadge.className = 'pr-status-badge pr-status-' + d.status;
-
-  // Compensation stats
-  var rateStr = '';
-  if (d.pay_type === 'salary') {
-    rateStr = '$' + (d.pay_rate_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) + '/yr';
-  } else {
-    rateStr = '$' + (d.pay_rate_cents / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/hr';
-  }
-  document.getElementById('pr-detail-rate').textContent = rateStr;
-  document.getElementById('pr-detail-hire').textContent = d.hire_date || '—';
-
-  var daysEl = document.getElementById('pr-detail-days-raise');
-  if (d.days_since_raise !== null) {
-    daysEl.textContent = d.days_since_raise + ' days';
-    daysEl.className = 'pr-detail-stat-value' + (d.days_since_raise > 365 ? ' pr-raise-flag--stale' : '');
-  } else {
-    daysEl.textContent = 'No raises on file';
-    daysEl.className = 'pr-detail-stat-value pr-raise-flag--none';
-  }
-
-  var peerStr = 'No comparable peers';
-  if (d.peer_avg_cents !== null) {
-    if (d.pay_type === 'salary') {
-      peerStr = '$' + (d.peer_avg_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) + '/yr';
-    } else {
-      peerStr = '$' + (d.peer_avg_cents / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/hr';
-    }
-  }
-  document.getElementById('pr-detail-peer-avg').textContent = peerStr;
-
-  // Pay history timeline
-  var historyBox = document.getElementById('pr-detail-history-box');
-  var timeline = document.getElementById('pr-detail-timeline');
-  if (d.pay_changes && d.pay_changes.length > 0) {
-    historyBox.hidden = false;
-    var html = '';
-    d.pay_changes.forEach(function(c) {
-      var pctStr = c.pct_change !== null ? ' (' + (c.pct_change > 0 ? '+' : '') + c.pct_change + '%)' : '';
-      var oldRate = '$' + (c.old_rate_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 2});
-      var newRate = '$' + (c.new_rate_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 2});
-      html += '<div class="pr-timeline-item">'
-        + '<span class="pr-timeline-date">' + c.effective_date + '</span>'
-        + '<span class="pr-timeline-change">' + oldRate + ' → ' + newRate + pctStr + '</span>'
-        + (c.notes ? '<span class="pr-timeline-notes">' + c.notes + '</span>' : '')
-        + '</div>';
-    });
-    timeline.innerHTML = html;
-  } else {
-    historyBox.hidden = true;
-  }
-
-  // Recent paychecks
-  var paycheckBox = document.getElementById('pr-detail-paychecks-box');
-  var paychecks = document.getElementById('pr-detail-paychecks');
-  if (d.recent_paychecks && d.recent_paychecks.length > 0) {
-    paycheckBox.hidden = false;
-    var html2 = '';
-    d.recent_paychecks.forEach(function(p) {
-      html2 += '<div class="pr-paycheck-item">'
-        + '<span class="pr-paycheck-date">' + p.paycheck_date + '</span>'
-        + '<span class="pr-paycheck-amount">$' + (p.amount_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) + '</span>'
-        + '</div>';
-    });
-    paychecks.innerHTML = html2;
-  } else {
-    paycheckBox.hidden = true;
-  }
-
-  // Edit form
-  document.getElementById('pr-edit-form').action = '/payroll/employees/update/' + d.id;
-  document.getElementById('pr-edit-name').value = d.name;
-  document.getElementById('pr-edit-role').value = d.role;
-  document.getElementById('pr-edit-pay-type').value = d.pay_type;
-  document.getElementById('pr-edit-pay-rate').value = (d.pay_rate_cents / 100).toLocaleString('en-US', {
-    minimumFractionDigits: d.pay_type === 'salary' ? 0 : 2,
-    maximumFractionDigits: d.pay_type === 'salary' ? 0 : 2,
-    useGrouping: true
-  });
-  document.getElementById('pr-edit-hire-date').value = d.hire_date || '';
-  document.getElementById('pr-edit-status').value = d.status;
-  document.getElementById('pr-edit-notes').value = d.notes || '';
-
-  // Delete form
-  document.getElementById('pr-delete-form').action = '/payroll/employees/delete/' + d.id;
-
-  // Strip commas from pay rate before submit
-  document.getElementById('pr-edit-form').addEventListener('submit', function() {
-    var rateInput = document.getElementById('pr-edit-pay-rate');
-    rateInput.value = rateInput.value.replace(/,/g, '');
-  });
-}
-
-/* ── Spending pay period selector (HTMX-like fetch) ── */
-function prLoadSpending(period) {
-  fetch('/payroll/spending?spending_period=' + encodeURIComponent(period))
-    .then(function(r) { return r.text(); })
-    .then(function(html) {
-      document.getElementById('pr-spending-body').innerHTML = html;
-    });
-}
-
-/* ── Import: toggle new role dropdown ── */
-function prToggleNewRole(sel, empName) {
-  var roleSelect = sel.parentElement.querySelector('.pr-select--role');
-  if (roleSelect) {
-    roleSelect.style.display = sel.value === 'new' ? '' : 'none';
-  }
-}
-</script>
+<template id="pr-role-colors-data" data-json>
+{{ role_colors|tojson }}
+</template>
+</div>{# payroll controller #}
 {% endblock %}

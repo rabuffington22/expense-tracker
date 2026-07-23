@@ -2,27 +2,54 @@
 
 ## Active Objective
 
-Preserve the durable, automatically deployed, and credential-free health-verified 4AO-R subscription-page result while Ryan chooses the next separate gate.
+Publish the exact locally verified 4AP payroll-page result to `main`, observe its automatic Fly deployment read-only, verify credential-free production health, and close the release with sanitized Runway OS state.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.5-R is complete, durable, automatically deployed, and credential-free production health verified through 4AO-R, while Task 1P.4.2c.6 remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.6-R is active through confirmed work block 4AP-R, while Task 1P.4.2c.7 and every broader mutation remain separate Ryan gates.
 
 ## Current Work Block
 
-Work block 4AO-R: Subscription Page Durability And Release — complete.
+Work block 4AP-R: Payroll Page Durability And Release — active.
 
 ## Current Task
 
-Task 1P.4.2c.6: Migrate payroll-page execution — current planning gate; implementation is not authorized.
+Task 1P.4.2c.6-R: Publish and verify payroll-page execution — active.
 
 ## Owner
 
-Ryan owns the next task and every expansion or live-action decision. Codex Desktop owns Runway OS currency and no further mutation until a fresh work block is proposed and confirmed.
+Codex Desktop owns exact-path staging, release verification, one source commit, clean fast-forward, direct-main push, read-only automatic-deployment observation, credential-free production health, and sanitized closeout. Ryan owns every expansion, manual live mutation, failure recovery, and Task 1P.4.2c.7.
 
 ## Current Action
 
-Preserve the exact 4AO-R result. Recheck Task 1P.4.2c.6 source inventory and propose a fresh bounded payroll-page block only if Ryan asks to continue.
+Verify and stage only the exact 4AP source set, commit it on `codex/csp-payroll`, fast-forward and push `main`, observe only the resulting automatic Fly deployment, verify exact source SHA and credential-free `/health`, then publish one command-center-only `[skip actions]` closeout.
+
+## Work Block 4AP-R Contract
+
+- Include explicit staging of the exact verified 4AP application, controller, maintained-test, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-payroll`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.2c.7 and every later task, new application/runtime mutation beyond verified 4AP, credentials, protected data, real databases, retained uploads, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly mutations, downstream access/writes, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified controller, template, tests, residual inventory, false HTMX execution switches, and both unrelated untracked files exactly; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.7 still separately gated.
+
+## Work Block 4AP Contract
+
+- Include Task 1P.4.2c.6 plus only its focused Task 2 regression slice: move the one executable inline script and nine native handlers from `payroll.html` into a page-owned template-free local controller, delegated declarative controls, and non-script inert role-color data while preserving BFM-only access, add/edit/detail, spending-period, new-role, deletion-confirmation, modal, scrim, Escape, Enter, and Space workflows.
+- Keep Tasks 1P.4.2c.7-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, route/import/database-query/financial/product/style/CSP-enforcement/authentication/CSRF/Plaid/dependency/service-worker changes, credentials, protected data, real databases, retained uploads, external/live access, GitHub durability, publication, deployment, workflows, downstream access/writes, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use `web/static/payroll.js`, delegated `data-*` actions, non-script inert role-color data, and temporary synthetic Personal/BFM/Luxe Legacy databases; preserve existing runtime-style behavior for Task 1P.4.3a; keep both HTMX execution switches false; deny non-localhost browser traffic; require zero unexpected console/page errors and exact cleanup; keep durability local-only.
+- Stop if parity requires a route, import, database-query, financial, product, style-policy, CSP-enforcement, authentication, Plaid, dependency, protected/live, destructive, or later-task change; if a pre-existing payroll defect makes parity ambiguous; if verification changes the plan or cleanup fails; if command-center checks fail; if scope expands; or if either preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered payroll zero-execution assertions; exact residual inventory of eight executable inline scripts, fourteen external scripts, zero inert script carriers, seven native handlers, and zero `hx-on`; configured-auth and no-password isolated Chrome covering the included BFM workflows, Personal/LL denial, denied networking, browser errors, and cleanup; relevant Python/JavaScript/JSON syntax; whitespace; dashboard refresh/health/rendered state; exact scope; and both preserved files.
+- Report exact migrated behavior, controller/data organization, residual inventory, focused and full proof, entity-boundary and cleanup results, changed paths, local branch state, preserved exclusions, and separate 4AP-R plus Task 1P.4.2c.7 gates.
+
+## Work Block 4AP Result
+
+- `payroll.html` loads page-owned template-free `payroll.js`, uses delegated declarative controls, carries role colors in a non-script inert template, and contains zero executable inline scripts, native handlers, or `hx-on`.
+- BFM-only add/detail/edit/delete-target, pay-history/paycheck, spending-period, import-role, confirmation, modal/scrim/Escape, Enter, and Space workflows pass in maintained synthetic browser proof; Personal and LL remain denied before payroll execution.
+- The previously nested edit/delete forms are now valid sibling forms, and fetched detail values use DOM text nodes; no route, import, query, financial, product, style, CSP-enforcement, authentication, Plaid, dependency, or live-system change occurred.
+- Residual tracked-template inventory is eight executable inline scripts, fourteen external scripts, zero inert script carriers, seven native handlers, and zero `hx-on`; both HTMX execution switches remain false.
+- Baseline and final full smoke, configured-auth/no-password isolated Chrome, exact temporary database/upload/browser cleanup, relevant syntax, JSON, whitespace, dashboard refresh/health/generated state, exact scope, and preserved-file checks pass.
+- The result is local-only on `codex/csp-payroll`; no commit, push, PR, merge, publication, deployment, credential, protected data, real database, external request, live action, or preserved-file mutation occurred. Evidence: `command-center/logs/2026-07-23-payroll-page-execution-4ap.md`.
 
 ## Work Block 4AO-R Contract
 

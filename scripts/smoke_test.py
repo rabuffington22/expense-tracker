@@ -5010,11 +5010,14 @@ def main() -> None:
 
             payroll_page = payroll_4r_client.get("/payroll/")
             payroll_html = payroll_page.get_data(as_text=True)
+            payroll_controller_source = (
+                PROJECT_ROOT / "web" / "static" / "payroll.js"
+            ).read_text()
             _check(
                 payroll_page.status_code == 200
                 and "Peer Avg (same role and pay type)" in payroll_html
-                and "No comparable peers" in payroll_html
-                and "d.peer_avg_cents !== null" in payroll_html,
+                and "No comparable peers" in payroll_controller_source
+                and "data.peer_avg_cents !== null" in payroll_controller_source,
                 "payroll 4R display contract is missing labels or explicit empty handling",
             )
 
@@ -8736,8 +8739,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 9, 13, 0, 16, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AO CSP contract",
+            == (22, 8, 14, 0, 7, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AP CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8958,8 +8961,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 9, 13, 0, 16, 0),
-            "categorization/upload pages: maintained aggregate inventory must match the post-4AO CSP contract",
+            == (22, 8, 14, 0, 7, 0),
+            "categorization/upload pages: maintained aggregate inventory must match the post-4AP CSP contract",
         )
 
         print("   ✅ Three source templates, delegated controller, rendered routes, status-only reset, and exact residual inventory passed")
@@ -9080,8 +9083,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 9, 13, 0, 16, 0),
-            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AO CSP contract",
+            == (22, 8, 14, 0, 7, 0),
+            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AP CSP contract",
         )
 
         print("   ✅ Two source templates, page-owned controllers, rendered routes, and exact residual inventory passed")
@@ -9222,8 +9225,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 9, 13, 0, 16, 0),
-            "short-term planning: maintained aggregate inventory must match the post-4AO CSP contract",
+            == (22, 8, 14, 0, 7, 0),
+            "short-term planning: maintained aggregate inventory must match the post-4AP CSP contract",
         )
 
         print("   ✅ Source template, page controller, rendered response markup, inert data, cleanup, and exact residual inventory passed")
@@ -9326,8 +9329,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 9, 13, 0, 16, 0),
-            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AO CSP contract",
+            == (22, 8, 14, 0, 7, 0),
+            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AP CSP contract",
         )
 
         print("   ✅ Two source templates, rendered routes, page controller, AI seams, and exact residual inventory passed")
@@ -9423,11 +9426,106 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 9, 13, 0, 16, 0),
-            "subscriptions: maintained aggregate inventory must match the post-4AO CSP contract",
+            == (22, 8, 14, 0, 7, 0),
+            "subscriptions: maintained aggregate inventory must match the post-4AP CSP contract",
         )
 
         print("   ✅ Source template, rendered route, page controller, inert data, AI seam, and exact residual inventory passed")
+
+        # ── 11k. Payroll-page execution ─────────────────────────────
+        print("\n11k. Payroll-page execution…")
+
+        payroll_template = templates_root / "payroll.html"
+        payroll_source = payroll_template.read_text()
+        payroll_asset_source = (
+            PROJECT_ROOT / "web" / "static" / "payroll.js"
+        ).read_text()
+        _check(
+            not inline_executable_script_pattern.search(payroll_source)
+            and not native_handler_pattern.search(payroll_source)
+            and "hx-on" not in payroll_source,
+            "payroll: source template must contain no inline execution",
+        )
+        _check(
+            "payroll.js" in payroll_source
+            and "data-payroll-controller" in payroll_source
+            and '<template id="pr-role-colors-data" data-json>' in payroll_source
+            and 'data-payroll-action="show-add"' in payroll_source
+            and 'data-payroll-action="hide-add"' in payroll_source
+            and 'data-payroll-action="open-detail"' in payroll_source
+            and 'data-payroll-action="load-spending"' in payroll_source
+            and 'data-payroll-action="toggle-new-role"' in payroll_source
+            and 'data-payroll-action="close-detail"' in payroll_source
+            and "data-payroll-confirm=" in payroll_source
+            and 'form="pr-edit-form"' in payroll_source,
+            "payroll: template must expose the complete delegated controller, inert-data, and valid-form contract",
+        )
+        _check(
+            "{{" not in payroll_asset_source
+            and "{%" not in payroll_asset_source
+            and ".onclick" not in payroll_asset_source
+            and "data-payroll-action" in payroll_asset_source
+            and "payrollConfirm" in payroll_asset_source
+            and "replaceChildren" in payroll_asset_source,
+            "payroll: page controller must remain template-free and own delegated behavior",
+        )
+
+        fragment_client.set_cookie("entity", "BFM")
+        rendered_payroll = fragment_client.get("/payroll/").get_data(as_text=True)
+        _check(
+            not inline_executable_script_pattern.search(rendered_payroll)
+            and not native_handler_pattern.search(rendered_payroll)
+            and "hx-on" not in rendered_payroll,
+            "payroll: rendered route must contain no inline execution",
+        )
+        _check(
+            "/static/payroll.js" in rendered_payroll
+            and "data-payroll-controller" in rendered_payroll
+            and '<template id="pr-role-colors-data" data-json>' in rendered_payroll,
+            "payroll: rendered BFM route must expose the maintained controller and inert role-color data",
+        )
+
+        all_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        all_script_count = len(
+            _re.findall(r"<script\b[^>]*>", all_template_source, flags=_re.IGNORECASE)
+        )
+        inert_script_count = len(
+            _re.findall(
+                r"<script\b[^>]*\btype=[\"']application/json[\"'][^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        external_script_count = len(
+            _re.findall(
+                r"<script\b(?=[^>]*\bsrc=)[^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        inline_executable_count = (
+            all_script_count - inert_script_count - external_script_count
+        )
+        all_native_handler_count = len(
+            native_handler_pattern.findall(all_template_source)
+        )
+        all_hx_on_count = all_template_source.count("hx-on")
+        _check(
+            (
+                all_script_count,
+                inline_executable_count,
+                external_script_count,
+                inert_script_count,
+                all_native_handler_count,
+                all_hx_on_count,
+            )
+            == (22, 8, 14, 0, 7, 0),
+            "payroll: maintained aggregate inventory must match the post-4AP CSP contract",
+        )
+
+        print("   ✅ Source template, rendered BFM route, page controller, inert data, valid forms, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
