@@ -8729,8 +8729,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (24, 12, 10, 2, 66, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AL CSP contract",
+            == (23, 11, 11, 1, 44, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AM CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8951,8 +8951,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (24, 12, 10, 2, 66, 0),
-            "categorization/upload pages: maintained aggregate inventory must match the post-4AL CSP contract",
+            == (23, 11, 11, 1, 44, 0),
+            "categorization/upload pages: maintained aggregate inventory must match the post-4AM CSP contract",
         )
 
         print("   ✅ Three source templates, delegated controller, rendered routes, status-only reset, and exact residual inventory passed")
@@ -9073,11 +9073,153 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (24, 12, 10, 2, 66, 0),
-            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AL CSP contract",
+            == (23, 11, 11, 1, 44, 0),
+            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AM CSP contract",
         )
 
         print("   ✅ Two source templates, page-owned controllers, rendered routes, and exact residual inventory passed")
+
+        # ── 11h. Short-Term Planning execution ────────────────────────
+        print("\n11h. Short-Term Planning execution…")
+
+        short_term_template = templates_root / "short_term_planning.html"
+        short_term_source = short_term_template.read_text()
+        short_term_route_source = (
+            PROJECT_ROOT / "web" / "routes" / "short_term_planning.py"
+        ).read_text()
+        short_term_asset_source = (
+            PROJECT_ROOT / "web" / "static" / "short-term-planning.js"
+        ).read_text()
+        _check(
+            not inline_executable_script_pattern.search(short_term_source)
+            and not native_handler_pattern.search(short_term_source)
+            and "hx-on" not in short_term_source,
+            "short-term planning: source template must contain no inline execution",
+        )
+        _check(
+            '<template id="stp-goals-data" data-json>' in short_term_source
+            and "short-term-planning.js" in short_term_source
+            and "data-short-term-planning-controller" in short_term_source
+            and 'data-stp-action="flip-open"' in short_term_source
+            and 'data-stp-change="budget-month"' in short_term_source,
+            "short-term planning: source template must expose inert goal data and delegated controller seams",
+        )
+        _check(
+            "{{" not in short_term_asset_source
+            and "{%" not in short_term_asset_source
+            and 'data-stp-action="edit-transaction"' in short_term_route_source
+            and 'data-stp-action="show-transactions"' in short_term_route_source
+            and not native_handler_pattern.search(short_term_route_source),
+            "short-term planning: page controller and Python response markup must remain template-free and handler-free",
+        )
+
+        marker_id = "synthetic-4am-short-term-browser"
+        marker_conn = get_connection("personal")
+        try:
+            marker_conn.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, merchant_canonical, "
+                "amount, amount_cents, account, category, subcategory, "
+                "source_filename, imported_at) "
+                "VALUES (?, ?, '4AM SHORT TERM MARKER', '4AM SHORT TERM MARKER', "
+                "-12.34, -1234, '4AM Synthetic', 'Food', 'General', "
+                "'synthetic-4am', '2026-07-23T00:00:00+00:00')",
+                (marker_id, f"{current_month}-15"),
+            )
+            marker_conn.commit()
+        finally:
+            marker_conn.close()
+
+        fragment_client.set_cookie("entity", "Personal")
+        rendered_short_term = fragment_client.get(
+            f"/planning/short-term/?month={current_month}"
+        ).get_data(as_text=True)
+        rendered_transactions = fragment_client.get(
+            f"/planning/short-term/budget/transactions"
+            f"?category=Food&month={current_month}"
+        ).get_data(as_text=True)
+        rendered_subcategories = fragment_client.get(
+            f"/planning/short-term/budget/subcategories"
+            f"?category=Food&month={current_month}"
+        ).get_data(as_text=True)
+        _check(
+            not inline_executable_script_pattern.search(rendered_short_term)
+            and not native_handler_pattern.search(rendered_short_term)
+            and "hx-on" not in rendered_short_term
+            and "/static/short-term-planning.js" in rendered_short_term
+            and "data-short-term-planning-controller" in rendered_short_term,
+            "short-term planning: rendered page must load its controller with no inline execution",
+        )
+        _check(
+            marker_id in rendered_transactions
+            and 'data-stp-action="edit-transaction"' in rendered_transactions
+            and not native_handler_pattern.search(rendered_transactions),
+            "short-term planning: rendered transaction drill-down must be delegated and handler-free",
+        )
+        _check(
+            'data-stp-action="show-transactions"' in rendered_subcategories
+            and not native_handler_pattern.search(rendered_subcategories),
+            "short-term planning: rendered subcategory rows must be delegated and handler-free",
+        )
+
+        marker_conn = get_connection("personal")
+        try:
+            marker_conn.execute(
+                "DELETE FROM transactions WHERE transaction_id=?", (marker_id,)
+            )
+            marker_conn.commit()
+            _check(
+                marker_conn.execute(
+                    "SELECT COUNT(*) FROM transactions WHERE transaction_id=?",
+                    (marker_id,),
+                ).fetchone()[0]
+                == 0,
+                "short-term planning: focused marker cleanup must be exact",
+            )
+        finally:
+            marker_conn.close()
+
+        all_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        all_script_count = len(
+            _re.findall(r"<script\b[^>]*>", all_template_source, flags=_re.IGNORECASE)
+        )
+        inert_script_count = len(
+            _re.findall(
+                r"<script\b[^>]*\btype=[\"']application/json[\"'][^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        external_script_count = len(
+            _re.findall(
+                r"<script\b(?=[^>]*\bsrc=)[^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        inline_executable_count = (
+            all_script_count - inert_script_count - external_script_count
+        )
+        all_native_handler_count = len(
+            native_handler_pattern.findall(all_template_source)
+        )
+        all_hx_on_count = all_template_source.count("hx-on")
+        _check(
+            (
+                all_script_count,
+                inline_executable_count,
+                external_script_count,
+                inert_script_count,
+                all_native_handler_count,
+                all_hx_on_count,
+            )
+            == (23, 11, 11, 1, 44, 0),
+            "short-term planning: maintained aggregate inventory must match the post-4AM CSP contract",
+        )
+
+        print("   ✅ Source template, page controller, rendered response markup, inert data, cleanup, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

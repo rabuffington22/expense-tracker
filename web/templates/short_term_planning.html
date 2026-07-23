@@ -1,10 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Short-Term Planning — The Ledger{% endblock %}
+{% block head %}
+<script defer src="{{ url_for('static', filename='short-term-planning.js') }}?v={{ cache_bust }}"></script>
+{% endblock %}
 
 {% block content %}
-<div class="page-title-row">
+<div class="page-title-row"
+     data-short-term-planning-controller
+     data-current-month="{{ current_month }}"
+     data-index-url="{{ url_for('short_term_planning.index') }}"
+     data-budget-subcategories-url="{{ url_for('short_term_planning.budget_subcategories') }}"
+     data-budget-transactions-url="{{ url_for('short_term_planning.budget_transactions') }}"
+     data-all-subcategories-url="{{ url_for('transactions.all_subcategories') }}"
+     data-update-transaction-url="{{ url_for('short_term_planning.budget_update_txn', txn_id='__txn_id__') }}"
+     data-goal-update-url="{{ url_for('short_term_planning.update_goal', goal_id=0) }}"
+     data-goal-delete-url="{{ url_for('short_term_planning.delete_goal', goal_id=0) }}"
+     data-goal-lock-url="{{ url_for('short_term_planning.lock_plan', goal_id=0) }}">
     <h1 class="section-title">Short-Term Planning</h1>
-    <button type="button" class="joker-btn" onclick="aiChatOpen('short-term-planning')" title="Ask Opus" aria-label="Ask Opus">
+    <button type="button" class="joker-btn"
+            data-app-shell-action="open-ai-chat" data-ai-page="short-term-planning"
+            title="Ask Opus" aria-label="Ask Opus">
       <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
     </button>
 </div>
@@ -106,14 +121,14 @@
 <div class="stp-section">
     <div class="stp-section-header">
         <span class="stp-section-label">GOALS</span>
-        <button class="btn btn-sm" onclick="document.getElementById('stp-add-modal').showModal()">+ Add Goal</button>
+        <button class="btn btn-sm" data-stp-action="open-dialog" data-dialog-id="stp-add-modal">+ Add Goal</button>
     </div>
 
     {% if active_goals %}
     <div class="stp-goals-grid">
         {% for goal in active_goals %}
         <div class="stp-goal-card stp-goal-card--{{ goal.goal_type }}"
-             onclick="stpFlipAndOpen(this, {{ goal.id }}, event)"
+             data-stp-action="flip-open"
              data-goal-id="{{ goal.id }}"
              data-goal-type="{{ goal.goal_type }}">
             <div class="card-flip-inner">
@@ -229,14 +244,14 @@
             {# Review banner #}
             <div id="stp-popup-review-banner" class="stp-review-banner" hidden>
                 Monthly check-in
-                <button class="btn btn-sm" id="stp-popup-review-btn">Review</button>
+                <button class="btn btn-sm" id="stp-popup-review-btn" data-stp-action="review-current-goal">Review</button>
             </div>
 
             {# Footer actions #}
             <div class="cfm-footer">
-                <button type="button" class="cfm-btn cfm-btn--cancel" onclick="stpCloseGoalPopup()">Close</button>
-                <button type="button" class="cfm-btn cfm-btn--save" id="stp-popup-edit-btn">Edit</button>
-                <button type="button" class="cfm-btn cfm-btn--save" id="stp-popup-plan-btn" style="margin-left: 0;">Lock In Plan</button>
+                <button type="button" class="cfm-btn cfm-btn--cancel" data-stp-action="close-goal-popup">Close</button>
+                <button type="button" class="cfm-btn cfm-btn--save" id="stp-popup-edit-btn" data-stp-action="edit-current-goal">Edit</button>
+                <button type="button" class="cfm-btn cfm-btn--save" id="stp-popup-plan-btn" data-stp-action="lock-current-goal" style="margin-left: 0;">Lock In Plan</button>
             </div>
         </div>
     </div>
@@ -248,7 +263,7 @@
         <div class="stp-modal-content">
             <div class="stp-modal-header">
                 <h3>Monthly Review: {{ goal.name }}</h3>
-                <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+                <button class="stp-modal-close" data-stp-action="close-dialog">&times;</button>
             </div>
             <div class="stp-review-body">
                 <div class="stp-review-stat">
@@ -271,7 +286,8 @@
                 <textarea name="note" class="stp-modal-textarea" placeholder="Notes on this month's progress..."></textarea>
                 <div class="stp-modal-footer">
                     <button type="submit" class="btn">Save Review</button>
-                    <button type="button" class="btn btn-secondary" onclick="aiChatOpen('short-term-planning')">Discuss with AI</button>
+                    <button type="button" class="btn btn-secondary"
+                            data-app-shell-action="open-ai-chat" data-ai-page="short-term-planning">Discuss with AI</button>
                 </div>
             </form>
         </div>
@@ -292,7 +308,7 @@
 
     {% if budget_status %}
     <div class="stp-budget-kpi-row">
-        <select class="stp-month-select stp-month-select--standalone" id="budget" onchange="window.location.href='{{ url_for('short_term_planning.index') }}?month=' + this.value + '#budget'">
+        <select class="stp-month-select stp-month-select--standalone" id="budget" data-stp-change="budget-month">
             {% for m in budget_months %}
             <option value="{{ m.value }}" {% if m.value == current_month %}selected{% endif %}>{{ m.label }}</option>
             {% endfor %}
@@ -338,13 +354,13 @@
                     {% for item in sec_items %}
                     <tr class="stp-budget-cat-row" data-category="{{ item.category }}">
                         <td>
-                            <span class="stp-cat-toggle" onclick="stpToggleSub(this, '{{ item.category }}')">
+                            <span class="stp-cat-toggle" data-stp-action="toggle-subcategories" data-category="{{ item.category }}">
                                 <span class="stp-cat-chevron">›</span>
                                 {{ item.category }}
                             </span>
                         </td>
                         <td>
-                            <span class="stp-spent-link" onclick="stpShowTxns('{{ item.category }}')">
+                            <span class="stp-spent-link" data-stp-action="show-transactions" data-category="{{ item.category }}">
                                 {{ fmt_dollars(item.spent_cents) }}
                             </span>
                         </td>
@@ -457,7 +473,7 @@
     <div class="stp-modal-content">
         <div class="stp-modal-header">
             <h3>Add Goal</h3>
-            <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+            <button class="stp-modal-close" data-stp-action="close-dialog">&times;</button>
         </div>
         <form method="post" action="{{ url_for('short_term_planning.create_goal') }}">
             <div class="stp-form-group">
@@ -469,15 +485,15 @@
                 <label>Type</label>
                 <div class="stp-segmented" id="stp-type-seg">
                     <label class="stp-seg-option">
-                        <input type="radio" name="goal_type" value="debt_payoff" checked onchange="stpTypeChange(this.value)">
+                        <input type="radio" name="goal_type" value="debt_payoff" checked data-stp-change="goal-type">
                         <span>Debt Payoff</span>
                     </label>
                     <label class="stp-seg-option">
-                        <input type="radio" name="goal_type" value="savings" onchange="stpTypeChange(this.value)">
+                        <input type="radio" name="goal_type" value="savings" data-stp-change="goal-type">
                         <span>Savings</span>
                     </label>
                     <label class="stp-seg-option">
-                        <input type="radio" name="goal_type" value="spending_reduction" onchange="stpTypeChange(this.value)">
+                        <input type="radio" name="goal_type" value="spending_reduction" data-stp-change="goal-type">
                         <span>Spending Cut</span>
                     </label>
                 </div>
@@ -556,7 +572,7 @@
             </div>
 
             <div class="stp-modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="this.closest('dialog').close()">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-stp-action="close-dialog">Cancel</button>
                 <button type="submit" class="btn">Create Goal</button>
             </div>
         </form>
@@ -571,7 +587,7 @@
     <div class="stp-modal-content">
         <div class="stp-modal-header">
             <h3>Edit Goal</h3>
-            <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+            <button class="stp-modal-close" data-stp-action="close-dialog">&times;</button>
         </div>
         <form id="stp-edit-form" method="post">
             <div class="stp-form-group">
@@ -602,9 +618,9 @@
             </div>
 
             <div class="stp-modal-footer">
-                <button type="button" class="btn btn-danger" id="stp-edit-delete">Delete</button>
+                <button type="button" class="btn btn-danger" id="stp-edit-delete" data-stp-action="delete-current-goal">Delete</button>
                 <div style="flex: 1"></div>
-                <button type="button" class="btn btn-secondary" onclick="this.closest('dialog').close()">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-stp-action="close-dialog">Cancel</button>
                 <button type="submit" class="btn">Save</button>
             </div>
         </form>
@@ -620,7 +636,7 @@
     <div class="stp-modal-content">
         <div class="stp-modal-header">
             <h3>Lock In Plan</h3>
-            <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+            <button class="stp-modal-close" data-stp-action="close-dialog">&times;</button>
         </div>
         <form id="stp-lock-form" method="post">
             <div class="stp-form-group" id="stp-lock-strategy-group">
@@ -644,7 +660,7 @@
                           placeholder="Describe your plan strategy and key decisions..."></textarea>
             </div>
             <div class="stp-modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="this.closest('dialog').close()">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-stp-action="close-dialog">Cancel</button>
                 <button type="submit" class="btn">Lock In</button>
             </div>
         </form>
@@ -659,7 +675,7 @@
     <div class="stp-modal-content">
         <div class="stp-modal-header">
             <h3 id="stp-txn-modal-title">Transactions</h3>
-            <button class="stp-modal-close" onclick="this.closest('dialog').close()">&times;</button>
+            <button class="stp-modal-close" data-stp-action="close-dialog">&times;</button>
         </div>
         <div id="stp-txn-modal-body" style="max-height: 60vh; overflow-y: auto;">
             <div class="stp-drill-empty">Loading…</div>
@@ -667,390 +683,9 @@
     </div>
 </dialog>
 
-{# Goal data passed safely via JSON block (avoids broken onclick attributes) #}
-<script type="application/json" id="stp-goals-data">
+{# Goal data carried in a non-script inert template for the page controller. #}
+<template id="stp-goals-data" data-json>
 {{ (active_goals + completed_goals)|tojson }}
-</script>
-
-<script>
-var _stpGoals = {};
-(function() {
-    try {
-        var raw = JSON.parse(document.getElementById('stp-goals-data').textContent);
-        raw.forEach(function(g) { _stpGoals[g.id] = g; });
-    } catch(e) { console.error('Failed to parse goals data:', e); }
-})();
-
-function stpTypeChange(type) {
-    document.getElementById('stp-debt-fields').hidden = (type !== 'debt_payoff');
-    document.getElementById('stp-savings-fields').hidden = (type !== 'savings');
-    document.getElementById('stp-spending-fields').hidden = (type !== 'spending_reduction');
-}
-
-function stpEditGoal(goalId) {
-    var goal = _stpGoals[goalId];
-    if (!goal) return;
-    var form = document.getElementById('stp-edit-form');
-    form.action = '/planning/short-term/goals/' + goal.id + '/update';
-    document.getElementById('stp-edit-name').value = goal.name;
-    document.getElementById('stp-edit-type').value = goal.goal_type;
-    document.getElementById('stp-edit-monthly').value = goal.monthly_amount_cents ? (goal.monthly_amount_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) : '';
-    document.getElementById('stp-edit-target-date').value = goal.target_date || '';
-    document.getElementById('stp-edit-status').value = goal.status;
-    document.getElementById('stp-edit-notes').value = goal.notes || '';
-
-    var delForm = document.getElementById('stp-delete-form');
-    delForm.action = '/planning/short-term/goals/' + goal.id + '/delete';
-    document.getElementById('stp-edit-delete').onclick = function() {
-        if (confirm('Delete this goal and all its progress data?')) {
-            delForm.submit();
-        }
-    };
-
-    document.getElementById('stp-edit-modal').showModal();
-}
-
-function stpLockPlan(goalId) {
-    var goal = _stpGoals[goalId];
-    if (!goal) return;
-    var form = document.getElementById('stp-lock-form');
-    form.action = '/planning/short-term/goals/' + goal.id + '/lock-plan';
-    document.getElementById('stp-lock-strategy').value = goal.strategy || 'avalanche';
-    document.getElementById('stp-lock-monthly').value = goal.monthly_amount_cents ? (goal.monthly_amount_cents / 100).toLocaleString('en-US', {maximumFractionDigits: 0}) : '';
-    document.getElementById('stp-lock-date').value = goal.target_date || '';
-    document.getElementById('stp-lock-narrative').value = goal.ai_plan || '';
-
-    var stratGroup = document.getElementById('stp-lock-strategy-group');
-    stratGroup.hidden = (goal.goal_type !== 'debt_payoff');
-
-    document.getElementById('stp-lock-modal').showModal();
-}
-
-// ── Goal detail popup ──────────────────────────────────────────────────
-var _stpCurrentGoalId = null;
-var _stpFlippedCard = null;
-
-function _stpSetGenieOrigin(cardEl) {
-    var rect = cardEl.getBoundingClientRect();
-    var cx = rect.left + rect.width / 2;
-    var cy = rect.top + rect.height / 2;
-    var vw = window.innerWidth / 2;
-    var vh = window.innerHeight / 2;
-    var popup = document.getElementById('stp-goal-popup');
-    popup.style.setProperty('--genie-x', (cx - vw) + 'px');
-    popup.style.setProperty('--genie-y', (cy - vh) + 'px');
-}
-
-function stpFlipAndOpen(cardEl, goalId, evt) {
-    if (evt && (evt.target.closest('button') || evt.target.closest('a'))) return;
-    cardEl.classList.add('card-flipped');
-    _stpFlippedCard = cardEl;
-    _stpSetGenieOrigin(cardEl);
-    setTimeout(function() { stpOpenGoalPopup(goalId, null); }, 250);
-}
-
-function stpOpenGoalPopup(goalId, evt) {
-    if (evt && (evt.target.closest('button') || evt.target.closest('a'))) return;
-    var goal = _stpGoals[goalId];
-    if (!goal) return;
-    _stpCurrentGoalId = goalId;
-
-    var popup = document.getElementById('stp-goal-popup');
-    /* Set suit class for playing card treatment */
-    popup.classList.remove('stp-goal-popup--debt_payoff', 'stp-goal-popup--savings', 'stp-goal-popup--spending_reduction');
-    popup.classList.add('stp-goal-popup--' + goal.goal_type);
-
-    document.getElementById('stp-popup-name').textContent = goal.name;
-    var balStr = (goal.current_balance_cents / 100).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
-    document.getElementById('stp-popup-balance').textContent = balStr;
-
-    /* Target */
-    var targetEl = document.getElementById('stp-popup-target');
-    if (goal.goal_type === 'savings' && goal.target_amount_cents) {
-        var tgtStr = (goal.target_amount_cents / 100).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
-        targetEl.textContent = 'of ' + tgtStr;
-        targetEl.hidden = false;
-    } else {
-        targetEl.hidden = true;
-    }
-
-    /* Progress */
-    document.getElementById('stp-popup-pct').textContent = (goal.progress_pct || 0) + '%';
-
-    /* Strategy */
-    var stratRow = document.getElementById('stp-popup-strategy-row');
-    if (goal.strategy) {
-        document.getElementById('stp-popup-strategy').textContent = goal.strategy.charAt(0).toUpperCase() + goal.strategy.slice(1);
-        stratRow.hidden = false;
-    } else { stratRow.hidden = true; }
-
-    /* Monthly */
-    var monthlyRow = document.getElementById('stp-popup-monthly-row');
-    if (goal.monthly_amount_cents && goal.monthly_amount_cents > 0) {
-        var moStr = (goal.monthly_amount_cents / 100).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
-        document.getElementById('stp-popup-monthly').textContent = moStr + '/mo';
-        monthlyRow.hidden = false;
-    } else { monthlyRow.hidden = true; }
-
-    /* Target date */
-    var tDateRow = document.getElementById('stp-popup-target-date-row');
-    if (goal.target_date) {
-        document.getElementById('stp-popup-target-date').textContent = goal.target_date;
-        tDateRow.hidden = false;
-    } else { tDateRow.hidden = true; }
-
-    /* AI Plan */
-    var planGroup = document.getElementById('stp-popup-plan-group');
-    if (goal.ai_plan) {
-        document.getElementById('stp-popup-plan-content').textContent = goal.ai_plan;
-        planGroup.hidden = false;
-    } else { planGroup.hidden = true; }
-
-    /* Review banner */
-    var reviewBanner = document.getElementById('stp-popup-review-banner');
-    if (goal.needs_review) {
-        reviewBanner.hidden = false;
-        document.getElementById('stp-popup-review-btn').onclick = function() {
-            stpCloseGoalPopup();
-            document.getElementById('stp-review-' + goalId).showModal();
-        };
-    } else { reviewBanner.hidden = true; }
-
-    /* Plan button text */
-    var planBtn = document.getElementById('stp-popup-plan-btn');
-    planBtn.textContent = goal.ai_plan ? 'Update Plan' : 'Lock In Plan';
-    planBtn.onclick = function() { stpCloseGoalPopup(); stpLockPlan(goalId); };
-
-    /* Edit button */
-    document.getElementById('stp-popup-edit-btn').onclick = function() { stpCloseGoalPopup(); stpEditGoal(goalId); };
-
-    document.getElementById('stp-goal-scrim').hidden = false;
-}
-
-function stpCloseGoalPopup() {
-    var scrim = document.getElementById('stp-goal-scrim');
-    var popup = document.getElementById('stp-goal-popup');
-    if (_stpFlippedCard) _stpSetGenieOrigin(_stpFlippedCard);
-    scrim.classList.add('stp-goal-scrim--closing');
-    popup.classList.add('stp-goal-popup--closing');
-    setTimeout(function() {
-        scrim.hidden = true;
-        scrim.classList.remove('stp-goal-scrim--closing');
-        popup.classList.remove('stp-goal-popup--closing');
-        if (_stpFlippedCard) {
-            _stpFlippedCard.classList.remove('card-flipped');
-            _stpFlippedCard = null;
-        }
-        _stpCurrentGoalId = null;
-    }, 300);
-}
-
-/* Close on scrim click */
-document.getElementById('stp-goal-scrim').addEventListener('click', function(e) {
-    if (e.target === this) stpCloseGoalPopup();
-});
-
-/* Close on Escape */
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !document.getElementById('stp-goal-scrim').hidden) {
-        stpCloseGoalPopup();
-    }
-});
-
-// ── Budget drill-down: subcategory toggle ──────────────────────────────
-function stpToggleSub(el, category) {
-    var chevron = el.querySelector('.stp-cat-chevron');
-    var row = el.closest('tr');
-    var isOpen = chevron.classList.contains('open');
-
-    // Remove any existing subcat rows for this category
-    var existing = row.parentElement.querySelectorAll('tr.stp-subcat-row[data-parent="' + category + '"]');
-    existing.forEach(function(r) { r.remove(); });
-
-    if (isOpen) {
-        chevron.classList.remove('open');
-        return;
-    }
-
-    chevron.classList.add('open');
-    var month = '{{ current_month }}';
-    fetch('{{ url_for("short_term_planning.budget_subcategories") }}?category=' + encodeURIComponent(category) + '&month=' + month)
-        .then(function(r) { return r.text(); })
-        .then(function(html) {
-            if (!html.trim()) return;
-            // Insert subcat rows after the category row
-            var temp = document.createElement('tbody');
-            temp.innerHTML = html;
-            var rows = temp.querySelectorAll('tr');
-            var after = row;
-            rows.forEach(function(r) {
-                r.setAttribute('data-parent', category);
-                after.parentElement.insertBefore(r, after.nextSibling);
-                after = r;
-            });
-        });
-}
-
-// ── Budget drill-down: transaction popup ───────────────────────────────
-function stpShowTxns(category, subcategory) {
-    var modal = document.getElementById('stp-txn-modal');
-    var body = document.getElementById('stp-txn-modal-body');
-    var title = document.getElementById('stp-txn-modal-title');
-    title.textContent = subcategory ? category + ' › ' + subcategory : category;
-    body.innerHTML = '<div class="stp-drill-empty">Loading…</div>';
-    modal.showModal();
-    /* Store context for save operations */
-    modal._origCat = category;
-    modal._origSub = subcategory || '';
-    modal._month = '{{ current_month }}';
-
-    var url = '{{ url_for("short_term_planning.budget_transactions") }}?category=' + encodeURIComponent(category) + '&month=' + modal._month;
-    if (subcategory) url += '&subcategory=' + encodeURIComponent(subcategory);
-    fetch(url)
-        .then(function(r) { return r.text(); })
-        .then(function(html) {
-            body.innerHTML = html;
-        })
-        .catch(function() {
-            body.innerHTML = '<div class="stp-drill-empty">Error loading transactions</div>';
-        });
-}
-
-/* ── Inline category editing in drill-down ─────────────────────── */
-var _stpSubcatCache = null;
-
-function _stpEnsureCache(cb) {
-    if (_stpSubcatCache) { cb(); return; }
-    fetch('/transactions/all-subcategories')
-        .then(function(r) { return r.json(); })
-        .then(function(data) { _stpSubcatCache = data; cb(); })
-        .catch(function() { alert('Could not load categories'); });
-}
-
-function _stpBuildOptions(items, selected) {
-    var html = '';
-    for (var i = 0; i < items.length; i++) {
-        var s = items[i];
-        var esc = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-        html += '<option value="' + esc + '"' + (s === selected ? ' selected' : '') + '>' + esc + '</option>';
-    }
-    return html;
-}
-
-function stpEditTxn(row, txnId, currentCat, currentSub) {
-    /* Don't re-edit if already in edit mode */
-    if (row.classList.contains('stp-drill-edit-row')) return;
-    _stpEnsureCache(function() {
-        row._origHTML = row.innerHTML;
-        row.classList.add('stp-drill-edit-row');
-        row.classList.remove('stp-drill-row');
-        row.removeAttribute('onclick');
-
-        var cats = Object.keys(_stpSubcatCache).sort();
-        if (currentCat && cats.indexOf(currentCat) < 0) cats.push(currentCat);
-        cats.sort();
-        var subs = (_stpSubcatCache[currentCat] || ['General']).slice();
-        if (currentSub && subs.indexOf(currentSub) < 0) subs.push(currentSub);
-        subs.sort();
-
-        var cells = row.querySelectorAll('td');
-        var dateCell = cells[0].textContent;
-        var descCell = cells[1].textContent;
-        var amtCell = cells[3].textContent;
-
-        row.innerHTML =
-            '<td>' + dateCell + '</td>' +
-            '<td>' + descCell + '</td>' +
-            '<td colspan="2">' +
-                '<div class="stp-drill-edit-wrap">' +
-                    '<select id="stp-cat-' + txnId + '" onchange="stpCatChange(\'' + txnId + '\')">' +
-                        _stpBuildOptions(cats, currentCat) +
-                    '</select>' +
-                    '<select id="stp-sub-' + txnId + '">' +
-                        _stpBuildOptions(subs, currentSub) +
-                    '</select>' +
-                '</div>' +
-                '<div class="stp-drill-edit-actions">' +
-                    '<button class="btn btn-primary btn-sm" onclick="stpSaveTxn(\'' + txnId + '\')">Save</button>' +
-                    '<button class="btn btn-secondary btn-sm" onclick="stpCancelEdit(\'' + txnId + '\')">' + amtCell + '</button>' +
-                '</div>' +
-            '</td>';
-    });
-}
-
-function stpCatChange(txnId) {
-    var catSel = document.getElementById('stp-cat-' + txnId);
-    var subSel = document.getElementById('stp-sub-' + txnId);
-    var subs = (_stpSubcatCache[catSel.value] || ['General']);
-    subSel.innerHTML = _stpBuildOptions(subs, 'General');
-}
-
-function stpSaveTxn(txnId) {
-    var catSel = document.getElementById('stp-cat-' + txnId);
-    var subSel = document.getElementById('stp-sub-' + txnId);
-    var modal = document.getElementById('stp-txn-modal');
-
-    var fd = new FormData();
-    fd.append('category', catSel.value);
-    fd.append('subcategory', subSel.value);
-    fd.append('orig_category', modal._origCat);
-    fd.append('orig_subcategory', modal._origSub);
-    fd.append('month', modal._month);
-
-    fetch('/planning/short-term/budget/update-txn/' + encodeURIComponent(txnId), {
-        method: 'POST',
-        body: fd
-    })
-    .then(function(r) {
-        if (!r.ok) throw new Error('Save failed');
-        /* Check for budget refresh trigger */
-        var trigger = r.headers.get('HX-Trigger');
-        if (trigger && trigger.indexOf('stpBudgetChanged') >= 0) {
-            window._stpNeedsRefresh = true;
-        }
-        return r.text();
-    })
-    .then(function(html) {
-        document.getElementById('stp-txn-modal-body').innerHTML = html;
-    })
-    .catch(function() {
-        alert('Error saving — try again');
-    });
-}
-
-function stpCancelEdit(txnId) {
-    var row = document.getElementById('stp-txnr-' + txnId);
-    if (row && row._origHTML) {
-        row.innerHTML = row._origHTML;
-        row.classList.remove('stp-drill-edit-row');
-        row.classList.add('stp-drill-row');
-        var cat = row.querySelector('td:nth-child(3)').textContent;
-        row.setAttribute('onclick',
-            "stpEditTxn(this,'" + txnId + "'," +
-            JSON.stringify(document.getElementById('stp-txn-modal')._origCat) + "," +
-            JSON.stringify(cat) + ")"
-        );
-    }
-}
-
-/* Refresh budget when modal closes after edits */
-document.getElementById('stp-txn-modal').addEventListener('close', function() {
-    if (window._stpNeedsRefresh) {
-        window._stpNeedsRefresh = false;
-        window.location.reload();
-    }
-});
-
-// Strip commas from money inputs on submit
-document.addEventListener('submit', function(e) {
-    var form = e.target;
-    form.querySelectorAll('input[name="monthly_amount"], input[name="target_amount"]').forEach(function(inp) {
-        inp.value = inp.value.replace(/,/g, '');
-    });
-    form.querySelectorAll('.stp-budget-input').forEach(function(inp) {
-        inp.value = inp.value.replace(/,/g, '').replace(/\$/g, '');
-    });
-});
-</script>
+</template>
 
 {% endblock %}

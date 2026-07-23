@@ -2,35 +2,63 @@
 
 ## Active Objective
 
-Preserve the durable, deployed, and health-verified 4AL-R Cash Flow and Long-Term Planning result while Ryan decides whether to recheck the separately gated Short-Term Planning slice.
+Publish and verify the exact complete 4AM Short-Term Planning result through confirmed work block 4AM-R while preserving the separately gated Weekly/Waterfall slice.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.2c.3a-1P.4.2c.3b are durable, automatically deployed, and credential-free health verified through 4AL-R, while Task 1P.4.2c.3c and later work remain separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.2c.3a-1P.4.2c.3b are durable, automatically deployed, and credential-free health verified through 4AL-R, Task 1P.4.2c.3c is complete locally and publication is active through confirmed 4AM-R, and later work remains separately gated.
 
 ## Current Work Block
 
-Work block 4AL-R: Cash Flow And Long-Term Planning Durability And Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AM-R: Short-Term Planning Durability And Release — active.
 
 ## Current Task
 
-Task 1P.4.2c.3c: Migrate Short-Term Planning execution — next separate Ryan planning gate.
+Task 1P.4.2c.3c-R: Publish and verify Short-Term Planning execution — current.
 
 ## Owner
 
-Ryan owns the decision to recheck Task 1P.4.2c.3c for a separate high-interaction proposal. Codex Desktop owns no further implementation, publication, deployment, protected-access, or live action without confirmation.
+Codex Desktop owns exact staging, Git safety, direct-main durability, read-only automatic-deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan retains every expansion, live mutation, failure recovery, and Task 1P.4.2c.4 decision.
 
 ## Current Action
 
-Choose whether to run a fresh Task 1P.4.2c.3c recheck and bounded proposal. No Short-Term Planning implementation is pre-authorized.
+Stage and commit the exact verified 4AM source set; fast-forward local `main`; push directly to `origin/main`; observe only the automatic Fly deployment; verify the exact source SHA and credential-free production health; then publish one sanitized `[skip actions]` closeout.
 
 ## Task 1P.4.2c.3 Re-sizing Result
 
 - Task 1P.4.2c.3 remains the active umbrella for three executable inline scripts, forty-seven native handlers, and one inert JSON carrier.
 - Task 1P.4.2c.3a covers Cash Flow: one executable inline script and fifteen native handlers.
 - Task 1P.4.2c.3b covers Long-Term Planning: one executable inline script and ten native handlers.
-- Task 1P.4.2c.3c covers Short-Term Planning: one executable inline script, twenty-two native handlers, and one inert JSON carrier.
-- Ryan confirmed that 4AL will include Tasks 1P.4.2c.3a-1P.4.2c.3b plus only their focused Task 2 regression slices after this task inventory is durable; Task 1P.4.2c.3c remains separately gated.
+- Task 1P.4.2c.3c covers Short-Term Planning: one executable inline script, twenty-two template-source native-handler occurrences, one inert JSON carrier, and two additional Python-rendered native handlers in the same budget drill-down route family.
+- Ryan confirmed that 4AM includes Task 1P.4.2c.3c plus only its focused Task 2 regression slice. The two Python-rendered handlers are a corrected source inventory inside the same route family, behavior, risk class, and verification path.
+
+## Work Block 4AM Contract
+
+- Include Task 1P.4.2c.3c plus only its focused Task 2 regression slice: move the one executable inline script, twenty-two template-source native-handler occurrences, one inert JSON carrier, and two Python-rendered native handlers from Short-Term Planning into a page-owned local controller, delegated controls, and non-script inert data while preserving goals, plan locking, monthly reviews, action items, budgets, subcategory expansion, transaction drill-down/editing, AI entry, fetch behavior, money normalization, dialogs, keyboard behavior, and Personal/BFM versus Luxe Legacy boundaries.
+- Keep Tasks 1P.4.2c.4-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, Weekly, Waterfall, subscriptions, payroll, Plaid, standalone/error pages, financial-business-logic and database-query changes, style migration, CSP headers/nonces/enforcement, authentication, CSRF, service-worker/manifest behavior, dependencies, credentials, protected data, real databases, retained uploads, external/live access, GitHub durability, publication, deployment, workflows, downstream access/writes, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use a page-owned `short-term-planning.js`, delegated `data-*` actions, idempotent initialization, and non-script inert goal data; allow only response-markup changes in `web/routes/short_term_planning.py`; keep `allowEval=false`, `allowScriptTags=false`, and `hx-on` at zero; preserve visual and behavioral parity; and keep durability local-only on `codex/csp-short-term-planning`.
+- Stop if parity requires financial logic, database-query, route-family, product-direction, style/CSP-enforcement, Plaid, authentication, dependency, protected/live, destructive, or later-task work; if verification changes the plan or exact cleanup fails; if command-center checks fail; or if either preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered-response zero-execution assertions; exact residual template inventory of eleven executable inline scripts, eleven external executable assets, one inert JSON carrier, forty-four native handlers, and zero `hx-on`; configured-auth and no-password isolated Chrome covering goal, plan, review, action-item, budget, subcategory, transaction-edit, month, AI, modal, keyboard, entity-boundary, denied-network, browser-error, and exact-cleanup behavior; relevant Python/JavaScript/JSON syntax; whitespace; dashboard refresh/health/rendered state; exact scope; and both preserved untracked files.
+- Report corrected source inventory, exact migrated behavior, controller and response-markup organization, focused and full verification, cleanup, changed paths, local branch state, preserved exclusions, and separate 4AM-R publication plus Task 1P.4.2c.4 gates.
+
+## Work Block 4AM Result
+
+- `short_term_planning.html` now loads one page-owned `short-term-planning.js`, carries goal data in a non-script inert template, and contains zero executable inline scripts, native inline handlers, or `hx-on` attributes.
+- Delegated local behavior preserves goal popup/edit/plan/review, goal-type switching, action items, budget month navigation, subcategory expansion, transaction drill-down/edit/save/cancel, AI entry, money normalization, dialog and keyboard behavior, and Personal/BFM versus Luxe Legacy boundaries.
+- The two same-route Python response builders emit handler-free declarative controls without changing their database queries, calculations, mutation rules, or response boundary.
+- The residual tracked-template inventory is eleven executable inline scripts, eleven external executable assets, one inert JSON carrier, forty-four native handlers, and zero `hx-on`; both HTMX execution switches remain false.
+- Baseline and final full smoke plus configured-auth/no-password isolated Chrome pass with denied external requests, zero unexpected console/page errors, and exact temporary all-entity cleanup. Focused source/rendered assertions, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health, generated-state inspection, exact scope, and preserved-file checks pass.
+- No financial logic, database-query, style, CSP-enforcement, Plaid, authentication, dependency, credential, protected-data, real-database, retained-upload, external/live, GitHub durability, publication, deployment, downstream, or preserved-file mutation occurred.
+- The result is local-only on `codex/csp-short-term-planning`; no commit, push, PR, merge, publication, or deployment occurred. Evidence: `command-center/logs/2026-07-23-short-term-planning-execution-4am.md`.
+
+## Work Block 4AM-R Contract
+
+- Include explicit staging of the exact twelve verified 4AM application, controller, maintained-test, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-short-term-planning`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.2c.4 and every later task, new application or runtime mutation beyond verified 4AM, credentials, protected data, real databases, retained uploads, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly mutations, downstream access/writes, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified controller, response markup, tests, residual inventory, false HTMX execution switches, and both unrelated untracked files exactly; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/rendered state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
+- Report source and closeout commit SHAs, published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.4 still separately gated.
 
 ## Work Block 4AL Contract
 

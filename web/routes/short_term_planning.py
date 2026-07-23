@@ -1138,7 +1138,6 @@ def delete_action(item_id):
 def _render_budget_transactions(conn, category, subcategory, month):
     """Build HTML table of transactions for a category drill-down (reusable)."""
     from markupsafe import escape
-    import json as _json
 
     _cte = effective_txns_cte("t")
     if subcategory:
@@ -1184,13 +1183,12 @@ def _render_budget_transactions(conn, category, subcategory, month):
             amt = abs(r["amount"])
             cat_val = r["category"] or ""
             sub_val = r["subcategory"] or "General"
-            # Use &quot; for quotes inside onclick HTML attribute
-            cat_attr = escape(cat_val).replace("'", "&#39;")
-            sub_attr = escape(sub_val).replace("'", "&#39;")
-            txn_attr = escape(txn_id).replace("'", "&#39;")
             lines.append(
                 f'<tr id="stp-txnr-{escape(txn_id)}" class="stp-drill-row" '
-                f"onclick=\"stpEditTxn(this,'{txn_attr}','{cat_attr}','{sub_attr}')\">"
+                f'data-stp-action="edit-transaction" '
+                f'data-transaction-id="{escape(txn_id)}" '
+                f'data-category="{escape(cat_val)}" '
+                f'data-subcategory="{escape(sub_val)}">'
                 f"<td>{r['date'][5:]}</td>"
                 f"<td>{escape(desc)}</td>"
                 f"<td>{escape(sub_val)}</td>"
@@ -1347,7 +1345,6 @@ def budget_subcategories():
         # 5. Build sorted list: spent desc, then alphabetical for $0 items
         sorted_subs = sorted(all_subs, key=lambda s: (-spend_map.get(s, 0), s))
 
-        import json
         from markupsafe import escape
 
         lines = []
@@ -1355,8 +1352,6 @@ def budget_subcategories():
             amt = spend_map.get(sub_name, 0)
             spent_cents = int(round(amt * 100))
             sub_esc = escape(sub_name)
-            cat_js = escape(json.dumps(category))
-            sub_js = escape(json.dumps(sub_name))
             field_name = escape(f"subbudget_{category}__{sub_name}")
             budget_cents = sub_budgets.get(sub_name)
 
@@ -1377,7 +1372,9 @@ def budget_subcategories():
             # Spent cell (always clickable)
             spent_td = (
                 f'<td><span class="stp-spent-link" '
-                f'onclick="stpShowTxns({cat_js}, {sub_js})">${amt:,.0f}</span></td>'
+                f'data-stp-action="show-transactions" '
+                f'data-category="{escape(category)}" '
+                f'data-subcategory="{sub_esc}">${amt:,.0f}</span></td>'
             )
 
             if budget_cents and budget_cents > 0:

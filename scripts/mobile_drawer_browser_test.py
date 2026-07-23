@@ -6,8 +6,8 @@ blocked non-localhost browser requests. No production credentials or data are
 required. Covers the mobile drawer plus theme, HTMX configuration and swaps,
 AI modal listeners, CSRF wiring, service-worker registration, and configured-
 auth/no-password shell loading. Transaction and supporting modal fragments,
-categorization/upload controls, and Cash Flow/Long-Term Planning interactions run
-only against temporary synthetic databases.
+categorization/upload controls, Cash Flow/Long-Term Planning, and Short-Term
+Planning interactions run only against temporary synthetic databases.
 """
 
 from __future__ import annotations
@@ -318,6 +318,72 @@ def _seed_cashflow_planning_data(entity_key: str) -> None:
             f"4AL {display_name} Liability",
             updated_at,
             updated_at,
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+
+def _seed_short_term_planning_data(entity_key: str) -> None:
+    if entity_key == "luxelegacy":
+        return
+
+    from core.db import get_connection
+
+    display_name = {
+        "personal": "Personal",
+        "company": "BFM",
+    }[entity_key]
+    month = date.today().strftime("%Y-%m")
+    timestamp = datetime.now(timezone.utc).isoformat()
+    linked_account = f"4AL {display_name} Credit"
+    transaction_id = f"synthetic-4am-{entity_key}-food"
+    conn = get_connection(entity_key)
+    conn.execute(
+        "INSERT INTO short_term_goals "
+        "(name, goal_type, target_amount_cents, target_date, strategy, "
+        "monthly_amount_cents, linked_accounts, status, notes, ai_plan) "
+        "VALUES (?, 'debt_payoff', 0, ?, 'avalanche', 25000, ?, 'active', "
+        "'Synthetic 4AM goal', 'Pay the highest APR first.')",
+        (
+            f"4AM {display_name} Goal",
+            f"{date.today().year + 1}-12-31",
+            f'["{linked_account}"]',
+        ),
+    )
+    conn.execute(
+        "INSERT INTO action_items "
+        "(title, status, due_date, notes, sort_order, is_recurring) "
+        "VALUES (?, 'pending', NULL, 'Synthetic 4AM action', 0, 0)",
+        (f"4AM {display_name} Action",),
+    )
+    conn.execute(
+        "INSERT INTO budget_items "
+        "(category, monthly_budget_cents, budget_section) "
+        "VALUES ('Food', 50000, 'focus') "
+        "ON CONFLICT(category) DO UPDATE SET "
+        "monthly_budget_cents=excluded.monthly_budget_cents, "
+        "budget_section=excluded.budget_section"
+    )
+    conn.execute(
+        "INSERT INTO budget_subcategories "
+        "(category, subcategory, monthly_budget_cents) "
+        "VALUES ('Food', 'General', 30000) "
+        "ON CONFLICT(category, subcategory) DO UPDATE SET "
+        "monthly_budget_cents=excluded.monthly_budget_cents"
+    )
+    conn.execute(
+        "INSERT INTO transactions "
+        "(transaction_id, date, description_raw, merchant_canonical, amount, "
+        "amount_cents, account, category, subcategory, source_filename, imported_at) "
+        "VALUES (?, ?, ?, ?, -12.34, -1234, '4AM Synthetic', 'Food', 'General', "
+        "'synthetic-4am', ?)",
+        (
+            transaction_id,
+            f"{month}-15",
+            f"4AM {display_name} Food",
+            f"4AM {display_name} Food",
+            timestamp,
         ),
     )
     conn.commit()
@@ -1208,6 +1274,238 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
     page.locator("[data-ai-chat-close]").click()
 
 
+def _assert_short_term_planning_page(page, base_url: str, label: str) -> None:
+    current_month = date.today().strftime("%Y-%m")
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(
+        f"{base_url}/planning/short-term/?month={current_month}",
+        wait_until="networkidle",
+    )
+    page.wait_for_function(
+        "document.querySelector('[data-short-term-planning-controller]')"
+        "?.dataset.initialized === 'true'"
+    )
+    initial = page.evaluate(
+        """() => ({
+            asset: Boolean(document.querySelector('script[src*="short-term-planning.js"]')),
+            inertTemplate: document.getElementById('stp-goals-data')?.tagName === 'TEMPLATE',
+            inlineHandlers: document.querySelectorAll(
+                '#main-content [onclick], #main-content [onchange], #main-content [onfocus], '
+                + '#main-content [oninput], #main-content [onblur], #main-content [onsubmit], '
+                + '#main-content [onkeydown]'
+            ).length,
+            goal: Boolean(document.querySelector(
+                '.stp-goal-card[data-stp-action="flip-open"][data-goal-id]'
+            )),
+            action: Array.from(document.querySelectorAll('.stp-action-title')).some(
+                (element) => element.textContent.includes('4AM Personal Action')
+            ),
+            allowEval: window.htmx.config.allowEval,
+            allowScriptTags: window.htmx.config.allowScriptTags,
+        })"""
+    )
+    _check(
+        initial["asset"] and initial["inertTemplate"],
+        f"{label}: Short-Term Planning controller and inert goal data must load",
+    )
+    _check(
+        initial["inlineHandlers"] == 0,
+        f"{label}: Short-Term Planning must expose no native inline handlers",
+    )
+    _check(
+        initial["goal"] and initial["action"],
+        f"{label}: synthetic Personal goal and action must remain visible",
+    )
+    _check(
+        initial["allowEval"] is False and initial["allowScriptTags"] is False,
+        f"{label}: disabled HTMX execution switches must remain intact",
+    )
+
+    goal_card = page.locator(
+        '.stp-goal-card[data-stp-action="flip-open"]',
+        has_text="4AM Personal Goal",
+    )
+    goal_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    _check(
+        page.locator("#stp-goal-scrim").is_visible()
+        and page.locator("#stp-popup-name").text_content() == "4AM Personal Goal"
+        and page.locator("#stp-popup-strategy").text_content() == "Avalanche"
+        and page.locator("#stp-popup-plan-btn").text_content() == "Update Plan",
+        f"{label}: delegated goal-card opening must populate the maintained popup",
+    )
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(350)
+    _check(
+        page.locator("#stp-goal-scrim").is_hidden(),
+        f"{label}: Escape must close the goal popup",
+    )
+
+    goal_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    page.locator('[data-stp-action="edit-current-goal"]').click()
+    edit_dialog = page.locator("#stp-edit-modal")
+    _check(
+        edit_dialog.is_visible()
+        and edit_dialog.locator("#stp-edit-name").input_value()
+        == "4AM Personal Goal"
+        and edit_dialog.locator("#stp-edit-form").get_attribute("action").endswith(
+            "/planning/short-term/goals/1/update"
+        ),
+        f"{label}: delegated edit action must populate the goal-specific form",
+    )
+    edit_dialog.locator('[data-stp-action="close-dialog"]').first.click()
+    page.wait_for_timeout(350)
+
+    goal_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    page.locator('[data-stp-action="lock-current-goal"]').click()
+    lock_dialog = page.locator("#stp-lock-modal")
+    _check(
+        lock_dialog.is_visible()
+        and lock_dialog.locator("#stp-lock-strategy-group").is_visible()
+        and lock_dialog.locator("#stp-lock-narrative").input_value()
+        == "Pay the highest APR first.",
+        f"{label}: delegated plan action must preserve debt strategy and narrative",
+    )
+    lock_dialog.locator('[data-stp-action="close-dialog"]').first.click()
+    page.wait_for_timeout(350)
+
+    goal_card.evaluate("element => element.click()")
+    page.wait_for_timeout(300)
+    review_button = page.locator('[data-stp-action="review-current-goal"]')
+    _check(review_button.is_visible(), f"{label}: monthly review action must remain visible")
+    review_button.click()
+    review_dialog = page.locator("#stp-review-1")
+    _check(
+        review_dialog.is_visible(),
+        f"{label}: delegated monthly review action must open its goal dialog",
+    )
+    review_dialog.locator('[data-stp-action="close-dialog"]').click()
+    page.wait_for_timeout(350)
+
+    page.locator('[data-stp-action="open-dialog"][data-dialog-id="stp-add-modal"]').click()
+    add_dialog = page.locator("#stp-add-modal")
+    add_dialog.get_by_text("Savings", exact=True).click()
+    _check(
+        add_dialog.locator("#stp-debt-fields").is_hidden()
+        and add_dialog.locator("#stp-savings-fields").is_visible()
+        and add_dialog.locator("#stp-spending-fields").is_hidden(),
+        f"{label}: delegated goal-type change must preserve conditional fields",
+    )
+    add_dialog.locator('[data-stp-action="close-dialog"]').first.click()
+
+    category_toggle = page.locator(
+        '[data-stp-action="toggle-subcategories"][data-category="Food"]'
+    ).first
+    category_toggle.click()
+    page.wait_for_selector('tr.stp-subcat-row[data-parent="Food"]')
+    subcategory_control = page.locator(
+        'tr.stp-subcat-row[data-parent="Food"] '
+        '[data-stp-action="show-transactions"][data-subcategory="General"]'
+    ).first
+    _check(
+        subcategory_control.count() == 1,
+        f"{label}: fetched subcategory markup must expose delegated drill-down controls",
+    )
+    subcategory_control.click()
+    transaction_dialog = page.locator("#stp-txn-modal")
+    page.wait_for_selector(
+        '#stp-txn-modal-body [data-stp-action="edit-transaction"]'
+    )
+    dynamic_handler_count = page.locator(
+        "#stp-txn-modal-body [onclick], #stp-txn-modal-body [onchange], "
+        "#stp-txn-modal-body [oninput], #stp-txn-modal-body [onsubmit]"
+    ).count()
+    _check(
+        transaction_dialog.is_visible() and dynamic_handler_count == 0,
+        f"{label}: fetched transaction markup must remain visible and handler-free",
+    )
+
+    transaction_row = page.locator(
+        '#stp-txn-modal-body [data-transaction-id="synthetic-4am-personal-food"]'
+    )
+    transaction_row.click()
+    page.wait_for_selector(
+        '#stp-txn-modal-body tr.stp-drill-edit-row '
+        '[data-stp-change="transaction-category"]'
+    )
+    edit_row = page.locator(
+        '#stp-txn-modal-body tr[data-transaction-id="synthetic-4am-personal-food"]'
+    )
+    edit_row.locator('[data-stp-change="transaction-category"]').select_option("Food")
+    edit_row.locator('[data-stp-field="transaction-subcategory"]').select_option(
+        "General"
+    )
+    edit_row.locator('[data-stp-action="save-transaction"]').click()
+    page.wait_for_selector(
+        '#stp-txn-modal-body [data-transaction-id="synthetic-4am-personal-food"]'
+        '[data-stp-action="edit-transaction"]'
+    )
+    restored_row = page.locator(
+        '#stp-txn-modal-body [data-transaction-id="synthetic-4am-personal-food"]'
+    )
+    restored_row.click()
+    page.wait_for_selector(
+        '#stp-txn-modal-body tr.stp-drill-edit-row '
+        '[data-stp-action="cancel-transaction"]'
+    )
+    page.locator(
+        '#stp-txn-modal-body [data-stp-action="cancel-transaction"]'
+    ).click()
+    _check(
+        page.locator(
+            '#stp-txn-modal-body [data-transaction-id="synthetic-4am-personal-food"]'
+            '[data-stp-action="edit-transaction"]'
+        ).count()
+        == 1,
+        f"{label}: delegated transaction cancel must restore the response row",
+    )
+    with page.expect_navigation(wait_until="networkidle"):
+        transaction_dialog.locator('[data-stp-action="close-dialog"]').click()
+
+    page.locator(
+        '[data-app-shell-action="open-ai-chat"][data-ai-page="short-term-planning"]'
+    ).first.click()
+    _check(
+        page.locator("#ai-chat-scrim").is_visible()
+        and page.locator("#ai-chat-page").input_value() == "short-term-planning",
+        f"{label}: Short-Term Planning AI entry must use the maintained app-shell action",
+    )
+    page.locator("[data-ai-chat-close]").click()
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "BFM", "url": base_url}]
+    )
+    page.goto(
+        f"{base_url}/planning/short-term/?month={current_month}",
+        wait_until="networkidle",
+    )
+    _check(
+        page.locator(".stp-goal-card", has_text="4AM BFM Goal").count() == 1,
+        f"{label}: BFM Short-Term Planning must remain available and isolated",
+    )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "LL", "url": base_url}]
+    )
+    page.goto(
+        f"{base_url}/planning/short-term/?month={current_month}",
+        wait_until="networkidle",
+    )
+    _check(
+        page.url.rstrip("/") == base_url
+        and page.locator(".stp-goal-card").count() == 0,
+        f"{label}: Luxe Legacy must remain denied before Short-Term Planning execution",
+    )
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -1260,6 +1558,7 @@ def main() -> None:
                 init_db(entity_key)
                 _seed_dashboard_data(entity_key)
                 _seed_cashflow_planning_data(entity_key)
+                _seed_short_term_planning_data(entity_key)
 
             app = create_app()
             app.config.update(TESTING=True)
@@ -1515,6 +1814,9 @@ def main() -> None:
                 _assert_cashflow_planning_pages(
                     page, base_url, "no-password Cash Flow/Planning execution"
                 )
+                _assert_short_term_planning_page(
+                    page, base_url, "no-password Short-Term Planning execution"
+                )
 
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
@@ -1615,6 +1917,9 @@ def main() -> None:
                 _assert_cashflow_planning_pages(
                     page, base_url, "configured-auth Cash Flow/Planning execution"
                 )
+                _assert_short_term_planning_page(
+                    page, base_url, "configured-auth Short-Term Planning execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -1660,7 +1965,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload and Cash Flow/Long-Term Planning workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, and Short-Term Planning workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":
