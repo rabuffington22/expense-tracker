@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-23 4:13 AM CST",
+    "lastUpdated": "2026-07-23 4:17 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,29 +1619,29 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Work block 4AL-R is durable deployed and health verified; work block 4AM is complete locally and publication is active through confirmed 4AM-R"
+    "durabilityStatus": "Tasks 1P.4.2c.3a-1P.4.2c.3c are durable deployed and health verified through 4AL-R and 4AM-R; later route clusters remain separately gated"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Tasks 1P.4.2c.3a-1P.4.2c.3b are durable automatically deployed and credential-free health verified through 4AL-R Task 1P.4.2c.3c is complete locally and publication is active through confirmed 4AM-R while later work remains separately gated.",
+    "summary": "Tasks 1P.4.2c.3a-1P.4.2c.3c are durable automatically deployed and credential-free health verified through 4AL-R and 4AM-R while Task 1P.4.2c.4 and later work remain separately gated.",
     "progress": 96
   },
   "currentTask": {
-    "title": "Task 1P.4.2c.3c-R: Publish and verify Short-Term Planning execution",
-    "owner": "Codex Desktop",
-    "status": "in-progress",
-    "supportingAgent": "Ryan owns every expansion live mutation failure recovery and later-route decision",
-    "nextAction": "Commit the exact verified 4AM source set fast-forward main push observe the automatic release verify health and publish the sanitized closeout.",
-    "blocker": "Task 1P.4.2c.4 and every mutation beyond the exact verified release remain separately gated."
+    "title": "Task 1P.4.2c.4: Migrate Weekly and Waterfall execution",
+    "owner": "Ryan",
+    "status": "waiting-on-ryan",
+    "supportingAgent": "Codex Desktop can recheck and propose the next Weekly and Waterfall slice after confirmation",
+    "nextAction": "Choose whether to run a fresh Task 1P.4.2c.4 recheck and bounded proposal.",
+    "blocker": "Planning implementation publication and every later slice remain separately gated."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-am-r",
     "label": "4AM-R",
     "name": "Short-Term Planning Durability And Release",
-    "status": "in-progress",
+    "status": "complete",
     "owner": "Codex Desktop",
-    "currentTask": "Task 1P.4.2c.3c-R exact durability automatic release and health verification",
+    "currentTask": "Task 1P.4.2c.3c-R exact durability automatic release and health verification complete",
     "includedTasks": [
       "Stage and commit the exact twelve verified 4AM application controller maintained-test CSP contract evidence and Runway OS paths",
       "Fast-forward local main push directly to origin/main and observe the resulting automatic Fly deployment without manual mutation",
@@ -1677,10 +1677,11 @@
       "Commit content clean fast-forward ancestry exact remote SHA automatic workflow result credential-free production health final alignment and preserved files"
     ],
     "nextReportPoint": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and Task 1P.4.2c.4 still separately gated.",
-    "durability": "Publication authorized and active; exact verified 4AM source remains uncommitted until release verification passes.",
-    "result": "Pending exact-path source commit automatic Fly deployment credential-free production health and sanitized skip-actions closeout.",
+    "durability": "Exact source commit f6505aa is durable on local and remote main; automatic Fly deployment and credential-free production health passed.",
+    "result": "Exact twelve-path source commit f6505aa is durable on main automatic Fly run 29994452861 and job 89164689293 passed and credential-free production health returned HTTP 200.",
     "evidence": [
       "command-center/logs/2026-07-23-short-term-planning-execution-4am.md",
+      "command-center/logs/2026-07-23-short-term-planning-execution-release-4am-r.md",
       "command-center/csp-compatibility-contract.md"
     ]
   },
@@ -1707,20 +1708,30 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish and verify the exact 4AM result",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan authorized direct-main durability for the complete locally verified Short-Term Planning source set.",
-    "action": "Complete exact-path staging direct-main publication automatic-release observation credential-free health and sanitized closeout.",
+    "title": "Recheck Weekly and Waterfall before the next execution block",
+    "status": "waiting-on-ryan",
+    "owner": "Ryan",
+    "why": "Work block 4AM-R is durable deployed and health verified while Weekly and Waterfall remain a separate interaction and verification boundary.",
+    "action": "Choose whether to run a fresh Task 1P.4.2c.4 recheck and bounded proposal.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    {
+      "decision": "Decide whether to recheck Task 1P.4.2c.4 after 4AM-R closeout",
+      "status": "open",
+      "whyItMatters": "Weekly and Waterfall have a separate route interaction and verification boundary from the completed Short-Term Planning release.",
+      "defaultRecommendation": "Run a fresh source recheck before proposing the next bounded implementation block.",
+      "workaround": "Preserve the durable deployed health-verified result through 4AM-R."
+    }
+  ],
   "waitingOnRyan": {
-    "summary": "No current external wait; Ryan retains every expansion and failure-recovery decision.",
-    "items": []
+    "summary": "Ryan owns the next route-cluster planning gate.",
+    "items": [
+      "Choose whether to run a fresh Task 1P.4.2c.4 recheck and bounded proposal."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1P.4.2c.3c publication is active only through exact-scope 4AM-R; every later CSP slice remains separately gated.",
+    "phaseQuestions": "Task 1P.4.2c.3c is durable through 4AM-R; Task 1P.4.2c.4 and every later CSP slice remain separately gated.",
     "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -7899,24 +7910,25 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C3CR",
       "title": "Task 1P.4.2c.3c-R: Publish and verify Short-Term Planning execution",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Stage and commit the exact verified 4AM paths fast-forward and push main observe the automatic deployment read-only verify credential-free production health and publish one sanitized skip-actions closeout.",
-      "nextAction": "Complete exact-path source durability automatic Fly release observation credential-free health and sanitized closeout.",
-      "blocker": "Task 1P.4.2c.4 and any recovery beyond clean fast-forward plus read-only diagnosis remain separate Ryan gates.",
+      "nextAction": "Preserve the durable deployed health-verified 4AM-R result; Task 1P.4.2c.4 remains separately gated.",
+      "blocker": "None; Task 1P.4.2c.4 and any broader recovery remain separate Ryan gates.",
+      "result": "Exact source commit f6505aa is durable on main automatic Fly run 29994452861 and job 89164689293 passed and credential-free production health returned HTTP 200.",
       "evidence": [
-        "command-center/logs/2026-07-23-short-term-planning-execution-4am.md"
+        "command-center/logs/2026-07-23-short-term-planning-execution-release-4am-r.md"
       ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C4",
       "title": "Task 1P.4.2c.4: Migrate Weekly and Waterfall execution",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Move one executable inline script and thirteen native handlers from Weekly and Waterfall into maintained local behavior while preserving review mode breakdown target tax tooltip and keyboard behavior.",
-      "nextAction": "Preserve as the next separately gated planning task after 4AM-R closes.",
-      "blocker": "Planning and implementation remain separately gated from the active exact-scope release."
+      "nextAction": "Choose whether to run a fresh source recheck and bounded proposal.",
+      "blocker": "Planning and implementation remain separately gated from the durable 4AM-R result."
     },
     {
       "phaseId": "phase-4",
@@ -9307,10 +9319,14 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Recheck Task 1P.4.2c.3c",
-    "description": "Run a fresh bounded Short-Term Planning sizing pass only after Ryan confirms the separate planning gate."
+    "name": "Recheck Task 1P.4.2c.4",
+    "description": "Run a fresh bounded Weekly and Waterfall sizing pass only after Ryan confirms the separate planning gate."
   },
   "verification": {
+    "phase4ShortTermPlanningRelease": "pass; exact twelve-path source commit f6505aa is durable on main automatic Fly run 29994452861 and deploy job 89164689293 passed for the exact SHA and credential-free production health returned HTTP 200",
+    "phase4ShortTermPlanningBlock": "pass locally; 4AM removed one executable inline script twenty-two template handlers one inert JSON script carrier and two Python-rendered handlers into one page-owned controller and handler-free response markup leaving residual inventory eleven inline eleven external one inert forty-four handlers and zero hx-on",
+    "phase4ShortTermPlanningCoverage": "pass; full synthetic smoke plus configured-auth and no-password isolated Chrome cover goal plan review action budget subcategory transaction edit AI modal keyboard fetch entity network error and exact cleanup behavior",
+    "phase4ShortTermPlanningBoundaries": "pass; no financial database-query Weekly Waterfall style CSP enforcement Plaid authentication dependency protected data credential real database retained upload downstream preserved-file or manual live mutation occurred",
     "phase4CashflowPlanningRelease": "pass; exact thirteen-path source commit 62fab26 is durable on main automatic Fly run 29991146113 and deploy job 89154057052 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4CashflowPlanningBlock": "pass locally; 4AL removed two executable inline scripts and twenty-five native handlers from Cash Flow and Long-Term Planning into separate page-owned controllers leaving residual inventory twelve inline ten external two inert sixty-six handlers and zero hx-on",
     "phase4CashflowPlanningCoverage": "pass; full synthetic smoke plus configured-auth and no-password isolated Chrome cover account card recurring item source birthday projection confirmation AI keyboard and entity workflows with denied external traffic zero unexpected browser errors and exact all-entity cleanup",
@@ -9323,7 +9339,7 @@
     "phase4CategorizationUploadBlock": "pass locally; 4AK removed three executable inline scripts and seven native handlers from the three included templates into one maintained controller relabeled status-only Undo as Mark incomplete and left residual inventory fourteen inline scripts eight external scripts two inert carriers ninety-one handlers and zero hx-on",
     "phase4CategorizationUploadCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover alias category subcategory orphan month deletion and status-only behavior with denied external traffic zero unexpected browser errors and exact all-entity cleanup",
     "phase4CategorizationUploadBoundaries": "pass; no style CSP-header Plaid authentication financial dependency protected data credential real database external live GitHub publication deployment later-route or preserved-file mutation occurred",
-    "phase4FullPageDecomposition": "pass; the tracked source inventory remains decomposed into eight route clusters with Task 1P.4.2c.1 durable through 4AJ-R Task 1P.4.2c.2 durable through 4AK-R Tasks 1P.4.2c.3a-1P.4.2c.3b complete locally through 4AL and Task 1P.4.2c.3c plus later clusters separately gated",
+    "phase4FullPageDecomposition": "pass; the tracked source inventory remains decomposed into eight route clusters with Task 1P.4.2c.1 durable through 4AJ-R Task 1P.4.2c.2 durable through 4AK-R Tasks 1P.4.2c.3a-1P.4.2c.3b durable through 4AL-R Task 1P.4.2c.3c durable through 4AM-R and later clusters separately gated",
     "phase4HtmxDisablementRelease": "pass; exact sixteen-path source commit 3fb0d74 is durable on main automatic Fly run 29954953878 and deploy job 89041537857 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4HtmxDisablement": "pass locally; allowEval and allowScriptTags are false zero eval-backed template attributes and zero directly returned script elements are maintained and three swapped inert JSON carriers use non-script template data",
     "phase4HtmxDisablementCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover shared shell repeated dashboard-report and transaction-modal behavior with denied external traffic zero unexpected console or page errors and exact all-entity cleanup",

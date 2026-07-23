@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify the exact complete 4AM Short-Term Planning result through confirmed work block 4AM-R while preserving the separately gated Weekly/Waterfall slice.
+Preserve the durable, deployed, and health-verified 4AM-R Short-Term Planning result while Ryan decides whether to recheck the separately gated Weekly/Waterfall slice.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.2c.3a-1P.4.2c.3b are durable, automatically deployed, and credential-free health verified through 4AL-R, Task 1P.4.2c.3c is complete locally and publication is active through confirmed 4AM-R, and later work remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.2c.3a-1P.4.2c.3c are durable, automatically deployed, and credential-free health verified through 4AL-R and 4AM-R, while Task 1P.4.2c.4 and later work remain separately gated.
 
 ## Current Work Block
 
-Work block 4AM-R: Short-Term Planning Durability And Release — active.
+Work block 4AM-R: Short-Term Planning Durability And Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.2c.3c-R: Publish and verify Short-Term Planning execution — current.
+Task 1P.4.2c.4: Migrate Weekly and Waterfall execution — next separate Ryan planning gate.
 
 ## Owner
 
-Codex Desktop owns exact staging, Git safety, direct-main durability, read-only automatic-deployment observation, credential-free health verification, and sanitized Runway OS closeout. Ryan retains every expansion, live mutation, failure recovery, and Task 1P.4.2c.4 decision.
+Ryan owns the decision to recheck Task 1P.4.2c.4 for a separate proposal. Codex Desktop owns no further implementation, publication, deployment, protected-access, or live action without confirmation.
 
 ## Current Action
 
-Stage and commit the exact verified 4AM source set; fast-forward local `main`; push directly to `origin/main`; observe only the automatic Fly deployment; verify the exact source SHA and credential-free production health; then publish one sanitized `[skip actions]` closeout.
+Choose whether to run a fresh Task 1P.4.2c.4 recheck and bounded proposal. No Weekly/Waterfall implementation is pre-authorized.
 
 ## Task 1P.4.2c.3 Re-sizing Result
 
@@ -59,6 +59,15 @@ Stage and commit the exact verified 4AM source set; fast-forward local `main`; p
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/rendered state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
 - Report source and closeout commit SHAs, published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.4 still separately gated.
+
+## Work Block 4AM-R Result
+
+- Exact twelve-path source commit `f6505aa1860ad3219231effb26c53e23fa7ffe0b` is durable on local and remote `main`.
+- Automatic Fly Deploy run `29994452861` and deploy job `89164689293` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with `{"status":"ok"}` after deployment.
+- Exact-path and staged-set checks, protected-path and high-confidence sensitive-addition scans, maintained smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/rendered state, commit content, clean fast-forward, ancestry, exact remote SHA, automatic release, production health, and preserved-file checks passed.
+- No PR, force push, credential, protected data, real database, retained upload, authenticated production page, manual workflow action, workflow edit, non-automatic Fly mutation, downstream access/write, Task 1P.4.2c.4 implementation, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-short-term-planning-execution-release-4am-r.md`.
 
 ## Work Block 4AL Contract
 
