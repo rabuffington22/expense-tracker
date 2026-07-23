@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify the exact locally validated 4AN Weekly and Waterfall source set through confirmed work block 4AN-R.
+Preserve the durable, deployed, and health-verified 4AN-R Weekly and Waterfall result while Ryan chooses the next separate gate.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.4-R is active through confirmed direct-main work block 4AN-R, while Task 1P.4.2c.5 remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.4-R is complete, durable, automatically deployed, and credential-free production health verified through 4AN-R, while Task 1P.4.2c.5 remains separately gated.
 
 ## Current Work Block
 
-Work block 4AN-R: Weekly And Waterfall Durability And Release — active.
+Work block 4AN-R: Weekly And Waterfall Durability And Release — complete.
 
 ## Current Task
 
-Task 1P.4.2c.4-R: Publish and verify the exact 4AN source set — active.
+Task 1P.4.2c.5: Migrate subscription-page execution — current planning gate; implementation is not authorized.
 
 ## Owner
 
-Codex Desktop owns exact staging, Git safety, direct-main durability, read-only automatic-deployment observation, credential-free production health, and sanitized closeout. Ryan owns every expansion, live mutation, failure recovery, and Task 1P.4.2c.5 decision.
+Ryan owns the next decision. Codex Desktop may preserve the 4AN-R result or prepare a fresh Task 1P.4.2c.5 proposal after Ryan requests it.
 
 ## Current Action
 
-Stage only the verified 4AN paths, commit on `codex/csp-weekly-waterfall`, fast-forward local `main`, push directly to `origin/main`, observe the automatic deployment read-only, verify credential-free production health, and publish one sanitized `[skip actions]` closeout.
+Choose whether to request a fresh bounded Task 1P.4.2c.5 subscription-page proposal. Do not infer implementation authorization.
 
 ## Work Block 4AN Contract
 
@@ -51,6 +51,15 @@ Stage only the verified 4AN paths, commit on `codex/csp-weekly-waterfall`, fast-
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/rendered state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
 - Report source and closeout commit SHAs, exact published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.5 still separately gated.
+
+## Work Block 4AN-R Result
+
+- Exact thirteen-path source commit `4fc47359de1f02a78dde95d90b34292fa4ea1542` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30011582629` and deploy job `89220774553` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with `{"status":"ok"}` after deployment.
+- Exact-path and staged-set checks, protected-boundary and high-confidence sensitive-addition scans, maintained smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/rendered state, commit content, clean fast-forward, ancestry, exact remote SHA, automatic release, production health, and preserved-file checks passed.
+- No PR, force push, credential, protected data, real database, retained upload, authenticated production page, manual workflow action, workflow edit, non-automatic Fly mutation, downstream access/write, Task 1P.4.2c.5 implementation, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-weekly-waterfall-execution-release-4an-r.md`.
 
 ## Task 1P.4.2c.3 Re-sizing Result
 
