@@ -17,7 +17,7 @@ import os
 import sys
 import tempfile
 import threading
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from werkzeug.serving import WSGIRequestHandler, make_server
@@ -387,6 +387,71 @@ def _seed_short_term_planning_data(entity_key: str) -> None:
             timestamp,
         ),
     )
+    conn.commit()
+    conn.close()
+
+
+def _seed_subscription_data(entity_key: str) -> None:
+    from core.db import get_connection
+
+    display_name = {
+        "personal": "Personal",
+        "company": "BFM",
+        "luxelegacy": "LL",
+    }[entity_key]
+    today = date.today()
+    imported_at = datetime.now(timezone.utc).isoformat()
+    watchlist_merchant = f"4AO {display_name} Watchlist"
+    suggestion_merchant = f"4AO {display_name} Suggestion"
+    conn = get_connection(entity_key)
+    watchlist_cursor = conn.execute(
+        "INSERT INTO subscription_watchlist "
+        "(merchant, amount_cents, frequency, status, notes, cancellation_tips) "
+        "VALUES (?, 1299, 'monthly', 'watching', ?, NULL)",
+        (watchlist_merchant, f"Synthetic 4AO {display_name} notes"),
+    )
+    subscription_id = watchlist_cursor.lastrowid
+    conn.execute(
+        "INSERT INTO subscription_account_info "
+        "(subscription_id, field_type, field_value, sort_order) "
+        "VALUES (?, 'Email', ?, 0)",
+        (subscription_id, f"synthetic-{entity_key}@example.invalid"),
+    )
+    conn.execute(
+        "INSERT INTO subscription_notes_log "
+        "(subscription_id, action, detail) VALUES (?, 'created', 'Synthetic 4AO fixture')",
+        (subscription_id,),
+    )
+    conn.execute(
+        "INSERT INTO subscription_dismissals (merchant_canonical) VALUES (?)",
+        (f"4AO {display_name} Dismissed",),
+    )
+
+    for merchant, prefix, amount_cents in (
+        (watchlist_merchant, "watchlist", -1299),
+        (suggestion_merchant, "suggestion", -2499),
+    ):
+        for index, days_ago in enumerate((60, 30, 0)):
+            transaction_date = (today - timedelta(days=days_ago)).isoformat()
+            conn.execute(
+                "INSERT INTO transactions "
+                "(transaction_id, date, description_raw, merchant_raw, "
+                "merchant_canonical, amount, amount_cents, account, category, "
+                "subcategory, confidence, source_filename, imported_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Office Supplies', 'General', "
+                "1.0, 'synthetic-4ao.csv', ?)",
+                (
+                    f"4ao-{entity_key}-{prefix}-{index}",
+                    transaction_date,
+                    merchant,
+                    merchant,
+                    merchant,
+                    amount_cents / 100,
+                    amount_cents,
+                    f"4AO {display_name} Card",
+                    imported_at,
+                ),
+            )
     conn.commit()
     conn.close()
 
@@ -1676,6 +1741,205 @@ def _assert_weekly_waterfall_pages(page, base_url: str, label: str) -> None:
     page.goto(base_url, wait_until="networkidle")
 
 
+def _assert_subscription_page(page, base_url: str, label: str) -> None:
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(f"{base_url}/subscriptions/", wait_until="networkidle")
+    _check(
+        page.locator("[data-subscriptions-controller]").count() == 1
+        and page.locator('script[src*="subscriptions.js"]').count() == 1,
+        f"{label}: subscriptions must load one page-owned controller",
+    )
+
+    subscriptions_ai = page.locator(
+        '[data-app-shell-action="open-ai-chat"][data-ai-page="subscriptions"]'
+    )
+    _check(
+        subscriptions_ai.count() == 1,
+        f"{label}: subscriptions must expose the maintained app-shell AI action",
+    )
+    subscriptions_ai.click()
+    _check(
+        page.locator("#ai-chat-scrim").is_visible()
+        and page.locator("#ai-chat-page").input_value() == "subscriptions",
+        f"{label}: subscriptions AI entry must preserve its page context",
+    )
+    page.locator("[data-ai-chat-close]").click()
+
+    suggestion_row = page.locator(
+        '[data-subscriptions-row][data-subscriptions-action="open-suggestion"]'
+    )
+    _check(
+        suggestion_row.count() == 1,
+        f"{label}: synthetic recurring history must render one suggestion",
+    )
+    suggestion_row.focus()
+    suggestion_row.press("Enter")
+    _check(
+        page.locator("#sub-detail-scrim").is_visible()
+        and "4AO Personal Suggestion"
+        in page.locator("#sub-detail-title").inner_text()
+        and page.locator("#sub-detail-footer form").count() == 2,
+        f"{label}: suggestion Enter must open details with both server forms",
+    )
+    page.locator('[data-subscriptions-action="close-detail"]').click()
+    _check(
+        page.locator("#sub-detail-scrim").is_hidden(),
+        f"{label}: delegated close button must hide suggestion details",
+    )
+    suggestion_row.focus()
+    suggestion_row.press("Space")
+    _check(
+        page.locator("#sub-detail-scrim").is_visible(),
+        f"{label}: suggestion Space must open details",
+    )
+    page.locator("#sub-detail-scrim").click(position={"x": 2, "y": 2})
+    _check(
+        page.locator("#sub-detail-scrim").is_hidden(),
+        f"{label}: scrim click must close suggestion details",
+    )
+
+    add_trigger = page.locator('[data-subscriptions-action="show-add"]')
+    add_trigger.click()
+    add_name = page.locator('#sub-add-panel input[name="merchant"]')
+    _check(
+        page.locator("#sub-add-panel").is_visible()
+        and add_name.evaluate("element => document.activeElement === element"),
+        f"{label}: delegated add control must reveal and focus the form",
+    )
+    add_name.fill("Synthetic unsaved 4AO")
+    page.locator('[data-subscriptions-action="hide-add"]').click()
+    _check(
+        page.locator("#sub-add-panel").is_hidden()
+        and add_name.input_value() == "",
+        f"{label}: delegated add cancellation must hide and reset the form",
+    )
+
+    dismissed_list = page.locator("#sub-dismissed-list")
+    page.locator('[data-subscriptions-action="toggle-dismissed"]').click()
+    _check(
+        dismissed_list.is_visible()
+        and "4AO Personal Dismissed" in dismissed_list.inner_text(),
+        f"{label}: delegated dismissed control must reveal entity-local rows",
+    )
+    page.locator('[data-subscriptions-action="toggle-dismissed"]').click()
+    _check(
+        dismissed_list.is_hidden(),
+        f"{label}: delegated dismissed control must close the list",
+    )
+
+    watchlist_row = page.locator(
+        '[data-subscriptions-row][data-subscriptions-action="open-watchlist"]'
+    )
+    _check(
+        watchlist_row.count() == 1,
+        f"{label}: Personal must render one synthetic watchlist item",
+    )
+    watchlist_row.click()
+    page.wait_for_function(
+        "() => document.getElementById('sub-detail-title').textContent.includes('4AO Personal Watchlist')"
+    )
+    _check(
+        page.locator("#sub-detail-scrim").is_visible()
+        and "3" in page.locator("#sub-detail-count").inner_text()
+        and "4AO Personal Card" in page.locator("#sub-detail-payment").inner_text()
+        and page.locator("#sub-detail-charges .sub-detail-charge").count() == 3
+        and page.locator("#sub-detail-timeline .sub-detail-timeline-entry").count() >= 1
+        and page.locator("#sub-detail-acctinfo-fields .sub-acctinfo-field").count() == 1,
+        f"{label}: watchlist detail must render charges payment timeline and account info",
+    )
+
+    account_value = page.locator("#sub-acctinfo-value")
+    account_value.fill("synthetic-added@example.invalid")
+    account_value.press("Enter")
+    page.wait_for_function(
+        "() => document.querySelectorAll('#sub-detail-acctinfo-fields .sub-acctinfo-field').length === 2"
+    )
+    account_rows = page.locator(
+        "#sub-detail-acctinfo-fields .sub-acctinfo-field"
+    )
+    _check(
+        account_rows.count() == 2
+        and "synthetic-added@example.invalid" in account_rows.last.inner_text(),
+        f"{label}: account-info Enter must add a synthetic field",
+    )
+    account_rows.last.locator(
+        '[data-subscriptions-action="delete-account-info"]'
+    ).click()
+    page.wait_for_function(
+        "() => document.querySelectorAll('#sub-detail-acctinfo-fields .sub-acctinfo-field').length === 1"
+    )
+
+    tips_button = page.locator('[data-subscriptions-action="fetch-tips"]')
+    if tips_button.is_visible():
+        tips_button.click()
+        page.wait_for_function(
+            "() => document.getElementById('sub-detail-tips').textContent.includes('Synthetic 4AO cancellation tips')"
+        )
+    _check(
+        "Synthetic 4AO cancellation tips"
+        in page.locator("#sub-detail-tips").inner_text()
+        and
+        page.locator("#sub-tips-fetch-btn").is_hidden(),
+        f"{label}: deterministic local tips must persist and hide the fetch control",
+    )
+
+    page.evaluate(
+        """() => {
+            window.__copiedSubscriptionText = '';
+            Object.defineProperty(navigator, 'clipboard', {
+                configurable: true,
+                value: {
+                    writeText: async (text) => {
+                        window.__copiedSubscriptionText = text;
+                    },
+                },
+            });
+        }"""
+    )
+    page.locator('[data-subscriptions-action="copy-share"]').click()
+    page.wait_for_function(
+        "() => window.__copiedSubscriptionText.includes('4AO PERSONAL WATCHLIST')"
+    )
+    _check(
+        "synthetic-personal@example.invalid"
+        in page.evaluate("window.__copiedSubscriptionText"),
+        f"{label}: clipboard action must use the entity-local synthetic share text",
+    )
+
+    page.once("dialog", lambda dialog: dialog.dismiss())
+    page.locator('[data-subscriptions-action="remove-watchlist"]').click()
+    _check(
+        page.locator("#sub-detail-scrim").is_visible(),
+        f"{label}: dismissed removal confirmation must preserve the current detail",
+    )
+    page.keyboard.press("Escape")
+    _check(
+        page.locator("#sub-detail-scrim").is_hidden(),
+        f"{label}: Escape must close watchlist details",
+    )
+
+    for entity_name, expected_merchant, excluded_merchant in (
+        ("BFM", "4AO BFM Watchlist", "4AO Personal Watchlist"),
+        ("LL", "4AO LL Watchlist", "4AO BFM Watchlist"),
+    ):
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        page.goto(f"{base_url}/subscriptions/", wait_until="networkidle")
+        page_text = page.locator(".sub-page").inner_text()
+        _check(
+            expected_merchant in page_text and excluded_merchant not in page_text,
+            f"{label}: {entity_name} subscriptions must remain entity-local",
+        )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -1694,6 +1958,7 @@ def main() -> None:
     page_errors: list[str] = []
     ai_client_module = None
     original_category_suggestion = None
+    original_cancellation_tips = None
 
     try:
         with tempfile.TemporaryDirectory(prefix="expense_drawer_browser_") as temp_root:
@@ -1718,17 +1983,22 @@ def main() -> None:
             from web import create_app
 
             original_category_suggestion = ai_client_module.generate_category_suggestion
+            original_cancellation_tips = ai_client_module.generate_cancellation_tips
             ai_client_module.generate_category_suggestion = lambda **_kwargs: {
                 "category": "Office Supplies",
                 "subcategory": "General",
                 "reason": "Synthetic local-only browser suggestion",
             }
+            ai_client_module.generate_cancellation_tips = (
+                lambda _merchant: "Synthetic 4AO cancellation tips. Use the local account portal."
+            )
 
             for entity_key in ("personal", "company", "luxelegacy"):
                 init_db(entity_key)
                 _seed_dashboard_data(entity_key)
                 _seed_cashflow_planning_data(entity_key)
                 _seed_short_term_planning_data(entity_key)
+                _seed_subscription_data(entity_key)
 
             app = create_app()
             app.config.update(TESTING=True)
@@ -1990,6 +2260,9 @@ def main() -> None:
                 _assert_weekly_waterfall_pages(
                     page, base_url, "no-password Weekly/Waterfall execution"
                 )
+                _assert_subscription_page(
+                    page, base_url, "no-password subscription execution"
+                )
 
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
@@ -2096,6 +2369,9 @@ def main() -> None:
                 _assert_weekly_waterfall_pages(
                     page, base_url, "configured-auth Weekly/Waterfall execution"
                 )
+                _assert_subscription_page(
+                    page, base_url, "configured-auth subscription execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -2138,10 +2414,12 @@ def main() -> None:
             server_thread.join(timeout=5)
         if ai_client_module is not None and original_category_suggestion is not None:
             ai_client_module.generate_category_suggestion = original_category_suggestion
+        if ai_client_module is not None and original_cancellation_tips is not None:
+            ai_client_module.generate_cancellation_tips = original_cancellation_tips
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, and Weekly/Waterfall workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, and subscription workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

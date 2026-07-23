@@ -2,27 +2,54 @@
 
 ## Active Objective
 
-Preserve the durable, deployed, and health-verified 4AN-R Weekly and Waterfall result while Ryan chooses the next separate gate.
+Publish and verify only the exact locally validated 4AO subscription-page source set through confirmed work block 4AO-R while keeping Task 1P.4.2c.6 and every broader mutation separate.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.4-R is complete, durable, automatically deployed, and credential-free production health verified through 4AN-R, while Task 1P.4.2c.5 remains separately gated.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.5-R is authorized through exact-scope work block 4AO-R after 4AO completed local implementation and verification.
 
 ## Current Work Block
 
-Work block 4AN-R: Weekly And Waterfall Durability And Release — complete.
+Work block 4AO-R: Subscription Page Durability And Release — active.
 
 ## Current Task
 
-Task 1P.4.2c.5: Migrate subscription-page execution — current planning gate; implementation is not authorized.
+Task 1P.4.2c.5-R: publish and verify the exact 4AO source set — active.
 
 ## Owner
 
-Ryan owns the next decision. Codex Desktop may preserve the 4AN-R result or prepare a fresh Task 1P.4.2c.5 proposal after Ryan requests it.
+Codex Desktop owns exact-path staging, source commit, clean fast-forward, direct-main push, read-only automatic-deployment observation, credential-free health verification, and sanitized closeout. Ryan owns every expansion, recovery, and later-task decision.
 
 ## Current Action
 
-Choose whether to request a fresh bounded Task 1P.4.2c.5 subscription-page proposal. Do not infer implementation authorization.
+Execute the confirmed 4AO-R release path and report exact source/closeout SHAs, deployment and health results, final alignment, exclusions, and the still-separate Task 1P.4.2c.6 gate.
+
+## Work Block 4AO-R Contract
+
+- Include explicit staging of the exact verified 4AO application, controller, maintained-test, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-subscriptions`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.2c.6 and every later task, new application/runtime mutation beyond verified 4AO, credentials, protected data, real databases, retained uploads, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly mutations, downstream access/writes, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified controller, template, tests, residual inventory, false HTMX execution switches, and both unrelated untracked files exactly; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, deployment and health results, final alignment, preserved exclusions, and Task 1P.4.2c.6 still separately gated.
+
+## Work Block 4AO Contract
+
+- Include Task 1P.4.2c.5 plus only its focused Task 2 regression slice: move the one executable inline script, fifteen native handlers, one runtime `onclick` assignment, and one inert JSON carrier from `subscriptions.html` into a page-owned template-free local controller, delegated declarative controls, and non-script inert data while preserving suggestion, watchlist, detail, charge/payment, timeline, account-info, tips, clipboard, add/dismiss, confirmation, modal, scrim, Escape, Enter, Space, AI-entry, and entity-isolation behavior.
+- Keep Tasks 1P.4.2c.6-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, route/database-query/financial/product-policy changes, style migration, CSP headers/nonces/enforcement, authentication, CSRF, Plaid, dependencies, service-worker behavior, credentials, protected data, real databases, retained uploads, external/live access, GitHub durability, publication, deployment, workflows, downstream access/writes, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` outside scope.
+- Create page-owned `subscriptions.js`; reuse the maintained app-shell AI action; carry suggestion data and server-generated endpoints through non-script inert markup; preserve existing runtime-style behavior for the later style task; keep both HTMX execution switches false; use temporary synthetic Personal, BFM, and Luxe Legacy data with deterministic local AI/clipboard behavior, localhost-only browser state, denied non-localhost requests, zero unexpected console/page errors, and exact cleanup; keep durability local-only.
+- Stop if parity requires route, query, financial, product, account-information policy, style-policy, CSP-enforcement, authentication, Plaid, dependency, protected/live, destructive, or later-task work; if verification changes the plan or cleanup fails; if command-center checks fail; if scope expands; or if either preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered subscription-page zero-execution assertions; exact residual aggregate inventory of nine executable inline scripts, thirteen external scripts, zero inert script carriers, sixteen native handlers, and zero `hx-on`; configured-auth and no-password isolated Chrome covering the included interaction and entity matrix, denied networking, browser errors, and cleanup; relevant Python/JavaScript/JSON syntax; whitespace; dashboard refresh/health/rendered state; exact scope; and both preserved untracked files.
+- Report exact migrated behavior and residual inventory, controller/data organization, focused and full proof, browser and cleanup results, changed paths, local branch state, preserved exclusions, and the separate 4AO-R publication plus Task 1P.4.2c.6 gates.
+
+## Work Block 4AO Result
+
+- `subscriptions.html` now loads one page-owned template-free `subscriptions.js`, carries recurring-suggestion data in a non-script inert template, reuses the maintained app-shell AI action, and contains zero executable inline scripts, native inline handlers, runtime `onclick` assignments, inert script carriers, or `hx-on`.
+- Delegated behavior preserves suggestion and watchlist detail, recent charges, payment method, timeline, account-info add/delete, deterministic cancellation tips, clipboard sharing, add/dismiss controls, removal confirmation, modal/scrim/Escape behavior, Enter/Space activation, and Personal/BFM/Luxe Legacy isolation.
+- The residual tracked-template inventory is nine executable inline scripts, thirteen external script assets, zero inert script carriers, sixteen native handlers, and zero `hx-on`; both HTMX execution switches remain false.
+- Baseline and final full smoke plus configured-auth/no-password isolated Chrome pass with localhost-only state, denied external traffic, zero unexpected console/page errors, and exact temporary all-entity cleanup. Focused source/rendered assertions, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated-state inspection, exact scope, and preserved-file checks pass.
+- No route, query, financial, product, account-information-policy, style, CSP-enforcement, authentication, CSRF, Plaid, dependency, service-worker, credential, protected-data, real-database, retained-upload, external/live, downstream, publication, deployment, or preserved-file mutation occurred.
+- The result is local-only on `codex/csp-subscriptions`; no commit, push, PR, merge, publication, or deployment occurred. Evidence: `command-center/logs/2026-07-23-subscription-page-execution-4ao.md`.
 
 ## Work Block 4AN Contract
 

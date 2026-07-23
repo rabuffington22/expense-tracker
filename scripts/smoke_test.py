@@ -8736,8 +8736,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 10, 12, 1, 31, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AN CSP contract",
+            == (22, 9, 13, 0, 16, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AO CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8958,8 +8958,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 10, 12, 1, 31, 0),
-            "categorization/upload pages: maintained aggregate inventory must match the post-4AN CSP contract",
+            == (22, 9, 13, 0, 16, 0),
+            "categorization/upload pages: maintained aggregate inventory must match the post-4AO CSP contract",
         )
 
         print("   ✅ Three source templates, delegated controller, rendered routes, status-only reset, and exact residual inventory passed")
@@ -9080,8 +9080,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 10, 12, 1, 31, 0),
-            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AN CSP contract",
+            == (22, 9, 13, 0, 16, 0),
+            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AO CSP contract",
         )
 
         print("   ✅ Two source templates, page-owned controllers, rendered routes, and exact residual inventory passed")
@@ -9222,8 +9222,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 10, 12, 1, 31, 0),
-            "short-term planning: maintained aggregate inventory must match the post-4AN CSP contract",
+            == (22, 9, 13, 0, 16, 0),
+            "short-term planning: maintained aggregate inventory must match the post-4AO CSP contract",
         )
 
         print("   ✅ Source template, page controller, rendered response markup, inert data, cleanup, and exact residual inventory passed")
@@ -9326,11 +9326,108 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (23, 10, 12, 1, 31, 0),
-            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AN CSP contract",
+            == (22, 9, 13, 0, 16, 0),
+            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AO CSP contract",
         )
 
         print("   ✅ Two source templates, rendered routes, page controller, AI seams, and exact residual inventory passed")
+
+        # ── 11j. Subscription-page execution ────────────────────────
+        print("\n11j. Subscription-page execution…")
+
+        subscriptions_template = templates_root / "subscriptions.html"
+        subscriptions_source = subscriptions_template.read_text()
+        subscriptions_asset_source = (
+            PROJECT_ROOT / "web" / "static" / "subscriptions.js"
+        ).read_text()
+        _check(
+            not inline_executable_script_pattern.search(subscriptions_source)
+            and not native_handler_pattern.search(subscriptions_source)
+            and "hx-on" not in subscriptions_source,
+            "subscriptions: source template must contain no inline execution",
+        )
+        _check(
+            "subscriptions.js" in subscriptions_source
+            and "data-subscriptions-controller" in subscriptions_source
+            and 'data-app-shell-action="open-ai-chat"' in subscriptions_source
+            and 'data-ai-page="subscriptions"' in subscriptions_source
+            and '<template id="sub-suggestions-data" data-json>' in subscriptions_source
+            and 'data-subscriptions-action="open-suggestion"' in subscriptions_source
+            and 'data-subscriptions-action="open-watchlist"' in subscriptions_source
+            and 'data-subscriptions-action="add-account-info"' in subscriptions_source
+            and 'data-subscriptions-action="fetch-tips"' in subscriptions_source
+            and 'data-subscriptions-action="copy-share"' in subscriptions_source
+            and 'data-subscriptions-action="remove-watchlist"' in subscriptions_source,
+            "subscriptions: template must expose the complete delegated controller and inert-data contract",
+        )
+        _check(
+            "{{" not in subscriptions_asset_source
+            and "{%" not in subscriptions_asset_source
+            and ".onclick" not in subscriptions_asset_source
+            and "data-subscriptions-action" in subscriptions_asset_source
+            and "subscriptionsEnterAction" in subscriptions_asset_source,
+            "subscriptions: page controller must remain template-free and own delegated actions",
+        )
+
+        fragment_client.set_cookie("entity", "Personal")
+        rendered_subscriptions = fragment_client.get(
+            "/subscriptions/"
+        ).get_data(as_text=True)
+        _check(
+            not inline_executable_script_pattern.search(rendered_subscriptions)
+            and not native_handler_pattern.search(rendered_subscriptions)
+            and "hx-on" not in rendered_subscriptions,
+            "subscriptions: rendered route must contain no inline execution",
+        )
+        _check(
+            "/static/subscriptions.js" in rendered_subscriptions
+            and "data-subscriptions-controller" in rendered_subscriptions
+            and 'data-app-shell-action="open-ai-chat"' in rendered_subscriptions
+            and 'data-ai-page="subscriptions"' in rendered_subscriptions,
+            "subscriptions: rendered route must expose the maintained controller and AI seam",
+        )
+
+        all_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        all_script_count = len(
+            _re.findall(r"<script\b[^>]*>", all_template_source, flags=_re.IGNORECASE)
+        )
+        inert_script_count = len(
+            _re.findall(
+                r"<script\b[^>]*\btype=[\"']application/json[\"'][^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        external_script_count = len(
+            _re.findall(
+                r"<script\b(?=[^>]*\bsrc=)[^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        inline_executable_count = (
+            all_script_count - inert_script_count - external_script_count
+        )
+        all_native_handler_count = len(
+            native_handler_pattern.findall(all_template_source)
+        )
+        all_hx_on_count = all_template_source.count("hx-on")
+        _check(
+            (
+                all_script_count,
+                inline_executable_count,
+                external_script_count,
+                inert_script_count,
+                all_native_handler_count,
+                all_hx_on_count,
+            )
+            == (22, 9, 13, 0, 16, 0),
+            "subscriptions: maintained aggregate inventory must match the post-4AO CSP contract",
+        )
+
+        print("   ✅ Source template, rendered route, page controller, inert data, AI seam, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

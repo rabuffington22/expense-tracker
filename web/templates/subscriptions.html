@@ -1,12 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Subscription Tracker{% endblock %}
+{% block head %}
+<script defer src="{{ url_for('static', filename='subscriptions.js') }}?v={{ cache_bust }}"></script>
+{% endblock %}
 
 {% block content %}
+<div data-subscriptions-controller
+     data-detail-url="{{ url_for('subscriptions.detail', sub_id=0) }}"
+     data-update-url="{{ url_for('subscriptions.update', sub_id=0) }}"
+     data-delete-url="{{ url_for('subscriptions.delete', sub_id=0) }}"
+     data-tips-url="{{ url_for('subscriptions.generate_tips', sub_id=0) }}"
+     data-account-add-url="{{ url_for('subscriptions.add_account_info', sub_id=0) }}"
+     data-account-delete-url="{{ url_for('subscriptions.delete_account_info', field_id=0) }}"
+     data-share-url="{{ url_for('subscriptions.share_text', sub_id=0) }}">
 <div class="sub-page">
 
 <div class="page-title-row">
   <h1 class="page-title">Subscription Tracker</h1>
-  <button type="button" class="joker-btn" onclick="aiChatOpen('subscriptions')" title="Ask Opus" aria-label="Ask Opus">
+  <button type="button" class="joker-btn"
+          data-app-shell-action="open-ai-chat" data-ai-page="subscriptions"
+          title="Ask Opus" aria-label="Ask Opus">
     <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
   </button>
 </div>
@@ -17,8 +30,9 @@
     <div class="sub-section-label">We found these recurring charges</div>
     <div class="outline-panel sub-panel">
         {% for s in suggestions %}
-        <div class="sub-row sub-suggestion-row" onclick="subOpenDetail({{ loop.index0 }})" role="button" tabindex="0"
-             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="sub-row sub-suggestion-row" role="button" tabindex="0"
+             data-subscriptions-row data-subscriptions-action="open-suggestion"
+             data-suggestion-index="{{ loop.index0 }}">
             <div class="sub-row-main">
                 <div class="sub-info">
                     <span class="sub-merchant">{{ s.merchant_canonical }}</span>
@@ -30,7 +44,7 @@
                     <span class="badge badge-blue">{{ s.cadence_label|lower }}</span>
                     <form method="post"
                           action="{{ url_for('subscriptions.accept') }}"
-                          class="sub-suggest-form" onclick="event.stopPropagation()">
+                          class="sub-suggest-form">
                         <input type="hidden" name="merchant"
                                value="{{ s.merchant_canonical }}">
                         <input type="hidden" name="merchant_canonical"
@@ -44,7 +58,7 @@
                     </form>
                     <form method="post"
                           action="{{ url_for('subscriptions.dismiss') }}"
-                          class="sub-suggest-form" onclick="event.stopPropagation()">
+                          class="sub-suggest-form">
                         <input type="hidden" name="merchant_canonical"
                                value="{{ s.merchant_canonical }}">
                         <button type="submit" class="sub-suggest-btn sub-suggest-btn--dismiss"
@@ -58,9 +72,9 @@
 </div>
 
 {# ── Suggestion data for modal ── #}
-<script type="application/json" id="sub-suggestions-data">
+<template id="sub-suggestions-data" data-json>
 {{ suggestions|tojson }}
-</script>
+</template>
 {% endif %}
 
 {# ── Watchlist ─────────────────────────────────────────────────────── #}
@@ -71,8 +85,8 @@
 <div class="outline-panel sub-panel">
     {% for sub in watchlist %}
     <div class="sub-row sub-watchlist-row" data-sub-id="{{ sub.id }}"
-         onclick="subOpenWatchlistDetail({{ sub.id }})" role="button" tabindex="0"
-         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+         data-subscriptions-row data-subscriptions-action="open-watchlist"
+         role="button" tabindex="0">
         <div class="sub-row-main">
             <div class="sub-info">
                 <span class="sub-merchant">{{ sub.merchant }}</span>
@@ -109,7 +123,7 @@
 {# ── Add subscription ─────────────────────────────────────────── #}
 <div class="sub-add-section">
     <button type="button" class="sub-add-trigger" id="sub-add-trigger"
-            onclick="subShowAdd()">+ Add subscription</button>
+            data-subscriptions-action="show-add">+ Add subscription</button>
 
     <div class="outline-panel sub-add-panel" id="sub-add-panel" hidden>
         <form method="post" action="{{ url_for('subscriptions.add') }}" class="sub-add-form">
@@ -139,7 +153,7 @@
             <div class="sub-add-actions">
                 <button type="submit" class="btn btn-sm btn-primary">Add</button>
                 <button type="button" class="btn btn-sm btn-secondary"
-                        onclick="subHideAdd()">Cancel</button>
+                        data-subscriptions-action="hide-add">Cancel</button>
             </div>
         </form>
     </div>
@@ -149,7 +163,7 @@
 {% if dismissed %}
 <div class="sub-dismissed-section">
     <button type="button" class="sub-dismissed-trigger" id="sub-dismissed-trigger"
-            onclick="subToggleDismissed()">
+            data-subscriptions-action="toggle-dismissed">
         Show {{ dismissed|length }} dismissed
         <span class="sub-dismissed-chevron" id="sub-dismissed-chevron">&#x203A;</span>
     </button>
@@ -170,11 +184,13 @@
 </div>{# .sub-page #}
 
 {# ── Detail Modal (shared by suggestions + watchlist) ──────────── #}
-<div class="tq-modal-scrim" id="sub-detail-scrim" hidden>
+<div class="tq-modal-scrim" id="sub-detail-scrim"
+     data-subscriptions-action="close-on-scrim" hidden>
     <div class="outline-panel tq-modal-card sub-detail-card" role="dialog" aria-modal="true">
         <div class="tq-modal-top">
             <button type="button" class="cf-edit-btn tq-modal-close"
-                    onclick="subCloseDetail()" title="Close" aria-label="Close">&times;</button>
+                    data-subscriptions-action="close-detail"
+                    title="Close" aria-label="Close">&times;</button>
         </div>
         <div class="sub-detail-body">
             <div class="sub-detail-title" id="sub-detail-title"></div>
@@ -229,9 +245,10 @@
                     </select>
                     <input type="text" class="sub-input sub-acctinfo-value"
                            id="sub-acctinfo-value" placeholder="Enter value"
-                           onkeydown="if(event.key==='Enter'){event.preventDefault();subAddAccountInfo();}">
+                           data-subscriptions-enter-action="add-account-info">
                     <button type="button" class="sub-acctinfo-add-btn"
-                            id="sub-acctinfo-add-btn" onclick="subAddAccountInfo()"
+                            id="sub-acctinfo-add-btn"
+                            data-subscriptions-action="add-account-info"
                             title="Add field" aria-label="Add account info field">+</button>
                 </div>
             </div>
@@ -241,7 +258,8 @@
                 <div class="sub-detail-box-title">How to Cancel</div>
                 <div class="sub-detail-tips" id="sub-detail-tips"></div>
                 <button type="button" class="sub-tips-fetch-btn" id="sub-tips-fetch-btn"
-                        hidden onclick="subFetchTips()">AI Cancellation Tips</button>
+                        data-subscriptions-action="fetch-tips"
+                        hidden>AI Cancellation Tips</button>
             </div>
 
             {# ── Timeline box (watchlist only) ── #}
@@ -273,9 +291,11 @@
                 <div class="sub-detail-edit-actions">
                     <button type="submit" class="btn btn-sm btn-primary">Save</button>
                     <button type="button" class="sub-phone-btn" id="sub-phone-btn"
-                            onclick="subPhoneAFriend()" title="Copy all info to clipboard">
+                            data-subscriptions-action="copy-share"
+                            title="Copy all info to clipboard">
                         Phone a Friend</button>
-                    <button type="button" class="sub-delete-btn" id="sub-detail-delete-btn">
+                    <button type="button" class="sub-delete-btn" id="sub-detail-delete-btn"
+                            data-subscriptions-action="remove-watchlist">
                         Remove from list</button>
                 </div>
             </form>
@@ -285,403 +305,5 @@
     </div>
 </div>
 
-<script>
-/* ── Suggestion detail (client-side data) ── */
-var _subSuggestions = [];
-(function() {
-    var el = document.getElementById('sub-suggestions-data');
-    if (el) {
-        try { _subSuggestions = JSON.parse(el.textContent); } catch(e) {}
-    }
-})();
-
-function _fmtDollars(cents) {
-    return '$' + (cents / 100).toFixed(2).replace(/\.00$/, '');
-}
-
-function _freqSuffix(freq) {
-    var m = {weekly:'/wk', biweekly:'/2wk', monthly:'/mo', quarterly:'/qtr', annual:'/yr'};
-    return m[freq] || '';
-}
-
-function _escapeHtml(text) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(text));
-    return div.innerHTML;
-}
-
-var _subMode = 'suggestion'; // 'suggestion' or 'watchlist'
-var _currentSubId = null;
-
-function _populateCharges(data) {
-    // Stats
-    document.getElementById('sub-detail-count').textContent =
-        data.occurrence_count || '\u2014';
-    document.getElementById('sub-detail-period').textContent =
-        (data.first_date_display && data.last_date_display)
-            ? data.first_date_display + ' \u2013 ' + data.last_date_display
-            : '\u2014';
-
-    var rangeEl = document.getElementById('sub-detail-amount-range');
-    if (data.min_amount_cents != null && data.max_amount_cents != null) {
-        if (data.min_amount_cents === data.max_amount_cents) {
-            rangeEl.textContent = _fmtDollars(data.amount_cents) + ' (consistent)';
-        } else {
-            rangeEl.textContent = _fmtDollars(data.min_amount_cents) + ' \u2013 ' +
-                _fmtDollars(data.max_amount_cents);
-        }
-    } else {
-        rangeEl.textContent = data.amount_cents ? _fmtDollars(data.amount_cents) : '\u2014';
-    }
-
-    // Recent charges
-    var chargesEl = document.getElementById('sub-detail-charges');
-    chargesEl.innerHTML = '';
-    var charges = data.recent_charges || [];
-    if (charges.length === 0) {
-        chargesEl.innerHTML = '<div class="sub-detail-empty">No charge data available</div>';
-    }
-    charges.forEach(function(c) {
-        var row = document.createElement('div');
-        row.className = 'sub-detail-charge';
-        row.innerHTML = '<span class="sub-detail-charge-date">' +
-            _escapeHtml(c.date) + '</span><span class="sub-detail-charge-amount">' +
-            _fmtDollars(c.amount_cents) + '</span>';
-        chargesEl.appendChild(row);
-    });
-}
-
-/* ── Open suggestion detail ── */
-function subOpenDetail(idx) {
-    var s = _subSuggestions[idx];
-    if (!s) return;
-
-    _subMode = 'suggestion';
-
-    document.getElementById('sub-detail-title').textContent = s.merchant_canonical;
-    document.getElementById('sub-detail-meta').textContent =
-        _fmtDollars(s.amount_cents) + _freqSuffix(s.frequency) + '  \u00b7  ' + s.cadence_label;
-
-    _populateCharges(s);
-
-    // Hide watchlist-only sections
-    document.getElementById('sub-detail-tips-section').hidden = true;
-    document.getElementById('sub-detail-timeline-section').hidden = true;
-    document.getElementById('sub-detail-edit-footer').hidden = true;
-
-    // Show suggestion footer
-    var footer = document.getElementById('sub-detail-footer');
-    footer.hidden = false;
-    footer.innerHTML =
-        '<form method="post" action="{{ url_for("subscriptions.accept") }}" class="sub-detail-form">' +
-            '<input type="hidden" name="merchant" value="' + _escapeHtml(s.merchant_canonical) + '">' +
-            '<input type="hidden" name="merchant_canonical" value="' + _escapeHtml(s.merchant_canonical) + '">' +
-            '<input type="hidden" name="amount" value="' + (s.amount_cents / 100).toFixed(2) + '">' +
-            '<input type="hidden" name="frequency" value="' + s.frequency + '">' +
-            '<button type="submit" class="btn btn-sm btn-primary">Add to Watchlist</button>' +
-        '</form>' +
-        '<form method="post" action="{{ url_for("subscriptions.dismiss") }}" class="sub-detail-form">' +
-            '<input type="hidden" name="merchant_canonical" value="' + _escapeHtml(s.merchant_canonical) + '">' +
-            '<button type="submit" class="btn btn-sm btn-secondary">Dismiss</button>' +
-        '</form>';
-
-    document.getElementById('sub-detail-scrim').hidden = false;
-}
-
-/* ── Open watchlist detail (fetch from server) ── */
-function subOpenWatchlistDetail(subId) {
-    _subMode = 'watchlist';
-
-    // Show modal with loading state
-    document.getElementById('sub-detail-title').textContent = 'Loading\u2026';
-    document.getElementById('sub-detail-meta').textContent = '';
-    document.getElementById('sub-detail-count').textContent = '';
-    document.getElementById('sub-detail-period').textContent = '';
-    document.getElementById('sub-detail-amount-range').textContent = '';
-    document.getElementById('sub-detail-charges').innerHTML = '';
-    document.getElementById('sub-detail-tips-section').hidden = true;
-    document.getElementById('sub-detail-timeline-section').hidden = true;
-    document.getElementById('sub-detail-payment-row').hidden = true;
-    document.getElementById('sub-detail-acctinfo-section').hidden = true;
-    document.getElementById('sub-detail-footer').hidden = true;
-    document.getElementById('sub-detail-edit-footer').hidden = true;
-    document.getElementById('sub-detail-scrim').hidden = false;
-
-    fetch('/subscriptions/detail/' + subId)
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.error) { subCloseDetail(); return; }
-
-            // Title + meta
-            document.getElementById('sub-detail-title').textContent = data.merchant;
-            var metaParts = [];
-            if (data.amount_cents) metaParts.push(_fmtDollars(data.amount_cents) + _freqSuffix(data.frequency));
-            if (data.cadence_label) metaParts.push(data.cadence_label);
-            document.getElementById('sub-detail-meta').textContent = metaParts.join('  \u00b7  ');
-
-            // Charge history
-            if (data.charges) {
-                _populateCharges(data.charges);
-            } else {
-                document.getElementById('sub-detail-count').textContent = '\u2014';
-                document.getElementById('sub-detail-period').textContent = '\u2014';
-                document.getElementById('sub-detail-amount-range').textContent = '\u2014';
-                document.getElementById('sub-detail-charges').innerHTML =
-                    '<div class="sub-detail-empty">No matching transactions found</div>';
-            }
-
-            // Payment method
-            var paymentRow = document.getElementById('sub-detail-payment-row');
-            if (data.payment_method) {
-                document.getElementById('sub-detail-payment').textContent = data.payment_method;
-                paymentRow.hidden = false;
-            } else {
-                paymentRow.hidden = true;
-            }
-
-            // Account info
-            _currentSubId = data.id;
-            var acctSection = document.getElementById('sub-detail-acctinfo-section');
-            var fieldsEl = document.getElementById('sub-detail-acctinfo-fields');
-            fieldsEl.innerHTML = '';
-            if (data.account_info && data.account_info.length > 0) {
-                data.account_info.forEach(function(field) {
-                    _renderAccountInfoField(fieldsEl, field);
-                });
-            }
-            acctSection.hidden = false;
-            // Reset add row
-            document.getElementById('sub-acctinfo-value').value = '';
-            document.getElementById('sub-acctinfo-type').selectedIndex = 0;
-
-            // Cancellation tips
-            var tipsSection = document.getElementById('sub-detail-tips-section');
-            var tipsEl = document.getElementById('sub-detail-tips');
-            var tipsFetchBtn = document.getElementById('sub-tips-fetch-btn');
-            if (data.cancellation_tips) {
-                tipsEl.textContent = data.cancellation_tips;
-                tipsFetchBtn.hidden = true;
-                tipsSection.hidden = false;
-            } else {
-                tipsEl.textContent = '';
-                tipsFetchBtn.hidden = false;
-                tipsSection.hidden = false;
-            }
-
-            // Timeline
-            var timelineSection = document.getElementById('sub-detail-timeline-section');
-            var timelineEl = document.getElementById('sub-detail-timeline');
-            timelineEl.innerHTML = '';
-            if (data.timeline && data.timeline.length > 0) {
-                data.timeline.forEach(function(entry) {
-                    var row = document.createElement('div');
-                    row.className = 'sub-detail-timeline-entry';
-
-                    var label = entry.action;
-                    if (entry.action === 'created') label = 'Added to watchlist';
-                    else if (entry.action === 'status_changed') label = 'Status: ' + (entry.detail || '');
-                    else if (entry.action === 'note_added') label = 'Note: ' + (entry.detail || '');
-                    else if (entry.action === 'tips_generated') label = 'Cancellation tips generated';
-
-                    row.innerHTML =
-                        '<span class="sub-timeline-date">' + _escapeHtml(entry.date_display) + '</span>' +
-                        '<span class="sub-timeline-action">' + _escapeHtml(label) + '</span>';
-                    timelineEl.appendChild(row);
-                });
-                timelineSection.hidden = false;
-            } else {
-                timelineSection.hidden = true;
-            }
-
-            // Edit footer
-            document.getElementById('sub-detail-footer').hidden = true;
-            var editFooter = document.getElementById('sub-detail-edit-footer');
-            editFooter.hidden = false;
-
-            // Set form action
-            var editForm = document.getElementById('sub-detail-edit-form');
-            editForm.action = '/subscriptions/update/' + data.id;
-
-            // Populate status
-            var statusSelect = document.getElementById('sub-detail-status');
-            statusSelect.value = data.status || 'watching';
-
-            // Populate notes
-            var notesEl = document.getElementById('sub-detail-notes');
-            notesEl.value = data.notes || '';
-
-            // Delete form
-            var deleteForm = document.getElementById('sub-detail-delete-form');
-            deleteForm.action = '/subscriptions/delete/' + data.id;
-
-            var deleteBtn = document.getElementById('sub-detail-delete-btn');
-            deleteBtn.onclick = function() {
-                if (confirm('Remove ' + data.merchant + ' from watchlist?')) {
-                    deleteForm.submit();
-                }
-            };
-        })
-        .catch(function() {
-            subCloseDetail();
-        });
-}
-
-function subFetchTips() {
-    if (!_currentSubId) return;
-    var btn = document.getElementById('sub-tips-fetch-btn');
-    btn.textContent = 'Loading\u2026';
-    btn.disabled = true;
-    fetch('/subscriptions/generate-tips/' + _currentSubId, { method: 'POST' })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            var tipsEl = document.getElementById('sub-detail-tips');
-            if (data.tips) {
-                tipsEl.textContent = data.tips;
-                btn.hidden = true;
-            } else {
-                btn.textContent = 'Tips unavailable';
-            }
-        })
-        .catch(function() {
-            btn.textContent = 'Tips unavailable';
-        });
-}
-
-/* ── Account info field management ── */
-function _renderAccountInfoField(container, field) {
-    var row = document.createElement('div');
-    row.className = 'sub-acctinfo-field';
-    row.dataset.fieldId = field.id;
-    row.innerHTML =
-        '<span class="sub-acctinfo-field-type">' + _escapeHtml(field.field_type) + '</span>' +
-        '<span class="sub-acctinfo-field-value">' + _escapeHtml(field.field_value) + '</span>' +
-        '<button type="button" class="sub-acctinfo-delete-btn" title="Remove" aria-label="Remove field">&times;</button>';
-    row.querySelector('.sub-acctinfo-delete-btn').addEventListener('click', function() {
-        subDeleteAccountInfo(field.id, row);
-    });
-    container.appendChild(row);
-}
-
-function subAddAccountInfo() {
-    if (!_currentSubId) return;
-    var typeEl = document.getElementById('sub-acctinfo-type');
-    var valueEl = document.getElementById('sub-acctinfo-value');
-    var fieldType = typeEl.value;
-    var fieldValue = valueEl.value.trim();
-    if (!fieldValue) { valueEl.focus(); return; }
-
-    var btn = document.getElementById('sub-acctinfo-add-btn');
-    btn.disabled = true;
-
-    fetch('/subscriptions/account-info/add/' + _currentSubId, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({field_type: fieldType, field_value: fieldValue})
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        btn.disabled = false;
-        if (data.error) return;
-        var container = document.getElementById('sub-detail-acctinfo-fields');
-        _renderAccountInfoField(container, data);
-        valueEl.value = '';
-        valueEl.focus();
-    })
-    .catch(function() { btn.disabled = false; });
-}
-
-function subDeleteAccountInfo(fieldId, rowEl) {
-    fetch('/subscriptions/account-info/delete/' + fieldId, {method: 'POST'})
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.ok) rowEl.remove();
-        });
-}
-
-/* ── Phone a Friend (copy to clipboard) ── */
-function subPhoneAFriend() {
-    if (!_currentSubId) return;
-    var btn = document.getElementById('sub-phone-btn');
-    var origText = btn.innerHTML;
-    btn.textContent = 'Building\u2026';
-    btn.disabled = true;
-
-    fetch('/subscriptions/share-text/' + _currentSubId)
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.text) {
-                navigator.clipboard.writeText(data.text).then(function() {
-                    btn.textContent = '\u2705 Copied!';
-                    setTimeout(function() {
-                        btn.innerHTML = origText;
-                        btn.disabled = false;
-                    }, 2000);
-                }).catch(function() {
-                    // Fallback for older browsers
-                    var ta = document.createElement('textarea');
-                    ta.value = data.text;
-                    ta.style.position = 'fixed';
-                    ta.style.opacity = '0';
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
-                    btn.textContent = '\u2705 Copied!';
-                    setTimeout(function() {
-                        btn.innerHTML = origText;
-                        btn.disabled = false;
-                    }, 2000);
-                });
-            } else {
-                btn.innerHTML = origText;
-                btn.disabled = false;
-            }
-        })
-        .catch(function() {
-            btn.innerHTML = origText;
-            btn.disabled = false;
-        });
-}
-
-function subCloseDetail() {
-    document.getElementById('sub-detail-scrim').hidden = true;
-}
-
-function subShowAdd() {
-    document.getElementById('sub-add-trigger').hidden = true;
-    document.getElementById('sub-add-panel').hidden = false;
-    var nameInput = document.querySelector('#sub-add-panel input[name="merchant"]');
-    if (nameInput) nameInput.focus();
-}
-
-function subHideAdd() {
-    document.getElementById('sub-add-trigger').hidden = false;
-    document.getElementById('sub-add-panel').hidden = true;
-    document.querySelector('#sub-add-panel form').reset();
-}
-
-function subToggleDismissed() {
-    var list = document.getElementById('sub-dismissed-list');
-    var chevron = document.getElementById('sub-dismissed-chevron');
-    if (list.hidden) {
-        list.hidden = false;
-        chevron.style.transform = 'rotate(90deg)';
-    } else {
-        list.hidden = true;
-        chevron.style.transform = '';
-    }
-}
-
-/* ── Modal close handlers ── */
-document.getElementById('sub-detail-scrim').addEventListener('click', function(e) {
-    if (e.target === this) subCloseDetail();
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        var scrim = document.getElementById('sub-detail-scrim');
-        if (scrim && !scrim.hidden) subCloseDetail();
-    }
-});
-</script>
+</div>{# subscriptions controller #}
 {% endblock %}

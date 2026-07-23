@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-23 8:35 AM CST",
+    "lastUpdated": "2026-07-23 9:18 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,64 +27,59 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.2c.4-R is durable deployed and credential-free production health verified through 4AN-R while Task 1P.4.2c.5 remains separately gated.",
+    "summary": "Task 1P.4.2c.5-R is active through exact-scope work block 4AO-R after 4AO completed local implementation and verification; Task 1P.4.2c.6 remains separate.",
     "progress": 97
   },
   "currentTask": {
-    "title": "Task 1P.4.2c.5: Migrate subscription-page execution",
-    "owner": "Ryan",
-    "status": "waiting-on-ryan",
-    "supportingAgent": "Codex Desktop may preserve 4AN-R or prepare a fresh bounded proposal after Ryan requests it",
-    "nextAction": "Choose whether to request a fresh Task 1P.4.2c.5 work-block proposal.",
-    "blocker": "Task 1P.4.2c.5 implementation remains unauthorized."
+    "title": "Task 1P.4.2c.5-R: Publish and verify subscription-page execution",
+    "owner": "Codex Desktop",
+    "status": "in-progress",
+    "supportingAgent": "Codex Desktop owns exact staging Git safety direct-main durability deployment observation health verification and sanitized closeout",
+    "nextAction": "Execute confirmed work block 4AO-R and report exact release verification before any later-task action.",
+    "blocker": "Every expansion manual live mutation failure recovery and Task 1P.4.2c.6 remain unauthorized."
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-an-r",
-    "label": "4AN-R",
-    "name": "Weekly And Waterfall Durability And Release",
-    "status": "complete",
+    "id": "phase-4-block-ao-r",
+    "label": "4AO-R",
+    "name": "Subscription Page Durability And Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Task 1P.4.2c.4-R for the exact verified 4AN source set only",
+    "currentTask": "Task 1P.4.2c.5-R for the exact verified 4AO source set only",
     "includedTasks": [
-      "Explicitly stage and commit the exact verified 4AN application controller test evidence and Runway OS paths",
-      "Fast-forward local main push origin main without force or PR and observe the automatic Fly deployment read-only",
-      "Verify exact source SHA credential-free production health and publish one sanitized skip-actions closeout"
+      "Explicit-path staging and one source commit for the exact verified 4AO application controller tests CSP contract evidence and Runway OS paths",
+      "Clean fast-forward of local main direct push to origin/main read-only automatic Fly deployment observation credential-free production health and exact source-SHA verification",
+      "One sanitized command-center-only skip-actions closeout commit and push"
     ],
     "excludedTasks": [
-      "Task 1P.4.2c.5 and every later task plus any new application runtime test dependency route financial authentication header Plaid or workflow mutation",
-      "Credentials protected data real databases retained uploads authenticated production pages manual workflow actions non-automatic Fly changes and downstream access or writes",
-      "PR creation force push broader recovery and parent-repo mutation",
+      "Task 1P.4.2c.6 and every later task plus new application runtime test dependency route financial authentication header Plaid or workflow mutation",
+      "Credentials protected data real databases retained uploads authenticated production pages manual workflow actions non-automatic Fly mutations and downstream access or writes",
+      "PR creation force push broader recovery and any scope beyond the exact verified 4AO set",
       "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
     ],
     "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "The verified source set exact Git history automatic deployment observation health proof and Runway OS closeout share one release boundary.",
-    "runnerPath": "Source commit on codex/csp-weekly-waterfall clean fast-forward of local main direct origin main push automatic-deployment observation credential-free health and sanitized skip-actions closeout.",
+    "whyThisAgent": "The verified source set exact Git path deployment observation health proof and sanitized closeout form one established release boundary.",
+    "runnerPath": "Current Codex task using local Git gh read-only workflow inspection and credential-free production health.",
     "expectedFiles": [
-      "Exact verified 4AN application controller maintained-test CSP evidence and Runway OS paths for the source commit",
-      "Only sanitized Runway OS sources generated dashboard and one 4AN-R evidence log for closeout"
+      "Exact eleven-path verified 4AO source set for the source commit",
+      "Six command-center-only paths for the sanitized closeout commit"
     ],
     "defaults": [
-      "Use explicit-path staging no PR no force push and no new application mutation",
-      "Preserve the verified controller templates tests inventory false HTMX execution switches and both unrelated untracked files",
-      "Observe only the automatic main deployment and credential-free production health",
-      "Use skip actions only for the sanitized closeout commit"
+      "Explicit-path staging no PR no force push no manual workflow action and no non-automatic Fly mutation",
+      "Preserve exact verified 4AO controller template tests residual inventory false HTMX switches and both unrelated untracked files",
+      "Observe only the automatic deployment and credential-free health then use skip-actions only for the sanitized closeout"
     ],
     "stopConditions": [
-      "Unexpected or excluded path sensitive addition protected-boundary risk or failed maintained verification",
-      "Local or remote main divergence excluded staging push rejection or preserved-file overlap",
-      "Automatic deployment or health failure requiring mutation or recovery beyond clean fast-forward and read-only diagnosis"
+      "Unexpected path sensitive addition protected-boundary risk failed maintained verification excluded staging or preserved-file overlap",
+      "Local or remote main divergence push rejection automatic deployment failure requiring mutation credential-free health failure or exact source-SHA mismatch",
+      "Recovery beyond a clean fast-forward and read-only diagnosis"
     ],
     "verification": [
-      "Exact changed and staged paths protected-boundary and high-confidence sensitive-addition scans",
-      "Full smoke configured-auth and no-password isolated Chrome Python JavaScript JSON whitespace dashboard and rendered-state checks",
-      "Commit content clean fast-forward ancestry exact remote SHA automatic deployment result credential-free production health final alignment and preserved files"
+      "Exact changed and staged paths protected-boundary and high-confidence sensitive-addition scans full smoke and both-auth-mode isolated Chrome",
+      "Python JavaScript JSON syntax whitespace dashboard refresh health generated-state commit content ancestry exact remote SHA and preserved files",
+      "Automatic workflow result credential-free production health and final local remote alignment"
     ],
-    "nextReportPoint": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and Task 1P.4.2c.5 still separately gated.",
-    "durability": "Exact source commit 4fc4735 is durable on local and remote main; automatic Fly run 30011582629 and deploy job 89220774553 passed and credential-free production health returned HTTP 200.",
-    "result": "The exact thirteen-path 4AN source set is durable deployed and health verified with no PR force push manual workflow action non-automatic Fly mutation protected access or later-task work.",
-    "evidence": [
-      "command-center/logs/2026-07-23-weekly-waterfall-execution-release-4an-r.md"
-    ]
+    "nextReportPoint": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and Task 1P.4.2c.6 still separately gated.",
+    "durability": "Active through confirmed 4AO-R direct-main release; no expansion or later-task work is authorized."
   },
   "routerHealth": {
     "status": "healthy",
@@ -109,31 +104,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Choose whether to plan the subscription-page migration",
-    "status": "waiting-on-ryan",
-    "owner": "Ryan",
-    "why": "Work block 4AN-R is complete durable deployed and health verified while subscriptions remains a separate high-interaction boundary.",
-    "action": "Request a fresh bounded Task 1P.4.2c.5 proposal when ready.",
+    "title": "Execute exact-scope 4AO-R durability and release",
+    "status": "in-progress",
+    "owner": "Codex Desktop",
+    "why": "Ryan explicitly authorized commit and direct push of the complete verified 4AO source set to main.",
+    "action": "Stage commit fast-forward push observe the automatic deployment verify credential-free health and publish one sanitized closeout.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [
-    {
-      "decision": "Recheck and propose Task 1P.4.2c.5 after 4AN-R closes",
-      "status": "open",
-      "whyItMatters": "Subscriptions has a separate high-interaction controller and inert-data boundary.",
-      "defaultRecommendation": "Request a fresh source recheck and bounded proposal before implementation.",
-      "workaround": "Keep Task 1P.4.2c.5 unauthorized."
-    }
-  ],
+  "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Ryan's next choice is required before another implementation block.",
-    "items": [
-      "Choose whether to request a fresh Task 1P.4.2c.5 subscription-page proposal."
-    ]
+    "summary": "No Ryan input is required inside confirmed work block 4AO-R unless a stop condition appears.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1P.4.2c.4-R is complete through 4AN-R; Task 1P.4.2c.5 remains separately gated.",
-    "decisionQueue": "CSP broader browser coverage read-model work and live-sensitive actions remain later separate Ryan gates.",
+    "phaseQuestions": "Task 1P.4.2c.5-R is active only through exact-scope work block 4AO-R.",
+    "decisionQueue": "Task 1P.4.2c.6 later CSP browser coverage read-model work and live-sensitive actions remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -5154,6 +5139,97 @@
       "evidence": [
         "command-center/logs/2026-07-23-weekly-waterfall-execution-release-4an-r.md"
       ]
+    },
+    {
+      "id": "phase-4-block-ao",
+      "phaseId": "phase-4",
+      "label": "4AO",
+      "name": "Subscription Page Execution",
+      "status": "complete",
+      "includedTasks": [
+        "Task 1P.4.2c.5 plus only its focused Task 2 regression slice",
+        "Move one executable inline script fifteen native handlers one runtime onclick assignment and one inert JSON carrier into a page-owned controller and non-script inert data",
+        "Preserve the included subscription workflows add focused synthetic and both-auth-mode isolated-browser proof reconcile inventory and close locally"
+      ],
+      "excludedTasks": [
+        "Tasks 1P.4.2c.6-1P.4.4 Tasks 1P.6-1P.7 remainder of Task 2 and Tasks 3-4",
+        "Route query financial product account-information-policy style CSP-enforcement authentication CSRF Plaid dependency service-worker and later-task changes",
+        "Credentials protected data real databases retained uploads external live GitHub durability publication deployment workflows and downstream access or writes",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The page-controller migration focused proof exact cleanup inventory reconciliation and Runway OS closeout share one local compatibility boundary.",
+      "runnerPath": "Current Codex task on local branch codex/csp-subscriptions without delegation or second opinion.",
+      "expectedFiles": [
+        "Subscriptions template plus one new page-owned subscriptions static controller",
+        "Focused smoke and isolated-browser coverage CSP contract sanitized evidence Runway OS sources and generated dashboard"
+      ],
+      "defaults": [
+        "Reuse app-shell AI use delegated declarative actions non-script inert suggestion data and no executable server templating in JavaScript",
+        "Preserve runtime-style route and entity behavior and both false HTMX execution switches",
+        "Use temporary synthetic all-entity data deterministic local AI and clipboard behavior both auth modes localhost denied external requests zero browser errors exact cleanup and preserve both unrelated untracked files",
+        "Keep durability local-only with publication and live action separately gated"
+      ],
+      "stopConditions": [
+        "Parity requires route query financial product account-information-policy style CSP-enforcement authentication Plaid dependency or later-task work",
+        "Protected data credentials real databases retained uploads destructive external or live access appears",
+        "Verification changes the plan exact cleanup fails scope expands command-center checks fail or either preserved file overlaps"
+      ],
+      "verification": [
+        "Baseline and final full smoke exact subscriptions zero-execution proof and residual nine-inline thirteen-external zero-inert sixteen-handler zero-hx-on inventory",
+        "Configured-auth and no-password isolated Chrome for included subscription AI detail account-info tips clipboard modal keyboard entity network error and cleanup behavior",
+        "Relevant Python JavaScript JSON syntax whitespace dashboard refresh health rendered-state inspection exact scope and preserved files"
+      ],
+      "reportBack": "Return exact migrated behavior residual inventory controller and data organization focused and full proof browser and cleanup results changed paths local branch state preserved exclusions and separate 4AO-R plus Task 1P.4.2c.6 gates.",
+      "durability": "Complete and locally verified on codex/csp-subscriptions; no commit push PR merge publication deployment protected access credential use real database or live action occurred.",
+      "result": "subscriptions.html uses page-owned template-free subscriptions.js delegated declarative actions non-script inert suggestion data and app-shell AI with the included interaction and entity matrix preserved. Residual inventory is nine inline thirteen external zero inert sixteen handlers and zero hx-on with both HTMX execution switches false. Full smoke and both-auth-mode isolated Chrome pass with denied external traffic zero unexpected browser errors and exact cleanup.",
+      "evidence": [
+        "command-center/logs/2026-07-23-subscription-page-execution-4ao.md"
+      ]
+    },
+    {
+      "id": "phase-4-block-ao-r",
+      "phaseId": "phase-4",
+      "label": "4AO-R",
+      "name": "Subscription Page Durability And Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1P.4.2c.5-R for the exact verified 4AO source set only",
+        "Explicit-path source commit clean fast-forward direct-main push read-only automatic Fly deployment observation credential-free health and exact source-SHA verification",
+        "One sanitized command-center-only skip-actions closeout commit and push"
+      ],
+      "excludedTasks": [
+        "Task 1P.4.2c.6 and every later task plus new application runtime test dependency route financial authentication header Plaid or workflow mutation",
+        "Credentials protected data real databases retained uploads authenticated production pages manual workflow actions non-automatic Fly mutations and downstream access or writes",
+        "PR creation force push broader recovery and any scope beyond the exact verified 4AO set",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The verified source set exact Git path deployment observation health proof and sanitized closeout form one established release boundary.",
+      "runnerPath": "Current Codex task using local Git gh read-only workflow inspection and credential-free production health.",
+      "expectedFiles": [
+        "Exact eleven-path verified 4AO source set for the source commit",
+        "Six command-center-only paths for the sanitized closeout commit"
+      ],
+      "defaults": [
+        "Explicit-path staging no PR no force push no manual workflow action and no non-automatic Fly mutation",
+        "Preserve exact verified 4AO behavior inventory tests false HTMX switches and both unrelated untracked files",
+        "Observe only the automatic deployment and credential-free health then use skip-actions only for the sanitized closeout"
+      ],
+      "stopConditions": [
+        "Unexpected path sensitive addition protected-boundary risk failed maintained verification excluded staging or preserved-file overlap",
+        "Local or remote main divergence push rejection automatic deployment failure requiring mutation credential-free health failure or exact source-SHA mismatch",
+        "Recovery beyond a clean fast-forward and read-only diagnosis"
+      ],
+      "verification": [
+        "Exact changed and staged paths protected-boundary and high-confidence sensitive-addition scans full smoke and both-auth-mode isolated Chrome",
+        "Python JavaScript JSON syntax whitespace dashboard refresh health generated-state commit content ancestry exact remote SHA and preserved files",
+        "Automatic workflow result credential-free production health and final local remote alignment"
+      ],
+      "reportBack": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and Task 1P.4.2c.6 still separately gated.",
+      "durability": "Active through confirmed 4AO-R direct-main release; no expansion or later-task work is authorized."
     }
   ],
   "phaseTasks": [
@@ -6050,7 +6126,7 @@
       "status": "active",
       "owner": "Ryan and Codex Desktop",
       "summary": "Durably decomposed into public-route cookie mobile CSP operator-copy browser-coverage and read-model tasks; the CSP family is further decomposed into Tasks 1P.4.1-1P.4.4.",
-      "nextAction": "Confirm or revise the proposed Task 1P.4.1 CSP contract-and-matrix block.",
+      "nextAction": "Decide exact-scope 4AO-R durability separately; keep Task 1P.4.2c.6 as a fresh later gate.",
       "blocker": null
     },
     {
@@ -6107,7 +6183,7 @@
       "status": "active",
       "owner": "Ryan and Codex Desktop",
       "summary": "Resolve the CSP half of P3-3J-06 through the durable Tasks 1P.4.1-1P.4.4 without weakening the policy merely to avoid template work.",
-      "nextAction": "Complete confirmed local-only work block 4AF for Task 1P.4.2a then size the residual fragment slice separately.",
+      "nextAction": "Preserve the complete locally verified 4AO result and decide exact-scope durability separately.",
       "blocker": null
     },
     {
@@ -6286,8 +6362,8 @@
       "status": "active",
       "owner": "Codex Desktop",
       "summary": "Move the remaining 22 executable inline scripts 116 native handlers and two full-page inert JSON carriers to maintained local behavior and inert server data; Task 1P.4.2c.3 is further decomposed into three execution-sized route slices.",
-      "nextAction": "Preserve the complete local 4AN result and wait for Ryan to choose exact-scope publication or a fresh Task 1P.4.2c.5 proposal.",
-      "blocker": "Publication and every later route cluster remain separately gated."
+      "nextAction": "Decide exact-scope 4AO-R durability; Task 1P.4.2c.6 and later route clusters remain separate.",
+      "blocker": "4AO-R publication and every later route cluster remain separately gated."
     },
     {
       "phaseId": "phase-4",
@@ -6425,8 +6501,8 @@
       "status": "done",
       "owner": "Codex Desktop",
       "summary": "Move one executable inline script and thirteen native handlers from Weekly and Waterfall into maintained local behavior while preserving review mode breakdown target tax tooltip and keyboard behavior.",
-      "nextAction": "Preserve the complete locally verified 4AN result pending a separate durability decision.",
-      "blocker": "None; publication and every later route cluster remain separately gated.",
+      "nextAction": "Preserve the durable deployed health-verified 4AN-R result.",
+      "blocker": "None; Task 1P.4.2c.5 is separately active through 4AO.",
       "result": "Weekly and Waterfall contain zero included executable inline scripts native handlers or hx-on; app-shell AI and page-owned waterfall.js preserve the included workflows with focused and full proof passing.",
       "evidence": [
         "command-center/logs/2026-07-23-weekly-waterfall-execution-4an.md"
@@ -6450,11 +6526,25 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P42C5",
       "title": "Task 1P.4.2c.5: Migrate subscription-page execution",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Move one executable inline script fifteen native handlers one runtime onclick assignment and one inert JSON carrier from subscriptions into maintained local behavior and non-script inert data with dedicated detail account-info tips clipboard modal and keyboard proof.",
+      "nextAction": "Preserve the complete locally verified 4AO result while exact-scope durability remains a separate decision.",
+      "blocker": "Publication Task 1P.4.2c.6 and every excluded boundary remain unauthorized.",
+      "result": "The subscription template contains zero executable inline scripts native handlers runtime onclick assignments inert script carriers or hx-on. Page-owned subscriptions.js delegated controls non-script inert suggestion data and the app-shell AI seam preserve the included workflows with focused and full proof passing.",
+      "evidence": [
+        "command-center/logs/2026-07-23-subscription-page-execution-4ao.md"
+      ]
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1P42C5R",
+      "title": "Task 1P.4.2c.5-R: Publish and verify subscription-page execution",
       "status": "current",
-      "owner": "Ryan",
-      "summary": "Move one executable inline script fifteen native handlers and one inert JSON carrier from subscriptions into maintained local behavior and non-script inert data with dedicated detail account-info tips clipboard modal and keyboard proof.",
-      "nextAction": "Choose whether to request a fresh bounded implementation proposal.",
-      "blocker": "Implementation is not authorized."
+      "owner": "Codex Desktop",
+      "summary": "Make only the exact locally verified 4AO source set durable then observe the automatic deployment and verify credential-free production health through confirmed work block 4AO-R.",
+      "nextAction": "Execute exact staging direct-main durability automatic deployment observation health verification and sanitized closeout.",
+      "blocker": "Every expansion manual live mutation failure recovery and Task 1P.4.2c.6 remain unauthorized."
     },
     {
       "phaseId": "phase-4",
@@ -6959,6 +7049,18 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-23",
+      "text": "Ryan authorized work block 4AO-R to stage and commit the exact verified 4AO paths fast-forward and push main observe only the automatic Fly deployment verify credential-free production health and publish one sanitized skip-actions closeout while later tasks protected data manual live actions and both preserved untracked files remain excluded."
+    },
+    {
+      "time": "2026-07-23",
+      "text": "Completed work block 4AO locally: subscriptions now uses page-owned template-free execution delegated controls non-script inert suggestion data and app-shell AI; full smoke and both-auth-mode isolated Chrome pass with denied external traffic zero unexpected browser errors exact all-entity cleanup and preserved files while durability deployment and Task 1P.4.2c.6 remain separate Ryan gates."
+    },
+    {
+      "time": "2026-07-23",
+      "text": "Ryan confirmed local-only work block 4AO for Task 1P.4.2c.5 plus only its focused Task 2 regression slice to migrate subscription-page execution into a maintained controller and inert data with both-auth-mode synthetic browser proof while later tasks publication live access protected data and both preserved untracked files remain excluded."
+    },
     {
       "time": "2026-07-22",
       "text": "Completed work block 4AI-R: exact source commit 3fb0d74 was fast-forwarded and pushed to main automatic Fly run 29954953878 and job 89041537857 passed credential-free production health returned HTTP 200 both preserved untracked files remained excluded and the sanitized skip-actions closeout was prepared."
@@ -7837,10 +7939,13 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Choose whether to plan Task 1P.4.2c.5",
-    "description": "Request a fresh source recheck and bounded subscription-page proposal without inferring implementation authority."
+    "name": "Complete work block 4AO-R",
+    "description": "Make the exact verified 4AO source set durable on main observe the automatic deployment verify credential-free production health and publish one sanitized closeout."
   },
   "verification": {
+    "phase4SubscriptionsBlock": "pass locally; 4AO removed one executable inline script fifteen native handlers one runtime onclick assignment and one inert JSON script carrier into page-owned subscriptions.js delegated controls and non-script inert data leaving residual inventory nine inline thirteen external zero inert sixteen handlers and zero hx-on",
+    "phase4SubscriptionsCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover AI suggestion watchlist charge payment timeline account-info tips clipboard add dismiss confirmation modal scrim Escape Enter Space all-entity isolation denied external traffic zero unexpected browser errors and exact cleanup",
+    "phase4SubscriptionsBoundaries": "pass; no route query financial product account-information-policy style CSP enforcement authentication CSRF Plaid dependency service-worker credential protected data real database retained upload external live downstream publication deployment later-task or preserved-file mutation occurred",
     "phase4WeeklyWaterfallRelease": "pass; exact thirteen-path source commit 4fc4735 is durable on main automatic Fly run 30011582629 and deploy job 89220774553 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4WeeklyWaterfallBlock": "pass locally; 4AN moved Weekly and Waterfall AI entry to the maintained app-shell seam and removed one Waterfall inline script plus thirteen native handlers into page-owned waterfall.js leaving residual inventory ten inline twelve external one inert thirty-one handlers and zero hx-on",
     "phase4WeeklyWaterfallCoverage": "pass; baseline and final full smoke plus configured-auth and no-password isolated Chrome cover AI actual target nested breakdown mode target tax tooltip animation keyboard URL entity network error and exact cleanup behavior",
