@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify only the exact locally verified standalone and error-document execution result through the confirmed 4AR-R direct-main release boundary.
+Preserve the complete durable standalone and error-document execution result while Task 1P.4.3a awaits fresh just-in-time decomposition before any style-policy implementation.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.8 is complete locally through 4AR and exact-scope 4AR-R release is active, while Tasks 1P.4.2c.1-1P.4.2c.7 are durable through 4AQ-R.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2 and every full-page execution cluster are durable, automatically deployed, and credential-free health verified through 4AR-R.
 
 ## Current Work Block
 
-Work block 4AR-R: Standalone And Error-Document Execution Release — active.
+Work block 4AR-R: Standalone And Error-Document Execution Release — complete.
 
 ## Current Task
 
-Task 1P.4.2c.8-R: Publish and verify standalone and error-document execution — active and authorized for the exact verified 4AR source set.
+Task 1P.4.3a: Make application styles strict-policy compatible — waiting for fresh just-in-time decomposition before any proposal or implementation.
 
 ## Owner
 
-Codex Desktop owns exact staging, maintained verification, direct-main durability, read-only automatic-deployment observation, credential-free health, and sanitized closeout. Ryan owns every expansion, non-automatic live mutation, failure recovery, and the later Task 1P.4.3a decomposition decision.
+Ryan owns the decision to invoke fresh Task 1P.4.3a work-block planning and every expansion or live mutation. Codex Desktop owns preservation of the durable 4AR-R result and may run the planning pass only after Ryan requests it.
 
 ## Current Action
 
-Verify and explicitly stage the exact 4AR paths, commit on `codex/csp-standalone-documents`, cleanly fast-forward and push `main`, observe only the automatic Fly deployment, verify credential-free production health and exact source SHA, then publish one sanitized command-center-only `[skip actions]` closeout while preserving both unrelated untracked files.
+Preserve the aligned local and remote `main` result and both unrelated untracked files. Do not begin Task 1P.4.3a until a fresh just-in-time decomposition is requested, written into Runway OS, and separately confirmed.
 
 ## Work Block 4AR-R Contract
 
@@ -32,6 +32,16 @@ Verify and explicitly stage the exact 4AR paths, commit on `codex/csp-standalone
 - Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
 - Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
 - Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and the separately gated Task 1P.4.3a just-in-time decomposition.
+
+## Work Block 4AR-R Result
+
+- Exact sixteen-path source commit `9e45ee6a653ff5053574785b7c5903c2bb1264c6` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30036622567` and deploy job `89306074345` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}` after deployment.
+- Exact-path and staged-set checks, protected-boundary and high-confidence sensitive-addition scans, maintained smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated-state assertions, commit content, clean fast-forward, ancestry, exact remote SHA, automatic release, production health, and preserved-file checks passed.
+- GitHub reported only the existing non-blocking Node 20 deprecation annotation for `actions/checkout@v4`, forced onto Node 24.
+- No PR, force push, credential, protected data, real database, retained upload, authenticated production page, manual workflow action, workflow edit, non-automatic Fly mutation, downstream access/write, Task 1P.4.3a implementation, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-standalone-error-document-execution-release-4ar-r.md`.
 
 ## Work Block 4AR Contract
 
