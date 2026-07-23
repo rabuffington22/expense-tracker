@@ -28,6 +28,36 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+PLAID_INITIALIZER_URL = (
+    "https://cdn.plaid.com/link/v2/stable/link-initialize.js"
+)
+PLAID_STUB_SOURCE = """
+window.__plaidStub = {mode: "exit", opens: 0};
+window.Plaid = {
+    create: function (options) {
+        if (window.__plaidStub.mode === "throw") {
+            throw new Error("synthetic initializer failure");
+        }
+        window.__plaidStub.options = options;
+        return {
+            open: function () {
+                window.__plaidStub.opens += 1;
+                if (window.__plaidStub.mode === "exit") {
+                    options.onExit();
+                    return;
+                }
+                options.onSuccess("synthetic-4aq-public-token", {
+                    institution: {
+                        name: "Synthetic 4AQ Institution",
+                        institution_id: "ins_synthetic_4aq"
+                    }
+                });
+            }
+        };
+    }
+};
+"""
+
 
 class _QuietRequestHandler(WSGIRequestHandler):
     def log_request(self, code: int | str = "-", size: int | str = "-") -> None:
@@ -484,6 +514,59 @@ def _seed_payroll_data(entity_key: str) -> None:
         (
             (employee_id, "2026-06-15", 500000),
             (employee_id, "2026-07-01", 600000),
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+
+def _seed_plaid_entry_data(entity_key: str) -> None:
+    from core.db import get_connection
+
+    created_at = datetime.now(timezone.utc).isoformat()
+    conn = get_connection(entity_key)
+    conn.execute(
+        "INSERT INTO plaid_items "
+        "(item_id, access_token, institution_name, institution_id, is_vendor, created_at) "
+        "VALUES (?, 'synthetic-4aq-token', ?, 'ins_4aq_vendor', 1, ?)",
+        (
+            f"4aq-{entity_key}-vendor-existing",
+            f"4AQ {entity_key.title()} Vendor",
+            created_at,
+        ),
+    )
+    conn.execute(
+        "INSERT INTO plaid_items "
+        "(item_id, access_token, institution_name, institution_id, is_vendor, created_at) "
+        "VALUES (?, 'synthetic-4aq-token', ?, 'ins_4aq_bank', 0, ?)",
+        (
+            f"4aq-{entity_key}-bank-existing",
+            f"4AQ {entity_key.title()} Bank",
+            created_at,
+        ),
+    )
+    conn.execute(
+        "INSERT INTO plaid_accounts "
+        "(item_id, account_id, name, display_name, mask, type, subtype, enabled) "
+        "VALUES (?, ?, ?, '', '4242', 'depository', 'checking', 1)",
+        (
+            f"4aq-{entity_key}-bank-existing",
+            f"4aq-{entity_key}-account-existing",
+            f"4AQ {entity_key.title()} Checking",
+        ),
+    )
+    conn.execute(
+        "INSERT INTO vendor_transactions "
+        "(plaid_item_id, plaid_transaction_id, plaid_account_id, date, amount, "
+        "amount_cents, name, merchant_name, recipient, vendor_type, imported_at) "
+        "VALUES (?, ?, ?, '2026-07-01', 12.34, 1234, "
+        "'Synthetic 4AQ payment', 'Synthetic 4AQ payment', "
+        "'Synthetic 4AQ recipient', 'venmo', ?)",
+        (
+            f"4aq-{entity_key}-vendor-existing",
+            f"4aq-{entity_key}-vendor-transaction",
+            f"4aq-{entity_key}-vendor-account",
+            created_at,
         ),
     )
     conn.commit()
@@ -2136,6 +2219,264 @@ def _assert_payroll_page(page, base_url: str, label: str) -> None:
     page.goto(base_url, wait_until="networkidle")
 
 
+def _assert_plaid_entry_pages(page, base_url: str, label: str) -> None:
+    from core.db import get_connection
+    from web.routes import data_sources as data_sources_routes
+
+    safe_label = "".join(character for character in label if character.isalnum())
+    fixture_conn = get_connection("personal")
+    try:
+        empty_vendor_items = fixture_conn.execute(
+            "SELECT pi.item_id FROM plaid_items pi "
+            "LEFT JOIN vendor_transactions vt ON vt.plaid_item_id = pi.item_id "
+            "WHERE pi.is_vendor = 1 GROUP BY pi.item_id HAVING COUNT(vt.id) = 0"
+        ).fetchall()
+        for index, row in enumerate(empty_vendor_items):
+            fixture_conn.execute(
+                "INSERT INTO vendor_transactions "
+                "(plaid_item_id, plaid_transaction_id, plaid_account_id, date, "
+                "amount, amount_cents, name, merchant_name, recipient, vendor_type, "
+                "imported_at) VALUES (?, ?, ?, '2026-07-01', 12.34, 1234, "
+                "'Synthetic 4AQ payment', 'Synthetic 4AQ payment', "
+                "'Synthetic 4AQ recipient', 'venmo', ?)",
+                (
+                    row["item_id"],
+                    f"4aq-browser-vendor-stat-{index}-{safe_label}",
+                    f"4aq-browser-vendor-account-{index}",
+                    datetime.now(timezone.utc).isoformat(),
+                ),
+            )
+        fixture_conn.commit()
+    finally:
+        fixture_conn.close()
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(f"{base_url}/data-sources/", wait_until="networkidle")
+    page.wait_for_function(
+        "document.querySelector('[data-data-sources-controller]')"
+        "?.dataset.initialized === 'true'"
+    )
+    _check(
+        page.locator('script[src*="data-sources.js"]').count() == 1
+        and page.locator(
+            f'script[src="{PLAID_INITIALIZER_URL}"]'
+        ).count() == 1
+        and page.locator(
+            "#main-content [onclick], #main-content [onchange], "
+            "#main-content [onsubmit], #main-content [hx-on]"
+        ).count() == 0,
+        f"{label}: Data Sources must load one handler-free local controller and exact Plaid initializer",
+    )
+
+    vendor_select = page.locator("#vendorSelect")
+    vendor_select.select_option("Henry Schein")
+    _check(
+        page.locator("#fileLabel").text_content()
+        == "Henry Schein Items Purchased XLSX",
+        f"{label}: delegated vendor selection must update the file label",
+    )
+    vendor_select.select_option("Amazon")
+
+    amazon_csv = (
+        "Order ID,Order Date,Product Name,Item Total,Quantity\n"
+        f"4AQ-{safe_label}-1,2026-07-01,Synthetic first item,10.00,1\n"
+        f"4AQ-{safe_label}-2,2026-07-02,Synthetic middle item,20.00,1\n"
+        f"4AQ-{safe_label}-3,2026-07-03,Synthetic final item,30.00,1\n"
+    ).encode()
+    page.locator('input[name="file"]').set_input_files(
+        {
+            "name": f"synthetic-{safe_label}-amazon.csv",
+            "mimeType": "text/csv",
+            "buffer": amazon_csv,
+        }
+    )
+    with page.expect_navigation(wait_until="networkidle"):
+        page.get_by_role("button", name="Upload & Parse", exact=True).click()
+    page.wait_for_function(
+        "document.querySelector('[data-data-sources-controller]')"
+        "?.dataset.initialized === 'true'"
+    )
+    temp_key = page.locator('input[name="temp_key"]').input_value()
+    temp_path = Path(data_sources_routes._TEMP_DIR) / f"{temp_key}.json"
+    _check(
+        temp_path.exists()
+        and page.locator("#ds-order-dates-data").evaluate(
+            "element => element.tagName === 'TEMPLATE'"
+        ),
+        f"{label}: Data Sources preview must use one exact temporary payload and non-script date carrier",
+    )
+    page.locator("#filterFrom").evaluate(
+        """element => {
+            element.value = "2026-07-02";
+            element.dispatchEvent(new Event("change", {bubbles: true}));
+        }"""
+    )
+    page.locator("#filterTo").evaluate(
+        """element => {
+            element.value = "2026-07-02";
+            element.dispatchEvent(new Event("change", {bubbles: true}));
+        }"""
+    )
+    _check(
+        page.locator("#saveBtn").text_content() == "Save 1 orders",
+        f"{label}: delegated date filtering must update the preview save count",
+    )
+
+    vendor_dialogs: list[str] = []
+
+    def dismiss_vendor_disconnect(dialog) -> None:
+        vendor_dialogs.append(dialog.message)
+        dialog.dismiss()
+
+    page.once("dialog", dismiss_vendor_disconnect)
+    page.locator(
+        'form[action*="/data-sources/disconnect-vendor/"] button'
+    ).first.click()
+    _check(
+        vendor_dialogs
+        == [
+            "Disconnect 4AQ Personal Vendor? "
+            "This will remove all synced vendor transactions."
+        ],
+        f"{label}: Data Sources disconnect confirmation must remain delegated and exact",
+    )
+    with page.expect_navigation(wait_until="networkidle"):
+        page.locator("#saveBtn").click()
+    _check(
+        not temp_path.exists(),
+        f"{label}: saving the preview must consume its exact temporary payload",
+    )
+
+    page.wait_for_function(
+        "document.querySelector('[data-data-sources-controller]')"
+        "?.dataset.initialized === 'true'"
+    )
+    page.evaluate("window.__plaidStub.mode = 'exit'")
+    page.locator("#ds-connect-btn").click()
+    page.wait_for_function(
+        "() => !document.getElementById('ds-connect-btn').disabled "
+        "&& document.getElementById('ds-connect-btn').textContent "
+        "=== 'Connect Payment Account'"
+    )
+    data_source_errors: list[str] = []
+
+    def dismiss_data_source_error(dialog) -> None:
+        data_source_errors.append(dialog.message)
+        dialog.dismiss()
+
+    page.evaluate("window.__plaidStub.mode = 'throw'")
+    page.once("dialog", dismiss_data_source_error)
+    page.locator("#ds-connect-btn").click()
+    page.wait_for_function(
+        "() => !document.getElementById('ds-connect-btn').disabled"
+    )
+    _check(
+        data_source_errors
+        == [
+            "Failed to start Plaid Link: "
+            "Error: synthetic initializer failure"
+        ],
+        f"{label}: Data Sources initializer failures must alert and reset the button",
+    )
+
+    page.evaluate("window.__plaidStub.mode = 'success'")
+    with page.expect_navigation(wait_until="networkidle"):
+        page.locator("#ds-connect-btn").click()
+    _check(
+        "Synthetic 4AQ Institution" in page.locator("#main-content").inner_text(),
+        f"{label}: mocked vendor Link success must preserve form exchange and reload",
+    )
+
+    page.goto(f"{base_url}/plaid/", wait_until="networkidle")
+    page.wait_for_function(
+        "document.querySelector('[data-plaid-controller]')"
+        "?.dataset.initialized === 'true'"
+    )
+    _check(
+        page.locator('script[src*="/static/plaid.js"]').count() == 1
+        and page.locator(
+            f'script[src="{PLAID_INITIALIZER_URL}"]'
+        ).count() == 1
+        and page.locator(
+            "#main-content [onclick], #main-content [onchange], "
+            "#main-content [onsubmit], #main-content [hx-on]"
+        ).count() == 0
+        and page.locator('[data-plaid-action="connect"]').count() >= 1,
+        f"{label}: Connected Accounts must load one handler-free controller exact initializer and delegated Link controls",
+    )
+
+    plaid_dialogs: list[str] = []
+
+    def dismiss_plaid_disconnect(dialog) -> None:
+        plaid_dialogs.append(dialog.message)
+        dialog.dismiss()
+
+    page.once("dialog", dismiss_plaid_disconnect)
+    page.locator(
+        'form[action$="/plaid/disconnect/4aq-personal-bank-existing"] button'
+    ).click()
+    _check(
+        plaid_dialogs
+        == [
+            "Disconnect 4AQ Personal Bank? "
+            "Imported transactions will be kept."
+        ],
+        f"{label}: Connected Accounts disconnect confirmation must remain delegated and exact",
+    )
+
+    page.evaluate("window.__plaidStub.mode = 'exit'")
+    page.locator("#connect-btn").click()
+    page.wait_for_function(
+        "() => !document.getElementById('connect-btn').disabled "
+        "&& document.getElementById('connect-btn').textContent.trim() "
+        "=== 'Connect a Bank'"
+    )
+    plaid_errors: list[str] = []
+
+    def dismiss_plaid_error(dialog) -> None:
+        plaid_errors.append(dialog.message)
+        dialog.dismiss()
+
+    page.evaluate("window.__plaidStub.mode = 'throw'")
+    page.once("dialog", dismiss_plaid_error)
+    page.locator("#connect-btn").click()
+    page.wait_for_function("() => !document.getElementById('connect-btn').disabled")
+    _check(
+        plaid_errors
+        == [
+            "Failed to start Plaid Link: synthetic initializer failure"
+        ],
+        f"{label}: Connected Accounts initializer failures must alert and reset the button",
+    )
+
+    page.evaluate("window.__plaidStub.mode = 'success'")
+    with page.expect_navigation(wait_until="networkidle"):
+        page.locator("#connect-btn").click()
+    _check(
+        "Synthetic 4AQ Institution" in page.locator("#main-content").inner_text()
+        and "Synthetic 4AQ Checking" in page.locator("#main-content").inner_text(),
+        f"{label}: mocked bank Link success must preserve JSON exchange account creation and reload",
+    )
+
+    for entity_name in ("BFM", "LL"):
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        page.goto(f"{base_url}/plaid/", wait_until="networkidle")
+        _check(
+            "Synthetic 4AQ Institution"
+            not in page.locator("#main-content").inner_text(),
+            f"{label}: mocked Personal Link results must not leak into {entity_name}",
+        )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -2157,6 +2498,12 @@ def main() -> None:
     original_cancellation_tips = None
     payroll_routes_module = None
     original_payroll_parser = None
+    plaid_client_module = None
+    original_create_link_token = None
+    original_exchange_public_token = None
+    original_get_accounts = None
+    crypto_module = None
+    original_encrypt_token = None
 
     try:
         with tempfile.TemporaryDirectory(prefix="expense_drawer_browser_") as temp_root:
@@ -2166,8 +2513,8 @@ def main() -> None:
                     "DATA_DIR": temp_root,
                     "FLASK_SECRET": "synthetic-mobile-drawer-secret",
                     "APP_PASSWORD_HASH": "",
-                    "PLAID_CLIENT_ID": "",
-                    "PLAID_SECRET": "",
+                    "PLAID_CLIENT_ID": "synthetic-4aq-client",
+                    "PLAID_SECRET": "synthetic-4aq-secret",
                     "SYNC_SECRET": "",
                     "OPENROUTER_API_KEY": "",
                     "LUXURY_SUPABASE_URL": "",
@@ -2178,12 +2525,20 @@ def main() -> None:
 
             from core.db import init_db
             from core import ai_client as ai_client_module
+            from core import crypto as crypto_module
+            from core import plaid_client as plaid_client_module
             from web import create_app
             from web.routes import payroll as payroll_routes_module
 
             original_category_suggestion = ai_client_module.generate_category_suggestion
             original_cancellation_tips = ai_client_module.generate_cancellation_tips
             original_payroll_parser = payroll_routes_module.parse_phoenix_per_payroll_costs
+            original_create_link_token = plaid_client_module.create_link_token
+            original_exchange_public_token = (
+                plaid_client_module.exchange_public_token
+            )
+            original_get_accounts = plaid_client_module.get_accounts
+            original_encrypt_token = crypto_module.encrypt_token
             ai_client_module.generate_category_suggestion = lambda **_kwargs: {
                 "category": "Office Supplies",
                 "subcategory": "General",
@@ -2205,6 +2560,45 @@ def main() -> None:
                     [],
                 )
             )
+            plaid_exchange_counter = {"value": 0}
+
+            def synthetic_exchange_public_token(_public_token):
+                plaid_exchange_counter["value"] += 1
+                return {
+                    "access_token": (
+                        f"synthetic-4aq-access-"
+                        f"{plaid_exchange_counter['value']}"
+                    ),
+                    "item_id": (
+                        f"4aq-browser-item-"
+                        f"{plaid_exchange_counter['value']}"
+                    ),
+                }
+
+            plaid_client_module.create_link_token = (
+                lambda user_id: f"synthetic-4aq-link-{user_id}"
+            )
+            plaid_client_module.exchange_public_token = (
+                synthetic_exchange_public_token
+            )
+            plaid_client_module.get_accounts = lambda _access_token: [
+                {
+                    "account_id": (
+                        f"4aq-browser-account-"
+                        f"{plaid_exchange_counter['value']}"
+                    ),
+                    "name": "Synthetic 4AQ Checking",
+                    "mask": "4242",
+                    "type": "depository",
+                    "subtype": "checking",
+                    "balance_current": 1234.56,
+                    "balance_available": 1200.00,
+                    "balance_limit": None,
+                }
+            ]
+            crypto_module.encrypt_token = (
+                lambda token: f"synthetic-encrypted-{token}"
+            )
 
             for entity_key in ("personal", "company", "luxelegacy"):
                 init_db(entity_key)
@@ -2213,6 +2607,7 @@ def main() -> None:
                 _seed_short_term_planning_data(entity_key)
                 _seed_subscription_data(entity_key)
                 _seed_payroll_data(entity_key)
+                _seed_plaid_entry_data(entity_key)
 
             app = create_app()
             app.config.update(TESTING=True)
@@ -2231,7 +2626,13 @@ def main() -> None:
 
                 def route_request(route) -> None:
                     url = route.request.url
-                    if url.startswith(base_url) or url.startswith("data:"):
+                    if url == PLAID_INITIALIZER_URL:
+                        route.fulfill(
+                            status=200,
+                            content_type="application/javascript",
+                            body=PLAID_STUB_SOURCE,
+                        )
+                    elif url.startswith(base_url) or url.startswith("data:"):
                         route.continue_()
                     else:
                         blocked_urls.append(url)
@@ -2480,6 +2881,9 @@ def main() -> None:
                 _assert_payroll_page(
                     page, base_url, "no-password payroll execution"
                 )
+                _assert_plaid_entry_pages(
+                    page, base_url, "no-password Plaid entry execution"
+                )
 
                 hamburger.click()
                 _assert_open_mobile(page, "entity open")
@@ -2542,7 +2946,13 @@ def main() -> None:
 
                 def route_auth_request(route) -> None:
                     url = route.request.url
-                    if url.startswith(base_url) or url.startswith("data:"):
+                    if url == PLAID_INITIALIZER_URL:
+                        route.fulfill(
+                            status=200,
+                            content_type="application/javascript",
+                            body=PLAID_STUB_SOURCE,
+                        )
+                    elif url.startswith(base_url) or url.startswith("data:"):
                         route.continue_()
                     else:
                         auth_blocked_urls.append(url)
@@ -2592,6 +3002,9 @@ def main() -> None:
                 _assert_payroll_page(
                     page, base_url, "configured-auth payroll execution"
                 )
+                _assert_plaid_entry_pages(
+                    page, base_url, "configured-auth Plaid entry execution"
+                )
                 _assert_closed_mobile(page, "configured-auth phone state")
                 page.locator("#hamburger-btn").click()
                 _assert_open_mobile(page, "configured-auth drawer open")
@@ -2638,10 +3051,18 @@ def main() -> None:
             ai_client_module.generate_cancellation_tips = original_cancellation_tips
         if payroll_routes_module is not None and original_payroll_parser is not None:
             payroll_routes_module.parse_phoenix_per_payroll_costs = original_payroll_parser
+        if plaid_client_module is not None and original_create_link_token is not None:
+            plaid_client_module.create_link_token = original_create_link_token
+        if plaid_client_module is not None and original_exchange_public_token is not None:
+            plaid_client_module.exchange_public_token = original_exchange_public_token
+        if plaid_client_module is not None and original_get_accounts is not None:
+            plaid_client_module.get_accounts = original_get_accounts
+        if crypto_module is not None and original_encrypt_token is not None:
+            crypto_module.encrypt_token = original_encrypt_token
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, and BFM-only payroll workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, and mocked Plaid entry workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

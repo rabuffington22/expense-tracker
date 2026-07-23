@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Data Sources — The Ledger{% endblock %}
+{% block head %}
+<script defer src="{{ url_for('static', filename='data-sources.js') }}?v={{ cache_bust }}"></script>
+{% endblock %}
 
 {% block content %}
+<div data-data-sources-controller
+     data-link-token-url="{{ url_for('data_sources.link_token') }}"
+     data-exchange-token-url="{{ url_for('data_sources.exchange_token') }}">
 <h1 class="page-title">Data Sources</h1>
 <p class="text-muted mb-2">Upload vendor order data and connect payment accounts (Venmo, PayPal) for transaction matching.</p>
 
@@ -13,7 +19,7 @@
         <div class="form-group">
             <label>Vendor</label>
             <select name="vendor" id="vendorSelect"
-                    onchange="document.getElementById('fileLabel').textContent = this.value === 'Amazon' ? 'Amazon Order History CSV' : 'Henry Schein Items Purchased XLSX'">
+                    data-data-sources-action="select-vendor">
                 <option value="Amazon">Amazon</option>
                 <option value="Henry Schein">Henry Schein</option>
             </select>
@@ -38,43 +44,24 @@
     <p>{{ min_date }} to {{ max_date }} — totaling <strong>${{ "{:,.2f}".format(total_spent) }}</strong></p>
 </div>
 
-<form method="post" action="{{ url_for('data_sources.save') }}">
-    <input type="hidden" name="temp_key" value="{{ temp_key }}">
-    <div class="form-row mb-2" style="max-width: 400px;">
+    <form method="post" action="{{ url_for('data_sources.save') }}">
+        <input type="hidden" name="temp_key" value="{{ temp_key }}">
+        <template id="ds-order-dates-data" data-json>{{ orders | map(attribute='order_date') | list | tojson }}</template>
+        <div class="form-row mb-2" style="max-width: 400px;">
         <div class="form-group">
             <label>From</label>
-            <input type="date" name="filter_from" id="filterFrom" value="{{ min_date }}">
+            <input type="date" name="filter_from" id="filterFrom" value="{{ min_date }}"
+                   data-data-sources-action="filter-date">
         </div>
         <div class="form-group">
             <label>To</label>
-            <input type="date" name="filter_to" id="filterTo" value="{{ max_date }}">
+            <input type="date" name="filter_to" id="filterTo" value="{{ max_date }}"
+                   data-data-sources-action="filter-date">
         </div>
     </div>
     <button type="submit" class="btn btn-primary" id="saveBtn">Save {{ order_count }} orders</button>
 </form>
 
-<script>
-(function() {
-    var dates = [{% for o in orders %}"{{ o.order_date }}"{% if not loop.last %},{% endif %}{% endfor %}];
-    var fromEl = document.getElementById('filterFrom');
-    var toEl = document.getElementById('filterTo');
-    var btn = document.getElementById('saveBtn');
-
-    function update() {
-        var from = fromEl.value;
-        var to = toEl.value;
-        var count = 0;
-        for (var i = 0; i < dates.length; i++) {
-            var d = dates[i].slice(0, 10);
-            if (d >= from && d <= to) count++;
-        }
-        btn.textContent = 'Save ' + count + ' orders';
-    }
-
-    fromEl.addEventListener('change', update);
-    toEl.addEventListener('change', update);
-})();
-</script>
 {% endif %}
 
 {% if total_orders %}
@@ -107,7 +94,7 @@
                 <button type="submit" class="btn btn-secondary btn-sm">Sync</button>
             </form>
             <form method="post" action="{{ url_for('data_sources.disconnect_vendor', item_id=acct.item_id) }}" style="display:inline;"
-                  onsubmit="return confirm('Disconnect {{ acct.institution_name|e }}? This will remove all synced vendor transactions.');">
+                  data-data-sources-confirm="Disconnect {{ acct.institution_name|e }}? This will remove all synced vendor transactions.">
                 <button type="submit" class="btn btn-sm" style="color: var(--red);">Disconnect</button>
             </form>
         </div>
@@ -117,60 +104,13 @@
 {% endif %}
 
 <div style="margin-top: 0.75rem;">
-    <button type="button" class="btn btn-primary" id="ds-connect-btn" onclick="dsConnectAccount()">Connect Payment Account</button>
+    <button type="button" class="btn btn-primary" id="ds-connect-btn"
+            data-data-sources-action="connect-account">Connect Payment Account</button>
 </div>
 
 {# ── Plaid Link Script ──────────────────────────────────────────────────── #}
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-<script>
-function dsConnectAccount() {
-    var btn = document.getElementById('ds-connect-btn');
-    btn.disabled = true;
-    btn.textContent = 'Loading\u2026';
-
-    fetch('{{ url_for("data_sources.link_token") }}', {method: 'POST'})
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.error) {
-                alert('Error: ' + data.error);
-                btn.disabled = false;
-                btn.textContent = 'Connect Payment Account';
-                return;
-            }
-            var handler = Plaid.create({
-                token: data.link_token,
-                onSuccess: function(public_token, metadata) {
-                    var inst = metadata.institution || {};
-                    var form = new FormData();
-                    form.append('public_token', public_token);
-                    form.append('institution_name', inst.name || '');
-                    form.append('institution_id', inst.institution_id || '');
-
-                    fetch('{{ url_for("data_sources.exchange_token") }}', {
-                        method: 'POST',
-                        body: form
-                    }).then(function(r) { return r.json(); })
-                      .then(function(result) {
-                          if (result.error) {
-                              alert('Error: ' + result.error);
-                          }
-                          window.location.reload();
-                      });
-                },
-                onExit: function() {
-                    btn.disabled = false;
-                    btn.textContent = 'Connect Payment Account';
-                }
-            });
-            handler.open();
-        })
-        .catch(function(err) {
-            alert('Failed to start Plaid Link: ' + err);
-            btn.disabled = false;
-            btn.textContent = 'Connect Payment Account';
-        });
-}
-</script>
+</div>
 
 <style>
 .ds-vendor-row {

@@ -3,9 +3,13 @@
 
 {% block head %}
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script defer src="{{ url_for('static', filename='plaid.js') }}?v={{ cache_bust }}"></script>
 {% endblock %}
 
 {% block content %}
+<div data-plaid-controller
+     data-link-token-url="{{ url_for('plaid.link_token') }}"
+     data-exchange-token-url="{{ url_for('plaid.exchange_token') }}">
 <h1 class="page-title">Connected Accounts</h1>
 
 {% if not plaid_available %}
@@ -16,7 +20,7 @@
 
 <!-- Connect + Sync All buttons -->
 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-    <button id="connect-btn" class="btn btn-primary" onclick="startPlaidLink()">
+    <button id="connect-btn" class="btn btn-primary" data-plaid-action="connect">
         Connect a Bank
     </button>
     {% if items %}
@@ -61,7 +65,7 @@
             </form>
             <form method="post" action="{{ url_for('plaid.disconnect', item_id=item.item_id) }}"
                   style="margin: 0;"
-                  onsubmit="return confirm('Disconnect ' + {{ (item.institution_name or item.item_id)|tojson }} + '? Imported transactions will be kept.');">
+                  data-plaid-confirm="Disconnect {{ (item.institution_name or item.item_id)|e }}? Imported transactions will be kept.">
                 <button type="submit" class="btn btn-sm btn-secondary" style="color: var(--red);">Disconnect</button>
             </form>
         </div>
@@ -128,7 +132,7 @@
             <tr>
                 <td style="padding: 0.4rem 0.5rem;">{{ acct.account_name }}</td>
                 <td style="padding: 0.4rem 0.5rem; text-align: right;">
-                    <button class="btn btn-sm btn-secondary" onclick="startPlaidLink()">Connect</button>
+                    <button class="btn btn-sm btn-secondary" data-plaid-action="connect">Connect</button>
                 </td>
             </tr>
             {% endfor %}
@@ -139,54 +143,5 @@
 
 {% endif %}
 {% endif %}
-
-<script>
-async function startPlaidLink() {
-    const btn = document.getElementById('connect-btn');
-    btn.disabled = true;
-    btn.textContent = 'Loading…';
-
-    try {
-        const resp = await fetch('{{ url_for("plaid.link_token") }}', { method: 'POST' });
-        const data = await resp.json();
-        if (data.error) {
-            alert('Error: ' + data.error);
-            btn.disabled = false;
-            btn.textContent = 'Connect a Bank';
-            return;
-        }
-
-        const handler = Plaid.create({
-            token: data.link_token,
-            onSuccess: async function(public_token, metadata) {
-                const exchResp = await fetch('{{ url_for("plaid.exchange_token") }}', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        public_token: public_token,
-                        institution_name: metadata.institution ? metadata.institution.name : '',
-                        institution_id: metadata.institution ? metadata.institution.institution_id : '',
-                    }),
-                });
-                const exchData = await exchResp.json();
-                if (exchData.error) {
-                    alert('Error connecting: ' + exchData.error);
-                } else {
-                    window.location.reload();
-                }
-            },
-            onExit: function(err) {
-                btn.disabled = false;
-                btn.textContent = 'Connect a Bank';
-                if (err) console.error('Plaid Link exit error:', err);
-            },
-        });
-        handler.open();
-    } catch (e) {
-        alert('Failed to start Plaid Link: ' + e.message);
-        btn.disabled = false;
-        btn.textContent = 'Connect a Bank';
-    }
-}
-</script>
+</div>
 {% endblock %}

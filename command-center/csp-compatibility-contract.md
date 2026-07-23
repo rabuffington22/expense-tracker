@@ -1,12 +1,12 @@
 # Content Security Policy Compatibility Contract
 
-Status: Task 1P.4.1, Task 1P.4.2a, both Task 1P.4.2b migration slices, final HTMX disablement, and the first four full-page route clusters are durable, automatically deployed, and credential-free health verified through work blocks 4AK-R, 4AL-R, and 4AM-R. Weekly and Waterfall execution is migrated and locally verified through 4AN; publication and every later page, style/document, header-enforcement, and proof slice remain separately gated.
+Status: Task 1P.4.1, Task 1P.4.2a, both Task 1P.4.2b migration slices, final HTMX disablement, and the first seven full-page route clusters are migrated through local work block 4AQ; publication of the Plaid entry-page slice and every later page, style/document, header-enforcement, and proof slice remain separately gated.
 
 Parent: Phase 4 Task 1P.4 / finding `P3-3J-06`.
 
 ## Purpose And Boundary
 
-This contract defines the target browser policy, the application surfaces that must be migrated before enforcement, and the maintained proof required to close the CSP half of `P3-3J-06`. Work block 4AE created the contract without product mutation. Work block 4AF implemented the shared execution foundation, work block 4AG implemented the dashboard/report fragment slice, work block 4AH implemented the transaction and supporting-modal fragment slice, work block 4AI disabled HTMX eval and swapped-script processing after replacing three swapped inert JSON script carriers with non-script template data, work block 4AJ migrated the first full-page cluster, work block 4AK migrated categorization/upload execution, work block 4AL migrated Cash Flow and Long-Term Planning execution, work block 4AM migrated Short-Term Planning execution into page-owned local behavior and handler-free response markup, work block 4AN migrated Weekly and Waterfall execution into the app-shell AI seam plus one page-owned Waterfall controller, work block 4AO migrated subscription-page execution into one page-owned controller and non-script inert data, and work block 4AP migrated BFM-only payroll execution into one page-owned controller and non-script inert role-color data. None added a CSP header, changed authentication or Plaid behavior, or touched any live system.
+This contract defines the target browser policy, the application surfaces that must be migrated before enforcement, and the maintained proof required to close the CSP half of `P3-3J-06`. Work block 4AE created the contract without product mutation. Work blocks 4AF-4AI migrated shared and swapped-fragment execution and disabled HTMX eval and swapped-script processing. Work blocks 4AJ-4AP migrated the first six full-page clusters. Work block 4AQ migrated Data Sources and Connected Accounts application execution into two page-owned controllers and non-script inert data while retaining both exact Plaid Link initializer tags. None added a CSP header, changed authentication, route or Plaid business behavior, or touched any live system.
 
 Protected data, credentials, real databases, live Plaid Link, production/demo inspection, publication, deployment, and both preserved untracked files remain outside this planning artifact.
 
@@ -19,15 +19,15 @@ Protected data, credentials, real databases, live Plaid Link, production/demo in
 
 ## Inventory Summary
 
-The tracked surface contains 46 HTML templates and seven standalone document roots: the shared `base.html` shell, login, three error documents, offline, and standalone `/k/`. After local work block 4AP, the source inventory contains:
+The tracked surface contains 46 HTML templates and seven standalone document roots: the shared `base.html` shell, login, three error documents, offline, and standalone `/k/`. After local work block 4AQ, the source inventory contains:
 
 | Surface | Count | Contract consequence |
 | --- | ---: | --- |
-| All `<script>` elements | 22 | Separate the eight remaining inline application scripts from fourteen external executable assets. |
-| Executable inline scripts | 8 | Move to maintained local static JavaScript; a nonce is not a migration substitute. Shared-shell, migrated fragment, core review-page, categorization/upload, Cash Flow, Long-Term Planning, Short-Term Planning, Weekly, Waterfall, subscription, and payroll behavior now use local assets. |
-| External executable scripts | 14 | Local theme, HTMX, app-shell, dashboard-fragment, transaction-fragment, categorization/upload, Cash Flow, Long-Term Planning, Short-Term Planning, Waterfall, subscription, and payroll assets plus two exact Plaid Link initializer tags. |
+| All `<script>` elements | 21 | Separate the five remaining standalone-document inline scripts from sixteen external executable assets. |
+| Executable inline scripts | 5 | Move to maintained local static JavaScript; a nonce is not a migration substitute. All authenticated application-page behavior now uses local assets. |
+| External executable scripts | 16 | Local theme, HTMX, app-shell, page and fragment controllers, including `data-sources.js` and `plaid.js`, plus two exact Plaid Link initializer tags. |
 | Inert `application/json` scripts | 0 | Swapped carriers, Short-Term Planning goals, and subscription suggestions now use non-script `<template>` data. |
-| Native inline event-handler attributes | 7 | Replace with delegated or initialized listeners before `script-src-attr 'none'`; all completed execution slices through payroll are removed. |
+| Native inline event-handler attributes | 1 | Replace the remaining offline retry handler before `script-src-attr 'none'`; all authenticated application-page handlers are removed. |
 | `hx-on` attributes | 0 | All dependencies remain removed and 4AI proves the configured-auth/no-password cross-route matrix with HTMX eval and swapped-script processing disabled. |
 | Inline `<style>` blocks | 7 | Move to local CSS before strict `style-src-elem`. |
 | Element `style` attributes | 221 | Replace with classes, data-driven classes, custom-property classes, or stylesheet-backed state before strict application policy. |
@@ -94,7 +94,7 @@ For `PLAID_ENV=production`, replace the sandbox connect origin with `https://pro
 | --- | --- | --- | --- |
 | Shared execution foundation | Move `base.html` executable blocks and five native handlers to local JS; replace two base `hx-on` handlers; move indicator CSS to the tracked stylesheet; set only `includeIndicatorStyles=false`; and establish the declarative HTMX configuration point. Keep `allowEval` and `allowScriptTags` at their current values until the remaining fragment dependencies are removed. | Complete locally through 4AF: maintained source assertions and configured-auth/no-password isolated Chrome prove shared navigation, themes, AI chat, service-worker registration, CSRF/HTMX behavior, repeated representative swaps, and responsive drawer behavior with no executable inline shell markup. | Task 1P.4.2a / work block 4AF complete locally. |
 | Swapped-fragment execution | Remove executable scripts and inline handlers from all directly returned HTMX components; replace the remaining two fragment `hx-on` handlers; carry swapped server values through non-script inert data; initialize through local static JS and `htmx:load`/delegation; then set `allowEval=false` and `allowScriptTags=false`. | Durable and deployed through 4AI-R. Configured-auth/no-password isolated Chrome preserves repeated swaps, charts, KPI/category/insight/AI behavior, reports, transaction sorting/copy/edit/splits, popup/queue controls, and cleanup with both switches false and no directly returned script elements. | Tasks 1P.4.2b.1-1P.4.2b.3 / work blocks 4AG-4AI-R complete, durable, deployed, and credential-free health verified. |
-| Full-page execution | Migrate the remaining 8 executable inline scripts and 7 native handlers, including both Plaid entry pages; preserve page-specific initialization through local modules/data. | Every full-page route works with `script-src-attr 'none'` and no inline application script. | Task 1P.4.2c.1 is durable through 4AJ-R, Task 1P.4.2c.2 is durable through 4AK-R, Tasks 1P.4.2c.3a-1P.4.2c.3b are durable through 4AL-R, Task 1P.4.2c.3c is durable through 4AM-R, Task 1P.4.2c.4 is durable through 4AN-R, Task 1P.4.2c.5 is durable through 4AO-R, Task 1P.4.2c.6 is complete locally through 4AP, and Tasks 1P.4.2c.7-1P.4.2c.8 remain separate. |
+| Full-page execution | Migrate the remaining 5 executable inline scripts and 1 native handler in standalone/error documents; preserve page-specific initialization through local modules/data. | Every full-page route works with `script-src-attr 'none'` and no inline application script. | Tasks 1P.4.2c.1-1P.4.2c.6 are durable through their release blocks, Task 1P.4.2c.7 is complete locally through 4AQ, and Task 1P.4.2c.8 remains separate. |
 | Application style compatibility | Move seven inline style blocks, 221 attributes, and runtime style writes to static CSS/classes or explicitly bounded data-driven states. | Core pages run under `style-src-attr 'none'`; responsive and visualization behavior passes at maintained breakpoints. | Task 1P.4.3a; likely split into shell/components and page clusters. |
 | Exceptional documents and Plaid | Reconcile login, offline/errors, `/k/`, local SVG data images, worker/manifest, and Plaid route-specific behavior; preserve Plaid's narrow documented style-attribute exception only on Link documents. | Strict families have no exception leakage; mocked Plaid document proves exact policy/header/tag wiring without live Plaid. | Task 1P.4.3b. |
 | Header enforcement and proof | Add route-family header generation and optional Plaid nonce plumbing only after migration gates pass; add maintained request and isolated-browser contracts. | No CSP violations on the required matrix; exact prohibited source probes are blocked; no protected/live dependency. | Task 1P.4.4. |
@@ -111,10 +111,10 @@ Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must u
 | 1P.4.2c.4 | Weekly and Waterfall | 0 inline scripts; 0 native handlers after 4AN | Existing app-shell AI behavior plus page-owned `waterfall.js` preserve view, breakdown, target, tax, tooltip, animation, keyboard, URL, and entity-boundary behavior; durable, deployed, and credential-free health verified through 4AN-R. |
 | 1P.4.2c.5 | Subscriptions | 0 inline scripts; 0 native handlers; 0 inert JSON carriers after 4AO | Page-owned `subscriptions.js`, delegated controls, non-script suggestion data, and inert endpoint templates preserve AI, suggestion, watchlist, detail, account-info, tips, clipboard, modal, keyboard, and all-entity behavior; complete and verified locally through 4AO. |
 | 1P.4.2c.6 | Payroll | 0 inline scripts; 0 native handlers; 0 inert JSON carriers after 4AP | Page-owned `payroll.js`, delegated controls, non-script role-color data, and valid sibling edit/delete forms preserve BFM-only add, detail, spending, import-role, confirmation, modal, and keyboard behavior; complete and verified locally through 4AP. |
-| 1P.4.2c.7 | Data Sources and Connected Accounts | 3 inline application scripts; 6 native handlers; 2 retained external Plaid initializers | The exact mocked Plaid Link and later route-specific CSP exception form a separate integration boundary. |
+| 1P.4.2c.7 | Data Sources and Connected Accounts | 0 inline application scripts; 0 native handlers; 2 page-owned local controllers; 2 retained external Plaid initializers after 4AQ | Page-owned `data-sources.js` and `plaid.js`, delegated controls, non-script order-date data, and inert endpoint attributes preserve vendor selection/counting, confirmations, both Link flows, button states, and distinct form-versus-JSON exchange contracts under exact mocked initializer interception; complete and verified locally through 4AQ. |
 | 1P.4.2c.8 | Offline, errors, and standalone `/k/` | 5 inline scripts; 1 native handler | Standalone documents do not inherit the authenticated shell and require document-family, auth, and no-exception-leakage proof. |
 
-The original eight-cluster inventory reconciled exactly to 22 executable inline scripts, 116 template-native handlers, and two full-page inert JSON carriers. The 4AM recheck additionally found and removed two Python-rendered Short-Term Planning handlers inside the same confirmed route family. After local 4AP, Tasks 1P.4.2c.7-1P.4.2c.8 reconcile to the eight remaining executable inline scripts and seven template-native handlers with no inert JSON script carriers; both remain planned and unauthorized.
+The original eight-cluster inventory reconciled exactly to 22 executable inline scripts, 116 template-native handlers, and two full-page inert JSON carriers. The 4AM recheck additionally found and removed two Python-rendered Short-Term Planning handlers inside the same confirmed route family. After local 4AQ, only Task 1P.4.2c.8 remains: five executable inline scripts and one template-native handler with no inert JSON script carriers. Publication of 4AQ and Task 1P.4.2c.8 remain separate Ryan gates.
 
 ## Template Surface Inventory
 
@@ -147,7 +147,7 @@ Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSO
 | `components/txn_split_editor.html` | 0 | 0 | 0 | 0 | 35 | 0 |
 | `components/vendor_card.html` | 0 | 0 | 0 | 0 | 2 | 0 |
 | `dashboard.html` | 0 | 0 | 0 | 0 | 0 | 0 |
-| `data_sources.html` | 3 | 0 | 1 | 3 | 7 | 0 |
+| `data_sources.html` | 2 | 0 | 1 | 0 | 7 | 0 |
 | `errors/403.html` | 1 | 0 | 1 | 0 | 0 | 0 |
 | `errors/404.html` | 1 | 0 | 1 | 0 | 0 | 0 |
 | `errors/500.html` | 1 | 0 | 1 | 0 | 0 | 0 |
@@ -155,7 +155,7 @@ Counts are source occurrences, not estimates. `Script` excludes inert JSON; `JSO
 | `match.html` | 0 | 0 | 0 | 0 | 1 | 0 |
 | `offline.html` | 1 | 0 | 1 | 1 | 0 | 0 |
 | `payroll.html` | 0 | 1 | 0 | 0 | 3 | 0 |
-| `plaid.html` | 2 | 0 | 0 | 3 | 27 | 0 |
+| `plaid.html` | 2 | 0 | 0 | 0 | 27 | 0 |
 | `planning.html` | 1 | 0 | 0 | 0 | 1 | 0 |
 | `reports.html` | 0 | 0 | 0 | 0 | 8 | 0 |
 | `short_term_planning.html` | 1 | 0 | 0 | 0 | 10 | 0 |
@@ -198,6 +198,6 @@ Required repository checks after each implementation slice remain the focused te
 4. Core documents target `style-src-attr 'none'`; Plaid's documented style-attribute exception is route-family-specific and cannot leak to login, `/k/`, offline/errors, or ordinary authenticated pages.
 5. Only one Plaid API environment is allowed per response, selected from validated tracked environment behavior.
 6. Trusted Types, CSP reporting infrastructure, and Fly-only request upgrading are not bundled into Task 1P.4.
-7. Task 1P.4.2 and 1P.4.3 require smaller execution blocks; 4AF completed the shared foundation, 4AG completed the dashboard/report fragment slice, 4AH completed the transaction/supporting-modal slice, 4AI/4AI-R made final HTMX switch disablement durable and deployed, 4AJ/4AJ-R completed and released the first full-page cluster, 4AK/4AK-R completed and released the categorization/upload cluster, 4AL/4AL-R completed and released Cash Flow and Long-Term Planning, 4AM/4AM-R completed and released Short-Term Planning, 4AN/4AN-R completed and released Weekly and Waterfall, 4AO/4AO-R completed and released subscriptions, and 4AP completed payroll locally. Publication and every later slice remain separately gated.
+7. Task 1P.4.2 and 1P.4.3 require smaller execution blocks; 4AF-4AI completed shared and fragment execution, 4AJ-4AP completed the first six full-page clusters, and 4AQ completed Plaid entry-page execution locally while retaining the exact external initializer boundary. Publication of 4AQ and every later slice remain separately gated.
 
 Any wish to allow broader inline behavior, both Plaid environments, another external origin, live Plaid testing, public-route redesign, or Trusted Types is a plan-changing decision and requires Ryan's explicit direction.

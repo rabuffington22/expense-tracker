@@ -8739,8 +8739,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 8, 14, 0, 7, 0),
-            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AP CSP contract",
+            == (21, 5, 16, 0, 1, 0),
+            "transaction/modal fragments: maintained aggregate inventory must match the active post-4AQ CSP contract",
         )
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
@@ -8961,8 +8961,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 8, 14, 0, 7, 0),
-            "categorization/upload pages: maintained aggregate inventory must match the post-4AP CSP contract",
+            == (21, 5, 16, 0, 1, 0),
+            "categorization/upload pages: maintained aggregate inventory must match the post-4AQ CSP contract",
         )
 
         print("   ✅ Three source templates, delegated controller, rendered routes, status-only reset, and exact residual inventory passed")
@@ -9083,8 +9083,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 8, 14, 0, 7, 0),
-            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AP CSP contract",
+            == (21, 5, 16, 0, 1, 0),
+            "cash-flow/planning pages: maintained aggregate inventory must match the post-4AQ CSP contract",
         )
 
         print("   ✅ Two source templates, page-owned controllers, rendered routes, and exact residual inventory passed")
@@ -9225,8 +9225,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 8, 14, 0, 7, 0),
-            "short-term planning: maintained aggregate inventory must match the post-4AP CSP contract",
+            == (21, 5, 16, 0, 1, 0),
+            "short-term planning: maintained aggregate inventory must match the post-4AQ CSP contract",
         )
 
         print("   ✅ Source template, page controller, rendered response markup, inert data, cleanup, and exact residual inventory passed")
@@ -9329,8 +9329,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 8, 14, 0, 7, 0),
-            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AP CSP contract",
+            == (21, 5, 16, 0, 1, 0),
+            "Weekly/Waterfall: maintained aggregate inventory must match the post-4AQ CSP contract",
         )
 
         print("   ✅ Two source templates, rendered routes, page controller, AI seams, and exact residual inventory passed")
@@ -9426,8 +9426,8 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 8, 14, 0, 7, 0),
-            "subscriptions: maintained aggregate inventory must match the post-4AP CSP contract",
+            == (21, 5, 16, 0, 1, 0),
+            "subscriptions: maintained aggregate inventory must match the post-4AQ CSP contract",
         )
 
         print("   ✅ Source template, rendered route, page controller, inert data, AI seam, and exact residual inventory passed")
@@ -9521,11 +9521,297 @@ def main() -> None:
                 all_native_handler_count,
                 all_hx_on_count,
             )
-            == (22, 8, 14, 0, 7, 0),
-            "payroll: maintained aggregate inventory must match the post-4AP CSP contract",
+            == (21, 5, 16, 0, 1, 0),
+            "payroll: maintained aggregate inventory must match the post-4AQ CSP contract",
         )
 
         print("   ✅ Source template, rendered BFM route, page controller, inert data, valid forms, and exact residual inventory passed")
+
+        # ── 11l. Plaid entry-page execution ─────────────────────────
+        print("\n11l. Plaid entry-page execution…")
+
+        data_sources_template = templates_root / "data_sources.html"
+        plaid_template = templates_root / "plaid.html"
+        data_sources_source = data_sources_template.read_text()
+        plaid_source = plaid_template.read_text()
+        data_sources_asset_source = (
+            PROJECT_ROOT / "web" / "static" / "data-sources.js"
+        ).read_text()
+        plaid_asset_source = (
+            PROJECT_ROOT / "web" / "static" / "plaid.js"
+        ).read_text()
+        plaid_initializer = (
+            '<script src="https://cdn.plaid.com/link/v2/stable/'
+            'link-initialize.js"></script>'
+        )
+
+        _check(
+            all(
+                not inline_executable_script_pattern.search(source)
+                and not native_handler_pattern.search(source)
+                and "hx-on" not in source
+                for source in (data_sources_source, plaid_source)
+            ),
+            "Plaid entry pages: source templates must contain no inline application execution",
+        )
+        _check(
+            data_sources_source.count(plaid_initializer) == 1
+            and plaid_source.count(plaid_initializer) == 1,
+            "Plaid entry pages: both exact external initializer tags must remain",
+        )
+        _check(
+            "data-sources.js" in data_sources_source
+            and "data-data-sources-controller" in data_sources_source
+            and 'data-data-sources-action="select-vendor"' in data_sources_source
+            and 'data-data-sources-action="filter-date"' in data_sources_source
+            and 'data-data-sources-action="connect-account"' in data_sources_source
+            and "data-data-sources-confirm=" in data_sources_source
+            and '<template id="ds-order-dates-data" data-json>' in data_sources_source
+            and "plaid.js" in plaid_source
+            and "data-plaid-controller" in plaid_source
+            and 'data-plaid-action="connect"' in plaid_source
+            and "data-plaid-confirm=" in plaid_source,
+            "Plaid entry pages: templates must expose both delegated controller and inert-data contracts",
+        )
+        _check(
+            all(
+                "{{" not in source
+                and "{%" not in source
+                and ".onclick" not in source
+                for source in (data_sources_asset_source, plaid_asset_source)
+            )
+            and "dataSourcesAction" in data_sources_asset_source
+            and "dataSourcesConfirm" in data_sources_asset_source
+            and "FormData" in data_sources_asset_source
+            and "plaidConfirm" in plaid_asset_source
+            and '"Content-Type": "application/json"' in plaid_asset_source,
+            "Plaid entry pages: both page controllers must remain template-free and preserve their distinct exchange formats",
+        )
+
+        original_plaid_client_id = os.environ.get("PLAID_CLIENT_ID")
+        original_plaid_secret = os.environ.get("PLAID_SECRET")
+        os.environ["PLAID_CLIENT_ID"] = "synthetic-4aq-client"
+        os.environ["PLAID_SECRET"] = "synthetic-4aq-secret"
+        try:
+            plaid_entry_client = no_auth_app.test_client()
+            plaid_entry_client.set_cookie("entity", "Personal")
+            with plaid_entry_client.session_transaction() as plaid_entry_session:
+                plaid_entry_session["_csrf_token"] = "synthetic-4aq-csrf"
+            plaid_headers = {"X-CSRF-Token": "synthetic-4aq-csrf"}
+
+            rendered_data_sources = plaid_entry_client.get(
+                "/data-sources/"
+            ).get_data(as_text=True)
+            rendered_plaid = plaid_entry_client.get(
+                "/plaid/"
+            ).get_data(as_text=True)
+            _check(
+                all(
+                    not inline_executable_script_pattern.search(source)
+                    and not native_handler_pattern.search(source)
+                    and "hx-on" not in source
+                    for source in (rendered_data_sources, rendered_plaid)
+                ),
+                "Plaid entry pages: rendered routes must contain no inline application execution",
+            )
+            _check(
+                "/static/data-sources.js" in rendered_data_sources
+                and "data-data-sources-controller" in rendered_data_sources
+                and rendered_data_sources.count(
+                    "https://cdn.plaid.com/link/v2/stable/link-initialize.js"
+                )
+                == 1
+                and "/static/plaid.js" in rendered_plaid
+                and "data-plaid-controller" in rendered_plaid
+                and rendered_plaid.count(
+                    "https://cdn.plaid.com/link/v2/stable/link-initialize.js"
+                )
+                == 1,
+                "Plaid entry pages: rendered routes must expose both local controllers and exact initializers",
+            )
+
+            create_link_token_calls = []
+
+            def synthetic_create_link_token(user_id):
+                create_link_token_calls.append(user_id)
+                return f"4aq-link-token-{user_id}"
+
+            exchange_results = [
+                {
+                    "access_token": "4aq-vendor-access",
+                    "item_id": "4aq-vendor-item",
+                },
+                {
+                    "access_token": "4aq-bank-access",
+                    "item_id": "4aq-bank-item",
+                },
+            ]
+            synthetic_accounts = [
+                {
+                    "account_id": "4aq-bank-account",
+                    "name": "Synthetic 4AQ Checking",
+                    "mask": "4242",
+                    "type": "depository",
+                    "subtype": "checking",
+                }
+            ]
+
+            with (
+                patch(
+                    "core.plaid_client.create_link_token",
+                    side_effect=synthetic_create_link_token,
+                ),
+                patch(
+                    "core.plaid_client.exchange_public_token",
+                    side_effect=exchange_results,
+                ),
+                patch(
+                    "core.plaid_client.get_accounts",
+                    return_value=synthetic_accounts,
+                ),
+                patch(
+                    "core.crypto.encrypt_token",
+                    side_effect=lambda token: f"encrypted-{token}",
+                ),
+            ):
+                vendor_link_response = plaid_entry_client.post(
+                    "/data-sources/link-token", headers=plaid_headers
+                )
+                bank_link_response = plaid_entry_client.post(
+                    "/plaid/link-token", headers=plaid_headers
+                )
+                vendor_exchange_response = plaid_entry_client.post(
+                    "/data-sources/exchange-token",
+                    data={
+                        "public_token": "4aq-vendor-public",
+                        "institution_name": "Synthetic 4AQ Vendor",
+                        "institution_id": "ins_4aq_vendor",
+                    },
+                    headers=plaid_headers,
+                )
+                bank_exchange_response = plaid_entry_client.post(
+                    "/plaid/exchange-token",
+                    json={
+                        "public_token": "4aq-bank-public",
+                        "institution_name": "Synthetic 4AQ Bank",
+                        "institution_id": "ins_4aq_bank",
+                    },
+                    headers=plaid_headers,
+                )
+
+            _check(
+                vendor_link_response.status_code == 200
+                and vendor_link_response.get_json()["link_token"].startswith(
+                    "4aq-link-token-vendor-personal"
+                )
+                and bank_link_response.status_code == 200
+                and bank_link_response.get_json()["link_token"].startswith(
+                    "4aq-link-token-expense-tracker-personal"
+                )
+                and create_link_token_calls
+                == ["vendor-personal", "expense-tracker-personal"],
+                "Plaid entry pages: both link-token routes must preserve their distinct user identifiers",
+            )
+            _check(
+                vendor_exchange_response.status_code == 200
+                and vendor_exchange_response.get_json()["item_id"]
+                == "4aq-vendor-item"
+                and bank_exchange_response.status_code == 200
+                and bank_exchange_response.get_json()["item_id"]
+                == "4aq-bank-item"
+                and bank_exchange_response.get_json()["accounts"] == 1,
+                "Plaid entry pages: form and JSON exchange routes must both remain functional under mocked Plaid",
+            )
+
+            for entity_key in ("personal", "company", "luxelegacy"):
+                plaid_entry_conn = get_connection(entity_key)
+                try:
+                    plaid_entry_items = plaid_entry_conn.execute(
+                        "SELECT item_id, is_vendor FROM plaid_items "
+                        "WHERE item_id LIKE '4aq-%' ORDER BY item_id"
+                    ).fetchall()
+                    plaid_entry_accounts = plaid_entry_conn.execute(
+                        "SELECT account_id FROM plaid_accounts "
+                        "WHERE account_id LIKE '4aq-%'"
+                    ).fetchall()
+                    if entity_key == "personal":
+                        _check(
+                            [(row["item_id"], row["is_vendor"]) for row in plaid_entry_items]
+                            == [("4aq-bank-item", 0), ("4aq-vendor-item", 1)]
+                            and [row["account_id"] for row in plaid_entry_accounts]
+                            == ["4aq-bank-account"],
+                            "Plaid entry pages: mocked exchanges must remain isolated to Personal with exact item roles",
+                        )
+                    else:
+                        _check(
+                            not plaid_entry_items and not plaid_entry_accounts,
+                            f"Plaid entry pages: {entity_key} must remain unchanged",
+                        )
+                finally:
+                    plaid_entry_conn.close()
+
+            cleanup_conn = get_connection("personal")
+            try:
+                cleanup_conn.execute(
+                    "DELETE FROM plaid_accounts WHERE account_id LIKE '4aq-%'"
+                )
+                cleanup_conn.execute(
+                    "DELETE FROM plaid_items WHERE item_id LIKE '4aq-%'"
+                )
+                cleanup_conn.commit()
+            finally:
+                cleanup_conn.close()
+        finally:
+            if original_plaid_client_id is None:
+                os.environ.pop("PLAID_CLIENT_ID", None)
+            else:
+                os.environ["PLAID_CLIENT_ID"] = original_plaid_client_id
+            if original_plaid_secret is None:
+                os.environ.pop("PLAID_SECRET", None)
+            else:
+                os.environ["PLAID_SECRET"] = original_plaid_secret
+
+        all_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        all_script_count = len(
+            _re.findall(r"<script\b[^>]*>", all_template_source, flags=_re.IGNORECASE)
+        )
+        inert_script_count = len(
+            _re.findall(
+                r"<script\b[^>]*\btype=[\"']application/json[\"'][^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        external_script_count = len(
+            _re.findall(
+                r"<script\b(?=[^>]*\bsrc=)[^>]*>",
+                all_template_source,
+                flags=_re.IGNORECASE,
+            )
+        )
+        inline_executable_count = (
+            all_script_count - inert_script_count - external_script_count
+        )
+        all_native_handler_count = len(
+            native_handler_pattern.findall(all_template_source)
+        )
+        all_hx_on_count = all_template_source.count("hx-on")
+        _check(
+            (
+                all_script_count,
+                inline_executable_count,
+                external_script_count,
+                inert_script_count,
+                all_native_handler_count,
+                all_hx_on_count,
+            )
+            == (21, 5, 16, 0, 1, 0),
+            "Plaid entry pages: maintained aggregate inventory must match the post-4AQ CSP contract",
+        )
+
+        print("   ✅ Source, rendered, mocked request, exchange-format, entity-isolation, cleanup, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

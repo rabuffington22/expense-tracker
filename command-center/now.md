@@ -2,27 +2,56 @@
 
 ## Active Objective
 
-Preserve the durable, automatically deployed, and credential-free health-verified payroll-page result while Ryan chooses the next separately bounded route cluster.
+Make only the verified 4AQ Plaid entry-page source set durable on `main`, observe its automatic deployment, and verify credential-free production health while preserving every later-task and protected boundary.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.6 is durable, automatically deployed, and credential-free health verified through 4AP-R, while Task 1P.4.2c.7 remains a separate Ryan planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.2c.7-R is active through confirmed exact-scope work block 4AQ-R.
 
 ## Current Work Block
 
-Work block 4AP-R: Payroll Page Durability And Release — complete.
+Work block 4AQ-R: Plaid Entry-Page Execution Release — active.
 
 ## Current Task
 
-Task 1P.4.2c.7: Migrate Plaid entry-page execution — current planning gate; implementation is not authorized.
+Task 1P.4.2c.7-R: Publish and verify Plaid entry-page execution — active.
 
 ## Owner
 
-Ryan owns Task 1P.4.2c.7, every expansion, live action, product decision, and recovery. Codex Desktop owns Runway OS currency and no further mutation until a fresh work block is proposed and confirmed.
+Codex Desktop owns exact staging, verification, commit, clean fast-forward, direct-main push, read-only automatic-deployment observation, credential-free health, and sanitized closeout. Ryan owns every expansion, live mutation, and recovery beyond the confirmed path.
 
 ## Current Action
 
-Preserve the exact durable 4AP-R result. If Ryan asks to continue, freshly recheck and propose a bounded Task 1P.4.2c.7 Plaid entry-page block without inferring implementation authorization.
+Verify and stage only the exact 4AQ source set, commit on `codex/csp-plaid-entry`, cleanly fast-forward `main`, push without force or PR, observe only the resulting automatic deployment, verify credential-free `/health`, and publish a sanitized `[skip actions]` closeout.
+
+## Work Block 4AQ-R Contract
+
+- Include explicit staging of the exact verified 4AQ application, controllers, maintained tests, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-plaid-entry`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.2c.8 and every later task; new application/runtime mutation beyond verified 4AQ; the pre-existing empty-vendor aggregation edge; credentials; protected data; real databases; retained uploads; authenticated production pages; live Plaid; manual workflow actions; workflow edits; non-automatic Fly mutations; downstream access/writes; PR creation; force push; broader recovery; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified controllers, templates, tests, residual inventory, false HTMX execution switches, exact Plaid initializer tags, and both unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths, protected-boundary and high-confidence sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, commit contents, ancestry, exact remote SHA, automatic workflow result, credential-free production health, final local/remote alignment, and both preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, the separately gated empty-vendor route edge, and Task 1P.4.2c.8.
+
+## Work Block 4AQ Contract
+
+- Include Task 1P.4.2c.7 plus only its focused Task 2 regression slice: move the three executable inline application scripts and six native handlers from `data_sources.html` and `plaid.html` into page-owned template-free local controllers, declarative controls, and non-script inert data while preserving vendor-label switching, preview-date counting, confirmations, both Plaid Link launch/exchange flows, button reset/error behavior, and the existing JSON-versus-form payload contracts.
+- Keep Task 1P.4.2c.8; Tasks 1P.4.3a-1P.4.4; Tasks 1P.6-1P.7; the remainder of Task 2; Tasks 3-4; style migration; CSP headers, nonces, exception policy, or enforcement; route, API, database-query, financial, product, authentication, CSRF, dependency, or service-worker changes; credentials; protected data; real databases; retained uploads; live Plaid or other external access; GitHub durability; publication; deployment; workflows; downstream access or writes; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md` outside scope.
+- Use page-owned `data-sources.js` and `plaid.js`, delegated `data-*` controls, non-script inert order-date and endpoint data, the exact two existing Plaid initializer tags, fake configuration, monkeypatched Plaid functions, exact initializer interception, temporary synthetic Personal/BFM/Luxe Legacy data, configured-auth and no-password isolated Chrome, denied non-localhost traffic, zero unexpected console/page errors, and exact cleanup; preserve current style attributes and block for later tasks; keep durability local-only.
+- Stop if parity requires route, payload, database, financial, product, authentication, CSRF, dependency, style-policy, CSP-enforcement, service-worker, live, destructive, or later-task work; if a pre-existing page defect makes parity ambiguous; if the exact initializer cannot be mocked without weakening denied networking; if verification changes the plan or cleanup fails; if command-center checks fail; if scope expands; or if either preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-application-execution assertions for both pages; exact retained Plaid initializer tags; exact residual aggregate inventory of five executable inline scripts, sixteen external scripts, zero inert script carriers, one native handler, and zero `hx-on`; configured-auth and no-password isolated Chrome covering vendor label/count behavior, confirmations, Plaid open/success/exit/error behavior, both exchange formats, all-entity isolation, denied networking, browser errors, and cleanup; relevant Python/JavaScript/JSON syntax; whitespace; dashboard refresh/health/rendered state; exact scope; and both preserved files.
+- Report exact migrated behavior and residual inventory, controller/data organization, mocked Link proof, focused and full verification, entity and cleanup results, changed paths, local branch state, preserved exclusions, and separate 4AQ-R plus Task 1P.4.2c.8 gates.
+
+## Work Block 4AQ Result
+
+- `data_sources.html` and `plaid.html` now load page-owned template-free `data-sources.js` and `plaid.js`, use delegated declarative controls, and contain zero executable inline application scripts, native handlers, or `hx-on`.
+- Vendor-label switching, synthetic order-preview date counting, disconnect confirmations, both Plaid Link launch/exchange flows, button exit/error states, and the distinct form-versus-JSON exchange payload contracts are preserved.
+- Both exact Plaid Link initializer tags remain unchanged. Fake configuration, monkeypatched Plaid functions, exact initializer interception, denied non-localhost traffic, both authentication modes, temporary synthetic all-entity data, zero unexpected browser errors, and exact cleanup passed without live Plaid access.
+- Aggregate tracked execution inventory is now five executable inline scripts, sixteen external executable scripts, zero inert script carriers, one native handler, and zero `hx-on`.
+- Baseline and final smoke, focused request/rendered contracts, configured-auth and no-password isolated Chrome, Python and JavaScript syntax, JSON, whitespace, dashboard refresh/health/generated state, scope, protected-boundary, and preserved-file checks passed.
+- The proof exposed a pre-existing empty-vendor aggregation edge in excluded route/query logic. No route fix was made; a synthetic transaction fixture isolates the migrated browser proof, and any repair remains separately gated.
+- No style, CSP header/nonce/exception/enforcement, route, API, query, financial, product, authentication, CSRF, dependency, service-worker, credential, protected-data, real-database, retained-upload, live, external, GitHub, publication, deployment, workflow, downstream, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-plaid-entry-page-execution-4aq.md`.
 
 ## Work Block 4AP-R Contract
 
