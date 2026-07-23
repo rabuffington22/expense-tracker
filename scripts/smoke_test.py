@@ -10068,8 +10068,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (7, 122, 0, 17),
-            "shared/dashboard styles: current application inventory must match the post-4AT contract",
+            == (6, 66, 0, 17),
+            "shared/dashboard styles: current application inventory must match the post-4AU contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and current residual inventory passed")
@@ -10221,11 +10221,139 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (7, 122, 0, 17),
-            "transaction/matching styles: residual application inventory must match the post-4AT contract",
+            == (6, 66, 0, 17),
+            "transaction/matching styles: residual application inventory must match the post-4AU contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded progress, split state, and exact residual inventory passed")
+
+        # ── 11p. Categorization and upload style compatibility ──────────
+        print("\n11p. Categorization and upload style compatibility…")
+
+        categorization_style_paths = (
+            templates_root / "categorize.html",
+            templates_root / "categorize_orphans.html",
+            templates_root / "upload.html",
+            templates_root / "upload_dialog.html",
+        )
+        categorization_style_sources = [
+            path.read_text() for path in categorization_style_paths
+        ]
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                and not _re.search(
+                    r"<style(?:\s|>)", source, flags=_re.IGNORECASE
+                )
+                for source in categorization_style_sources
+            ),
+            "categorization/upload styles: all four source templates must contain no inline style blocks or style attributes",
+        )
+        _check(
+            all(
+                selector in style_source
+                for selector in (
+                    ".cat-col-date",
+                    ".cat-low-confidence",
+                    ".cat-alias-link",
+                    ".cat-pagination",
+                    ".cat-category-item",
+                    ".cat-alias-actions",
+                    ".cat-orphan-panel",
+                    ".cat-orphan-row",
+                    ".upload-month-field",
+                    ".upload-inline-form",
+                    ".import-preview-metric",
+                    ".import-preview-value--credit",
+                    ".import-preview-value--debit",
+                )
+            ),
+            "categorization/upload styles: maintained CSS must contain the compact table form alias orphan upload and preview contracts",
+        )
+        _check(
+            "style=" not in categorization_upload_source
+            and ".style." not in categorization_upload_source
+            and ".style =" not in categorization_upload_source,
+            "categorization/upload styles: the existing controller must emit no style attributes or runtime style writes",
+        )
+
+        rendered_categorization_styles = []
+        for path in (
+            "/categorize/",
+            "/categorize/?tab=settings",
+            "/categorize/orphans",
+            "/upload/?month=2026-07",
+            "/upload/?tab=settings&month=2026-07",
+        ):
+            response = style_client.get(path)
+            _check(
+                response.status_code == 200,
+                f"categorization/upload styles: {path} must render successfully",
+            )
+            rendered_categorization_styles.append(
+                response.get_data(as_text=True)
+            )
+
+        with no_auth_app.test_request_context("/"):
+            rendered_categorization_styles.append(
+                render_template(
+                    "upload_dialog.html",
+                    item={"id": 1, "label": "Synthetic import"},
+                    month="2026-07",
+                    show_preview=True,
+                    good_count=1,
+                    total_txns=2,
+                    format_month=lambda value: "July 2026",
+                    previews=[
+                        {
+                            "name": "synthetic.csv",
+                            "error": None,
+                            "count": 2,
+                            "min_date": "2026-07-01",
+                            "max_date": "2026-07-02",
+                            "credits": 10.00,
+                            "debits": 4.00,
+                            "net": 6.00,
+                            "suggested_name": "Synthetic",
+                        }
+                    ],
+                )
+            )
+
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                and not _re.search(
+                    r"<style(?:\s|>)", source, flags=_re.IGNORECASE
+                )
+                for source in rendered_categorization_styles
+            ),
+            "categorization/upload styles: included rendered pages and preview dialog must contain no inline style blocks or style attributes",
+        )
+        _check(
+            "cat-category-list" in rendered_categorization_styles[1]
+            and "cat-orphan-intro" in rendered_categorization_styles[2]
+            and "u-width-pct u-pct-" in rendered_categorization_styles[3]
+            and "upload-inline-form" in rendered_categorization_styles[4]
+            and "import-preview-metric" in rendered_categorization_styles[5]
+            and "import-preview-value--credit"
+            in rendered_categorization_styles[5]
+            and "import-preview-value--debit"
+            in rendered_categorization_styles[5],
+            "categorization/upload styles: rendered class and bounded progress contracts must remain explicit",
+        )
+        _check(
+            (
+                current_style_blocks,
+                current_style_attributes,
+                current_generated_style_attributes,
+                current_runtime_style_writes,
+            )
+            == (6, 66, 0, 17),
+            "categorization/upload styles: residual application inventory must match the post-4AU contract",
+        )
+
+        print("   ✅ Four source templates, rendered routes and preview, controller, semantic CSS, bounded progress, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

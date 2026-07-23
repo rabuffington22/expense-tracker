@@ -43,31 +43,31 @@
     </div>
 
     {% if p.error %}
-    <p class="text-sm" style="color: var(--red);">{{ p.error }}</p>
+    <p class="text-sm import-preview-error">{{ p.error }}</p>
     {% endif %}
 
     {% if p.count %}
-    <div class="metrics-row" style="margin-bottom: 0.5rem;">
-        <div class="metric" style="padding: 0.6rem 0.8rem;">
+    <div class="metrics-row import-preview-metrics">
+        <div class="metric import-preview-metric">
             <div class="metric-label">Date Range</div>
-            <div style="font-size: 0.9rem; font-weight: 600;">{{ p.min_date }} &mdash; {{ p.max_date }}</div>
+            <div class="import-preview-value">{{ p.min_date }} &mdash; {{ p.max_date }}</div>
         </div>
-        <div class="metric" style="padding: 0.6rem 0.8rem;">
+        <div class="metric import-preview-metric">
             <div class="metric-label">Credits</div>
-            <div style="font-size: 0.9rem; font-weight: 600; color: var(--green);">${{ "{:,.2f}".format(p.credits) }}</div>
+            <div class="import-preview-value import-preview-value--credit">${{ "{:,.2f}".format(p.credits) }}</div>
         </div>
-        <div class="metric" style="padding: 0.6rem 0.8rem;">
+        <div class="metric import-preview-metric">
             <div class="metric-label">Debits</div>
-            <div style="font-size: 0.9rem; font-weight: 600; color: var(--red);">${{ "{:,.2f}".format(p.debits) }}</div>
+            <div class="import-preview-value import-preview-value--debit">${{ "{:,.2f}".format(p.debits) }}</div>
         </div>
-        <div class="metric" style="padding: 0.6rem 0.8rem;">
+        <div class="metric import-preview-metric">
             <div class="metric-label">Net</div>
-            <div style="font-size: 0.9rem; font-weight: 600;">${{ "{:,.2f}".format(p.net) }}</div>
+            <div class="import-preview-value">${{ "{:,.2f}".format(p.net) }}</div>
         </div>
     </div>
 
     {% if p.suggested_name %}
-    <div class="form-group" style="max-width: 400px;">
+    <div class="form-group import-preview-rename">
         <label>Save as</label>
         <input type="text" form="confirm-form" name="rename_{{ p.name }}" value="{{ p.suggested_name }}">
     </div>

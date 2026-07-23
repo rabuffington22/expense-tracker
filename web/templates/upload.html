@@ -17,7 +17,7 @@
 <!-- ═══════════ IMPORT TAB ═══════════ -->
 
 <!-- Month selector -->
-<div class="form-group" style="max-width: 200px; margin-bottom: 0.8rem;">
+<div class="form-group upload-month-field">
     <label>Month</label>
     <select data-upload-change="month">
         {% for m in months %}
@@ -31,7 +31,7 @@
     <strong>{{ done_count }}/{{ total_count }}</strong> sources imported for {{ format_month(selected_month) }}
 </p>
 <div class="progress-bar mb-2">
-    <div class="progress-fill" style="width: {{ (done_count / total_count * 100)|int if total_count else 0 }}%;"></div>
+    <div class="progress-fill u-width-pct u-pct-{{ (done_count / total_count * 100)|int if total_count else 0 }}"></div>
 </div>
 
 <!-- Checklist items -->
@@ -44,16 +44,16 @@
     <div>
         <strong>{{ item.label }}</strong>
         {% if item.profile_name %}
-        <span class="badge badge-muted" style="margin-left: 0.5rem;">{{ item.profile_name }}</span>
+        <span class="badge badge-muted upload-meta-offset">{{ item.profile_name }}</span>
         {% endif %}
         {% if is_done %}
-        <span class="badge badge-green" style="margin-left: 0.3rem;">Done</span>
+        <span class="badge badge-green upload-done-offset">Done</span>
         {% endif %}
         {% if last_date %}
-        <span class="text-xs text-muted" style="margin-left: 0.5rem;">Last txn: {{ last_date }}</span>
+        <span class="text-xs text-muted upload-meta-offset">Last txn: {{ last_date }}</span>
         {% endif %}
         {% if s.get('source_filename') %}
-        <span class="text-xs text-muted" style="margin-left: 0.5rem;">{{ s['source_filename'] }}</span>
+        <span class="text-xs text-muted upload-meta-offset">{{ s['source_filename'] }}</span>
         {% endif %}
     </div>
     <div class="flex gap-1">
@@ -104,7 +104,7 @@
             <td class="text-muted text-sm">{{ item.filename_pattern or '—' }}</td>
             <td class="text-muted text-sm">{{ item.profile_name or '—' }}</td>
             <td class="text-right">
-                <form method="post" action="{{ url_for('upload.delete_source', item_id=item.id) }}" style="display:inline;">
+                <form method="post" action="{{ url_for('upload.delete_source', item_id=item.id) }}" class="upload-inline-form">
                     <button type="submit" class="btn btn-sm btn-danger"
                             data-confirm-message="Delete this source?">Delete</button>
                 </form>
@@ -185,7 +185,7 @@
             <td class="text-muted text-sm">{{ p.amount_col }}</td>
             <td class="text-muted text-sm">{{ 'Yes' if p.amount_negate else 'No' }}</td>
             <td class="text-right">
-                <form method="post" action="{{ url_for('upload.delete_profile', name=p.name) }}" style="display:inline;">
+                <form method="post" action="{{ url_for('upload.delete_profile', name=p.name) }}" class="upload-inline-form">
                     <button type="submit" class="btn btn-sm btn-danger"
                             data-confirm-message="Delete this profile?">Delete</button>
                 </form>
@@ -246,7 +246,7 @@
             </div>
             <div class="form-group">
                 <label>
-                    <input type="checkbox" name="negate" style="width: auto; margin-right: 0.4rem;">
+                    <input type="checkbox" name="negate" class="upload-checkbox">
                     Negate amounts (flip sign)
                 </label>
             </div>

@@ -1295,6 +1295,175 @@ def _assert_transaction_matching_styles(page, base_url: str, label: str) -> None
 
 
 def _assert_categorization_upload_pages(page, base_url: str, label: str) -> None:
+    entity_names = ("Personal", "BFM", "LL")
+    viewport_cases = (
+        (390, 844, "phone"),
+        (768, 900, "exact-768"),
+        (1280, 900, "desktop"),
+    )
+
+    for entity_name in entity_names:
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        for width, height, viewport_label in viewport_cases:
+            page.set_viewport_size({"width": width, "height": height})
+
+            page.goto(
+                f"{base_url}/__synthetic-4au/categorize-pagination",
+                wait_until="networkidle",
+            )
+            categorization_style_state = page.evaluate(
+                """() => ({
+                    styleAttributes: document.querySelectorAll(
+                        "#main-content [style]"
+                    ).length,
+                    styleBlocks: document.querySelectorAll(
+                        "#main-content style"
+                    ).length,
+                    compactControl: Boolean(document.querySelector(
+                        ".cat-compact-control"
+                    )),
+                    lowConfidence: Boolean(document.querySelector(
+                        ".cat-low-confidence"
+                    )),
+                    pageButtons: document.querySelectorAll(
+                        ".cat-page-button"
+                    ).length,
+                    pageOverflow:
+                        document.documentElement.scrollWidth
+                        > window.innerWidth + 1,
+                })"""
+            )
+            _check(
+                categorization_style_state
+                == {
+                    "styleAttributes": 0,
+                    "styleBlocks": 0,
+                    "compactControl": True,
+                    "lowConfidence": True,
+                    "pageButtons": 3,
+                    "pageOverflow": False,
+                },
+                f"{label}: {entity_name} {viewport_label} categorization must preserve compact confidence pagination layout without inline styles or page overflow",
+            )
+
+            page.goto(
+                f"{base_url}/categorize/orphans",
+                wait_until="networkidle",
+            )
+            orphan_style_state = page.evaluate(
+                """() => {
+                    const row = document.querySelector(".cat-orphan-row");
+                    return {
+                        styleAttributes: document.querySelectorAll(
+                            "#main-content [style]"
+                        ).length,
+                        panel: Boolean(document.querySelector(
+                            ".cat-orphan-panel"
+                        )),
+                        fields: document.querySelectorAll(
+                            ".cat-orphan-field"
+                        ).length,
+                        rowDirection: getComputedStyle(row).flexDirection,
+                        pageOverflow:
+                            document.documentElement.scrollWidth
+                            > window.innerWidth + 1,
+                    };
+                }"""
+            )
+            expected_orphan_direction = (
+                "row" if viewport_label == "desktop" else "column"
+            )
+            _check(
+                orphan_style_state["styleAttributes"] == 0
+                and orphan_style_state["panel"]
+                and orphan_style_state["fields"] == 2
+                and orphan_style_state["rowDirection"]
+                == expected_orphan_direction
+                and not orphan_style_state["pageOverflow"],
+                f"{label}: {entity_name} {viewport_label} orphan reassignment must preserve responsive semantic layout without style attributes",
+            )
+
+            page.goto(f"{base_url}/upload/", wait_until="networkidle")
+            upload_style_state = page.evaluate(
+                """() => {
+                    const progress = document.querySelector(
+                        ".progress-fill.u-width-pct"
+                    );
+                    return {
+                        styleAttributes: document.querySelectorAll(
+                            "#main-content [style]"
+                        ).length,
+                        boundedProgress:
+                            Boolean(progress)
+                            && Array.from(progress.classList).some(
+                                (name) => name.startsWith("u-pct-")
+                            ),
+                        monthField: Boolean(document.querySelector(
+                            ".upload-month-field"
+                        )),
+                        pageOverflow:
+                            document.documentElement.scrollWidth
+                            > window.innerWidth + 1,
+                    };
+                }"""
+            )
+            _check(
+                upload_style_state
+                == {
+                    "styleAttributes": 0,
+                    "boundedProgress": True,
+                    "monthField": True,
+                    "pageOverflow": False,
+                },
+                f"{label}: {entity_name} {viewport_label} upload checklist must preserve bounded progress and responsive layout without style attributes",
+            )
+
+            page.goto(
+                f"{base_url}/__synthetic-4au/upload-dialog",
+                wait_until="networkidle",
+            )
+            preview_style_state = page.evaluate(
+                """() => ({
+                    styleAttributes: document.querySelectorAll(
+                        "#main-content [style]"
+                    ).length,
+                    metrics: document.querySelectorAll(
+                        ".import-preview-metric"
+                    ).length,
+                    credit: Boolean(document.querySelector(
+                        ".import-preview-value--credit"
+                    )),
+                    debit: Boolean(document.querySelector(
+                        ".import-preview-value--debit"
+                    )),
+                    rename: Boolean(document.querySelector(
+                        ".import-preview-rename"
+                    )),
+                    pageOverflow:
+                        document.documentElement.scrollWidth
+                        > window.innerWidth + 1,
+                })"""
+            )
+            _check(
+                preview_style_state
+                == {
+                    "styleAttributes": 0,
+                    "metrics": 4,
+                    "credit": True,
+                    "debit": True,
+                    "rename": True,
+                    "pageOverflow": False,
+                },
+                f"{label}: {entity_name} {viewport_label} upload preview must preserve metric and rename layout without style attributes or page overflow",
+            )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.set_viewport_size({"width": 390, "height": 844})
+
     page.goto(f"{base_url}/categorize/", wait_until="networkidle")
     page.wait_for_function(
         "document.querySelector('[data-categorization-controller]')?.dataset.initialized === 'true'"
@@ -1324,6 +1493,15 @@ def _assert_categorization_upload_pages(page, base_url: str, label: str) -> None
         '[data-description="PAYPAL * SYNTHETIC ALIAS TX"]'
     )
     _check(alias_control.count() == 1, f"{label}: synthetic alias prefill control must render")
+    _check(
+        alias_control.is_hidden(),
+        f"{label}: alias control must start hidden until its transaction row is hovered",
+    )
+    alias_control.locator("xpath=ancestor::tr").hover()
+    _check(
+        alias_control.is_visible(),
+        f"{label}: maintained hover CSS must reveal the alias control",
+    )
     alias_control.evaluate("element => element.click()")
     alias_state = page.evaluate(
         """() => ({
@@ -2744,6 +2922,56 @@ def _register_standalone_test_routes(app) -> None:
             ),
         )
 
+    def synthetic_categorization_pagination():
+        return render_template(
+            "categorize.html",
+            tab="review",
+            txns=[
+                {
+                    "transaction_id": "synthetic-4au-pagination",
+                    "date": "2026-07-23",
+                    "description_raw": "SYNTHETIC 4AU LOW CONFIDENCE",
+                    "amount": -42.00,
+                    "category": "Food",
+                    "subcategory": "Coffee",
+                    "confidence": 0.2,
+                    "notes": "",
+                }
+            ],
+            txn_count=51,
+            categories=["Food", "Uncategorized"],
+            cats=["Food"],
+            aliases=[],
+            has_suggestions=True,
+            page=2,
+            total_pages=3,
+            page_size=50,
+        )
+
+    def synthetic_upload_dialog():
+        return render_template(
+            "upload_dialog.html",
+            item={"id": 1, "label": "Synthetic 4AU import"},
+            month="2026-07",
+            show_preview=True,
+            good_count=1,
+            total_txns=2,
+            format_month=lambda value: "July 2026",
+            previews=[
+                {
+                    "name": "synthetic-4au.csv",
+                    "error": None,
+                    "count": 2,
+                    "min_date": "2026-07-01",
+                    "max_date": "2026-07-02",
+                    "credits": 10.00,
+                    "debits": 4.00,
+                    "net": 6.00,
+                    "suggested_name": "Synthetic 4AU",
+                }
+            ],
+        )
+
     app.add_url_rule(
         "/__synthetic-4ar/403",
         "synthetic_4ar_403",
@@ -2768,6 +2996,16 @@ def _register_standalone_test_routes(app) -> None:
         "/__synthetic-4at/vendor-card",
         "synthetic_4at_vendor_card",
         synthetic_vendor_card,
+    )
+    app.add_url_rule(
+        "/__synthetic-4au/categorize-pagination",
+        "synthetic_4au_categorize_pagination",
+        synthetic_categorization_pagination,
+    )
+    app.add_url_rule(
+        "/__synthetic-4au/upload-dialog",
+        "synthetic_4au_upload_dialog",
+        synthetic_upload_dialog,
     )
     app.add_url_rule(
         "/favicon.ico",

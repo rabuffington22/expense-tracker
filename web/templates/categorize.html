@@ -25,7 +25,7 @@
 <form method="post" action="{{ url_for('categorize.suggest') }}" class="mb-2">
     <button type="submit" class="btn btn-primary">Suggest Categories</button>
     {% if has_suggestions %}
-    <span class="badge badge-green" style="margin-left: 0.5rem;">Suggestions applied</span>
+    <span class="badge badge-green cat-badge-offset">Suggestions applied</span>
     {% endif %}
 </form>
 
@@ -35,13 +35,13 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 80px;">Date</th>
+                    <th class="cat-col-date">Date</th>
                     <th>Description</th>
-                    <th style="width: 90px;">Amount</th>
-                    <th style="width: 160px;">Category</th>
-                    <th style="width: 140px;">Subcategory</th>
-                    <th style="width: 55px;">Conf.</th>
-                    <th style="width: 140px;">Notes</th>
+                    <th class="cat-col-amount">Amount</th>
+                    <th class="cat-col-category">Category</th>
+                    <th class="cat-col-subcategory">Subcategory</th>
+                    <th class="cat-col-confidence">Conf.</th>
+                    <th class="cat-col-notes">Notes</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,20 +51,20 @@
                     <td class="text-sm">
                         {{ txn.description_raw[:60] }}
                         {% if not txn.category or txn.category == '' %}
-                        <span class="badge badge-muted" style="margin-left: 0.3rem; font-size: 0.65rem;">NEW</span>
+                        <span class="badge badge-muted cat-row-badge">NEW</span>
                         {% elif txn.confidence and txn.confidence < 0.6 %}
-                        <span class="badge" style="margin-left: 0.3rem; font-size: 0.65rem; background: rgba(255,159,10,0.2); color: var(--orange);">LOW CONF</span>
+                        <span class="badge cat-row-badge cat-low-confidence">LOW CONF</span>
                         {% endif %}
                         <input type="hidden" name="txn_id" value="{{ txn.transaction_id }}">
                         <input type="hidden" name="desc_{{ txn.transaction_id }}" value="{{ txn.description_raw }}">
-                        <a href="#alias-details" class="alias-link text-xs" style="display: none; margin-left: 0.3rem;"
+                        <a href="#alias-details" class="alias-link text-xs cat-alias-link"
                            data-categorization-action="prefill-alias"
                            data-description="{{ txn.description_raw|e }}">+ Alias</a>
                     </td>
                     <td class="text-sm text-right">${{ "{:,.2f}".format(txn.amount|abs) }}</td>
                     <td>
                         <select name="cat_{{ txn.transaction_id }}"
-                                style="font-size: 0.8rem; padding: 0.3rem;"
+                                class="cat-compact-control"
                                 data-categorization-change="category"
                                 data-transaction-id="{{ txn.transaction_id }}">
                             {% for cat in categories %}
@@ -75,7 +75,7 @@
                     <td>
                         <select name="subcat_{{ txn.transaction_id }}"
                                 id="subcat_{{ txn.transaction_id }}"
-                                style="font-size: 0.8rem; padding: 0.3rem;"
+                                class="cat-compact-control"
                                 data-current="{{ txn.subcategory or '' }}">
                             <option value="Unknown">Unknown</option>
                         </select>
@@ -86,7 +86,7 @@
                     <td>
                         <input type="text" name="notes_{{ txn.transaction_id }}"
                                value="{{ txn.notes or '' }}"
-                               style="font-size: 0.8rem; padding: 0.3rem;"
+                               class="cat-compact-control"
                                placeholder="Notes...">
                     </td>
                 </tr>
@@ -102,14 +102,13 @@
 </form>
 
 {% if total_pages > 1 %}
-<div class="form-row mt-2" style="justify-content: center; gap: 0.5rem;">
+<div class="form-row mt-2 cat-pagination">
     {% if page > 1 %}
     <a href="{{ url_for('categorize.index', page=page-1) }}" class="btn btn-secondary btn-sm">&laquo; Prev</a>
     {% endif %}
     {% for p in range(1, total_pages + 1) %}
     <a href="{{ url_for('categorize.index', page=p) }}"
-       class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-secondary{% endif %}"
-       style="min-width: 2.2rem; text-align: center;">{{ p }}</a>
+       class="btn btn-sm cat-page-button {% if p == page %}btn-primary{% else %}btn-secondary{% endif %}">{{ p }}</a>
     {% endfor %}
     {% if page < total_pages %}
     <a href="{{ url_for('categorize.index', page=page+1) }}" class="btn btn-secondary btn-sm">Next &raquo;</a>
@@ -118,10 +117,6 @@
 {% endif %}
 
 {% endif %}
-
-<style>
-tr:hover .alias-link { display: inline !important; }
-</style>
 
 <!-- Quick alias from transaction -->
 <details class="mt-2" id="alias-details">
@@ -140,7 +135,7 @@ tr:hover .alias-link { display: inline !important; }
                     <input type="text" name="canonical" id="alias-canonical" placeholder="e.g. Starbucks">
                 </div>
             </div>
-            <div class="form-group" style="max-width: 250px;">
+            <div class="form-group cat-alias-category">
                 <label>Default category</label>
                 <select name="default_category">
                     <option value="(none)">(none)</option>
@@ -159,16 +154,16 @@ tr:hover .alias-link { display: inline !important; }
 
 <!-- ── Categories (read-only — defined in categories.md) ─────────────────── -->
 <h2 class="section-title">Categories</h2>
-<p class="text-muted text-sm" style="margin-bottom: 0.5rem;">
+<p class="text-muted text-sm cat-settings-intro">
     Categories and subcategories are defined in <code>categories.md</code>.
     Edit that file to add, rename, or remove categories.
 </p>
 
-<div style="max-width: 500px;">
+<div class="cat-category-list">
 {% for cat in cats %}
-<details style="border-bottom: 1px solid var(--border);">
-    <summary style="padding: 0.3rem 0; cursor: pointer;">{{ cat }}</summary>
-    <div style="padding: 0 0 0.4rem 1rem;">
+<details class="cat-category-item">
+    <summary class="cat-category-summary">{{ cat }}</summary>
+    <div class="cat-subcategory-list">
         {% set subs = get_subcategories(entity_key, cat) %}
         {% for sub in subs %}
             {% if sub != 'Unknown' %}
@@ -190,7 +185,7 @@ tr:hover .alias-link { display: inline !important; }
 </p>
 
 {% if aliases %}
-<div class="table-wrap" style="max-width: 700px;">
+<div class="table-wrap cat-alias-table">
     <table>
         <thead>
             <tr>
@@ -210,13 +205,13 @@ tr:hover .alias-link { display: inline !important; }
                 <td class="text-sm">{{ a.merchant_canonical }}</td>
                 <td class="text-sm">{{ a.default_category or '—' }}</td>
                 <td class="text-sm">{{ 'Yes' if a.active else 'No' }}</td>
-                <td class="text-right" style="white-space: nowrap;">
-                    <form method="post" action="{{ url_for('categorize.toggle_alias', alias_id=a.id) }}" style="display:inline;">
+                <td class="text-right cat-alias-actions">
+                    <form method="post" action="{{ url_for('categorize.toggle_alias', alias_id=a.id) }}" class="cat-inline-form">
                         <button type="submit" class="btn btn-sm btn-secondary">
                             {{ 'Pause' if a.active else 'Enable' }}
                         </button>
                     </form>
-                    <form method="post" action="{{ url_for('categorize.delete_alias', alias_id=a.id) }}" style="display:inline;">
+                    <form method="post" action="{{ url_for('categorize.delete_alias', alias_id=a.id) }}" class="cat-inline-form">
                         <button type="submit" class="btn btn-sm btn-danger"
                                 data-confirm-message="Delete this alias?">Delete</button>
                     </form>
@@ -265,7 +260,7 @@ tr:hover .alias-link { display: inline !important; }
             </div>
             <div class="form-group">
                 <label>
-                    <input type="checkbox" name="active" checked style="width: auto; margin-right: 0.4rem;">
+                    <input type="checkbox" name="active" checked class="cat-checkbox">
                     Active
                 </label>
             </div>

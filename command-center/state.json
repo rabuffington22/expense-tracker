@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-23 4:19 PM CST",
+    "lastUpdated": "2026-07-23 5:08 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,32 +27,32 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Tasks 1P.4.3a.1 and 1P.4.3a.2 are durable deployed and health verified through 4AS-R and 4AT-R; Task 1P.4.3a.3 is the next separately gated planning decision.",
+    "summary": "Tasks 1P.4.3a.1 and 1P.4.3a.2 are durable deployed and health verified through 4AS-R and 4AT-R; Task 1P.4.3a.3 is complete locally through 4AU and Task 1P.4.3a.3-R is active through confirmed work block 4AU-R.",
     "progress": 98
   },
   "currentTask": {
-    "title": "Task 1P.4.3a.3: Make categorization and upload styles strict-policy compatible",
-    "owner": "Ryan",
-    "status": "waiting",
-    "supportingAgent": "Codex Desktop preserves the verified 4AT-R result and can propose a separate bounded work block when requested",
-    "nextAction": "Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3.",
-    "blocker": "No Task 1P.4.3a.3 work block is planned or confirmed."
+    "title": "Task 1P.4.3a.3-R: Publish and verify categorization and upload style compatibility",
+    "owner": "Codex Desktop",
+    "status": "active",
+    "supportingAgent": "Ryan owns every expansion manual live action broader recovery and Task 1P.4.3a.4.",
+    "nextAction": "Verify and explicitly stage the exact 4AU source set commit it on codex/csp-categorization-upload-styles cleanly fast-forward and push main observe the automatic Fly deployment verify the exact source SHA and credential-free health then publish a sanitized skip-actions closeout.",
+    "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-at-r",
-    "label": "4AT-R",
-    "name": "Transaction And Matching Style Compatibility Release",
-    "status": "complete",
+    "id": "phase-4-block-au-r",
+    "label": "4AU-R",
+    "name": "Categorization And Upload Style Compatibility Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Task 1P.4.3a.2-R",
+    "currentTask": "Task 1P.4.3a.3-R",
     "includedTasks": [
-      "Explicitly stage and commit the exact 19 verified 4AT paths on codex/csp-transaction-matching-styles",
+      "Explicitly stage and commit the exact verified 4AU paths on codex/csp-categorization-upload-styles",
       "Cleanly fast-forward local main and push directly to origin/main without force or PR",
       "Observe only the automatic Fly deployment verify its exact source SHA and credential-free production health",
       "Publish one sanitized command-center-only skip-actions closeout"
     ],
     "excludedTasks": [
-      "Task 1P.4.3a.3 and every later task plus any new mutation beyond verified 4AT",
+      "Task 1P.4.3a.4 and every later task plus any new mutation beyond verified 4AU",
       "Credentials protected data real databases retained uploads authenticated production pages or downstream access or writes",
       "PR creation force push manual workflow action workflow edits non-automatic Fly mutation broader recovery or destructive actions",
       "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
@@ -61,11 +61,11 @@
     "whyThisAgent": "The exact verified set branch state direct-main release observation and Runway OS closeout form one controlled durability boundary.",
     "runnerPath": "Current Codex task through exact verification explicit-path commit clean main fast-forward direct push automatic-release observation credential-free health and sanitized closeout.",
     "expectedFiles": [
-      "Exact 19 verified 4AT paths for the source commit",
-      "Only command-center now roadmap decisions state generated dashboard and a sanitized 4AT-R evidence log for closeout"
+      "Exact verified 4AU paths for the source commit",
+      "Only command-center now roadmap decisions state generated dashboard and a sanitized 4AU-R evidence log for closeout"
     ],
     "defaults": [
-      "Use explicit-path staging only and preserve the verified 63 7 4 migration residual 7 122 0 17 inventory and browser proof",
+      "Use explicit-path staging only and preserve the verified one-block 56-attribute migration residual 6 66 0 17 inventory and browser proof",
       "Use no PR force push manual workflow action or non-automatic Fly mutation",
       "Observe only automatic deployment and credential-free production health",
       "Use skip actions only for sanitized closeout and preserve both unrelated untracked files"
@@ -80,12 +80,8 @@
       "Python JavaScript JSON syntax whitespace dashboard refresh health generated state commit content ancestry remote alignment and preserved files",
       "Automatic Fly workflow and deploy-job result for the exact source SHA plus credential-free production health"
     ],
-    "nextReportPoint": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and separately gated Task 1P.4.3a.3.",
-    "durability": "Exact source commit 30236a7 is durable on local and remote main; automatic Fly run 30045444363 and deploy job 89335369654 passed and credential-free production health returned HTTP 200.",
-    "result": "The exact 19-path 4AT source set is durable deployed and health verified with no PR force push manual workflow action non-automatic Fly mutation Task 1P.4.3a.3 work broader recovery or preserved-file overlap.",
-    "evidence": [
-      "command-center/logs/2026-07-23-transaction-matching-style-compatibility-release-4at-r.md"
-    ]
+    "nextReportPoint": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and separately gated Task 1P.4.3a.4.",
+    "durability": "Active on codex/csp-categorization-upload-styles before exact-path source commit and direct-main push."
   },
   "routerHealth": {
     "status": "healthy",
@@ -110,25 +106,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 1P.4.3a.3 separately",
-    "status": "waiting-on-ryan",
-    "owner": "Ryan",
-    "why": "4AT-R is durable deployed and health verified; the categorization and upload style cluster has a distinct controller dialog pagination confidence-state and browser-proof boundary.",
-    "action": "Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3; do not infer implementation authority.",
+    "title": "Complete exact-scope 4AU-R durability and release verification",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan explicitly authorized committing and pushing the complete verified 4AU result to main.",
+    "action": "Commit the exact verified set push main observe the automatic deployment verify the exact source SHA and credential-free health then publish a sanitized closeout.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [
-    "Decide whether to plan a separate Task 1P.4.3a.3 categorization and upload style-compatibility work block."
-  ],
+  "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "4AT-R is complete durable deployed and health verified; Task 1P.4.3a.3 later clusters CSP enforcement manual live-sensitive actions broader recovery and every expansion remain Ryan decisions.",
+    "summary": "4AU-R is active; Task 1P.4.3a.4 later style clusters CSP enforcement manual live-sensitive actions broader recovery and every expansion remain Ryan decisions.",
     "items": [
-      "Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3."
+      "Decide the next work block only after 4AU-R closes."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1P.4.3a.2-R is complete through 4AT-R; Task 1P.4.3a.3 later style clusters CSP policy installed-PWA and broad read-model work remain separate.",
-    "decisionQueue": "Task 1P.4.3a.3 later style clusters CSP enforcement manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
+    "phaseQuestions": "Task 1P.4.3a.3-R is active through 4AU-R; Task 1P.4.3a.4 later style clusters CSP policy installed-PWA and broad read-model work remain separate.",
+    "decisionQueue": "Task 1P.4.3a.4 later style clusters CSP enforcement manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -5722,6 +5716,100 @@
       "evidence": [
         "command-center/logs/2026-07-23-transaction-matching-style-compatibility-release-4at-r.md"
       ]
+    },
+    {
+      "id": "phase-4-block-au",
+      "phaseId": "phase-4",
+      "label": "4AU",
+      "name": "Categorization And Upload Style Compatibility",
+      "status": "complete",
+      "includedTasks": [
+        "Remove one inline style block and 56 template style attributes from categorize categorize_orphans upload and upload_dialog",
+        "Move included styling into maintained semantic classes while preserving compact forms tables alias confidence pagination orphan upload dialog mobile and status-only behavior",
+        "Add focused source rendered and configured-auth/no-password all-entity responsive isolated-browser proof",
+        "Reconcile the exact residual CSP inventory and close Runway OS locally without publication"
+      ],
+      "excludedTasks": [
+        "Tasks 1P.4.3a.4 through 1P.4.4 Tasks 1P.6 through 1P.7 remainder of Task 2 and Tasks 3 through 4",
+        "Route controller financial database category-domain product authentication CSRF dependency CSP enforcement or later-cluster changes",
+        "Credentials protected data real databases retained uploads external live GitHub publication deployment workflow downstream or destructive actions",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The deterministic local style migration needs integrated source rendered browser cleanup inventory and Runway OS stewardship under the sensitive-retrofit boundary.",
+      "runnerPath": "Current Codex task on codex/csp-categorization-upload-styles through local implementation focused and full proof exact cleanup inventory reconciliation and uncommitted closeout.",
+      "expectedFiles": [
+        "web/static/style.css plus categorize categorize_orphans upload and upload_dialog templates",
+        "Focused smoke and isolated-browser coverage CSP contract sanitized evidence Runway OS sources and generated dashboard"
+      ],
+      "defaults": [
+        "Preserve appearance and behavior and use maintained static semantic classes and existing shared utilities",
+        "Add no dependency or runtime style-writing mechanism and expect categorization-upload.js to remain unchanged",
+        "Use temporary synthetic all-entity data both authentication modes desktop phone and exact 768px denied non-localhost traffic zero unexpected errors and exact cleanup",
+        "Preserve both unrelated untracked files and keep durability local-only and uncommitted"
+      ],
+      "stopConditions": [
+        "Parity requires a product design choice or excluded route controller database financial category-domain authentication CSP enforcement unbounded dynamic styling or later-task work",
+        "Desktop phone or exact 768px behavior becomes ambiguous or protected live destructive or preserved-file overlap appears",
+        "Verification changes the plan exact cleanup fails command-center checks fail or scope expands"
+      ],
+      "verification": [
+        "Baseline and final full smoke plus source rendered zero-style and exact residual 6 66 0 17 inventory assertions",
+        "Configured-auth and no-password all-entity isolated Chrome at desktop phone and exact 768px for categorization orphan upload dialog responsive network error and cleanup behavior",
+        "Relevant Python JavaScript JSON syntax whitespace dashboard refresh health generated state exact scope and preserved files"
+      ],
+      "reportBack": "Return exact migrated surfaces patterns final inventory source rendered responsive browser proof cleanup changed paths branch state preserved exclusions and separate 4AU-R gate.",
+      "durability": "Complete verified local-only and uncommitted; no commit push publication deployment or live action is authorized.",
+      "result": "Removed the exact one inline style block and 56 template style attributes from the four categorization and upload templates through maintained semantic classes while leaving categorization-upload.js unchanged; full source rendered all-entity both-auth responsive isolated-browser proof passed and the residual inventory is 6 style blocks 66 template attributes 0 generated attributes and 17 runtime writes.",
+      "evidence": [
+        "command-center/logs/2026-07-23-categorization-upload-style-compatibility-4au.md"
+      ]
+    },
+    {
+      "id": "phase-4-block-au-r",
+      "phaseId": "phase-4",
+      "label": "4AU-R",
+      "name": "Categorization And Upload Style Compatibility Release",
+      "status": "active",
+      "includedTasks": [
+        "Explicitly stage and commit the exact verified 4AU paths on codex/csp-categorization-upload-styles",
+        "Cleanly fast-forward local main and push directly to origin/main without force or PR",
+        "Observe only the automatic Fly deployment verify its exact source SHA and credential-free production health",
+        "Publish one sanitized command-center-only skip-actions closeout"
+      ],
+      "excludedTasks": [
+        "Task 1P.4.3a.4 and every later task plus any new mutation beyond verified 4AU",
+        "Credentials protected data real databases retained uploads authenticated production pages or downstream access or writes",
+        "PR creation force push manual workflow action workflow edits non-automatic Fly mutation broader recovery or destructive actions",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh and unrelated untracked command-center/now 2.md"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The exact verified set branch state direct-main release observation and Runway OS closeout form one controlled durability boundary.",
+      "runnerPath": "Current Codex task through exact verification explicit-path commit clean main fast-forward direct push automatic-release observation credential-free health and sanitized closeout.",
+      "expectedFiles": [
+        "Exact verified 4AU paths for the source commit",
+        "Only command-center now roadmap decisions state generated dashboard and a sanitized 4AU-R evidence log for closeout"
+      ],
+      "defaults": [
+        "Use explicit-path staging only and preserve the verified one-block 56-attribute migration residual 6 66 0 17 inventory and browser proof",
+        "Use no PR force push manual workflow action or non-automatic Fly mutation",
+        "Observe only automatic deployment and credential-free production health",
+        "Use skip actions only for sanitized closeout and preserve both unrelated untracked files"
+      ],
+      "stopConditions": [
+        "Unexpected path sensitive addition protected-boundary risk failed maintained verification excluded staging or preserved-file overlap",
+        "Local or remote main divergence push rejection commit mismatch or recovery beyond a clean fast-forward",
+        "Automatic deployment failure requiring mutation credential-free health failure exact source-SHA mismatch or scope expansion"
+      ],
+      "verification": [
+        "Exact changed and staged sets protected-boundary and high-confidence sensitive-addition scans full smoke and configured-auth/no-password isolated Chrome",
+        "Python JavaScript JSON syntax whitespace dashboard refresh health generated state commit content ancestry remote alignment and preserved files",
+        "Automatic Fly workflow and deploy-job result for the exact source SHA plus credential-free production health"
+      ],
+      "reportBack": "Return source and closeout SHAs exact published paths automatic deployment and health results final alignment preserved exclusions and separately gated Task 1P.4.3a.4.",
+      "durability": "Active on codex/csp-categorization-upload-styles before exact-path source commit and direct-main push."
     }
   ],
   "phaseTasks": [
@@ -7143,9 +7231,9 @@
       "title": "Task 1P.4.3a: Make application styles strict-policy compatible",
       "status": "active",
       "owner": "Codex Desktop",
-      "summary": "The 4AE baseline found seven style blocks and 221 template attributes; 4AS and 4AT completed the first two of eight route clusters and left a verified residual inventory of seven style blocks 122 template attributes zero generated attributes and 17 runtime writes.",
-      "nextAction": "Decide whether to plan Task 1P.4.3a.3 separately.",
-      "blocker": "Task 1P.4.3a.3 and every later route cluster remain separately gated."
+      "summary": "The 4AE baseline found seven style blocks and 221 template attributes; 4AS, 4AT, and 4AU completed the first three of eight route clusters and left a verified residual inventory of six style blocks 66 template attributes zero generated attributes and 17 runtime writes.",
+      "nextAction": "Decide whether to plan Task 1P.4.3a.3-R separately.",
+      "blocker": "Task 1P.4.3a.3-R and every later route cluster remain separately gated."
     },
     {
       "phaseId": "phase-4",
@@ -7207,11 +7295,25 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P43A3",
       "title": "Task 1P.4.3a.3: Make categorization and upload styles strict-policy compatible",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Move one style block and 56 template style attributes into maintained CSS and classes while preserving categorization orphan reassignment upload dialogs compact layouts confidence states pagination responsive behavior and status-only Undo wording.",
-      "nextAction": "Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3.",
-      "blocker": "No Task 1P.4.3a.3 work block is planned or confirmed."
+      "nextAction": null,
+      "blocker": null,
+      "result": "The exact one inline style block and 56 template style attributes are removed from categorize, categorize_orphans, upload, and upload_dialog through maintained semantic classes; full source rendered all-entity both-auth responsive isolated-browser proof passed and the residual inventory is 6 style blocks 66 template attributes 0 generated attributes and 17 runtime writes.",
+      "evidence": [
+        "command-center/logs/2026-07-23-categorization-upload-style-compatibility-4au.md"
+      ]
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1P43A3R",
+      "title": "Task 1P.4.3a.3-R: Publish and verify categorization and upload style compatibility",
+      "status": "current",
+      "owner": "Codex Desktop",
+      "summary": "Make only the exact locally verified 4AU source set durable, then observe automatic deployment and verify credential-free production health under a separately confirmed release block.",
+      "nextAction": "Execute confirmed work block 4AU-R through exact-path commit direct-main push automatic deployment observation credential-free health and sanitized closeout.",
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -8654,8 +8756,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Plan Task 1P.4.3a.3 separately",
-    "description": "Preserve the durable 4AT-R result and decide whether to invoke fresh work-block planning for the categorization and upload style cluster."
+    "name": "Complete exact-scope work block 4AU-R",
+    "description": "Publish only the verified 4AU source set to main observe its automatic deployment verify exact-SHA credential-free health and close with a sanitized skip-actions command-center commit."
   },
   "verification": {
     "phase4StandaloneDocumentsBlock": "pass locally; 4AR moved five executable inline scripts and both source or rendered handler seams into blocking standalone-documents.js and deferred kristine.js leaving final tracked-template inventory zero inline twenty-one external zero inert zero source-recognized handlers and zero hx-on",
@@ -8670,6 +8772,9 @@
     "phase4TransactionMatchingStyleCoverage": "pass; baseline and final full smoke source rendered proof and configured-auth/no-password isolated Chrome cover Personal BFM and Luxe Legacy desktop phone exact 768 transaction filters sorting copy edit matching vendor cards repeated swaps split lines totals auto manual lifecycle modals denied networking zero unexpected browser errors and exact cleanup",
     "phase4TransactionMatchingStyleBoundaries": "pass; no commit push PR publication deployment live protected route financial database matching-policy product authentication CSP enforcement later-cluster destructive downstream or preserved-file mutation occurred",
     "phase4TransactionMatchingStyleRelease": "pass; exact 19-path source commit 30236a7 is durable on main automatic Fly run 30045444363 and deploy job 89335369654 passed for the exact SHA and credential-free production health returned HTTP 200",
+    "phase4CategorizationUploadStyleBlock": "pass locally; 4AU removed the exact one inline style block and 56 template style attributes from categorize categorize_orphans upload and upload_dialog through maintained semantic classes while leaving categorization-upload.js unchanged and reducing the residual inventory to 6 style blocks 66 template attributes 0 generated attributes and 17 runtime writes",
+    "phase4CategorizationUploadStyleCoverage": "pass; baseline and final full smoke source rendered proof and configured-auth/no-password isolated Chrome cover Personal BFM and Luxe Legacy desktop phone exact 768 categorization pagination confidence compact controls orphan reassignment upload progress preview credit debit rename alias hover and prefill denied networking zero unexpected browser errors and exact cleanup",
+    "phase4CategorizationUploadStyleBoundaries": "pass; no commit push PR publication deployment live protected route controller financial database category-domain product authentication CSRF dependency CSP enforcement later-cluster destructive downstream or preserved-file mutation occurred",
     "phase4TransactionMatchingStyleReleaseBoundaries": "pass; no PR force push manual workflow action non-automatic Fly mutation Task 1P.4.3a.3 work credential protected data real database retained upload authenticated production downstream broader recovery or preserved-file mutation occurred",
     "phase4PlaidEntryRelease": "pass; exact thirteen-path source commit 993506b is durable on main automatic Fly run 30027699965 and deploy job 89276216665 passed for the exact SHA and credential-free production health returned HTTP 200",
     "phase4PlaidEntryBlock": "pass locally; 4AQ moved three executable inline application scripts and six native handlers into page-owned data-sources.js and plaid.js delegated controls non-script order-date data and inert endpoint attributes while retaining both exact initializer tags leaving residual inventory five inline sixteen external zero inert one handler and zero hx-on",

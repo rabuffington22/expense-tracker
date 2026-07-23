@@ -2737,6 +2737,96 @@ input[type="checkbox"] {
 .u-pct-99 { --ui-pct: 99%; }
 .u-pct-100 { --ui-pct: 100%; }
 
+/* ── Categorization and upload strict-style compatibility ──────────────── */
+.cat-badge-offset,
+.upload-meta-offset {
+    margin-left: 0.5rem;
+}
+.upload-done-offset,
+.cat-row-badge,
+.cat-alias-link {
+    margin-left: 0.3rem;
+}
+.cat-row-badge {
+    font-size: 0.65rem;
+}
+.cat-low-confidence {
+    background: rgba(255,159,10,0.2);
+    color: var(--orange);
+}
+.cat-col-date { width: 80px; }
+.cat-col-amount { width: 90px; }
+.cat-col-category { width: 160px; }
+.cat-col-subcategory,
+.cat-col-notes { width: 140px; }
+.cat-col-confidence { width: 55px; }
+.cat-alias-link { display: none; }
+tr:hover .cat-alias-link { display: inline; }
+.cat-compact-control {
+    font-size: 0.8rem;
+    padding: 0.3rem;
+}
+.cat-pagination {
+    justify-content: center;
+    gap: 0.5rem;
+}
+.cat-page-button {
+    min-width: 2.2rem;
+    text-align: center;
+}
+.cat-alias-category { max-width: 250px; }
+.cat-settings-intro { margin-bottom: 0.5rem; }
+.cat-category-list { max-width: 500px; }
+.cat-category-item { border-bottom: 1px solid var(--border); }
+.cat-category-summary {
+    padding: 0.3rem 0;
+    cursor: pointer;
+}
+.cat-subcategory-list { padding: 0 0 0.4rem 1rem; }
+.cat-alias-table { max-width: 700px; }
+.cat-alias-actions { white-space: nowrap; }
+.cat-inline-form,
+.upload-inline-form {
+    display: inline;
+}
+input.cat-checkbox,
+input.upload-checkbox {
+    width: auto;
+    margin-right: 0.4rem;
+}
+.cat-orphan-intro { margin-bottom: 1.2rem; }
+.cat-orphan-panel {
+    max-width: 600px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+.cat-orphan-heading { margin-bottom: 0.75rem; }
+.cat-orphan-name { font-size: 1rem; }
+.cat-orphan-count { margin-left: 0.5rem; }
+.cat-orphan-row {
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+.cat-orphan-field { flex: 2; }
+.cat-orphan-submit {
+    align-self: flex-end;
+    margin-bottom: 0.55rem;
+}
+.upload-month-field {
+    max-width: 200px;
+    margin-bottom: 0.8rem;
+}
+.import-preview-error { color: var(--red); }
+.import-preview-metrics { margin-bottom: 0.5rem; }
+.import-preview-metric { padding: 0.6rem 0.8rem; }
+.import-preview-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.import-preview-value--credit { color: var(--green); }
+.import-preview-value--debit { color: var(--red); }
+.import-preview-rename { max-width: 400px; }
+
 /* ── Reports Page ──────────────────────────────────────────────────────── */
 
 .rpt-title {

@@ -2,27 +2,54 @@
 
 ## Active Objective
 
-Preserve the durable, deployed, and health-verified 4AT-R result while Ryan decides whether to plan the separately gated categorization-and-upload style cluster.
+Make the exact verified 4AU categorization-and-upload style result durable on `main`, observe the automatic deployment, and verify credential-free production health under confirmed work block 4AU-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.2 is durable through 4AT-R, and Task 1P.4.3a.3 is the next separately gated planning decision.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.3 is complete and verified locally through 4AU, and exact-scope Task 1P.4.3a.3-R is active through confirmed work block 4AU-R.
 
 ## Current Work Block
 
-Work block 4AT-R: Transaction And Matching Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AU-R: Categorization And Upload Style Compatibility Release — active.
 
 ## Current Task
 
-Task 1P.4.3a.3: Make categorization and upload styles strict-policy compatible — waiting for separate work-block planning and confirmation.
+Task 1P.4.3a.3-R: Publish and verify categorization and upload style compatibility — active.
 
 ## Owner
 
-Ryan owns the decision to plan or authorize Task 1P.4.3a.3 and every later expansion or live-sensitive action. Codex Desktop preserves the verified 4AT-R result and current Runway OS state.
+Codex Desktop owns exact-scope 4AU-R execution and verification. Ryan owns every expansion, manual live action, recovery beyond the confirmed boundary, and Task 1P.4.3a.4.
 
 ## Current Action
 
-Decide whether to invoke fresh work-block planning for Task 1P.4.3a.3. No categorization/upload implementation, CSP enforcement, or other later work is pre-authorized.
+Verify and stage only the exact 4AU source set, commit it on `codex/csp-categorization-upload-styles`, cleanly fast-forward local `main`, push directly to `origin/main`, observe the automatic Fly deployment, verify its exact source SHA and credential-free production `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+
+## Work Block 4AU-R Contract
+
+- Include explicit-path staging of the exact verified 4AU application, template, maintained-test, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-categorization-upload-styles`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.3a.4 and every later task; new application, runtime, style, route, controller, authentication, financial, database, category-domain, product, dependency, CSP-header/nonce/exception/enforcement, or policy mutation beyond verified 4AU; credentials; protected data; real databases; retained uploads; authenticated production pages; manual workflow actions; workflow edits; non-automatic Fly mutations; downstream access or writes; PR creation; force push; broader recovery; `scripts/sync_prod_to_local.sh`; and `command-center/now 2.md` outside scope.
+- Use explicit-path staging only; preserve the verified one-block/56-attribute migration, residual 6/66/0/17 inventory, configured-auth/no-password all-entity responsive browser proof, and both unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths; protected-boundary and high-confidence sensitive-addition scans; full smoke and configured-auth/no-password isolated Chrome; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and both preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and separately gated Task 1P.4.3a.4.
+
+## Work Block 4AU Contract
+
+- Include Task 1P.4.3a.3 plus only its focused Task 2 regression slice: remove one inline style block and 56 template style attributes from `categorize.html`, `categorize_orphans.html`, `upload.html`, and `upload_dialog.html`; preserve compact tables and forms, alias visibility and prefill, confidence badges, pagination, orphan reassignment, upload settings and preview dialogs, mobile layout, and the status-only `Mark incomplete` contract; add focused maintained source, rendered-response, and isolated-browser proof; reconcile the exact residual CSP style inventory; and close Runway OS locally after verification.
+- Keep Tasks 1P.4.3a.4-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, route, controller, financial, database, category-domain, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, protected-data, credential, external/live, GitHub, publication, deployment, workflow, downstream, `scripts/sync_prod_to_local.sh`, and `command-center/now 2.md` changes outside scope.
+- Preserve current appearance and behavior rather than redesigning; use maintained static semantic classes and existing shared utilities; add no dependency or runtime style-writing mechanism; use temporary synthetic Personal/BFM/Luxe Legacy data, configured-auth and no-password modes, localhost-only disposable browser state, denied non-localhost requests, zero unexpected console/page errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if parity requires a product/design choice or excluded route, controller, database, financial, category-domain, authentication, CSP-enforcement, unbounded dynamic styling, or later-task work; desktop, phone, or exact 768px behavior becomes ambiguous; protected/live/destructive access appears; verification changes the plan; cleanup fails; command-center checks fail; scope expands; or either preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-style proof for all four included templates; exact residual inventory of six style blocks, 66 template style attributes, zero generated attributes, and 17 runtime writes; configured-auth and no-password isolated Chrome across Personal/BFM/Luxe Legacy at desktop, phone, and exact 768px for categorization, alias/confidence state, pagination, orphan reassignment, upload controls, dialog layout, status-only wording, responsive overflow, denied networking, zero unexpected errors, and exact cleanup; relevant syntax; JSON; whitespace; dashboard refresh/health/generated state; exact scope; and both preserved files.
+- Report exact migrated surfaces and patterns, final inventory, responsive/browser parity, cleanup, changed paths, branch state, preserved exclusions, and the separate 4AU-R durability gate.
+
+## Work Block 4AU Status
+
+- All one included inline style block and 56 included template style attributes are removed from the four target templates through maintained semantic classes and the existing bounded percentage contract.
+- The exact residual tracked inventory is six inline style blocks, 66 template style attributes, zero generated-markup style attributes, and 17 application runtime style writes.
+- Baseline and final full smoke, focused source/rendered assertions, and configured-auth/no-password isolated Chrome across Personal/BFM/Luxe Legacy at phone, exact 768px, and desktop passed.
+- Categorization pagination, compact controls, alias/confidence state, orphan reassignment, upload progress/settings, preview metrics, status-only wording, responsive overflow, denied networking, zero unexpected errors, and exact cleanup passed.
+- No controller, route, financial, database, category-domain, product, authentication, CSP enforcement, protected/live, publication, deployment, destructive, downstream, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-categorization-upload-style-compatibility-4au.md`.
 
 ## Work Block 4AT-R Contract
 
