@@ -1,12 +1,12 @@
 # Content Security Policy Compatibility Contract
 
-Status: Task 1P.4.1, Task 1P.4.2a, both Task 1P.4.2b migration slices, final HTMX disablement, and all eight full-page execution clusters are durable, automatically deployed, and credential-free health verified through work block 4AR-R; style, header-enforcement, and final proof slices remain separately gated.
+Status: Task 1P.4.1, all Task 1P.4.2 execution migrations, and all Task 1P.4.3a application-style migrations are durable and credential-free health verified through work block 4AZ-R. Confirmed local-only work block 4BA is reconciling the final exceptional-document, PWA, and Plaid policy inputs before separately gated header enforcement and proof.
 
 Parent: Phase 4 Task 1P.4 / finding `P3-3J-06`.
 
 ## Purpose And Boundary
 
-This contract defines the target browser policy, the application surfaces that must be migrated before enforcement, and the maintained proof required to close the CSP half of `P3-3J-06`. Work block 4AE created the contract without product mutation. Work blocks 4AF-4AI migrated shared and swapped-fragment execution and disabled HTMX eval and swapped-script processing. Work blocks 4AJ-4AP migrated the first six full-page clusters. Work block 4AQ migrated Data Sources and Connected Accounts application execution into two page-owned controllers and non-script inert data while retaining both exact Plaid Link initializer tags. Work block 4AY then moved those pages' application-owned style block and attributes into maintained CSS/classes while preserving the exact initializer and exchange boundaries. None added a CSP header, changed authentication, route or Plaid business behavior, or touched any live system.
+This contract defines the target browser policy, the application surfaces that must be migrated before enforcement, and the maintained proof required to close the CSP half of `P3-3J-06`. Work block 4AE created the contract without product mutation. Work blocks 4AF-4AR migrated application execution; work blocks 4AS-4AZ migrated application-owned styles. Confirmed work block 4BA freezes policy inputs only. It does not add a CSP header or nonce, change a template, route, service worker, authentication, or Plaid business behavior, or touch any live system.
 
 Protected data, credentials, real databases, live Plaid Link, production/demo inspection, publication, deployment, and both preserved untracked files remain outside this planning artifact.
 
@@ -14,7 +14,7 @@ Protected data, credentials, real databases, live Plaid Link, production/demo in
 
 - [HTMX security guidance](https://htmx.org/docs/#security) documents that `allowScriptTags=false` stops processing scripts in swapped content and `allowEval=false` disables event filters, `hx-on`, and `js:` forms of `hx-vals` and `hx-headers`. The same guidance recommends replacing those features through custom JavaScript and HTMX events.
 - [HTMX configuration guidance](https://htmx.org/docs/#config) shows that `allowEval`, `allowScriptTags`, and `includeIndicatorStyles` default to `true`. The tracked local HTMX asset is version 2.0.4 and retains those defaults.
-- [Plaid Link Web guidance](https://plaid.com/docs/link/web/#csp-directives) requires the Link initializer to load directly from its exact CDN URL and identifies Plaid frame and environment-specific connect origins. Plaid's nonce example still calls for `style-src-attr 'unsafe-inline'` on a Link document.
+- [Plaid Link Web guidance](https://plaid.com/docs/link/web/#csp-directives) requires the Link initializer to load directly from its exact CDN URL and identifies Plaid frame and environment-specific connect origins. Its current nonce example applies the same response nonce to the exact initializer plus `style-src` and `style-src-elem`, and retains `style-src-attr 'unsafe-inline'` on a Link document.
 - [MDN CSP guidance](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP) distinguishes nonces from source allowlists and recommends a restrictive default with explicit resource directives. [MDN `style-src-attr`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src-attr) confirms that this directive governs element `style` attributes independently of stylesheet and `<style>` sources.
 
 ## Inventory Summary
@@ -36,21 +36,57 @@ The tracked surface contains 46 HTML templates and seven standalone document roo
 
 All application `fetch`, HTMX, XHR, service-worker, manifest, image, form, and upload behavior is otherwise same-origin. Tracked images are local; the stylesheet contains seven local `data:image/svg+xml` values. No tracked frame, object/embed, audio/video, remote font, or CSS import dependency was found outside Plaid Link.
 
+## Task 1P.4.3b Final Policy Input Reconciliation
+
+Work block 4BA rechecked the live post-4AZ source rather than carrying the historical 4AE inventory forward as implementation truth.
+
+### Strict exceptional-document and PWA inputs
+
+| Surface | Current tracked input | Frozen policy consequence |
+| --- | --- | --- |
+| Login | Same-origin `style.css`, local icons, same-origin form submission, and no script. | Strict core policy; no Plaid, inline-style, frame, or cross-origin connection exception. |
+| Offline and errors | Same-origin `standalone-documents.js` and `style.css`; no inline execution or style; offline retry is delegated. | Strict core policy. The cached `/offline` response retains the header with which it was stored, so the Task 1P.4.4 service-worker byte change must ship with enforcement and re-precaches `/offline` under the new header. |
+| Standalone `/k/` | Same-origin `kristine.js`, `style.css`, and local icons; no inline execution or style. | Strict core policy; no change to its existing authentication/entity boundary. |
+| Shared PWA document | Same-origin manifest, service-worker registration, icons, scripts, styles, forms, and requests. | `worker-src 'self'`, `manifest-src 'self'`, and the remaining core directives stay strict. |
+| Service worker and manifest resources | Root `/sw.js` is same-origin, intercepts only same-origin GETs, uses cache-first only for `/static/*`, and caches only generic offline/static assets. Manifest icons are same-origin. | The HTML policy belongs on document responses, not on these asset responses. The worker script's own fetch is constrained by `worker-src 'self'` on the registering document. |
+| Service-worker emergency HTML | The last-resort synthetic response contains only fixed `<h1>` and `<p>` markup if the cached `/offline` response is unavailable. | Task 1P.4.4 must give this synthetic HTML response the strict core CSP header too; the 4BA policy block does not modify `sw.js`. |
+| CSS-local SVGs | Exactly seven `data:image/svg+xml` URLs remain in `web/static/style.css`; tracked image files are otherwise same-origin. | Preserve `img-src 'self' data:`. Do not broaden any other resource directive to `data:`. |
+
+### Plaid Link inputs
+
+| Input | Current tracked truth | Frozen policy consequence |
+| --- | --- | --- |
+| Link documents | `plaid.html` always renders the initializer from `plaid.index`. `data_sources.html` always renders it from `data_sources.index` and a successful `data_sources.parse`. | The Plaid variant follows the rendered Link document, not merely a request endpoint. |
+| Initializer | Exactly two template occurrences of `https://cdn.plaid.com/link/v2/stable/link-initialize.js`, one in each Link template. | Permit only this exact URL in `script-src`; apply the response nonce only to these initializer elements. |
+| Plaid styles | Current Plaid guidance requires a matching nonce in `style-src` and `style-src-elem`, plus `style-src-attr 'unsafe-inline'`. | These three style exceptions exist only on rendered Link documents. Application-owned style remains external and nonce-free. |
+| Plaid frame | Link embeds from `https://cdn.plaid.com/`. | Change `frame-src` from `'none'` to only `https://cdn.plaid.com` on rendered Link documents. |
+| Plaid API | Tracked `PLAID_ENV` accepts only `sandbox` or `production` and rejects other values. | Permit only the validated selected origin per response: sandbox or production, never both. No credential access is needed to choose the directive. |
+| Other app resources | Page controllers, shell assets, forms, and application requests remain same-origin. | Every unchanged core directive remains in the Plaid variant; Plaid does not broaden `default-src`. |
+
+### Response-classification handoff to Task 1P.4.4
+
+1. Every server-rendered HTML response defaults to the strict core policy.
+2. A response may use the Plaid variant only when rendering `plaid.html` or `data_sources.html`, including the successful `data_sources.parse` preview response.
+3. Task 1P.4.4 must use an explicit render/response marker rather than endpoint identity alone. The marker binds only to a successfully rendered Link response: set it after rendering completes or stamp it directly on the rendered response object. A mid-render exception must leave no stale marker for the error handler. Redirects, authentication responses, and error-handler documents reached from a Plaid endpoint remain strict and must not receive a nonce or Plaid exception.
+4. The same cryptographically random, unpredictable nonce is generated once per Link-document response from at least 128 bits of CSPRNG output and base64-encoded, serialized into that response's Plaid directives, and added only to the exact initializer element. It is never a static configuration value and never authorizes application inline code. `style-src-attr` remains nonce-free: its narrow `'unsafe-inline'` exception cannot be folded into the nonce-bearing `style-src`.
+5. Attach the strict core policy to every `text/html` response, full document or fragment. A fragment response's header is inert when HTMX swaps it into an existing document and protective when the same endpoint is navigated directly. Only the successfully rendered Link-document marker selects the Plaid variant. Static files, `/sw.js`, manifest responses, and API/JSON responses receive no HTML document policy. The last-resort service-worker-generated HTML response must carry the strict core header explicitly.
+6. The first real Plaid Link open after enforcement is a separately authorized live checkpoint with `securitypolicyviolation`, console, and request capture. Any Plaid runtime violation or unexpected cross-origin request behavior triggers re-reconciliation against then-current official guidance under a new scoped decision; it does not broaden 4BA or authorize live access.
+
 ## Document And Resource Policy Matrix
 
 | Document family | Examples | Script/style migration | Network/resource policy |
 | --- | --- | --- | --- |
 | Shared authenticated shell | `base.html` and extending full pages | Remove base and page inline scripts, native handlers, `hx-on`, inline style blocks/attributes, and runtime style writes. Configure HTMX without inline config execution. | Self-only scripts, styles, images, fetch/HTMX, worker, manifest, and forms. No frames. |
-| HTMX fragments | dashboard/report/category/transaction components returned directly by routes | Remove all executable fragment scripts and inline handlers. Initialize swapped content from static JS through delegated listeners or `htmx:load`. | Fragment response headers do not establish a new document policy; the owning full document policy controls execution. |
+| HTMX fragments | dashboard/report/category/transaction components returned directly by routes | Remove all executable fragment scripts and inline handlers. Initialize swapped content from static JS through delegated listeners or `htmx:load`. | Emit the strict core header on every `text/html` fragment response. It is inert during an HTMX swap and protects direct navigation to the fragment endpoint. |
 | Login | `auth/login.html` | Move its inline style block to local CSS. | Strict core policy; no Plaid, frame, worker, or manifest exception needed beyond harmless shared directives. |
 | Offline and errors | `offline.html`, `errors/403.html`, `404.html`, `500.html` | Move theme bootstrap, retry handler, and inline styles to local assets while preserving data-free rendering. | Strict core policy; service worker may navigate to `/offline`, but the document makes no external connection. |
 | Standalone `/k/` | `kristine.html` | Move its executable script and dynamic width styles to local behavior/classes while preserving the existing server-side authentication and self-managed entity contract. | Strict core policy; no Plaid exception. CSP does not change the established authentication boundary. |
-| Plaid Link documents | `data_sources.html`, `plaid.html` | Move application scripts/handlers/styles to local assets. Add any request nonce only to the exact external initializer if implementation follows Plaid's nonce example. | Narrow Plaid variant: exact initializer URL, `frame-src https://cdn.plaid.com`, and only the selected `sandbox` or `production` connect origin. Plaid-only `style-src-attr 'unsafe-inline'` exception unless a maintained isolated proof shows Link works without the documented requirement. |
+| Plaid Link documents | `data_sources.html`, `plaid.html` | Application scripts/handlers/styles are local. Add one per-response nonce only to the exact external initializer and its matching Plaid policy directives. | Narrow Plaid variant: exact initializer URL, nonce-bearing `style-src` and `style-src-elem`, `style-src-attr 'unsafe-inline'`, `frame-src https://cdn.plaid.com`, and only the selected `sandbox` or `production` connect origin. |
 | Static/PWA resources | `/static/*`, `/sw.js`, manifest, icons | No executable inline dependency. Move HTMX indicator rules into local CSS and set `includeIndicatorStyles=false` so HTMX does not inject a `<style>` element. | `worker-src 'self'`, `manifest-src 'self'`, `img-src 'self' data:`. Service worker remains same-origin and static/offline-only. |
 
 ## Candidate Enforced Policies
 
-The policy is an HTTP response header on HTML responses. Static assets do not need a separate HTML CSP. Response scoping must be explicit so the Plaid exception cannot leak to unrelated documents.
+The policy is an HTTP response header on every `text/html` response, including fragments that can be navigated directly. Static assets, `/sw.js`, the manifest, and API/JSON responses do not need the HTML CSP. Response scoping must be explicit so the Plaid exception cannot leak to unrelated documents.
 
 ### Core application documents
 
@@ -79,12 +115,14 @@ Start with the core policy and change only these directives:
 
 ```text
 script-src 'self' 'nonce-<per-response-random>' https://cdn.plaid.com/link/v2/stable/link-initialize.js;
+style-src 'self' 'nonce-<per-response-random>';
+style-src-elem 'self' 'nonce-<per-response-random>';
 style-src-attr 'unsafe-inline';
 connect-src 'self' https://sandbox.plaid.com;
 frame-src https://cdn.plaid.com
 ```
 
-For `PLAID_ENV=production`, replace the sandbox connect origin with `https://production.plaid.com`; never allow both merely for convenience. A random per-response nonce is a defense-in-depth match for Plaid's documented nonce form, not authorization for application inline script. Do not add `strict-dynamic`, wildcard hosts, `unsafe-eval`, general script `unsafe-inline`, `data:` scripts, or `blob:` scripts.
+For `PLAID_ENV=production`, replace the sandbox connect origin with `https://production.plaid.com`; never allow both merely for convenience. The same random per-response nonce appears in the three nonce-bearing directives and on the exact Plaid initializer element. It is not authorization for application inline script or application inline style. Do not add `strict-dynamic`, wildcard hosts, `unsafe-eval`, general script `unsafe-inline`, `data:` scripts, or `blob:` scripts.
 
 `upgrade-insecure-requests` is excluded from the initial policy because an unconditional directive would rewrite ordinary local HTTP dependencies. It may be reconsidered only as an explicitly Fly-only rule with synthetic local/Fly coverage. No report endpoint exists, so `report-uri`/`report-to` is excluded rather than adding a live reporting service. Trusted Types is parked as later hardening: tracked code has numerous deliberate HTML insertion sinks, and `require-trusted-types-for 'script'` would be a separate compatibility program rather than a CSP-header closeout requirement.
 
@@ -95,8 +133,8 @@ For `PLAID_ENV=production`, replace the sandbox connect origin with `https://pro
 | Shared execution foundation | Move `base.html` executable blocks and five native handlers to local JS; replace two base `hx-on` handlers; move indicator CSS to the tracked stylesheet; set only `includeIndicatorStyles=false`; and establish the declarative HTMX configuration point. Keep `allowEval` and `allowScriptTags` at their current values until the remaining fragment dependencies are removed. | Complete locally through 4AF: maintained source assertions and configured-auth/no-password isolated Chrome prove shared navigation, themes, AI chat, service-worker registration, CSRF/HTMX behavior, repeated representative swaps, and responsive drawer behavior with no executable inline shell markup. | Task 1P.4.2a / work block 4AF complete locally. |
 | Swapped-fragment execution | Remove executable scripts and inline handlers from all directly returned HTMX components; replace the remaining two fragment `hx-on` handlers; carry swapped server values through non-script inert data; initialize through local static JS and `htmx:load`/delegation; then set `allowEval=false` and `allowScriptTags=false`. | Durable and deployed through 4AI-R. Configured-auth/no-password isolated Chrome preserves repeated swaps, charts, KPI/category/insight/AI behavior, reports, transaction sorting/copy/edit/splits, popup/queue controls, and cleanup with both switches false and no directly returned script elements. | Tasks 1P.4.2b.1-1P.4.2b.3 / work blocks 4AG-4AI-R complete, durable, deployed, and credential-free health verified. |
 | Full-page execution | Migrate the remaining 5 executable inline scripts and every source or rendered native handler in standalone/error documents; preserve page-specific initialization through local modules/data. | Every full-page route works with `script-src-attr 'none'` and no inline application script. | Tasks 1P.4.2c.1-1P.4.2c.8 are durable, automatically deployed, and credential-free health verified through 4AR-R. |
-| Application style compatibility | Move seven inline style blocks, 221 attributes, and runtime style writes to static CSS/classes or explicitly bounded data-driven states. | Core pages run under `style-src-attr 'none'`; responsive and visualization behavior passes at maintained breakpoints. | Task 1P.4.3a; likely split into shell/components and page clusters. |
-| Exceptional documents and Plaid | Reconcile login, offline/errors, `/k/`, local SVG data images, worker/manifest, and Plaid route-specific behavior; preserve Plaid's narrow documented style-attribute exception only on Link documents. | Strict families have no exception leakage; mocked Plaid document proves exact policy/header/tag wiring without live Plaid. | Task 1P.4.3b. |
+| Application style compatibility | Move seven inline style blocks, 221 attributes, and runtime style writes to static CSS/classes or explicitly bounded data-driven states. | Core pages run under `style-src-attr 'none'`; responsive and visualization behavior passes at maintained breakpoints. | Task 1P.4.3a complete through 4AZ-R. |
+| Exceptional documents and Plaid | Reconcile login, offline/errors, `/k/`, local SVG data images, worker/manifest, the synthetic service-worker fallback, rendered-Link response classification, and the exact current Plaid nonce/style/frame/environment contract. | Policy inputs are source-linked; strict defaults and a render-scoped Plaid variant are frozen without product mutation or live Plaid. | Tasks 1P.4.3b.1-1P.4.3b.2 / work block 4BA active. |
 | Header enforcement and proof | Add route-family header generation and optional Plaid nonce plumbing only after migration gates pass; add maintained request and isolated-browser contracts. | No CSP violations on the required matrix; exact prohibited source probes are blocked; no protected/live dependency. | Task 1P.4.4. |
 
 Task 1P.4.2 and Task 1P.4.3 are too broad as single autonomous blocks and must use the sub-slices above. Work block 4AF completed the shared foundation, work block 4AG completed the dashboard/report fragment slice, work block 4AH completed the transaction/supporting-modal fragment slice, and work blocks 4AI and 4AI-R made global HTMX disablement and cross-route proof durable, automatically deployed, and credential-free health verified. The 2026-07-22 just-in-time source pass decomposed Task 1P.4.2c into the route clusters below before any work block could reference them.
@@ -193,7 +231,8 @@ Task 1P.4.4 must use temporary synthetic `DATA_DIR` databases and fake or absent
 Request-level assertions:
 
 - Core HTML documents emit exactly the strict core policy; Plaid documents emit only the narrow variant.
-- Authenticated/no-password modes, login, all three errors, offline, exact `/k/`, and representative HTMX fragments retain existing authentication and cache behavior.
+- Authenticated/no-password modes, login, all three errors, offline, exact `/k/`, and representative HTMX fragments retain existing authentication and cache behavior; direct navigation to a fragment receives the strict core policy.
+- A synthetically forced mid-render exception on each Link route emits the strict core policy with no nonce or Plaid exception on the resulting error document.
 - Plaid sandbox/production selection emits one connect origin; invalid or absent configuration cannot broaden the allowlist.
 - Static, service-worker, and manifest responses retain their existing content types/cache contracts and do not receive contradictory HTML-only policy assumptions.
 
@@ -202,6 +241,7 @@ Isolated Chrome assertions:
 - Deny all non-localhost traffic and mock the exact Plaid initializer when exercising its document wiring.
 - Capture `securitypolicyviolation`, console errors, page errors, failed requests, and unexpected dialogs.
 - Exercise desktop, phone, and exact `768px` responsive boundaries; configured-auth and no-password modes; full-page loads; repeated HTMX swaps; transaction editing/splitting; dashboard/report/chart initialization; login; offline/errors; `/k/`; manifest and service-worker installation; and mocked Plaid open/exit wiring.
+- Simulate the service-worker update from a previously cached headerless `/offline` response and prove that the same release's service-worker install re-precaches `/offline` with the strict core header; prove the cache-served offline navigation retains it.
 - Inject prohibited inline script, event attribute, style attribute on a core page, `eval`, cross-origin fetch, cross-origin frame, object, and form target probes and assert that the policy blocks them. Keep probes synthetic and isolated from production code paths.
 - Preserve the existing mobile-drawer, CSRF, safe-redirect, entity isolation, no-store, and static/offline-only service-worker contracts.
 
@@ -212,9 +252,13 @@ Required repository checks after each implementation slice remain the focused te
 1. No general `unsafe-eval`, executable-script `unsafe-inline`, wildcard host, or data/blob script source.
 2. Executable code moves to maintained local static JavaScript; application nonces do not excuse inline migration.
 3. HTMX ends with eval and swapped-script execution disabled, and its injected indicator style disabled.
-4. Core documents target `style-src-attr 'none'`; Plaid's documented style-attribute exception is route-family-specific and cannot leak to login, `/k/`, offline/errors, or ordinary authenticated pages.
+4. Core documents target `style-src-attr 'none'`; Plaid's documented nonce-bearing `style-src`/`style-src-elem` and style-attribute exception are rendered-Link-document-specific and cannot leak to login, `/k/`, offline/errors, redirects, authentication responses, or ordinary authenticated pages.
 5. Only one Plaid API environment is allowed per response, selected from validated tracked environment behavior.
 6. Trusted Types, CSP reporting infrastructure, and Fly-only request upgrading are not bundled into Task 1P.4.
-7. Task 1P.4.2 and Task 1P.4.3 require smaller execution blocks; 4AF-4AI completed shared and fragment execution, 4AJ-4AP completed the first six full-page clusters, 4AQ/4AQ-R completed and released Plaid entry-page execution while retaining the exact external initializer boundary, and 4AR/4AR-R completed and released the final standalone/error execution cluster. Every style or enforcement slice remains separately gated.
+7. Task 1P.4.2 and Task 1P.4.3 require smaller execution blocks; 4AF-4AR completed execution, 4AS-4AZ completed application-owned styles, and 4BA reconciles the final policy inputs. Header generation, nonce plumbing, service-worker fallback header mutation, and enforcement proof remain separately gated to Task 1P.4.4.
+8. Task 1P.4.4 must classify Plaid by the actual rendered Link document, not the originating endpoint, and must leave redirects, authentication responses, and error-handler documents on the strict default.
+9. Every `text/html` response, including an HTMX fragment, carries the strict core policy unless a marker bound to a successfully rendered Link response selects the Plaid variant. Static, manifest, worker, and API/JSON responses do not receive the HTML document policy.
+10. The last-resort service-worker-generated HTML fallback carries the strict core policy. The service-worker change ships with header enforcement so its installation refreshes cached `/offline` under the enforced header.
+11. Real Plaid runtime compatibility remains a separately authorized live checkpoint before relying on released enforcement; violations trigger a new scoped decision rather than a broader standing allowlist.
 
 Any wish to allow broader inline behavior, both Plaid environments, another external origin, live Plaid testing, public-route redesign, or Trusted Types is a plan-changing decision and requires Ryan's explicit direction.

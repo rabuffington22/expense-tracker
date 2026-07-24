@@ -2,27 +2,67 @@
 
 ## Active Objective
 
-Preserve the durable, deployed, and health-verified 4AZ-R result and decide separately whether to plan Task 1P.4.3b exceptional-document and Plaid policy reconciliation.
+Publish the exact verified 4BA command-center artifact set to `main` under confirmed command-center-only work block 4BA-R without triggering application deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; all eight application-style clusters are durable through 4AS-R to 4AZ-R, and Task 1P.4.3b is the next separately gated planning decision.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3b.1-1P.4.3b.2 are complete locally through 4BA, and confirmed 4BA-R owns exact command-center durability before Task 1P.4.4 returns as the next separate planning decision.
 
 ## Current Work Block
 
-Work block 4AZ-R: Standalone Document Style Compatibility Release — done, durable, deployed, and credential-free health verified.
+Work block 4BA-R: Exceptional Documents And Plaid CSP Policy Reconciliation Durability — active and limited to the exact sanitized command-center set.
 
 ## Current Task
 
-Task 1P.4.3b: Reconcile exceptional documents and Plaid — waiting for separate planning and confirmation.
+Task 1P.4.3b-R: Publish and verify the 4BA policy reconciliation artifacts — active; Task 1P.4.4 remains separately gated.
 
 ## Owner
 
-Ryan owns the next planning decision. Codex Desktop owns no new Task 1P.4.3b, CSP-policy, service-worker, protected, publication, or live mutation until a separate exact block is confirmed.
+Codex Desktop owns exact-path staging, `[skip actions]` commits, clean local-main fast-forward, non-force push, remote verification, closeout, and preserved-file control. Ryan owns Task 1P.4.4 confirmation plus every product, deployment, protected, and live decision.
 
 ## Current Action
 
-Decide whether to plan and confirm Task 1P.4.3b exceptional-document and Plaid policy reconciliation.
+Verify and stage only the nine intended 4BA command-center paths, commit with `[skip actions]`, fast-forward and push `main`, verify the remote SHA, then publish the sanitized 4BA-R closeout with `[skip actions]`.
+
+## Work Block 4BA-R Contract
+
+- Include explicit staging of only the nine intended sanitized 4BA command-center paths; one `[skip actions]` source commit on `codex/csp-policy-reconciliation`; clean fast-forward of local `main`; direct non-force push to `origin/main`; exact remote verification; and one sanitized `[skip actions]` closeout commit and push.
+- Exclude product/templates/routes/tests/dependencies/workflows/configuration, CSP header/nonce/service-worker/manifest/authentication changes, credentials, protected data, real databases/uploads, live Plaid, production/demo/Fly access, downstream systems, PRs, force push, broader recovery, proposed 4BB work, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the duplicate 4AU log.
+- Preserve the exact verified policies, review artifacts, no product/runtime diff, all three unrelated untracked files, and the separate Task 1P.4.4 gate.
+- Stop for an unexpected or sensitive path, failed validation/dashboard health, remote divergence, push rejection, preserved-file overlap, or recovery beyond clean fast-forward and read-only diagnosis.
+- Verify exact staged and commit contents; JSON; whitespace; dashboard refresh/health/rendered state; local/remote ancestry and exact SHA; no workflow run from `[skip actions]`; final clean tracked state; and all preserved files.
+- Report source and closeout commit SHAs, exact published paths, remote alignment, skipped deployment, preserved exclusions, and separately gated 4BB.
+
+## Work Block 4BA Contract
+
+- Include Tasks 1P.4.3b.1-1P.4.3b.2 only: reconcile strict login, offline/error, standalone `/k/`, local data-image, worker, manifest/icon, offline-cache, and HTML/static response inputs; reconcile both exact Plaid initializer tags, CDN frame, one sandbox-or-production connect origin, Plaid initializer/style nonce requirements, and the Plaid-route-only style-attribute exception; update one contract and evidence log; obtain a read-only second opinion after Ryan selects the Claude model and effort; disposition findings; and close locally.
+- Keep Task 1P.4.4, Tasks 1P.6-1P.7, broader Task 2, Tasks 3-4, product/templates/routes/tests/dependencies/configuration, CSP headers/nonce plumbing, service-worker/manifest behavior, authentication/CSRF, credentials, protected data, real databases/uploads, live Plaid, production/demo, GitHub, publication, deployment, workflows, downstream systems, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the duplicate 4AU log outside scope.
+- Work on `codex/csp-policy-reconciliation`; preserve the strict core and zero application-owned inline inventory; use public official documentation and tracked source only; keep exactly one Plaid environment per response; confine Plaid exceptions to Link documents; keep local-only and uncommitted; and skip full smoke because product behavior must not change.
+- Stop for a product/UX decision, broader inline or Plaid exception, both-environment allowlisting, live/protected/non-public access, product/header/nonce/service-worker/manifest/authentication/later-task work, material reviewer-driven scope change, failed verification or dashboard health, scope expansion, or preserved-file overlap.
+- Verify exact strict/PWA/HTML-static and Plaid matrices; seven data images; root service worker; manifest/icons; offline cache; both exact initializers; sandbox/production validation; exact core/Plaid variants; no product/test/dependency/configuration/runtime diff; JSON; whitespace; dashboard refresh/health/generated/rendered state; exact worktree scope; and preserved files.
+- Report exact policy variants, resolved drift, route/environment/nonce decisions, review findings and dispositions, changed paths, checks, local durability, preserved exclusions, and the separate Task 1P.4.4 gate.
+
+## Work Block 4BA Status
+
+- Ryan confirmed the exact 4BA proposal on 2026-07-24.
+- The block is complete and locally verified on `codex/csp-policy-reconciliation`.
+- The tracked-source and official-documentation reconciliation is complete in `command-center/csp-compatibility-contract.md` with sanitized evidence in `command-center/logs/2026-07-24-exceptional-document-plaid-csp-policy-reconciliation-4ba.md`.
+- The draft corrects Plaid nonce coverage to include `style-src` and `style-src-elem`, scopes the Plaid variant to actual rendered Link documents rather than originating endpoints, and keeps redirects/errors strict.
+- The strict PWA input now also calls for Task 1P.4.4 to attach the core policy to the service worker's last-resort synthetic HTML response; no service-worker source changed in 4BA.
+- Claude CLI `claude-fable-5` at `max` effort completed its read-only review in 858 seconds with “approve with corrections,” no critical finding, and no policy-string change.
+- Accepted review corrections protect every `text/html` response, bind the Plaid marker only to a successfully rendered response, specify at least 128 CSPRNG bits/base64 encoding, couple offline cache refresh to the enforcement release, and retain real Link as a separately authorized live checkpoint.
+- Optional header tightening, worker CSP, SVG-file conversion, deprecated-header removal, reporting/upgrading/Trusted Types, and cross-origin fetch-wrapper behavior are parked outside 4BA.
+- Contract/evidence, JSON, whitespace, exact-scope, dashboard health/generated/rendered state, and preserved-file checks pass. Full product smoke was intentionally skipped because no product behavior changed.
+- No product, test, header, nonce, service-worker, manifest, authentication, protected, live, GitHub, publication, deployment, downstream, or preserved-file mutation is authorized.
+- Evidence includes the sanitized policy log, saved review prompt, and saved reviewer response. Task 1P.4.4 / 4BB remains separately gated.
+
+## Task 1P.4.3b Just-In-Time Decomposition
+
+- Task 1P.4.3b.1: freeze strict login, offline/error, standalone `/k/`, local data-image, service-worker, manifest/icon, offline-cache, and HTML-versus-static policy inputs without adding CSP headers or changing product behavior.
+- Task 1P.4.3b.2: freeze the narrow Plaid document variant for both exact Link initializer tags, the CDN frame, one validated sandbox-or-production connect origin, request-scoped initializer and Plaid-injected-style nonce handling, and the Plaid-route-only style-attribute exception.
+- Current official Plaid guidance still requires `style-src-attr 'unsafe-inline'` for Link and now makes the nonce example explicit for element styles as well as the initializer; the older candidate variant must therefore be reconciled before Task 1P.4.4 enforcement.
+- These slices share one policy artifact, official-documentation review, source inventory, synthetic proof design, and Task 1P.4.4 handoff, so they are candidates for one bounded planning block. Task 1P.4.4 remains a separate implementation and enforcement gate.
+- No product, template, route, header, nonce, service-worker, manifest, maintained-test, protected, live, GitHub, publication, or deployment mutation is authorized by this decomposition.
 
 ## Work Block 4AZ-R Contract
 
