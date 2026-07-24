@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Preserve the complete, locally verified, uncommitted 4AW result while deciding its separately gated 4AW-R durability and release.
+Preserve the complete, durable, automatically deployed, and credential-free health-verified 4AW-R result while deciding the next separately gated style cluster.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.4 are durable through 4AS-R, 4AT-R, 4AU-R, and 4AV-R, and Task 1P.4.3a.5 is complete and verified locally through 4AW.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.5 are durable, automatically deployed, and credential-free health verified through 4AS-R, 4AT-R, 4AU-R, 4AV-R, and 4AW-R.
 
 ## Current Work Block
 
-Work block 4AW: Weekly And Waterfall Style Compatibility — complete, verified, local-only, and uncommitted.
+Work block 4AW-R: Weekly And Waterfall Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.3a.5-R: Publish and verify Weekly and Waterfall style compatibility — waiting for separate planning and confirmation.
+Task 1P.4.3a.6: Make Subscriptions and Payroll styles strict-policy compatible — waiting for separate planning and confirmation.
 
 ## Owner
 
-Ryan owns the 4AW-R durability and release decision. Codex Desktop owns no commit, push, publication, deployment, or later style mutation without another exact confirmed block.
+Ryan owns the next planning and confirmation decision. Codex Desktop owns no later style mutation, publication, protected access, or live action without another exact confirmed block or direct Ryan request.
 
 ## Current Action
 
-Decide whether to plan and confirm exact-scope 4AW-R durability and release; preserve the verified local branch and all exclusions meanwhile.
+Decide whether to plan and confirm Task 1P.4.3a.6 for Subscriptions and Payroll style compatibility; preserve the durable 4AW-R result and every excluded boundary meanwhile.
 
 ## Work Block 4AW Contract
 
@@ -42,6 +42,25 @@ Decide whether to plan and confirm exact-scope 4AW-R durability and release; pre
 - Validated calculations, integer and fractional bars, actual/target views, tooltip viewport placement, animation staggering, tax/target input behavior, navigation, and responsive layout passed without an inline-style exception or route change.
 - No commit, push, PR, publication, deployment, live/protected access, route, calculation, database, authentication, CSP enforcement, later-cluster, destructive, downstream, or preserved-file mutation occurred.
 - Evidence: `command-center/logs/2026-07-23-weekly-waterfall-style-compatibility-4aw.md`.
+
+## Work Block 4AW-R Contract
+
+- Include explicit-path staging and commit of the exact verified 4AW application, controller, templates, maintained tests, CSP contract, evidence, and Runway OS paths on `codex/csp-weekly-waterfall-styles`; direct non-force push of that exact source commit to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.3a.6 and every later task; new application, runtime, style, route, calculation, financial, database, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, Plaid, protected-data, credential, manual workflow, non-automatic Fly, downstream, PR, force-push, broader-recovery, and preserved-file mutation outside scope.
+- Use explicit-path staging only; preserve the verified 13-attribute/four-runtime-write migration, residual 6/40/0/5 inventory, dual-auth responsive browser proof, and all three unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths; full smoke and configured-auth/no-password isolated Chrome; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and all preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and separately gated Task 1P.4.3a.6.
+
+## Work Block 4AW-R Status
+
+- Ryan directly instructed Codex to commit and push the verified 4AW result to `main`, authorizing the exact 4AW-R release boundary.
+- Exact 13-path source commit `dec8b0731b346c19b631b0f6c405bfc4c19ede4a` is durable on `origin/main`.
+- Automatic Fly Deploy run `30067582194` and deploy job `89401458560` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Full smoke, configured-auth/no-password isolated Chrome, syntax, JSON, whitespace, command-center health, exact staging, ancestry, remote alignment, automatic deployment, health, and preserved-file checks passed.
+- No PR, force push, credential, protected data, real database, retained upload, authenticated production page, manual workflow action, workflow edit, non-automatic Fly mutation, downstream access/write, later-cluster work, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-weekly-waterfall-style-compatibility-release-4aw-r.md`.
 
 ## Work Block 4AV Contract
 
