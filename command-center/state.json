@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-24 1:18 PM CST",
+    "lastUpdated": "2026-07-24 4:16 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,57 +27,61 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.4 is durable automatically deployed and credential-free health verified through 4BB-R while real Plaid validation and broader remaining Phase 4 work stay separately gated.",
+    "summary": "Task 1P.4 is complete through the durable deployed enforcement and passed two-entry-path real Plaid runtime checkpoint in 4BC; Task 1P.6 is next.",
     "progress": 99
   },
   "currentTask": {
-    "title": "Task 1P.4.4: Enforce and prove the final Content Security Policy",
+    "title": "Task 1P.6: Finish installed-PWA and browser-boundary regression coverage",
     "owner": "Ryan",
     "status": "awaiting-decision",
-    "supportingAgent": "Codex completed 4BB implementation and 4BB-R durability deployment health and closeout; Ryan owns real-Plaid protected and expansion decisions.",
-    "nextAction": "Decide whether to authorize one narrow real Plaid enforcement checkpoint after the source release.",
-    "blocker": "No source or release blocker; real Plaid access requires separate target-specific authorization."
+    "supportingAgent": "Codex completed 4BC and proposes a separately bounded 4BD planning and verification block.",
+    "nextAction": "Ryan decides whether to authorize proposed 4BD for the bounded Task 1P.6 installed-PWA and browser-boundary regression slice.",
+    "blocker": "No 4BD work block is confirmed."
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-bb-r",
-    "label": "4BB-R",
-    "name": "Final CSP Enforcement Durability And Release",
+    "id": "phase-4-block-bc",
+    "label": "4BC",
+    "name": "Real Plaid CSP Runtime Checkpoint",
     "status": "done",
     "owner": "Codex Desktop",
-    "currentTask": "Task 4",
+    "currentTask": "Task 1P.4.4",
     "includedTasks": [
-      "Task 4 exact 4BB durability and automatic-release slice",
-      "Explicit staging source commit clean main fast-forward non-force push automatic Fly observation exact SHA credential-free health and sanitized closeout"
+      "Task 1P.4.4 separately gated real Plaid runtime validation slice",
+      "Exact deployed-source and health preflight plus one open-and-close Link check on each released production entry path"
     ],
     "excludedTasks": [
-      "Proposed 4BC real Plaid credentials protected data real databases uploads authenticated production or demo pages and downstream access or writes",
-      "Manual workflow actions workflow edits non-automatic Fly mutation PR force push product changes beyond verified 4BB broader recovery and later tasks",
+      "Tasks 1P.6 through 1P.7 broader Task 2 Task 3 CI and Task 4 publication",
+      "Credentials institution selection account login token exchange connection sync disconnect toggle rename protected detail screenshots response bodies policy or product repair database downstream workflow Fly GitHub or deployment action",
       "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
     ],
     "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "The exact verified source set is local and Codex can control explicit staging clean ancestry automatic deployment observation credential-free health and sanitized closeout.",
-    "runnerPath": "Rerun release checks on codex/csp-header-enforcement stage intended paths commit fast-forward main push origin main observe the automatic deployment verify exact SHA and health then push a skip-actions closeout.",
+    "whyThisAgent": "The sensitive live checkpoint requires exact browser instrumentation evidence minimization immediate stop decisions and command-center stewardship after prior independent review.",
+    "runnerPath": "Verify active Runway OS then use the existing authenticated Chrome session and current entity to inspect each entry policy create one Link token open Link and close before institution selection then save sanitized evidence.",
     "expectedFiles": [
-      "Exact verified 4BB application maintained-test documentation evidence and Runway OS paths",
-      "Sanitized command-center-only 4BB-R closeout log and state"
+      "command-center/now.md command-center/roadmap.md command-center/decisions.md command-center/state.json and generated command-center/index.html",
+      "One sanitized 4BC evidence log and CSP contract status note only if appropriate"
     ],
     "defaults": [
-      "Stage explicit intended paths only and preserve all three unrelated untracked files",
-      "Use the source commit to trigger the automatic Fly deployment and use skip actions only for the later command-center closeout",
-      "Observe only the automatic run and credential-free health; do not open real Plaid or authenticated production pages"
+      "Use the current entity and existing Chrome authentication state without switching",
+      "Record only route status policy shape nonce presence and freshness permitted hostnames expected Link-token calls Link open and close and sanitized errors",
+      "Take no screenshots retain no response bodies inspect no protected details and keep local-only uncommitted"
     ],
     "stopConditions": [
-      "Unexpected or sensitive path failed release verification dashboard health or preserved-file overlap",
-      "Local or remote main divergence non-fast-forward requirement push rejection or source-SHA mismatch",
-      "Automatic deployment or credential-free health failure requiring mutation or recovery beyond read-only diagnosis"
+      "Missing authentication or any password OTP credential institution-selection or account-login need",
+      "Any token-exchange sync disconnect account database downstream workflow Fly or other mutation request",
+      "CSP violation initializer or frame failure unexpected origin sensitive output policy or product repair deployed-source drift scope expansion failed dashboard health or preserved-file overlap"
     ],
     "verification": [
-      "Full smoke configured-auth and no-password isolated browser syntax JSON whitespace dashboard refresh health rendered state and preserved files",
-      "Exact changed staged and committed path sets plus sensitive-addition review",
-      "Clean ancestry exact origin-main source SHA automatic workflow and deploy success credential-free production health and final alignment"
+      "Exact deployed 4BB source and credential-free production health",
+      "Both entry documents use a fresh nonce-bearing Plaid policy with one configured environment and Link opens and closes without unexpected browser violations or errors",
+      "Exactly two Link-token POSTs no exchange sync disconnect or mutation endpoint plus JSON whitespace dashboard rendered state exact worktree scope and preserved files"
     ],
-    "nextReportPoint": "Return source and closeout SHAs exact published scope automatic deployment and health results final alignment real-Plaid omission and preserved exclusions.",
-    "durability": "Exact source commit 6c2a2800ec887ea3c2bf8fb254214dbd0630f55f is durable on origin main with automatic Fly run 30116007970 and job 89556739589 successful and credential-free health HTTP 200."
+    "nextReportPoint": "Return the passed two-entry-path result sanitized policy console and network findings confirmation of no account mutation changed command-center paths local durability preserved exclusions and proposed 4BD as the next separate decision.",
+    "durability": "Done locally and uncommitted; both entry paths passed with exactly two authorized Link-token requests no exchange or mutation endpoint no product or CSP error and no protected-detail capture.",
+    "result": "Both released production entry paths returned fresh nonce-bearing single-environment Plaid policies and opened and closed real Link before institution selection; exactly two Link-token POSTs occurred with no exchange mutation failed response product error or CSP violation.",
+    "evidence": [
+      "command-center/logs/2026-07-24-real-plaid-csp-runtime-checkpoint-4bc.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -102,30 +106,29 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Decide whether to authorize proposed 4BC real Plaid CSP checkpoint",
-    "status": "awaiting-decision",
+    "title": "Decide whether to authorize proposed 4BD",
+    "status": "waiting-on-ryan",
     "owner": "Ryan",
-    "why": "4BB-R made the enforced policy durable deployed and health verified without exercising the protected third-party Plaid runtime.",
-    "action": "Confirm or decline one narrow real Plaid compatibility checkpoint; keep every broader protected or policy action separate.",
+    "why": "4BC passed both production Plaid entry paths without policy widening or account mutation, completing Task 1P.4 through its real-runtime checkpoint.",
+    "action": "Decide whether to authorize a separately bounded 4BD block for Task 1P.6 installed-PWA and browser-boundary regression coverage.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
     {
-      "decision": "Whether to authorize proposed 4BC for one narrow real Plaid enforcement checkpoint",
-      "status": "open",
-      "whyItMatters": "The released source passed mocked local proof but has not exercised the current protected third-party Plaid runtime under enforcement.",
-      "workaround": "Keep ordinary released health in place and do not open or rely on real Plaid Link until separately authorized."
+      "decision": "Whether to authorize proposed work block 4BD for the bounded Task 1P.6 installed-PWA and browser-boundary regression slice.",
+      "owner": "Ryan",
+      "status": "open"
     }
   ],
   "waitingOnRyan": {
-    "summary": "4BB-R is complete; Ryan owns the separate 4BC real-Plaid checkpoint decision and every protected or expansion gate.",
+    "summary": "4BC is complete; the next work block remains a separate decision.",
     "items": [
-      "Decide whether to authorize proposed 4BC for one real Plaid enforcement checkpoint."
+      "Decide whether to authorize proposed 4BD for Task 1P.6."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "4BB and 4BB-R completed Task 1P.4.4 implementation durability and automatic release; proposed 4BC real Plaid broader installed-PWA regression and broad read-model work remain separate.",
-    "decisionQueue": "Policy expansion real-Plaid checkpoint manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
+    "phaseQuestions": "Task 1P.4 is complete through 4BC; proposed 4BD covers only a bounded Task 1P.6 installed-PWA and browser-boundary regression slice.",
+    "decisionQueue": "4BD confirmation Task 1P.7 broader regression CI publication live access workflow Fly GitHub and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -184,6 +187,51 @@
     }
   ],
   "phaseWorkBlocks": [
+    {
+      "id": "phase-4-block-bc",
+      "phaseId": "phase-4",
+      "label": "4BC",
+      "name": "Real Plaid CSP Runtime Checkpoint",
+      "status": "done",
+      "includedTasks": [
+        "Task 1P.4.4 separately gated real Plaid runtime validation slice",
+        "Exact deployed-source and health preflight plus one open-and-close Link check on each released production entry path"
+      ],
+      "excludedTasks": [
+        "Tasks 1P.6 through 1P.7 broader Task 2 Task 3 CI and Task 4 publication",
+        "Credentials institution selection account login token exchange connection sync disconnect toggle rename protected detail screenshots response bodies policy or product repair database downstream workflow Fly GitHub or deployment action",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The sensitive live checkpoint requires exact browser instrumentation evidence minimization immediate stop decisions and command-center stewardship after prior independent review.",
+      "runnerPath": "Verify active Runway OS then use the existing authenticated Chrome session and current entity to inspect each entry policy create one Link token open Link and close before institution selection then save sanitized evidence.",
+      "expectedFiles": [
+        "command-center/now.md command-center/roadmap.md command-center/decisions.md command-center/state.json and generated command-center/index.html",
+        "One sanitized 4BC evidence log and CSP contract status note only if appropriate"
+      ],
+      "defaults": [
+        "Use the current entity and existing Chrome authentication state without switching",
+        "Record only route status policy shape nonce presence and freshness permitted hostnames expected Link-token calls Link open and close and sanitized errors",
+        "Take no screenshots retain no response bodies inspect no protected details and keep local-only uncommitted"
+      ],
+      "stopConditions": [
+        "Missing authentication or any password OTP credential institution-selection or account-login need",
+        "Any token-exchange sync disconnect account database downstream workflow Fly or other mutation request",
+        "CSP violation initializer or frame failure unexpected origin sensitive output policy or product repair deployed-source drift scope expansion failed dashboard health or preserved-file overlap"
+      ],
+      "verification": [
+        "Exact deployed 4BB source and credential-free production health",
+        "Both entry documents use a fresh nonce-bearing Plaid policy with one configured environment and Link opens and closes without unexpected browser violations or errors",
+        "Exactly two Link-token POSTs no exchange sync disconnect or mutation endpoint plus JSON whitespace dashboard rendered state exact worktree scope and preserved files"
+      ],
+      "reportBack": "Return the passed two-entry-path result sanitized policy console and network findings confirmation of no account mutation changed command-center paths local durability preserved exclusions and proposed 4BD as the next separate decision.",
+      "durability": "Done locally and uncommitted; the exact deployed-source and health preflight both entry-path runtime checks network boundary and evidence-minimization checks passed.",
+      "result": "Both production Link documents used fresh nonce-bearing policies with only the configured production environment and each Link opened and closed before institution selection; exactly two Link-token POSTs occurred with no exchange mutation failed response product error or CSP violation.",
+      "evidence": [
+        "command-center/logs/2026-07-24-real-plaid-csp-runtime-checkpoint-4bc.md"
+      ]
+    },
     {
       "id": "phase-4-block-bb-r",
       "phaseId": "phase-4",
@@ -7403,11 +7451,15 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P4",
       "title": "Task 1P.4: Design and enforce a compatible Content Security Policy",
-      "status": "active",
-      "owner": "Ryan and Codex Desktop",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Resolve the CSP half of P3-3J-06 through the durable Tasks 1P.4.1-1P.4.4 without weakening the policy merely to avoid template work.",
-      "nextAction": "Preserve the complete locally verified 4AO result and decide exact-scope durability separately.",
-      "blocker": null
+      "nextAction": null,
+      "blocker": null,
+      "result": "Task 1P.4 is complete through the durable 4BB-R enforcement release and the passed two-entry-path real Plaid runtime checkpoint in 4BC.",
+      "evidence": [
+        "command-center/logs/2026-07-24-real-plaid-csp-runtime-checkpoint-4bc.md"
+      ]
     },
     {
       "phaseId": "phase-4",
@@ -7864,19 +7916,19 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P43",
       "title": "Task 1P.4.3: Make styling and exceptional document surfaces policy-compatible",
-      "status": "planned",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Apply the strict core style policy while confining Plaid's documented exception to Link documents; decomposed into Tasks 1P.4.3a-1P.4.3b."
+      "summary": "Apply the strict core style policy while confining Plaid's documented exception to Link documents; complete and durable through 4AZ-R and 4BA-R."
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P43A",
       "title": "Task 1P.4.3a: Make application styles strict-policy compatible",
-      "status": "active",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "The first six of eight route clusters are durable deployed and health verified while Task 1P.4.3a.7 is complete locally through 4AY with residual inventory 5 3 0 0.",
-      "nextAction": "Decide whether to plan and confirm exact-scope 4AY-R durability and release.",
-      "blocker": "No 4AY-R durability and release work block is confirmed."
+      "summary": "All eight application-style route clusters are complete durable deployed and health verified through 4AZ-R with final application-owned inline and runtime style inventory zero.",
+      "nextAction": null,
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -8153,15 +8205,16 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P44",
       "title": "Task 1P.4.4: Enforce and prove the final Content Security Policy",
-      "status": "current",
-      "owner": "Ryan",
-      "summary": "Implementation is durable deployed and health verified through 4BB-R: strict HTML policy successful-response Plaid marker fresh nonce service-worker v5 and maintained synthetic plus isolated-browser enforcement proof all pass.",
-      "nextAction": "Decide whether to authorize proposed 4BC for one narrow real Plaid enforcement checkpoint.",
-      "blocker": "Real Plaid remains separately gated.",
-      "result": "P3-3J-06 is resolved in durable source commit 6c2a2800ec887ea3c2bf8fb254214dbd0630f55f with automatic Fly run 30116007970 successful and production health HTTP 200.",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Implementation is durable deployed and health verified through 4BB-R and both released production entry paths passed the real Plaid runtime checkpoint in 4BC.",
+      "nextAction": null,
+      "blocker": null,
+      "result": "P3-3J-06 is resolved in durable source commit 6c2a2800ec887ea3c2bf8fb254214dbd0630f55f; automatic Fly run 30116007970 and production health passed and 4BC produced exactly two Link-token requests with successful pre-institution Link open-and-close and no exchange mutation product error or CSP violation.",
       "evidence": [
         "command-center/logs/2026-07-24-final-csp-enforcement-4bb.md",
-        "command-center/logs/2026-07-24-final-csp-enforcement-release-4bb-r.md"
+        "command-center/logs/2026-07-24-final-csp-enforcement-release-4bb-r.md",
+        "command-center/logs/2026-07-24-real-plaid-csp-runtime-checkpoint-4bc.md"
       ]
     },
     {
@@ -8178,9 +8231,11 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P6",
       "title": "Task 1P.6: Finish installed-PWA and browser-boundary regression coverage",
-      "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Complete the unconsumed manifest icon service-worker installation offline-isolation configured-auth and exact post-decision /k/ slices of P3-3J-C01 without reopening resolved 4A-4B behavior absent contrary evidence."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Complete the unconsumed manifest icon service-worker installation offline-isolation configured-auth and exact post-decision /k/ slices of P3-3J-C01 without reopening resolved 4A-4B behavior absent contrary evidence.",
+      "nextAction": "Decide whether to authorize proposed 4BD for a bounded planning and regression-verification slice.",
+      "blocker": "No 4BD work block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -9854,6 +9909,10 @@
     "phase4FinalCspStyleReconciliation": "pass; enforcement exposed and removed the final Short-Term Planning generated label and bounded-width style attributes without widening policy",
     "phase4FinalCspBoundaries": "pass; 4BB remains local uncommitted and unpublished with no real Plaid credential protected data real database production demo downstream workflow Fly or preserved-file action",
     "phase4FinalCspRelease": "pass; exact source commit 6c2a2800ec887ea3c2bf8fb254214dbd0630f55f is durable on origin/main automatic Fly run 30116007970 and deploy job 89556739589 passed for the exact SHA and credential-free production health returned HTTP 200",
-    "phase4FinalCspReleaseBoundaries": "pass; no real Plaid credential protected data real database authenticated production page PR force push manual workflow action workflow edit non-automatic Fly mutation downstream access broader recovery or preserved-file mutation occurred; a non-failing checkout v4 Node 20 deprecation annotation was observed"
+    "phase4FinalCspReleaseBoundaries": "pass; no real Plaid credential protected data real database authenticated production page PR force push manual workflow action workflow edit non-automatic Fly mutation downstream access broader recovery or preserved-file mutation occurred; a non-failing checkout v4 Node 20 deprecation annotation was observed",
+    "phase4RealPlaidRuntime": "pass; both released production entry documents returned fresh nonce-bearing single-production-environment Plaid policies and each real Link opened and closed before institution selection",
+    "phase4RealPlaidNetworkBoundary": "pass; exactly two authorized Link-token POSTs occurred with no exchange sync disconnect account database downstream workflow or Fly mutation request and no failed response",
+    "phase4RealPlaidBrowserBoundary": "pass; zero product or CSP errors and zero targeted CSP or refused-resource entries; three identical Chrome extension message-channel closures were classified as non-product control noise",
+    "phase4RealPlaidEvidenceBoundary": "pass; no screenshot response body credential protected detail institution selection account login public-token exchange account connection policy widening product repair publication or preserved-file mutation occurred"
   }
 }

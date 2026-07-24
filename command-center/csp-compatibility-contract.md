@@ -1,6 +1,6 @@
 # Content Security Policy Compatibility Contract
 
-Status: Local-only work block 4BB implements Task 1P.4.4 header enforcement and maintained synthetic proof after the execution, style, and final policy-input gates completed through 4BA. Publication, production inspection, and the first real Plaid Link open remain separate authorization gates.
+Status: Task 1P.4 is complete through the durable 4BB-R enforcement release and the separately authorized 4BC real Plaid runtime checkpoint on both production entry paths. Any future environment, origin, or runtime change requires a new scoped checkpoint.
 
 Parent: Phase 4 Task 1P.4 / finding `P3-3J-06`.
 
@@ -259,6 +259,6 @@ Required repository checks after each implementation slice remain the focused te
 8. Task 1P.4.4 must classify Plaid by the actual rendered Link document, not the originating endpoint, and must leave redirects, authentication responses, and error-handler documents on the strict default.
 9. Every `text/html` response, including an HTMX fragment, carries the strict core policy unless a marker bound to a successfully rendered Link response selects the Plaid variant. Static, manifest, worker, and API/JSON responses do not receive the HTML document policy.
 10. The last-resort service-worker-generated HTML fallback carries the strict core policy. The service-worker change ships with header enforcement so its installation refreshes cached `/offline` under the enforced header.
-11. Real Plaid runtime compatibility remains a separately authorized live checkpoint before relying on released enforcement; violations trigger a new scoped decision rather than a broader standing allowlist.
+11. Separately authorized work block 4BC passed real Plaid runtime compatibility on both released production entry paths with one configured production environment, fresh response nonces, successful pre-institution Link open-and-close, exactly two Link-token requests, and no token exchange or account mutation. Any future environment, origin, or runtime change requires a new scoped checkpoint rather than a broader standing allowlist.
 
 Any wish to allow broader inline behavior, both Plaid environments, another external origin, live Plaid testing, public-route redesign, or Trusted Types is a plan-changing decision and requires Ryan's explicit direction.

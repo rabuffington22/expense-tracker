@@ -2,27 +2,51 @@
 
 ## Active Objective
 
-Review whether to authorize a narrowly bounded 4BC real Plaid enforcement checkpoint after 4BB-R made the final CSP implementation durable, deployed, and health verified.
+Decide whether to authorize proposed work block 4BD for the bounded Task 1P.6 installed-PWA and browser-boundary regression slice.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.4 is durable, automatically deployed, and credential-free health verified through 4BB-R, while real Plaid validation remains a separate gate.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4 is complete through the durable, deployed enforcement and passed real Plaid runtime checkpoint in 4BC. Task 1P.6 is next.
 
 ## Current Work Block
 
-Work block 4BB-R: Final CSP Enforcement Durability And Release — done.
+Work block 4BC: Real Plaid CSP Runtime Checkpoint — done locally and uncommitted.
 
 ## Current Task
 
-Task 1P.4.4: Enforce and prove the final Content Security Policy — durable and deployed through 4BB-R. The current task is Ryan's decision on whether to authorize proposed 4BC.
+Task 1P.6: Finish installed-PWA and browser-boundary regression coverage — awaiting a separate 4BD decision.
 
 ## Owner
 
-Ryan owns the 4BC real-Plaid decision and every protected or expansion gate. Codex completed exact-path durability, automatic deployment observation, credential-free health, and sanitized closeout through 4BB-R.
+Ryan owns the decision whether to authorize proposed 4BD. Codex has no active implementation authority beyond the completed 4BC closeout.
 
 ## Current Action
 
-Decide whether to authorize proposed work block 4BC for one narrow real Plaid enforcement checkpoint. Do not open Plaid Link, use credentials, or expand the released policy without separate confirmation.
+Review the completed 4BC result and decide whether to authorize a separately bounded 4BD planning and verification block for Task 1P.6.
+
+## Work Block 4BC Contract
+
+- Include only Task 1P.4.4's separately gated real-runtime validation slice: verify the exact deployed 4BB source and credential-free production health; inspect the production `/data-sources/` and `/plaid/` document policies without recording financial page content; create exactly one real Link token from each entry path; open and close each Plaid Link surface before institution selection; and record sanitized policy, console, and network evidence.
+- Exclude Tasks 1P.6-1P.7, broader Task 2 regression, Task 3 CI, Task 4 publication, product or test changes, policy widening, credentials, password or OTP handling, institution selection, public-token exchange, account connection, sync, disconnect, account toggles or renames, real-database mutation, downstream access or writes, workflow actions, Fly mutation, commit, push, PR, merge, deployment, screenshots, response bodies, protected detail, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the duplicate 4AU log.
+- Use the currently selected entity without switching. Use the existing authenticated Chrome session; if authentication is unavailable, pause for Ryan to sign in manually without Codex requesting, reading, or entering credentials. Do not inspect or report institution, account, transaction, payroll, balance, or other row-level details.
+- Permit only the two expected Link-token POST requests. Verify that no exchange-token, sync, disconnect, account, database, downstream, workflow, or Fly mutation occurs. Keep command-center changes local-only and uncommitted.
+- No delegation or second opinion is needed because 4BC is one deterministic live checkpoint after the frozen policy already received independent review and maintained synthetic/browser proof.
+- Stop for missing authentication; any password, OTP, credential, institution-selection, account-login, token-exchange, sync, disconnect, account, database, downstream, workflow, or Fly action; a CSP violation, initializer/frame failure, unexpected external origin, sensitive browser output, or protected-detail capture need; policy or product repair; changed deployed source; failed health, dashboard, scope, or preserved-file checks; or any expansion beyond 4BC.
+- Verify exact deployed source and credential-free `/health`; both entry documents' nonce-bearing Plaid policy with one configured environment; real Link open and close without CSP violations or unexpected browser errors; exactly two Link-token calls and no mutation endpoints; JSON; whitespace; dashboard refresh/health/generated/rendered state; exact worktree scope; and all three preserved untracked files.
+- Report pass or stop by entry path, sanitized policy/browser/network findings, whether any unexpected request occurred, confirmation that no account mutation happened, changed command-center paths, local durability, preserved exclusions, and the next separately gated block.
+
+## Work Block 4BC Status
+
+- Ryan confirmed the exact 4BC proposal on 2026-07-24.
+- Active command-center state, JSON, dashboard refresh, health check, and rendered inspection passed before production access.
+- Exact Fly Deploy run `30116007970` still reports successful source SHA `6c2a2800ec887ea3c2bf8fb254214dbd0630f55f`, and credential-free production `/health` returned HTTP 200 with `{"status":"ok"}`.
+- Ryan authenticated manually after the prepared Chrome tab reached the standalone login page; Codex did not request, read, enter, or retain credentials.
+- Both production entry documents returned HTTP 200 with exactly one expected initializer, one fresh nonce matched across all three intended policy directives, the Plaid frame origin, and only the configured production API origin.
+- Each real Plaid Link opened to the pre-institution consent surface and closed through Plaid's exit confirmation before institution selection. Both entry controls reset successfully.
+- The full session contained exactly two authorized Link-token POSTs, no exchange or mutation endpoint, no failed response, and zero product or CSP errors. Three identical Chrome extension message-channel entries were classified as non-product control noise.
+- No screenshot, response body, credential, protected detail, institution selection, account login, public-token exchange, connection, sync, disconnect, account/financial mutation, downstream action, workflow/Fly action, product repair, or policy widening occurred.
+- 4BC is done locally and uncommitted. Evidence: `command-center/logs/2026-07-24-real-plaid-csp-runtime-checkpoint-4bc.md`.
+- Proposed 4BD for Task 1P.6 is the next separate decision; it is not authorized by 4BC.
 
 ## Work Block 4BB-R Contract
 
