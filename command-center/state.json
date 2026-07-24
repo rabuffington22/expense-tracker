@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-24 10:25 AM CST",
+    "lastUpdated": "2026-07-24 10:38 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,27 +22,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R and the first seven application-style clusters are durable deployed and health verified through 4AS-R 4AT-R 4AU-R 4AV-R 4AW-R 4AX-R and 4AY-R"
+    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R and all eight application-style clusters are durable deployed and health verified through 4AS-R 4AT-R 4AU-R 4AV-R 4AW-R 4AX-R 4AY-R and 4AZ-R"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.3a.8-R and the authorized Task 4 release slice are active through confirmed 4AZ-R after local 4AZ completed with exact zero application-owned style inventory.",
+    "summary": "All eight application-style clusters are durable deployed and credential-free health verified through 4AZ-R; Task 1P.4.3b is the next separately gated planning decision.",
     "progress": 98
   },
   "currentTask": {
-    "title": "Task 1P.4.3a.8-R: Publish and verify standalone document style compatibility",
-    "owner": "Codex Desktop",
-    "status": "active",
-    "supportingAgent": "Codex Desktop owns exact-path staging source commit direct non-force push automatic-deployment observation credential-free health sanitized closeout and final intake; Ryan owns every expansion manual workflow or Fly action protected access broader recovery and later task.",
-    "nextAction": "Reverify and stage the exact 4AZ set commit and push directly to origin/main observe automatic Fly deployment verify exact SHA and credential-free health then publish only the sanitized skip-actions closeout.",
-    "blocker": null
+    "title": "Task 1P.4.3b: Reconcile exceptional documents and Plaid",
+    "owner": "Ryan",
+    "status": "waiting",
+    "supportingAgent": "Ryan owns the next planning and confirmation decision; Codex Desktop owns no new policy service-worker CSP protected publication or live mutation until a separate exact block is confirmed.",
+    "nextAction": "Decide whether to plan and confirm Task 1P.4.3b exceptional-document and Plaid policy reconciliation.",
+    "blocker": "No Task 1P.4.3b work block is confirmed."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-az-r",
     "label": "4AZ-R",
     "name": "Standalone Document Style Compatibility Release",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
     "currentTask": "Task 1P.4.3a.8-R",
     "includedTasks": [
@@ -78,7 +78,11 @@
       "Credential-free production health final branch remote alignment and all preserved untracked files"
     ],
     "nextReportPoint": "Return source and closeout commit SHAs exact published paths automatic deployment and health result final alignment preserved exclusions and separately gated Task 1P.4.3b.",
-    "durability": "Active release; source commit push automatic deployment observation health verification and sanitized closeout are in progress."
+    "durability": "Complete durable deployed and credential-free health verified on origin/main.",
+    "result": "Exact 16-path source commit 6017d2262d303f93fd70f4c790f32455d5022df1 is durable on origin/main automatic Fly run 30105710374 and deploy job 89522491511 passed for the exact SHA and credential-free production health returned HTTP 200 with JSON status ok.",
+    "evidence": [
+      "command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -103,22 +107,29 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Execute confirmed 4AZ-R release",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized the exact verified 4AZ set to be committed and pushed to main.",
-    "action": "Reverify stage explicitly commit push observe the automatic deployment verify exact SHA and credential-free health then publish only the sanitized skip-actions closeout.",
+    "title": "Plan Task 1P.4.3b exceptional-document and Plaid policy reconciliation",
+    "status": "waiting-on-Ryan",
+    "owner": "Ryan",
+    "why": "All application-owned execution and style prerequisites are now durable deployed and health verified through 4AZ-R.",
+    "action": "Decide whether to plan and confirm a bounded Task 1P.4.3b policy-reconciliation work block.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    {
+      "decision": "Whether to plan and confirm Task 1P.4.3b exceptional-document and Plaid policy reconciliation",
+      "status": "open",
+      "whyItMatters": "The application-owned style inventory is zero, so the remaining decision concerns exceptional-document and third-party Plaid policy rather than another migration cluster.",
+      "workaround": "Preserve the durable 4AZ-R state and leave CSP policy and enforcement unchanged."
+    }
+  ],
   "waitingOnRyan": {
-    "summary": "Nothing blocks exact 4AZ-R execution; manual workflow or Fly actions protected access broader recovery Task 1P.4.3b and every expansion remain separate Ryan decisions.",
+    "summary": "4AZ-R is complete; Task 1P.4.3b planning CSP enforcement manual live-sensitive actions broader recovery and every expansion remain separate Ryan decisions.",
     "items": [
-      "After verified 4AZ-R closeout decide separately whether to plan Task 1P.4.3b."
+      "Decide separately whether to plan and confirm Task 1P.4.3b."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1P.4.3a.8-R is active through confirmed 4AZ-R while Plaid and exceptional-document policy CSP enforcement installed-PWA and broad read-model work remain separate.",
+    "phaseQuestions": "All application execution and style prerequisites are durable through 4AZ-R while Plaid and exceptional-document policy CSP enforcement installed-PWA and broad read-model work remain separate.",
     "decisionQueue": "Task 1P.4.3b CSP enforcement manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -183,7 +194,7 @@
       "phaseId": "phase-4",
       "label": "4AZ-R",
       "name": "Standalone Document Style Compatibility Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 1P.4.3a.8-R",
         "Only the authorized Task 4 exact durability automatic-release observation credential-free health and sanitized closeout slice"
@@ -218,7 +229,11 @@
         "Credential-free production health final branch remote alignment and all preserved untracked files"
       ],
       "reportBack": "Return source and closeout commit SHAs exact published paths automatic deployment and health result final alignment preserved exclusions and separately gated Task 1P.4.3b.",
-      "durability": "Active release; source commit push automatic deployment observation health verification and sanitized closeout are in progress."
+      "durability": "Complete durable deployed and credential-free health verified on origin/main.",
+      "result": "Exact 16-path source commit 6017d2262d303f93fd70f4c790f32455d5022df1 is durable on origin/main automatic Fly run 30105710374 and deploy job 89522491511 passed for the exact SHA and credential-free production health returned HTTP 200 with JSON status ok.",
+      "evidence": [
+        "command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md"
+      ]
     },
     {
       "id": "phase-4-block-az",
@@ -7912,19 +7927,25 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P43A8R",
       "title": "Task 1P.4.3a.8-R: Publish and verify standalone document style compatibility",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Make only the exact locally verified 4AZ source set durable then observe the authorized automatic deployment and verify credential-free production health under a separately confirmed release block.",
-      "nextAction": "Execute confirmed 4AZ-R with exact-path staging direct non-force push automatic deployment observation credential-free health and sanitized closeout.",
-      "blocker": null
+      "nextAction": null,
+      "blocker": null,
+      "result": "Exact source commit 6017d2262d303f93fd70f4c790f32455d5022df1 is durable on origin/main automatic Fly run 30105710374 and deploy job 89522491511 passed and credential-free production health returned HTTP 200.",
+      "evidence": [
+        "command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md"
+      ]
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P43B",
       "title": "Task 1P.4.3b: Reconcile exceptional documents and Plaid",
-      "status": "planned",
-      "owner": "Codex Desktop",
-      "summary": "Cover login offline and errors standalone /k/ local data images worker manifest and the narrow Plaid policy with exact initializer frame environment connect and Plaid-only style-attribute allowances."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Cover login offline and errors standalone /k/ local data images worker manifest and the narrow Plaid policy with exact initializer frame environment connect and Plaid-only style-attribute allowances.",
+      "nextAction": "Decide whether to plan and confirm a bounded exceptional-document and Plaid policy-reconciliation work block.",
+      "blocker": "No Task 1P.4.3b work block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -7985,7 +8006,7 @@
       "summary": "Publish and verify only explicitly approved repairs through exact-scope direct-main release blocks.",
       "nextAction": null,
       "blocker": null,
-      "result": "Releases through 4AV-R completed successfully; source commit 7fa732b is durable on main automatic Fly run 30055663641 and deploy job 89366650549 passed and credential-free production health returned HTTP 200.",
+      "result": "Every explicitly approved repair through 4AZ-R is durable deployed and health verified; latest source commit 6017d226 is on main automatic Fly run 30105710374 and deploy job 89522491511 passed and credential-free production health returned HTTP 200.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -8008,7 +8029,8 @@
         "command-center/logs/2026-07-21-luxe-legacy-mirror-idempotency-release-4aa-r.md",
         "command-center/logs/2026-07-21-session-cookie-policy-release-4ac-r.md",
         "command-center/logs/2026-07-21-mobile-drawer-accessibility-release-4ad-r.md",
-        "command-center/logs/2026-07-23-cashflow-planning-style-compatibility-release-4av-r.md"
+        "command-center/logs/2026-07-23-cashflow-planning-style-compatibility-release-4av-r.md",
+        "command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md"
       ]
     },
     {
@@ -9332,8 +9354,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete confirmed 4AZ-R release",
-    "description": "Make the exact verified zero-inventory 4AZ source set durable on main then verify the automatic Fly deployment credential-free health and sanitized skip-actions closeout."
+    "name": "Plan Task 1P.4.3b exceptional-document and Plaid policy reconciliation",
+    "description": "Use the durable zero-inventory application foundation to define a separately gated exceptional-document and third-party Plaid policy block."
   },
   "verification": {
     "phase4StandaloneDocumentsBlock": "pass locally; 4AR moved five executable inline scripts and both source or rendered handler seams into blocking standalone-documents.js and deferred kristine.js leaving final tracked-template inventory zero inline twenty-one external zero inert zero source-recognized handlers and zero hx-on",
@@ -9614,6 +9636,8 @@
     "phase4FocusedDashboardAuthDurability": "pass; local main matched origin/main at source commit e20555d before this command-center-only skip-actions closeout with both preserved untracked files excluded",
     "phase4StandaloneStyleBlock": "pass locally; 4AZ removed all five standalone login offline and error style blocks plus all three standalone k template style attributes through scoped document-family CSS and bounded percentage classes leaving exact application-owned inventory 0 style blocks 0 template attributes 0 generated attributes and 0 runtime writes",
     "phase4StandaloneStyleCoverage": "pass; baseline and final full smoke focused source rendered request status no-leakage auth entity cached-asset proof and configured-auth no-password isolated Chrome cover login offline 403 404 500 and standalone k at phone exact 768 and desktop with visual inspection denied networking zero unexpected errors no overflow and exact cleanup",
-    "phase4StandaloneStyleBoundaries": "pass; no service-worker manifest route authentication CSRF CSP policy enforcement product financial database protected credential external live GitHub publication deployment workflow downstream or preserved-file mutation occurred"
+    "phase4StandaloneStyleBoundaries": "pass; no service-worker manifest route authentication CSRF CSP policy enforcement product financial database protected credential external live GitHub publication deployment workflow downstream or preserved-file mutation occurred",
+    "phase4StandaloneStyleRelease": "pass; exact 16-path source commit 6017d2262d303f93fd70f4c790f32455d5022df1 is durable on origin/main automatic Fly run 30105710374 and deploy job 89522491511 passed for the exact SHA and credential-free production health returned HTTP 200",
+    "phase4StandaloneStyleReleaseBoundaries": "pass; no PR force push manual workflow action workflow edit non-automatic Fly mutation Task 1P.4.3b work credential protected data real database retained upload authenticated production downstream broader recovery or preserved-file mutation occurred; a non-failing checkout v4 Node 20 deprecation annotation was observed"
   }
 }

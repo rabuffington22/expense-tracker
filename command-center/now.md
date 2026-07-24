@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify the exact locally proven 4AZ standalone-document style result through confirmed work block 4AZ-R without widening into CSP enforcement, service-worker behavior, protected data, or manual live actions.
+Preserve the durable, deployed, and health-verified 4AZ-R result and decide separately whether to plan Task 1P.4.3b exceptional-document and Plaid policy reconciliation.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.8-R and the authorized Task 4 release slice are active through confirmed work block 4AZ-R.
+Phase 4: Core Repairs And Regression Coverage — active; all eight application-style clusters are durable through 4AS-R to 4AZ-R, and Task 1P.4.3b is the next separately gated planning decision.
 
 ## Current Work Block
 
-Work block 4AZ-R: Standalone Document Style Compatibility Release — active.
+Work block 4AZ-R: Standalone Document Style Compatibility Release — done, durable, deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.3a.8-R: Publish and verify standalone document style compatibility — active.
+Task 1P.4.3b: Reconcile exceptional documents and Plaid — waiting for separate planning and confirmation.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, the source commit, direct non-force push to `origin/main`, read-only automatic-deployment observation, credential-free production health, sanitized closeout, and final intake. Ryan owns every expansion, manual workflow or Fly action, protected access, broader recovery, and later task.
+Ryan owns the next planning decision. Codex Desktop owns no new Task 1P.4.3b, CSP-policy, service-worker, protected, publication, or live mutation until a separate exact block is confirmed.
 
 ## Current Action
 
-Execute confirmed 4AZ-R: reverify the exact 4AZ set, stage only authorized paths, commit and push directly to `main`, observe the automatic Fly deployment and credential-free health, then publish a command-center-only `[skip actions]` closeout.
+Decide whether to plan and confirm Task 1P.4.3b exceptional-document and Plaid policy reconciliation.
 
 ## Work Block 4AZ-R Contract
 
@@ -37,9 +37,13 @@ Execute confirmed 4AZ-R: reverify the exact 4AZ set, stage only authorized paths
 ## Work Block 4AZ-R Status
 
 - Ryan directly instructed Codex to commit and push the complete verified 4AZ work to `main` on 2026-07-24, authorizing this exact release boundary.
-- Remote preflight passed: `codex/csp-standalone-styles`, local `main`, and `origin/main` share pre-release commit `4af5d0c5d5142f73fc23c168d96db9ef7d1690dd`.
-- Verification, exact staging, source commit, direct push, automatic deployment, health, and sanitized closeout are in progress.
-- No manual workflow action, non-automatic Fly mutation, protected access, or scope expansion is authorized.
+- Exact 16-path source commit `6017d2262d303f93fd70f4c790f32455d5022df1` is durable on `origin/main`.
+- Automatic Fly Deploy run `30105710374` and deploy job `89522491511` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Full smoke, configured-auth/no-password isolated browser, syntax, JSON, whitespace, command-center health, exact staging, ancestry, remote alignment, automatic deployment, health, and preserved-file checks passed.
+- GitHub emitted a platform deprecation annotation because `actions/checkout@v4` targets Node 20 and is currently forced to Node 24; the job still passed and workflow changes remain outside this block.
+- No PR, force push, manual workflow action, workflow edit, non-automatic Fly mutation, credential, protected data, authenticated production page, downstream access, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md`.
 
 ## Work Block 4AZ Contract
 
