@@ -2,7 +2,7 @@
 {% block title %}{{ entity_display }} Connected Accounts — The Ledger{% endblock %}
 
 {% block head %}
-<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script nonce="{{ csp_nonce }}" src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 <script defer src="{{ url_for('static', filename='plaid.js') }}?v={{ cache_bust }}"></script>
 {% endblock %}
 

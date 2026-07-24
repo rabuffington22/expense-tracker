@@ -2,27 +2,61 @@
 
 ## Active Objective
 
-Decide whether to confirm proposed local-only work block 4BB for Task 1P.4.4 CSP header enforcement and maintained synthetic/isolated-browser proof.
+Publish and verify the exact completed 4BB source set through Ryan-authorized direct-main work block 4BB-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3b.1-1P.4.3b.2 and their command-center durability are complete through 4BA/4BA-R, and Task 1P.4.4 is the next separate planning decision.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.4 is complete locally through 4BB, and its exact durability, automatic deployment, and credential-free health verification are active through 4BB-R.
 
 ## Current Work Block
 
-Work block 4BA-R: Exceptional Documents And Plaid CSP Policy Reconciliation Durability — done and durable on `main` without deployment.
+Work block 4BB-R: Final CSP Enforcement Durability And Release — active.
 
 ## Current Task
 
-Task 1P.4.4: Enforce and prove the final Content Security Policy — current planning decision only; no implementation block is confirmed.
+Task 4: Publish and verify explicitly approved repairs — current through 4BB-R. Task 1P.4.4 remains complete locally through 4BB.
 
 ## Owner
 
-Ryan owns Task 1P.4.4 work-block confirmation plus every product, deployment, protected, and live decision. Codex Desktop owns the durable 4BA/4BA-R artifacts and may not continue into enforcement without separate confirmation.
+Codex Desktop owns exact-path staging, source commit, clean main fast-forward, non-force push, automatic deployment observation, credential-free production health, and sanitized closeout. Ryan owns real Plaid, credentials, protected access, broader recovery, and every expansion.
 
 ## Current Action
 
-Review proposed 4BB for Task 1P.4.4. If not confirmed, stop with 4BA/4BA-R complete and durable.
+Record and validate 4BB-R; rerun maintained release checks; stage only the intended 4BB paths; commit, fast-forward local `main`, push `main` without force, observe the automatic Fly deployment, verify credential-free production health, and publish only a sanitized `[skip actions]` closeout.
+
+## Work Block 4BB-R Contract
+
+- Include Task 4 only for the exact verified 4BB set: explicit-path staging; one source commit on `codex/csp-header-enforcement`; clean fast-forward of local `main`; direct non-force push to `origin/main`; observation of only the resulting automatic Fly deployment; exact source-SHA verification; credential-free production `/health`; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Ryan's direct instruction authorizes publication and the automatic deployment before the proposed real-Plaid checkpoint. It does not authorize Plaid Link, sync, disconnect, credentials, authenticated production pages, protected data, real databases/uploads, Fly mutation outside the automatic workflow, workflow dispatch/rerun/edit, downstream access, PR creation, force push, broader recovery, or any product change beyond the already verified 4BB set.
+- Preserve all three unrelated untracked files. Stage explicit intended paths only. Do not include `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, or the duplicate 4AU log.
+- Stop for a changed or unexpected path, failed release verification, sensitive addition, local/remote `main` divergence, non-fast-forward requirement, push rejection, automatic deployment failure requiring mutation, credential-free health failure, source-SHA mismatch, preserved-file overlap, or recovery beyond clean fast-forward and read-only diagnosis.
+- Verify full smoke; configured-auth/no-password isolated browser; relevant syntax; JSON; whitespace; dashboard refresh/health/rendered state; exact staged and committed paths; ancestry; exact remote source SHA; automatic workflow/deploy result; credential-free production health; final local/remote alignment; and preserved files.
+- Report source and closeout commit SHAs, exact published scope, deployment and health result, real-Plaid omission, preserved exclusions, and next separate gate.
+
+## Work Block 4BB-R Status
+
+- Ryan directly instructed Codex to commit and push the complete verified 4BB work to `main` on 2026-07-24.
+- Activation and release verification are in progress.
+- No real Plaid, credential, protected-data, real-database, authenticated-production, manual-workflow, non-automatic Fly, downstream, or preserved-file action is authorized.
+
+## Work Block 4BB Contract
+
+- Include Task 1P.4.4 plus only its focused Task 2 CSP regression slice: attach the exact strict policy to every `text/html` response; select the narrow Plaid variant only for a successfully rendered Link document; generate one unpredictable base64 nonce from at least 128 CSPRNG bits per successful Link response; apply it only to both exact initializer tags and the three nonce-bearing directives; preserve one validated sandbox-or-production connect origin; refresh the service-worker cache and give its last-resort synthetic HTML the strict policy; add maintained request and isolated-browser enforcement proof; and close `P3-3J-06` locally only if every required check passes.
+- Keep Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, real Plaid Link, credentials, protected data, real databases/uploads, production/demo, non-localhost access, GitHub durability, publication, deployment, workflows, downstream systems, authentication, CSRF, financial, category, database, dependency, broader PWA redesign, CSP reporting, Trusted Types, request upgrading, broader origins, both Plaid environments, relaxed inline-code policy, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the duplicate 4AU log outside scope.
+- Work locally on `codex/csp-header-enforcement`; preserve the exact frozen strict and Plaid policies; keep redirects, authentication responses, errors, static/worker/manifest, and JSON response classification exact; preserve the existing absent-`PLAID_ENV` sandbox default; fail closed without broadening on invalid configuration; use temporary synthetic all-entity databases, fake configuration, mocked Plaid, localhost only, denied non-localhost traffic, disposable browser state, and exact cleanup; keep local-only and uncommitted.
+- No second opinion is required because the frozen policy already received an independent `claude-fable-5` maximum-effort review and 4BB has deterministic implementation and verification gates.
+- Stop if compatibility requires widening the frozen policy, allowing both Plaid environments or another origin, changing product/authentication/CSRF/financial/database/dependency behavior, or broader service-worker/PWA redesign; a nonce or Plaid exception could leak to an error, redirect, or authentication response; real Plaid, credentials, protected data, real databases, production/demo, or non-localhost access becomes necessary; verification materially changes the plan; cleanup, command-center health, or preserved-file checks fail; or scope expands.
+- Verify baseline and final full smoke; focused exact-header, response-family, successful-render, forced-error, sandbox/production, absent/invalid configuration, and service-worker-cache assertions; configured-auth and no-password isolated Chrome at desktop, phone, and exact 768px; full pages and repeated HTMX swaps; login/errors/`/k/`; mocked Plaid; manifest/worker installation and headerless-to-enforced offline-cache refresh; prohibited inline script/handler/style/eval/cross-origin fetch/frame/object/form probes; denied networking; zero unexpected violations/errors/dialogs; exact cleanup; relevant Python/JavaScript syntax; JSON; whitespace; dashboard refresh/health/generated/rendered state; exact worktree scope; and all preserved untracked files.
+- Report the exact strict and Plaid policies, response-classification and nonce design, service-worker/offline result, prohibited-probe results, changed paths, verification and cleanup, local branch/durability state, preserved exclusions, and the separate real-Plaid/publication gates.
+
+## Work Block 4BB Status
+
+- Ryan confirmed the exact local-only 4BB proposal on 2026-07-24.
+- The frozen strict and successfully-rendered-Link policies, fresh nonce plumbing, service-worker v5 offline refresh, and maintained request/browser proof are complete.
+- Full smoke and configured-auth/no-password isolated Chrome pass with denied non-localhost traffic, mocked Plaid, prohibited-source probes, and exact cleanup.
+- Enforcement exposed and removed the final Short-Term Planning generated style seams without widening policy. `P3-3J-06` is locally resolved.
+- No commit, push, publication, deployment, production/demo inspection, live Plaid, credential, protected-data, real-database, downstream, or preserved-file action occurred.
+- Evidence: `command-center/logs/2026-07-24-final-csp-enforcement-4bb.md`.
 
 ## Work Block 4BA-R Contract
 

@@ -41,6 +41,11 @@ def _parse_dollar_to_cents(dollar_str: str) -> int:
         return 0
 
 
+def _bounded_percent(value: float | int) -> int:
+    """Return the nearest whole percentage supported by the shared CSS scale."""
+    return max(0, min(int(round(value)), 100))
+
+
 def _get_payroll_schedule(conn) -> dict | None:
     """Return the payroll schedule singleton or None if not configured."""
     row = conn.execute("SELECT * FROM payroll_schedule WHERE id = 1").fetchone()
@@ -1049,6 +1054,7 @@ def budget_status():
         html_parts = []
         for item in status:
             pct = item["pct"]
+            bounded_pct = _bounded_percent(pct)
             if pct <= 75:
                 color_class = "stp-budget-green"
             elif pct <= 100:
@@ -1062,8 +1068,9 @@ def budget_status():
                 f'<td>${item["budget_cents"] / 100:,.0f}</td>'
                 f'<td>${item["spent_cents"] / 100:,.0f}</td>'
                 f'<td>${item["remaining_cents"] / 100:,.0f}</td>'
-                f'<td><div class="stp-budget-bar"><div class="stp-budget-fill" '
-                f'style="width: {min(pct, 100)}%"></div></div></td>'
+                f'<td><div class="stp-budget-bar"><div '
+                f'class="stp-budget-fill u-width-pct u-pct-{bounded_pct}">'
+                f'</div></div></td>'
                 f'</tr>'
             )
         return "".join(html_parts)
@@ -1388,9 +1395,10 @@ def budget_subcategories():
                     else "stp-bar-yellow" if pct <= 115
                     else "stp-bar-red"
                 )
+                bounded_pct = _bounded_percent(pct)
                 lines.append(
                     f'<tr class="stp-subcat-row">'
-                    f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
+                    f'<td class="stp-subcat-label">{sub_esc}</td>'
                     f'{spent_td}'
                     f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
                     f'<input type="text" name="{field_name}" value="{budget_val}" '
@@ -1399,7 +1407,8 @@ def budget_subcategories():
                     f'<td class="{rem_class}">${remaining / 100:,.0f}</td>'
                     f'<td><div class="stp-budget-progress-wrap">'
                     f'<div class="stp-budget-bar stp-budget-bar--sub">'
-                    f'<div class="stp-budget-fill {bar_class}" style="width:{min(pct, 100)}%"></div></div>'
+                    f'<div class="stp-budget-fill u-width-pct '
+                    f'u-pct-{bounded_pct} {bar_class}"></div></div>'
                     f'<span class="stp-budget-pct">{min(pct, 999)}%</span></div></td>'
                     f'</tr>'
                 )
@@ -1407,7 +1416,7 @@ def budget_subcategories():
                 # No budget — empty input with dash placeholder
                 lines.append(
                     f'<tr class="stp-subcat-row">'
-                    f'<td style="padding-left:2rem;color:var(--text-muted)">{sub_esc}</td>'
+                    f'<td class="stp-subcat-label">{sub_esc}</td>'
                     f'{spent_td}'
                     f'<td><span class="stp-budget-input-wrap stp-budget-input-wrap--sub">$'
                     f'<input type="text" name="{field_name}" value="" '

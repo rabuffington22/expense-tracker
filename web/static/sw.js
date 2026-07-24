@@ -8,8 +8,9 @@
  *   - Offline fallback: Simple branded page when nothing is available
  */
 
-const CACHE_NAME = 'the-ledger-v4';
+const CACHE_NAME = 'the-ledger-v5';
 const OFFLINE_URL = '/offline';
+const CORE_CSP_POLICY = "default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; media-src 'none'";
 
 // App shell and static assets to pre-cache on install
 const PRECACHE_URLS = [
@@ -107,7 +108,10 @@ async function networkOnlyWithOfflineFallback(request) {
 
     return new Response('<h1>Offline</h1><p>Please check your connection.</p>', {
       status: 503,
-      headers: { 'Content-Type': 'text/html' },
+      headers: {
+        'Content-Type': 'text/html',
+        'Content-Security-Policy': CORE_CSP_POLICY,
+      },
     });
   }
 }

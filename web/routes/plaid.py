@@ -4,7 +4,7 @@ import logging
 import secrets
 from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, request, flash, redirect, url_for, g, jsonify
+from flask import Blueprint, request, flash, redirect, url_for, g, jsonify
 
 log = logging.getLogger(__name__)
 
@@ -12,6 +12,7 @@ from core.db import get_connection, init_db
 from core.imports import compute_external_transaction_id
 from core.categorize import _get_active_aliases, _match_alias, _keyword_suggest, _strip_platform_prefix
 from core.sync_coordination import try_acquire_sync_lease
+from web.csp import render_plaid_document
 
 bp = Blueprint("plaid", __name__, url_prefix="/plaid")
 
@@ -92,7 +93,7 @@ def index():
     finally:
         conn.close()
 
-    return render_template(
+    return render_plaid_document(
         "plaid.html",
         items=items,
         manual_accounts=manual_accounts,

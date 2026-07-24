@@ -29,6 +29,7 @@ from werkzeug.security import check_password_hash
 
 from core.db import init_db, get_connection
 from core.categories import load_categories
+from web.csp import policy_for_html_response
 
 
 # ── Entity helpers ────────────────────────────────────────────────────────────
@@ -337,6 +338,10 @@ def create_app():
             )
         if not request.path.startswith("/static/") and request.path != "/sw.js":
             response.headers["Cache-Control"] = "no-store"
+        if response.mimetype == "text/html":
+            response.headers["Content-Security-Policy"] = (
+                policy_for_html_response(response)
+            )
         return response
 
     # ── CSRF protection ──────────────────────────────────────────────────

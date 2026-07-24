@@ -12,6 +12,9 @@ synthetic databases. Subscription and BFM-only payroll interactions use the
 same local-only fixture and cleanup boundary. Standalone offline/error and
 `/k/` execution proof uses synthetic status routes and the same denied-network,
 temporary-data, and exact-cleanup boundary.
+Final CSP coverage also verifies strict full-page enforcement, request-scoped
+Plaid nonces, service-worker offline-cache refresh, and prohibited browser
+source probes without contacting any non-localhost service.
 """
 
 from __future__ import annotations
@@ -20,6 +23,7 @@ import os
 import sys
 import tempfile
 import threading
+import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -60,15 +64,62 @@ window.Plaid = {
 };
 """
 
+from web.csp import CORE_CSP_POLICY
+
 
 class _QuietRequestHandler(WSGIRequestHandler):
     def log_request(self, code: int | str = "-", size: int | str = "-") -> None:
         pass
 
 
+class _CspSafePage:
+    """Delegate Page operations while polling conditions without unsafe-eval."""
+
+    def __init__(self, page) -> None:
+        self._page = page
+
+    def __getattr__(self, name):
+        return getattr(self._page, name)
+
+    def wait_for_function(
+        self,
+        expression: str,
+        *,
+        arg=None,
+        timeout: float | None = None,
+        polling=None,
+    ) -> None:
+        del polling
+        deadline = time.monotonic() + (30_000 if timeout is None else timeout) / 1000
+        last_error: Exception | None = None
+        while time.monotonic() < deadline:
+            try:
+                result = (
+                    self._page.evaluate(expression)
+                    if arg is None
+                    else self._page.evaluate(expression, arg)
+                )
+                if result:
+                    return
+            except Exception as exc:
+                last_error = exc
+            self._page.wait_for_timeout(50)
+        detail = f"; last browser error: {last_error}" if last_error else ""
+        raise AssertionError(
+            f"CSP-safe browser condition did not become true: {expression}{detail}"
+        )
+
+
 def _check(condition: bool, message: str) -> None:
     if not condition:
         raise AssertionError(message)
+
+
+def _browser_console_error(page, message) -> str:
+    text = message.text
+    if text.startswith("Failed to load resource:"):
+        return text
+    return f"{page.url} {message.location}: {text}"
 
 
 def _drawer_state(page) -> dict:
@@ -162,6 +213,33 @@ def _assert_shared_shell(page, label: str) -> None:
     _check(not state["injectedIndicatorStyle"], f"{label}: HTMX indicator style tag must be absent")
     _check(state["hiddenOpacity"] == "0" and state["requestOpacity"] == "1", f"{label}: local indicator CSS must preserve behavior")
     _check(state["shellFunctions"], f"{label}: compatibility globals must remain available")
+
+
+def _assert_plaid_document_policy(page, response, label: str) -> None:
+    policy = response.headers.get("content-security-policy", "")
+    initializer = page.locator(f'script[src="{PLAID_INITIALIZER_URL}"]')
+    _check(
+        initializer.count() == 1,
+        f"{label}: exact Plaid initializer must appear once",
+    )
+    nonce = initializer.evaluate("element => element.nonce")
+    _check(
+        bool(nonce)
+        and policy.count(f"'nonce-{nonce}'") == 3
+        and f"style-src 'self' 'nonce-{nonce}'" in policy
+        and f"style-src-elem 'self' 'nonce-{nonce}'" in policy
+        and "style-src-attr 'unsafe-inline'" in policy
+        and "https://cdn.plaid.com/link/v2/stable/link-initialize.js"
+        in policy
+        and "frame-src https://cdn.plaid.com" in policy
+        and "connect-src 'self' https://sandbox.plaid.com" in policy
+        and "https://production.plaid.com" not in policy,
+        f"{label}: rendered Link document must bind one nonce to the exact sandbox policy",
+    )
+    _check(
+        page.evaluate("window.__cspViolations.length") == 0,
+        f"{label}: normal mocked Link loading must produce no CSP violation",
+    )
 
 
 def _seed_dashboard_data(entity_key: str) -> None:
@@ -3149,10 +3227,18 @@ def _assert_plaid_entry_pages(page, base_url: str, label: str) -> None:
     page.context.add_cookies(
         [{"name": "entity", "value": "Personal", "url": base_url}]
     )
-    page.goto(f"{base_url}/data-sources/", wait_until="networkidle")
+    data_sources_response = page.goto(
+        f"{base_url}/data-sources/",
+        wait_until="networkidle",
+    )
     page.wait_for_function(
         "document.querySelector('[data-data-sources-controller]')"
         "?.dataset.initialized === 'true'"
+    )
+    _assert_plaid_document_policy(
+        page,
+        data_sources_response,
+        f"{label} Data Sources",
     )
     _check(
         page.locator('script[src*="data-sources.js"]').count() == 1
@@ -3285,10 +3371,18 @@ def _assert_plaid_entry_pages(page, base_url: str, label: str) -> None:
         f"{label}: mocked vendor Link success must preserve form exchange and reload",
     )
 
-    page.goto(f"{base_url}/plaid/", wait_until="networkidle")
+    plaid_response = page.goto(
+        f"{base_url}/plaid/",
+        wait_until="networkidle",
+    )
     page.wait_for_function(
         "document.querySelector('[data-plaid-controller]')"
         "?.dataset.initialized === 'true'"
+    )
+    _assert_plaid_document_policy(
+        page,
+        plaid_response,
+        f"{label} Connected Accounts",
     )
     _check(
         page.locator('script[src*="/static/plaid.js"]').count() == 1
@@ -3523,7 +3617,7 @@ def _assert_plaid_entry_style_responsive(
 
 
 def _register_standalone_test_routes(app) -> None:
-    from flask import abort, render_template, render_template_string
+    from flask import Response, abort, render_template, render_template_string
 
     def synthetic_forbidden():
         abort(403)
@@ -3632,6 +3726,20 @@ def _register_standalone_test_routes(app) -> None:
             ],
         )
 
+    def synthetic_csp_eval_probe():
+        return Response(
+            """
+window.__cspEvalRan = false;
+window.__cspEvalBlocked = false;
+try {
+    eval("window.__cspEvalRan = true");
+} catch (error) {
+    window.__cspEvalBlocked = Boolean(error && error.name === "EvalError");
+}
+""",
+            mimetype="application/javascript",
+        )
+
     app.add_url_rule(
         "/__synthetic-4ar/403",
         "synthetic_4ar_403",
@@ -3666,6 +3774,11 @@ def _register_standalone_test_routes(app) -> None:
         "/__synthetic-4au/upload-dialog",
         "synthetic_4au_upload_dialog",
         synthetic_upload_dialog,
+    )
+    app.add_url_rule(
+        "/__synthetic-4bb/eval-probe.js",
+        "synthetic_4bb_eval_probe",
+        synthetic_csp_eval_probe,
     )
     app.add_url_rule(
         "/favicon.ico",
@@ -3883,6 +3996,218 @@ def _assert_standalone_documents(
     del console_errors[console_error_start:]
 
 
+def _assert_csp_enforcement(
+    page,
+    base_url: str,
+    label: str,
+    console_errors: list[str],
+    page_errors: list[str],
+    blocked_urls: list[str],
+    *,
+    verify_worker_refresh: bool,
+) -> None:
+    _check(
+        not console_errors and not page_errors and not blocked_urls,
+        f"{label}: normal workflows must be clean before prohibited-source probes; "
+        f"console={console_errors}, page={page_errors}, blocked={blocked_urls}",
+    )
+
+    response = page.goto(base_url, wait_until="networkidle")
+    _check(
+        response.headers.get("content-security-policy") == CORE_CSP_POLICY,
+        f"{label}: ordinary full-page HTML must emit the exact strict core policy",
+    )
+    _check(
+        page.evaluate("window.__cspViolations.length") == 0,
+        f"{label}: normal core loading must produce no CSP violation",
+    )
+
+    if verify_worker_refresh:
+        worker_state = page.evaluate(
+            """async (expectedPolicy) => {
+                const current = await navigator.serviceWorker.ready;
+                await caches.delete("the-ledger-v5");
+                const oldCache = await caches.open("the-ledger-v4");
+                await oldCache.put(
+                    "/offline",
+                    new Response(
+                        "<h1>Headerless synthetic old offline</h1>",
+                        {headers: {"Content-Type": "text/html"}}
+                    )
+                );
+                await current.unregister();
+                const registration = await navigator.serviceWorker.register(
+                    "/sw.js?synthetic-4bb-refresh=1",
+                    {scope: "/"}
+                );
+                const worker = (
+                    registration.installing
+                    || registration.waiting
+                    || registration.active
+                );
+                if (worker && worker.state !== "activated") {
+                    await new Promise((resolve, reject) => {
+                        const timeout = setTimeout(
+                            () => reject(new Error("worker activation timeout")),
+                            10000
+                        );
+                        worker.addEventListener("statechange", () => {
+                            if (worker.state === "activated") {
+                                clearTimeout(timeout);
+                                resolve();
+                            }
+                        });
+                    });
+                }
+                const cache = await caches.open("the-ledger-v5");
+                const offline = await cache.match("/offline");
+                const keys = await caches.keys();
+                return {
+                    activeScript: registration.active
+                        && registration.active.scriptURL,
+                    cacheKeys: keys,
+                    offlineFound: Boolean(offline),
+                    offlinePolicy: offline
+                        && offline.headers.get("Content-Security-Policy"),
+                    offlineBody: offline && await offline.text(),
+                    policyMatches: offline
+                        && offline.headers.get("Content-Security-Policy")
+                            === expectedPolicy,
+                };
+            }""",
+            CORE_CSP_POLICY,
+        )
+        _check(
+            worker_state["activeScript"].endswith(
+                "/sw.js?synthetic-4bb-refresh=1"
+            )
+            and worker_state["cacheKeys"] == ["the-ledger-v5"]
+            and worker_state["offlineFound"]
+            and worker_state["policyMatches"]
+            and "Headerless synthetic old offline"
+            not in worker_state["offlineBody"]
+            and "You're Offline" in worker_state["offlineBody"],
+            f"{label}: same-release worker install must replace the headerless old cache with strict /offline; state={worker_state}",
+        )
+
+    console_start = len(console_errors)
+    page_error_start = len(page_errors)
+    blocked_start = len(blocked_urls)
+    probe_state = page.evaluate(
+        """async () => {
+            window.__cspViolations.length = 0;
+            window.__cspInlineRan = false;
+            window.__cspHandlerRan = false;
+
+            const inlineScript = document.createElement("script");
+            inlineScript.textContent = "window.__cspInlineRan = true";
+            document.body.appendChild(inlineScript);
+
+            const handlerButton = document.createElement("button");
+            handlerButton.setAttribute(
+                "onclick",
+                "window.__cspHandlerRan = true"
+            );
+            document.body.appendChild(handlerButton);
+            handlerButton.click();
+
+            const styled = document.createElement("div");
+            document.body.appendChild(styled);
+            const colorBefore = getComputedStyle(styled).color;
+            styled.setAttribute("style", "color: rgb(1, 2, 3)");
+            const colorAfter = getComputedStyle(styled).color;
+
+            const evalScript = document.createElement("script");
+            evalScript.src = "/__synthetic-4bb/eval-probe.js";
+            await new Promise((resolve, reject) => {
+                evalScript.addEventListener("load", resolve, {once: true});
+                evalScript.addEventListener("error", reject, {once: true});
+                document.body.appendChild(evalScript);
+            });
+
+            await fetch("https://blocked-4bb.invalid/connect").catch(() => {});
+
+            const frame = document.createElement("iframe");
+            frame.src = "https://blocked-4bb.invalid/frame";
+            document.body.appendChild(frame);
+
+            const object = document.createElement("object");
+            object.data = "https://blocked-4bb.invalid/object";
+            document.body.appendChild(object);
+
+            const target = document.createElement("iframe");
+            target.name = "synthetic-4bb-form-target";
+            document.body.appendChild(target);
+            const form = document.createElement("form");
+            form.action = "https://blocked-4bb.invalid/form";
+            form.method = "post";
+            form.target = target.name;
+            document.body.appendChild(form);
+            form.requestSubmit();
+
+            await new Promise((resolve) => setTimeout(resolve, 600));
+            const directives = Array.from(
+                new Set(
+                    window.__cspViolations.map(
+                        (event) => event.effectiveDirective
+                    )
+                )
+            );
+            const result = {
+                directives,
+                inlineRan: window.__cspInlineRan,
+                handlerRan: window.__cspHandlerRan,
+                evalRan: Boolean(window.__cspEvalRan),
+                evalBlocked: Boolean(window.__cspEvalBlocked),
+                styleApplied: colorBefore !== colorAfter,
+            };
+            inlineScript.remove();
+            evalScript.remove();
+            handlerButton.remove();
+            styled.remove();
+            frame.remove();
+            object.remove();
+            form.remove();
+            target.remove();
+            return result;
+        }"""
+    )
+    directives = set(probe_state["directives"])
+    _check(
+        not probe_state["inlineRan"]
+        and not probe_state["handlerRan"]
+        and not probe_state["evalRan"]
+        and probe_state["evalBlocked"]
+        and not probe_state["styleApplied"],
+        f"{label}: inline script handler eval and style probes must be blocked; state={probe_state}",
+    )
+    _check(
+        {"script-src", "script-src-elem", "script-src-attr", "style-src-attr",
+         "connect-src", "frame-src", "object-src", "form-action"}.issubset(directives),
+        f"{label}: browser must report every prohibited source family; directives={sorted(directives)}",
+    )
+    _check(
+        len(blocked_urls) == blocked_start,
+        f"{label}: CSP must block cross-origin probes before any browser request",
+    )
+    _check(
+        len(page_errors) == page_error_start,
+        f"{label}: caught CSP probes must not create page errors",
+    )
+    probe_console_errors = console_errors[console_start:]
+    unexpected_probe_errors = [
+        message
+        for message in probe_console_errors
+        if "Content Security Policy" not in message
+        and not message.startswith("Refused to")
+    ]
+    _check(
+        not unexpected_probe_errors,
+        f"{label}: prohibited probes produced unexpected console errors: {unexpected_probe_errors}",
+    )
+    del console_errors[console_start:]
+
+
 def main() -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -3923,6 +4248,7 @@ def main() -> None:
                     "APP_PASSWORD_HASH": "",
                     "PLAID_CLIENT_ID": "synthetic-4aq-client",
                     "PLAID_SECRET": "synthetic-4aq-secret",
+                    "PLAID_ENV": "sandbox",
                     "SYNC_SECRET": "",
                     "OPENROUTER_API_KEY": "",
                     "LUXURY_SUPABASE_URL": "",
@@ -4037,7 +4363,16 @@ def main() -> None:
             with sync_playwright() as playwright:
                 browser = playwright.chromium.launch(channel="chrome", headless=True)
                 context = browser.new_context(viewport={"width": 390, "height": 844})
-                page = context.new_page()
+                context.add_init_script(
+                    """window.__cspViolations = [];
+                    addEventListener("securitypolicyviolation", (event) => {
+                        window.__cspViolations.push({
+                            effectiveDirective: event.effectiveDirective,
+                            blockedURI: event.blockedURI,
+                        });
+                    });"""
+                )
+                page = _CspSafePage(context.new_page())
 
                 def route_request(route) -> None:
                     url = route.request.url
@@ -4056,7 +4391,9 @@ def main() -> None:
                 page.route("**/*", route_request)
                 page.on(
                     "console",
-                    lambda message: console_errors.append(message.text)
+                    lambda message: console_errors.append(
+                        _browser_console_error(page, message)
+                    )
                     if message.type == "error"
                     else None,
                 )
@@ -4380,6 +4717,15 @@ def main() -> None:
                     "Luxe Legacy phone shell must preserve entity styling without style attributes",
                 )
 
+                _assert_csp_enforcement(
+                    page,
+                    base_url,
+                    "no-password final CSP enforcement",
+                    console_errors,
+                    page_errors,
+                    blocked_urls,
+                    verify_worker_refresh=True,
+                )
                 _check(not blocked_urls, f"browser attempted external requests: {blocked_urls}")
                 _check(not console_errors, f"browser console errors: {console_errors}")
                 _check(not page_errors, f"browser page errors: {page_errors}")
@@ -4415,7 +4761,16 @@ def main() -> None:
             with sync_playwright() as playwright:
                 browser = playwright.chromium.launch(channel="chrome", headless=True)
                 context = browser.new_context(viewport={"width": 390, "height": 844})
-                page = context.new_page()
+                context.add_init_script(
+                    """window.__cspViolations = [];
+                    addEventListener("securitypolicyviolation", (event) => {
+                        window.__cspViolations.push({
+                            effectiveDirective: event.effectiveDirective,
+                            blockedURI: event.blockedURI,
+                        });
+                    });"""
+                )
+                page = _CspSafePage(context.new_page())
 
                 def route_auth_request(route) -> None:
                     url = route.request.url
@@ -4434,7 +4789,9 @@ def main() -> None:
                 page.route("**/*", route_auth_request)
                 page.on(
                     "console",
-                    lambda message: auth_console_errors.append(message.text)
+                    lambda message: auth_console_errors.append(
+                        _browser_console_error(page, message)
+                    )
                     if message.type == "error"
                     else None,
                 )
@@ -4541,6 +4898,15 @@ def main() -> None:
                     page.evaluate("document.documentElement.getAttribute('data-theme')") == "light",
                     "configured-auth shell must retain migrated theme behavior",
                 )
+                _assert_csp_enforcement(
+                    page,
+                    base_url,
+                    "configured-auth final CSP enforcement",
+                    auth_console_errors,
+                    auth_page_errors,
+                    auth_blocked_urls,
+                    verify_worker_refresh=False,
+                )
                 _check(
                     not auth_blocked_urls,
                     f"configured-auth browser attempted external requests: {auth_blocked_urls}",
@@ -4594,7 +4960,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, mocked Plaid entry, and standalone login/offline/error/k execution and style workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, mocked Plaid entry, standalone login/offline/error/k execution and style workflows, final strict/Link CSP enforcement, worker cache refresh, prohibited-source probes, status-only wording, split and planning CRUD, AI, CSRF, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

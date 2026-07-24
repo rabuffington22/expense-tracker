@@ -7620,6 +7620,10 @@ input.pl-input--sm {
     padding-top: 0.25rem !important;
     padding-bottom: 0.25rem !important;
 }
+.stp-subcat-row .stp-subcat-label {
+    padding-left: 2rem;
+    color: var(--text-muted);
+}
 /* Subcategory budget inputs — smaller/lighter than category-level */
 .stp-budget-input-wrap--sub {
     font-size: 0.85rem;

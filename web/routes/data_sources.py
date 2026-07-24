@@ -10,11 +10,12 @@ from datetime import date as _date, datetime, timezone
 log = logging.getLogger(__name__)
 
 import pandas as pd
-from flask import Blueprint, render_template, request, flash, redirect, url_for, g, session, jsonify
+from flask import Blueprint, request, flash, redirect, url_for, g, session, jsonify
 
 from core.amazon import parse_amazon_csv, group_orders, save_orders_to_db, get_order_counts
 from core.henryschein import parse_henryschein_xlsx
 from core.db import get_connection
+from web.csp import render_plaid_document
 
 bp = Blueprint("data_sources", __name__, url_prefix="/data-sources")
 
@@ -66,7 +67,7 @@ def index():
     # Load connected vendor payment accounts
     vendor_accounts = _get_vendor_accounts(g.entity_key)
 
-    return render_template(
+    return render_plaid_document(
         "data_sources.html",
         total_orders=total_orders,
         matched_orders=matched,
@@ -118,7 +119,7 @@ def parse():
     matched = total_orders - unmatched_orders
     vendor_accounts = _get_vendor_accounts(g.entity_key)
 
-    return render_template(
+    return render_plaid_document(
         "data_sources.html",
         orders=orders,
         vendor=vendor,

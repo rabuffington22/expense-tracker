@@ -1711,7 +1711,7 @@ Work block 4AD gives the hamburger an explicit drawer relationship and synchroni
 
 ## Session Cookie And Browser Security Policy Need Explicit Hardening
 
-Status: partly addressed; cookie policy, CSP planning, shared and fragment execution, final HTMX disablement, and full-page route clusters through subscriptions are durable and deployed; payroll is complete locally through 4AP
+Status: locally resolved through work block 4BB; publication, production inspection, and a real Plaid Link checkpoint remain separate
 
 Severity: medium defense-in-depth risk
 
@@ -1719,15 +1719,15 @@ Captured: 2026-07-18
 
 Where seen: `web/__init__.py` and the repeated synthetic HTTPS response probe
 
-Revisit: Phase 4 Task 1P.4.2c for separately gated remaining full-page execution migration
+Revisit: Phase 4 Task 1P.4.4 release planning and separately authorized real Plaid compatibility checkpoint
 
 Summary:
 
-Work block 4AC made the Flask session cookie explicitly HttpOnly and SameSite Lax everywhere and Secure on Fly while preserving ordinary local HTTP. Work block 4AE froze the compatible route-family policy and migration/proof sequence. Work block 4AF moved the shared-shell execution surface into maintained local behavior. Work block 4AG moved nine dashboard/report fragment scripts, twelve template handlers, and one Python-rendered handler into maintained static/declarative behavior. Work block 4AH moved the final fragment executable script, twenty-eight native handlers, and two `hx-on` attributes into `transaction-fragments.js` and declarative controls. Work blocks 4AI and 4AI-R set `allowEval=false` and `allowScriptTags=false`, replace three directly swapped inert JSON script carriers with non-script template data, prove zero eval-backed HTMX attributes and zero directly returned script elements, pass the configured-auth/no-password cross-route browser matrix, and make the exact result durable and automatically deployed with credential-free production health verified. Full-page execution migrations through subscriptions are durable and released through 4AO-R. Work block 4AP locally moves BFM-only payroll add/detail/spending/import-role/confirmation/modal/keyboard behavior into page-owned `payroll.js`, delegated controls, non-script role-color data, and valid edit/delete form structure; full smoke and both auth-mode isolated Chrome pass with eight inline scripts, fourteen external scripts, zero inert JSON carriers, seven native handlers, and zero `hx-on` remaining across tracked templates. Protected HTML still does not emit Content-Security-Policy. Existing MIME, frame, referrer, XSS, and HTTPS HSTS headers continue to pass.
+Work block 4AC made the Flask session cookie explicitly HttpOnly and SameSite Lax everywhere and Secure on Fly while preserving ordinary local HTTP. Work blocks 4AE-4BA then defined and completed the execution, style, exceptional-document, PWA, and Plaid compatibility sequence. Local-only work block 4BB adds the strict core policy to every HTML response, a successfully-rendered-document marker and fresh 128-bit nonce for only the exact Plaid initializer, fail-closed sandbox/production selection, and a strict service-worker emergency HTML header. Enforcement exposed and removed the remaining Short-Term Planning generated style attributes. Maintained request and configured-auth/no-password isolated-browser coverage uses only temporary all-entity databases, mocked Plaid, denied non-localhost traffic, exact prohibited-source probes, service-worker cache refresh, and exact cleanup.
 
 Impact:
 
-The session-cookie policy no longer relies on browser defaults in tracked source. The remaining defense-in-depth gap is a compatible CSP for protected HTML.
+The session-cookie policy no longer relies on browser defaults in tracked source. Protected HTML now has a compatible, enforced local CSP implementation; the remaining risk is operational validation and publication rather than an absent source policy.
 
 Acceptance checks:
 
@@ -1737,7 +1737,7 @@ Acceptance checks:
 
 Why not fixed now:
 
-The cookie half is durable through 4AC-R, the CSP compatibility contract is durable through 4AE-R, the shared execution foundation is durable through 4AF-R, both fragment migration slices are durable and deployed through 4AH-R, final HTMX execution disablement plus cross-route proof are durable and deployed through 4AI-R, full-page clusters through subscriptions are released, and payroll is complete locally through 4AP. Remaining payroll publication, Plaid, standalone/error execution, style/document compatibility, header enforcement, and final production proof remain separately confirmed Task 1P.4 gates.
+The source and maintained local proof are complete through 4BB. Commit, push, merge/deploy, production inspection, and the first real Plaid Link open were outside 4BB and require separately confirmed work blocks.
 
 ## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
 

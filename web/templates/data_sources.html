@@ -109,7 +109,7 @@
 </div>
 
 {# ── Plaid Link Script ──────────────────────────────────────────────────── #}
-<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script nonce="{{ csp_nonce }}" src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 </div>
 
 {% endblock %}

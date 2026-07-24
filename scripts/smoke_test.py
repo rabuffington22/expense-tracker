@@ -8417,7 +8417,7 @@ def main() -> None:
         sw_source = (PROJECT_ROOT / "web" / "static" / "sw.js").read_text()
         precache = sw_source.split("const PRECACHE_URLS = [", 1)[1].split("];", 1)[0]
         _check("'/'" not in precache, "service worker: protected root must not be precached")
-        _check("the-ledger-v4" in sw_source, "service worker: cache version should invalidate old dynamic caches")
+        _check("the-ledger-v5" in sw_source, "service worker: cache version should invalidate old dynamic caches")
         _check("networkFirst" not in sw_source, "service worker: dynamic cache fallback should be removed")
         _check(sw_source.count("caches.match(request)") == 1, "service worker: only static cache-first may match the request URL")
         _check(sw_source.count("cache.put(request") == 1, "service worker: only static assets may be cached at runtime")
@@ -9168,8 +9168,14 @@ def main() -> None:
         )
         _check(
             'data-stp-action="show-transactions"' in rendered_subcategories
+            and "stp-subcat-label" in rendered_subcategories
+            and not _re.search(
+                r"\sstyle\s*=",
+                rendered_subcategories,
+                flags=_re.IGNORECASE,
+            )
             and not native_handler_pattern.search(rendered_subcategories),
-            "short-term planning: rendered subcategory rows must be delegated and handler-free",
+            "short-term planning: rendered subcategory rows must be delegated, handler-free, and style-attribute-free",
         )
 
         marker_conn = get_connection("personal")
@@ -9541,8 +9547,8 @@ def main() -> None:
             PROJECT_ROOT / "web" / "static" / "plaid.js"
         ).read_text()
         plaid_initializer = (
-            '<script src="https://cdn.plaid.com/link/v2/stable/'
-            'link-initialize.js"></script>'
+            'src="https://cdn.plaid.com/link/v2/stable/'
+            'link-initialize.js"'
         )
 
         _check(
@@ -9558,6 +9564,13 @@ def main() -> None:
             data_sources_source.count(plaid_initializer) == 1
             and plaid_source.count(plaid_initializer) == 1,
             "Plaid entry pages: both exact external initializer tags must remain",
+        )
+        _check(
+            all(
+                'nonce="{{ csp_nonce }}"' in source
+                for source in (data_sources_source, plaid_source)
+            ),
+            "Plaid entry pages: both exact initializer tags must use the request-scoped nonce",
         )
         _check(
             "data-sources.js" in data_sources_source
@@ -10383,6 +10396,9 @@ def main() -> None:
         short_term_controller_source = (
             PROJECT_ROOT / "web" / "static" / "short-term-planning.js"
         ).read_text()
+        short_term_route_source = (
+            PROJECT_ROOT / "web" / "routes" / "short_term_planning.py"
+        ).read_text()
         planning_controller_sources = (
             cashflow_controller_source,
             planning_controller_source,
@@ -10396,6 +10412,12 @@ def main() -> None:
                 for source in planning_controller_sources
             ),
             "cashflow/planning styles: all three controllers must emit no style attributes or runtime style writes",
+        )
+        _check(
+            "style=" not in short_term_route_source
+            and "u-width-pct" in short_term_route_source
+            and "stp-subcat-label" in short_term_route_source,
+            "cashflow/planning styles: Short-Term Planning route fragments must use bounded and semantic classes without generated style attributes",
         )
         _check(
             "input.size = Math.max(2, input.value.length + 1);"
@@ -10968,6 +10990,330 @@ def main() -> None:
         )
 
         print("   ✅ Six source and rendered documents, local offline-safe CSS, bounded k bars, family classes, and final zero inventory passed")
+
+        # ── 11v. Final CSP enforcement and local proof ───────────────
+        print("\n11v. Final CSP enforcement and local proof…")
+
+        import base64 as _base64
+        from flask import abort as _abort
+        from web.csp import CORE_CSP_POLICY
+
+        csp_app = create_app()
+        csp_app.config.update(TESTING=False, PROPAGATE_EXCEPTIONS=False)
+        csp_app.logger.disabled = True
+
+        def _synthetic_csp_forbidden():
+            _abort(403)
+
+        def _synthetic_csp_server_error():
+            raise RuntimeError("SYNTHETIC_4BB_EXCEPTION_MARKER")
+
+        csp_app.add_url_rule(
+            "/__synthetic-4bb/403",
+            "synthetic_4bb_403",
+            _synthetic_csp_forbidden,
+        )
+        csp_app.add_url_rule(
+            "/__synthetic-4bb/500",
+            "synthetic_4bb_500",
+            _synthetic_csp_server_error,
+        )
+
+        def _csp_header(response) -> str:
+            return response.headers.get("Content-Security-Policy", "")
+
+        def _assert_core_csp(response, label: str) -> None:
+            _check(
+                response.mimetype == "text/html"
+                and _csp_header(response) == CORE_CSP_POLICY,
+                f"{label}: every strict HTML response must emit the exact core policy",
+            )
+
+        def _assert_plaid_csp(response, environment: str | None, label: str) -> str:
+            policy = _csp_header(response)
+            nonce_values = set(
+                _re.findall(r"'nonce-([^']+)'", policy)
+            )
+            _check(
+                response.status_code == 200
+                and response.mimetype == "text/html"
+                and len(nonce_values) == 1,
+                f"{label}: successful Link response must emit one nonce-bearing policy",
+            )
+            nonce = nonce_values.pop()
+            _check(
+                len(_base64.b64decode(nonce, validate=True)) == 16,
+                f"{label}: nonce must decode to exactly 128 CSPRNG bits",
+            )
+            _check(
+                policy.count(f"'nonce-{nonce}'") == 3
+                and response.get_data(as_text=True).count(
+                    f'nonce="{nonce}"'
+                )
+                == 1,
+                f"{label}: one response nonce must cover the exact initializer and three directives only",
+            )
+            _check(
+                "script-src 'self'" in policy
+                and "https://cdn.plaid.com/link/v2/stable/link-initialize.js"
+                in policy
+                and f"style-src 'self' 'nonce-{nonce}'" in policy
+                and f"style-src-elem 'self' 'nonce-{nonce}'" in policy
+                and "style-src-attr 'unsafe-inline'" in policy
+                and "frame-src https://cdn.plaid.com" in policy
+                and "script-src-attr 'none'" in policy,
+                f"{label}: Plaid variant must change only the frozen initializer style and frame seams",
+            )
+            expected_origin = {
+                "sandbox": "https://sandbox.plaid.com",
+                "production": "https://production.plaid.com",
+            }.get(environment)
+            if expected_origin:
+                _check(
+                    f"connect-src 'self' {expected_origin}" in policy,
+                    f"{label}: policy must select only the validated {environment} connect origin",
+                )
+            else:
+                _check(
+                    "connect-src 'self';" in policy
+                    and "https://sandbox.plaid.com" not in policy
+                    and "https://production.plaid.com" not in policy,
+                    f"{label}: invalid configuration must fail closed without a Plaid connect origin",
+                )
+            other_origin = (
+                "https://production.plaid.com"
+                if environment == "sandbox"
+                else "https://sandbox.plaid.com"
+            )
+            _check(
+                environment not in ("sandbox", "production")
+                or other_origin not in policy,
+                f"{label}: a Link response must never allow both Plaid environments",
+            )
+            return nonce
+
+        with csp_app.test_client() as csp_client:
+            csp_client.set_cookie("entity", "Personal")
+            with csp_client.session_transaction() as csp_session:
+                csp_session["_csrf_token"] = "synthetic-4bb-csrf"
+
+            for path, expected_status in (
+                ("/", 200),
+                ("/dashboard/partial", 200),
+                ("/offline", 200),
+                ("/__synthetic-4bb/403", 403),
+                ("/__synthetic-4bb/500", 500),
+                ("/vendors", 301),
+            ):
+                response = csp_client.get(path, follow_redirects=False)
+                _check(
+                    response.status_code == expected_status,
+                    f"final CSP: {path} status must remain {expected_status}",
+                )
+                _assert_core_csp(response, f"final CSP {path}")
+
+            with patch(
+                "web.routes.kristine._start_background_sync",
+                return_value=False,
+            ):
+                focused_csp_response = csp_client.get("/k/")
+            _assert_core_csp(
+                focused_csp_response,
+                "final CSP standalone /k/",
+            )
+
+            for path in (
+                "/health",
+                "/sw.js",
+                "/static/manifest.json",
+            ):
+                response = csp_client.get(path)
+                _check(
+                    response.mimetype != "text/html"
+                    and "Content-Security-Policy" not in response.headers,
+                    f"final CSP {path}: non-HTML responses must not receive the document policy",
+                )
+
+            original_plaid_env = os.environ.pop("PLAID_ENV", None)
+            try:
+                absent_nonce = _assert_plaid_csp(
+                    csp_client.get("/plaid/"),
+                    "sandbox",
+                    "final CSP absent environment",
+                )
+                sandbox_nonce = _assert_plaid_csp(
+                    csp_client.get("/data-sources/"),
+                    "sandbox",
+                    "final CSP sandbox Data Sources",
+                )
+                _check(
+                    absent_nonce != sandbox_nonce,
+                    "final CSP: separate Link responses must not reuse a nonce",
+                )
+
+                os.environ["PLAID_ENV"] = "production"
+                _assert_plaid_csp(
+                    csp_client.get("/plaid/"),
+                    "production",
+                    "final CSP production Connected Accounts",
+                )
+
+                os.environ["PLAID_ENV"] = "invalid-4bb"
+                _assert_plaid_csp(
+                    csp_client.get("/plaid/"),
+                    None,
+                    "final CSP invalid environment",
+                )
+
+                os.environ["PLAID_ENV"] = "sandbox"
+                preview_response = csp_client.post(
+                    "/data-sources/parse",
+                    data={
+                        "_csrf_token": "synthetic-4bb-csrf",
+                        "vendor": "Amazon",
+                        "file": (
+                            io.BytesIO(amazon_csv_text.encode("utf-8")),
+                            "orders-4bb.csv",
+                        ),
+                    },
+                    content_type="multipart/form-data",
+                )
+                _assert_plaid_csp(
+                    preview_response,
+                    "sandbox",
+                    "final CSP successful Data Sources preview",
+                )
+                with csp_client.session_transaction() as csp_session:
+                    preview_temp_key = csp_session.pop(
+                        "vendor_temp_key",
+                        None,
+                    )
+                _check(
+                    preview_temp_key is not None,
+                    "final CSP: successful preview must expose its temporary cleanup key",
+                )
+                preview_temp_path = (
+                    Path(data_sources_routes._TEMP_DIR)
+                    / f"{preview_temp_key}.json"
+                )
+                preview_temp_path.unlink(missing_ok=True)
+
+                for path, method in (
+                    ("/plaid/", "get"),
+                    ("/data-sources/", "get"),
+                    ("/data-sources/parse", "post"),
+                ):
+                    request_kwargs = {}
+                    if method == "post":
+                        request_kwargs = {
+                            "data": {
+                                "_csrf_token": "synthetic-4bb-csrf",
+                                "vendor": "Amazon",
+                                "file": (
+                                    io.BytesIO(
+                                        amazon_csv_text.encode("utf-8")
+                                    ),
+                                    "orders-4bb-error.csv",
+                                ),
+                            },
+                            "content_type": "multipart/form-data",
+                        }
+                    with patch(
+                        "web.csp.render_template",
+                        side_effect=RuntimeError(
+                            "SYNTHETIC_4BB_LINK_RENDER_FAILURE"
+                        ),
+                    ):
+                        response = getattr(csp_client, method)(
+                            path,
+                            **request_kwargs,
+                        )
+                    _check(
+                        response.status_code == 500
+                        and "SYNTHETIC_4BB_LINK_RENDER_FAILURE"
+                        not in response.get_data(as_text=True),
+                        f"final CSP {path}: forced Link render failure must use the controlled error document",
+                    )
+                    _assert_core_csp(
+                        response,
+                        f"final CSP forced Link render failure {path}",
+                    )
+                    _check(
+                        "nonce-" not in _csp_header(response)
+                        and "cdn.plaid.com" not in _csp_header(response)
+                        and "style-src-attr 'unsafe-inline'"
+                        not in _csp_header(response),
+                        f"final CSP {path}: failed Link render must not leak a nonce or Plaid exception",
+                    )
+                    if method == "post":
+                        with csp_client.session_transaction() as csp_session:
+                            error_temp_key = csp_session.pop(
+                                "vendor_temp_key",
+                                None,
+                            )
+                        _check(
+                            error_temp_key is not None,
+                            "final CSP: forced preview failure must expose its temporary cleanup key",
+                        )
+                        (
+                            Path(data_sources_routes._TEMP_DIR)
+                            / f"{error_temp_key}.json"
+                        ).unlink(missing_ok=True)
+            finally:
+                if original_plaid_env is None:
+                    os.environ.pop("PLAID_ENV", None)
+                else:
+                    os.environ["PLAID_ENV"] = original_plaid_env
+
+        original_csp_auth_hash = os.environ.get("APP_PASSWORD_HASH")
+        os.environ["APP_PASSWORD_HASH"] = generate_password_hash(
+            "synthetic-4bb-auth-password"
+        )
+        csp_auth_app = create_app()
+        csp_auth_app.config.update(
+            TESTING=False,
+            PROPAGATE_EXCEPTIONS=False,
+        )
+        with csp_auth_app.test_client() as csp_auth_client:
+            _assert_core_csp(
+                csp_auth_client.get("/", follow_redirects=False),
+                "final CSP configured-auth redirect",
+            )
+            _assert_core_csp(
+                csp_auth_client.get(
+                    "/transactions/",
+                    headers={"HX-Request": "true"},
+                ),
+                "final CSP configured-auth HTMX rejection",
+            )
+            _assert_core_csp(
+                csp_auth_client.get("/auth/login"),
+                "final CSP configured-auth login",
+            )
+        if original_csp_auth_hash is None:
+            os.environ.pop("APP_PASSWORD_HASH", None)
+        else:
+            os.environ["APP_PASSWORD_HASH"] = original_csp_auth_hash
+
+        csp_source = (PROJECT_ROOT / "web" / "csp.py").read_text()
+        sw_source = (PROJECT_ROOT / "web" / "static" / "sw.js").read_text()
+        _check(
+            "secrets.token_bytes(16)" in csp_source
+            and "rendered = render_template" in csp_source
+            and "response = make_response(rendered)" in csp_source
+            and "setattr(" in csp_source,
+            "final CSP: source must generate 128-bit nonces and stamp only a completed rendered response",
+        )
+        _check(
+            "the-ledger-v5" in sw_source
+            and f'const CORE_CSP_POLICY = "{CORE_CSP_POLICY}";'
+            in sw_source
+            and "'Content-Security-Policy': CORE_CSP_POLICY"
+            in sw_source,
+            "final CSP: service-worker refresh and emergency HTML policy must match the server core policy exactly",
+        )
+
+        print("   ✅ Strict and Plaid response families, fresh nonces, fail-closed environments, forced errors, worker fallback, and exact cleanup passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
