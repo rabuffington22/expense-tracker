@@ -2,27 +2,61 @@
 
 ## Active Objective
 
-Preserve the complete, durable, automatically deployed, and credential-free health-verified 4AW-R result while deciding the next separately gated style cluster.
+Publish the exact verified 4AX Subscriptions and Payroll style-compatibility result through confirmed release work block 4AX-R, observe only its automatic Fly deployment, verify exact source identity and credential-free production health, and close Runway OS without retriggering deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.5 are durable, automatically deployed, and credential-free health verified through 4AS-R, 4AT-R, 4AU-R, 4AV-R, and 4AW-R.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.5 are durable, automatically deployed, and credential-free health verified through 4AS-R, 4AT-R, 4AU-R, 4AV-R, and 4AW-R; Task 1P.4.3a.6 is complete and verified locally through 4AX, and its exact release block 4AX-R is active.
 
 ## Current Work Block
 
-Work block 4AW-R: Weekly And Waterfall Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AX-R: Subscriptions And Payroll Style Compatibility Release — confirmed and active.
 
 ## Current Task
 
-Task 1P.4.3a.6: Make Subscriptions and Payroll styles strict-policy compatible — waiting for separate planning and confirmation.
+Task 1P.4.3a.6-R: Publish and verify Subscriptions and Payroll style compatibility — active through confirmed work block 4AX-R.
 
 ## Owner
 
-Ryan owns the next planning and confirmation decision. Codex Desktop owns no later style mutation, publication, protected access, or live action without another exact confirmed block or direct Ryan request.
+Codex Desktop owns exact-path staging, commit and ancestry verification, direct non-force push to `origin/main`, read-only automatic-deployment observation, credential-free production health, sanitized `[skip actions]` closeout, and final intake. Ryan owns every expansion, manual live action, and broader recovery.
 
 ## Current Action
 
-Decide whether to plan and confirm Task 1P.4.3a.6 for Subscriptions and Payroll style compatibility; preserve the durable 4AW-R result and every excluded boundary meanwhile.
+Commit the exact verified 4AX source set, push it directly to `origin/main` without force or PR, observe only the resulting automatic Fly deployment, verify the exact source SHA and credential-free `/health`, then publish one sanitized command-center-only `[skip actions]` closeout commit.
+
+## Work Block 4AX-R Contract
+
+- Include explicit-path staging and commit of the exact verified 4AX application, controller, templates, maintained tests, CSP contract, evidence, and Runway OS paths on `codex/csp-subscriptions-payroll-styles`; direct non-force push of that exact source commit to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.3a.7 and every later task; new application, runtime, style, route, financial, database, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, Plaid, protected-data, credential, manual workflow, non-automatic Fly, downstream, PR, force-push, broader-recovery, and preserved-file mutation outside scope.
+- Use explicit-path staging only; preserve the verified template, conditional-rendered, route-generated, and runtime migration, residual 6/37/0/0 inventory, zero Payroll route-generated attributes, dual-auth responsive browser proof, and all three unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths; full smoke and configured-auth/no-password isolated Chrome; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and all preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and separately gated Task 1P.4.3a.7.
+
+## Work Block 4AX-R Status
+
+- Ryan directly instructed Codex to commit and push the verified 4AX result to `main`, authorizing the exact 4AX-R release boundary.
+- Exact-path preflight, commit, push, automatic-deployment observation, production health, and sanitized closeout are in progress.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, credential, protected data, authenticated production page, downstream access, later-task work, broader recovery, or preserved-file mutation is authorized.
+
+## Work Block 4AX Contract
+
+- Include Task 1P.4.3a.6 plus only its focused Task 2 regression slice: remove the three baseline-counted Payroll template style attributes, one conditional new-role rendered style attribute, two route-generated Payroll spending-partial style attributes, and all five runtime style writes in the page-owned Subscriptions and Payroll controllers; preserve clipboard fallback, disclosure state, role colors, bounded spending bars, repeated period swaps, new-role visibility, dialogs, keyboard behavior, entity isolation, and the BFM-only Payroll boundary; reconcile the exact residual CSP style inventory; and close Runway OS locally after verification.
+- Keep Tasks 1P.4.3a.7-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, route contracts or queries beyond the included Payroll partial markup, financial calculations, databases, product behavior, authentication, CSRF, dependencies, CSP-header/nonce/exception/enforcement, Plaid, protected data, credentials, downstream systems, external/live access, GitHub, publication, deployment, workflows, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the unrelated duplicate 4AU log outside scope.
+- Preserve appearance and behavior rather than redesigning; use a maintained off-screen class for the clipboard proxy, semantic state and ARIA plus `hidden` for disclosure and new-role visibility, finite existing role-color classes with the current fallback, and the existing bounded `u-pct-0` through `u-pct-100` contract for integer spending bars; use temporary synthetic all-entity data, configured-auth and no-password modes, localhost-only disposable browser state, denied non-localhost traffic, zero unexpected console/page errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if parity requires a product/design decision, an inline-style exception, unbounded dynamic styling, a new role-color policy, or excluded route/query, financial, database, authentication, CSP-enforcement, Plaid, or later-task work; desktop, phone, or exact 768px behavior becomes ambiguous; protected/live/destructive access appears; verification changes the plan; cleanup fails; command-center checks fail; scope expands; or a preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-style proof for Payroll including both conditional branches and `/payroll/spending`; zero `.style.*` writes in both included controllers; exact residual tracked inventory of six style blocks, 37 template style attributes, zero JavaScript-generated attributes, and zero runtime writes plus zero Payroll route-generated style attributes; configured-auth and no-password isolated Chrome across Subscriptions in Personal/BFM/Luxe Legacy plus BFM Payroll and Personal/Luxe Legacy denial at desktop, phone, and exact 768px for clipboard fallback, disclosure, dialogs, mouse/Enter/Space/Escape behavior, role colors, spending refresh, conditional new-role controls, responsive overflow, denied networking, zero unexpected errors, and exact cleanup; relevant Python and JavaScript syntax; JSON; whitespace; dashboard refresh/health/generated state; exact scope; and all preserved files.
+- Report exact migrated seams and replacement patterns, final inventory, behavioral/responsive/browser parity, cleanup, changed paths, branch state, preserved exclusions, and the separate 4AX-R durability gate.
+
+## Work Block 4AX Status
+
+- Ryan confirmed the exact local-only 4AX proposal on 2026-07-24.
+- All three baseline-counted Payroll template attributes, one conditional rendered attribute, two route-generated Payroll spending-partial attributes, and all five Subscriptions/Payroll runtime style writes are removed through a maintained clipboard-proxy class, semantic disclosure and conditional-control state, finite role classes, and bounded percentage classes.
+- The exact residual tracked inventory is six inline style blocks, 37 template style attributes, zero JavaScript-generated style attributes, and zero application runtime style writes; the Payroll route emits zero style attributes.
+- Baseline and final full smoke, focused source/rendered/repeated-partial assertions, Python and JavaScript syntax, and configured-auth/no-password isolated Chrome across all-entity Subscriptions plus the BFM-only Payroll boundary at phone, exact 768px, and desktop passed with denied non-localhost traffic, zero unexpected browser/page errors, and exact cleanup.
+- Clipboard success and rejection fallback, dismissed disclosure, dialogs, mouse/Enter/Space/Escape behavior, role colors, employee detail, repeated spending swaps, bounded bars, import new-role visibility, and responsive layout passed without an inline-style exception or route-contract change.
+- No commit, push, PR, publication, deployment, live/protected access, route-query, financial, database, authentication, CSP enforcement, Plaid, later-cluster, destructive, downstream, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-24-subscriptions-payroll-style-compatibility-4ax.md`.
 
 ## Work Block 4AW Contract
 
@@ -216,8 +250,9 @@ Decide whether to plan and confirm Task 1P.4.3a.6 for Subscriptions and Payroll 
 - Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — complete and verified locally through 4AV.
 - Task 1P.4.3a.4-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — complete through 4AV-R.
 - Task 1P.4.3a.5: Weekly and Waterfall — complete and verified locally through 4AW.
-- Task 1P.4.3a.5-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — waiting for separate planning and confirmation.
-- Task 1P.4.3a.6: Subscriptions and Payroll — planned.
+- Task 1P.4.3a.5-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — complete through 4AW-R.
+- Task 1P.4.3a.6: Subscriptions and Payroll — complete and verified locally through 4AX with exact residual inventory 6/37/0/0 and zero Payroll route-generated attributes.
+- Task 1P.4.3a.6-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — waiting for separate planning and confirmation.
 - Task 1P.4.3a.7: Data Sources and Connected Accounts — planned; the third-party Plaid exception remains Task 1P.4.3b.
 - Task 1P.4.3a.8: login, offline/errors, and standalone `/k/` — planned; exceptional-document policy reconciliation remains Task 1P.4.3b.
 - No application, runtime, policy, header, live, GitHub, publication, or deployment mutation is authorized by this planning pass.

@@ -84,7 +84,7 @@
             role="button" tabindex="0">
           <td class="pr-name">{{ emp.name }}</td>
           <td>
-            <span class="pr-role-badge" style="background:{{ role_colors.get(emp.role, '#98989d') }}">
+            <span class="pr-role-badge {{ role_style_classes.get(emp.role, 'pr-role--default') }}">
               {{ emp.role }}
             </span>
           </td>
@@ -152,14 +152,15 @@
   <div id="pr-spending-body">
     {% if role_spending %}
       {% for rs in role_spending %}
+      {% set role_pct = (rs.total_cents / grand_total * 100)|round|int if grand_total else 0 %}
       <div class="pr-spending-role">
         <div class="pr-spending-role-header">
-          <span class="pr-role-badge" style="background:{{ role_colors.get(rs.role, '#98989d') }}">{{ rs.role }}</span>
+          <span class="pr-role-badge {{ role_style_classes.get(rs.role, 'pr-role--default') }}">{{ rs.role }}</span>
           <span class="pr-spending-amount">${{ "{:,.0f}".format(rs.total_cents / 100) }}</span>
-          <span class="pr-spending-pct">{{ (rs.total_cents / grand_total * 100)|round|int if grand_total else 0 }}%</span>
+          <span class="pr-spending-pct">{{ role_pct }}%</span>
         </div>
         <div class="pr-spending-bar-track">
-          <div class="pr-spending-bar-fill" style="width:{{ (rs.total_cents / grand_total * 100)|round|int if grand_total else 0 }}%;background:{{ role_colors.get(rs.role, '#98989d') }}"></div>
+          <div class="pr-spending-bar-fill u-width-pct u-pct-{{ [[role_pct, 0]|max, 100]|min }} {{ role_style_classes.get(rs.role, 'pr-role--default') }}"></div>
         </div>
         {% for emp in rs.employees %}
         <div class="pr-spending-employee">
@@ -240,7 +241,7 @@
                     {% endfor %}
                   </select>
                   <select name="new_role_{{ ue.name }}" class="pr-input pr-select pr-select--role" id="pr-new-role-{{ loop.index }}"
-                          {% if ue.exact_matches %}style="display:none"{% endif %}>
+                          {% if ue.exact_matches %}hidden{% endif %}>
                     <option value="">Role...</option>
                     {% for r in role_order %}
                     <option value="{{ r }}" {% if r == ue.suggested_role %}selected{% endif %}>{{ r }}</option>
@@ -291,7 +292,7 @@
     <div class="pr-detail-body">
       <div class="pr-detail-header">
         <span class="pr-detail-name" id="pr-detail-name"></span>
-        <span class="pr-role-badge" id="pr-detail-role-badge"></span>
+        <span class="pr-role-badge pr-role--default" id="pr-detail-role-badge"></span>
         <span class="pr-status-badge" id="pr-detail-status-badge"></span>
       </div>
 
@@ -395,8 +396,8 @@
 
 </div>
 
-<template id="pr-role-colors-data" data-json>
-{{ role_colors|tojson }}
+<template id="pr-role-classes-data" data-json>
+{{ role_style_classes|tojson }}
 </template>
 </div>{# payroll controller #}
 {% endblock %}

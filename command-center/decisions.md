@@ -2,6 +2,18 @@
 
 ## Accepted
 
+### 2026-07-24 — Confirm work block 4AX-R for exact Subscriptions and Payroll style-compatibility release
+
+Ryan directly instructed Codex to commit and push the verified 4AX result to `main`, authorizing exact-path staging and commit of the verified source set, a direct non-force push to `origin/main`, read-only observation of the resulting automatic Fly deployment, exact source-SHA verification, credential-free production `/health`, and one sanitized command-center-only `[skip actions]` closeout commit and push. The release excludes every later task or new application mutation, credentials, protected data, authenticated production pages, manual workflow actions, non-automatic Fly operations, downstream access, PR creation, force push, broader recovery, and mutation of the three preserved unrelated untracked files.
+
+### 2026-07-24 — Confirm work block 4AX for Subscriptions and Payroll style compatibility
+
+Ryan authorized the exact local-only Task 1P.4.3a.6 implementation and focused Task 2 regression slice: remove the explicit Payroll template, conditional-rendered, route-generated spending-partial, and Subscriptions/Payroll controller style seams while preserving clipboard fallback, disclosure state, role colors, bounded spending bars, repeated swaps, conditional controls, dialogs, keyboard behavior, entity isolation, and the BFM-only Payroll boundary. The block may update only the bounded application, maintained synthetic/browser coverage, CSP contract, sanitized evidence, and Runway OS surfaces; it excludes later style clusters, final CSP enforcement, protected/live access, GitHub durability, publication, deployment, and all three unrelated untracked files.
+
+### 2026-07-24 — Accept work block 4AX as complete locally
+
+The confirmed template, conditional-rendered, Payroll-partial, and controller style seams are removed through maintained semantic and bounded classes with exact 6/37/0/0 residual inventory and zero Payroll route-generated attributes. Baseline and final smoke plus configured-auth/no-password isolated Chrome prove clipboard success and rejection fallback, disclosure, dialogs, keyboard behavior, role colors, employee detail, repeated spending swaps, conditional new-role visibility, all-entity Subscriptions, the BFM-only Payroll boundary, phone/768/desktop layout, denied networking, zero unexpected errors, and exact cleanup. GitHub durability, publication, automatic-deployment observation, production health, later clusters, and every live or protected action remain separate.
+
 ### 2026-07-17 — Install the full Runway OS in Expense Tracker
 
 Ryan rejected a thin overlay and confirmed a full in-repo Runway OS install. The target repo will own its roadmap, current state, decisions, operating rules, dashboard, logs, handoffs, and verification history in `command-center/`.

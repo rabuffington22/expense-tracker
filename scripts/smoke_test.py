@@ -9449,7 +9449,7 @@ def main() -> None:
         _check(
             "payroll.js" in payroll_source
             and "data-payroll-controller" in payroll_source
-            and '<template id="pr-role-colors-data" data-json>' in payroll_source
+            and '<template id="pr-role-classes-data" data-json>' in payroll_source
             and 'data-payroll-action="show-add"' in payroll_source
             and 'data-payroll-action="hide-add"' in payroll_source
             and 'data-payroll-action="open-detail"' in payroll_source
@@ -9481,8 +9481,8 @@ def main() -> None:
         _check(
             "/static/payroll.js" in rendered_payroll
             and "data-payroll-controller" in rendered_payroll
-            and '<template id="pr-role-colors-data" data-json>' in rendered_payroll,
-            "payroll: rendered BFM route must expose the maintained controller and inert role-color data",
+            and '<template id="pr-role-classes-data" data-json>' in rendered_payroll,
+            "payroll: rendered BFM route must expose the maintained controller and inert role-class data",
         )
 
         all_template_source = "\n".join(
@@ -10068,8 +10068,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 40, 0, 5),
-            "shared/dashboard styles: current application inventory must match the post-4AW contract",
+            == (6, 37, 0, 0),
+            "shared/dashboard styles: current application inventory must match the post-4AX contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and current residual inventory passed")
@@ -10221,8 +10221,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 40, 0, 5),
-            "transaction/matching styles: residual application inventory must match the post-4AW contract",
+            == (6, 37, 0, 0),
+            "transaction/matching styles: residual application inventory must match the post-4AX contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded progress, split state, and exact residual inventory passed")
@@ -10349,8 +10349,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 40, 0, 5),
-            "categorization/upload styles: residual application inventory must match the post-4AW contract",
+            == (6, 37, 0, 0),
+            "categorization/upload styles: residual application inventory must match the post-4AX contract",
         )
 
         print("   ✅ Four source templates, rendered routes and preview, controller, semantic CSS, bounded progress, and exact residual inventory passed")
@@ -10470,8 +10470,8 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (6, 40, 0, 5),
-            "cashflow/planning styles: residual application inventory must match the post-4AW contract",
+            final_inventory == (6, 37, 0, 0),
+            "cashflow/planning styles: residual application inventory must match the post-4AX contract",
         )
 
         print("   ✅ Three source templates, rendered routes, semantic CSS, Web Animations motion, bounded progress, and exact residual inventory passed")
@@ -10573,11 +10573,142 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (6, 40, 0, 5),
-            "weekly/waterfall styles: residual application inventory must match the post-4AW contract",
+            final_inventory == (6, 37, 0, 0),
+            "weekly/waterfall styles: residual application inventory must match the post-4AX contract",
         )
 
         print("   ✅ Two source templates, rendered routes, bounded bars, inert geometry, measured tooltip and motion effects, and exact residual inventory passed")
+
+        # ── 11s. Subscriptions and Payroll style compatibility ──────────
+        print("\n11s. Subscriptions and Payroll style compatibility…")
+
+        subscriptions_style_source = (
+            templates_root / "subscriptions.html"
+        ).read_text()
+        payroll_style_source = payroll_template.read_text()
+        subscriptions_controller_source = (
+            PROJECT_ROOT / "web" / "static" / "subscriptions.js"
+        ).read_text()
+        payroll_controller_source = payroll_asset_source
+        payroll_route_source = (
+            PROJECT_ROOT / "web" / "routes" / "payroll.py"
+        ).read_text()
+
+        _check(
+            not style_attribute_pattern.search(payroll_style_source)
+            and "style=" not in payroll_route_source,
+            "subscriptions/payroll styles: Payroll template and route-generated partial source must contain no style attributes",
+        )
+        _check(
+            all(
+                "style=" not in source
+                and ".style." not in source
+                and ".style =" not in source
+                for source in (
+                    subscriptions_controller_source,
+                    payroll_controller_source,
+                )
+            ),
+            "subscriptions/payroll styles: both page controllers must emit no style attributes or runtime style writes",
+        )
+        _check(
+            'className = "u-clipboard-proxy"' in subscriptions_controller_source
+            and 'control.setAttribute("aria-expanded", String(!list.hidden))'
+            in subscriptions_controller_source
+            and 'aria-controls="sub-dismissed-list" aria-expanded="false"'
+            in subscriptions_style_source
+            and "roleSelect.hidden = control.value !== \"new\""
+            in payroll_controller_source
+            and "roleStyleClasses[data.role] || \"pr-role--default\""
+            in payroll_controller_source
+            and "u-width-pct u-pct-" in payroll_style_source
+            and "{% if ue.exact_matches %}hidden{% endif %}"
+            in payroll_style_source,
+            "subscriptions/payroll styles: semantic clipboard disclosure role-color bounded-bar and conditional-visibility contracts must remain explicit",
+        )
+        _check(
+            all(
+                selector in style_source
+                for selector in (
+                    ".u-clipboard-proxy",
+                    '.sub-dismissed-trigger[aria-expanded="true"] .sub-dismissed-chevron',
+                    ".pr-role--providers",
+                    ".pr-role--nurses",
+                    ".pr-role--front-office",
+                    ".pr-role--office-manager",
+                    ".pr-role--default",
+                )
+            ),
+            "subscriptions/payroll styles: maintained CSS must contain the clipboard disclosure and finite role-color contracts",
+        )
+
+        _check(
+            not style_attribute_pattern.search(rendered_subscriptions)
+            and not style_attribute_pattern.search(rendered_payroll)
+            and 'aria-expanded="false"' in rendered_subscriptions
+            and 'id="pr-role-classes-data"' in rendered_payroll,
+            "subscriptions/payroll styles: rendered full pages must expose semantic state and no style attributes",
+        )
+
+        synthetic_role_spending = [
+            {
+                "role": "Providers",
+                "total_cents": 20000,
+                "employees": [
+                    {"name": "Synthetic Provider", "total_cents": 20000}
+                ],
+            },
+            {
+                "role": "Front Office",
+                "total_cents": 10000,
+                "employees": [
+                    {"name": "Synthetic Front Office", "total_cents": 10000}
+                ],
+            },
+        ]
+        style_client.set_cookie("entity", "BFM")
+        with patch(
+            "web.routes.payroll._get_role_spending",
+            return_value=synthetic_role_spending,
+        ):
+            rendered_payroll_partial = style_client.get(
+                "/payroll/spending?spending_period=2026-07-24"
+            ).get_data(as_text=True)
+        _check(
+            not style_attribute_pattern.search(rendered_payroll_partial)
+            and "pr-role--providers" in rendered_payroll_partial
+            and "pr-role--front-office" in rendered_payroll_partial
+            and "u-width-pct u-pct-67" in rendered_payroll_partial
+            and "u-width-pct u-pct-33" in rendered_payroll_partial,
+            "subscriptions/payroll styles: repeated Payroll spending partials must use finite role and bounded percentage classes",
+        )
+
+        final_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        final_js_source = "\n".join(
+            path.read_text()
+            for path in (PROJECT_ROOT / "web" / "static").glob("*.js")
+            if path.name != "htmx.min.js"
+        )
+        final_inventory = (
+            len(
+                _re.findall(
+                    r"<style(?:\s|>)",
+                    final_template_source,
+                    flags=_re.IGNORECASE,
+                )
+            ),
+            len(style_attribute_pattern.findall(final_template_source)),
+            final_js_source.count("style="),
+            final_js_source.count(".style."),
+        )
+        _check(
+            final_inventory == (6, 37, 0, 0),
+            "subscriptions/payroll styles: residual application inventory must match the post-4AX contract",
+        )
+
+        print("   ✅ Source and rendered pages, repeated Payroll partials, semantic state, finite role colors, bounded bars, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

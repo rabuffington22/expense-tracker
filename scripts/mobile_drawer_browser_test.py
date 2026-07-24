@@ -2620,15 +2620,25 @@ def _assert_subscription_page(page, base_url: str, label: str) -> None:
     )
 
     dismissed_list = page.locator("#sub-dismissed-list")
-    page.locator('[data-subscriptions-action="toggle-dismissed"]').click()
+    dismissed_trigger = page.locator(
+        '[data-subscriptions-action="toggle-dismissed"]'
+    )
+    _check(
+        dismissed_trigger.get_attribute("aria-expanded") == "false",
+        f"{label}: dismissed disclosure must begin semantically collapsed",
+    )
+    dismissed_trigger.click()
     _check(
         dismissed_list.is_visible()
-        and "4AO Personal Dismissed" in dismissed_list.inner_text(),
+        and "4AO Personal Dismissed" in dismissed_list.inner_text()
+        and dismissed_trigger.get_attribute("aria-expanded") == "true"
+        and page.locator("#sub-dismissed-chevron").get_attribute("style") is None,
         f"{label}: delegated dismissed control must reveal entity-local rows",
     )
-    page.locator('[data-subscriptions-action="toggle-dismissed"]').click()
+    dismissed_trigger.click()
     _check(
-        dismissed_list.is_hidden(),
+        dismissed_list.is_hidden()
+        and dismissed_trigger.get_attribute("aria-expanded") == "false",
         f"{label}: delegated dismissed control must close the list",
     )
 
@@ -2710,6 +2720,40 @@ def _assert_subscription_page(page, base_url: str, label: str) -> None:
         in page.evaluate("window.__copiedSubscriptionText"),
         f"{label}: clipboard action must use the entity-local synthetic share text",
     )
+    page.evaluate(
+        """() => {
+            window.__subscriptionFallback = null;
+            navigator.clipboard.writeText = async () => {
+                throw new Error("synthetic clipboard rejection");
+            };
+            document.execCommand = (command) => {
+                const proxy = document.querySelector(".u-clipboard-proxy");
+                window.__subscriptionFallback = {
+                    command,
+                    proxyPresent: Boolean(proxy),
+                    inlineStyle: proxy?.hasAttribute("style") ?? true,
+                    position: proxy ? getComputedStyle(proxy).position : "",
+                    opacity: proxy ? getComputedStyle(proxy).opacity : "",
+                };
+                return true;
+            };
+        }"""
+    )
+    page.locator('[data-subscriptions-action="copy-share"]').click()
+    page.wait_for_function("() => window.__subscriptionFallback !== null")
+    clipboard_fallback = page.evaluate("window.__subscriptionFallback")
+    _check(
+        clipboard_fallback
+        == {
+            "command": "copy",
+            "proxyPresent": True,
+            "inlineStyle": False,
+            "position": "fixed",
+            "opacity": "0",
+        }
+        and page.locator(".u-clipboard-proxy").count() == 0,
+        f"{label}: clipboard rejection must use and remove the style-attribute-free maintained proxy; state={clipboard_fallback}",
+    )
 
     page.once("dialog", lambda dialog: dialog.dismiss())
     page.locator('[data-subscriptions-action="remove-watchlist"]').click()
@@ -2757,9 +2801,10 @@ def _assert_payroll_page(page, base_url: str, label: str) -> None:
     _check(
         page.locator("[data-payroll-controller]").count() == 1
         and page.locator('script[src*="payroll.js"]').count() == 1
-        and page.locator("#pr-role-colors-data").evaluate(
+        and page.locator("#pr-role-classes-data").evaluate(
             "element => element.tagName === 'TEMPLATE'"
         )
+        and page.locator("#main-content [style]").count() == 0
         and page.locator(
             "#main-content [onclick], #main-content [onchange], "
             "#main-content [onkeydown], #main-content [hx-on]"
@@ -2794,6 +2839,9 @@ def _assert_payroll_page(page, base_url: str, label: str) -> None:
     )
     _check(
         page.locator("#pr-detail-scrim").is_visible()
+        and "pr-role--providers"
+        in page.locator("#pr-detail-role-badge").get_attribute("class")
+        and page.locator("#pr-detail-role-badge").get_attribute("style") is None
         and page.locator("#pr-detail-timeline .pr-timeline-item").count() == 1
         and page.locator("#pr-detail-paychecks .pr-paycheck-item").count() == 2
         and page.locator("#pr-edit-form").get_attribute("action").endswith(
@@ -2846,7 +2894,16 @@ def _assert_payroll_page(page, base_url: str, label: str) -> None:
         "() => document.getElementById('pr-spending-body').textContent.includes('$5,000')"
     )
     _check(
-        "4AP BFM Provider" in page.locator("#pr-spending-body").inner_text(),
+        "4AP BFM Provider" in page.locator("#pr-spending-body").inner_text()
+        and page.locator("#pr-spending-body [style]").count() == 0
+        and page.locator(
+            "#pr-spending-body .pr-spending-bar-fill.u-width-pct[class*='u-pct-']"
+        ).count()
+        >= 1
+        and page.locator(
+            "#pr-spending-body .pr-role-badge[class*='pr-role--']"
+        ).count()
+        >= 1,
         f"{label}: delegated spending-period change must refresh synthetic BFM totals",
     )
 
@@ -2865,17 +2922,18 @@ def _assert_payroll_page(page, base_url: str, label: str) -> None:
     _check(
         assignment.count() == 1
         and new_role.is_visible()
+        and new_role.get_attribute("style") is None
         and "4AP Preview Employee" in page.locator(".pr-import-table").inner_text(),
         f"{label}: synthetic import preview must expose the new-role control",
     )
     assignment.select_option("1")
     _check(
-        new_role.is_hidden(),
+        new_role.is_hidden() and new_role.get_attribute("style") is None,
         f"{label}: selecting an existing employee must hide the new-role control",
     )
     assignment.select_option("new")
     _check(
-        new_role.is_visible(),
+        new_role.is_visible() and new_role.get_attribute("style") is None,
         f"{label}: selecting new must reveal the new-role control",
     )
     temp_key = page.locator('input[name="temp_key"]').input_value()
@@ -2899,6 +2957,158 @@ def _assert_payroll_page(page, base_url: str, label: str) -> None:
             f"{label}: {entity_name} must remain denied before payroll execution",
         )
 
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
+def _assert_subscriptions_payroll_style_responsive(
+    page, base_url: str, label: str
+) -> None:
+    viewports = (
+        ("phone", 390, 844),
+        ("exact-768", 768, 900),
+        ("desktop", 1280, 900),
+    )
+
+    for entity_name in ("Personal", "BFM", "LL"):
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        for viewport_name, width, height in viewports:
+            page.set_viewport_size({"width": width, "height": height})
+            page.goto(f"{base_url}/subscriptions/", wait_until="networkidle")
+            subscription_state = page.evaluate(
+                """() => ({
+                    controller: document.querySelectorAll(
+                        "[data-subscriptions-controller]"
+                    ).length,
+                    styleAttrs: document.querySelectorAll(
+                        "#main-content [style]"
+                    ).length,
+                    bodyOverflow: document.documentElement.scrollWidth
+                        > document.documentElement.clientWidth + 1,
+                    pageVisible: Boolean(
+                        document.querySelector(".sub-page")?.getClientRects().length
+                    ),
+                    triggerExpanded: document.getElementById(
+                        "sub-dismissed-trigger"
+                    )?.getAttribute("aria-expanded") ?? null,
+                })"""
+            )
+            _check(
+                subscription_state["controller"] == 1
+                and subscription_state["styleAttrs"] == 0
+                and not subscription_state["bodyOverflow"]
+                and subscription_state["pageVisible"]
+                and (
+                    entity_name != "Personal"
+                    or subscription_state["triggerExpanded"] == "false"
+                ),
+                f"{label}: {entity_name} Subscriptions must remain style-attribute-free and non-overflowing at {viewport_name}; state={subscription_state}",
+            )
+            if entity_name == "Personal":
+                disclosure = page.locator(
+                    '[data-subscriptions-action="toggle-dismissed"]'
+                )
+                disclosure.click()
+                disclosure_state = page.evaluate(
+                    """() => {
+                        const trigger = document.getElementById(
+                            "sub-dismissed-trigger"
+                        );
+                        const chevron = document.getElementById(
+                            "sub-dismissed-chevron"
+                        );
+                        return {
+                            expanded: trigger.getAttribute("aria-expanded"),
+                            listVisible: !document.getElementById(
+                                "sub-dismissed-list"
+                            ).hidden,
+                            inlineStyle: chevron.hasAttribute("style"),
+                            transform: getComputedStyle(chevron).transform,
+                        };
+                    }"""
+                )
+                _check(
+                    disclosure_state["expanded"] == "true"
+                    and disclosure_state["listVisible"]
+                    and not disclosure_state["inlineStyle"]
+                    and disclosure_state["transform"] != "none",
+                    f"{label}: Personal dismissed disclosure must use semantic state and maintained rotation at {viewport_name}; state={disclosure_state}",
+                )
+                disclosure.click()
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "BFM", "url": base_url}]
+    )
+    for viewport_name, width, height in viewports:
+        page.set_viewport_size({"width": width, "height": height})
+        page.goto(f"{base_url}/payroll/", wait_until="networkidle")
+        page.wait_for_function(
+            "document.querySelector('[data-payroll-controller]')"
+            "?.dataset.initialized === 'true'"
+        )
+        payroll_state = page.evaluate(
+            """() => {
+                const badges = Array.from(
+                    document.querySelectorAll(".pr-role-badge")
+                );
+                const bars = Array.from(
+                    document.querySelectorAll(".pr-spending-bar-fill")
+                );
+                return {
+                    controller: document.querySelectorAll(
+                        "[data-payroll-controller]"
+                    ).length,
+                    styleAttrs: document.querySelectorAll(
+                        "#main-content [style]"
+                    ).length,
+                    bodyOverflow: document.documentElement.scrollWidth
+                        > document.documentElement.clientWidth + 1,
+                    badges: badges.length,
+                    finiteRoleClasses: badges.every(
+                        (badge) => Array.from(badge.classList).some(
+                            (name) => name.startsWith("pr-role--")
+                        )
+                    ),
+                    boundedBars: bars.length,
+                    boundedBarClasses: bars.every(
+                        (bar) => bar.classList.contains("u-width-pct")
+                            && Array.from(bar.classList).some(
+                                (name) => name.startsWith("u-pct-")
+                            )
+                            && !bar.hasAttribute("style")
+                    ),
+                };
+            }"""
+        )
+        _check(
+            payroll_state["controller"] == 1
+            and payroll_state["styleAttrs"] == 0
+            and not payroll_state["bodyOverflow"]
+            and payroll_state["badges"] > 0
+            and payroll_state["finiteRoleClasses"]
+            and payroll_state["boundedBars"] > 0
+            and payroll_state["boundedBarClasses"],
+            f"{label}: BFM Payroll must preserve finite role classes bounded bars and a style-attribute-free non-overflowing {viewport_name} layout; state={payroll_state}",
+        )
+
+    for entity_name in ("Personal", "LL"):
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        for viewport_name, width, height in viewports:
+            page.set_viewport_size({"width": width, "height": height})
+            page.goto(f"{base_url}/payroll/", wait_until="networkidle")
+            _check(
+                page.url.rstrip("/") == base_url
+                and page.locator("[data-payroll-controller]").count() == 0,
+                f"{label}: {entity_name} Payroll must remain denied before controller execution at {viewport_name}",
+            )
+
+    page.set_viewport_size({"width": 390, "height": 844})
     page.context.add_cookies(
         [{"name": "entity", "value": "Personal", "url": base_url}]
     )
@@ -3892,6 +4102,11 @@ def main() -> None:
                 _assert_payroll_page(
                     page, base_url, "no-password payroll execution"
                 )
+                _assert_subscriptions_payroll_style_responsive(
+                    page,
+                    base_url,
+                    "no-password Subscriptions/Payroll style compatibility",
+                )
                 _assert_plaid_entry_pages(
                     page, base_url, "no-password Plaid entry execution"
                 )
@@ -4053,6 +4268,11 @@ def main() -> None:
                 )
                 _assert_payroll_page(
                     page, base_url, "configured-auth payroll execution"
+                )
+                _assert_subscriptions_payroll_style_responsive(
+                    page,
+                    base_url,
+                    "configured-auth Subscriptions/Payroll style compatibility",
                 )
                 _assert_plaid_entry_pages(
                     page, base_url, "configured-auth Plaid entry execution"

@@ -3,7 +3,7 @@
     "use strict";
 
     var currentEmployeeId = null;
-    var roleColors = {};
+    var roleStyleClasses = {};
 
     function root() {
         return document.querySelector("[data-payroll-controller]");
@@ -13,8 +13,8 @@
         return document.getElementById(id);
     }
 
-    function parseRoleColors() {
-        var carrier = element("pr-role-colors-data");
+    function parseRoleStyleClasses() {
+        var carrier = element("pr-role-classes-data");
         if (!carrier) {
             return {};
         }
@@ -120,7 +120,8 @@
 
         var roleBadge = element("pr-detail-role-badge");
         roleBadge.textContent = data.role;
-        roleBadge.style.background = roleColors[data.role] || "#98989d";
+        roleBadge.className = "pr-role-badge "
+            + (roleStyleClasses[data.role] || "pr-role--default");
 
         var statusBadge = element("pr-detail-status-badge");
         statusBadge.textContent = data.status;
@@ -196,7 +197,7 @@
     function toggleNewRole(control) {
         var roleSelect = control.parentElement.querySelector(".pr-select--role");
         if (roleSelect) {
-            roleSelect.style.display = control.value === "new" ? "" : "none";
+            roleSelect.hidden = control.value !== "new";
         }
     }
 
@@ -222,7 +223,7 @@
         if (!controller || controller.dataset.initialized === "true") {
             return;
         }
-        roleColors = parseRoleColors();
+        roleStyleClasses = parseRoleStyleClasses();
         controller.dataset.initialized = "true";
     }
 

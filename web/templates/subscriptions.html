@@ -163,7 +163,8 @@
 {% if dismissed %}
 <div class="sub-dismissed-section">
     <button type="button" class="sub-dismissed-trigger" id="sub-dismissed-trigger"
-            data-subscriptions-action="toggle-dismissed">
+            data-subscriptions-action="toggle-dismissed"
+            aria-controls="sub-dismissed-list" aria-expanded="false">
         Show {{ dismissed|length }} dismissed
         <span class="sub-dismissed-chevron" id="sub-dismissed-chevron">&#x203A;</span>
     </button>

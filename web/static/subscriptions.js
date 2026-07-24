@@ -394,8 +394,7 @@
                     .catch(function () {
                         var textarea = document.createElement("textarea");
                         textarea.value = data.text;
-                        textarea.style.position = "fixed";
-                        textarea.style.opacity = "0";
+                        textarea.className = "u-clipboard-proxy";
                         document.body.appendChild(textarea);
                         textarea.select();
                         document.execCommand("copy");
@@ -436,11 +435,10 @@
         document.querySelector("#sub-add-panel form").reset();
     }
 
-    function toggleDismissed() {
+    function toggleDismissed(control) {
         var list = element("sub-dismissed-list");
-        var chevron = element("sub-dismissed-chevron");
         list.hidden = !list.hidden;
-        chevron.style.transform = list.hidden ? "" : "rotate(90deg)";
+        control.setAttribute("aria-expanded", String(!list.hidden));
     }
 
     function runAction(control) {
@@ -454,7 +452,7 @@
         } else if (action === "hide-add") {
             hideAdd();
         } else if (action === "toggle-dismissed") {
-            toggleDismissed();
+            toggleDismissed(control);
         } else if (action === "close-detail") {
             closeDetail();
         } else if (action === "add-account-info") {

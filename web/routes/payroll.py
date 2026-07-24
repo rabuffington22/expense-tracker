@@ -47,6 +47,11 @@ ROLE_COLORS: dict[str, str] = {
     "HR": "#6366f1",
     "Owner": "#94a3b8",
 }
+ROLE_STYLE_CLASSES: dict[str, str] = {
+    role: f"pr-role--{re.sub(r'[^a-z0-9]+', '-', role.lower()).strip('-')}"
+    for role in ROLE_COLORS
+}
+DEFAULT_ROLE_STYLE_CLASS = "pr-role--default"
 
 ROLE_ORDER = ["Providers", "Nurses", "Scribes", "Front Office", "Office Manager", "HR", "Owner"]
 PAY_TYPES = {"hourly", "salary"}
@@ -350,7 +355,7 @@ def _render_import_error(warnings: list[str], message: str):
         role_avgs={},
         role_spending=[],
         grand_total=0,
-        role_colors=ROLE_COLORS,
+        role_style_classes=ROLE_STYLE_CLASSES,
         role_order=ROLE_ORDER,
         available_periods=[],
         spending_period=date.today().strftime("%Y-%m-%d"),
@@ -384,7 +389,7 @@ def index():
             role_avgs=role_avgs,
             role_spending=role_spending,
             grand_total=grand_total,
-            role_colors=ROLE_COLORS,
+            role_style_classes=ROLE_STYLE_CLASSES,
             role_order=ROLE_ORDER,
             available_periods=available_periods,
             spending_period=spending_period,
@@ -604,7 +609,7 @@ def import_parse():
             role_avgs=role_avgs,
             role_spending=role_spending,
             grand_total=grand_total,
-            role_colors=ROLE_COLORS,
+            role_style_classes=ROLE_STYLE_CLASSES,
             role_order=ROLE_ORDER,
             available_periods=available_periods,
             spending_period=spending_period,
@@ -787,17 +792,20 @@ def spending_partial():
         else:
             for rs in role_spending:
                 pct = round(rs["total_cents"] / grand_total * 100) if grand_total else 0
-                color = ROLE_COLORS.get(rs["role"], "#98989d")
+                bounded_pct = max(0, min(100, pct))
+                role_class = ROLE_STYLE_CLASSES.get(
+                    rs["role"], DEFAULT_ROLE_STYLE_CLASS
+                )
                 role_esc = escape(rs["role"])
                 lines.append(
                     f'<div class="pr-spending-role">'
                     f'<div class="pr-spending-role-header">'
-                    f'<span class="pr-role-badge" style="background:{color}">{role_esc}</span>'
+                    f'<span class="pr-role-badge {role_class}">{role_esc}</span>'
                     f'<span class="pr-spending-amount">${rs["total_cents"] / 100:,.0f}</span>'
                     f'<span class="pr-spending-pct">{pct}%</span>'
                     f'</div>'
                     f'<div class="pr-spending-bar-track">'
-                    f'<div class="pr-spending-bar-fill" style="width:{pct}%;background:{color}"></div>'
+                    f'<div class="pr-spending-bar-fill u-width-pct u-pct-{bounded_pct} {role_class}"></div>'
                     f'</div>'
                 )
                 # Per-employee breakdown

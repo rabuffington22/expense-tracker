@@ -2608,6 +2608,14 @@ input[type="checkbox"] {
 .u-width-pct { width: var(--ui-pct); }
 .u-height-pct { height: var(--ui-pct); }
 .u-left-pct { left: var(--ui-pct); }
+.u-clipboard-proxy {
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    inset: 0 auto auto -10000px;
+    opacity: 0;
+    pointer-events: none;
+}
 .u-pct-0 { --ui-pct: 0%; }
 .u-pct-1 { --ui-pct: 1%; }
 .u-pct-2 { --ui-pct: 2%; }
@@ -4098,6 +4106,9 @@ tr.is-selected > td:first-child {
     display: inline-block;
     transition: transform var(--transition);
     font-size: 0.85rem;
+}
+.sub-dismissed-trigger[aria-expanded="true"] .sub-dismissed-chevron {
+    transform: rotate(90deg);
 }
 .sub-dismissed-list {
     margin-top: 0.35rem;
@@ -7884,6 +7895,14 @@ select.stp-modal-input {
     letter-spacing: 0.02em;
     white-space: nowrap;
 }
+.pr-role--providers { background: #ef4444; }
+.pr-role--nurses { background: #8b5cf6; }
+.pr-role--scribes { background: #f59e0b; }
+.pr-role--front-office { background: #22c55e; }
+.pr-role--office-manager { background: #3b82f6; }
+.pr-role--hr { background: #6366f1; }
+.pr-role--owner { background: #94a3b8; }
+.pr-role--default { background: #98989d; }
 
 /* ── Status badge ── */
 .pr-status-badge {
