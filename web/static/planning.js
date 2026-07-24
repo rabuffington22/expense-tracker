@@ -8,15 +8,38 @@
         return document.querySelector("[data-planning-controller]");
     }
 
-    function setGenieOrigin(card) {
-        var rect = card.getBoundingClientRect();
-        var centerX = rect.left + rect.width / 2;
-        var centerY = rect.top + rect.height / 2;
-        var popup = document.querySelector(".pl-modal-popup");
-        if (popup) {
-            popup.style.setProperty("--genie-x", (centerX - window.innerWidth / 2) + "px");
-            popup.style.setProperty("--genie-y", (centerY - window.innerHeight / 2) + "px");
+    function animatePopup(popup, card, closing) {
+        if (!popup) {
+            return;
         }
+        popup.getAnimations().forEach(function (animation) {
+            animation.cancel();
+        });
+        var popupRect = popup.getBoundingClientRect();
+        var cardRect = card ? card.getBoundingClientRect() : popupRect;
+        var offsetX = cardRect.left + cardRect.width / 2
+            - (popupRect.left + popupRect.width / 2);
+        var offsetY = cardRect.top + cardRect.height / 2
+            - (popupRect.top + popupRect.height / 2);
+        var originFrame = {
+            opacity: 0,
+            transform: "translate3d(" + offsetX + "px, "
+                + offsetY + "px, 0) scale(0.05)"
+        };
+        var settledFrame = {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0) scale(1)"
+        };
+        popup.animate(
+            closing ? [settledFrame, originFrame] : [originFrame, settledFrame],
+            {
+                duration: closing ? 300 : 400,
+                easing: closing
+                    ? "cubic-bezier(0.55, 0, 1, 0.45)"
+                    : "cubic-bezier(0.22, 1, 0.36, 1)",
+                fill: closing ? "forwards" : "none"
+            }
+        );
     }
 
     function hideAllForms() {
@@ -31,6 +54,7 @@
         }
         form.hidden = false;
         document.getElementById("pl-modal-scrim").hidden = false;
+        animatePopup(document.querySelector(".pl-modal-popup"), flippedCard, false);
         var nameInput = form.querySelector('input[name="name"]');
         if (nameInput) {
             nameInput.focus();
@@ -50,7 +74,6 @@
     function flipAndOpen(card) {
         card.classList.add("card-flipped");
         flippedCard = card;
-        setGenieOrigin(card);
         window.setTimeout(function () {
             openEdit(card.dataset.itemId);
         }, 250);
@@ -62,18 +85,15 @@
             return;
         }
         var popup = document.querySelector(".pl-modal-popup");
-        if (flippedCard) {
-            setGenieOrigin(flippedCard);
-        }
         scrim.classList.add("cf-modal-scrim--closing");
-        if (popup) {
-            popup.classList.add("pl-modal-popup--closing");
-        }
+        animatePopup(popup, flippedCard, true);
         window.setTimeout(function () {
             scrim.hidden = true;
             scrim.classList.remove("cf-modal-scrim--closing");
             if (popup) {
-                popup.classList.remove("pl-modal-popup--closing");
+                popup.getAnimations().forEach(function (animation) {
+                    animation.cancel();
+                });
             }
             hideAllForms();
             if (flippedCard) {
@@ -90,7 +110,6 @@
         var isCashFlow = select.value === "cashflow";
         accountGroup.hidden = !isCashFlow;
         valueInput.disabled = isCashFlow;
-        valueInput.style.opacity = isCashFlow ? "0.5" : "1";
     }
 
     function editAge(display) {

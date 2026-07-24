@@ -144,7 +144,8 @@
                     <div class="stp-back">
                         <div class="stp-back-progress">
                             <div class="stp-progress-bar">
-                                <div class="stp-progress-fill" style="width: {{ goal.progress_pct }}%"></div>
+                                {% set goal_progress_width = [[goal.progress_pct, 0]|max, 100]|min|int %}
+                                <div class="stp-progress-fill u-width-pct u-pct-{{ goal_progress_width }}"></div>
                             </div>
                             <span class="stp-back-pct">{{ goal.progress_pct }}%</span>
                         </div>
@@ -230,7 +231,7 @@
                 <div class="cfm-group-header">
                     <span class="cfm-section-label">Trend</span>
                 </div>
-                <div id="stp-popup-sparkline-content" style="padding: 0.5rem 1rem;"></div>
+                <div id="stp-popup-sparkline-content" class="stp-popup-sparkline-content"></div>
             </div>
 
             {# AI Plan #}
@@ -238,7 +239,7 @@
                 <div class="cfm-group-header">
                     <span class="cfm-section-label">Plan</span>
                 </div>
-                <div id="stp-popup-plan-content" style="padding: 0.5rem 1rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;"></div>
+                <div id="stp-popup-plan-content" class="stp-popup-plan-content"></div>
             </div>
 
             {# Review banner #}
@@ -251,7 +252,7 @@
             <div class="cfm-footer">
                 <button type="button" class="cfm-btn cfm-btn--cancel" data-stp-action="close-goal-popup">Close</button>
                 <button type="button" class="cfm-btn cfm-btn--save" id="stp-popup-edit-btn" data-stp-action="edit-current-goal">Edit</button>
-                <button type="button" class="cfm-btn cfm-btn--save" id="stp-popup-plan-btn" data-stp-action="lock-current-goal" style="margin-left: 0;">Lock In Plan</button>
+                <button type="button" class="cfm-btn cfm-btn--save stp-popup-plan-btn" id="stp-popup-plan-btn" data-stp-action="lock-current-goal">Lock In Plan</button>
             </div>
         </div>
     </div>
@@ -393,8 +394,8 @@
                         <td>
                             <div class="stp-budget-progress-wrap">
                                 <div class="stp-budget-bar">
-                                    <div class="stp-budget-fill {% if item.pct <= 100 %}stp-bar-green{% elif item.pct <= 115 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"
-                                         style="width: {{ [item.pct, 100]|min }}%"></div>
+                                    {% set item_progress_width = [[item.pct, 0]|max, 100]|min|int %}
+                                    <div class="stp-budget-fill u-width-pct u-pct-{{ item_progress_width }} {% if item.pct <= 100 %}stp-bar-green{% elif item.pct <= 115 %}stp-bar-yellow{% else %}stp-bar-red{% endif %}"></div>
                                 </div>
                                 <span class="stp-budget-pct">{{ item.pct }}%</span>
                             </div>
@@ -442,8 +443,8 @@
                             {% set pct = budget_totals.pct %}
                             <div class="stp-budget-progress-wrap">
                                 <div class="stp-budget-bar">
-                                    <div class="stp-budget-fill {{ 'stp-bar-green' if pct <= 100 else ('stp-bar-yellow' if pct <= 115 else 'stp-bar-red') }}"
-                                         style="width:{{ [pct, 100] | min }}%"></div>
+                                    {% set total_progress_width = [[pct, 0]|max, 100]|min|int %}
+                                    <div class="stp-budget-fill u-width-pct u-pct-{{ total_progress_width }} {{ 'stp-bar-green' if pct <= 100 else ('stp-bar-yellow' if pct <= 115 else 'stp-bar-red') }}"></div>
                                 </div>
                                 <span class="stp-budget-pct">{{ pct }}%</span>
                             </div>
@@ -619,12 +620,12 @@
 
             <div class="stp-modal-footer">
                 <button type="button" class="btn btn-danger" id="stp-edit-delete" data-stp-action="delete-current-goal">Delete</button>
-                <div style="flex: 1"></div>
+                <div class="stp-modal-spacer"></div>
                 <button type="button" class="btn btn-secondary" data-stp-action="close-dialog">Cancel</button>
                 <button type="submit" class="btn">Save</button>
             </div>
         </form>
-        <form id="stp-delete-form" method="post" style="display:none"></form>
+        <form id="stp-delete-form" method="post" hidden></form>
     </div>
 </dialog>
 
@@ -671,13 +672,13 @@
    TRANSACTIONS DRILL-DOWN POPUP
    ════════════════════════════════════════════════════════════════════════════ #}
 
-<dialog id="stp-txn-modal" class="stp-modal" style="max-width: 560px">
+<dialog id="stp-txn-modal" class="stp-modal stp-txn-modal">
     <div class="stp-modal-content">
         <div class="stp-modal-header">
             <h3 id="stp-txn-modal-title">Transactions</h3>
             <button class="stp-modal-close" data-stp-action="close-dialog">&times;</button>
         </div>
-        <div id="stp-txn-modal-body" style="max-height: 60vh; overflow-y: auto;">
+        <div id="stp-txn-modal-body" class="stp-txn-modal-body">
             <div class="stp-drill-empty">Loading…</div>
         </div>
     </div>

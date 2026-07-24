@@ -10068,8 +10068,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 66, 0, 17),
-            "shared/dashboard styles: current application inventory must match the post-4AU contract",
+            == (6, 53, 0, 9),
+            "shared/dashboard styles: current application inventory must match the post-4AV contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and current residual inventory passed")
@@ -10221,8 +10221,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 66, 0, 17),
-            "transaction/matching styles: residual application inventory must match the post-4AU contract",
+            == (6, 53, 0, 9),
+            "transaction/matching styles: residual application inventory must match the post-4AV contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded progress, split state, and exact residual inventory passed")
@@ -10349,11 +10349,132 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 66, 0, 17),
-            "categorization/upload styles: residual application inventory must match the post-4AU contract",
+            == (6, 53, 0, 9),
+            "categorization/upload styles: residual application inventory must match the post-4AV contract",
         )
 
         print("   ✅ Four source templates, rendered routes and preview, controller, semantic CSS, bounded progress, and exact residual inventory passed")
+
+        # ── 11q. Cash Flow and planning style compatibility ─────────────
+        print("\n11q. Cash Flow and planning style compatibility…")
+
+        planning_style_paths = (
+            templates_root / "cashflow.html",
+            templates_root / "planning.html",
+            templates_root / "short_term_planning.html",
+        )
+        planning_style_sources = [
+            path.read_text() for path in planning_style_paths
+        ]
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in planning_style_sources
+            ),
+            "cashflow/planning styles: all three source templates must contain no style attributes",
+        )
+
+        cashflow_controller_source = (
+            PROJECT_ROOT / "web" / "static" / "cashflow.js"
+        ).read_text()
+        planning_controller_source = (
+            PROJECT_ROOT / "web" / "static" / "planning.js"
+        ).read_text()
+        short_term_controller_source = (
+            PROJECT_ROOT / "web" / "static" / "short-term-planning.js"
+        ).read_text()
+        planning_controller_sources = (
+            cashflow_controller_source,
+            planning_controller_source,
+            short_term_controller_source,
+        )
+        _check(
+            all(
+                "style=" not in source
+                and ".style." not in source
+                and ".style =" not in source
+                for source in planning_controller_sources
+            ),
+            "cashflow/planning styles: all three controllers must emit no style attributes or runtime style writes",
+        )
+        _check(
+            "input.size = Math.max(2, input.value.length + 1);"
+            in cashflow_controller_source
+            and "modal.animate(" in cashflow_controller_source
+            and "popup.animate(" in planning_controller_source
+            and "valueInput.disabled = isCashFlow;"
+            in planning_controller_source
+            and "popup.animate(" in short_term_controller_source,
+            "cashflow/planning styles: semantic input state and Web Animations card-origin contracts must remain explicit",
+        )
+        _check(
+            all(
+                selector in style_source
+                for selector in (
+                    ".cf-empty-state",
+                    ".pl-box--static",
+                    ".pl-modal-input:disabled",
+                    ".stp-popup-plan-content",
+                    ".stp-modal-spacer",
+                    ".stp-txn-modal-body",
+                )
+            ),
+            "cashflow/planning styles: maintained CSS must contain the empty-state static-card disabled-input popup spacer and drill-down contracts",
+        )
+
+        rendered_planning_styles = []
+        for path in (
+            "/cashflow/",
+            "/planning/",
+            f"/planning/short-term/?month={current_month}",
+        ):
+            response = style_client.get(path)
+            _check(
+                response.status_code == 200,
+                f"cashflow/planning styles: {path} must render successfully",
+            )
+            rendered_planning_styles.append(response.get_data(as_text=True))
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in rendered_planning_styles
+            ),
+            "cashflow/planning styles: included rendered routes must contain no style attributes",
+        )
+        _check(
+            "cfm" in rendered_planning_styles[0]
+            and "pl-box--static" in rendered_planning_styles[1]
+            and "u-width-pct u-pct-" in rendered_planning_styles[2]
+            and "stp-txn-modal-body" in rendered_planning_styles[2],
+            "cashflow/planning styles: rendered modal static-card bounded-progress and drill-down classes must remain explicit",
+        )
+
+        final_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        final_js_source = "\n".join(
+            path.read_text()
+            for path in (PROJECT_ROOT / "web" / "static").glob("*.js")
+            if path.name != "htmx.min.js"
+        )
+        final_inventory = (
+            len(
+                _re.findall(
+                    r"<style(?:\s|>)",
+                    final_template_source,
+                    flags=_re.IGNORECASE,
+                )
+            ),
+            len(style_attribute_pattern.findall(final_template_source)),
+            final_js_source.count("style="),
+            final_js_source.count(".style."),
+        )
+        _check(
+            final_inventory == (6, 53, 0, 9),
+            "cashflow/planning styles: residual application inventory must match the post-4AV contract",
+        )
+
+        print("   ✅ Three source templates, rendered routes, semantic CSS, Web Animations motion, bounded progress, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

@@ -104,16 +104,34 @@
         document.getElementById("stp-lock-modal").showModal();
     }
 
-    function setGenieOrigin(card) {
-        var rect = card.getBoundingClientRect();
-        var popup = document.getElementById("stp-goal-popup");
-        popup.style.setProperty(
-            "--genie-x",
-            (rect.left + rect.width / 2 - window.innerWidth / 2) + "px"
-        );
-        popup.style.setProperty(
-            "--genie-y",
-            (rect.top + rect.height / 2 - window.innerHeight / 2) + "px"
+    function animateGoalPopup(popup, card, closing) {
+        popup.getAnimations().forEach(function (animation) {
+            animation.cancel();
+        });
+        var popupRect = popup.getBoundingClientRect();
+        var cardRect = card ? card.getBoundingClientRect() : popupRect;
+        var offsetX = cardRect.left + cardRect.width / 2
+            - (popupRect.left + popupRect.width / 2);
+        var offsetY = cardRect.top + cardRect.height / 2
+            - (popupRect.top + popupRect.height / 2);
+        var originFrame = {
+            opacity: 0,
+            transform: "translate3d(" + offsetX + "px, "
+                + offsetY + "px, 0) scale(0.05)"
+        };
+        var settledFrame = {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0) scale(1)"
+        };
+        popup.animate(
+            closing ? [settledFrame, originFrame] : [originFrame, settledFrame],
+            {
+                duration: closing ? 300 : 400,
+                easing: closing
+                    ? "cubic-bezier(0.55, 0, 1, 0.45)"
+                    : "cubic-bezier(0.22, 1, 0.36, 1)",
+                fill: closing ? "forwards" : "none"
+            }
         );
     }
 
@@ -187,6 +205,7 @@
         document.getElementById("stp-popup-plan-btn").textContent =
             goal.ai_plan ? "Update Plan" : "Lock In Plan";
         document.getElementById("stp-goal-scrim").hidden = false;
+        animateGoalPopup(popup, flippedCard, false);
     }
 
     function flipAndOpen(card, event) {
@@ -195,7 +214,6 @@
         }
         card.classList.add("card-flipped");
         flippedCard = card;
-        setGenieOrigin(card);
         window.setTimeout(function () {
             openGoalPopup(card.dataset.goalId);
         }, 250);
@@ -207,15 +225,14 @@
         if (!scrim || scrim.hidden) {
             return;
         }
-        if (flippedCard) {
-            setGenieOrigin(flippedCard);
-        }
         scrim.classList.add("stp-goal-scrim--closing");
-        popup.classList.add("stp-goal-popup--closing");
+        animateGoalPopup(popup, flippedCard, true);
         window.setTimeout(function () {
             scrim.hidden = true;
             scrim.classList.remove("stp-goal-scrim--closing");
-            popup.classList.remove("stp-goal-popup--closing");
+            popup.getAnimations().forEach(function (animation) {
+                animation.cancel();
+            });
             if (flippedCard) {
                 flippedCard.classList.remove("card-flipped");
                 flippedCard = null;

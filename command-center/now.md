@@ -2,27 +2,61 @@
 
 ## Active Objective
 
-Preserve the durable, deployed, and health-verified 4AU-R result while Ryan decides whether to plan the next Cash Flow and planning style cluster.
+Publish and verify the exact locally complete 4AV result through confirmed work block 4AV-R while preserving the durable 4AU-R baseline and every excluded boundary.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.3 and its release are complete through 4AU-R, and Task 1P.4.3a.4 is the next separate planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.3 and its release are complete through 4AU-R, Task 1P.4.3a.4 is complete locally through 4AV, and its exact durability/release is active through confirmed work block 4AV-R.
 
 ## Current Work Block
 
-Work block 4AU-R: Categorization And Upload Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AV-R: Cash Flow And Planning Style Compatibility Release — active.
 
 ## Current Task
 
-Task 1P.4.3a.4: Make Cash Flow and planning styles strict-policy compatible — waiting for fresh work-block planning and confirmation.
+Task 1P.4.3a.4-R: Publish and verify Cash Flow and planning style compatibility — active.
 
 ## Owner
 
-Ryan owns the decision to plan or authorize Task 1P.4.3a.4 and every later expansion or live-sensitive action. Codex Desktop preserves the verified 4AU-R result and current Runway OS state.
+Codex Desktop owns exact-path staging, commit and ancestry verification, clean fast-forward to local `main`, direct non-force push, read-only automatic-deployment observation, credential-free production health, and sanitized closeout. Ryan owns every expansion, manual live action, and broader recovery.
 
 ## Current Action
 
-Decide whether to invoke fresh work-block planning for Task 1P.4.3a.4. No Cash Flow/planning implementation, CSP enforcement, or later work is pre-authorized.
+Verify the exact 4AV set, stage only authorized paths, commit on `codex/csp-cashflow-planning-styles`, cleanly fast-forward local `main`, push `main` without force, observe only the resulting automatic Fly deployment, verify its exact source SHA and credential-free `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+
+## Work Block 4AV Contract
+
+- Include Task 1P.4.3a.4 plus only its focused Task 2 regression slice: remove two Cash Flow, one Long-Term Planning, and ten Short-Term Planning template style attributes plus three `cashflow.js`, three `planning.js`, and two `short-term-planning.js` runtime style writes; preserve data-driven progress, precise modal origins, input sizing, disabled and visibility state, transaction drilldowns, responsive behavior, and Personal/BFM versus Luxe Legacy boundaries; add focused maintained source, rendered-response, and configured-auth/no-password isolated-browser proof; reconcile the exact residual CSP style inventory; and close Runway OS locally after verification.
+- Keep Tasks 1P.4.3a.5-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, route, financial-calculation, database, category-domain, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, protected-data, credential, external/live, GitHub, publication, deployment, workflow, downstream, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the unrelated duplicate 4AU log outside scope.
+- Preserve appearance and behavior rather than redesigning; use maintained semantic classes, the existing bounded `u-pct-0` through `u-pct-100` contract, HTML sizing and state attributes, CSS state selectors, and measured Web Animations API motion only when it preserves the current modal-origin behavior without runtime style mutation; use temporary synthetic Personal/BFM/Luxe Legacy data, configured-auth and no-password modes, localhost-only disposable browser state, denied non-localhost requests, zero unexpected console/page errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if parity requires a product/design choice, inline-style exception, unbounded dynamic styling, or excluded route, financial, database, authentication, CSP-enforcement, or later-task work; desktop, phone, or exact 768px behavior becomes ambiguous; protected/live/destructive access appears; verification changes the plan; cleanup fails; command-center checks fail; scope expands; or a preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-style proof for all three included templates; zero `.style.*` writes in all three page-owned controllers; exact residual inventory of six style blocks, 53 template style attributes, zero generated attributes, and nine runtime writes; configured-auth and no-password isolated Chrome across supported Personal/BFM/Luxe Legacy boundaries at desktop, phone, and exact 768px for progress, modal origin, input sizing, disabled/hidden state, drilldowns, responsive overflow, denied networking, zero unexpected errors, and exact cleanup; relevant Python and JavaScript syntax; JSON; whitespace; dashboard refresh/health/generated state; exact scope; and all preserved files.
+- Report exact migrated surfaces and patterns, final inventory, responsive/browser parity, cleanup, changed paths, branch state, preserved exclusions, and the separate 4AV-R durability gate.
+
+## Work Block 4AV Status
+
+- Ryan confirmed the exact local-only 4AV proposal on 2026-07-23.
+- All 13 included template style attributes and eight included runtime style writes are removed through maintained semantic classes, the existing bounded percentage contract, HTML sizing/state attributes, CSS disabled/visibility selectors, and card-origin Web Animations API motion without inline style mutation.
+- The exact residual tracked inventory is six inline style blocks, 53 template style attributes, zero generated-markup style attributes, and nine application runtime style writes.
+- Baseline and final full smoke, focused source/rendered assertions, JavaScript and Python syntax, and configured-auth/no-password isolated Chrome across Personal/BFM supported routes and the Luxe Legacy denial boundary at phone, exact 768px, and desktop passed with denied non-localhost traffic, zero unexpected browser/page errors, and exact cleanup.
+- Cash Flow input sizing and card/bank modal origin, Long-Term Planning static cross-entity cards plus disabled/hidden source state, Short-Term Planning bounded progress, goal popup origin, transaction drilldown layout, responsive overflow, and existing CRUD/AI behavior passed.
+- No commit, push, PR, publication, deployment, live/protected access, route, financial, database, category-domain, product, authentication, CSP enforcement, later-cluster, destructive, downstream, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-cashflow-planning-style-compatibility-4av.md`.
+
+## Work Block 4AV-R Contract
+
+- Include explicit-path staging of the exact verified 4AV application, controllers, templates, maintained tests, CSP contract, evidence, and Runway OS paths; one source commit on `codex/csp-cashflow-planning-styles`; a clean fast-forward of local `main`; direct push to `origin/main` without force or PR; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.3a.5 and every later task; new application, runtime, style, route, financial, database, category-domain, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, or policy mutation beyond verified 4AV; credentials; protected data; real databases; retained uploads; authenticated production pages; manual workflow actions; workflow edits; non-automatic Fly mutations; downstream access or writes; PR creation; force push; broader recovery; `scripts/sync_prod_to_local.sh`; `command-center/now 2.md`; and the unrelated duplicate 4AU log outside scope.
+- Use explicit-path staging only; preserve the verified 13-attribute/eight-runtime-write migration, residual 6/53/0/9 inventory, dual-auth responsive browser proof, and all three unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths; protected-boundary and high-confidence sensitive-addition scans; full smoke and configured-auth/no-password isolated Chrome; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and all preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and separately gated Task 1P.4.3a.5.
+
+## Work Block 4AV-R Status
+
+- Ryan authorized committing and pushing the complete verified 4AV result to `main` on 2026-07-23.
+- Preflight shows `codex/csp-cashflow-planning-styles`, local `main`, and `origin/main` aligned at the same 4AU-R closeout commit before release mutation.
+- No staging, commit, push, deployment, health claim, or closeout mutation has occurred yet under 4AV-R.
 
 ## Work Block 4AU-R Contract
 
@@ -135,10 +169,11 @@ Decide whether to invoke fresh work-block planning for Task 1P.4.3a.4. No Cash F
 
 - Fresh tracked-source inventory: seven inline style blocks, 211 template style attributes, nine JavaScript-generated style attributes, and 31 application runtime style writes. The original 4AE count of 221 template attributes remains historical baseline evidence.
 - Task 1P.4.3a.1: shared shell and dashboard/report pages/fragments — durable, automatically deployed, and credential-free health verified through 4AS-R.
-- Task 1P.4.3a.2: transactions, matching, vendor cards, and supporting fragments — complete and verified locally through 4AT.
+- Task 1P.4.3a.2: transactions, matching, vendor cards, and supporting fragments — durable, automatically deployed, and credential-free health verified through 4AT-R.
 - Task 1P.4.3a.2-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — complete through 4AT-R.
-- Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — next separately gated planning decision.
-- Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — planned.
+- Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — durable, automatically deployed, and credential-free health verified through 4AU-R.
+- Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — complete and verified locally through 4AV.
+- Task 1P.4.3a.4-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — waiting for Ryan's separate decision.
 - Task 1P.4.3a.5: Weekly and Waterfall — planned.
 - Task 1P.4.3a.6: Subscriptions and Payroll — planned.
 - Task 1P.4.3a.7: Data Sources and Connected Accounts — planned; the third-party Plaid exception remains Task 1P.4.3b.

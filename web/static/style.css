@@ -488,37 +488,10 @@ body.mobile-drawer-open {
 :root[data-theme="light"] .card-flip-back--liability {
     background: linear-gradient(135deg, rgba(47,123,255,0.18) 0%, rgba(47,123,255,0.05) 100%);
 }
-/* Modal open/close — genie effect from card position
-   Uses translate3d for GPU compositing. Scrim has no fade (backdrop-filter
-   blur is too expensive to animate). Modal stretches from card position. */
-@keyframes modalGenieIn {
-    from {
-        opacity: 0;
-        transform: translate3d(var(--genie-x, 0px), var(--genie-y, 0px), 0) scale(0.05);
-    }
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-}
-@keyframes modalGenieOut {
-    from {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: translate3d(var(--genie-x, 0px), var(--genie-y, 0px), 0) scale(0.05);
-    }
-}
-/* Closing state — applied by JS before hiding */
+/* Modal scrim closing state. Card-origin motion uses the Web Animations API. */
 .cf-modal-scrim--closing {
     opacity: 0;
     transition: opacity 0.3s ease-in;
-}
-.cfm--closing,
-.pl-modal-popup--closing {
-    animation: modalGenieOut 0.3s cubic-bezier(0.55, 0, 1, 0.45) forwards;
 }
 
 .sb-brand-text {
@@ -5508,6 +5481,14 @@ select.input-sm {
     flex-shrink: 0;
 }
 .cf-edit-btn:hover { opacity: 1; }
+.cf-empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+.cf-empty-state-copy {
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
 
 /* Edit popover */
 /* Edit modal */
@@ -5539,7 +5520,6 @@ select.input-sm {
     position: relative;
     overflow: hidden;
     will-change: transform, opacity;
-    animation: modalGenieIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 :root[data-theme="light"] .cfm {
     background: #f2f2f7;
@@ -5968,6 +5948,7 @@ input.pl-input--sm {
     position: relative; overflow: visible;
     aspect-ratio: 5 / 7;
 }
+.pl-box--static { cursor: default; }
 /* Suit pip — top-left */
 .pl-box::before {
     position: absolute; top: 5px; left: 6px;
@@ -6168,7 +6149,6 @@ input.pl-input--sm {
     max-height: 85vh; overflow-y: auto;
     box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     will-change: transform, opacity;
-    animation: modalGenieIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .pl-modal-form { display: flex; flex-direction: column; gap: 0.5rem; }
 .pl-modal-form[hidden] { display: none; }
@@ -6177,6 +6157,7 @@ input.pl-input--sm {
     margin-top: 0.4rem; padding-top: 0.5rem;
     border-top: 1px solid rgba(255,255,255,0.06);
 }
+.pl-modal-spacer { flex: 1; }
 :root[data-theme="light"] .pl-modal-footer { border-top-color: rgba(0,0,0,0.06); }
 .pl-btn-modal-delete {
     background: none; border: none; color: var(--red);
@@ -6573,6 +6554,7 @@ input.pl-input--sm {
 }
 .pl-modal-input--money { padding-left: 0.3rem; }
 .pl-modal-input--pct { padding-right: 0; text-align: right; }
+.pl-modal-input:disabled { opacity: 0.5; }
 .pl-input-wrap {
     display: flex; align-items: center; gap: 0.2rem;
 }
@@ -6958,10 +6940,6 @@ input.pl-input--sm {
     overflow: hidden;
     aspect-ratio: 5 / 7;
     will-change: transform, opacity;
-    animation: modalGenieIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.stp-goal-popup--closing {
-    animation: modalGenieOut 0.3s cubic-bezier(0.55, 0, 1, 0.45) forwards;
 }
 :root[data-theme="light"] .stp-goal-popup {
     background: #f2f2f7;
@@ -7007,6 +6985,14 @@ input.pl-input--sm {
     color: var(--text-muted);
     margin-top: 0.2rem;
 }
+.stp-popup-sparkline-content { padding: 0.5rem 1rem; }
+.stp-popup-plan-content {
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+.stp-popup-plan-btn { margin-left: 0; }
 
 /* ── STP goal card front (simplified — name + amount only) ────────────────── */
 .stp-goal-card .card-flip-front {
@@ -7780,6 +7766,12 @@ select.stp-modal-input {
     gap: 0.5rem;
     margin-top: 1rem;
     justify-content: flex-end;
+}
+.stp-modal-spacer { flex: 1; }
+.stp-txn-modal { max-width: 560px; }
+.stp-txn-modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
 }
 .btn-danger {
     background: transparent;

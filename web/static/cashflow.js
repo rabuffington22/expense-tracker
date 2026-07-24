@@ -23,7 +23,7 @@
     }
 
     function sizeInput(input) {
-        input.style.width = Math.max(2, input.value.length + 1) + "ch";
+        input.size = Math.max(2, input.value.length + 1);
     }
 
     function parseDueDay(input) {
@@ -34,13 +34,35 @@
         sizeInput(input);
     }
 
-    function setGenieOrigin(card) {
-        var rect = card.getBoundingClientRect();
-        var centerX = rect.left + rect.width / 2;
-        var centerY = rect.top + rect.height / 2;
-        var modal = document.querySelector(".cfm");
-        modal.style.setProperty("--genie-x", (centerX - window.innerWidth / 2) + "px");
-        modal.style.setProperty("--genie-y", (centerY - window.innerHeight / 2) + "px");
+    function animateModal(modal, card, closing) {
+        modal.getAnimations().forEach(function (animation) {
+            animation.cancel();
+        });
+        var modalRect = modal.getBoundingClientRect();
+        var cardRect = card ? card.getBoundingClientRect() : modalRect;
+        var offsetX = cardRect.left + cardRect.width / 2
+            - (modalRect.left + modalRect.width / 2);
+        var offsetY = cardRect.top + cardRect.height / 2
+            - (modalRect.top + modalRect.height / 2);
+        var originFrame = {
+            opacity: 0,
+            transform: "translate3d(" + offsetX + "px, "
+                + offsetY + "px, 0) scale(0.05)"
+        };
+        var settledFrame = {
+            opacity: 1,
+            transform: "translate3d(0, 0, 0) scale(1)"
+        };
+        modal.animate(
+            closing ? [settledFrame, originFrame] : [originFrame, settledFrame],
+            {
+                duration: closing ? 300 : 400,
+                easing: closing
+                    ? "cubic-bezier(0.55, 0, 1, 0.45)"
+                    : "cubic-bezier(0.22, 1, 0.36, 1)",
+                fill: closing ? "forwards" : "none"
+            }
+        );
     }
 
     function openModal(control, event) {
@@ -94,6 +116,7 @@
         document.getElementById("cf-add-acct-id").value = data.acctId;
         document.getElementById("cf-add-recurring-section").hidden = false;
         document.getElementById("cf-modal-scrim").hidden = false;
+        animateModal(modal, flippedCard, false);
     }
 
     function flipAndOpen(card, event) {
@@ -102,7 +125,6 @@
         }
         card.classList.add("card-flipped");
         flippedCard = card;
-        setGenieOrigin(card);
         window.setTimeout(function () {
             openModal(card, null);
         }, 250);
@@ -114,15 +136,14 @@
             return;
         }
         var modal = document.querySelector(".cfm");
-        if (flippedCard) {
-            setGenieOrigin(flippedCard);
-        }
         scrim.classList.add("cf-modal-scrim--closing");
-        modal.classList.add("cfm--closing");
+        animateModal(modal, flippedCard, true);
         window.setTimeout(function () {
             scrim.hidden = true;
             scrim.classList.remove("cf-modal-scrim--closing");
-            modal.classList.remove("cfm--closing");
+            modal.getAnimations().forEach(function (animation) {
+                animation.cancel();
+            });
             document.getElementById("cf-add-recurring-section").hidden = true;
             if (flippedCard) {
                 flippedCard.classList.remove("card-flipped");

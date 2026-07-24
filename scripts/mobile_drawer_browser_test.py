@@ -1618,6 +1618,7 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
             ).length,
             personal: Boolean(document.querySelector('[data-acct-name="4AL Personal Checking"]')),
             company: Boolean(document.querySelector('[data-acct-name="4AL BFM Checking"]')),
+            styleAttrs: document.querySelectorAll("#main-content [style]").length,
         })"""
     )
     _check(cashflow_state["asset"], f"{label}: Cash Flow controller must load")
@@ -1628,6 +1629,10 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
     _check(
         cashflow_state["personal"] and cashflow_state["company"],
         f"{label}: Cash Flow must preserve Personal/BFM shared visibility",
+    )
+    _check(
+        cashflow_state["styleAttrs"] == 0,
+        f"{label}: Cash Flow must render without style attributes",
     )
 
     credit_card = page.locator(
@@ -1645,6 +1650,11 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
             dueDisplay: document.getElementById('cf-modal-due-display').value,
             dueHidden: document.getElementById('cf-modal-due-day-hidden').value,
             payment: document.getElementById('cf-modal-payment').value,
+            balanceSize: document.getElementById('cf-modal-balance').size,
+            dueSize: document.getElementById('cf-modal-due-display').size,
+            animationFrames: document.querySelector('.cfm').getAnimations()
+                .flatMap((animation) => animation.effect.getKeyframes()),
+            styleAttrs: document.querySelectorAll("#main-content [style]").length,
         })"""
     )
     _check(
@@ -1654,13 +1664,21 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
         and card_modal["cardFieldsVisible"]
         and card_modal["dueDisplay"] == "Aug 17"
         and card_modal["dueHidden"] == "17"
-        and card_modal["payment"] == "275",
+        and card_modal["payment"] == "275"
+        and card_modal["balanceSize"] >= 2
+        and card_modal["dueSize"] >= 2
+        and card_modal["styleAttrs"] == 0
+        and len(card_modal["animationFrames"]) >= 2
+        and "translate3d(" in card_modal["animationFrames"][0]["transform"]
+        and "scale(0.05)" in card_modal["animationFrames"][0]["transform"],
         f"{label}: delegated credit-card modal must preserve populated card fields",
     )
     due_display = page.locator("#cf-modal-due-display")
     due_display.fill("31")
     _check(
-        page.locator("#cf-modal-due-day-hidden").input_value() == "31",
+        page.locator("#cf-modal-due-day-hidden").input_value() == "31"
+        and due_display.get_attribute("style") is None
+        and int(due_display.get_attribute("size")) >= 3,
         f"{label}: delegated due-day parsing must preserve valid days",
     )
     due_display.fill("32")
@@ -1725,6 +1743,8 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
             company: Array.from(document.querySelectorAll('.pl-cross .pl-box-name')).some(
                 (element) => element.textContent.includes('4AL BFM')
             ),
+            staticCards: document.querySelectorAll(".pl-cross .pl-box--static").length,
+            styleAttrs: document.querySelectorAll("#main-content [style]").length,
         })"""
     )
     _check(planning_state["asset"], f"{label}: Planning controller must load")
@@ -1736,6 +1756,11 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
         planning_state["personal"] and planning_state["company"],
         f"{label}: Long-Term Planning must preserve Personal/BFM shared visibility",
     )
+    _check(
+        planning_state["staticCards"] >= 1
+        and planning_state["styleAttrs"] == 0,
+        f"{label}: Long-Term Planning must use static cross-entity cards without style attributes",
+    )
 
     primary_card = page.locator(
         '.pl-entity-section:not(.pl-cross) [data-planning-action="flip-open"]'
@@ -1745,20 +1770,40 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
     visible_edit = page.locator(".pl-modal-form:not([hidden])")
     _check(
         visible_edit.count() == 1
-        and visible_edit.locator(".pl-box-projections").count() == 1,
+        and visible_edit.locator(".pl-box-projections").count() == 1
+        and page.evaluate(
+            """() => {
+                const frames = document.querySelector(".pl-modal-popup")
+                    .getAnimations()
+                    .flatMap((animation) => animation.effect.getKeyframes());
+                return frames.length >= 2
+                    && frames[0].transform.includes("translate3d(")
+                    && frames[0].transform.includes("scale(0.05)");
+            }"""
+        ),
         f"{label}: delegated item-card opening must preserve projections and one visible edit form",
     )
     source_select = visible_edit.locator('[data-planning-change="source"]')
     source_select.select_option("manual")
     _check(
         not visible_edit.locator('input[name="current_value"]').is_disabled()
-        and visible_edit.locator(".pl-g-cfaccount").is_hidden(),
+        and visible_edit.locator(".pl-g-cfaccount").is_hidden()
+        and visible_edit.locator('input[name="current_value"]').evaluate(
+            "element => getComputedStyle(element).opacity"
+        )
+        == "1",
         f"{label}: manual source selection must enable the maintained value input",
     )
     source_select.select_option("cashflow")
     _check(
         visible_edit.locator('input[name="current_value"]').is_disabled()
-        and visible_edit.locator(".pl-g-cfaccount").is_visible(),
+        and visible_edit.locator(".pl-g-cfaccount").is_visible()
+        and visible_edit.locator('input[name="current_value"]').evaluate(
+            "element => getComputedStyle(element).opacity"
+        )
+        == "0.5"
+        and visible_edit.locator('input[name="current_value"]').get_attribute("style")
+        is None,
         f"{label}: Cash Flow source selection must expose the linked-account control",
     )
     page.keyboard.press("Escape")
@@ -1870,6 +1915,11 @@ def _assert_short_term_planning_page(page, base_url: str, label: str) -> None:
             action: Array.from(document.querySelectorAll('.stp-action-title')).some(
                 (element) => element.textContent.includes('4AM Personal Action')
             ),
+            boundedProgress: document.querySelectorAll(
+                ".stp-progress-fill.u-width-pct[class*='u-pct-'], "
+                + ".stp-budget-fill.u-width-pct[class*='u-pct-']"
+            ).length,
+            styleAttrs: document.querySelectorAll("#main-content [style]").length,
             allowEval: window.htmx.config.allowEval,
             allowScriptTags: window.htmx.config.allowScriptTags,
         })"""
@@ -1887,6 +1937,10 @@ def _assert_short_term_planning_page(page, base_url: str, label: str) -> None:
         f"{label}: synthetic Personal goal and action must remain visible",
     )
     _check(
+        initial["boundedProgress"] >= 1 and initial["styleAttrs"] == 0,
+        f"{label}: Short-Term Planning must use bounded progress classes without style attributes",
+    )
+    _check(
         initial["allowEval"] is False and initial["allowScriptTags"] is False,
         f"{label}: disabled HTMX execution switches must remain intact",
     )
@@ -1901,7 +1955,17 @@ def _assert_short_term_planning_page(page, base_url: str, label: str) -> None:
         page.locator("#stp-goal-scrim").is_visible()
         and page.locator("#stp-popup-name").text_content() == "4AM Personal Goal"
         and page.locator("#stp-popup-strategy").text_content() == "Avalanche"
-        and page.locator("#stp-popup-plan-btn").text_content() == "Update Plan",
+        and page.locator("#stp-popup-plan-btn").text_content() == "Update Plan"
+        and page.evaluate(
+            """() => {
+                const frames = document.getElementById("stp-goal-popup")
+                    .getAnimations()
+                    .flatMap((animation) => animation.effect.getKeyframes());
+                return frames.length >= 2
+                    && frames[0].transform.includes("translate3d(")
+                    && frames[0].transform.includes("scale(0.05)");
+            }"""
+        ),
         f"{label}: delegated goal-card opening must populate the maintained popup",
     )
     page.keyboard.press("Escape")
@@ -1988,7 +2052,18 @@ def _assert_short_term_planning_page(page, base_url: str, label: str) -> None:
         "#stp-txn-modal-body [oninput], #stp-txn-modal-body [onsubmit]"
     ).count()
     _check(
-        transaction_dialog.is_visible() and dynamic_handler_count == 0,
+        transaction_dialog.is_visible()
+        and dynamic_handler_count == 0
+        and transaction_dialog.get_attribute("style") is None
+        and page.locator("#stp-txn-modal-body").get_attribute("style") is None
+        and transaction_dialog.evaluate(
+            "element => getComputedStyle(element).maxWidth"
+        )
+        == "560px"
+        and page.locator("#stp-txn-modal-body").evaluate(
+            "element => getComputedStyle(element).overflowY"
+        )
+        == "auto",
         f"{label}: fetched transaction markup must remain visible and handler-free",
     )
 
@@ -2068,6 +2143,61 @@ def _assert_short_term_planning_page(page, base_url: str, label: str) -> None:
         and page.locator(".stp-goal-card").count() == 0,
         f"{label}: Luxe Legacy must remain denied before Short-Term Planning execution",
     )
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
+def _assert_planning_style_responsive(page, base_url: str, label: str) -> None:
+    current_month = date.today().strftime("%Y-%m")
+    route_contracts = (
+        ("/cashflow/", "[data-cashflow-controller]"),
+        ("/planning/", "[data-planning-controller]"),
+        (
+            f"/planning/short-term/?month={current_month}",
+            "[data-short-term-planning-controller]",
+        ),
+    )
+    viewports = (
+        ("phone", 390, 844),
+        ("exact-768", 768, 900),
+        ("desktop", 1280, 900),
+    )
+
+    for entity_name in ("Personal", "BFM"):
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        for viewport_name, width, height in viewports:
+            page.set_viewport_size({"width": width, "height": height})
+            for route, controller_selector in route_contracts:
+                page.goto(f"{base_url}{route}", wait_until="networkidle")
+                page.wait_for_function(
+                    "(selector) => document.querySelector(selector)?.dataset.initialized === 'true'",
+                    arg=controller_selector,
+                )
+                responsive_state = page.evaluate(
+                    """() => ({
+                        styleAttrs: document.querySelectorAll(
+                            "#main-content [style]"
+                        ).length,
+                        bodyOverflow: document.documentElement.scrollWidth
+                            > document.documentElement.clientWidth + 1,
+                        mainVisible: Boolean(
+                            document.getElementById("main-content")
+                                ?.getClientRects().length
+                        ),
+                    })"""
+                )
+                _check(
+                    responsive_state["styleAttrs"] == 0
+                    and not responsive_state["bodyOverflow"]
+                    and responsive_state["mainVisible"],
+                    f"{label}: {entity_name} {route} must preserve a style-attribute-free non-overflowing {viewport_name} layout",
+                )
+
+    page.set_viewport_size({"width": 390, "height": 844})
     page.context.add_cookies(
         [{"name": "entity", "value": "Personal", "url": base_url}]
     )
@@ -3574,6 +3704,9 @@ def main() -> None:
                 _assert_short_term_planning_page(
                     page, base_url, "no-password Short-Term Planning execution"
                 )
+                _assert_planning_style_responsive(
+                    page, base_url, "no-password planning style compatibility"
+                )
                 _assert_weekly_waterfall_pages(
                     page, base_url, "no-password Weekly/Waterfall execution"
                 )
@@ -3727,6 +3860,9 @@ def main() -> None:
                 )
                 _assert_short_term_planning_page(
                     page, base_url, "configured-auth Short-Term Planning execution"
+                )
+                _assert_planning_style_responsive(
+                    page, base_url, "configured-auth planning style compatibility"
                 )
                 _assert_weekly_waterfall_pages(
                     page, base_url, "configured-auth Weekly/Waterfall execution"

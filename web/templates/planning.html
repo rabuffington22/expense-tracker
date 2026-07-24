@@ -108,7 +108,7 @@
             {% if not is_add %}
             <button type="button" class="pl-btn-modal-delete" data-planning-action="delete-item">Delete</button>
             {% endif %}
-            <div style="flex:1"></div>
+            <div class="pl-modal-spacer"></div>
             <button type="button" class="btn btn-secondary btn-sm" data-planning-action="close-modal">Cancel</button>
             <button type="submit" class="btn btn-primary btn-sm">Save</button>
         </div>
@@ -136,9 +136,8 @@
 
 {# ── Item card (view only) ───────────────────────────────────────────────── #}
 {% macro item_card(item, milestones, entity_key, cf_accounts, is_cross=false) %}
-<div class="pl-box pl-box--{{ item.item_type }}" id="pl-card-{{ item.id }}"
-    {% if not is_cross %}data-planning-action="flip-open" data-item-id="{{ item.id }}"{% endif %}
-    {% if not is_cross %}style="cursor:pointer"{% endif %}>
+<div class="pl-box pl-box--{{ item.item_type }}{% if is_cross %} pl-box--static{% endif %}" id="pl-card-{{ item.id }}"
+    {% if not is_cross %}data-planning-action="flip-open" data-item-id="{{ item.id }}"{% endif %}>
     <div class="card-flip-inner">
         <div class="card-flip-front">
             <div class="pl-box-header">
