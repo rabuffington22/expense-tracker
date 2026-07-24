@@ -61,7 +61,7 @@
               <div class="kd-account-limit">of {{ fmt_dollars(acct.credit_limit_cents) }} limit</div>
               {% set used_pct = (acct.balance_cents / acct.credit_limit_cents * 100)|round|int %}
               <div class="kd-bar kd-bar--sm kd-account-bar">
-                <div class="kd-fill {% if used_pct > 90 %}kd-fill--over{% elif used_pct > 70 %}kd-fill--warn{% endif %}" style="width: {{ [used_pct, 100]|min }}%"></div>
+                <div class="kd-fill u-width-pct u-pct-{{ [0, [used_pct|int, 100]|min]|max }} {% if used_pct > 90 %}kd-fill--over{% elif used_pct > 70 %}kd-fill--warn{% endif %}"></div>
               </div>
             {% endif %}
           {% else %}
@@ -98,7 +98,7 @@
 
         {# Overall progress bar #}
         <div class="kd-bar">
-          <div class="kd-fill {% if focus_pct > 100 %}kd-fill--over{% elif focus_pct > 80 %}kd-fill--warn{% endif %}" style="width: {{ [focus_pct, 100]|min }}%"></div>
+          <div class="kd-fill u-width-pct u-pct-{{ [0, [focus_pct|int, 100]|min]|max }} {% if focus_pct > 100 %}kd-fill--over{% elif focus_pct > 80 %}kd-fill--warn{% endif %}"></div>
         </div>
         <div class="kd-bar-label">{{ focus_pct }}% of budget</div>
 
@@ -118,7 +118,7 @@
               <span>{{ item.pct }}%</span>
             </div>
             <div class="kd-bar kd-bar--sm">
-              <div class="kd-fill {% if item.pct > 100 %}kd-fill--over{% elif item.pct > 80 %}kd-fill--warn{% endif %}" style="width: {{ [item.pct, 100]|min }}%"></div>
+              <div class="kd-fill u-width-pct u-pct-{{ [0, [item.pct|int, 100]|min]|max }} {% if item.pct > 100 %}kd-fill--over{% elif item.pct > 80 %}kd-fill--warn{% endif %}"></div>
             </div>
             {% if item.subcategories %}
             <div class="kd-subcats">

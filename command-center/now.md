@@ -2,27 +2,63 @@
 
 ## Active Objective
 
-Plan and separately confirm Task 1P.4.3a.8 for login, offline/error, and standalone `/k/` style compatibility after the exact 4AY result became durable, automatically deployed, and credential-free health verified through completed work block 4AY-R.
+Publish and verify the exact locally proven 4AZ standalone-document style result through confirmed work block 4AZ-R without widening into CSP enforcement, service-worker behavior, protected data, or manual live actions.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.7-R is complete through 4AY-R and Task 1P.4.3a.8 is the next separately gated planning decision.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.8-R and the authorized Task 4 release slice are active through confirmed work block 4AZ-R.
 
 ## Current Work Block
 
-Work block 4AY-R: Data Sources And Connected Accounts Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AZ-R: Standalone Document Style Compatibility Release — active.
 
 ## Current Task
 
-Task 1P.4.3a.8: Make login, offline/error, and standalone `/k/` styles strict-policy compatible — waiting for separate planning and confirmation.
+Task 1P.4.3a.8-R: Publish and verify standalone document style compatibility — active.
 
 ## Owner
 
-Ryan owns the next planning and confirmation decision. Codex Desktop owns no Task 1P.4.3a.8 implementation, Plaid policy, CSP enforcement, protected access, publication, deployment, or live action without a separately confirmed block or direct Ryan request.
+Codex Desktop owns exact-path staging, the source commit, direct non-force push to `origin/main`, read-only automatic-deployment observation, credential-free production health, sanitized closeout, and final intake. Ryan owns every expansion, manual workflow or Fly action, protected access, broader recovery, and later task.
 
 ## Current Action
 
-Decide whether to define and confirm a bounded Task 1P.4.3a.8 work block for the five remaining style blocks and three template style attributes in login, offline/error, and standalone `/k/` surfaces.
+Execute confirmed 4AZ-R: reverify the exact 4AZ set, stage only authorized paths, commit and push directly to `main`, observe the automatic Fly deployment and credential-free health, then publish a command-center-only `[skip actions]` closeout.
+
+## Work Block 4AZ-R Contract
+
+- Include Task 1P.4.3a.8-R plus only the authorized Task 4 durability, automatic-release observation, credential-free health, and sanitized closeout slice.
+- Stage explicitly only the exact verified 4AZ application templates, maintained CSS, smoke/browser tests, CSP contract, evidence, and Runway OS paths; create one source commit on `codex/csp-standalone-styles`; push that exact commit directly and without force to `origin/main`; observe only the resulting automatic Fly deployment; verify the exact source SHA and credential-free production `/health`; then commit and push only the sanitized command-center closeout with `[skip actions]`.
+- Keep Task 1P.4.3b, Task 1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3 and every unapproved Task 4 action, new application/runtime/style/route/authentication/CSRF/service-worker/manifest/CSP-policy changes, credentials, protected data, real databases, retained uploads, authenticated production pages, manual workflow actions, workflow edits, non-automatic Fly mutations, downstream access, PR creation, force push, broader recovery, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the unrelated duplicate 4AU log outside scope.
+- Preserve exact 0/0/0/0 application-owned style inventory, dual-auth responsive/browser/visual proof, offline asset behavior, and all three unrelated untracked files; use explicit-path staging only; do not open production application pages beyond credential-free `/health`.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean direct push and read-only diagnosis.
+- Verify exact changed and staged paths; full smoke and configured-auth/no-password isolated browser; relevant Python and JavaScript syntax; JSON; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final branch/remote alignment; and all preserved untracked files.
+- Report the source and closeout commit SHAs, exact published paths, automatic deployment and health result, final alignment, preserved exclusions, and separately gated Task 1P.4.3b.
+
+## Work Block 4AZ-R Status
+
+- Ryan directly instructed Codex to commit and push the complete verified 4AZ work to `main` on 2026-07-24, authorizing this exact release boundary.
+- Remote preflight passed: `codex/csp-standalone-styles`, local `main`, and `origin/main` share pre-release commit `4af5d0c5d5142f73fc23c168d96db9ef7d1690dd`.
+- Verification, exact staging, source commit, direct push, automatic deployment, health, and sanitized closeout are in progress.
+- No manual workflow action, non-automatic Fly mutation, protected access, or scope expansion is authorized.
+
+## Work Block 4AZ Contract
+
+- Include Task 1P.4.3a.8 plus only its focused Task 2 regression slice: remove the five inline style blocks in login, offline, and 403/404/500 documents; remove the three bounded percentage style attributes in standalone `/k/`; preserve login, CSRF, safe-return, early theme, data-free error/offline, retry, exact status/no-leakage, configured-auth/no-password, Personal/Luxe Legacy scope, BFM exclusion, and responsive behavior; reconcile the final application-owned style inventory from 5/3/0/0 to 0/0/0/0; and close Runway OS locally after verification.
+- Keep Task 1P.4.3b, Task 1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, CSP headers/nonces/exception policy/enforcement, Plaid policy, service-worker/manifest behavior, route/authentication/CSRF/product/financial/database/dependency changes, protected data, credentials, external/live access, GitHub durability, publication, deployment, workflows, downstream systems, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the unrelated duplicate 4AU log outside scope.
+- Preserve appearance rather than redesigning; use scoped document-family classes in the already precached `web/static/style.css` so the cached offline fallback remains styled without a service-worker mutation; use the existing bounded percentage-class contract for `/k/`; use temporary synthetic all-entity data, configured-auth and no-password modes, localhost-only disposable browser state, denied non-localhost traffic, zero unexpected browser/page errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if preserving offline styling requires a service-worker change; parity requires a product/design decision or inline-style exception; work would cross into authentication, CSRF, routes, CSP policy/enforcement, Plaid, service worker/manifest, financial, database, protected/live, or later-task behavior; phone, exact 768px, or desktop behavior becomes ambiguous; verification changes the plan; cleanup or command-center health fails; scope expands; or a preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-style proof with exact final 0/0/0/0 inventory; configured-auth and no-password isolated Chrome across login, offline/retry, 403/404/500, and `/k/`; Personal/Luxe Legacy visibility with BFM exclusion; phone, exact 768px, and desktop layout; actual rendered visual inspection; offline asset availability through the existing precache; denied networking; zero unexpected errors; relevant syntax; JSON; whitespace; dashboard refresh/health/generated state; exact scope; and all preserved untracked files.
+- Report exact migrated seams and replacement classes, final inventory, authentication/error/offline/browser and visual proof, cleanup, changed paths, branch/worktree state, preserved exclusions, and the separate 4AZ-R durability/release gate.
+
+## Work Block 4AZ Status
+
+- Ryan confirmed the exact local-only 4AZ proposal on 2026-07-24.
+- The five login/offline/error style blocks and three `/k/` style attributes are removed through scoped standalone document classes in the already precached `style.css` and existing bounded percentage classes; the exact application-owned style inventory is now 0/0/0/0.
+- Baseline and final full smoke, focused source/rendered/request/offline-asset proof, configured-auth/no-password isolated Chrome, phone/exact-768/desktop responsive checks, and rendered visual inspection passed with exact status/no leakage, authentication/entity boundaries, denied networking, zero unexpected errors, and exact cleanup.
+- Relevant Python and JavaScript syntax, JSON, whitespace, dashboard checks, exact scope, and all three preserved-file checks passed.
+- No service-worker, manifest, route, authentication, CSRF, CSP policy/enforcement, protected/live, GitHub, publication, deployment, downstream, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-24-standalone-document-style-compatibility-4az.md`.
+- Exact 4AZ-R durability and release remain a separate Ryan decision.
 
 ## Work Block 4AY-R Contract
 

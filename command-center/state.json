@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-24 9:41 AM CST",
+    "lastUpdated": "2026-07-24 10:25 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,62 +27,58 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.3a.7-R is complete through durable deployed and health-verified 4AY-R; Task 1P.4.3a.8 is the next separately gated planning decision.",
+    "summary": "Task 1P.4.3a.8-R and the authorized Task 4 release slice are active through confirmed 4AZ-R after local 4AZ completed with exact zero application-owned style inventory.",
     "progress": 98
   },
   "currentTask": {
-    "title": "Task 1P.4.3a.8: Make login offline error and standalone k styles strict-policy compatible",
-    "owner": "Ryan",
-    "status": "waiting",
-    "supportingAgent": "Ryan owns the next bounded planning and confirmation decision; Codex Desktop owns no Task 1P.4.3a.8 implementation Plaid policy CSP enforcement publication protected access or live action without a separately confirmed block or direct Ryan request.",
-    "nextAction": "Decide whether to define and confirm a bounded Task 1P.4.3a.8 work block for the five remaining style blocks and three template style attributes.",
-    "blocker": "No Task 1P.4.3a.8 work block is confirmed."
+    "title": "Task 1P.4.3a.8-R: Publish and verify standalone document style compatibility",
+    "owner": "Codex Desktop",
+    "status": "active",
+    "supportingAgent": "Codex Desktop owns exact-path staging source commit direct non-force push automatic-deployment observation credential-free health sanitized closeout and final intake; Ryan owns every expansion manual workflow or Fly action protected access broader recovery and later task.",
+    "nextAction": "Reverify and stage the exact 4AZ set commit and push directly to origin/main observe automatic Fly deployment verify exact SHA and credential-free health then publish only the sanitized skip-actions closeout.",
+    "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-ay-r",
-    "label": "4AY-R",
-    "name": "Data Sources And Connected Accounts Style Compatibility Release",
-    "status": "done",
+    "id": "phase-4-block-az-r",
+    "label": "4AZ-R",
+    "name": "Standalone Document Style Compatibility Release",
+    "status": "active",
     "owner": "Codex Desktop",
-    "currentTask": "Task 1P.4.3a.7-R",
+    "currentTask": "Task 1P.4.3a.8-R",
     "includedTasks": [
-      "Task 1P.4.3a.7-R",
-      "Only the authorized Task 4 exact durability automatic-release observation and credential-free health slice"
+      "Task 1P.4.3a.8-R",
+      "Only the authorized Task 4 exact durability automatic-release observation credential-free health and sanitized closeout slice"
     ],
     "excludedTasks": [
-      "Task 1P.4.3a.8 and every later task plus every new application route query financial database product authentication CSRF dependency CSP policy or enforcement mutation",
-      "Credentials protected data real databases retained uploads authenticated production pages real Plaid manual workflow actions workflow edits non-automatic Fly mutations downstream access PR force push and broader recovery",
+      "Task 1P.4.3b Task 1P.4.4 Tasks 1P.6 through 1P.7 the remainder of Task 2 Tasks 3 and every unapproved Task 4 action",
+      "New application runtime style route authentication CSRF service-worker manifest CSP policy financial database product dependency credential protected authenticated-production manual-workflow non-automatic-Fly downstream PR force-push or broader-recovery changes",
       "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
     ],
     "recommendedAgent": "Codex Desktop",
     "whyThisAgent": "The release couples exact-path Git durability read-only automatic-deployment observation credential-free health and sanitized Runway OS closeout.",
-    "runnerPath": "Current Codex task on codex/csp-plaid-entry-styles through direct non-force push to origin/main automatic Fly observation health verification and skip-actions closeout.",
+    "runnerPath": "Current Codex task on codex/csp-standalone-styles through direct non-force push to origin/main automatic Fly observation health verification and skip-actions closeout.",
     "expectedFiles": [
-      "Exact twelve-path verified 4AY application template maintained-CSS test CSP-contract evidence and Runway OS source set for the source commit",
-      "Then only command-center now roadmap decisions state generated dashboard and one sanitized 4AY-R release evidence log"
+      "Exact sixteen-path verified 4AZ application template maintained-CSS test CSP-contract evidence and Runway OS source set for the source commit",
+      "Then only command-center now roadmap decisions state generated dashboard and one sanitized 4AZ-R release evidence log"
     ],
     "defaults": [
       "Use explicit-path staging direct non-force push and no PR manual workflow action or non-automatic Fly mutation",
-      "Preserve the verified 5 3 0 0 inventory both exact Plaid initializer tags dual-auth all-entity responsive browser proof and all three unrelated untracked files",
-      "Observe only the automatic Fly deployment and credential-free health and use skip-actions only for sanitized closeout",
-      "Keep Task 1P.4.3a.8 Plaid policy CSP enforcement protected access and every expansion separately gated"
+      "Preserve exact 0 0 0 0 inventory dual-auth responsive browser and visual proof offline asset behavior and all three unrelated untracked files",
+      "Observe only the automatic Fly deployment and credential-free health and use skip actions only for sanitized closeout",
+      "Keep Task 1P.4.3b final CSP enforcement protected access and every expansion separately gated"
     ],
     "stopConditions": [
       "Unexpected path sensitive addition protected-boundary risk failed maintained verification excluded staging or preserved-file overlap",
       "Local or remote main divergence push rejection commit mismatch automatic deployment failure requiring mutation credential-free health failure or exact source SHA mismatch",
-      "Recovery beyond a clean fast-forward and read-only diagnosis or any scope expansion"
+      "Recovery beyond a clean direct push and read-only diagnosis or any scope expansion"
     ],
     "verification": [
-      "Exact changed and staged paths full smoke configured-auth and no-password isolated Chrome and relevant Python JavaScript and JSON syntax",
+      "Exact changed and staged paths full smoke configured-auth and no-password isolated browser and relevant Python JavaScript and JSON syntax",
       "Whitespace dashboard refresh health generated state commit content ancestry exact remote SHA automatic Fly workflow and deploy-job result",
-      "Credential-free production health final local remote alignment and all preserved untracked files"
+      "Credential-free production health final branch remote alignment and all preserved untracked files"
     ],
-    "nextReportPoint": "Return source and closeout commit SHAs exact published paths automatic deployment and health result final alignment preserved exclusions and separately gated Task 1P.4.3a.8.",
-    "durability": "Complete durable deployed and credential-free health verified on origin/main.",
-    "result": "Exact 12-path source commit 9daeb8f4508a3fab2b63ea7304903d4cc10adcbb is durable on origin/main automatic Fly run 30101833858 and deploy job 89509540237 passed for the exact SHA and credential-free production health returned HTTP 200 with JSON status ok.",
-    "evidence": [
-      "command-center/logs/2026-07-24-data-sources-connected-accounts-style-compatibility-release-4ay-r.md"
-    ]
+    "nextReportPoint": "Return source and closeout commit SHAs exact published paths automatic deployment and health result final alignment preserved exclusions and separately gated Task 1P.4.3b.",
+    "durability": "Active release; source commit push automatic deployment observation health verification and sanitized closeout are in progress."
   },
   "routerHealth": {
     "status": "healthy",
@@ -107,30 +103,23 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 1P.4.3a.8",
-    "status": "waiting-on-ryan",
-    "owner": "Ryan",
-    "why": "4AY-R is complete durable deployed and health verified; the final local page-style cluster remains separately gated.",
-    "action": "Decide whether to define and confirm a bounded Task 1P.4.3a.8 work block for login offline error and standalone k style compatibility.",
+    "title": "Execute confirmed 4AZ-R release",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan directly authorized the exact verified 4AZ set to be committed and pushed to main.",
+    "action": "Reverify stage explicitly commit push observe the automatic deployment verify exact SHA and credential-free health then publish only the sanitized skip-actions closeout.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [
-    {
-      "decision": "Plan Task 1P.4.3a.8 after 4AY-R closes",
-      "status": "open",
-      "whyItMatters": "The final local page-style cluster remains separate from the active exact release boundary.",
-      "defaultRecommendation": "Complete 4AY-R first, then separately define and confirm the login offline error and standalone k style-compatibility block."
-    }
-  ],
+  "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "4AY-R is complete; Task 1P.4.3a.8 later style work Plaid policy CSP enforcement protected access broader recovery and every expansion remain separate Ryan decisions.",
+    "summary": "Nothing blocks exact 4AZ-R execution; manual workflow or Fly actions protected access broader recovery Task 1P.4.3b and every expansion remain separate Ryan decisions.",
     "items": [
-      "Decide whether to plan and confirm Task 1P.4.3a.8."
+      "After verified 4AZ-R closeout decide separately whether to plan Task 1P.4.3b."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Task 1P.4.3a.7-R is complete through durable deployed and health-verified 4AY-R while Task 1P.4.3a.8 later clusters Plaid policy CSP enforcement installed-PWA and broad read-model work remain separate.",
-    "decisionQueue": "Task 1P.4.3a.8 later style clusters Plaid policy CSP enforcement manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
+    "phaseQuestions": "Task 1P.4.3a.8-R is active through confirmed 4AZ-R while Plaid and exceptional-document policy CSP enforcement installed-PWA and broad read-model work remain separate.",
+    "decisionQueue": "Task 1P.4.3b CSP enforcement manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -189,6 +178,94 @@
     }
   ],
   "phaseWorkBlocks": [
+    {
+      "id": "phase-4-block-az-r",
+      "phaseId": "phase-4",
+      "label": "4AZ-R",
+      "name": "Standalone Document Style Compatibility Release",
+      "status": "active",
+      "includedTasks": [
+        "Task 1P.4.3a.8-R",
+        "Only the authorized Task 4 exact durability automatic-release observation credential-free health and sanitized closeout slice"
+      ],
+      "excludedTasks": [
+        "Task 1P.4.3b Task 1P.4.4 Tasks 1P.6 through 1P.7 the remainder of Task 2 Tasks 3 and every unapproved Task 4 action",
+        "New application runtime style route authentication CSRF service-worker manifest CSP policy financial database product dependency credential protected authenticated-production manual-workflow non-automatic-Fly downstream PR force-push or broader-recovery changes",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The release couples exact-path Git durability read-only automatic-deployment observation credential-free health and sanitized Runway OS closeout.",
+      "runnerPath": "Current Codex task on codex/csp-standalone-styles through direct non-force push to origin/main automatic Fly observation health verification and skip-actions closeout.",
+      "expectedFiles": [
+        "Exact sixteen-path verified 4AZ application template maintained-CSS test CSP-contract evidence and Runway OS source set for the source commit",
+        "Then only command-center now roadmap decisions state generated dashboard and one sanitized 4AZ-R release evidence log"
+      ],
+      "defaults": [
+        "Use explicit-path staging direct non-force push and no PR manual workflow action or non-automatic Fly mutation",
+        "Preserve exact 0 0 0 0 inventory dual-auth responsive browser and visual proof offline asset behavior and all three unrelated untracked files",
+        "Observe only the automatic Fly deployment and credential-free health and use skip actions only for sanitized closeout",
+        "Keep Task 1P.4.3b final CSP enforcement protected access and every expansion separately gated"
+      ],
+      "stopConditions": [
+        "Unexpected path sensitive addition protected-boundary risk failed maintained verification excluded staging or preserved-file overlap",
+        "Local or remote main divergence push rejection commit mismatch automatic deployment failure requiring mutation credential-free health failure or exact source SHA mismatch",
+        "Recovery beyond a clean direct push and read-only diagnosis or any scope expansion"
+      ],
+      "verification": [
+        "Exact changed and staged paths full smoke configured-auth and no-password isolated browser and relevant Python JavaScript and JSON syntax",
+        "Whitespace dashboard refresh health generated state commit content ancestry exact remote SHA automatic Fly workflow and deploy-job result",
+        "Credential-free production health final branch remote alignment and all preserved untracked files"
+      ],
+      "reportBack": "Return source and closeout commit SHAs exact published paths automatic deployment and health result final alignment preserved exclusions and separately gated Task 1P.4.3b.",
+      "durability": "Active release; source commit push automatic deployment observation health verification and sanitized closeout are in progress."
+    },
+    {
+      "id": "phase-4-block-az",
+      "phaseId": "phase-4",
+      "label": "4AZ",
+      "name": "Standalone Document Style Compatibility",
+      "status": "done",
+      "includedTasks": [
+        "Task 1P.4.3a.8",
+        "Only the focused Task 2 source rendered request configured-auth no-password responsive offline-asset and visual regression slice"
+      ],
+      "excludedTasks": [
+        "Task 1P.4.3b Task 1P.4.4 Tasks 1P.6 through 1P.7 the remainder of Task 2 and Tasks 3 through 4",
+        "CSP header nonce exception policy enforcement Plaid policy service-worker manifest route authentication CSRF product financial database dependency protected credential external live GitHub publication deployment workflow or downstream changes",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block couples cross-template UI-preserving style migration authentication and error-boundary proof offline-safe asset reasoning exact responsive visual inspection cleanup inventory reconciliation and Runway OS stewardship.",
+      "runnerPath": "Completed locally on codex/csp-standalone-styles through exact implementation full synthetic request browser and visual proof cleanup and uncommitted Runway OS closeout.",
+      "expectedFiles": [
+        "Six standalone document templates and web/static/style.css",
+        "Focused smoke and isolated-browser coverage CSP contract sanitized evidence Runway OS sources and generated dashboard"
+      ],
+      "defaults": [
+        "Preserve appearance using scoped document-family classes in already precached style.css and existing bounded percentage classes for standalone k",
+        "Preserve blocking early theme initialization login CSRF safe return exact error statuses no leakage offline retry authentication and entity boundaries",
+        "Use temporary synthetic all-entity data both authentication modes desktop phone exact 768 denied non-localhost traffic zero unexpected errors exact cleanup and actual rendered visual inspection",
+        "Preserve all three unrelated untracked files keep durability local-only and keep later policy enforcement publication protected access and live action separately gated"
+      ],
+      "stopConditions": [
+        "Preserving offline styling requires a service-worker change or parity requires a product design decision or inline-style exception",
+        "Work crosses into authentication CSRF routes CSP policy enforcement Plaid service worker manifest financial database protected live or later-task behavior",
+        "Phone exact 768 or desktop behavior is ambiguous verification changes the plan cleanup or command-center health fails scope expands or a preserved untracked file overlaps"
+      ],
+      "verification": [
+        "Baseline and final full smoke source and rendered final 0 0 0 0 style inventory and exact authentication error offline and entity-boundary request behavior",
+        "Configured-auth and no-password isolated Chrome at desktop phone exact 768 with actual rendered visual inspection offline asset availability denied networking zero unexpected errors and exact cleanup",
+        "Relevant syntax JSON whitespace dashboard refresh health generated state exact scope and all preserved untracked files"
+      ],
+      "reportBack": "Return exact migrated seams replacement classes final zero inventory authentication error offline browser and visual proof cleanup changed paths branch state preserved exclusions and separate 4AZ-R gate.",
+      "result": "4AZ removed all five standalone-document style blocks and all three standalone k percentage style attributes through scoped maintained classes in the already precached stylesheet and bounded percentage classes. Final full smoke focused source rendered request and cached-asset proof configured-auth and no-password isolated Chrome phone exact-768 desktop visual inspection syntax cleanup and final 0 0 0 0 inventory passed.",
+      "evidence": [
+        "command-center/logs/2026-07-24-standalone-document-style-compatibility-4az.md"
+      ],
+      "durability": "Complete local-only and uncommitted on codex/csp-standalone-styles; no GitHub durability publication deployment protected access service-worker mutation CSP enforcement or live action occurred."
+    },
     {
       "id": "phase-4-block-ay-r",
       "phaseId": "phase-4",
@@ -7821,11 +7898,25 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P43A8",
       "title": "Task 1P.4.3a.8: Make login offline error and standalone k styles strict-policy compatible",
-      "status": "current",
-      "owner": "Ryan",
+      "status": "done",
+      "owner": "Codex Desktop",
       "summary": "Move five style blocks and three template style attributes to family-specific local CSS and classes while preserving early theme data-free error and offline rendering retry exact statuses no leakage authentication entity boundaries and mobile layout.",
-      "nextAction": "Decide whether to define and confirm a bounded implementation and verification work block.",
-      "blocker": "No Task 1P.4.3a.8 work block is confirmed."
+      "nextAction": null,
+      "blocker": null,
+      "result": "Work block 4AZ removed all five standalone-document style blocks and all three standalone k percentage style attributes with exact final application-owned inventory 0 0 0 0 plus full synthetic request dual-auth responsive browser rendered visual cached-asset and cleanup proof.",
+      "evidence": [
+        "command-center/logs/2026-07-24-standalone-document-style-compatibility-4az.md"
+      ]
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T1P43A8R",
+      "title": "Task 1P.4.3a.8-R: Publish and verify standalone document style compatibility",
+      "status": "current",
+      "owner": "Codex Desktop",
+      "summary": "Make only the exact locally verified 4AZ source set durable then observe the authorized automatic deployment and verify credential-free production health under a separately confirmed release block.",
+      "nextAction": "Execute confirmed 4AZ-R with exact-path staging direct non-force push automatic deployment observation credential-free health and sanitized closeout.",
+      "blocker": null
     },
     {
       "phaseId": "phase-4",
@@ -9241,8 +9332,8 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Plan Task 1P.4.3a.8",
-    "description": "Decide whether to define and confirm a bounded work block for login offline error and standalone k style compatibility."
+    "name": "Complete confirmed 4AZ-R release",
+    "description": "Make the exact verified zero-inventory 4AZ source set durable on main then verify the automatic Fly deployment credential-free health and sanitized skip-actions closeout."
   },
   "verification": {
     "phase4StandaloneDocumentsBlock": "pass locally; 4AR moved five executable inline scripts and both source or rendered handler seams into blocking standalone-documents.js and deferred kristine.js leaving final tracked-template inventory zero inline twenty-one external zero inert zero source-recognized handlers and zero hx-on",
@@ -9520,6 +9611,9 @@
     "phase4WeeklyCoverage": "pass; maintained current historical February cross-month cross-year invalid-week rendered Personal BFM Luxe Legacy denial denied-network unrelated-row-preservation and exact-cleanup checks pass",
     "phase4WeeklyBoundaries": "pass; existing Cash Flow and Short-Term Planning today-based callers still render and no template migration schema historical remediation protected data external action GitHub durability deployment live action or preserved untracked-file change occurred",
     "phase4FocusedDashboardAuthRelease": "pass; source commit e20555d is on main automatic Fly run 29849025459 and deploy job 88696866487 passed for the exact source SHA and credential-free production health returned HTTP 200",
-    "phase4FocusedDashboardAuthDurability": "pass; local main matched origin/main at source commit e20555d before this command-center-only skip-actions closeout with both preserved untracked files excluded"
+    "phase4FocusedDashboardAuthDurability": "pass; local main matched origin/main at source commit e20555d before this command-center-only skip-actions closeout with both preserved untracked files excluded",
+    "phase4StandaloneStyleBlock": "pass locally; 4AZ removed all five standalone login offline and error style blocks plus all three standalone k template style attributes through scoped document-family CSS and bounded percentage classes leaving exact application-owned inventory 0 style blocks 0 template attributes 0 generated attributes and 0 runtime writes",
+    "phase4StandaloneStyleCoverage": "pass; baseline and final full smoke focused source rendered request status no-leakage auth entity cached-asset proof and configured-auth no-password isolated Chrome cover login offline 403 404 500 and standalone k at phone exact 768 and desktop with visual inspection denied networking zero unexpected errors no overflow and exact cleanup",
+    "phase4StandaloneStyleBoundaries": "pass; no service-worker manifest route authentication CSRF CSP policy enforcement product financial database protected credential external live GitHub publication deployment workflow downstream or preserved-file mutation occurred"
   }
 }

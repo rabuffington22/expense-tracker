@@ -10068,8 +10068,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (5, 3, 0, 0),
-            "shared/dashboard styles: current application inventory must match the post-4AY contract",
+            == (0, 0, 0, 0),
+            "shared/dashboard styles: current application inventory must match the post-4AZ contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and current residual inventory passed")
@@ -10221,8 +10221,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (5, 3, 0, 0),
-            "transaction/matching styles: residual application inventory must match the post-4AY contract",
+            == (0, 0, 0, 0),
+            "transaction/matching styles: residual application inventory must match the post-4AZ contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded progress, split state, and exact residual inventory passed")
@@ -10349,8 +10349,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (5, 3, 0, 0),
-            "categorization/upload styles: residual application inventory must match the post-4AY contract",
+            == (0, 0, 0, 0),
+            "categorization/upload styles: residual application inventory must match the post-4AZ contract",
         )
 
         print("   ✅ Four source templates, rendered routes and preview, controller, semantic CSS, bounded progress, and exact residual inventory passed")
@@ -10470,8 +10470,8 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (5, 3, 0, 0),
-            "cashflow/planning styles: residual application inventory must match the post-4AY contract",
+            final_inventory == (0, 0, 0, 0),
+            "cashflow/planning styles: residual application inventory must match the post-4AZ contract",
         )
 
         print("   ✅ Three source templates, rendered routes, semantic CSS, Web Animations motion, bounded progress, and exact residual inventory passed")
@@ -10573,8 +10573,8 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (5, 3, 0, 0),
-            "weekly/waterfall styles: residual application inventory must match the post-4AY contract",
+            final_inventory == (0, 0, 0, 0),
+            "weekly/waterfall styles: residual application inventory must match the post-4AZ contract",
         )
 
         print("   ✅ Two source templates, rendered routes, bounded bars, inert geometry, measured tooltip and motion effects, and exact residual inventory passed")
@@ -10704,8 +10704,8 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (5, 3, 0, 0),
-            "subscriptions/payroll styles: residual application inventory must match the post-4AY contract",
+            final_inventory == (0, 0, 0, 0),
+            "subscriptions/payroll styles: residual application inventory must match the post-4AZ contract",
         )
 
         print("   ✅ Source and rendered pages, repeated Payroll partials, semantic state, finite role colors, bounded bars, and exact residual inventory passed")
@@ -10848,11 +10848,126 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (5, 3, 0, 0),
-            "Plaid entry styles: residual application inventory must match the post-4AY contract",
+            final_inventory == (0, 0, 0, 0),
+            "Plaid entry styles: residual application inventory must match the post-4AZ contract",
         )
 
-        print("   ✅ Source and conditional-rendered pages, exact initializers, semantic layout classes, and exact residual inventory passed")
+        print("   ✅ Source and conditional-rendered pages, exact initializers, semantic layout classes, and final aggregate inventory passed")
+
+        # ── 11u. Standalone document style compatibility ─────────────
+        print("\n11u. Standalone document style compatibility…")
+
+        standalone_style_paths = (
+            templates_root / "auth" / "login.html",
+            templates_root / "offline.html",
+            templates_root / "errors" / "403.html",
+            templates_root / "errors" / "404.html",
+            templates_root / "errors" / "500.html",
+            templates_root / "kristine.html",
+        )
+        standalone_style_sources = [
+            path.read_text() for path in standalone_style_paths
+        ]
+        _check(
+            all(
+                not _re.search(r"<style(?:\s|>)", source, flags=_re.IGNORECASE)
+                and not style_attribute_pattern.search(source)
+                for source in standalone_style_sources
+            ),
+            "standalone styles: all six source templates must contain no style blocks or attributes",
+        )
+        _check(
+            all("style.css" in source for source in standalone_style_sources)
+            and 'class="standalone-login-root"' in standalone_style_sources[0]
+            and 'class="standalone-login"' in standalone_style_sources[0]
+            and all(
+                'class="standalone-message-root"' in source
+                and 'class="standalone-message ' in source
+                for source in standalone_style_sources[1:5]
+            )
+            and standalone_style_sources[5].count("u-width-pct u-pct-{{") == 3,
+            "standalone styles: local stylesheet family roots and three bounded k bars must be explicit",
+        )
+        _check(
+            all(
+                marker in style_source
+                for marker in (
+                    ".standalone-login-root",
+                    ".standalone-login-card",
+                    ".standalone-login-error",
+                    ".standalone-message-root",
+                    ".standalone-message",
+                    ".offline-wrap",
+                    ".error-wrap",
+                )
+            )
+            and "'/static/style.css'" in precache,
+            "standalone styles: maintained CSS and existing offline precache contract must remain explicit",
+        )
+
+        os.environ["APP_PASSWORD_HASH"] = generate_password_hash(
+            "synthetic-4az-login-password"
+        )
+        standalone_style_auth_app = create_app()
+        standalone_style_auth_app.config.update(
+            TESTING=True,
+            PROPAGATE_EXCEPTIONS=False,
+        )
+        rendered_login_style = standalone_style_auth_app.test_client().get(
+            "/auth/login"
+        ).get_data(as_text=True)
+        os.environ["APP_PASSWORD_HASH"] = ""
+
+        rendered_standalone_styles = [
+            rendered_login_style,
+            *rendered_standalone,
+        ]
+        _check(
+            all(
+                not _re.search(r"<style(?:\s|>)", source, flags=_re.IGNORECASE)
+                and not style_attribute_pattern.search(source)
+                and "/static/style.css" in source
+                for source in rendered_standalone_styles
+            ),
+            "standalone styles: rendered login offline errors and k must load local CSS without inline styling",
+        )
+        _check(
+            "standalone-login-card" in rendered_login_style
+            and "standalone-login-error" in rendered_login_style
+            and "standalone-message--offline" in rendered_standalone_styles[1]
+            and all(
+                "standalone-message--error" in source
+                for source in rendered_standalone_styles[2:5]
+            ),
+            "standalone styles: rendered family-specific login offline and error contracts must remain explicit",
+        )
+
+        final_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        final_js_source = "\n".join(
+            path.read_text()
+            for path in (PROJECT_ROOT / "web" / "static").glob("*.js")
+            if path.name != "htmx.min.js"
+        )
+        final_inventory = (
+            len(
+                _re.findall(
+                    r"<style(?:\s|>)",
+                    final_template_source,
+                    flags=_re.IGNORECASE,
+                )
+            ),
+            len(style_attribute_pattern.findall(final_template_source)),
+            final_js_source.count("style="),
+            final_js_source.count(".style."),
+        )
+        _check(
+            final_inventory == (0, 0, 0, 0),
+            "standalone styles: final application-owned style inventory must be exactly zero",
+        )
+
+        print("   ✅ Six source and rendered documents, local offline-safe CSS, bounded k bars, family classes, and final zero inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

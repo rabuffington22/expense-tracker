@@ -3693,6 +3693,11 @@ def _assert_standalone_documents(
         """() => ({
             theme: document.documentElement.getAttribute("data-theme"),
             color: document.querySelector('meta[name="theme-color"]').content,
+            stylesheetCount: document.querySelectorAll(
+                'link[rel="stylesheet"][href$="/static/style.css"]'
+            ).length,
+            styleBlockCount: document.querySelectorAll("style").length,
+            styleAttributeCount: document.querySelectorAll("[style]").length,
             assetCount: document.querySelectorAll(
                 'script[src*="standalone-documents.js"]'
             ).length,
@@ -3700,6 +3705,10 @@ def _assert_standalone_documents(
                 (script) => !script.src
             ).length,
             retryAction: document.querySelector(".offline-btn").dataset.standaloneAction,
+            bodyDisplay: getComputedStyle(document.body).display,
+            wrapMaxWidth: getComputedStyle(
+                document.querySelector(".offline-wrap")
+            ).maxWidth,
         })"""
     )
     _check(
@@ -3707,11 +3716,16 @@ def _assert_standalone_documents(
         == {
             "theme": "light",
             "color": "#F7F9FC",
+            "stylesheetCount": 1,
+            "styleBlockCount": 0,
+            "styleAttributeCount": 0,
             "assetCount": 1,
             "inlineCount": 0,
             "retryAction": "retry",
+            "bodyDisplay": "flex",
+            "wrapMaxWidth": "360px",
         },
-        f"{label}: offline document must initialize theme and delegated retry from one local asset",
+        f"{label}: offline document must preserve local CSS layout early theme and delegated retry without inline styles",
     )
     with page.expect_navigation(wait_until="networkidle"):
         page.get_by_role("button", name="Retry", exact=True).click()
@@ -3733,6 +3747,11 @@ def _assert_standalone_documents(
             """() => ({
                 theme: document.documentElement.getAttribute("data-theme"),
                 color: document.querySelector('meta[name="theme-color"]').content,
+                stylesheetCount: document.querySelectorAll(
+                    'link[rel="stylesheet"][href$="/static/style.css"]'
+                ).length,
+                styleBlockCount: document.querySelectorAll("style").length,
+                styleAttributeCount: document.querySelectorAll("[style]").length,
                 assetCount: document.querySelectorAll(
                     'script[src*="standalone-documents.js"]'
                 ).length,
@@ -3740,14 +3759,26 @@ def _assert_standalone_documents(
                     (script) => !script.src
                 ).length,
                 body: document.body.innerText,
+                bodyDisplay: getComputedStyle(document.body).display,
+                wrapMaxWidth: getComputedStyle(
+                    document.querySelector(".error-wrap")
+                ).maxWidth,
             })"""
         )
         _check(
             error_state["theme"] == "light"
             and error_state["color"] == "#F7F9FC"
+            and error_state["stylesheetCount"] == 1
+            and error_state["styleBlockCount"] == 0
+            and error_state["styleAttributeCount"] == 0
             and error_state["assetCount"] == 1
             and error_state["inlineCount"] == 0,
-            f"{label}: {status} document must use the local early-theme controller",
+            f"{label}: {status} document must use local CSS and the early-theme controller without inline styles",
+        )
+        _check(
+            error_state["bodyDisplay"] == "flex"
+            and error_state["wrapMaxWidth"] == "360px",
+            f"{label}: {status} document must preserve centered responsive layout",
         )
         _check(
             "SYNTHETIC_4AR_EXCEPTION_MARKER" not in error_state["body"],
@@ -3765,6 +3796,14 @@ def _assert_standalone_documents(
             inlineCount: Array.from(document.scripts).filter(
                 (script) => !script.src
             ).length,
+            stylesheetCount: document.querySelectorAll(
+                'link[rel="stylesheet"][href*="/static/style.css"]'
+            ).length,
+            styleBlockCount: document.querySelectorAll("style").length,
+            styleAttributeCount: document.querySelectorAll("[style]").length,
+            boundedFillCount: document.querySelectorAll(
+                '.kd-fill.u-width-pct[class*="u-pct-"]'
+            ).length,
             bfmLeak: document.body.innerText.includes("4AL BFM Checking"),
             focusVisible: document.body.innerText.includes("FOCUS SPENDING")
                 && document.body.innerText.includes("Food"),
@@ -3773,9 +3812,13 @@ def _assert_standalone_documents(
     _check(
         focused_state["assetCount"] == 1
         and focused_state["inlineCount"] == 0
+        and focused_state["stylesheetCount"] == 1
+        and focused_state["styleBlockCount"] == 0
+        and focused_state["styleAttributeCount"] == 0
+        and focused_state["boundedFillCount"] >= 2
         and not focused_state["bfmLeak"]
         and focused_state["focusVisible"],
-        f"{label}: /k/ must load its local controller and preserve Personal plus LL without BFM",
+        f"{label}: /k/ must use local CSS and bounded bars while preserving Personal plus LL without BFM",
     )
 
     toggles = page.locator('[data-kristine-action="toggle-category"]')
@@ -3802,6 +3845,26 @@ def _assert_standalone_documents(
         drill.evaluate("element => element.hidden"),
         f"{label}: delegated /k/ click must close the drill-down",
     )
+
+    for viewport_width in (768, 1200, 390):
+        page.set_viewport_size({"width": viewport_width, "height": 844})
+        responsive_state = page.evaluate(
+            """() => ({
+                styleBlockCount: document.querySelectorAll("style").length,
+                styleAttributeCount: document.querySelectorAll("[style]").length,
+                wrapWidth: document.querySelector(".kd-wrap").getBoundingClientRect().width,
+                viewportWidth: document.documentElement.clientWidth,
+                bodyOverflow: document.documentElement.scrollWidth
+                    > document.documentElement.clientWidth,
+            })"""
+        )
+        _check(
+            responsive_state["styleBlockCount"] == 0
+            and responsive_state["styleAttributeCount"] == 0
+            and responsive_state["wrapWidth"] <= 480
+            and not responsive_state["bodyOverflow"],
+            f"{label}: /k/ must preserve zero-inline responsive layout at {viewport_width}px",
+        )
 
     page.evaluate("localStorage.setItem('theme', 'dark')")
     page.goto(base_url, wait_until="networkidle")
@@ -4382,6 +4445,31 @@ def main() -> None:
                     "/auth/login" in page.url,
                     "configured-auth shell must redirect to the standalone login first",
                 )
+                login_style_state = page.evaluate(
+                    """() => ({
+                        stylesheetCount: document.querySelectorAll(
+                            'link[rel="stylesheet"][href$="/static/style.css"]'
+                        ).length,
+                        styleBlockCount: document.querySelectorAll("style").length,
+                        styleAttributeCount: document.querySelectorAll("[style]").length,
+                        bodyDisplay: getComputedStyle(document.body).display,
+                        cardWidth: document.querySelector(
+                            ".standalone-login-card"
+                        ).getBoundingClientRect().width,
+                        cardMaxWidth: getComputedStyle(
+                            document.querySelector(".standalone-login-card")
+                        ).maxWidth,
+                    })"""
+                )
+                _check(
+                    login_style_state["stylesheetCount"] == 1
+                    and login_style_state["styleBlockCount"] == 0
+                    and login_style_state["styleAttributeCount"] == 0
+                    and login_style_state["bodyDisplay"] == "grid"
+                    and login_style_state["cardWidth"] <= 360
+                    and login_style_state["cardMaxWidth"] == "360px",
+                    "configured-auth login must preserve its local CSS card layout without inline styles",
+                )
                 page.locator("#password").fill(auth_password)
                 with page.expect_navigation(wait_until="networkidle"):
                     page.get_by_role("button", name="Sign in", exact=True).click()
@@ -4506,7 +4594,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, mocked Plaid entry, and standalone offline/error/k workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, mocked Plaid entry, and standalone login/offline/error/k execution and style workflows, status-only wording, split and planning CRUD, AI, CSRF, service worker, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":
