@@ -990,7 +990,9 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 
 ### Confirmed Work Block 4BA-R: Exceptional Documents And Plaid CSP Policy Reconciliation Durability
 
-Status: active; directly authorized by Ryan on 2026-07-24.
+Status: done; directly authorized and completed on 2026-07-24.
+
+Result: exact nine-path source commit `8dfbc0f4c32d9b011db0e8f0eeb4b9bfa4081b09` is durable on `origin/main`. Exact scope, sensitive-addition, JSON, whitespace, dashboard, commit-parent, clean fast-forward, non-force push, remote-SHA, no-workflow-run, and preserved-file checks passed. `[skip actions]` produced no GitHub workflow run and no Fly deployment or production access occurred. No product, workflow, protected, credential, database, live Plaid, downstream, proposed 4BB, broader recovery, or preserved-file mutation occurred.
 
 Parent task: Phase 4 Task 1P.4.3b-R plus only the authorized command-center durability slice.
 

@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4BA command-center artifact set to `main` under confirmed command-center-only work block 4BA-R without triggering application deployment.
+Decide whether to confirm proposed local-only work block 4BB for Task 1P.4.4 CSP header enforcement and maintained synthetic/isolated-browser proof.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3b.1-1P.4.3b.2 are complete locally through 4BA, and confirmed 4BA-R owns exact command-center durability before Task 1P.4.4 returns as the next separate planning decision.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3b.1-1P.4.3b.2 and their command-center durability are complete through 4BA/4BA-R, and Task 1P.4.4 is the next separate planning decision.
 
 ## Current Work Block
 
-Work block 4BA-R: Exceptional Documents And Plaid CSP Policy Reconciliation Durability — active and limited to the exact sanitized command-center set.
+Work block 4BA-R: Exceptional Documents And Plaid CSP Policy Reconciliation Durability — done and durable on `main` without deployment.
 
 ## Current Task
 
-Task 1P.4.3b-R: Publish and verify the 4BA policy reconciliation artifacts — active; Task 1P.4.4 remains separately gated.
+Task 1P.4.4: Enforce and prove the final Content Security Policy — current planning decision only; no implementation block is confirmed.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, `[skip actions]` commits, clean local-main fast-forward, non-force push, remote verification, closeout, and preserved-file control. Ryan owns Task 1P.4.4 confirmation plus every product, deployment, protected, and live decision.
+Ryan owns Task 1P.4.4 work-block confirmation plus every product, deployment, protected, and live decision. Codex Desktop owns the durable 4BA/4BA-R artifacts and may not continue into enforcement without separate confirmation.
 
 ## Current Action
 
-Verify and stage only the nine intended 4BA command-center paths, commit with `[skip actions]`, fast-forward and push `main`, verify the remote SHA, then publish the sanitized 4BA-R closeout with `[skip actions]`.
+Review proposed 4BB for Task 1P.4.4. If not confirmed, stop with 4BA/4BA-R complete and durable.
 
 ## Work Block 4BA-R Contract
 
@@ -32,6 +32,15 @@ Verify and stage only the nine intended 4BA command-center paths, commit with `[
 - Stop for an unexpected or sensitive path, failed validation/dashboard health, remote divergence, push rejection, preserved-file overlap, or recovery beyond clean fast-forward and read-only diagnosis.
 - Verify exact staged and commit contents; JSON; whitespace; dashboard refresh/health/rendered state; local/remote ancestry and exact SHA; no workflow run from `[skip actions]`; final clean tracked state; and all preserved files.
 - Report source and closeout commit SHAs, exact published paths, remote alignment, skipped deployment, preserved exclusions, and separately gated 4BB.
+
+## Work Block 4BA-R Status
+
+- Exact nine-path source commit `8dfbc0f4c32d9b011db0e8f0eeb4b9bfa4081b09` is durable on `origin/main`.
+- The source commit used `[skip actions]`; GitHub returned no workflow run for the SHA, so no Fly deployment occurred.
+- Local `HEAD`, local `origin/main`, and the remote `main` ref matched the exact source SHA before this sanitized closeout.
+- Exact scope, sensitive-addition, JSON, whitespace, dashboard refresh/health/generated/rendered state, ancestry, push, remote alignment, and preserved-file checks passed.
+- No product, workflow, credential, protected, database, live Plaid, production/demo, Fly, downstream, proposed 4BB, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-24-exceptional-document-plaid-csp-policy-reconciliation-release-4ba-r.md`.
 
 ## Work Block 4BA Contract
 
