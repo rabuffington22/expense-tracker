@@ -17,8 +17,8 @@
 </div>
 
 {% if not has_data %}
-<div class="outline-panel" style="text-align:center; padding:2rem;">
-  <p style="color:var(--text-muted);">No BFM transaction data found.</p>
+<div class="outline-panel wf-empty-panel">
+  <p class="wf-empty-copy">No BFM transaction data found.</p>
 </div>
 {% else %}
 
@@ -94,7 +94,7 @@
         </div>
         <div class="wf-wf-track">
           <div class="wf-wf-bar wf-wfbar--{{ row.type }} wf-wf-bar-anim"
-               style="--bar-left: {{ row.left }}%; --bar-width: {{ row.width }}%;"
+               data-bar-left="{{ row.left }}" data-bar-width="{{ row.width }}"
                data-delay="{{ loop.index0 }}"></div>
         </div>
       </div>
@@ -206,7 +206,7 @@
         </div>
         <div class="wf-wf-track">
           <div class="wf-wf-bar wf-wfbar--{{ row.type }} wf-wf-bar-anim"
-               style="--bar-left: {{ row.left }}%; --bar-width: {{ row.width }}%;"
+               data-bar-left="{{ row.left }}" data-bar-width="{{ row.width }}"
                data-delay="{{ loop.index0 + 5 }}"></div>
         </div>
       </div>
@@ -271,7 +271,7 @@
         </div>
         <div class="wf-wf-track">
           <div class="wf-wf-bar wf-wfbar--{{ row.type }} wf-wf-bar-anim"
-               style="--bar-left: {{ row.left }}%; --bar-width: {{ row.width }}%;"
+               data-bar-left="{{ row.left }}" data-bar-width="{{ row.width }}"
                data-delay="{{ loop.index0 }}"></div>
         </div>
       </div>
@@ -320,7 +320,7 @@
         </div>
         <div class="wf-wf-track">
           <div class="wf-wf-bar wf-wfbar--{{ row.type }} wf-wf-bar-anim"
-               style="--bar-left: {{ row.left }}%; --bar-width: {{ row.width }}%;"
+               data-bar-left="{{ row.left }}" data-bar-width="{{ row.width }}"
                data-delay="{{ loop.index0 }}"></div>
         </div>
       </div>
@@ -349,8 +349,7 @@
       <span class="wk-cc-name">{{ card.name }}</span>
       <span class="wk-cc-balance">{{ fmt_dollars(card.balance_cents) }}</span>
       <div class="wk-cc-bar-track">
-        <div class="wk-cc-bar {% if card.pct > 80 %}wk-cc-bar--over{% elif card.pct > 50 %}wk-cc-bar--warn{% endif %}"
-             style="width: {{ card.pct }}%;"></div>
+        <div class="wk-cc-bar u-width-pct u-pct-{{ [0, [card.pct|int, 100]|min]|max }} {% if card.pct > 80 %}wk-cc-bar--over{% elif card.pct > 50 %}wk-cc-bar--warn{% endif %}"></div>
       </div>
       {% if card.limit_cents > 0 %}
       <span class="wk-cc-limit">of {{ fmt_dollars(card.limit_cents) }}</span>
@@ -389,8 +388,7 @@
       </div>
       {% endif %}
       <div class="wk-cc-progress-track">
-        <div class="wk-cc-progress {% if paydown_pace.on_pace %}wk-cc-progress--ok{% else %}wk-cc-progress--behind{% endif %}"
-             style="width: {{ paydown_pace.pct_complete }}%;"></div>
+        <div class="wk-cc-progress u-width-pct u-pct-{{ [0, [paydown_pace.pct_complete|int, 100]|min]|max }} {% if paydown_pace.on_pace %}wk-cc-progress--ok{% else %}wk-cc-progress--behind{% endif %}"></div>
       </div>
       <div class="wk-cc-pace-meta">
         {{ paydown_pace.days_remaining }} days remaining · Target {{ paydown_pace.target_date }}
@@ -414,8 +412,7 @@
         </div>
         <div class="chart-track">
           {% set pct = ((t.surplus_cents|abs * 100) / max_abs)|int %}
-          <div class="chart-fill {% if t.surplus_cents < 0 %}wf-bar-negative{% endif %} {% if t.month == month %}chart-fill--selected{% endif %}"
-               style="height: {{ [pct, 100]|min }}%;"></div>
+          <div class="chart-fill u-height-pct u-pct-{{ [0, [pct|int, 100]|min]|max }} {% if t.surplus_cents < 0 %}wf-bar-negative{% endif %} {% if t.month == month %}chart-fill--selected{% endif %}"></div>
         </div>
         <div class="chart-label">{{ fmt_month_short(t.month) }}</div>
       </div>

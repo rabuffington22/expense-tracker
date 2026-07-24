@@ -2,27 +2,46 @@
 
 ## Active Objective
 
-Preserve the complete, durable, automatically deployed, and credential-free health-verified 4AV-R result while deciding the next separately gated style cluster.
+Preserve the complete, locally verified, uncommitted 4AW result while deciding its separately gated 4AW-R durability and release.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.4 are complete and durable through 4AS-R, 4AT-R, 4AU-R, and 4AV-R.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.4 are durable through 4AS-R, 4AT-R, 4AU-R, and 4AV-R, and Task 1P.4.3a.5 is complete and verified locally through 4AW.
 
 ## Current Work Block
 
-Work block 4AV-R: Cash Flow And Planning Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AW: Weekly And Waterfall Style Compatibility — complete, verified, local-only, and uncommitted.
 
 ## Current Task
 
-Task 1P.4.3a.5: Make Weekly and Waterfall styles strict-policy compatible — waiting for separate planning and confirmation.
+Task 1P.4.3a.5-R: Publish and verify Weekly and Waterfall style compatibility — waiting for separate planning and confirmation.
 
 ## Owner
 
-Ryan owns the next planning and confirmation decision. Codex Desktop owns no new application or release mutation until another exact work block is confirmed.
+Ryan owns the 4AW-R durability and release decision. Codex Desktop owns no commit, push, publication, deployment, or later style mutation without another exact confirmed block.
 
 ## Current Action
 
-Decide whether to plan and confirm Task 1P.4.3a.5 for Weekly and Waterfall style compatibility; do not begin implementation, publication, CSP enforcement, or any live-sensitive action without a separate exact block.
+Decide whether to plan and confirm exact-scope 4AW-R durability and release; preserve the verified local branch and all exclusions meanwhile.
+
+## Work Block 4AW Contract
+
+- Include Task 1P.4.3a.5 plus only its focused Task 2 regression slice: remove four Weekly and nine Waterfall template style attributes plus four `waterfall.js` runtime style writes; preserve validated calculations, credit-card and paydown bars, category pace, Waterfall fractional geometry, actual/target views, tooltips, animation staggering, tax/target behavior, exact responsive layout, and Personal/BFM versus Luxe Legacy boundaries; add focused maintained source, rendered-response, and configured-auth/no-password isolated-browser proof; reconcile the exact residual CSP style inventory; and close Runway OS locally after verification.
+- Keep Tasks 1P.4.3a.6-1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, route, financial-calculation, database-query, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, Plaid, protected-data, credential, external/live, GitHub, publication, deployment, workflow, downstream, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the unrelated duplicate 4AU log outside scope.
+- Preserve appearance and behavior rather than redesigning; use maintained semantic and bounded percentage classes for integer values and inert data plus measured Web Animations API effects for exact fractional Waterfall geometry, tooltip coordinates, and staggered motion without runtime style mutation; use temporary synthetic Personal/BFM/Luxe Legacy data, configured-auth and no-password modes, localhost-only disposable browser state, denied non-localhost requests, zero unexpected console/page errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if parity requires a product/design choice, calculation or route change, inline-style exception, visual drift, or excluded financial, database, authentication, CSP-enforcement, Plaid, or later-task work; desktop, phone, or exact 768px behavior becomes ambiguous; protected/live/destructive access appears; verification changes the plan; cleanup fails; command-center checks fail; scope expands; or a preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-style proof for both included templates; zero `.style.*` writes in `waterfall.js`; exact residual inventory of six style blocks, 40 template style attributes, zero generated attributes, and five runtime writes; configured-auth and no-password isolated Chrome across Personal/BFM supported routes and Luxe Legacy denial at desktop, phone, and exact 768px for bars, fractional geometry, actual/target views, tooltip edge placement, animation staggering, inputs, responsive overflow, denied networking, zero unexpected errors, and exact cleanup; relevant Python and JavaScript syntax; JSON; whitespace; dashboard refresh/health/generated state; exact scope; and all preserved files.
+- Report exact migrated surfaces and patterns, final inventory, calculation/visual/responsive/browser parity, cleanup, changed paths, branch state, preserved exclusions, and the separate 4AW-R durability gate.
+
+## Work Block 4AW Status
+
+- Ryan confirmed the exact local-only 4AW proposal on 2026-07-23.
+- All four Weekly and nine Waterfall template style attributes plus all four Waterfall runtime style writes are removed through maintained semantic and bounded percentage classes, inert fractional geometry, and measured Web Animations API effects.
+- The exact residual tracked inventory is six inline style blocks, 40 template style attributes, zero generated-markup style attributes, and five application runtime style writes.
+- Baseline and final full smoke, focused source/rendered assertions, JavaScript and Python syntax, and configured-auth/no-password isolated Chrome across Personal/BFM supported routes and the Luxe Legacy denial boundary at phone, exact 768px, and desktop passed with denied non-localhost traffic, zero unexpected browser/page errors, and exact cleanup.
+- Validated calculations, integer and fractional bars, actual/target views, tooltip viewport placement, animation staggering, tax/target input behavior, navigation, and responsive layout passed without an inline-style exception or route change.
+- No commit, push, PR, publication, deployment, live/protected access, route, calculation, database, authentication, CSP enforcement, later-cluster, destructive, downstream, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-weekly-waterfall-style-compatibility-4aw.md`.
 
 ## Work Block 4AV Contract
 
@@ -177,7 +196,8 @@ Decide whether to plan and confirm Task 1P.4.3a.5 for Weekly and Waterfall style
 - Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — durable, automatically deployed, and credential-free health verified through 4AU-R.
 - Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — complete and verified locally through 4AV.
 - Task 1P.4.3a.4-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — complete through 4AV-R.
-- Task 1P.4.3a.5: Weekly and Waterfall — planned.
+- Task 1P.4.3a.5: Weekly and Waterfall — complete and verified locally through 4AW.
+- Task 1P.4.3a.5-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — waiting for separate planning and confirmation.
 - Task 1P.4.3a.6: Subscriptions and Payroll — planned.
 - Task 1P.4.3a.7: Data Sources and Connected Accounts — planned; the third-party Plaid exception remains Task 1P.4.3b.
 - Task 1P.4.3a.8: login, offline/errors, and standalone `/k/` — planned; exceptional-document policy reconciliation remains Task 1P.4.3b.

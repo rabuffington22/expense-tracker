@@ -10068,8 +10068,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 53, 0, 9),
-            "shared/dashboard styles: current application inventory must match the post-4AV contract",
+            == (6, 40, 0, 5),
+            "shared/dashboard styles: current application inventory must match the post-4AW contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and current residual inventory passed")
@@ -10221,8 +10221,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 53, 0, 9),
-            "transaction/matching styles: residual application inventory must match the post-4AV contract",
+            == (6, 40, 0, 5),
+            "transaction/matching styles: residual application inventory must match the post-4AW contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded progress, split state, and exact residual inventory passed")
@@ -10349,8 +10349,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 53, 0, 9),
-            "categorization/upload styles: residual application inventory must match the post-4AV contract",
+            == (6, 40, 0, 5),
+            "categorization/upload styles: residual application inventory must match the post-4AW contract",
         )
 
         print("   ✅ Four source templates, rendered routes and preview, controller, semantic CSS, bounded progress, and exact residual inventory passed")
@@ -10470,11 +10470,114 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (6, 53, 0, 9),
-            "cashflow/planning styles: residual application inventory must match the post-4AV contract",
+            final_inventory == (6, 40, 0, 5),
+            "cashflow/planning styles: residual application inventory must match the post-4AW contract",
         )
 
         print("   ✅ Three source templates, rendered routes, semantic CSS, Web Animations motion, bounded progress, and exact residual inventory passed")
+
+        # ── 11r. Weekly and Waterfall style compatibility ───────────────
+        print("\n11r. Weekly and Waterfall style compatibility…")
+
+        weekly_waterfall_style_paths = (
+            templates_root / "weekly.html",
+            templates_root / "waterfall.html",
+        )
+        weekly_waterfall_style_sources = [
+            path.read_text() for path in weekly_waterfall_style_paths
+        ]
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in weekly_waterfall_style_sources
+            ),
+            "weekly/waterfall styles: both source templates must contain no style attributes",
+        )
+
+        waterfall_controller_source = (
+            PROJECT_ROOT / "web" / "static" / "waterfall.js"
+        ).read_text()
+        _check(
+            "style=" not in waterfall_controller_source
+            and ".style." not in waterfall_controller_source
+            and ".style =" not in waterfall_controller_source,
+            "weekly/waterfall styles: Waterfall controller must emit no style attributes or runtime style writes",
+        )
+        _check(
+            "_waterfallGeometryAnimation" in waterfall_controller_source
+            and "_waterfallPositionAnimation" in waterfall_controller_source
+            and "_waterfallEntranceAnimation" in waterfall_controller_source
+            and "u-width-pct u-pct-" in weekly_waterfall_style_sources[0]
+            and "data-bar-left" in weekly_waterfall_style_sources[1]
+            and "data-bar-width" in weekly_waterfall_style_sources[1]
+            and "u-height-pct u-pct-" in weekly_waterfall_style_sources[1],
+            "weekly/waterfall styles: inert geometry and measured Web Animations contracts must remain explicit",
+        )
+        _check(
+            all(
+                selector in style_source
+                for selector in (
+                    ".wk-section-subtitle",
+                    ".wf-empty-panel",
+                    ".wf-empty-copy",
+                    ".wf-tip",
+                    ".wf-wf-bar",
+                )
+            ),
+            "weekly/waterfall styles: maintained CSS must contain subtitle empty-state tooltip and Waterfall bar contracts",
+        )
+
+        rendered_weekly_waterfall_styles = []
+        for path in ("/weekly/", "/waterfall/"):
+            response = style_client.get(path)
+            _check(
+                response.status_code == 200,
+                f"weekly/waterfall styles: {path} must render successfully",
+            )
+            rendered_weekly_waterfall_styles.append(
+                response.get_data(as_text=True)
+            )
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in rendered_weekly_waterfall_styles
+            ),
+            "weekly/waterfall styles: included rendered routes must contain no style attributes",
+        )
+        _check(
+            "wk-section-subtitle" in rendered_weekly_waterfall_styles[0]
+            and "/static/waterfall.js" in rendered_weekly_waterfall_styles[1]
+            and "data-waterfall-controller"
+            in rendered_weekly_waterfall_styles[1],
+            "weekly/waterfall styles: rendered semantic and page-controller contracts must remain explicit",
+        )
+
+        final_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        final_js_source = "\n".join(
+            path.read_text()
+            for path in (PROJECT_ROOT / "web" / "static").glob("*.js")
+            if path.name != "htmx.min.js"
+        )
+        final_inventory = (
+            len(
+                _re.findall(
+                    r"<style(?:\s|>)",
+                    final_template_source,
+                    flags=_re.IGNORECASE,
+                )
+            ),
+            len(style_attribute_pattern.findall(final_template_source)),
+            final_js_source.count("style="),
+            final_js_source.count(".style."),
+        )
+        _check(
+            final_inventory == (6, 40, 0, 5),
+            "weekly/waterfall styles: residual application inventory must match the post-4AW contract",
+        )
+
+        print("   ✅ Two source templates, rendered routes, bounded bars, inert geometry, measured tooltip and motion effects, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")

@@ -8778,6 +8778,10 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
 .wk-section {
     margin-bottom: 2rem;
 }
+.wk-section-subtitle {
+    font-size: var(--ui-font-sm);
+    font-weight: 400;
+}
 
 /* ── Bills Table ──────────────────────────────────────────────────────────── */
 .wk-bills-table {
@@ -9139,6 +9143,13 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
 /* ── Color helpers ────────────────────────────────────────────────────────── */
 .wf-positive { color: var(--green); }
 .wf-negative { color: var(--red); }
+.wf-empty-panel {
+    padding: 2rem;
+    text-align: center;
+}
+.wf-empty-copy {
+    color: var(--text-muted);
+}
 
 /* ── Section spacing ──────────────────────────────────────────────────────── */
 .wf-section { margin-bottom: 1.5rem; }
@@ -9224,8 +9235,8 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
     position: absolute;
     top: 0;
     bottom: 0;
-    left: var(--bar-left);
-    width: var(--bar-width);
+    left: 0;
+    width: 0;
     border-radius: 8px;
     transition: width 0.6s ease, left 0.6s ease;
 }
@@ -9291,21 +9302,6 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
     opacity: 0.35;
 }
 .wf-wf-connector svg { display: block; }
-
-/* ── Bar entrance animation ──────────────────────────────────────────────── */
-@keyframes wfSlideIn {
-    from {
-        clip-path: inset(0 100% 0 0);
-        opacity: 0.2;
-    }
-    to {
-        clip-path: inset(0 0 0 0);
-        opacity: 1;
-    }
-}
-.wf-bar-animate {
-    animation: wfSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
 
 /* ── Chevron ──────────────────────────────────────────────────────────────── */
 .wf-chevron {

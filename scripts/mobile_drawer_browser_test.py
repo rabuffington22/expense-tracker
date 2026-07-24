@@ -2248,10 +2248,31 @@ def _assert_weekly_waterfall_pages(page, base_url: str, label: str) -> None:
         f"{label}: Waterfall must start on the actual view without target params",
     )
     actual_bar = actual_view.locator(".wf-wf-bar-anim").first
+    actual_bar_state = actual_bar.evaluate(
+        """element => ({
+            noStyle: !element.hasAttribute("style"),
+            geometry: element.getAnimations().some((animation) => {
+                const frames = animation.effect.getKeyframes();
+                return frames.some(
+                    (frame) => frame.left === `${element.dataset.barLeft}%`
+                        && frame.width === `${element.dataset.barWidth}%`
+                );
+            }),
+            entrance: element.getAnimations().some((animation) => {
+                const frames = animation.effect.getKeyframes();
+                return animation.effect.getTiming().duration === 500
+                    && frames.some(
+                        (frame) => typeof frame.clipPath === "string"
+                            && frame.clipPath.includes("100%")
+                    );
+            }),
+        })"""
+    )
     _check(
         actual_bar.count() == 1
-        and "wf-bar-animate" in (actual_bar.get_attribute("class") or ""),
-        f"{label}: actual-view bars must animate on initial load",
+        and actual_bar_state
+        == {"noStyle": True, "geometry": True, "entrance": True},
+        f"{label}: actual-view bars must preserve exact geometry and entrance motion without style attributes",
     )
 
     page.locator(
@@ -2274,10 +2295,30 @@ def _assert_weekly_waterfall_pages(page, base_url: str, label: str) -> None:
 
     tooltip_row = actual_view.locator(".wf-wf-row[data-tip]").first
     tooltip_row.click(position={"x": 24, "y": 20})
+    tooltip_state = page.locator("#wf-tip").evaluate(
+        """element => {
+            const rect = element.getBoundingClientRect();
+            return {
+                noStyle: !element.hasAttribute("style"),
+                positioned: element.getAnimations().some((animation) =>
+                    animation.effect.getKeyframes().some(
+                        (frame) => typeof frame.left === "string"
+                            && typeof frame.top === "string"
+                    )
+                ),
+                insideViewport: rect.left >= 7
+                    && rect.top >= 7
+                    && rect.right <= window.innerWidth - 7
+                    && rect.bottom <= window.innerHeight - 7,
+            };
+        }"""
+    )
     _check(
         page.locator("#wf-tip").is_visible()
-        and page.locator("#wf-tip .wf-tip-row").count() >= 1,
-        f"{label}: delegated Waterfall row click must show its tooltip",
+        and page.locator("#wf-tip .wf-tip-row").count() >= 1
+        and tooltip_state
+        == {"noStyle": True, "positioned": True, "insideViewport": True},
+        f"{label}: delegated Waterfall row click must show a bounded measured tooltip without style attributes",
     )
     tooltip_row.click(position={"x": 24, "y": 20})
     _check(
@@ -2303,10 +2344,28 @@ def _assert_weekly_waterfall_pages(page, base_url: str, label: str) -> None:
         f"{label}: delegated target-view switching must preserve active state",
     )
     target_bar = target_view.locator(".wf-wf-bar-anim").first
+    target_bar_state = target_bar.evaluate(
+        """element => ({
+            noStyle: !element.hasAttribute("style"),
+            geometry: element.getAnimations().some((animation) => {
+                const frames = animation.effect.getKeyframes();
+                return frames.some(
+                    (frame) => frame.left === `${element.dataset.barLeft}%`
+                        && frame.width === `${element.dataset.barWidth}%`
+                );
+            }),
+            delay: element.getAnimations().some((animation) =>
+                animation.effect.getTiming().duration === 500
+                    && animation.effect.getTiming().delay
+                        === Number.parseInt(element.dataset.delay || "0", 10) * 150
+            ),
+        })"""
+    )
     _check(
         target_bar.count() == 1
-        and "wf-bar-animate" in (target_bar.get_attribute("class") or ""),
-        f"{label}: newly visible target bars must re-animate",
+        and target_bar_state
+        == {"noStyle": True, "geometry": True, "delay": True},
+        f"{label}: newly visible target bars must preserve geometry and staggered motion without style attributes",
     )
 
     takehome_mode = page.locator(
@@ -2367,6 +2426,118 @@ def _assert_weekly_waterfall_pages(page, base_url: str, label: str) -> None:
         f"{label}: Luxe Legacy must remain denied before Waterfall execution",
     )
 
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
+def _assert_weekly_waterfall_style_responsive(
+    page, base_url: str, label: str
+) -> None:
+    route_contracts = (
+        ("/weekly/", False),
+        ("/waterfall/", True),
+    )
+    viewports = (
+        ("phone", 390, 844),
+        ("exact-768", 768, 900),
+        ("desktop", 1280, 900),
+    )
+
+    for entity_name in ("Personal", "BFM"):
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        for viewport_name, width, height in viewports:
+            page.set_viewport_size({"width": width, "height": height})
+            for route, is_waterfall in route_contracts:
+                page.goto(f"{base_url}{route}", wait_until="networkidle")
+                if is_waterfall:
+                    page.wait_for_function(
+                        "document.querySelector('[data-waterfall-controller]')"
+                        "?.dataset.initialized === 'true'"
+                    )
+                responsive_state = page.evaluate(
+                    """(isWaterfall) => {
+                        const geometryBars = Array.from(
+                            document.querySelectorAll(
+                                "#wf-view-actual .wf-wf-bar"
+                                + "[data-bar-left][data-bar-width]"
+                            )
+                        );
+                        return {
+                            styleAttrs: document.querySelectorAll(
+                                "#main-content [style]"
+                            ).length,
+                            bodyOverflow: document.documentElement.scrollWidth
+                                > document.documentElement.clientWidth + 1,
+                            mainVisible: Boolean(
+                                document.getElementById("main-content")
+                                    ?.getClientRects().length
+                            ),
+                            boundedBars: document.querySelectorAll(
+                                ".wk-cc-bar.u-width-pct[class*='u-pct-'], "
+                                + ".wk-cc-progress.u-width-pct[class*='u-pct-'], "
+                                + ".wk-cat-bar.u-width-pct[class*='u-pct-'], "
+                                + ".chart-fill.u-height-pct[class*='u-pct-']"
+                            ).length,
+                            geometryBars: geometryBars.length,
+                            geometryReady: !isWaterfall || (
+                                geometryBars.length > 0
+                                && geometryBars.every(
+                                    (bar) => {
+                                        const trackRect = bar.parentElement
+                                            .getBoundingClientRect();
+                                        const barRect = bar.getBoundingClientRect();
+                                        const expectedLeft = trackRect.width
+                                            * Number.parseFloat(
+                                                bar.dataset.barLeft
+                                            ) / 100;
+                                        const expectedWidth = trackRect.width
+                                            * Number.parseFloat(
+                                                bar.dataset.barWidth
+                                            ) / 100;
+                                        return !bar.hasAttribute("style")
+                                            && Math.abs(
+                                                barRect.left
+                                                    - trackRect.left
+                                                    - expectedLeft
+                                            ) <= 1.5
+                                            && Math.abs(
+                                                barRect.width - expectedWidth
+                                            ) <= 1.5;
+                                    }
+                                )
+                            ),
+                        };
+                    }""",
+                    is_waterfall,
+                )
+                _check(
+                    responsive_state["styleAttrs"] == 0
+                    and not responsive_state["bodyOverflow"]
+                    and responsive_state["mainVisible"]
+                    and responsive_state["boundedBars"] > 0
+                    and responsive_state["geometryReady"],
+                    f"{label}: {entity_name} {route} must preserve bounded bars exact geometry and a style-attribute-free non-overflowing {viewport_name} layout; state={responsive_state}",
+                )
+
+    page.context.add_cookies(
+        [{"name": "entity", "value": "LL", "url": base_url}]
+    )
+    for viewport_name, width, height in viewports:
+        page.set_viewport_size({"width": width, "height": height})
+        for route, _is_waterfall in route_contracts:
+            page.goto(f"{base_url}{route}", wait_until="networkidle")
+            _check(
+                page.url.rstrip("/") == base_url
+                and page.locator("[data-waterfall-controller]").count() == 0
+                and page.locator("[data-ai-page='weekly']").count() == 0,
+                f"{label}: Luxe Legacy {route} must remain denied at {viewport_name}",
+            )
+
+    page.set_viewport_size({"width": 390, "height": 844})
     page.context.add_cookies(
         [{"name": "entity", "value": "Personal", "url": base_url}]
     )
@@ -3710,6 +3881,11 @@ def main() -> None:
                 _assert_weekly_waterfall_pages(
                     page, base_url, "no-password Weekly/Waterfall execution"
                 )
+                _assert_weekly_waterfall_style_responsive(
+                    page,
+                    base_url,
+                    "no-password Weekly/Waterfall style compatibility",
+                )
                 _assert_subscription_page(
                     page, base_url, "no-password subscription execution"
                 )
@@ -3866,6 +4042,11 @@ def main() -> None:
                 )
                 _assert_weekly_waterfall_pages(
                     page, base_url, "configured-auth Weekly/Waterfall execution"
+                )
+                _assert_weekly_waterfall_style_responsive(
+                    page,
+                    base_url,
+                    "configured-auth Weekly/Waterfall style compatibility",
                 )
                 _assert_subscription_page(
                     page, base_url, "configured-auth subscription execution"

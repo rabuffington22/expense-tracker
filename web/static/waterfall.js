@@ -5,6 +5,29 @@
     var activeRow = null;
     var targetMode = "revenue";
 
+    function replaceAnimation(element, propertyName, keyframes, options) {
+        if (element[propertyName]) {
+            element[propertyName].cancel();
+        }
+        element[propertyName] = element.animate(keyframes, options);
+        return element[propertyName];
+    }
+
+    function applyBarGeometry(bar) {
+        var left = Number.parseFloat(bar.dataset.barLeft || "");
+        var width = Number.parseFloat(bar.dataset.barWidth || "");
+        if (!Number.isFinite(left) || !Number.isFinite(width)) {
+            return;
+        }
+        var animation = replaceAnimation(
+            bar,
+            "_waterfallGeometryAnimation",
+            [{left: left + "%", width: width + "%"}],
+            {duration: 1, fill: "forwards"}
+        );
+        animation.finish();
+    }
+
     function controllerRoot() {
         return document.querySelector("[data-waterfall-controller]");
     }
@@ -57,7 +80,6 @@
             tip.appendChild(tipRow);
         });
 
-        tip.style.position = "fixed";
         tip.removeAttribute("hidden");
         var tipWidth = tip.offsetWidth;
         var tipHeight = tip.offsetHeight;
@@ -76,8 +98,13 @@
         if (top < 8) {
             top = 8;
         }
-        tip.style.left = left + "px";
-        tip.style.top = top + "px";
+        var positionAnimation = replaceAnimation(
+            tip,
+            "_waterfallPositionAnimation",
+            [{left: left + "px", top: top + "px"}],
+            {duration: 1, fill: "forwards"}
+        );
+        positionAnimation.finish();
     }
 
     function animateBars(view) {
@@ -85,11 +112,22 @@
             return;
         }
         view.querySelectorAll(".wf-wf-bar-anim").forEach(function (bar) {
-            bar.classList.remove("wf-bar-animate");
-            void bar.offsetWidth;
+            applyBarGeometry(bar);
             var delay = parseInt(bar.dataset.delay || "0", 10);
-            bar.style.animationDelay = (delay * 0.15) + "s";
-            bar.classList.add("wf-bar-animate");
+            replaceAnimation(
+                bar,
+                "_waterfallEntranceAnimation",
+                [
+                    {clipPath: "inset(0 100% 0 0)", opacity: 0.2},
+                    {clipPath: "inset(0 0 0 0)", opacity: 1},
+                ],
+                {
+                    duration: 500,
+                    delay: delay * 150,
+                    easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                    fill: "both",
+                }
+            );
         });
     }
 
