@@ -2,27 +2,61 @@
 
 ## Active Objective
 
-Preserve the complete, durable, automatically deployed, and credential-free health-verified 4AX/4AX-R Subscriptions and Payroll style-compatibility result while deciding the separately gated Task 1P.4.3a.7 Data Sources and Plaid entry-page style block.
+Make the exact locally verified 4AY Data Sources and Connected Accounts style-compatibility result durable on `main`, observe the resulting automatic Fly deployment, verify exact source SHA and credential-free production health, and publish only a sanitized `[skip actions]` closeout under confirmed work block 4AY-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.6 are durable, automatically deployed, and credential-free health verified through 4AS-R, 4AT-R, 4AU-R, 4AV-R, 4AW-R, and 4AX-R.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.7-R is active through confirmed 4AY-R while the exact 4AY source set awaits commit, direct-main push, automatic deployment observation, and credential-free health verification.
 
 ## Current Work Block
 
-Work block 4AX-R: Subscriptions And Payroll Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
+Work block 4AY-R: Data Sources And Connected Accounts Style Compatibility Release — confirmed and active.
 
 ## Current Task
 
-Task 1P.4.3a.7: Make Data Sources and Plaid entry-page styles strict-policy compatible — waiting for separate planning and confirmation.
+Task 1P.4.3a.7-R: Publish and verify Data Sources and Connected Accounts style compatibility — active through 4AY-R.
 
 ## Owner
 
-Ryan owns the next exact-scope planning and confirmation decision. Codex Desktop owns no Task 1P.4.3a.7 implementation, Plaid-policy decision, protected access, GitHub durability, publication, deployment, or live action without another confirmed block or direct Ryan request.
+Codex Desktop owns exact-path staging, source commit, direct non-force `origin/main` push, read-only automatic-deployment observation, credential-free health, sanitized `[skip actions]` closeout, and final intake. Ryan retains every expansion, manual workflow action, protected action, and recovery beyond the confirmed boundary.
 
 ## Current Action
 
-Decide whether to plan and confirm an exact local-only Task 1P.4.3a.7 block for Data Sources and Plaid entry-page style compatibility; preserve the released 4AX result and every third-party, CSP-policy, protected, live, and publication boundary meanwhile.
+Reverify the exact 4AY source set and preserved exclusions; explicitly stage and commit the twelve authorized paths; push the exact source commit directly to `origin/main` without force or PR; observe only its automatic Fly deployment; verify exact source SHA and credential-free `/health`; then publish one sanitized command-center-only `[skip actions]` closeout.
+
+## Work Block 4AY-R Contract
+
+- Include explicit-path staging and commit of the exact verified 4AY application templates, maintained CSS, smoke/browser tests, CSP contract, evidence, and Runway OS paths on `codex/csp-plaid-entry-styles`; direct non-force push of that exact source commit to `origin/main`; read-only observation of the resulting automatic Fly deployment; credential-free production `/health`; exact source-SHA verification; and one sanitized command-center-only `[skip actions]` closeout commit and push.
+- Keep Task 1P.4.3a.8 and every later task; new application, route/query, financial, database, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, real Plaid, credential, protected-data, retained-upload, authenticated-production, manual workflow, non-automatic Fly, downstream, PR, force-push, broader-recovery, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the unrelated duplicate 4AU log outside scope.
+- Use explicit-path staging only; preserve the verified one-block/34-attribute migration, exact 5/3/0/0 inventory, both exact Plaid initializers, dual-auth all-entity responsive browser proof, and all three unrelated untracked files; observe only the automatic deployment and credential-free health; use `[skip actions]` only for the sanitized closeout.
+- Stop for an unexpected path, sensitive addition, protected-boundary risk, failed maintained verification, excluded staging, local or remote `main` divergence, push rejection, automatic deployment failure requiring mutation, credential-free health failure, exact source-SHA mismatch, preserved-file overlap, or recovery beyond a clean fast-forward and read-only diagnosis.
+- Verify exact changed and staged paths; full smoke and configured-auth/no-password isolated Chrome evidence; Python, JavaScript, and JSON syntax; whitespace; dashboard refresh/health/generated state; commit contents; ancestry; exact remote SHA; automatic workflow and deploy-job result; credential-free production health; final local/remote alignment; and all preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, automatic deployment and health results, final alignment, preserved exclusions, and separately gated Task 1P.4.3a.8.
+
+## Work Block 4AY-R Status
+
+- Ryan directly instructed Codex to commit and push the verified 4AY result to `main`, authorizing the exact 4AY-R release boundary.
+- Local `HEAD` and `origin/main` both begin at `4b25c5f3d318604bd3b4acda21e473e5f5141457`; no remote divergence exists.
+- Source staging, commit, push, automatic deployment observation, health verification, and sanitized closeout are active. No PR, force push, manual workflow action, non-automatic Fly mutation, protected access, or real Plaid is authorized.
+
+## Work Block 4AY Contract
+
+- Include Task 1P.4.3a.7 plus only its focused Task 2 regression slice: remove the one inline style block and 34 template style attributes in `data_sources.html` and `plaid.html`; preserve vendor workflows, conditional account states and tables, both exact Plaid initializer tags, form-versus-JSON exchange contracts, entity isolation, and responsive behavior; reconcile the exact residual CSP style inventory; and close Runway OS locally after verification.
+- Keep Task 1P.4.3a.8, Task 1P.4.3b, Task 1P.4.4, Tasks 1P.6-1P.7, the remainder of Task 2, Tasks 3-4, the known empty-vendor aggregation issue, route/query, financial, database, product, authentication, CSRF, dependency, CSP-header/nonce/exception/enforcement, real Plaid, protected data, credentials, external/live access, GitHub durability, publication, deployment, workflow, downstream, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the unrelated duplicate 4AU log outside scope.
+- Preserve appearance and behavior rather than redesigning; use maintained page-specific semantic classes and existing utilities where suitable; retain both exact Plaid initializer tags unchanged; use fake Plaid configuration, mocked Plaid functions, temporary synthetic all-entity data, configured-auth and no-password modes, localhost-only disposable browser state, denied non-localhost traffic, zero unexpected browser/page errors, and exact cleanup; keep durability local-only and uncommitted.
+- Stop if parity requires a product/design decision or inline-style exception; work would cross into Plaid policy, CSP enforcement, route/query, database, authentication, CSRF, financial, product, or later-task behavior; real Plaid, credentials, protected data, or non-localhost access becomes necessary; desktop, phone, or exact 768px behavior becomes ambiguous; verification changes the plan; cleanup or command-center health fails; scope expands; or a preserved untracked file overlaps.
+- Verify baseline and final full smoke; source and rendered zero-style proof across relevant conditional states; exact retention of both Plaid initializer tags and both exchange formats; final aggregate inventory of five style blocks, three template style attributes, zero generated attributes, and zero runtime writes; configured-auth and no-password isolated Chrome at desktop, phone, and exact 768px for vendor selection/counting, confirmations, account states/tables, Link open/success/exit/error wiring, responsive overflow, entity isolation, denied networking, zero unexpected errors, and cleanup; relevant Python and JavaScript syntax; JSON; whitespace; dashboard refresh/health/generated state; exact scope; and all preserved files.
+- Report exact migrated seams and replacement classes, final inventory, conditional/rendered/browser proof, cleanup, changed paths, branch/worktree state, preserved exclusions, and the separate 4AY-R durability gate.
+
+## Work Block 4AY Status
+
+- Ryan confirmed the exact local-only 4AY proposal on 2026-07-24.
+- The one Data Sources inline style block and all 34 Data Sources/Connected Accounts template style attributes are removed through maintained page-specific semantic classes and existing utilities.
+- Both exact Plaid initializer tags, page-owned controllers, vendor behavior, conditional account states, form-versus-JSON exchange contracts, entity isolation, and responsive layout remain intact.
+- The exact residual tracked inventory is five inline style blocks, three template style attributes, zero generated-markup style attributes, and zero application runtime style writes.
+- Baseline and final full smoke plus configured-auth/no-password isolated Chrome across all three entities at phone, exact 768px, and desktop passed with denied non-localhost traffic, zero unexpected browser/page errors, and exact cleanup.
+- No route/query, known empty-vendor aggregation repair, CSP policy/enforcement, real Plaid, credential, protected data, commit, push, publication, deployment, live action, downstream, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-24-data-sources-connected-accounts-style-compatibility-4ay.md`.
 
 ## Work Block 4AX-R Contract
 

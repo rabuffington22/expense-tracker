@@ -3373,6 +3373,155 @@ def _assert_plaid_entry_pages(page, base_url: str, label: str) -> None:
     page.goto(base_url, wait_until="networkidle")
 
 
+def _assert_plaid_entry_style_responsive(
+    page, base_url: str, label: str
+) -> None:
+    from core.db import get_connection
+
+    viewports = (
+        ("phone", 390, 844),
+        ("exact-768", 768, 900),
+        ("desktop", 1280, 900),
+    )
+
+    entity_pairs = (
+        ("Personal", "personal"),
+        ("BFM", "company"),
+        ("LL", "luxelegacy"),
+    )
+    safe_label = "".join(character for character in label if character.isalnum())
+    for _entity_name, entity_key in entity_pairs:
+        fixture_conn = get_connection(entity_key)
+        try:
+            empty_vendor_items = fixture_conn.execute(
+                "SELECT pi.item_id FROM plaid_items pi "
+                "LEFT JOIN vendor_transactions vt ON vt.plaid_item_id = pi.item_id "
+                "WHERE pi.is_vendor = 1 GROUP BY pi.item_id HAVING COUNT(vt.id) = 0"
+            ).fetchall()
+            for index, row in enumerate(empty_vendor_items):
+                fixture_conn.execute(
+                    "INSERT INTO vendor_transactions "
+                    "(plaid_item_id, plaid_transaction_id, plaid_account_id, date, "
+                    "amount, amount_cents, name, merchant_name, recipient, vendor_type, "
+                    "imported_at) VALUES (?, ?, ?, '2026-07-01', 12.34, 1234, "
+                    "'Synthetic 4AY style payment', 'Synthetic 4AY style payment', "
+                    "'Synthetic 4AY style recipient', 'venmo', ?)",
+                    (
+                        row["item_id"],
+                        f"4ay-browser-style-{entity_key}-{index}-{safe_label}",
+                        f"4ay-browser-style-account-{entity_key}-{index}",
+                        datetime.now(timezone.utc).isoformat(),
+                    ),
+                )
+            fixture_conn.commit()
+        finally:
+            fixture_conn.close()
+
+    for entity_name, _entity_key in entity_pairs:
+        page.context.add_cookies(
+            [{"name": "entity", "value": entity_name, "url": base_url}]
+        )
+        for viewport_name, width, height in viewports:
+            page.set_viewport_size({"width": width, "height": height})
+            page.goto(f"{base_url}/data-sources/", wait_until="networkidle")
+            data_sources_state = page.evaluate(
+                """() => {
+                    const vendorRow = document.querySelector(".ds-vendor-row");
+                    const vendorActions = document.querySelector(
+                        ".ds-vendor-actions"
+                    );
+                    const inlineForms = Array.from(
+                        document.querySelectorAll(".ds-inline-form")
+                    );
+                    return {
+                        controller: document.querySelectorAll(
+                            "[data-data-sources-controller]"
+                        ).length,
+                        styleAttrs: document.querySelectorAll(
+                            "#main-content [style]"
+                        ).length,
+                        bodyOverflow: document.documentElement.scrollWidth
+                            > document.documentElement.clientWidth + 1,
+                        vendorRows: document.querySelectorAll(
+                            ".ds-vendor-row"
+                        ).length,
+                        vendorDisplay: vendorRow
+                            ? getComputedStyle(vendorRow).display
+                            : null,
+                        vendorActionsDisplay: vendorActions
+                            ? getComputedStyle(vendorActions).display
+                            : null,
+                        inlineForms: inlineForms.length,
+                    };
+                }"""
+            )
+            _check(
+                data_sources_state["controller"] == 1
+                and data_sources_state["styleAttrs"] == 0
+                and not data_sources_state["bodyOverflow"]
+                and data_sources_state["vendorRows"] > 0
+                and data_sources_state["vendorDisplay"] == "flex"
+                and data_sources_state["vendorActionsDisplay"] == "flex"
+                and data_sources_state["inlineForms"] >= 2,
+                f"{label}: {entity_name} Data Sources must preserve semantic vendor layout and remain style-attribute-free and non-overflowing at {viewport_name}; state={data_sources_state}",
+            )
+
+            page.goto(f"{base_url}/plaid/", wait_until="networkidle")
+            page.wait_for_function(
+                "document.querySelector('[data-plaid-controller]')"
+                "?.dataset.initialized === 'true'"
+            )
+            plaid_state = page.evaluate(
+                """() => {
+                    const toolbar = document.querySelector(".plaid-toolbar");
+                    const accountTable = document.querySelector(
+                        ".plaid-accounts-table"
+                    );
+                    const renameForm = document.querySelector(
+                        ".plaid-rename-form"
+                    );
+                    return {
+                        controller: document.querySelectorAll(
+                            "[data-plaid-controller]"
+                        ).length,
+                        styleAttrs: document.querySelectorAll(
+                            "#main-content [style]"
+                        ).length,
+                        bodyOverflow: document.documentElement.scrollWidth
+                            > document.documentElement.clientWidth + 1,
+                        toolbarDisplay: toolbar
+                            ? getComputedStyle(toolbar).display
+                            : null,
+                        tableLayout: accountTable
+                            ? getComputedStyle(accountTable).tableLayout
+                            : null,
+                        renameDisplay: renameForm
+                            ? getComputedStyle(renameForm).display
+                            : null,
+                        initializerCount: document.querySelectorAll(
+                            'script[src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"]'
+                        ).length,
+                    };
+                }"""
+            )
+            _check(
+                plaid_state["controller"] == 1
+                and plaid_state["styleAttrs"] == 0
+                and not plaid_state["bodyOverflow"]
+                and plaid_state["toolbarDisplay"] == "flex"
+                and plaid_state["tableLayout"] == "fixed"
+                and plaid_state["renameDisplay"] == "flex"
+                and plaid_state["initializerCount"] == 1,
+                f"{label}: {entity_name} Connected Accounts must preserve toolbar table rename and initializer layout while remaining style-attribute-free and non-overflowing at {viewport_name}; state={plaid_state}",
+            )
+
+    page.set_viewport_size({"width": 390, "height": 844})
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
+    page.goto(base_url, wait_until="networkidle")
+
+
 def _register_standalone_test_routes(app) -> None:
     from flask import abort, render_template, render_template_string
 
@@ -4107,6 +4256,11 @@ def main() -> None:
                     base_url,
                     "no-password Subscriptions/Payroll style compatibility",
                 )
+                _assert_plaid_entry_style_responsive(
+                    page,
+                    base_url,
+                    "no-password Plaid entry style compatibility",
+                )
                 _assert_plaid_entry_pages(
                     page, base_url, "no-password Plaid entry execution"
                 )
@@ -4273,6 +4427,11 @@ def main() -> None:
                     page,
                     base_url,
                     "configured-auth Subscriptions/Payroll style compatibility",
+                )
+                _assert_plaid_entry_style_responsive(
+                    page,
+                    base_url,
+                    "configured-auth Plaid entry style compatibility",
                 )
                 _assert_plaid_entry_pages(
                     page, base_url, "configured-auth Plaid entry execution"

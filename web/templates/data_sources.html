@@ -47,7 +47,7 @@
     <form method="post" action="{{ url_for('data_sources.save') }}">
         <input type="hidden" name="temp_key" value="{{ temp_key }}">
         <template id="ds-order-dates-data" data-json>{{ orders | map(attribute='order_date') | list | tojson }}</template>
-        <div class="form-row mb-2" style="max-width: 400px;">
+        <div class="form-row mb-2 ds-date-filters">
         <div class="form-group">
             <label>From</label>
             <input type="date" name="filter_from" id="filterFrom" value="{{ min_date }}"
@@ -65,11 +65,11 @@
 {% endif %}
 
 {% if total_orders %}
-<div class="outline-panel" style="margin-top: 1rem;">
+<div class="outline-panel ds-orders-summary">
     <p><strong>{{ total_orders }}</strong> vendor orders on file — <strong>{{ matched_orders }}</strong> matched, <strong>{{ unmatched_orders }}</strong> unmatched</p>
 </div>
 {% else %}
-<p class="text-muted" style="margin-top: 0.5rem;">No vendor orders saved yet.</p>
+<p class="text-muted mt-1">No vendor orders saved yet.</p>
 {% endif %}
 
 {# ── Payment Accounts Section ────────────────────────────────────────────── #}
@@ -90,12 +90,12 @@
             </span>
         </div>
         <div class="ds-vendor-actions">
-            <form method="post" action="{{ url_for('data_sources.sync_vendor', item_id=acct.item_id) }}" style="display:inline;">
+            <form method="post" action="{{ url_for('data_sources.sync_vendor', item_id=acct.item_id) }}" class="ds-inline-form">
                 <button type="submit" class="btn btn-secondary btn-sm">Sync</button>
             </form>
-            <form method="post" action="{{ url_for('data_sources.disconnect_vendor', item_id=acct.item_id) }}" style="display:inline;"
+            <form method="post" action="{{ url_for('data_sources.disconnect_vendor', item_id=acct.item_id) }}" class="ds-inline-form"
                   data-data-sources-confirm="Disconnect {{ acct.institution_name|e }}? This will remove all synced vendor transactions.">
-                <button type="submit" class="btn btn-sm" style="color: var(--red);">Disconnect</button>
+                <button type="submit" class="btn btn-sm ds-danger-action">Disconnect</button>
             </form>
         </div>
     </div>
@@ -103,7 +103,7 @@
 </div>
 {% endif %}
 
-<div style="margin-top: 0.75rem;">
+<div class="mt-2">
     <button type="button" class="btn btn-primary" id="ds-connect-btn"
             data-data-sources-action="connect-account">Connect Payment Account</button>
 </div>
@@ -112,26 +112,4 @@
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 </div>
 
-<style>
-.ds-vendor-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 0;
-    gap: 0.75rem;
-}
-.ds-vendor-row--border {
-    border-bottom: 1px solid var(--border);
-}
-.ds-vendor-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-}
-.ds-vendor-actions {
-    display: flex;
-    gap: 0.4rem;
-    flex-shrink: 0;
-}
-</style>
 {% endblock %}

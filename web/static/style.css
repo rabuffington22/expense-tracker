@@ -2608,6 +2608,75 @@ input[type="checkbox"] {
 .u-width-pct { width: var(--ui-pct); }
 .u-height-pct { height: var(--ui-pct); }
 .u-left-pct { left: var(--ui-pct); }
+
+/* ── Data Sources and Connected Accounts ──────────────────────────────── */
+.ds-date-filters { max-width: 400px; }
+.ds-orders-summary { margin-top: 1rem; }
+.ds-inline-form { display: inline; }
+.ds-danger-action,
+.plaid-danger-action { color: var(--red); }
+.ds-vendor-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    gap: 0.75rem;
+}
+.ds-vendor-row--border { border-bottom: 1px solid var(--border); }
+.ds-vendor-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+.ds-vendor-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+.plaid-toolbar,
+.plaid-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.plaid-toolbar { margin-bottom: 1rem; }
+.plaid-inline-form { margin: 0; }
+.plaid-item-header { margin-bottom: 0.8rem; }
+.plaid-status-meta { margin-left: 0.8rem; }
+.plaid-status-never {
+    color: var(--orange);
+    margin-left: 0.8rem;
+}
+.plaid-item-stats { margin-top: 0.2rem; }
+.plaid-accounts-table {
+    table-layout: fixed;
+    width: 100%;
+}
+.plaid-col-toggle { width: 40px; }
+.plaid-col-account,
+.plaid-col-display { width: 30%; }
+.plaid-col-type { width: 25%; }
+.plaid-col-mask { width: 80px; }
+.plaid-rename-form {
+    margin: 0;
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+.plaid-rename-input {
+    width: 140px;
+    padding: 0.2rem 0.4rem;
+}
+.plaid-rename-save {
+    padding: 0.15rem 0.4rem;
+    opacity: 0.5;
+    font-size: 0.7rem;
+}
+.plaid-manual-title { margin-top: 2rem; }
+.plaid-manual-table { width: 100%; }
+.plaid-manual-name,
+.plaid-manual-action { padding: 0.4rem 0.5rem; }
+.plaid-manual-action { text-align: right; }
 .u-clipboard-proxy {
     position: fixed;
     width: 1px;

@@ -10068,8 +10068,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 37, 0, 0),
-            "shared/dashboard styles: current application inventory must match the post-4AX contract",
+            == (5, 3, 0, 0),
+            "shared/dashboard styles: current application inventory must match the post-4AY contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded CSS, state behavior, and current residual inventory passed")
@@ -10221,8 +10221,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 37, 0, 0),
-            "transaction/matching styles: residual application inventory must match the post-4AX contract",
+            == (5, 3, 0, 0),
+            "transaction/matching styles: residual application inventory must match the post-4AY contract",
         )
 
         print("   ✅ Source, rendered, controller, bounded progress, split state, and exact residual inventory passed")
@@ -10349,8 +10349,8 @@ def main() -> None:
                 current_generated_style_attributes,
                 current_runtime_style_writes,
             )
-            == (6, 37, 0, 0),
-            "categorization/upload styles: residual application inventory must match the post-4AX contract",
+            == (5, 3, 0, 0),
+            "categorization/upload styles: residual application inventory must match the post-4AY contract",
         )
 
         print("   ✅ Four source templates, rendered routes and preview, controller, semantic CSS, bounded progress, and exact residual inventory passed")
@@ -10470,8 +10470,8 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (6, 37, 0, 0),
-            "cashflow/planning styles: residual application inventory must match the post-4AX contract",
+            final_inventory == (5, 3, 0, 0),
+            "cashflow/planning styles: residual application inventory must match the post-4AY contract",
         )
 
         print("   ✅ Three source templates, rendered routes, semantic CSS, Web Animations motion, bounded progress, and exact residual inventory passed")
@@ -10573,8 +10573,8 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (6, 37, 0, 0),
-            "weekly/waterfall styles: residual application inventory must match the post-4AX contract",
+            final_inventory == (5, 3, 0, 0),
+            "weekly/waterfall styles: residual application inventory must match the post-4AY contract",
         )
 
         print("   ✅ Two source templates, rendered routes, bounded bars, inert geometry, measured tooltip and motion effects, and exact residual inventory passed")
@@ -10704,11 +10704,155 @@ def main() -> None:
             final_js_source.count(".style."),
         )
         _check(
-            final_inventory == (6, 37, 0, 0),
-            "subscriptions/payroll styles: residual application inventory must match the post-4AX contract",
+            final_inventory == (5, 3, 0, 0),
+            "subscriptions/payroll styles: residual application inventory must match the post-4AY contract",
         )
 
         print("   ✅ Source and rendered pages, repeated Payroll partials, semantic state, finite role colors, bounded bars, and exact residual inventory passed")
+
+        # ── 11t. Data Sources and Connected Accounts style compatibility ─
+        print("\n11t. Data Sources and Connected Accounts style compatibility…")
+
+        data_sources_style_source = data_sources_template.read_text()
+        plaid_style_source = plaid_template.read_text()
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                and not _re.search(r"<style(?:\s|>)", source, flags=_re.IGNORECASE)
+                for source in (data_sources_style_source, plaid_style_source)
+            ),
+            "Plaid entry styles: both source templates must contain no application style blocks or attributes",
+        )
+        _check(
+            data_sources_style_source.count(plaid_initializer) == 1
+            and plaid_style_source.count(plaid_initializer) == 1
+            and "ds-date-filters" in data_sources_style_source
+            and "ds-inline-form" in data_sources_style_source
+            and "plaid-accounts-table" in plaid_style_source
+            and "plaid-rename-form" in plaid_style_source,
+            "Plaid entry styles: exact initializers and semantic Data Sources and Connected Accounts classes must remain explicit",
+        )
+        _check(
+            all(
+                selector in style_source
+                for selector in (
+                    ".ds-date-filters",
+                    ".ds-vendor-row",
+                    ".ds-inline-form",
+                    ".plaid-toolbar",
+                    ".plaid-accounts-table",
+                    ".plaid-rename-form",
+                    ".plaid-manual-action",
+                )
+            ),
+            "Plaid entry styles: maintained CSS must contain the page layout form table and account-action contracts",
+        )
+
+        synthetic_vendor_accounts = [
+            {
+                "item_id": "4ay-vendor-item",
+                "institution_name": "Synthetic 4AY Vendor",
+                "total_transactions": 3,
+                "matched_transactions": 2,
+                "unmatched_transactions": 1,
+            }
+        ]
+        synthetic_plaid_items = [
+            {
+                "item_id": "4ay-bank-item",
+                "institution_name": "Synthetic 4AY Bank",
+                "last_synced": None,
+            }
+        ]
+        synthetic_plaid_accounts = [
+            {
+                "account_id": "4ay-bank-account",
+                "name": "Synthetic 4AY Checking",
+                "display_name": "",
+                "mask": "4242",
+                "type": "depository",
+                "subtype": "checking",
+                "enabled": 1,
+            }
+        ]
+        style_client.set_cookie("entity", "Personal")
+        with (
+            patch(
+                "web.routes.data_sources.get_order_counts",
+                return_value=(3, 1),
+            ),
+            patch(
+                "web.routes.data_sources._get_vendor_accounts",
+                return_value=synthetic_vendor_accounts,
+            ),
+        ):
+            rendered_data_sources_styles = style_client.get(
+                "/data-sources/"
+            ).get_data(as_text=True)
+        with (
+            patch(
+                "web.routes.plaid._get_items",
+                return_value=synthetic_plaid_items,
+            ),
+            patch(
+                "web.routes.plaid._get_accounts_for_item",
+                return_value=synthetic_plaid_accounts,
+            ),
+            patch(
+                "web.routes.plaid._plaid_available",
+                return_value=True,
+            ),
+        ):
+            rendered_plaid_styles = style_client.get("/plaid/").get_data(
+                as_text=True
+            )
+        _check(
+            all(
+                not style_attribute_pattern.search(source)
+                for source in (
+                    rendered_data_sources_styles,
+                    rendered_plaid_styles,
+                )
+            ),
+            "Plaid entry styles: rendered Data Sources and Connected Accounts conditional states must contain no style attributes",
+        )
+        _check(
+            "ds-vendor-row" in rendered_data_sources_styles
+            and "ds-inline-form" in rendered_data_sources_styles
+            and "plaid-status-never" in rendered_plaid_styles
+            and "plaid-accounts-table" in rendered_plaid_styles
+            and "plaid-rename-form" in rendered_plaid_styles
+            and rendered_data_sources_styles.count(plaid_initializer) == 1
+            and rendered_plaid_styles.count(plaid_initializer) == 1,
+            "Plaid entry styles: rendered vendor account status table rename and exact initializer contracts must remain explicit",
+        )
+
+        final_template_source = "\n".join(
+            path.read_text() for path in templates_root.rglob("*.html")
+        )
+        final_js_source = "\n".join(
+            path.read_text()
+            for path in (PROJECT_ROOT / "web" / "static").glob("*.js")
+            if path.name != "htmx.min.js"
+        )
+        final_inventory = (
+            len(
+                _re.findall(
+                    r"<style(?:\s|>)",
+                    final_template_source,
+                    flags=_re.IGNORECASE,
+                )
+            ),
+            len(style_attribute_pattern.findall(final_template_source)),
+            final_js_source.count("style="),
+            final_js_source.count(".style."),
+        )
+        _check(
+            final_inventory == (5, 3, 0, 0),
+            "Plaid entry styles: residual application inventory must match the post-4AY contract",
+        )
+
+        print("   ✅ Source and conditional-rendered pages, exact initializers, semantic layout classes, and exact residual inventory passed")
 
     print("\n" + "=" * 60)
     print("  🎉  All smoke tests passed!")
