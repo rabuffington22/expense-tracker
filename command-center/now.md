@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Make the exact locally verified 4AY Data Sources and Connected Accounts style-compatibility result durable on `main`, observe the resulting automatic Fly deployment, verify exact source SHA and credential-free production health, and publish only a sanitized `[skip actions]` closeout under confirmed work block 4AY-R.
+Plan and separately confirm Task 1P.4.3a.8 for login, offline/error, and standalone `/k/` style compatibility after the exact 4AY result became durable, automatically deployed, and credential-free health verified through completed work block 4AY-R.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.7-R is active through confirmed 4AY-R while the exact 4AY source set awaits commit, direct-main push, automatic deployment observation, and credential-free health verification.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.7-R is complete through 4AY-R and Task 1P.4.3a.8 is the next separately gated planning decision.
 
 ## Current Work Block
 
-Work block 4AY-R: Data Sources And Connected Accounts Style Compatibility Release — confirmed and active.
+Work block 4AY-R: Data Sources And Connected Accounts Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.3a.7-R: Publish and verify Data Sources and Connected Accounts style compatibility — active through 4AY-R.
+Task 1P.4.3a.8: Make login, offline/error, and standalone `/k/` styles strict-policy compatible — waiting for separate planning and confirmation.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, direct non-force `origin/main` push, read-only automatic-deployment observation, credential-free health, sanitized `[skip actions]` closeout, and final intake. Ryan retains every expansion, manual workflow action, protected action, and recovery beyond the confirmed boundary.
+Ryan owns the next planning and confirmation decision. Codex Desktop owns no Task 1P.4.3a.8 implementation, Plaid policy, CSP enforcement, protected access, publication, deployment, or live action without a separately confirmed block or direct Ryan request.
 
 ## Current Action
 
-Reverify the exact 4AY source set and preserved exclusions; explicitly stage and commit the twelve authorized paths; push the exact source commit directly to `origin/main` without force or PR; observe only its automatic Fly deployment; verify exact source SHA and credential-free `/health`; then publish one sanitized command-center-only `[skip actions]` closeout.
+Decide whether to define and confirm a bounded Task 1P.4.3a.8 work block for the five remaining style blocks and three template style attributes in login, offline/error, and standalone `/k/` surfaces.
 
 ## Work Block 4AY-R Contract
 
@@ -36,8 +36,12 @@ Reverify the exact 4AY source set and preserved exclusions; explicitly stage and
 ## Work Block 4AY-R Status
 
 - Ryan directly instructed Codex to commit and push the verified 4AY result to `main`, authorizing the exact 4AY-R release boundary.
-- Local `HEAD` and `origin/main` both begin at `4b25c5f3d318604bd3b4acda21e473e5f5141457`; no remote divergence exists.
-- Source staging, commit, push, automatic deployment observation, health verification, and sanitized closeout are active. No PR, force push, manual workflow action, non-automatic Fly mutation, protected access, or real Plaid is authorized.
+- Exact 12-path source commit `9daeb8f4508a3fab2b63ea7304903d4cc10adcbb` is durable on `origin/main`.
+- Automatic Fly Deploy run `30101833858` and deploy job `89509540237` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Full smoke, configured-auth/no-password isolated Chrome, syntax, JSON, whitespace, command-center health, exact staging, ancestry, remote alignment, automatic deployment, health, and preserved-file checks passed.
+- No PR, force push, manual workflow action, workflow edit, non-automatic Fly mutation, credential, protected data, authenticated production page, real Plaid, downstream access, later-task work, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-24-data-sources-connected-accounts-style-compatibility-release-4ay-r.md`.
 
 ## Work Block 4AY Contract
 

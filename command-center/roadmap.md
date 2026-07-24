@@ -1023,7 +1023,7 @@ Result: the one Data Sources inline style block and all 34 Data Sources/Connecte
 
 ### Confirmed Work Block 4AY-R: Data Sources And Connected Accounts Style Compatibility Release
 
-Status: active.
+Status: complete, durable, automatically deployed, and credential-free health verified.
 
 Parent task: Phase 4 Task 1P.4.3a.7-R plus the authorized Task 4 publication slice.
 
@@ -1054,6 +1054,8 @@ Dashboard closeout: mark 4AY-R and Task 1P.4.3a.7-R complete; preserve Task 1P.4
 Report point: return source and closeout commit SHAs, exact published paths, automatic deployment and health result, final local/remote alignment, preserved exclusions, and separately gated Task 1P.4.3a.8.
 
 Suggested next work block: separately decide whether to plan and confirm Task 1P.4.3a.8 for login, offline/error, and standalone `/k/` style compatibility.
+
+Result: exact 12-path source commit `9daeb8f4508a3fab2b63ea7304903d4cc10adcbb` is durable on `origin/main`. Automatic Fly Deploy run `30101833858` and deploy job `89509540237` passed for that exact source SHA, and credential-free production `/health` returned HTTP 200 with JSON `{"status":"ok"}`. Full maintained synthetic and dual-auth responsive browser proof, syntax, JSON, whitespace, command-center health, exact scope, ancestry, remote alignment, and preserved-file checks passed. No PR, force push, manual workflow action, workflow edit, non-automatic Fly mutation, protected access, real Plaid, later-task implementation, broader recovery, or preserved-file mutation occurred. Evidence: `command-center/logs/2026-07-24-data-sources-connected-accounts-style-compatibility-release-4ay-r.md`.
 
 ### Confirmed Work Block 4AX: Subscriptions And Payroll Style Compatibility
 
