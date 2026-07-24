@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4AX Subscriptions and Payroll style-compatibility result through confirmed release work block 4AX-R, observe only its automatic Fly deployment, verify exact source identity and credential-free production health, and close Runway OS without retriggering deployment.
+Preserve the complete, durable, automatically deployed, and credential-free health-verified 4AX/4AX-R Subscriptions and Payroll style-compatibility result while deciding the separately gated Task 1P.4.3a.7 Data Sources and Plaid entry-page style block.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.5 are durable, automatically deployed, and credential-free health verified through 4AS-R, 4AT-R, 4AU-R, 4AV-R, and 4AW-R; Task 1P.4.3a.6 is complete and verified locally through 4AX, and its exact release block 4AX-R is active.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.6 are durable, automatically deployed, and credential-free health verified through 4AS-R, 4AT-R, 4AU-R, 4AV-R, 4AW-R, and 4AX-R.
 
 ## Current Work Block
 
-Work block 4AX-R: Subscriptions And Payroll Style Compatibility Release — confirmed and active.
+Work block 4AX-R: Subscriptions And Payroll Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.3a.6-R: Publish and verify Subscriptions and Payroll style compatibility — active through confirmed work block 4AX-R.
+Task 1P.4.3a.7: Make Data Sources and Plaid entry-page styles strict-policy compatible — waiting for separate planning and confirmation.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, commit and ancestry verification, direct non-force push to `origin/main`, read-only automatic-deployment observation, credential-free production health, sanitized `[skip actions]` closeout, and final intake. Ryan owns every expansion, manual live action, and broader recovery.
+Ryan owns the next exact-scope planning and confirmation decision. Codex Desktop owns no Task 1P.4.3a.7 implementation, Plaid-policy decision, protected access, GitHub durability, publication, deployment, or live action without another confirmed block or direct Ryan request.
 
 ## Current Action
 
-Commit the exact verified 4AX source set, push it directly to `origin/main` without force or PR, observe only the resulting automatic Fly deployment, verify the exact source SHA and credential-free `/health`, then publish one sanitized command-center-only `[skip actions]` closeout commit.
+Decide whether to plan and confirm an exact local-only Task 1P.4.3a.7 block for Data Sources and Plaid entry-page style compatibility; preserve the released 4AX result and every third-party, CSP-policy, protected, live, and publication boundary meanwhile.
 
 ## Work Block 4AX-R Contract
 
@@ -36,8 +36,12 @@ Commit the exact verified 4AX source set, push it directly to `origin/main` with
 ## Work Block 4AX-R Status
 
 - Ryan directly instructed Codex to commit and push the verified 4AX result to `main`, authorizing the exact 4AX-R release boundary.
-- Exact-path preflight, commit, push, automatic-deployment observation, production health, and sanitized closeout are in progress.
-- No PR, force push, manual workflow action, non-automatic Fly mutation, credential, protected data, authenticated production page, downstream access, later-task work, broader recovery, or preserved-file mutation is authorized.
+- Exact 15-path source commit `fd16a004d81cf378948c6b6b3158e667c4a3905f` is durable on `origin/main`.
+- Automatic Fly Deploy run `30069896710` and deploy job `89408388148` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Full smoke, configured-auth/no-password isolated Chrome, syntax, JSON, whitespace, command-center health, exact staging, ancestry, remote alignment, automatic deployment, health, and preserved-file checks passed.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, credential, protected data, authenticated production page, downstream access, later-task work, broader recovery, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-24-subscriptions-payroll-style-compatibility-release-4ax-r.md`.
 
 ## Work Block 4AX Contract
 
