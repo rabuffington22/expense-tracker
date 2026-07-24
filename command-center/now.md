@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify the exact locally complete 4AV result through confirmed work block 4AV-R while preserving the durable 4AU-R baseline and every excluded boundary.
+Preserve the complete, durable, automatically deployed, and credential-free health-verified 4AV-R result while deciding the next separately gated style cluster.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.3a.3 and its release are complete through 4AU-R, Task 1P.4.3a.4 is complete locally through 4AV, and its exact durability/release is active through confirmed work block 4AV-R.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.4.3a.1 through 1P.4.3a.4 are complete and durable through 4AS-R, 4AT-R, 4AU-R, and 4AV-R.
 
 ## Current Work Block
 
-Work block 4AV-R: Cash Flow And Planning Style Compatibility Release — active.
+Work block 4AV-R: Cash Flow And Planning Style Compatibility Release — complete, durable, automatically deployed, and credential-free health verified.
 
 ## Current Task
 
-Task 1P.4.3a.4-R: Publish and verify Cash Flow and planning style compatibility — active.
+Task 1P.4.3a.5: Make Weekly and Waterfall styles strict-policy compatible — waiting for separate planning and confirmation.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, commit and ancestry verification, clean fast-forward to local `main`, direct non-force push, read-only automatic-deployment observation, credential-free production health, and sanitized closeout. Ryan owns every expansion, manual live action, and broader recovery.
+Ryan owns the next planning and confirmation decision. Codex Desktop owns no new application or release mutation until another exact work block is confirmed.
 
 ## Current Action
 
-Verify the exact 4AV set, stage only authorized paths, commit on `codex/csp-cashflow-planning-styles`, cleanly fast-forward local `main`, push `main` without force, observe only the resulting automatic Fly deployment, verify its exact source SHA and credential-free `/health`, then publish one sanitized command-center-only `[skip actions]` closeout.
+Decide whether to plan and confirm Task 1P.4.3a.5 for Weekly and Waterfall style compatibility; do not begin implementation, publication, CSP enforcement, or any live-sensitive action without a separate exact block.
 
 ## Work Block 4AV Contract
 
@@ -54,9 +54,12 @@ Verify the exact 4AV set, stage only authorized paths, commit on `codex/csp-cash
 
 ## Work Block 4AV-R Status
 
-- Ryan authorized committing and pushing the complete verified 4AV result to `main` on 2026-07-23.
-- Preflight shows `codex/csp-cashflow-planning-styles`, local `main`, and `origin/main` aligned at the same 4AU-R closeout commit before release mutation.
-- No staging, commit, push, deployment, health claim, or closeout mutation has occurred yet under 4AV-R.
+- Exact 16-path source commit `7fa732bda18f0aeb735492d1d23cfaf22d2d42e5` is durable on local and remote `main`.
+- Automatic Fly Deploy run `30055663641` and deploy job `89366650549` passed every reported step for that exact source SHA.
+- Credential-free `https://ledger-oak.fly.dev/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Exact changed and staged sets, protected-boundary and sensitive-addition scans, full smoke, configured-auth/no-password isolated Chrome, syntax, JSON, whitespace, dashboard, clean fast-forward, ancestry, remote alignment, automatic deployment, health, and preserved-file checks passed.
+- No PR, force push, manual workflow action, non-automatic Fly mutation, broader recovery, Task 1P.4.3a.5 work, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-23-cashflow-planning-style-compatibility-release-4av-r.md`.
 
 ## Work Block 4AU-R Contract
 
@@ -173,7 +176,7 @@ Verify the exact 4AV set, stage only authorized paths, commit on `codex/csp-cash
 - Task 1P.4.3a.2-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — complete through 4AT-R.
 - Task 1P.4.3a.3: categorization, orphan reassignment, upload, and upload dialog — durable, automatically deployed, and credential-free health verified through 4AU-R.
 - Task 1P.4.3a.4: Cash Flow, Long-Term Planning, and Short-Term Planning — complete and verified locally through 4AV.
-- Task 1P.4.3a.4-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — waiting for Ryan's separate decision.
+- Task 1P.4.3a.4-R: exact-scope durability, automatic-deployment observation, and credential-free health verification — complete through 4AV-R.
 - Task 1P.4.3a.5: Weekly and Waterfall — planned.
 - Task 1P.4.3a.6: Subscriptions and Payroll — planned.
 - Task 1P.4.3a.7: Data Sources and Connected Accounts — planned; the third-party Plaid exception remains Task 1P.4.3b.
