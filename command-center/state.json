@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-24 1:05 PM CST",
+    "lastUpdated": "2026-07-24 1:18 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,27 +22,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R all eight application-style clusters are durable deployed and health verified through 4AZ-R Tasks 1P.4.3b.1 through 1P.4.3b.2 policy artifacts are durable through 4BA-R and Task 1P.4.4 is complete locally through uncommitted 4BB"
+    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R all eight application-style clusters are durable deployed and health verified through 4AZ-R Tasks 1P.4.3b.1 through 1P.4.3b.2 policy artifacts are durable through 4BA-R and Task 1P.4.4 is durable deployed and health verified through 4BB-R"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.4.4 is complete locally through 4BB and its exact durability automatic deployment and credential-free health verification are active through Ryan-authorized 4BB-R.",
+    "summary": "Task 1P.4.4 is durable automatically deployed and credential-free health verified through 4BB-R while real Plaid validation and broader remaining Phase 4 work stay separately gated.",
     "progress": 99
   },
   "currentTask": {
-    "title": "Task 4: Publish and verify explicitly approved repairs",
-    "owner": "Codex Desktop",
-    "status": "in-progress",
-    "supportingAgent": "Codex owns exact-path 4BB-R durability automatic-deployment observation credential-free health and sanitized closeout; Ryan owns real-Plaid protected and expansion decisions.",
-    "nextAction": "Rerun release checks stage only intended 4BB paths commit fast-forward main push without force observe automatic Fly deployment verify exact SHA and health then publish a skip-actions closeout.",
-    "blocker": null
+    "title": "Task 1P.4.4: Enforce and prove the final Content Security Policy",
+    "owner": "Ryan",
+    "status": "awaiting-decision",
+    "supportingAgent": "Codex completed 4BB implementation and 4BB-R durability deployment health and closeout; Ryan owns real-Plaid protected and expansion decisions.",
+    "nextAction": "Decide whether to authorize one narrow real Plaid enforcement checkpoint after the source release.",
+    "blocker": "No source or release blocker; real Plaid access requires separate target-specific authorization."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-bb-r",
     "label": "4BB-R",
     "name": "Final CSP Enforcement Durability And Release",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
     "currentTask": "Task 4",
     "includedTasks": [
@@ -77,7 +77,7 @@
       "Clean ancestry exact origin-main source SHA automatic workflow and deploy success credential-free production health and final alignment"
     ],
     "nextReportPoint": "Return source and closeout SHAs exact published scope automatic deployment and health results final alignment real-Plaid omission and preserved exclusions.",
-    "durability": "Directly authorized and active; source is not yet committed or pushed."
+    "durability": "Exact source commit 6c2a2800ec887ea3c2bf8fb254214dbd0630f55f is durable on origin main with automatic Fly run 30116007970 and job 89556739589 successful and credential-free health HTTP 200."
   },
   "routerHealth": {
     "status": "healthy",
@@ -102,21 +102,30 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish and verify the exact 4BB source set",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan directly authorized commit and push to main for the fully verified local 4BB implementation.",
-    "action": "Complete exact-path 4BB-R durability automatic-deployment observation credential-free health and sanitized closeout without real Plaid.",
+    "title": "Decide whether to authorize proposed 4BC real Plaid CSP checkpoint",
+    "status": "awaiting-decision",
+    "owner": "Ryan",
+    "why": "4BB-R made the enforced policy durable deployed and health verified without exercising the protected third-party Plaid runtime.",
+    "action": "Confirm or decline one narrow real Plaid compatibility checkpoint; keep every broader protected or policy action separate.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    {
+      "decision": "Whether to authorize proposed 4BC for one narrow real Plaid enforcement checkpoint",
+      "status": "open",
+      "whyItMatters": "The released source passed mocked local proof but has not exercised the current protected third-party Plaid runtime under enforcement.",
+      "workaround": "Keep ordinary released health in place and do not open or rely on real Plaid Link until separately authorized."
+    }
+  ],
   "waitingOnRyan": {
-    "summary": "No current 4BB-R release decision is waiting on Ryan; real Plaid credentials protected access expansion and broader recovery remain separate gates.",
-    "items": []
+    "summary": "4BB-R is complete; Ryan owns the separate 4BC real-Plaid checkpoint decision and every protected or expansion gate.",
+    "items": [
+      "Decide whether to authorize proposed 4BC for one real Plaid enforcement checkpoint."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "4BB completed only Task 1P.4.4 local enforcement and focused proof; 4BB-R owns its exact durability and automatic release while proposed 4BC real Plaid broader installed-PWA regression and broad read-model work remain separate.",
-    "decisionQueue": "The exact 4BB publication and automatic deployment are authorized through 4BB-R; policy expansion real-Plaid checkpoint manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
+    "phaseQuestions": "4BB and 4BB-R completed Task 1P.4.4 implementation durability and automatic release; proposed 4BC real Plaid broader installed-PWA regression and broad read-model work remain separate.",
+    "decisionQueue": "Policy expansion real-Plaid checkpoint manual live-sensitive actions broader recovery and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -180,7 +189,7 @@
       "phaseId": "phase-4",
       "label": "4BB-R",
       "name": "Final CSP Enforcement Durability And Release",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 4 exact 4BB durability and automatic-release slice",
         "Explicit staging source commit clean main fast-forward non-force push automatic Fly observation exact SHA credential-free health and sanitized closeout"
@@ -214,7 +223,7 @@
         "Clean ancestry exact origin-main source SHA automatic workflow and deploy success credential-free production health and final alignment"
       ],
       "reportBack": "Return source and closeout SHAs exact published scope automatic deployment and health results final alignment real-Plaid omission and preserved exclusions.",
-      "durability": "Directly authorized and active; source is not yet committed or pushed."
+      "durability": "Exact source commit 6c2a2800ec887ea3c2bf8fb254214dbd0630f55f is durable on origin main with automatic Fly run 30116007970 and job 89556739589 successful and credential-free health HTTP 200."
     },
     {
       "id": "phase-4-block-bb",
@@ -8144,14 +8153,15 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P44",
       "title": "Task 1P.4.4: Enforce and prove the final Content Security Policy",
-      "status": "done",
-      "owner": "Codex Desktop",
-      "summary": "Local implementation is complete through 4BB: strict HTML policy successful-response Plaid marker fresh nonce plumbing service-worker v5 refresh and maintained synthetic plus isolated-browser enforcement proof all pass.",
-      "nextAction": "Preserve the verified implementation while 4BB-R publishes the exact source set; keep real Plaid separately gated.",
-      "blocker": null,
-      "result": "P3-3J-06 is locally resolved without policy widening; 4BB remains uncommitted and unpublished.",
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Implementation is durable deployed and health verified through 4BB-R: strict HTML policy successful-response Plaid marker fresh nonce service-worker v5 and maintained synthetic plus isolated-browser enforcement proof all pass.",
+      "nextAction": "Decide whether to authorize proposed 4BC for one narrow real Plaid enforcement checkpoint.",
+      "blocker": "Real Plaid remains separately gated.",
+      "result": "P3-3J-06 is resolved in durable source commit 6c2a2800ec887ea3c2bf8fb254214dbd0630f55f with automatic Fly run 30116007970 successful and production health HTTP 200.",
       "evidence": [
-        "command-center/logs/2026-07-24-final-csp-enforcement-4bb.md"
+        "command-center/logs/2026-07-24-final-csp-enforcement-4bb.md",
+        "command-center/logs/2026-07-24-final-csp-enforcement-release-4bb-r.md"
       ]
     },
     {
@@ -8200,12 +8210,12 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
       "summary": "Publish and verify only explicitly approved repairs through exact-scope direct-main release blocks.",
-      "nextAction": "Execute active 4BB-R through exact-path source commit clean main fast-forward non-force push automatic Fly observation credential-free health and skip-actions closeout.",
+      "nextAction": null,
       "blocker": null,
-      "result": "Every explicitly approved repair through 4AZ-R is durable deployed and health verified; 4BB-R is now active for the exact verified CSP enforcement set.",
+      "result": "Every explicitly approved repair through 4BB-R is durable deployed and health verified; latest source commit 6c2a2800 is on main automatic Fly run 30116007970 and deploy job 89556739589 passed and credential-free production health returned HTTP 200.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -8229,7 +8239,8 @@
         "command-center/logs/2026-07-21-session-cookie-policy-release-4ac-r.md",
         "command-center/logs/2026-07-21-mobile-drawer-accessibility-release-4ad-r.md",
         "command-center/logs/2026-07-23-cashflow-planning-style-compatibility-release-4av-r.md",
-        "command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md"
+        "command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md",
+        "command-center/logs/2026-07-24-final-csp-enforcement-release-4bb-r.md"
       ]
     },
     {
@@ -9841,6 +9852,8 @@
     "phase4FinalCspEnforcement": "pass locally; every HTML response receives the exact strict policy unless a marker bound after successful Link rendering selects one fresh nonce-bearing environment-specific Plaid variant",
     "phase4FinalCspCoverage": "pass; full smoke and configured-auth plus no-password isolated Chrome prove response families forced errors nonce freshness environment fail-closed behavior worker v5 cache refresh prohibited source blocking denied networking and exact cleanup",
     "phase4FinalCspStyleReconciliation": "pass; enforcement exposed and removed the final Short-Term Planning generated label and bounded-width style attributes without widening policy",
-    "phase4FinalCspBoundaries": "pass; 4BB remains local uncommitted and unpublished with no real Plaid credential protected data real database production demo downstream workflow Fly or preserved-file action"
+    "phase4FinalCspBoundaries": "pass; 4BB remains local uncommitted and unpublished with no real Plaid credential protected data real database production demo downstream workflow Fly or preserved-file action",
+    "phase4FinalCspRelease": "pass; exact source commit 6c2a2800ec887ea3c2bf8fb254214dbd0630f55f is durable on origin/main automatic Fly run 30116007970 and deploy job 89556739589 passed for the exact SHA and credential-free production health returned HTTP 200",
+    "phase4FinalCspReleaseBoundaries": "pass; no real Plaid credential protected data real database authenticated production page PR force push manual workflow action workflow edit non-automatic Fly mutation downstream access broader recovery or preserved-file mutation occurred; a non-failing checkout v4 Node 20 deprecation annotation was observed"
   }
 }

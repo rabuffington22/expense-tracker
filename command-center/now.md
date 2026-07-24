@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify the exact completed 4BB source set through Ryan-authorized direct-main work block 4BB-R.
+Review whether to authorize a narrowly bounded 4BC real Plaid enforcement checkpoint after 4BB-R made the final CSP implementation durable, deployed, and health verified.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.4 is complete locally through 4BB, and its exact durability, automatic deployment, and credential-free health verification are active through 4BB-R.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4.4 is durable, automatically deployed, and credential-free health verified through 4BB-R, while real Plaid validation remains a separate gate.
 
 ## Current Work Block
 
-Work block 4BB-R: Final CSP Enforcement Durability And Release — active.
+Work block 4BB-R: Final CSP Enforcement Durability And Release — done.
 
 ## Current Task
 
-Task 4: Publish and verify explicitly approved repairs — current through 4BB-R. Task 1P.4.4 remains complete locally through 4BB.
+Task 1P.4.4: Enforce and prove the final Content Security Policy — durable and deployed through 4BB-R. The current task is Ryan's decision on whether to authorize proposed 4BC.
 
 ## Owner
 
-Codex Desktop owns exact-path staging, source commit, clean main fast-forward, non-force push, automatic deployment observation, credential-free production health, and sanitized closeout. Ryan owns real Plaid, credentials, protected access, broader recovery, and every expansion.
+Ryan owns the 4BC real-Plaid decision and every protected or expansion gate. Codex completed exact-path durability, automatic deployment observation, credential-free health, and sanitized closeout through 4BB-R.
 
 ## Current Action
 
-Record and validate 4BB-R; rerun maintained release checks; stage only the intended 4BB paths; commit, fast-forward local `main`, push `main` without force, observe the automatic Fly deployment, verify credential-free production health, and publish only a sanitized `[skip actions]` closeout.
+Decide whether to authorize proposed work block 4BC for one narrow real Plaid enforcement checkpoint. Do not open Plaid Link, use credentials, or expand the released policy without separate confirmation.
 
 ## Work Block 4BB-R Contract
 
@@ -36,8 +36,13 @@ Record and validate 4BB-R; rerun maintained release checks; stage only the inten
 ## Work Block 4BB-R Status
 
 - Ryan directly instructed Codex to commit and push the complete verified 4BB work to `main` on 2026-07-24.
-- Activation and release verification are in progress.
-- No real Plaid, credential, protected-data, real-database, authenticated-production, manual-workflow, non-automatic Fly, downstream, or preserved-file action is authorized.
+- Exact 20-path source commit `6c2a2800ec887ea3c2bf8fb254214dbd0630f55f` is durable on `origin/main`.
+- Automatic Fly Deploy run `30116007970` and deploy job `89556739589` passed every reported step for that exact source SHA.
+- Credential-free production `/health` returned HTTP 200 with JSON `{"status":"ok"}`.
+- Full smoke, configured-auth/no-password isolated browser, syntax, JSON, whitespace, dashboard, exact staging, ancestry, remote alignment, deployment, health, and preserved-file checks passed.
+- The workflow reported the existing non-failing `actions/checkout@v4` Node 20 deprecation annotation while completing successfully on Node 24.
+- No real Plaid, credential, protected-data, real-database, authenticated-production, manual-workflow, non-automatic Fly, downstream, PR, force-push, broader-recovery, or preserved-file action occurred.
+- Evidence: `command-center/logs/2026-07-24-final-csp-enforcement-release-4bb-r.md`.
 
 ## Work Block 4BB Contract
 
