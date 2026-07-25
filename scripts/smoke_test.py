@@ -8834,6 +8834,977 @@ def main() -> None:
             "empty states, isolation, denied-network, and cleanup passed"
         )
 
+        # ── 8l. Cash Flow shared-entity mutation boundary ───────────────
+        print("\n8l. Cash Flow shared-entity mutation boundary…")
+
+        cashflow_entities = {
+            "personal": {"display": "Personal", "base": 11000},
+            "company": {"display": "BFM", "base": 22000},
+            "luxelegacy": {"display": "LL", "base": 33000},
+        }
+        cashflow_bank_id = 940001
+        cashflow_card_id = 940002
+        cashflow_recurring_id = 940003
+        cashflow_before_seed = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in cashflow_entities
+        }
+        cashflow_sequences = {}
+
+        for entity_key, contract in cashflow_entities.items():
+            cashflow_conn = get_connection(entity_key)
+            sequence_row = cashflow_conn.execute(
+                "SELECT seq FROM sqlite_sequence WHERE name = 'manual_recurring'"
+            ).fetchone()
+            cashflow_sequences[entity_key] = (
+                sequence_row["seq"] if sequence_row is not None else None
+            )
+            cashflow_conn.execute(
+                "INSERT INTO account_balances "
+                "(id, account_name, balance_cents, balance_source, account_type, "
+                "credit_limit_cents, payment_due_day, payment_amount_cents, "
+                "sort_order, apr_bps) "
+                "VALUES (?, ?, ?, 'manual', 'bank', 0, NULL, 0, 940, NULL)",
+                (
+                    cashflow_bank_id,
+                    f"4BH {contract['display']} Checking",
+                    contract["base"] + 100,
+                ),
+            )
+            cashflow_conn.execute(
+                "INSERT INTO account_balances "
+                "(id, account_name, balance_cents, balance_source, account_type, "
+                "credit_limit_cents, payment_due_day, payment_amount_cents, "
+                "sort_order, apr_bps) "
+                "VALUES (?, ?, ?, 'manual', 'credit_card', ?, 17, ?, 941, 1999)",
+                (
+                    cashflow_card_id,
+                    f"4BH {contract['display']} Credit",
+                    contract["base"] + 200,
+                    contract["base"] + 90000,
+                    contract["base"] + 300,
+                ),
+            )
+            cashflow_conn.execute(
+                "INSERT INTO manual_recurring "
+                "(id, account_id, merchant, amount_cents, day_of_month) "
+                "VALUES (?, ?, ?, ?, 17)",
+                (
+                    cashflow_recurring_id,
+                    cashflow_bank_id,
+                    f"4BH {contract['display']} Manual",
+                    contract["base"] + 400,
+                ),
+            )
+            cashflow_conn.commit()
+            cashflow_conn.close()
+
+        cashflow_seeded = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in cashflow_entities
+        }
+        _check(
+            cashflow_seeded != cashflow_before_seed,
+            "cashflow boundary fixture should exercise real temporary persistence",
+        )
+
+        with patch(
+            "socket.socket",
+            side_effect=AssertionError(
+                "cashflow boundary smoke forbids outbound networking"
+            ),
+        ):
+            with app.test_client() as cashflow_client:
+                cashflow_client.set_cookie("entity", "Personal")
+                personal_response = cashflow_client.get("/cashflow/")
+                personal_body = personal_response.get_data(as_text=True)
+                _check(
+                    personal_response.status_code == 200
+                    and "4BH Personal Checking" in personal_body
+                    and "4BH BFM Checking" in personal_body
+                    and "4BH BFM Credit" in personal_body
+                    and "4BH BFM Manual" in personal_body,
+                    "cashflow boundary: Personal should retain Personal and BFM financial visibility",
+                )
+                primary_markup, cross_and_modal = personal_body.split(
+                    '<div class="cf-entity-section cf-cross">', 1
+                )
+                cross_markup = cross_and_modal.split(
+                    '<div class="cf-modal-scrim"', 1
+                )[0]
+                _check(
+                    f'data-acct-id="{cashflow_bank_id}"' in primary_markup
+                    and f'data-acct-id="{cashflow_card_id}"' in primary_markup
+                    and 'data-entity-key="personal"' in primary_markup
+                    and primary_markup.count(
+                        'data-cashflow-action="flip-open"'
+                    )
+                    >= 2,
+                    "cashflow boundary: active Personal cards should retain mutation targets",
+                )
+                _check(
+                    cross_markup.count(
+                        'data-cashflow-action="flip-readonly"'
+                    )
+                    >= 2
+                    and "data-acct-id=" not in cross_markup
+                    and "data-acct-name=" not in cross_markup
+                    and "data-acct-type=" not in cross_markup
+                    and "data-entity-key=" not in cross_markup
+                    and "data-balance=" not in cross_markup
+                    and "data-limit=" not in cross_markup
+                    and "data-due-day=" not in cross_markup
+                    and "data-due-date=" not in cross_markup
+                    and "data-payment=" not in cross_markup
+                    and "data-apr=" not in cross_markup
+                    and 'data-cashflow-action="flip-open"' not in cross_markup
+                    and "<form" not in cross_markup
+                    and "/cashflow/accounts/" not in cross_markup
+                    and "/cashflow/recurring/" not in cross_markup,
+                    "cashflow boundary: BFM sibling cards should expose no mutation controls or target data",
+                )
+
+                cashflow_client.set_cookie("entity", "BFM")
+                bfm_response = cashflow_client.get("/cashflow/")
+                bfm_body = bfm_response.get_data(as_text=True)
+                bfm_cross = bfm_body.split(
+                    '<div class="cf-entity-section cf-cross">', 1
+                )[1].split('<div class="cf-modal-scrim"', 1)[0]
+                _check(
+                    bfm_response.status_code == 200
+                    and "4BH BFM Checking" in bfm_body
+                    and "4BH Personal Checking" in bfm_cross
+                    and bfm_cross.count(
+                        'data-cashflow-action="flip-readonly"'
+                    )
+                    >= 2
+                    and "data-acct-id=" not in bfm_cross
+                    and "data-entity-key=" not in bfm_cross,
+                    "cashflow boundary: BFM should retain read-only Personal visibility",
+                )
+
+                cashflow_client.set_cookie("entity", "LL")
+                ll_response = cashflow_client.get("/cashflow/")
+                ll_body = ll_response.get_data(as_text=True)
+                _check(
+                    ll_response.status_code == 200
+                    and "4BH LL Checking" in ll_body
+                    and "4BH Personal Checking" not in ll_body
+                    and "4BH BFM Checking" not in ll_body
+                    and '<div class="cf-entity-section cf-cross">' not in ll_body,
+                    "cashflow boundary: Luxe Legacy should remain isolated",
+                )
+
+                cashflow_client.set_cookie("entity", "Personal")
+                denied_baseline = {
+                    entity_key: _database_snapshot(entity_key)
+                    for entity_key in cashflow_entities
+                }
+                denied_routes = (
+                    (
+                        f"/cashflow/accounts/update/{cashflow_bank_id}",
+                        {"balance": "999.01"},
+                    ),
+                    (
+                        f"/cashflow/accounts/update-card/{cashflow_card_id}",
+                        {
+                            "balance": "999.02",
+                            "credit_limit": "999.03",
+                            "payment_due_day": "29",
+                            "payment_amount": "999.04",
+                            "apr": "29.99",
+                        },
+                    ),
+                    (
+                        "/cashflow/recurring/add",
+                        {
+                            "account_id": str(cashflow_bank_id),
+                            "merchant": "4BH Denied Recurring",
+                            "amount": "999.05",
+                            "day_of_month": "29",
+                        },
+                    ),
+                    (
+                        f"/cashflow/recurring/delete/{cashflow_recurring_id}",
+                        {},
+                    ),
+                )
+                for path, base_data in denied_routes:
+                    for submitted_entity in (None, "company"):
+                        denied_data = dict(base_data)
+                        if submitted_entity is not None:
+                            denied_data["entity_key"] = submitted_entity
+                        denied_response = cashflow_client.post(
+                            path, data=denied_data
+                        )
+                        _check(
+                            denied_response.status_code == 404,
+                            "cashflow boundary: missing or mismatched mutation "
+                            f"target should return 404 for {path}",
+                        )
+                _check(
+                    {
+                        entity_key: _database_snapshot(entity_key)
+                        for entity_key in cashflow_entities
+                    }
+                    == denied_baseline,
+                    "cashflow boundary: rejected mutations must preserve every entity exactly",
+                )
+
+                other_before_valid = {
+                    entity_key: _database_snapshot(entity_key)
+                    for entity_key in ("company", "luxelegacy")
+                }
+                valid_bank = cashflow_client.post(
+                    f"/cashflow/accounts/update/{cashflow_bank_id}",
+                    data={"entity_key": "personal", "balance": "444.44"},
+                )
+                valid_card = cashflow_client.post(
+                    f"/cashflow/accounts/update-card/{cashflow_card_id}",
+                    data={
+                        "entity_key": "personal",
+                        "balance": "555.55",
+                        "credit_limit": "6666.66",
+                        "payment_due_day": "23",
+                        "payment_amount": "77.77",
+                        "apr": "24.99",
+                    },
+                )
+                valid_add = cashflow_client.post(
+                    "/cashflow/recurring/add",
+                    data={
+                        "entity_key": "personal",
+                        "account_id": str(cashflow_bank_id),
+                        "merchant": "4BH Personal Added",
+                        "amount": "88.88",
+                        "day_of_month": "24",
+                    },
+                )
+                valid_delete = cashflow_client.post(
+                    f"/cashflow/recurring/delete/{cashflow_recurring_id}",
+                    data={"entity_key": "personal"},
+                )
+                _check(
+                    all(
+                        response.status_code == 302
+                        for response in (
+                            valid_bank,
+                            valid_card,
+                            valid_add,
+                            valid_delete,
+                        )
+                    ),
+                    "cashflow boundary: valid active-entity mutations should redirect",
+                )
+
+                personal_cashflow_conn = get_connection("personal")
+                bank_after = personal_cashflow_conn.execute(
+                    "SELECT balance_cents, balance_source FROM account_balances "
+                    "WHERE id = ?",
+                    (cashflow_bank_id,),
+                ).fetchone()
+                card_after = personal_cashflow_conn.execute(
+                    "SELECT balance_cents, credit_limit_cents, payment_due_day, "
+                    "payment_amount_cents, apr_bps, balance_source "
+                    "FROM account_balances WHERE id = ?",
+                    (cashflow_card_id,),
+                ).fetchone()
+                added_after = personal_cashflow_conn.execute(
+                    "SELECT account_id, amount_cents, day_of_month "
+                    "FROM manual_recurring WHERE merchant = '4BH Personal Added'"
+                ).fetchone()
+                deleted_after = personal_cashflow_conn.execute(
+                    "SELECT COUNT(*) FROM manual_recurring WHERE id = ?",
+                    (cashflow_recurring_id,),
+                ).fetchone()[0]
+                personal_cashflow_conn.close()
+                _check(
+                    tuple(bank_after) == (44444, "manual")
+                    and tuple(card_after)
+                    == (55555, 666666, 23, 7777, 2499, "manual")
+                    and tuple(added_after)
+                    == (cashflow_bank_id, 8888, 24)
+                    and deleted_after == 0,
+                    "cashflow boundary: valid active-entity account card and recurring writes should persist",
+                )
+                _check(
+                    {
+                        entity_key: _database_snapshot(entity_key)
+                        for entity_key in ("company", "luxelegacy")
+                    }
+                    == other_before_valid,
+                    "cashflow boundary: valid Personal writes must not change BFM or Luxe Legacy",
+                )
+
+        for entity_key in cashflow_entities:
+            cashflow_conn = get_connection(entity_key)
+            cashflow_conn.execute(
+                "DELETE FROM manual_recurring "
+                "WHERE id = ? OR merchant LIKE '4BH %'",
+                (cashflow_recurring_id,),
+            )
+            cashflow_conn.execute(
+                "DELETE FROM account_balances WHERE id IN (?, ?)",
+                (cashflow_bank_id, cashflow_card_id),
+            )
+            prior_sequence = cashflow_sequences[entity_key]
+            if prior_sequence is None:
+                cashflow_conn.execute(
+                    "DELETE FROM sqlite_sequence WHERE name = 'manual_recurring'"
+                )
+            else:
+                sequence_update = cashflow_conn.execute(
+                    "UPDATE sqlite_sequence SET seq = ? "
+                    "WHERE name = 'manual_recurring'",
+                    (prior_sequence,),
+                )
+                if sequence_update.rowcount == 0:
+                    cashflow_conn.execute(
+                        "INSERT INTO sqlite_sequence(name, seq) "
+                        "VALUES ('manual_recurring', ?)",
+                        (prior_sequence,),
+                    )
+            cashflow_conn.commit()
+            cashflow_conn.close()
+
+        _check(
+            {
+                entity_key: _database_snapshot(entity_key)
+                for entity_key in cashflow_entities
+            }
+            == cashflow_before_seed,
+            "cashflow boundary synthetic rows and sequences should be removed exactly",
+        )
+        print(
+            "   ✅ Read-only sibling cards, strict mutation targets, valid writes, "
+            "colliding-ID isolation, denied-network, and cleanup passed"
+        )
+
+        # ── 8m. Cash Flow financial-behavior coverage ─────────────────
+        print("\n8m. Cash Flow financial-behavior coverage…")
+        from datetime import date as cashflow_date, timedelta as cashflow_delta
+
+        import web.routes.cashflow as cashflow_behavior_routes
+
+        cashflow_behavior_entities = {
+            "personal": {
+                "display": "Personal",
+                "label": "Personal",
+                "bank_write": "1111.11",
+                "bank_cents": 111111,
+                "card_write": "2222.22",
+                "card_cents": 222222,
+                "limit_write": "3333.33",
+                "limit_cents": 333333,
+                "payment_write": "44.44",
+                "payment_cents": 4444,
+                "apr_write": "20.01",
+                "apr_bps": 2001,
+                "due_day": 15,
+                "stored_due_date": "2035-02-15",
+                "category": "Food",
+            },
+            "company": {
+                "display": "BFM",
+                "label": "BFM",
+                "bank_write": "2111.11",
+                "bank_cents": 211111,
+                "card_write": "3222.22",
+                "card_cents": 322222,
+                "limit_write": "4333.33",
+                "limit_cents": 433333,
+                "payment_write": "54.44",
+                "payment_cents": 5444,
+                "apr_write": "21.01",
+                "apr_bps": 2101,
+                "due_day": 30,
+                "stored_due_date": None,
+                "category": "Software",
+            },
+            "luxelegacy": {
+                "display": "LL",
+                "label": "LL",
+                "bank_write": "3111.11",
+                "bank_cents": 311111,
+                "card_write": "4222.22",
+                "card_cents": 422222,
+                "limit_write": "5333.33",
+                "limit_cents": 533333,
+                "payment_write": "64.44",
+                "payment_cents": 6444,
+                "apr_write": "22.01",
+                "apr_bps": 2201,
+                "due_day": 31,
+                "stored_due_date": None,
+                "category": "Software",
+            },
+        }
+        cashflow_behavior_bank_id = 950001
+        cashflow_behavior_card_id = 950002
+        cashflow_behavior_recurring_id = 950003
+        cashflow_behavior_anchor = cashflow_date(2034, 12, 31)
+        cashflow_behavior_source = "cashflow-behavior-4bi"
+
+        # Prove the primary empty state in completely separate disposable
+        # databases so earlier smoke fixtures cannot make the result order-dependent.
+        original_data_dir = os.environ["DATA_DIR"]
+        with tempfile.TemporaryDirectory(
+            prefix="expense_cashflow_empty_4bi_"
+        ) as empty_cashflow_dir:
+            os.environ["DATA_DIR"] = empty_cashflow_dir
+            try:
+                for entity_key in cashflow_behavior_entities:
+                    init_db(entity_key)
+                with patch.dict(
+                    os.environ,
+                    {"PLAID_CLIENT_ID": "", "PLAID_SECRET": ""},
+                    clear=False,
+                ), patch(
+                    "socket.socket",
+                    side_effect=AssertionError(
+                        "cashflow empty-state smoke forbids outbound networking"
+                    ),
+                ):
+                    with app.test_client() as empty_cashflow_client:
+                        for entity_key, contract in (
+                            cashflow_behavior_entities.items()
+                        ):
+                            empty_cashflow_client.set_cookie(
+                                "entity", contract["display"]
+                            )
+                            empty_response = empty_cashflow_client.get(
+                                "/cashflow/"
+                            )
+                            empty_body = empty_response.get_data(as_text=True)
+                            _check(
+                                empty_response.status_code == 200
+                                and "No accounts connected yet." in empty_body
+                                and 'href="/plaid/"' in empty_body,
+                                f"cashflow behavior {entity_key}: empty state should remain renderable",
+                            )
+            finally:
+                os.environ["DATA_DIR"] = original_data_dir
+
+        cashflow_behavior_before_seed = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in cashflow_behavior_entities
+        }
+        cashflow_behavior_sequences = {}
+        for entity_key, contract in cashflow_behavior_entities.items():
+            behavior_conn = get_connection(entity_key)
+            sequence_row = behavior_conn.execute(
+                "SELECT seq FROM sqlite_sequence WHERE name = 'manual_recurring'"
+            ).fetchone()
+            cashflow_behavior_sequences[entity_key] = (
+                sequence_row["seq"] if sequence_row is not None else None
+            )
+            behavior_conn.execute(
+                "INSERT INTO account_balances "
+                "(id, account_name, balance_cents, balance_source, account_type, "
+                "credit_limit_cents, payment_due_day, payment_due_date, "
+                "payment_amount_cents, sort_order, apr_bps) "
+                "VALUES (?, ?, ?, 'manual', 'bank', 0, NULL, NULL, 0, 950, NULL)",
+                (
+                    cashflow_behavior_bank_id,
+                    f"4BI {contract['label']} Operating",
+                    41000,
+                ),
+            )
+            behavior_conn.execute(
+                "INSERT INTO account_balances "
+                "(id, account_name, balance_cents, balance_source, account_type, "
+                "credit_limit_cents, payment_due_day, payment_due_date, "
+                "payment_amount_cents, sort_order, apr_bps) "
+                "VALUES (?, ?, ?, 'manual', 'credit_card', ?, ?, ?, ?, 951, ?)",
+                (
+                    cashflow_behavior_card_id,
+                    f"4BI {contract['label']} Liability",
+                    42000,
+                    900000,
+                    contract["due_day"],
+                    contract["stored_due_date"],
+                    12345,
+                    1799,
+                ),
+            )
+            behavior_conn.execute(
+                "INSERT INTO manual_recurring "
+                "(id, account_id, merchant, amount_cents, day_of_month) "
+                "VALUES (?, ?, ?, 2500, 1)",
+                (
+                    cashflow_behavior_recurring_id,
+                    cashflow_behavior_bank_id,
+                    f"4BI {contract['label']} Manual",
+                ),
+            )
+
+            auto_histories = {
+                "Weekly": ((14, 7, 0), (-1200, -1201, -1199)),
+                "Biweekly": ((28, 14, 0), (-2200, -2201, -2199)),
+                "Monthly": ((60, 30, 0), (-3200, -3201, -3199)),
+                "Irregular": ((60, 30, 0), (-500, -2500, -8000)),
+                "Stale": ((42, 35, 28), (-4200, -4201, -4199)),
+                "Outside": ((90, 0), (-5200, -5201)),
+            }
+            for cadence_label, (
+                day_offsets,
+                amount_values,
+            ) in auto_histories.items():
+                merchant = (
+                    f"4BI {contract['label']} Auto {cadence_label}"
+                )
+                for row_index, (days_ago, amount_cents) in enumerate(
+                    zip(day_offsets, amount_values)
+                ):
+                    txn_date = cashflow_behavior_anchor - cashflow_delta(
+                        days=days_ago
+                    )
+                    behavior_conn.execute(
+                        "INSERT INTO transactions "
+                        "(transaction_id, date, description_raw, "
+                        "merchant_canonical, amount, amount_cents, currency, "
+                        "account, category, confidence, source_filename, "
+                        "imported_at) "
+                        "VALUES (?, ?, ?, ?, ?, ?, 'USD', ?, ?, 0.99, ?, "
+                        "'2035-01-01T00:00:00+00:00')",
+                        (
+                            f"cashflow-4bi-{entity_key}-"
+                            f"{cadence_label.lower()}-{row_index}",
+                            txn_date.isoformat(),
+                            merchant,
+                            merchant,
+                            amount_cents / 100,
+                            amount_cents,
+                            f"4BI {contract['label']} Operating",
+                            contract["category"],
+                            cashflow_behavior_source,
+                        ),
+                    )
+            behavior_conn.commit()
+            behavior_conn.close()
+
+        cashflow_behavior_seeded = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in cashflow_behavior_entities
+        }
+        _check(
+            cashflow_behavior_seeded != cashflow_behavior_before_seed,
+            "cashflow behavior fixture should exercise real temporary persistence",
+        )
+
+        cadence_samples = {
+            "Weekly": 7,
+            "Biweekly": 15,
+            "Monthly": 30,
+            "Quarterly": 90,
+            "Annual": 365,
+        }
+        _check(
+            all(
+                cashflow_behavior_routes._classify_cadence(days) == label
+                for label, days in cadence_samples.items()
+            )
+            and cashflow_behavior_routes._classify_cadence(20) is None,
+            "cashflow behavior: cadence bands and unsupported gap should remain stable",
+        )
+
+        expected_auto_dates = {
+            "Weekly": "2035-01-07",
+            "Biweekly": "2035-01-14",
+            "Monthly": "2035-01-30",
+        }
+        for entity_key, contract in cashflow_behavior_entities.items():
+            behavior_conn = get_connection(entity_key)
+            upcoming = cashflow_behavior_routes._detect_upcoming_for_account(
+                behavior_conn,
+                [f"4BI {contract['label']} Operating"],
+                reference_date=cashflow_behavior_anchor,
+            )
+            upcoming_by_merchant = {
+                item["merchant"]: item for item in upcoming
+            }
+            for cadence_label, expected_date in expected_auto_dates.items():
+                merchant = (
+                    f"4BI {contract['label']} Auto {cadence_label}"
+                )
+                _check(
+                    merchant in upcoming_by_merchant
+                    and upcoming_by_merchant[merchant]["cadence"]
+                    == cadence_label
+                    and upcoming_by_merchant[merchant]["expected_date"]
+                    == expected_date,
+                    f"cashflow behavior {entity_key}: {cadence_label} projection should be deterministic",
+                )
+            _check(
+                all(
+                    f"4BI {contract['label']} Auto {excluded}"
+                    not in upcoming_by_merchant
+                    for excluded in ("Irregular", "Stale", "Outside")
+                ),
+                f"cashflow behavior {entity_key}: irregular stale and outside-horizon rows should be excluded",
+            )
+            behavior_conn.close()
+
+        class _CashflowBehaviorDate(cashflow_date):
+            current = cashflow_behavior_anchor
+
+            @classmethod
+            def today(cls):
+                return cls.current
+
+        original_detect_upcoming = (
+            cashflow_behavior_routes._detect_upcoming_for_account
+        )
+        original_get_manual = cashflow_behavior_routes._get_manual_recurring
+
+        def _fixed_detect_upcoming(conn, account_names):
+            return original_detect_upcoming(
+                conn,
+                account_names,
+                reference_date=cashflow_behavior_anchor,
+            )
+
+        def _fixed_get_manual(conn, account_id):
+            return original_get_manual(
+                conn,
+                account_id,
+                reference_date=cashflow_behavior_anchor,
+            )
+
+        with patch.dict(
+            os.environ,
+            {"PLAID_CLIENT_ID": "", "PLAID_SECRET": ""},
+            clear=False,
+        ), patch.object(
+            cashflow_behavior_routes.datetime,
+            "date",
+            _CashflowBehaviorDate,
+        ), patch.object(
+            cashflow_behavior_routes,
+            "_detect_upcoming_for_account",
+            side_effect=_fixed_detect_upcoming,
+        ), patch.object(
+            cashflow_behavior_routes,
+            "_get_manual_recurring",
+            side_effect=_fixed_get_manual,
+        ), patch(
+            "socket.socket",
+            side_effect=AssertionError(
+                "cashflow behavior smoke forbids outbound networking"
+            ),
+        ):
+            with app.test_client() as cashflow_behavior_client:
+                for entity_key, contract in (
+                    cashflow_behavior_entities.items()
+                ):
+                    cashflow_behavior_client.set_cookie(
+                        "entity", contract["display"]
+                    )
+                    other_keys = tuple(
+                        candidate
+                        for candidate in cashflow_behavior_entities
+                        if candidate != entity_key
+                    )
+                    other_before_valid = {
+                        candidate: _database_snapshot(candidate)
+                        for candidate in other_keys
+                    }
+                    bank_response = cashflow_behavior_client.post(
+                        f"/cashflow/accounts/update/"
+                        f"{cashflow_behavior_bank_id}",
+                        data={
+                            "entity_key": entity_key,
+                            "balance": contract["bank_write"],
+                        },
+                    )
+                    card_response = cashflow_behavior_client.post(
+                        f"/cashflow/accounts/update-card/"
+                        f"{cashflow_behavior_card_id}",
+                        data={
+                            "entity_key": entity_key,
+                            "balance": contract["card_write"],
+                            "credit_limit": contract["limit_write"],
+                            "payment_due_day": str(contract["due_day"]),
+                            "payment_amount": contract["payment_write"],
+                            "apr": contract["apr_write"],
+                        },
+                    )
+                    added_merchant = (
+                        f"4BI {contract['label']} Added Month End"
+                    )
+                    add_response = cashflow_behavior_client.post(
+                        "/cashflow/recurring/add",
+                        data={
+                            "entity_key": entity_key,
+                            "account_id": str(
+                                cashflow_behavior_bank_id
+                            ),
+                            "merchant": added_merchant,
+                            "amount": "77.77",
+                            "day_of_month": "31",
+                        },
+                    )
+                    _check(
+                        all(
+                            response.status_code == 302
+                            for response in (
+                                bank_response,
+                                card_response,
+                                add_response,
+                            )
+                        ),
+                        f"cashflow behavior {entity_key}: valid writes should redirect",
+                    )
+                    _check(
+                        {
+                            candidate: _database_snapshot(candidate)
+                            for candidate in other_keys
+                        }
+                        == other_before_valid,
+                        f"cashflow behavior {entity_key}: valid writes must not alter sibling entities",
+                    )
+
+                    behavior_conn = get_connection(entity_key)
+                    bank_after = behavior_conn.execute(
+                        "SELECT balance_cents, balance_source "
+                        "FROM account_balances WHERE id = ?",
+                        (cashflow_behavior_bank_id,),
+                    ).fetchone()
+                    card_after = behavior_conn.execute(
+                        "SELECT balance_cents, credit_limit_cents, "
+                        "payment_due_day, payment_due_date, "
+                        "payment_amount_cents, apr_bps, balance_source "
+                        "FROM account_balances WHERE id = ?",
+                        (cashflow_behavior_card_id,),
+                    ).fetchone()
+                    added_after = behavior_conn.execute(
+                        "SELECT id, account_id, amount_cents, day_of_month "
+                        "FROM manual_recurring WHERE merchant = ?",
+                        (added_merchant,),
+                    ).fetchone()
+                    manual_month_end = original_get_manual(
+                        behavior_conn,
+                        cashflow_behavior_bank_id,
+                        reference_date=cashflow_date(2035, 2, 1),
+                    )
+                    manual_month_end_by_merchant = {
+                        item["merchant"]: item for item in manual_month_end
+                    }
+                    manual_year_boundary = original_get_manual(
+                        behavior_conn,
+                        cashflow_behavior_bank_id,
+                        reference_date=cashflow_behavior_anchor,
+                    )
+                    manual_year_by_merchant = {
+                        item["merchant"]: item
+                        for item in manual_year_boundary
+                    }
+                    behavior_conn.close()
+                    _check(
+                        tuple(bank_after)
+                        == (contract["bank_cents"], "manual")
+                        and tuple(card_after)
+                        == (
+                            contract["card_cents"],
+                            contract["limit_cents"],
+                            contract["due_day"],
+                            contract["stored_due_date"],
+                            contract["payment_cents"],
+                            contract["apr_bps"],
+                            "manual",
+                        )
+                        and tuple(added_after)[1:]
+                        == (
+                            cashflow_behavior_bank_id,
+                            7777,
+                            31,
+                        ),
+                        f"cashflow behavior {entity_key}: bank card liability and recurring persistence should match submitted values",
+                    )
+                    _check(
+                        manual_month_end_by_merchant[added_merchant][
+                            "expected_date"
+                        ]
+                        == "2035-02-28"
+                        and manual_year_by_merchant[
+                            f"4BI {contract['label']} Manual"
+                        ]["expected_date"]
+                        == "2035-01-01",
+                        f"cashflow behavior {entity_key}: manual month-end and year-boundary projections should clamp correctly",
+                    )
+
+                    delete_response = cashflow_behavior_client.post(
+                        f"/cashflow/recurring/delete/{added_after['id']}",
+                        data={"entity_key": entity_key},
+                    )
+                    behavior_conn = get_connection(entity_key)
+                    added_remaining = behavior_conn.execute(
+                        "SELECT COUNT(*) FROM manual_recurring WHERE id = ?",
+                        (added_after["id"],),
+                    ).fetchone()[0]
+                    behavior_conn.close()
+                    _check(
+                        delete_response.status_code == 302
+                        and added_remaining == 0,
+                        f"cashflow behavior {entity_key}: manual recurring delete should persist",
+                    )
+
+                cashflow_behavior_client.set_cookie(
+                    "entity", "Personal"
+                )
+                personal_response = cashflow_behavior_client.get(
+                    "/cashflow/"
+                )
+                personal_body = personal_response.get_data(as_text=True)
+                personal_primary, personal_cross_and_modal = (
+                    personal_body.split(
+                        '<div class="cf-entity-section cf-cross">', 1
+                    )
+                )
+                personal_cross = personal_cross_and_modal.split(
+                    '<div class="cf-modal-scrim"', 1
+                )[0]
+                _check(
+                    personal_response.status_code == 200
+                    and "4BI Personal Operating" in personal_primary
+                    and "4BI Personal Liability" in personal_primary
+                    and 'data-entity-key="personal"' in personal_primary
+                    and 'data-due-date="2035-02-15"'
+                    in personal_primary
+                    and "$3,333" in personal_primary
+                    and "20.0%" in personal_primary
+                    and "$44" in personal_primary
+                    and "4BI Personal Manual" in personal_primary
+                    and "4BI Personal Auto Weekly" in personal_primary
+                    and "4BI Personal Auto Biweekly" in personal_primary,
+                    "cashflow behavior: Personal primary balances liabilities recurrence and stored due date should render",
+                )
+                _check(
+                    "4BI BFM Operating" in personal_cross
+                    and "4BI BFM Liability" in personal_cross
+                    and "$4,333" in personal_cross
+                    and "21.0%" in personal_cross
+                    and "$54" in personal_cross
+                    and "4BI BFM Manual" in personal_cross
+                    and 'data-cashflow-action="flip-readonly"'
+                    in personal_cross
+                    and "data-acct-id=" not in personal_cross
+                    and "data-entity-key=" not in personal_cross
+                    and "<form" not in personal_cross,
+                    "cashflow behavior: Personal should retain read-only BFM financial visibility without mutation targets",
+                )
+
+                cashflow_behavior_client.set_cookie("entity", "BFM")
+                bfm_response = cashflow_behavior_client.get("/cashflow/")
+                bfm_body = bfm_response.get_data(as_text=True)
+                bfm_primary, bfm_cross_and_modal = bfm_body.split(
+                    '<div class="cf-entity-section cf-cross">', 1
+                )
+                bfm_cross = bfm_cross_and_modal.split(
+                    '<div class="cf-modal-scrim"', 1
+                )[0]
+                _check(
+                    bfm_response.status_code == 200
+                    and "4BI BFM Operating" in bfm_primary
+                    and 'data-due-date="2035-01-30"' in bfm_primary
+                    and "4BI Personal Operating" in bfm_cross
+                    and "$3,333" in bfm_cross
+                    and "20.0%" in bfm_cross
+                    and 'data-cashflow-action="flip-readonly"'
+                    in bfm_cross
+                    and "data-acct-id=" not in bfm_cross
+                    and "data-entity-key=" not in bfm_cross,
+                    "cashflow behavior: BFM should derive its year-boundary due date and retain read-only Personal visibility",
+                )
+
+                _CashflowBehaviorDate.current = cashflow_date(
+                    2035, 2, 1
+                )
+                ll_section = (
+                    cashflow_behavior_routes._load_entity_section(
+                        "luxelegacy"
+                    )
+                )
+                ll_card = next(
+                    card
+                    for card in ll_section["cards"]
+                    if card["id"] == cashflow_behavior_card_id
+                )
+                _check(
+                    ll_card["payment_due_date"] == "2035-02-28",
+                    "cashflow behavior: due day 31 should clamp to the last day of February",
+                )
+
+                cashflow_behavior_client.set_cookie("entity", "LL")
+                ll_response = cashflow_behavior_client.get("/cashflow/")
+                ll_body = ll_response.get_data(as_text=True)
+                _check(
+                    ll_response.status_code == 200
+                    and "4BI LL Operating" in ll_body
+                    and "4BI LL Liability" in ll_body
+                    and "$5,333" in ll_body
+                    and "22.0%" in ll_body
+                    and "$64" in ll_body
+                    and "4BI Personal Operating" not in ll_body
+                    and "4BI BFM Operating" not in ll_body
+                    and '<div class="cf-entity-section cf-cross">'
+                    not in ll_body,
+                    "cashflow behavior: Luxe Legacy should render only its isolated balances liabilities and recurrence",
+                )
+
+        for entity_key in cashflow_behavior_entities:
+            behavior_conn = get_connection(entity_key)
+            behavior_conn.execute(
+                "DELETE FROM manual_recurring "
+                "WHERE id = ? OR merchant LIKE '4BI %'",
+                (cashflow_behavior_recurring_id,),
+            )
+            behavior_conn.execute(
+                "DELETE FROM transactions WHERE source_filename = ?",
+                (cashflow_behavior_source,),
+            )
+            behavior_conn.execute(
+                "DELETE FROM account_balances WHERE id IN (?, ?)",
+                (
+                    cashflow_behavior_bank_id,
+                    cashflow_behavior_card_id,
+                ),
+            )
+            prior_sequence = cashflow_behavior_sequences[entity_key]
+            if prior_sequence is None:
+                behavior_conn.execute(
+                    "DELETE FROM sqlite_sequence "
+                    "WHERE name = 'manual_recurring'"
+                )
+            else:
+                sequence_update = behavior_conn.execute(
+                    "UPDATE sqlite_sequence SET seq = ? "
+                    "WHERE name = 'manual_recurring'",
+                    (prior_sequence,),
+                )
+                if sequence_update.rowcount == 0:
+                    behavior_conn.execute(
+                        "INSERT INTO sqlite_sequence(name, seq) "
+                        "VALUES ('manual_recurring', ?)",
+                        (prior_sequence,),
+                    )
+            behavior_conn.commit()
+            behavior_conn.close()
+
+        _check(
+            {
+                entity_key: _database_snapshot(entity_key)
+                for entity_key in cashflow_behavior_entities
+            }
+            == cashflow_behavior_before_seed,
+            "cashflow behavior synthetic rows and sequences should be removed exactly",
+        )
+        print(
+            "   ✅ Bank/card persistence, stored liabilities, due dates, "
+            "manual/automatic recurrence, empty states, read-only visibility, "
+            "Luxe Legacy isolation, denied-network, and cleanup passed"
+        )
+
         # ── 9. Saved Views CRUD ──────────────────────────────────────
         print("\n9. Saved Views CRUD tests…")
         import json as _json

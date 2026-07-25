@@ -6,6 +6,38 @@ Phase 3 Task 7 is consolidated in `command-center/phase-3-findings-consolidation
 
 The Task 7 snapshot contains 42 unresolved behavioral or policy findings, 10 regression-coverage items, and three findings resolved and released through work blocks 4A-4B. The catalog's dependency tags support Task 8 sequencing but do not authorize or preselect a repair order.
 
+## Cash Flow Shared Sibling Cards Can Misroute Writes Into The Active Entity
+
+Status: resolved locally through 4BH; durability and publication separately gated
+
+Severity: high entity-isolation and data-integrity risk
+
+Captured: 2026-07-25
+
+Where seen: `web/templates/cashflow.html`, `web/static/cashflow.js`, `web/routes/cashflow.py`, and the disposable 4BG collision probe
+
+Revisit: exact-scope 4BH durability or Task 1P.7.4b coverage completion
+
+Summary:
+
+Personal and BFM intentionally render each other's Cash Flow sections, but the shared cards use the same editable modal controls as active-entity cards. Their forms submit a hidden sibling `entity_key`; the account and recurring mutation routes ignore that value and always open the active cookie entity's database.
+
+A disposable denied-network probe created colliding synthetic account IDs in Personal, BFM, and Luxe Legacy. From a Personal Cash Flow page, the BFM marker rendered with the editable card action. Submitting that BFM card's ID returned the normal redirect, changed the same-ID Personal row, left the intended BFM row unchanged, and left Luxe Legacy unchanged. The temporary root was removed exactly.
+
+Impact:
+
+Editing a visible sibling card can silently change an unrelated active-entity account when SQLite IDs collide. Without a collision it can silently do nothing, so the interface can misstate both the target and the result. Manual recurring add/delete uses the same cookie-owned route pattern and needs the same repair review.
+
+Acceptance:
+
+- Personal/BFM sibling sections are visibly read-only, or the product adopts a separately approved explicit cross-entity mutation contract.
+- A sibling account ID can never mutate a same-ID row in the active entity.
+- Current-entity bank/card and recurring mutations remain correct.
+- Luxe Legacy stays isolated.
+- Maintained temporary all-entity tests cover colliding IDs, rendered controls, direct POST attempts, denied networking, and exact cleanup.
+
+Work block 4BG stopped at this confirmed mismatch before maintained-test expansion. Work block 4BH now makes sibling cards view-only without account IDs or mutation targets, requires every included mutation route to receive the active cookie entity, and returns controlled HTTP 404 before database access for missing or mismatched targets. Maintained all-entity colliding-ID proof covers every included route, valid active-entity bank/card/recurring writes, rendered controls, isolated-browser behavior, Luxe Legacy isolation, denied networking, and exact row/sequence cleanup. Full smoke and maintained browser suites pass. The repair remains local and uncommitted; no migration, protected-data access, external call, publication, workflow, Fly action, or deployment occurred. Evidence: `command-center/logs/2026-07-25-cashflow-entity-boundary-repair-4bh.md`.
+
 ## Daily Plaid Sync Disabled For Inactivity
 
 Status: monitored; work block 1C complete

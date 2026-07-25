@@ -130,6 +130,13 @@
         }, 250);
     }
 
+    function flipReadOnly(card, event) {
+        if (event && event.target.closest("button, form, a")) {
+            return;
+        }
+        card.classList.toggle("card-flipped");
+    }
+
     function closeModal() {
         var scrim = document.getElementById("cf-modal-scrim");
         if (!scrim || scrim.hidden) {
@@ -172,6 +179,8 @@
         var action = control.dataset.cashflowAction;
         if (action === "flip-open") {
             flipAndOpen(control, event);
+        } else if (action === "flip-readonly") {
+            flipReadOnly(control, event);
         } else if (action === "open-modal") {
             openModal(control, event);
         } else if (action === "close-modal") {

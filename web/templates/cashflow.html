@@ -58,8 +58,9 @@
     {%- endif -%}
 {% endmacro %}
 
-{% macro bank_card(acct, entity_key) %}
+{% macro bank_card(acct, entity_key, editable=true) %}
 <div class="outline-panel cf-box cf-box--clickable"
+    {% if editable %}
     data-acct-id="{{ acct.id }}"
     data-acct-name="{{ acct.account_name }}"
     data-acct-type="{{ acct.account_type }}"
@@ -69,7 +70,11 @@
     data-due-day="{{ acct.payment_due_day or '' }}"
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
-    data-cashflow-action="flip-open">
+    data-cashflow-action="flip-open"
+    {% else %}
+    data-cashflow-action="flip-readonly"
+    aria-label="View {{ acct.account_name }} details"
+    {% endif %}>
     <div class="card-flip-inner">
         <div class="card-flip-front">
             <div class="cf-box-name-area">
@@ -101,8 +106,9 @@
 {% endmacro %}
 
 
-{% macro credit_card(acct, entity_key) %}
+{% macro credit_card(acct, entity_key, editable=true) %}
 <div class="outline-panel cf-box cf-box--card cf-box--clickable"
+    {% if editable %}
     data-acct-id="{{ acct.id }}"
     data-acct-name="{{ acct.account_name }}"
     data-acct-type="{{ acct.account_type }}"
@@ -113,7 +119,11 @@
     data-due-date="{{ acct.payment_due_date or '' }}"
     data-payment="{{ '{:,.0f}'.format(acct.payment_amount_cents / 100) }}"
     data-apr="{{ '{:.2f}'.format(acct.apr_bps / 100) if acct.apr_bps else '' }}"
-    data-cashflow-action="flip-open">
+    data-cashflow-action="flip-open"
+    {% else %}
+    data-cashflow-action="flip-readonly"
+    aria-label="View {{ acct.account_name }} details"
+    {% endif %}>
     <div class="card-flip-inner">
         <div class="card-flip-front">
             <div class="cf-box-name-area">
@@ -154,7 +164,7 @@
 
 {# ── Entity section macro (reused for primary + cross-entity) ──────── #}
 
-{% macro entity_section(display_name, entity_key, banks, cards, accent_class='') %}
+{% macro entity_section(display_name, entity_key, banks, cards, accent_class='', editable=true) %}
 <div class="cf-entity-section {{ accent_class }}">
     <h2 class="cf-section-title">{{ display_name }}</h2>
 
@@ -162,7 +172,7 @@
     <h3 class="cf-row-label">Bank Accounts</h3>
     <div class="cf-grid cf-grid--banks">
         {% for acct in banks %}
-            {{ bank_card(acct, entity_key) }}
+            {{ bank_card(acct, entity_key, editable) }}
         {% endfor %}
     </div>
     {% endif %}
@@ -171,7 +181,7 @@
     <h3 class="cf-row-label">Credit Cards</h3>
     <div class="cf-grid cf-grid--cards">
         {% for acct in cards %}
-            {{ credit_card(acct, entity_key) }}
+            {{ credit_card(acct, entity_key, editable) }}
         {% endfor %}
     </div>
     {% endif %}
@@ -199,7 +209,7 @@
 
 {# ── Cross-entity sections ────────────────────────────────────────────── #}
 {% for section in cross_sections %}
-{{ entity_section(section.entity_display, section.entity_key, section.banks, section.cards, 'cf-cross') }}
+{{ entity_section(section.entity_display, section.entity_key, section.banks, section.cards, 'cf-cross', false) }}
 {% endfor %}
 
 {# ── Edit Modal (Apple Settings sheet style) ─────────────────────────── #}

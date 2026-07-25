@@ -5,7 +5,7 @@ import logging
 import statistics
 from datetime import timedelta
 
-from flask import Blueprint, render_template, request, g, redirect, url_for
+from flask import Blueprint, abort, render_template, request, g, redirect, url_for
 
 from core.db import get_connection, init_db
 
@@ -26,6 +26,14 @@ def _build_entity_display():
     return {v: k for k, v in _ENTITY_MAP.items()}
 
 _ENTITY_DISPLAY = None  # lazy-init
+
+
+def _require_active_entity_target() -> str:
+    """Require mutations to name the entity selected by the active cookie."""
+    entity_key = request.form.get("entity_key")
+    if entity_key != g.entity_key:
+        abort(404)
+    return entity_key
 
 # ── Plaid account sync ────────────────────────────────────────────────────────
 
@@ -556,7 +564,7 @@ def index():
 
 @bp.route("/accounts/update/<int:acct_id>", methods=["POST"])
 def update_account(acct_id):
-    entity_key = g.entity_key
+    entity_key = _require_active_entity_target()
     balance_str = request.form.get("balance", "0")
     balance_cents = _parse_dollar_to_cents(balance_str)
     now = datetime.datetime.now().isoformat()
@@ -577,7 +585,7 @@ def update_account(acct_id):
 @bp.route("/accounts/update-card/<int:acct_id>", methods=["POST"])
 def update_card(acct_id):
     """Update credit card balance + credit-card-specific fields."""
-    entity_key = g.entity_key
+    entity_key = _require_active_entity_target()
     balance_cents = _parse_dollar_to_cents(request.form.get("balance", "0"))
     limit_cents = _parse_dollar_to_cents(request.form.get("credit_limit", "0"))
     due_day = request.form.get("payment_due_day", "").strip()
@@ -619,7 +627,7 @@ def update_card(acct_id):
 @bp.route("/recurring/add", methods=["POST"])
 def add_recurring():
     """Add a manual recurring charge to an account."""
-    entity_key = g.entity_key
+    entity_key = _require_active_entity_target()
     account_id = request.form.get("account_id")
     merchant = request.form.get("merchant", "").strip()
     amount_cents = _parse_dollar_to_cents(request.form.get("amount", "0"))
@@ -649,7 +657,7 @@ def add_recurring():
 @bp.route("/recurring/delete/<int:rec_id>", methods=["POST"])
 def delete_recurring(rec_id):
     """Delete a manual recurring charge."""
-    entity_key = g.entity_key
+    entity_key = _require_active_entity_target()
     conn = get_connection(entity_key)
     try:
         conn.execute("DELETE FROM manual_recurring WHERE id=?", (rec_id,))

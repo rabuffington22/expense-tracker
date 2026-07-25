@@ -987,14 +987,162 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
     - **Task 1P.6.2: Prove service-worker installation and offline entity isolation.** Exercise root-scoped installation and activation, current precache contents, static-only caching, protected/dynamic network-only behavior, and a real offline navigation fallback that remains generic and free of Personal, BFM, or Luxe Legacy content after representative online entity visits. Status: done and durable through 4BD-R.
     - **Task 1P.6.3: Prove configured-auth browser boundaries before and after sign-in.** Add maintained browser checks for full-page redirect, HTMX/JSON denial, safe local return handling, exempt static/manifest/worker/offline availability, successful synthetic sign-in, and authenticated shell continuity without exposing a client-side digest. Status: done and durable through 4BD-R.
     - **Task 1P.6.4: Prove the exact authenticated `/k/` field and entity contract.** Verify the post-decision authenticated browser surface with explicit synthetic Personal and Luxe Legacy fields, BFM exclusion, route-owned context, no-password preservation, responsive behavior, and no protected cache reuse. Status: done and durable through 4BD-R.
-  - **Task 1P.7: Finish the remaining broad financial read-model regression coverage.** Consume the unpaired remainder of `P3-3C-C01` without mixing it into public-route, mobile, or browser-policy implementation. The 2026-07-24 just-in-time pass reconciled the original 297 passing audit assertions against the maintained suite and split the remaining work into the four execution-sized tasks below. Status: active; Tasks 1P.7.1-1P.7.2 are durable through 4BE-R, Task 1P.7.3 is durable through 4BF-R, and Task 1P.7.4 is current at the next planning gate.
+  - **Task 1P.7: Finish the remaining broad financial read-model regression coverage.** Consume the unpaired remainder of `P3-3C-C01` without mixing it into public-route, mobile, or browser-policy implementation. The 2026-07-24 just-in-time pass reconciled the original 297 passing audit assertions against the maintained suite and split the remaining work into four execution-sized tasks. The 2026-07-25 4BG stop then decomposed Task 1P.7.4 into a repair prerequisite and the deferred coverage remainder. Status: complete locally; Tasks 1P.7.1-1P.7.3 are durable and Tasks 1P.7.4a-1P.7.4b are complete locally through 4BH/4BI pending separately gated durability.
     - **Task 1P.7.1: Reconcile effective-transaction and dashboard totals.** Add maintained all-entity synthetic proof that split pieces replace split parents, maintained exclusions remain centralized, signed income and spend reconcile, and dashboard counts, spend, income, review count, date/account/transfer filters, empty states, and entity-specific output agree with the same ledger fixture. Status: done and durable through 4BE-R.
     - **Task 1P.7.2: Complete the standard-report and export matrix.** Preserve every non-recurring report type through direct data preparation, rendered view, CSV, PDF, and supported QBO behavior, including range handling, filenames, response types, empty/missing inputs, reconciled totals, and Personal/BFM/Luxe Legacy isolation. The separately repaired Recurring Charges matrix remains covered by 4H. Status: done and durable through 4BE-R.
     - **Task 1P.7.3: Preserve subscription detection and lifecycle behavior.** Add maintained all-entity synthetic proof for suggestion cadence and regularity, accept/add/detail/update, account-information add/delete, dismiss/restore, share text, delete, persistence, empty states, denied networking, and entity-local isolation. Status: done and durable without deployment through 4BF-R.
-    - **Task 1P.7.4: Preserve Cash Flow balances, liabilities, recurrence, and visibility.** Add maintained all-entity synthetic proof for manual bank/card balance writes, liabilities, manual recurring add/delete, automatic recurring projections, the intended Personal/BFM shared-visibility rule, Luxe Legacy isolation, empty states, denied networking, and exact cleanup. Status: current at the next planning gate; no 4BG implementation block is confirmed.
+    - **Task 1P.7.4: Preserve Cash Flow balances, liabilities, recurrence, and visibility.** Umbrella for the repair prerequisite exposed by 4BG and the remaining maintained financial-behavior matrix. Status: complete locally through 4BH/4BI; durability remains separate.
+      - **Task 1P.7.4a: Repair the Cash Flow shared-entity mutation boundary.** Make Personal/BFM sibling sections genuinely read-only, require every account/card/recurring mutation target to match the active cookie entity, preserve valid active-entity mutations, and add focused maintained colliding-ID, no-mutation, entity-isolation, denied-network, and exact-cleanup proof. Status: complete and locally verified through 4BH; durability remains separate.
+      - **Task 1P.7.4b: Complete Cash Flow financial-behavior coverage.** Resume the stopped 4BG matrix for manual bank/card persistence, stored liabilities, manual recurring add/projection/delete, representative automatic recurrence and date boundaries, empty states, Personal/BFM shared visibility, Luxe Legacy isolation, denied networking, and exact cleanup after Task 1P.7.4a passes. Status: complete and locally verified through 4BI; durability remains separate.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, 4W completed the `P3-3E-04` Weekly/Waterfall validation slice, 4AD completed the responsive-navigation slice of `P3-3J-C01`, 4AS completed its shared-shell/dashboard/report source-rendered and configured-auth/no-password all-entity responsive browser slice, 4AT completed its transaction/matching source-rendered and configured-auth/no-password all-entity responsive browser slice, 4AV completed its Cash Flow and planning source-rendered and configured-auth/no-password supported-boundary responsive browser slice, 4AW completed its Weekly/Waterfall source-rendered and configured-auth/no-password supported-boundary responsive browser slice, 4AX completed its Subscriptions/Payroll source-rendered/repeated-partial and configured-auth/no-password responsive browser slice, 4AY completed its Data Sources/Connected Accounts source, conditional-rendered, mocked-Plaid, all-entity, both-auth, phone/exact-768/desktop responsive browser slice, and 4AZ completed its login/offline/error/standalone source, rendered, request, cached-asset, both-auth, entity-boundary, phone/exact-768/desktop browser and visual slice.
 - **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.**
 - **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4BF-R for the latest explicitly approved source set; every future publication remains separately gated.
+
+### Confirmed Work Block 4BI-R: Cash Flow Boundary Repair And Financial-Coverage Durability Without Deployment
+
+Status: active; confirmed on 2026-07-25.
+
+Parent task: Phase 4 Task 4, limited to the exact verified combined 4BG/4BH/4BI durability slice.
+
+Included: record 4BI-R active; re-run the approved source-package checks; explicitly stage only `web/routes/cashflow.py`, `web/templates/cashflow.html`, `web/static/cashflow.js`, `scripts/mobile_drawer_browser_test.py`, `scripts/smoke_test.py`, `command-center/decisions.md`, `command-center/index.html`, `command-center/issues.md`, `command-center/now.md`, `command-center/roadmap.md`, `command-center/state.json`, `command-center/logs/2026-07-25-cashflow-financial-behavior-coverage-4bg.md`, `command-center/logs/2026-07-25-cashflow-entity-boundary-repair-4bh.md`, and `command-center/logs/2026-07-25-cashflow-financial-behavior-coverage-4bi.md`; create one `[skip actions]` source commit on `codex/cashflow-read-model-coverage`; cleanly fast-forward local `main`; non-force push `origin/main`; verify exact live remote SHA and zero workflow activity; then publish one sanitized `[skip actions]` closeout commit.
+
+Excluded: broader Task 2; Task 3 CI; further Task 4 scope; Phase 5; product/test/documentation expansion or repair; migrations; dependencies; authentication; CSP; PWA; Plaid; PR creation; workflow dispatch, rerun, cancellation, or edits; deployment; production/demo/Fly access; credentials; protected data; real databases/uploads; downstream systems; force push; conflict resolution; rebase; broader recovery; `scripts/sync_prod_to_local.sh`; `command-center/now 2.md`; and the unrelated duplicate 4AU log.
+
+Why this grouping: the 4BG stop evidence, resolved issue, 4BH safety repair, 4BI financial-behavior matrix, maintained browser proof, and Runway OS closeout form one auditable Cash Flow result. Omitting any part would separate the repair from either its root-cause evidence or its maintained acceptance proof.
+
+Owner and recommended agent: Codex Desktop without delegation or second opinion. Codex owns exact-path verification, sensitive-addition review, staging, commits, ancestry, clean main fast-forward, non-force pushes, remote/no-workflow verification, dashboard stewardship, and final intake.
+
+Runner path: continue in the current task on `codex/cashflow-read-model-coverage`; verify active Runway OS and GitHub prerequisites; re-run the complete source-package checks; resolve local and live `main`; stage the fourteen approved paths only; create and inspect the source commit; cleanly fast-forward and push `main`; verify exact SHA and zero workflow activity; then write, verify, commit, and push the sanitized closeout.
+
+Expected paths: the exact fourteen source-package paths listed above. Closeout may change only `command-center/decisions.md`, `command-center/index.html`, `command-center/now.md`, `command-center/roadmap.md`, `command-center/state.json`, and one new sanitized 4BI-R release log.
+
+Defaults: explicit-path staging; two `[skip actions]` commits; direct non-force main publication without a PR; no workflow action, deployment, Fly access, production access, or production health check; preserve all three unrelated untracked files; expected source parent `e9ce4d002b1527516f1fbe8bdefa513e4bb41497`, subject to immediate pre-stage revalidation.
+
+Blocking questions: none.
+
+Expansion candidates and questions: none. Task 3 CI and Phase 5 use different definitions of done.
+
+Stop conditions: an unexpected or sensitive path; preserved-file overlap; verification, cleanup, dashboard, or scope failure; live remote divergence; non-fast-forward requirement; push rejection; inability to verify GitHub; any workflow run or deployment despite `[skip actions]`; or recovery beyond read-only diagnosis. If a workflow unexpectedly starts, stop and report rather than cancel it.
+
+Verification: full `.venv/bin/python scripts/smoke_test.py`; full `.venv/bin/python scripts/mobile_drawer_browser_test.py`; relevant Python compilation; JavaScript syntax; maintained sections 8l-8m denied-network/exact-cleanup proof; high-confidence sensitive-addition review; JSON validation; `git diff --check`; dashboard refresh, health, generated-state and rendered inspection; exact changed/staged/committed path checks; commit ancestry; exact live remote and GitHub SHA; zero workflow activity for both commits; final local/remote alignment; and all three preserved files.
+
+Dashboard closeout: show 4BI-R active with Task 4 current before staging. After remote verification, mark 4BI-R, Tasks 1P.7.4a-1P.7.4b, and the Task 1P.7.4 umbrella durable without deployment; make Task 3 the sole current planning gate for a just-in-time decomposition; refresh, health-check, and inspect the rendered dashboard.
+
+Report point: return source and closeout SHAs, exact published paths, ancestry and remote alignment, zero-workflow/no-deployment result, verification, final worktree state, preserved exclusions, and the separate Task 3 planning gate.
+
+Suggested next work block: run a just-in-time Task 3 decomposition, then separately propose a 4BJ safe synthetic CI block.
+
+### Confirmed Work Block 4BI: Cash Flow Financial-Behavior Coverage Completion
+
+Status: complete and locally verified; confirmed and completed on 2026-07-25; uncommitted.
+
+Parent tasks: Phase 4 Task 1P.7.4b plus only its focused Task 2 / `P3-3C-C01` regression slice.
+
+Included: add maintained temporary Personal, BFM, and Luxe Legacy proof for bank and card persistence; due-day and derived-date behavior; stored liability rendering without Plaid retrieval; manual recurring add, projection, and delete; cadence classification and representative automatic projections; stale, irregular, and horizon exclusions; month-end and year-boundary behavior; empty states; reciprocal read-only Personal/BFM visibility; Luxe Legacy isolation; valid active-entity writes; denied networking; exact row and sequence cleanup; and local Runway OS closeout.
+
+Excluded: broader Task 2; Tasks 3-4; further product repair or redesign; migrations; dependencies; categories; authentication; CSRF; CSP; PWA; unrelated UI; Plaid fetching, linking, or synchronization; protected data; real databases/uploads; credentials; production/demo; external or downstream systems; GitHub durability; workflows; Fly; deployment; publication; `scripts/sync_prod_to_local.sh`; `command-center/now 2.md`; and the unrelated duplicate 4AU log.
+
+Why this grouping: the included behavior shares the Cash Flow read model, `account_balances` and `manual_recurring` persistence, recurrence helpers, one temporary all-entity fixture, the verified 4BH visibility contract, denied networking, and exact cleanup. Product repair, browser-policy work, CI, durability, and publication use different definitions of done.
+
+Owner and recommended agent: Codex Desktop without delegation or second opinion. The block requires deterministic maintained-test integration, temporary financial-fixture cleanup, all-entity verification, and Runway OS stewardship.
+
+Runner path: continue on `codex/cashflow-read-model-coverage`; verify active Runway OS; run baseline full smoke; add one focused maintained Cash Flow section while keeping product source read-only; run the complete verification bundle; then close locally as passed or stopped without commit or publication.
+
+Expected paths: `scripts/smoke_test.py`; one sanitized 4BI evidence log; `command-center/decisions.md`; `command-center/index.html`; `command-center/now.md`; `command-center/roadmap.md`; and `command-center/state.json`. `command-center/issues.md` may change only if a confirmed mismatch requires a durable finding. No product path is expected.
+
+Defaults: use fixed reference dates; temporary Personal, BFM, and Luxe Legacy databases; stored-field liability proof rather than duplicate Plaid-fetch coverage; cadence-band classification plus representative weekly, biweekly, and monthly projection behavior; deterministic stale, irregular, horizon, month-end, and year-boundary cases; denied outbound networking; before/after row and sequence snapshots; local-only uncommitted closeout; and preservation of all three unrelated untracked files.
+
+Blocking questions: none. Ryan confirmed the recommended 4BI proposal and existing 4BH read-only sibling contract.
+
+Expansion candidates and questions: none. Broader Task 2, product repair, CI, durability, publication, protected access, and live action remain later gates.
+
+Stop conditions: any product mismatch or need for product repair; need for migration, dependency, authentication, Plaid, protected-data, external, live, publication, deployment, or other excluded work; scope expansion; plan-changing verification failure; failed cleanup or command-center health; or preserved-file overlap.
+
+Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; focused bank/card, stored-liability, manual/automatic recurrence, date-boundary, empty, reciprocal read-only visibility, Luxe Legacy, current-entity write, denied-network, and exact-cleanup proof; relevant Python compilation; maintained configured-auth and no-password isolated-browser regression; JSON validation; `git diff --check`; dashboard refresh, health, generated-state and rendered inspection; exact changed-path review; and all three preserved files.
+
+Dashboard closeout: after a pass, mark 4BI, Task 1P.7.4b, and the Task 1P.7.4 umbrella complete locally; make exact-scope 4BI-R durability without deployment the sole current planning gate; refresh, health-check, and inspect the rendered dashboard. Record the exact stop instead if any stop condition fires.
+
+Report point: return the exact maintained matrix, confirmed behavior or stopped mismatch, cleanup proof, verification, changed paths, branch/worktree state, preserved exclusions, and the separate 4BI-R durability gate.
+
+Suggested next work block: 4BI-R Cash Flow Boundary Repair And Financial-Coverage Durability Without Deployment for the exact verified combined 4BH/4BI set.
+
+Result: maintained section 8m proves primary empty states in separate disposable databases; all-entity bank/card persistence; stored liability rendering without Plaid retrieval; stored and derived due dates; manual add/projection/delete with month-end and year rollover; all cadence classification bands; representative weekly, biweekly, and monthly projections; irregular, stale, and horizon exclusions; reciprocal read-only Personal/BFM financial visibility; Luxe Legacy isolation; valid active-entity writes; denied networking; and exact row/sequence cleanup. The first new iteration corrected only a whole-dollar display expectation. Product source remained read-only. Baseline and final full smoke, maintained configured-auth/no-password isolated browser, Python and JavaScript syntax, JSON, whitespace, dashboard, exact-scope, and preserved-file checks pass. Task 1P.7.4b and the Task 1P.7.4 umbrella are complete locally. Evidence: `command-center/logs/2026-07-25-cashflow-financial-behavior-coverage-4bi.md`.
+
+### Confirmed Work Block 4BH: Cash Flow Shared-Entity Mutation Boundary Repair
+
+Status: complete and locally verified; confirmed and completed on 2026-07-25; uncommitted.
+
+Parent tasks: Phase 4 Task 1P.7.4a plus only its focused Task 2 regression slice.
+
+Included: preserve Personal/BFM sibling Cash Flow balances, liabilities, and upcoming information while removing sibling edit, delete, recurring-entry, mutation action, and mutation-target data; require submitted entity targets to match the active cookie entity for account, card, and recurring mutations; preserve valid active-entity writes; add maintained temporary all-entity colliding-ID, missing/mismatched-target no-mutation, valid-mutation, Luxe Legacy isolation, denied-network, exact-cleanup, rendered, and focused isolated-browser proof; and close Runway OS locally after verification.
+
+Excluded: Task 1P.7.4b; broader Task 2; Tasks 3-4; migrations; dependencies; categories; authentication; CSRF; CSP; PWA; unrelated UI work; Plaid; protected data; real databases/uploads; credentials; external systems; production/demo; GitHub durability; workflows; Fly; deployment; publication; `scripts/sync_prod_to_local.sh`; `command-center/now 2.md`; and the unrelated duplicate 4AU log.
+
+Why this grouping: sibling presentation, server target validation, and colliding-ID proof are one coherent safety repair across the same Cash Flow route/template/controller seam. The broader balance, liability, recurrence, and projection matrix depends on this boundary passing first and remains Task 1P.7.4b.
+
+Owner and recommended agent: Codex Desktop without delegation or second opinion. The block requires cross-file route/template/test integration, synthetic cleanup, rendered inspection, and Runway OS stewardship under a deterministic product contract.
+
+Runner path: continue on `codex/cashflow-read-model-coverage`; verify active Runway OS; run the baseline full smoke suite; implement only the boundary repair and focused maintained coverage; run the complete verification bundle; then close locally as passed or stopped without commit or publication.
+
+Expected paths: `web/routes/cashflow.py`; `web/templates/cashflow.html`; `web/static/cashflow.js`; `scripts/smoke_test.py`; `scripts/mobile_drawer_browser_test.py`; one sanitized 4BH evidence log; `command-center/decisions.md`; `command-center/index.html`; `command-center/issues.md`; `command-center/now.md`; `command-center/roadmap.md`; and `command-center/state.json`.
+
+Defaults: Personal/BFM sibling sections remain visible but read-only; missing or mismatched submitted entity targets receive controlled HTTP 404 with zero mutation; valid active-entity forms remain supported; temporary Personal, BFM, and Luxe Legacy databases use colliding local IDs, denied outbound networking, and exact row/sequence cleanup; preserve all three unrelated untracked files.
+
+Blocking questions: none. Ryan confirmed the recommended read-only sibling and strict active-entity mutation contract.
+
+Expansion candidates and questions: none. Task 1P.7.4b, CI, durability, publication, and live actions use separate definitions of done and remain later gates.
+
+Stop conditions: a requested cross-entity editing contract; need for migration, dependency, authentication, CSRF, CSP, PWA, protected, credential, Plaid, external, live, publication, or deployment work; scope expansion; plan-changing verification failure; failed cleanup or command-center health; or preserved-file overlap.
+
+Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; focused source/rendered/isolated-browser sibling-read-only and active-edit proof; colliding-ID missing/mismatched-target no-mutation checks for every included route; valid current-entity bank/card/recurring writes; Luxe Legacy isolation; denied networking; exact cleanup; relevant Python and JavaScript compilation; JSON; `git diff --check`; dashboard refresh, health, generated-state and rendered inspection; exact changed-path review; and all three preserved files.
+
+Dashboard closeout: after a pass, mark 4BH and Task 1P.7.4a done locally, make Task 1P.7.4b the sole current planning gate, refresh, health-check, and inspect the rendered dashboard. Record the exact stop instead if any stop condition fires.
+
+Report point: return exact repaired behavior, maintained proof, verification and cleanup, changed paths, branch/worktree state, preserved exclusions, and the separate Task 1P.7.4b or durability gate.
+
+Suggested next work block: 4BI Cash Flow Financial-Behavior Coverage Completion for Task 1P.7.4b after 4BH passes.
+
+Result: Personal/BFM sibling cards retain balances, liability detail, and upcoming information through a view-only flip but contain no account ID, entity target, edit modal, recurring form, or mutation-target data. Account, card, recurring-add, and recurring-delete routes require the submitted entity to equal the active cookie entity and return controlled HTTP 404 before database access for missing or mismatched targets. Maintained temporary all-entity colliding-ID proof covers every rejection path, zero mutation, valid active-entity writes, read-only rendered controls, Luxe Legacy isolation, denied networking, and exact row/sequence cleanup. Baseline and final full smoke, the maintained isolated-browser suite in both authentication modes, focused rendered inspection, Python and JavaScript syntax, JSON, whitespace, dashboard, exact-scope, and preserved-file checks pass. The first new smoke iteration corrected only an over-narrow exact sibling-card count. No migration, dependency, authentication, CSRF, CSP, PWA, Plaid, protected data, real database, credential, external/live, GitHub, workflow, Fly, deployment, publication, or preserved-file action occurred. Evidence: `command-center/logs/2026-07-25-cashflow-entity-boundary-repair-4bh.md`.
+
+### Confirmed Work Block 4BG: Cash Flow Financial-Behavior Coverage
+
+Status: stopped locally at a confirmed product-boundary mismatch; confirmed and stopped on 2026-07-25.
+
+Parent tasks: Phase 4 Task 1P.7.4 and only its focused Task 2 / `P3-3C-C01` regression slice.
+
+Included: add maintained temporary Personal, BFM, and Luxe Legacy proof for manual bank balance updates; credit-card balance, limit, APR, payment, and due-date persistence; existing cached/manual liability rendering; manual recurring add, projection, and delete; representative automatic recurring projections and date boundaries; empty states; Personal/BFM shared visibility; Luxe Legacy isolation; cookie-owned write isolation; denied networking; and exact cleanup.
+
+Shared-visibility decision: Personal and BFM may see each other's Cash Flow sections, but those sibling sections are read-only. Active-entity mutations remain cookie-owned. If the current rendered or route contract exposes or misroutes a foreign-entity mutation, 4BG stops and records the mismatch without changing product source.
+
+Excluded: Tasks 1P.7.1-1P.7.3; broader Task 2; Task 3 CI; Task 4 publication; product repair or redesign; migrations; dependencies; categories; authentication; CSRF; CSP; browser/PWA behavior; Plaid fetching or synchronization; protected data; real databases/uploads; credentials; production/demo; external networking; downstream systems; GitHub durability; workflows; Fly; deployment; `scripts/sync_prod_to_local.sh`; `command-center/now 2.md`; and the unrelated duplicate 4AU log.
+
+Why this grouping: the included behavior shares the Cash Flow route module, `account_balances` and `manual_recurring` persistence, one temporary all-entity fixture, the same entity-visibility contract, a denied-network boundary, and exact row/sequence cleanup. Upstream Plaid account/liability refresh is already covered through 4J; browser behavior, CI, repair, and publication use different contracts and remain separate.
+
+Owner and recommended agent: Codex Desktop in the current task without delegation or second opinion. Codex owns maintained-test integration, exact synthetic verification, dashboard stewardship, and final intake.
+
+Runner path: write and verify active Runway OS, create `codex/cashflow-read-model-coverage`, run the baseline full smoke suite, add one focused maintained Cash Flow section without product changes, run the complete verification bundle, then close locally as passed or stopped.
+
+Expected paths: `scripts/smoke_test.py`; one sanitized 4BG evidence log; `command-center/decisions.md`; `command-center/index.html`; `command-center/now.md`; `command-center/roadmap.md`; and `command-center/state.json`. `command-center/issues.md` may change only if a confirmed mismatch requires a durable finding. No product path is expected.
+
+Defaults: fixed synthetic dates; temporary Personal, BFM, and Luxe Legacy databases; stored-field liability proof rather than duplicate Plaid-fetch coverage; denied outbound networking; before/after row and sequence snapshots; local-only and uncommitted result; preserve all three unrelated untracked files.
+
+Blocking question resolved: Ryan accepted read-only Personal/BFM shared visibility by confirming the recommended 4BG proposal.
+
+Expansion candidates and questions: none. Broader Task 2, CI, repair, and publication use different risk and verification paths.
+
+Stop conditions: an ambiguous or violated shared-visibility/write contract; any product defect or need for product repair; need for migration, dependency, browser, authentication, protected-data, Plaid, external, live, publication, or deployment work; scope expansion; plan-changing verification failure; failed cleanup or command-center health; or preserved-file overlap.
+
+Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; focused current-entity bank/card writes, stored liabilities, manual/automatic recurrence, empty, read-only shared visibility, Luxe Legacy isolation, denied-network, and exact-cleanup proof; relevant Python compilation; JSON validation; `git diff --check`; dashboard refresh, health, generated-state and rendered inspection; exact changed-path review; and all three preserved files.
+
+Dashboard closeout: show 4BG active with Task 1P.7.4 current, Codex owner, the read-only shared-visibility decision, stop conditions, verification, and report point before maintained-test work. At closeout, mark 4BG and Task 1P.7.4 done locally or record the exact stop, refresh, health-check, and inspect the rendered dashboard.
+
+Report point: return exact maintained coverage, confirmed behavior or stopped mismatch, cleanup proof, verification, changed paths, branch state, preserved exclusions, and the next separate durability or repair gate.
+
+Suggested next work block: 4BG-R exact-scope durability if 4BG passes without product changes; otherwise separately plan a Cash Flow entity-boundary repair.
+
+Stop result: active-state JSON, dashboard refresh/health/generated/rendered inspection, branch creation, and the baseline full synthetic smoke suite passed. A disposable denied-network probe then created colliding synthetic account IDs in Personal, BFM, and Luxe Legacy. The Personal Cash Flow response exposed the BFM sibling card through the editable action; submitting that sibling card's ID and hidden BFM entity value returned the normal redirect, changed the same-ID Personal row, and left the intended BFM row plus Luxe Legacy unchanged. The temporary root was removed exactly. 4BG stopped before maintained-test expansion because this violates the confirmed read-only shared-visibility contract. No product or test repair, migration, protected access, external call, GitHub action, workflow, Fly action, deployment, or preserved-file mutation occurred. Evidence: `command-center/logs/2026-07-25-cashflow-financial-behavior-coverage-4bg.md`.
+
+Revised next block: separately propose a Cash Flow entity-boundary repair that makes sibling sections truly read-only or adopts another explicit Ryan-approved mutation contract, then resumes the maintained 4BG matrix.
 
 ### Confirmed Work Block 4BF-R: Subscription Lifecycle Coverage Durability Without Deployment
 

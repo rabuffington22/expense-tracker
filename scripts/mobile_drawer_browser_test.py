@@ -1695,7 +1695,26 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
                 + '#main-content [onkeydown]'
             ).length,
             personal: Boolean(document.querySelector('[data-acct-name="4AL Personal Checking"]')),
-            company: Boolean(document.querySelector('[data-acct-name="4AL BFM Checking"]')),
+            company: Array.from(document.querySelectorAll('.cf-cross .cf-box-name')).some(
+                (element) => element.textContent.includes('4AL BFM')
+            ),
+            readOnlyCross: Array.from(document.querySelectorAll('.cf-cross .cf-box')).every(
+                (card) => card.dataset.cashflowAction === 'flip-readonly'
+                    && !Array.from(card.attributes).some(
+                        (attribute) => attribute.name.startsWith('data-acct-')
+                            || attribute.name === 'data-entity-key'
+                            || attribute.name === 'data-balance'
+                            || attribute.name === 'data-limit'
+                            || attribute.name === 'data-due-day'
+                            || attribute.name === 'data-due-date'
+                            || attribute.name === 'data-payment'
+                            || attribute.name === 'data-apr'
+                    )
+            ),
+            crossCardCount: document.querySelectorAll('.cf-cross .cf-box').length,
+            crossMutationControls: document.querySelectorAll(
+                '.cf-cross form, .cf-cross button, .cf-cross [data-cashflow-action="flip-open"]'
+            ).length,
             styleAttrs: document.querySelectorAll("#main-content [style]").length,
         })"""
     )
@@ -1705,12 +1724,31 @@ def _assert_cashflow_planning_pages(page, base_url: str, label: str) -> None:
         f"{label}: Cash Flow must expose no native inline handlers",
     )
     _check(
-        cashflow_state["personal"] and cashflow_state["company"],
-        f"{label}: Cash Flow must preserve Personal/BFM shared visibility",
+        cashflow_state["personal"]
+        and cashflow_state["company"]
+        and cashflow_state["crossCardCount"] == 2
+        and cashflow_state["readOnlyCross"]
+        and cashflow_state["crossMutationControls"] == 0,
+        f"{label}: Cash Flow must preserve read-only Personal/BFM shared visibility",
     )
     _check(
         cashflow_state["styleAttrs"] == 0,
         f"{label}: Cash Flow must render without style attributes",
+    )
+
+    sibling_card = page.locator('.cf-cross [data-cashflow-action="flip-readonly"]').first
+    sibling_card.evaluate("element => element.click()")
+    page.wait_for_timeout(350)
+    _check(
+        sibling_card.evaluate("element => element.classList.contains('card-flipped')")
+        and page.locator("#cf-modal-scrim").is_hidden(),
+        f"{label}: read-only sibling cards must expose details without opening a mutation modal",
+    )
+    sibling_card.evaluate("element => element.click()")
+    page.wait_for_timeout(350)
+    _check(
+        not sibling_card.evaluate("element => element.classList.contains('card-flipped')"),
+        f"{label}: read-only sibling detail cards must return to their summary face",
     )
 
     credit_card = page.locator(
