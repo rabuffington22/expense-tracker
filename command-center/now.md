@@ -2,27 +2,62 @@
 
 ## Active Objective
 
-Request a bounded 4BF proposal for Task 1P.7.3 subscription detection and lifecycle coverage before any implementation.
+Execute confirmed 4BF-R durability for the exact completed subscription-lifecycle coverage package without deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.2 are durable through 4BE-R, and Task 1P.7.3 is current at its next planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.7.3 is complete locally through 4BF and its exact durability slice is active inside confirmed 4BF-R.
 
 ## Current Work Block
 
-Work block 4BE-R: Financial Read-Model Coverage Durability Without Deployment — done and durable on `origin/main` with zero workflow runs and no deployment.
+Work block 4BF-R: Subscription Lifecycle Coverage Durability Without Deployment — active on `codex/subscription-lifecycle-coverage`.
 
 ## Current Task
 
-Task 1P.7.3: Preserve subscription detection and lifecycle behavior — current at the next planning gate; no 4BF implementation block is confirmed.
+Task 4: Publish and verify only explicitly approved repairs — current only for the exact completed 4BF durability package.
 
 ## Owner
 
-Ryan owns the next 4BF planning and confirmation decision. Codex owns the durable 4BE-R record and may not begin Task 1P.7.3 without a new confirmed block.
+Codex Desktop owns exact-path revalidation, staging, commit, clean main fast-forward, non-force push, remote/no-workflow verification, sanitized closeout, dashboard stewardship, and final intake. Ryan owns every expansion, workflow/deployment action, product change, and Task 1P.7.4 decision.
 
 ## Current Action
 
-Request a just-in-time 4BF proposal for Task 1P.7.3 before subscription-lifecycle implementation.
+Reverify and publish only the seven-path 4BF package through the approved two-commit `[skip actions]` sequence, then restore Task 1P.7.4 to the next planning gate.
+
+## Work Block 4BF-R Contract
+
+- Include Task 4 only for the exact verified 4BF set: explicit staging of `scripts/smoke_test.py`, the 4BF evidence log, and the five Runway OS source/generated paths; one `[skip actions]` source commit on `codex/subscription-lifecycle-coverage`; clean fast-forward of local `main`; direct non-force push to `origin/main`; exact remote-SHA and zero-workflow verification; then one sanitized `[skip actions]` closeout commit and push.
+- Exclude Task 1P.7.4, broader Task 2, Task 3 CI, product or maintained-test expansion or repair, dependencies, migrations, browser/PWA/authentication behavior, PR creation, workflow dispatch/rerun/cancellation/edit, deployment, production/demo/Fly access, credentials, protected data, real databases/uploads, Plaid, downstream systems, force push, broader recovery, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the duplicate 4AU log.
+- Use explicit-path staging only and two `[skip actions]` commits. No workflow action, deployment, or production health check is authorized.
+- No delegation or second opinion is needed because this is a deterministic durability sequence with exact paths, ancestry, remote, and no-workflow acceptance checks.
+- Stop for any unexpected or sensitive path; verification, cleanup, dashboard, scope, or preserved-file failure; live remote divergence; non-fast-forward requirement; push rejection; any workflow run or deployment despite `[skip actions]`; or recovery beyond clean fast-forward and read-only diagnosis. If a workflow unexpectedly starts, stop and report rather than cancel it.
+- Verify full smoke; Python compilation; section 8k denied-network/exact-cleanup proof; sensitive-addition review; JSON; whitespace; dashboard refresh/health/generated/rendered state; exact changed/staged/committed paths; commit ancestry; exact live remote SHA; zero workflow activity for both commits; final local/remote alignment; and all three preserved untracked files.
+- Report source and closeout commit SHAs, exact published paths, remote alignment, `[skip actions]`/zero-workflow/no-deployment result, final worktree state, preserved exclusions, and the separate 4BG planning gate.
+
+## Work Block 4BF-R Status
+
+- Ryan confirmed the exact 4BF-R proposal on 2026-07-25.
+- The block is active before staging; current branch, local `main`, tracking `origin/main`, and live remote `main` all began aligned at `fb5dfaa2fc9e7400ef93fdc02917701ecf9e6ca4`.
+- No Task 1P.7.4 work, product/test expansion, workflow action, deployment, production access, protected access, delegation, or second opinion is authorized.
+
+## Work Block 4BF Contract
+
+- Include Task 1P.7.3 plus only its focused Task 2 / `P3-3C-C01` regression slice: all-five-cadence detection and amount regularity; staleness and exclusion behavior; empty rendering; suggestion accept; manual add; detail; status, notes, timeline, and payment-method persistence; stored synthetic cancellation-tip metadata; account-information add/delete; dismiss/restore; share text; delete and related-row cleanup; reopened-connection persistence; denied networking; and Personal/BFM/Luxe Legacy isolation.
+- Exclude Task 1P.7.4, broader Task 2, Task 3 CI, Task 4 publication, product repair or redesign, migrations, dependencies, categories, authentication, CSRF, CSP, browser/PWA work, real AI/OpenRouter generation, protected data, real databases/uploads, credentials, production/demo, external networking, Plaid, downstream systems, GitHub durability, workflows, Fly, deployment, and all three preserved untracked files.
+- Use temporary Personal, BFM, and Luxe Legacy databases in the maintained smoke runner. Keep product source read-only; use stored or deterministically mocked synthetic cancellation tips only; deny outbound networking; snapshot each entity before seeding; and restore every affected row and SQLite sequence exactly.
+- No delegation or second opinion is needed because this is deterministic regression-test convergence against an already established contract.
+- Stop for any product defect or ambiguous lifecycle/entity contract; need for excluded product, migration, dependency, protected, credential, real-data, external, live, or publication work; scope expansion; plan-changing verification failure; failed cleanup or command-center health; or preserved-file overlap. Do not repair a mismatch inside 4BF.
+- Verify baseline and final full smoke; focused detection, cadence, regularity, lifecycle, persistence, empty, isolation, denied-network, and cleanup checks; relevant Python compilation; JSON; whitespace; dashboard refresh, health, generated-state and rendered-dashboard inspection; exact changed-path scope; and all preserved files.
+- Keep 4BF local-only and uncommitted. Report exact coverage, confirmed behavior, any stopped mismatch, verification and cleanup, changed paths, branch state, preserved exclusions, and the next separate durability or Task 1P.7.4 planning gate.
+
+## Work Block 4BF Status
+
+- Ryan confirmed the exact 4BF proposal on 2026-07-25.
+- Section 8k of `scripts/smoke_test.py` now proves all five cadence classes, regularity, staleness and exclusions, empty rendering, suggestion accept, manual add, detail, status/notes/timeline/payment-method persistence, stored deterministic tips, account-information add/delete, dismiss/restore, share text, delete cascades, reopened persistence, all-entity isolation, denied networking, and exact row/sequence restoration.
+- Baseline and final full smoke, Python compilation, JSON, whitespace, dashboard refresh/health/generated/rendered state, exact scope, and all three preserved-file checks pass.
+- No product mismatch or repair need was found; product source did not change.
+- Work is local-only and uncommitted on `codex/subscription-lifecycle-coverage`. Evidence: `command-center/logs/2026-07-25-subscription-lifecycle-coverage-4bf.md`.
+- Exact-scope 4BF-R durability or 4BG Task 1P.7.4 planning requires a separate Ryan decision.
 
 ## Work Block 4BE-R Contract
 

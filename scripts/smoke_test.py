@@ -8168,6 +8168,672 @@ def main() -> None:
             "CSV/PDF/QBO, empty states, isolation, denied-network, and cleanup passed"
         )
 
+        # ── 8k. Subscription detection and lifecycle coverage ─────────
+        print("\n8k. Subscription detection and lifecycle coverage…")
+        from datetime import date as date_type, timedelta as timedelta_type
+
+        import web.routes.subscriptions as subscription_routes
+
+        subscription_entities = {
+            "personal": {
+                "display": "Personal",
+                "category": "Food",
+                "account": "Personal Card 4BF",
+            },
+            "company": {
+                "display": "BFM",
+                "category": "Software",
+                "account": "BFM Card 4BF",
+            },
+            "luxelegacy": {
+                "display": "LL",
+                "category": "Software",
+                "account": "LL Card 4BF",
+            },
+        }
+        subscription_cadences = {
+            "weekly": ("Weekly", (14, 7, 0)),
+            "biweekly": ("Biweekly", (28, 14, 0)),
+            "monthly": ("Monthly", (60, 30, 0)),
+            "quarterly": ("Quarterly", (180, 90, 0)),
+            "annual": ("Annual", (365, 0)),
+        }
+        subscription_sequence_tables = (
+            "subscription_watchlist",
+            "subscription_dismissals",
+            "subscription_notes_log",
+            "subscription_account_info",
+        )
+        subscription_today = date_type.today()
+        subscription_before_seed = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in subscription_entities
+        }
+        subscription_sequences = {}
+        for entity_key in subscription_entities:
+            subscription_conn = get_connection(entity_key)
+            sequence_rows = subscription_conn.execute(
+                "SELECT name, seq FROM sqlite_sequence "
+                "WHERE name IN (?, ?, ?, ?)",
+                subscription_sequence_tables,
+            ).fetchall()
+            subscription_sequences[entity_key] = {
+                row["name"]: row["seq"] for row in sequence_rows
+            }
+            subscription_conn.close()
+
+        with patch(
+            "socket.socket",
+            side_effect=AssertionError(
+                "subscription empty-state smoke forbids outbound networking"
+            ),
+        ):
+            with app.test_client() as subscription_empty_client:
+                for entity_key, contract in subscription_entities.items():
+                    subscription_empty_client.set_cookie(
+                        "entity", contract["display"]
+                    )
+                    empty_response = subscription_empty_client.get(
+                        "/subscriptions/"
+                    )
+                    empty_body = empty_response.get_data(as_text=True)
+                    _check(
+                        empty_response.status_code == 200
+                        and "No subscriptions being tracked yet."
+                        in empty_body
+                        and "Subscription 4BF" not in empty_body,
+                        f"subscriptions {entity_key}: empty watchlist should remain renderable",
+                    )
+
+        cadence_samples = {
+            "Weekly": 7,
+            "Biweekly": 15,
+            "Monthly": 30,
+            "Quarterly": 90,
+            "Annual": 365,
+        }
+        _check(
+            all(
+                subscription_routes._classify_cadence(days) == label
+                for label, days in cadence_samples.items()
+            )
+            and subscription_routes._classify_cadence(20) is None,
+            "subscriptions: all cadence classes and the unsupported gap should remain stable",
+        )
+        _check(
+            subscription_routes._amount_is_regular([-1299, -1300, -1299])
+            and not subscription_routes._amount_is_regular(
+                [-500, -2500, -8000]
+            ),
+            "subscriptions: regular and irregular amount histories should remain distinct",
+        )
+
+        def _insert_subscription_history(
+            conn,
+            entity_key,
+            merchant,
+            day_offsets,
+            amounts,
+            account,
+            category,
+            slug,
+        ):
+            for index, (days_ago, amount_cents) in enumerate(
+                zip(day_offsets, amounts)
+            ):
+                txn_date = subscription_today - timedelta_type(days=days_ago)
+                conn.execute(
+                    "INSERT INTO transactions "
+                    "(transaction_id, date, description_raw, merchant_canonical, "
+                    "amount, amount_cents, currency, account, category, confidence, "
+                    "source_filename, imported_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, 'USD', ?, ?, 0.99, "
+                    "'subscription-lifecycle-4bf', "
+                    "'2033-01-01T00:00:00+00:00')",
+                    (
+                        f"subscription-4bf-{entity_key}-{slug}-{index}",
+                        txn_date.isoformat(),
+                        merchant,
+                        merchant,
+                        amount_cents / 100,
+                        amount_cents,
+                        account,
+                        category,
+                    ),
+                )
+
+        for entity_key, contract in subscription_entities.items():
+            subscription_conn = get_connection(entity_key)
+            merchant_prefix = f"Subscription 4BF {contract['display']}"
+            for cadence_key, (_cadence_label, day_offsets) in (
+                subscription_cadences.items()
+            ):
+                _insert_subscription_history(
+                    subscription_conn,
+                    entity_key,
+                    f"{merchant_prefix} {cadence_key}",
+                    day_offsets,
+                    tuple(-1300 - index for index in range(len(day_offsets))),
+                    contract["account"],
+                    contract["category"],
+                    cadence_key,
+                )
+            _insert_subscription_history(
+                subscription_conn,
+                entity_key,
+                f"{merchant_prefix} irregular",
+                (60, 30, 0),
+                (-500, -2500, -8000),
+                contract["account"],
+                contract["category"],
+                "irregular",
+            )
+            _insert_subscription_history(
+                subscription_conn,
+                entity_key,
+                f"{merchant_prefix} stale",
+                (150, 120),
+                (-1700, -1700),
+                contract["account"],
+                contract["category"],
+                "stale",
+            )
+            _insert_subscription_history(
+                subscription_conn,
+                entity_key,
+                f"{merchant_prefix} Annual Fee",
+                (60, 30, 0),
+                (-1900, -1900, -1900),
+                contract["account"],
+                contract["category"],
+                "fee",
+            )
+            _insert_subscription_history(
+                subscription_conn,
+                entity_key,
+                f"{merchant_prefix} excluded category",
+                (60, 30, 0),
+                (-2100, -2100, -2100),
+                contract["account"],
+                "Internal Transfer",
+                "excluded-category",
+            )
+            _insert_subscription_history(
+                subscription_conn,
+                entity_key,
+                f"{merchant_prefix} income",
+                (60, 30, 0),
+                (2300, 2300, 2300),
+                contract["account"],
+                contract["category"],
+                "income",
+            )
+            subscription_conn.commit()
+            subscription_conn.close()
+
+        subscription_seeded = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in subscription_entities
+        }
+
+        def _store_subscription_tips(conn, sub_id, merchant):
+            tips = f"Synthetic 4BF cancellation tips for {merchant}"
+            conn.execute(
+                "UPDATE subscription_watchlist "
+                "SET cancellation_tips = ? WHERE id = ?",
+                (tips, sub_id),
+            )
+            conn.execute(
+                "INSERT INTO subscription_notes_log "
+                "(subscription_id, action, detail) "
+                "VALUES (?, 'tips_generated', 'Synthetic 4BF local fixture')",
+                (sub_id,),
+            )
+
+        with patch(
+            "socket.socket",
+            side_effect=AssertionError(
+                "subscription lifecycle smoke forbids outbound networking"
+            ),
+        ), patch.object(
+            subscription_routes,
+            "_generate_and_store_tips",
+            side_effect=_store_subscription_tips,
+        ) as subscription_tips_mock:
+            with app.test_client() as subscription_client:
+                for entity_key, contract in subscription_entities.items():
+                    display = contract["display"]
+                    merchant_prefix = f"Subscription 4BF {display}"
+                    expected_merchants = {
+                        f"{merchant_prefix} {cadence_key}"
+                        for cadence_key in subscription_cadences
+                    }
+                    subscription_conn = get_connection(entity_key)
+                    suggestions = subscription_routes._detect_subscriptions(
+                        subscription_conn
+                    )
+                    subscription_conn.close()
+                    detected = {
+                        suggestion["merchant_canonical"]: suggestion
+                        for suggestion in suggestions
+                        if suggestion["merchant_canonical"].startswith(
+                            merchant_prefix
+                        )
+                    }
+                    _check(
+                        set(detected) == expected_merchants
+                        and {
+                            detected[merchant]["frequency"]
+                            for merchant in expected_merchants
+                        }
+                        == set(subscription_cadences)
+                        and all(
+                            detected[merchant]["cadence_label"]
+                            == subscription_cadences[
+                                detected[merchant]["frequency"]
+                            ][0]
+                            for merchant in expected_merchants
+                        ),
+                        f"subscriptions {entity_key}: all five regular cadences should be detected and noise excluded",
+                    )
+
+                    other_before = {
+                        other_key: _database_snapshot(other_key)
+                        for other_key in subscription_entities
+                        if other_key != entity_key
+                    }
+                    subscription_client.set_cookie("entity", display)
+                    index_response = subscription_client.get("/subscriptions/")
+                    index_body = index_response.get_data(as_text=True)
+                    _check(
+                        index_response.status_code == 200
+                        and all(
+                            merchant in index_body
+                            for merchant in expected_merchants
+                        )
+                        and f"{merchant_prefix} irregular" not in index_body
+                        and f"{merchant_prefix} stale" not in index_body
+                        and f"{merchant_prefix} Annual Fee" not in index_body
+                        and f"{merchant_prefix} excluded category"
+                        not in index_body
+                        and f"{merchant_prefix} income" not in index_body,
+                        f"subscriptions {entity_key}: rendered suggestions should preserve detection boundaries",
+                    )
+
+                    accepted_merchant = f"{merchant_prefix} monthly"
+                    accept_response = subscription_client.post(
+                        "/subscriptions/accept",
+                        data={
+                            "merchant": accepted_merchant,
+                            "merchant_canonical": accepted_merchant,
+                            "amount": "13.00",
+                            "frequency": "monthly",
+                        },
+                    )
+                    _check(
+                        accept_response.status_code == 302,
+                        f"subscriptions {entity_key}: accepting a suggestion should redirect",
+                    )
+                    subscription_conn = get_connection(entity_key)
+                    accepted_row = subscription_conn.execute(
+                        "SELECT id, amount_cents, frequency, status, "
+                        "cancellation_tips FROM subscription_watchlist "
+                        "WHERE merchant = ?",
+                        (accepted_merchant,),
+                    ).fetchone()
+                    accepted_dismissal = subscription_conn.execute(
+                        "SELECT merchant_canonical FROM subscription_dismissals "
+                        "WHERE merchant_canonical = ?",
+                        (accepted_merchant,),
+                    ).fetchone()
+                    suggestions_after_accept = {
+                        suggestion["merchant_canonical"]
+                        for suggestion in subscription_routes._detect_subscriptions(
+                            subscription_conn
+                        )
+                    }
+                    subscription_conn.close()
+                    _check(
+                        accepted_row is not None
+                        and accepted_row["amount_cents"] == 1300
+                        and accepted_row["frequency"] == "monthly"
+                        and accepted_row["status"] == "watching"
+                        and "Synthetic 4BF cancellation tips"
+                        in accepted_row["cancellation_tips"]
+                        and accepted_dismissal is not None
+                        and accepted_merchant not in suggestions_after_accept,
+                        f"subscriptions {entity_key}: accepted suggestion should persist and leave detection",
+                    )
+                    accepted_id = accepted_row["id"]
+
+                    manual_merchant = f"Manual 4BF {display}"
+                    add_response = subscription_client.post(
+                        "/subscriptions/add",
+                        data={
+                            "merchant": manual_merchant,
+                            "amount": "24.50",
+                            "frequency": "quarterly",
+                            "notes": f"Synthetic 4BF manual note for {display}",
+                        },
+                    )
+                    _check(
+                        add_response.status_code == 302,
+                        f"subscriptions {entity_key}: manual add should redirect",
+                    )
+                    subscription_conn = get_connection(entity_key)
+                    manual_row = subscription_conn.execute(
+                        "SELECT id, amount_cents, frequency, status, notes, "
+                        "cancellation_tips FROM subscription_watchlist "
+                        "WHERE merchant = ?",
+                        (manual_merchant,),
+                    ).fetchone()
+                    subscription_conn.close()
+                    _check(
+                        manual_row is not None
+                        and manual_row["amount_cents"] == 2450
+                        and manual_row["frequency"] == "quarterly"
+                        and manual_row["status"] == "watching"
+                        and manual_row["notes"]
+                        == f"Synthetic 4BF manual note for {display}"
+                        and "Synthetic 4BF cancellation tips"
+                        in manual_row["cancellation_tips"],
+                        f"subscriptions {entity_key}: manual watchlist values should persist",
+                    )
+
+                    detail_response = subscription_client.get(
+                        f"/subscriptions/detail/{accepted_id}"
+                    )
+                    detail = detail_response.get_json()
+                    _check(
+                        detail_response.status_code == 200
+                        and detail["merchant"] == accepted_merchant
+                        and detail["cadence_label"] == "Monthly"
+                        and detail["status"] == "watching"
+                        and detail["payment_method"] == contract["account"]
+                        and detail["charges"]["occurrence_count"] == 3
+                        and len(detail["charges"]["recent_charges"]) == 3
+                        and {
+                            entry["action"] for entry in detail["timeline"]
+                        }
+                        >= {"created", "tips_generated"}
+                        and detail["account_info"] == [],
+                        f"subscriptions {entity_key}: detail should reconcile charges metadata tips and timeline",
+                    )
+
+                    update_response = subscription_client.post(
+                        f"/subscriptions/update/{accepted_id}",
+                        data={
+                            "status": "cancelling",
+                            "notes": f"Synthetic 4BF updated note for {display}",
+                        },
+                    )
+                    _check(
+                        update_response.status_code == 302,
+                        f"subscriptions {entity_key}: update should redirect",
+                    )
+                    updated_detail = subscription_client.get(
+                        f"/subscriptions/detail/{accepted_id}"
+                    ).get_json()
+                    _check(
+                        updated_detail["status"] == "cancelling"
+                        and updated_detail["notes"]
+                        == f"Synthetic 4BF updated note for {display}"
+                        and {
+                            entry["action"]
+                            for entry in updated_detail["timeline"]
+                        }
+                        >= {
+                            "created",
+                            "tips_generated",
+                            "status_changed",
+                            "note_added",
+                        },
+                        f"subscriptions {entity_key}: status notes and timeline should persist",
+                    )
+
+                    retained_account_response = subscription_client.post(
+                        f"/subscriptions/account-info/add/{accepted_id}",
+                        json={
+                            "field_type": "Website",
+                            "field_value": (
+                                f"https://{entity_key}.subscription-4bf.invalid"
+                            ),
+                        },
+                    )
+                    deleted_account_response = subscription_client.post(
+                        f"/subscriptions/account-info/add/{accepted_id}",
+                        json={
+                            "field_type": "Email",
+                            "field_value": (
+                                f"{entity_key}-subscription-4bf@example.invalid"
+                            ),
+                        },
+                    )
+                    retained_account = retained_account_response.get_json()
+                    deleted_account = deleted_account_response.get_json()
+                    _check(
+                        retained_account_response.status_code == 200
+                        and deleted_account_response.status_code == 200
+                        and retained_account["sort_order"] == 0
+                        and deleted_account["sort_order"] == 1,
+                        f"subscriptions {entity_key}: account information should append in order",
+                    )
+                    delete_account_response = subscription_client.post(
+                        "/subscriptions/account-info/delete/"
+                        f"{deleted_account['id']}"
+                    )
+                    account_detail = subscription_client.get(
+                        f"/subscriptions/detail/{accepted_id}"
+                    ).get_json()
+                    _check(
+                        delete_account_response.status_code == 200
+                        and delete_account_response.get_json() == {"ok": True}
+                        and account_detail["account_info"]
+                        == [
+                            {
+                                "id": retained_account["id"],
+                                "field_type": "Website",
+                                "field_value": (
+                                    f"https://{entity_key}."
+                                    "subscription-4bf.invalid"
+                                ),
+                                "sort_order": 0,
+                            }
+                        ],
+                        f"subscriptions {entity_key}: account information add and delete should persist exactly",
+                    )
+
+                    share_response = subscription_client.get(
+                        f"/subscriptions/share-text/{accepted_id}"
+                    )
+                    share_text = share_response.get_json()["text"]
+                    _check(
+                        share_response.status_code == 200
+                        and accepted_merchant.upper() in share_text
+                        and "Amount: $13/mo" in share_text
+                        and f"Charges to: {contract['account']}" in share_text
+                        and (
+                            "Website: "
+                            f"https://{entity_key}.subscription-4bf.invalid"
+                        )
+                        in share_text
+                        and "Synthetic 4BF cancellation tips" in share_text
+                        and f"Synthetic 4BF updated note for {display}"
+                        in share_text
+                        and "RECENT CHARGES" in share_text,
+                        f"subscriptions {entity_key}: share text should preserve all entity-local metadata",
+                    )
+
+                    dismissed_merchant = f"{merchant_prefix} weekly"
+                    dismiss_response = subscription_client.post(
+                        "/subscriptions/dismiss",
+                        data={"merchant_canonical": dismissed_merchant},
+                    )
+                    subscription_conn = get_connection(entity_key)
+                    dismissed_suggestions = {
+                        suggestion["merchant_canonical"]
+                        for suggestion in subscription_routes._detect_subscriptions(
+                            subscription_conn
+                        )
+                    }
+                    subscription_conn.close()
+                    _check(
+                        dismiss_response.status_code == 302
+                        and dismissed_merchant not in dismissed_suggestions,
+                        f"subscriptions {entity_key}: dismissal should hide the suggestion",
+                    )
+                    restore_response = subscription_client.post(
+                        "/subscriptions/undismiss",
+                        data={"merchant_canonical": dismissed_merchant},
+                    )
+                    subscription_conn = get_connection(entity_key)
+                    restored_suggestions = {
+                        suggestion["merchant_canonical"]
+                        for suggestion in subscription_routes._detect_subscriptions(
+                            subscription_conn
+                        )
+                    }
+                    subscription_conn.close()
+                    _check(
+                        restore_response.status_code == 302
+                        and dismissed_merchant in restored_suggestions,
+                        f"subscriptions {entity_key}: restore should return the suggestion",
+                    )
+
+                    delete_response = subscription_client.post(
+                        f"/subscriptions/delete/{accepted_id}"
+                    )
+                    subscription_conn = get_connection(entity_key)
+                    accepted_after_delete = subscription_conn.execute(
+                        "SELECT COUNT(*) FROM subscription_watchlist WHERE id = ?",
+                        (accepted_id,),
+                    ).fetchone()[0]
+                    account_after_delete = subscription_conn.execute(
+                        "SELECT COUNT(*) FROM subscription_account_info "
+                        "WHERE subscription_id = ?",
+                        (accepted_id,),
+                    ).fetchone()[0]
+                    timeline_after_delete = subscription_conn.execute(
+                        "SELECT COUNT(*) FROM subscription_notes_log "
+                        "WHERE subscription_id = ?",
+                        (accepted_id,),
+                    ).fetchone()[0]
+                    manual_after_reopen = subscription_conn.execute(
+                        "SELECT amount_cents, frequency, notes "
+                        "FROM subscription_watchlist WHERE merchant = ?",
+                        (manual_merchant,),
+                    ).fetchone()
+                    restored_dismissal = subscription_conn.execute(
+                        "SELECT COUNT(*) FROM subscription_dismissals "
+                        "WHERE merchant_canonical = ?",
+                        (dismissed_merchant,),
+                    ).fetchone()[0]
+                    subscription_conn.close()
+                    _check(
+                        delete_response.status_code == 302
+                        and accepted_after_delete == 0
+                        and account_after_delete == 0
+                        and timeline_after_delete == 0
+                        and manual_after_reopen is not None
+                        and manual_after_reopen["amount_cents"] == 2450
+                        and manual_after_reopen["frequency"] == "quarterly"
+                        and restored_dismissal == 0,
+                        f"subscriptions {entity_key}: delete cascade restore and reopened persistence should remain exact",
+                    )
+
+                    other_after = {
+                        other_key: _database_snapshot(other_key)
+                        for other_key in subscription_entities
+                        if other_key != entity_key
+                    }
+                    _check(
+                        other_after == other_before,
+                        f"subscriptions {entity_key}: lifecycle writes must not cross entity databases",
+                    )
+
+                subscription_tips_mock_calls = [
+                    call.args[2]
+                    for call in subscription_tips_mock.call_args_list
+                ]
+                _check(
+                    len(subscription_tips_mock_calls)
+                    == 2 * len(subscription_entities)
+                    and all(
+                        merchant.startswith(("Subscription 4BF", "Manual 4BF"))
+                        for merchant in subscription_tips_mock_calls
+                    ),
+                    "subscriptions: accepted and manual items should use only deterministic local tips",
+                )
+
+        for entity_key in subscription_entities:
+            subscription_conn = get_connection(entity_key)
+            subscription_conn.execute(
+                "DELETE FROM subscription_account_info "
+                "WHERE subscription_id IN ("
+                "SELECT id FROM subscription_watchlist "
+                "WHERE merchant LIKE 'Subscription 4BF %' "
+                "OR merchant LIKE 'Manual 4BF %')"
+            )
+            subscription_conn.execute(
+                "DELETE FROM subscription_notes_log "
+                "WHERE subscription_id IN ("
+                "SELECT id FROM subscription_watchlist "
+                "WHERE merchant LIKE 'Subscription 4BF %' "
+                "OR merchant LIKE 'Manual 4BF %')"
+            )
+            subscription_conn.execute(
+                "DELETE FROM subscription_watchlist "
+                "WHERE merchant LIKE 'Subscription 4BF %' "
+                "OR merchant LIKE 'Manual 4BF %'"
+            )
+            subscription_conn.execute(
+                "DELETE FROM subscription_dismissals "
+                "WHERE merchant_canonical LIKE 'Subscription 4BF %'"
+            )
+            subscription_conn.execute(
+                "DELETE FROM transactions "
+                "WHERE source_filename = 'subscription-lifecycle-4bf'"
+            )
+            prior_sequences = subscription_sequences[entity_key]
+            for sequence_table in subscription_sequence_tables:
+                if sequence_table not in prior_sequences:
+                    subscription_conn.execute(
+                        "DELETE FROM sqlite_sequence WHERE name = ?",
+                        (sequence_table,),
+                    )
+                else:
+                    sequence_update = subscription_conn.execute(
+                        "UPDATE sqlite_sequence SET seq = ? WHERE name = ?",
+                        (prior_sequences[sequence_table], sequence_table),
+                    )
+                    if sequence_update.rowcount == 0:
+                        subscription_conn.execute(
+                            "INSERT INTO sqlite_sequence(name, seq) VALUES (?, ?)",
+                            (
+                                sequence_table,
+                                prior_sequences[sequence_table],
+                            ),
+                        )
+            subscription_conn.commit()
+            subscription_conn.close()
+
+        subscription_after_cleanup = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in subscription_entities
+        }
+        _check(
+            subscription_after_cleanup == subscription_before_seed,
+            "subscription lifecycle synthetic rows and sequences should be removed exactly",
+        )
+        _check(
+            subscription_seeded != subscription_before_seed,
+            "subscription lifecycle fixture should exercise real temporary persistence",
+        )
+        print(
+            "   ✅ All-five-cadence detection, regularity, lifecycle, persistence, "
+            "empty states, isolation, denied-network, and cleanup passed"
+        )
+
         # ── 9. Saved Views CRUD ──────────────────────────────────────
         print("\n9. Saved Views CRUD tests…")
         import json as _json
