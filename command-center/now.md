@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Make the exact verified combined 4BG/4BH/4BI Cash Flow package durable on `origin/main` without a workflow run or deployment.
+Decompose Task 3 just in time before proposing any safe synthetic CI implementation block.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.3 are durable without deployment, Tasks 1P.7.4a-1P.7.4b are complete locally through 4BH/4BI, and exact-scope 4BI-R durability is active.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 are durable without deployment, and Task 3 is the sole current planning gate.
 
 ## Current Work Block
 
-Work block 4BI-R: Cash Flow Boundary Repair And Financial-Coverage Durability Without Deployment — active.
+Work block 4BI-R: Cash Flow Boundary Repair And Financial-Coverage Durability Without Deployment — done and durable without deployment.
 
 ## Current Task
 
-Task 4: Publish and verify only explicitly approved repairs — active only for the exact confirmed 4BI-R durability package.
+Task 3: Add safe CI checks — current for just-in-time decomposition only; implementation remains unconfirmed.
 
 ## Owner
 
-Codex Desktop owns the confirmed 4BI-R exact-path verification, staging, commit, non-force publication, zero-workflow proof, Runway OS closeout, and final intake. Ryan retains every workflow-intervention, deployment, production, protected-access, and recovery decision.
+Ryan owns the next planning decision. Codex may decompose Task 3 and propose a bounded 4BJ block only after a separate confirmation; no CI, workflow, deployment, production, or protected action is active.
 
 ## Current Action
 
-Verify the active state and exact fourteen-path package, publish it through two `[skip actions]` commits only if every acceptance check passes, and stop rather than broaden recovery if any guard fails.
+Wait at the Task 3 planning gate. If Ryan confirms planning, inspect the current synthetic-test and workflow boundaries, decompose the task just in time, and propose 4BJ without implementing it.
 
 ## Work Block 4BI-R Contract
 
@@ -37,14 +37,17 @@ Verify the active state and exact fourteen-path package, publish it through two 
 ## Work Block 4BI-R Status
 
 - Ryan confirmed the exact recommended 4BI-R proposal on 2026-07-25.
-- Active Runway OS recording and verification are in progress before staging.
-- The expected source parent is `e9ce4d002b1527516f1fbe8bdefa513e4bb41497`; local and live `main` must be re-resolved immediately before staging.
-- No staging, commit, push, workflow, deployment, production, or protected action has occurred yet.
+- Full smoke, maintained configured-auth/no-password browser coverage, Python and JavaScript syntax, sections 8l-8m denied-network/exact-cleanup proof, sensitive-addition review, JSON, whitespace, dashboard, exact-path, ancestry, remote, and preserved-file checks passed.
+- Exact fourteen-path source commit `e0b7ec1eda9b39d365062c5511bd1d93868f44c4` has parent `e9ce4d002b1527516f1fbe8bdefa513e4bb41497` and is durable on `origin/main`.
+- Local `HEAD`, local `main`, tracking `origin/main`, live remote `main`, and the GitHub commit API resolved to the source SHA after the non-force push.
+- GitHub reported zero workflow runs for the source SHA. No PR, workflow action, deployment, Fly action, production access, or protected-data access occurred.
+- Tasks 1P.7.4a-1P.7.4b and the Task 1P.7.4 umbrella are durable without deployment. This sanitized closeout is published separately with `[skip actions]`.
+- Evidence: `command-center/logs/2026-07-25-cashflow-boundary-financial-coverage-release-4bi-r.md`.
 
 ## Task 1P.7.4 Split
 
-- **Task 1P.7.4a: Repair the Cash Flow shared-entity mutation boundary.** Personal/BFM sibling sections are view-only, every included mutation target must match the active cookie entity, valid active-entity writes remain intact, and maintained colliding-ID proof passes. Status: complete locally through 4BH; durability is separate.
-- **Task 1P.7.4b: Complete Cash Flow financial-behavior coverage.** Resume the stopped 4BG balance, liability, manual and automatic recurrence, empty-state, shared-visibility, Luxe Legacy, denied-network, and exact-cleanup matrix. Status: complete locally through 4BI; durability is separate.
+- **Task 1P.7.4a: Repair the Cash Flow shared-entity mutation boundary.** Personal/BFM sibling sections are view-only, every included mutation target must match the active cookie entity, valid active-entity writes remain intact, and maintained colliding-ID proof passes. Status: complete and durable without deployment through 4BI-R.
+- **Task 1P.7.4b: Complete Cash Flow financial-behavior coverage.** Resume the stopped 4BG balance, liability, manual and automatic recurrence, empty-state, shared-visibility, Luxe Legacy, denied-network, and exact-cleanup matrix. Status: complete and durable without deployment through 4BI-R.
 
 ## Work Block 4BI Contract
 
