@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Execute confirmed 4BF-R durability for the exact completed subscription-lifecycle coverage package without deployment.
+Request a bounded 4BG proposal for Task 1P.7.4 Cash Flow balances, liabilities, recurrence, visibility, and isolation coverage.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.7.3 is complete locally through 4BF and its exact durability slice is active inside confirmed 4BF-R.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.3 are durable without deployment through 4BE-R and 4BF-R, and Task 1P.7.4 is current at its next planning gate.
 
 ## Current Work Block
 
-Work block 4BF-R: Subscription Lifecycle Coverage Durability Without Deployment — active on `codex/subscription-lifecycle-coverage`.
+Work block 4BF-R: Subscription Lifecycle Coverage Durability Without Deployment — done and durable on `origin/main` with zero workflow runs and no deployment.
 
 ## Current Task
 
-Task 4: Publish and verify only explicitly approved repairs — current only for the exact completed 4BF durability package.
+Task 1P.7.4: Preserve Cash Flow balances, liabilities, recurrence, and visibility — current at the next planning gate; no 4BG implementation block is confirmed.
 
 ## Owner
 
-Codex Desktop owns exact-path revalidation, staging, commit, clean main fast-forward, non-force push, remote/no-workflow verification, sanitized closeout, dashboard stewardship, and final intake. Ryan owns every expansion, workflow/deployment action, product change, and Task 1P.7.4 decision.
+Ryan owns the next 4BG planning and confirmation decision. Codex owns the durable 4BF-R record and may not begin Task 1P.7.4 without a new confirmed block.
 
 ## Current Action
 
-Reverify and publish only the seven-path 4BF package through the approved two-commit `[skip actions]` sequence, then restore Task 1P.7.4 to the next planning gate.
+Request a just-in-time 4BG proposal for Task 1P.7.4 before Cash Flow lifecycle implementation.
 
 ## Work Block 4BF-R Contract
 
@@ -37,8 +37,13 @@ Reverify and publish only the seven-path 4BF package through the approved two-co
 ## Work Block 4BF-R Status
 
 - Ryan confirmed the exact 4BF-R proposal on 2026-07-25.
-- The block is active before staging; current branch, local `main`, tracking `origin/main`, and live remote `main` all began aligned at `fb5dfaa2fc9e7400ef93fdc02917701ecf9e6ca4`.
-- No Task 1P.7.4 work, product/test expansion, workflow action, deployment, production access, protected access, delegation, or second opinion is authorized.
+- Full smoke, Python compilation, section 8k denied-network/exact-cleanup coverage, sensitive-addition, JSON, whitespace, dashboard, exact staging/commit, ancestry, live-remote, and preserved-file checks passed.
+- Exact seven-path source commit `a2ed513c3095f9df1f43039ab674e6894b12214a` is durable on `origin/main`.
+- Local `HEAD`, local `main`, tracking `origin/main`, live remote `main`, and the GitHub commit API all resolved to the source SHA after the non-force push.
+- GitHub reported zero workflow runs for the source SHA. No Fly deployment or production access occurred.
+- No product/runtime/dependency/workflow/configuration, credential, protected-data, real-database, Plaid, downstream, PR, force-push, broader-recovery, or preserved-file action occurred.
+- This sanitized closeout is published separately with `[skip actions]`. Evidence: `command-center/logs/2026-07-25-subscription-lifecycle-coverage-release-4bf-r.md`.
+- Task 1P.7.4 returns to the next planning gate; proposed 4BG remains a separate Ryan decision.
 
 ## Work Block 4BF Contract
 
