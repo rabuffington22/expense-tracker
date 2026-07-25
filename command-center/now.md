@@ -2,27 +2,49 @@
 
 ## Active Objective
 
-Confirm or revise a separately bounded synthetic test PR to observe the durable core CI workflow before browser-CI planning.
+Run a just-in-time Task 3.3 planning pass now that one durable hosted core CI run has succeeded without merge or deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, and Task 3 is current at the separate observed-test-PR decision.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, Task 3.2.1 is complete through 4BK, and Task 3 is current at the separate Task 3.3 planning gate.
 
 ## Current Work Block
 
-Work block 4BJ-R: Safe Synthetic CI Durability Without Deployment — done and durable on `main` without deployment.
+Work block 4BK: Core Synthetic CI Observation Through A No-Merge Test PR — done; the hosted run passed, the draft PR was closed unmerged, and no deployment occurred.
 
 ## Current Task
 
-Task 3: Add safe CI checks — current at the separately gated test-PR observation decision. Tasks 3.1-3.2 are durable; Task 3.3 remains planned.
+Task 3: Add safe CI checks — current at the just-in-time Task 3.3 planning gate. Tasks 3.1-3.2 are durable and Task 3.2.1 is complete; Task 3.3 remains planned and unconfirmed.
 
 ## Owner
 
-Ryan owns the next decision. Codex owns the durable 4BJ-R result and any separately confirmed exact-scope test-PR intake.
+Ryan owns the next planning decision. Codex owns the verified 4BK result and the separately requested just-in-time Task 3.3 planning pass.
 
 ## Current Action
 
-Wait for Ryan to confirm or revise a synthetic test-PR block. The recommended block would create and observe a minimal PR without merge or deployment; Task 3.3 browser CI, product work, production, and protected access remain separate.
+Wait for Ryan to invoke or authorize the next work-block planning pass for Task 3.3. Browser-CI implementation, workflow changes, merge, deployment, production, protected access, and every action-runtime response remain separate.
+
+## Work Block 4BK Contract
+
+- Include Task 3.2.1 (`P4-T321`) plus Task 4 only for the sanitized post-observation Runway OS closeout: create `codex/synthetic-ci-observation` from verified `main`; commit one branch-only sanitized observation marker without a skip token; push it; open one draft PR to `main`; observe the automatic `Synthetic CI` pull-request run; verify the exact event, head SHA, core job, all steps, and absence of Fly deployment; close the PR without merge after success; then publish the sanitized evidence and five Runway OS source/generated paths to `main` through one explicit-path `[skip actions]` closeout commit.
+- Exclude Task 3.3 browser CI, broader Task 2 or Task 4, workflow edits, product/runtime/dependency/migration/authentication/CSRF/CSP changes, merge, deployment, Fly, Plaid, production/demo/downstream, credentials, protected or real data, manual dispatch/rerun/cancellation, branch deletion, force push, conflict resolution, rebase, broader recovery, and the three preserved untracked files.
+- Use a draft PR, one marker-only branch commit, no skip token on that branch commit, no merge, close after success, retain the remote branch, and use `[skip actions]` only for the sanitized main closeout.
+- Stop for workflow or remote-main drift; an unexpected workflow or Fly deployment; a missing, failed, or over-window core run; any need for repair, rerun, workflow edit, merge, protected access, deployment, branch deletion, or broader recovery; verification/dashboard/scope failure; or preserved-file overlap. On hosted-run failure, leave the draft PR open and perform read-only diagnosis only.
+- Verify local smoke and CI safety preflight; exact marker-only diff, stage, commit, and branch SHA; draft-PR base/head/event; every core job step; no Fly deployment; closed-unmerged status; sanitized evidence; JSON, dashboard refresh/currentness/health/generated/rendered state, whitespace, exact closeout paths and commit; live main SHA; zero workflow activity for the `[skip actions]` closeout; final alignment; and all preserved files.
+- Report the feature SHA, PR URL/number, run and job identifiers, step conclusions, closed-unmerged/no-deployment result, main closeout SHA, final worktree, preserved exclusions, and the separately gated Task 3.3 decision.
+
+## Work Block 4BK Status
+
+- Ryan confirmed the exact recommended 4BK proposal on 2026-07-25.
+- Local smoke, maintained CI safety, JSON, dashboard, whitespace, exact-path, and preserved-file preflight passed.
+- Marker-only feature commit `cde1360e0e9f2041ebace7cd6555e2a021bf6400` was pushed on retained branch `codex/synthetic-ci-observation`.
+- Draft PR [#87](https://github.com/rabuffington22/expense-tracker/pull/87) triggered `pull_request` run [30175620834](https://github.com/rabuffington22/expense-tracker/actions/runs/30175620834) for the exact feature SHA.
+- Core job [89723824615](https://github.com/rabuffington22/expense-tracker/actions/runs/30175620834/job/89723824615) completed successfully in 52 seconds; every reported setup, dependency, safety, smoke, syntax, JSON, dashboard, whitespace, and cleanup step passed.
+- GitHub emitted one non-failing Node.js 20 deprecation annotation for the pinned official actions because the runner forced them onto Node.js 24. No workflow edit or repair occurred.
+- No Fly Deploy or other workflow run existed for the feature SHA; remote `main` remained at `65b6b7aa37fcd1f9ff88a82b161a4afa54960006`.
+- PR #87 was closed while still a draft and `mergedAt` remained null. The remote feature branch was retained.
+- Evidence: `command-center/logs/2026-07-25-core-synthetic-ci-observation-4bk.md`.
+- This sanitized Runway OS closeout is published separately with `[skip actions]`; Task 3.3 remains a separate planning and confirmation gate.
 
 ## Work Block 4BJ-R Contract
 
@@ -67,7 +89,8 @@ Wait for Ryan to confirm or revise a synthetic test-PR block. The recommended bl
 
 - **Task 3.1: Freeze the safe synthetic CI contract.** Define exact pull-request trigger, least-privilege token, immutable action reference, dependency, logging, network, timeout, command, and protected-data boundaries. Status: complete locally through 4BJ.
 - **Task 3.2: Implement the PR-only core synthetic CI foundation.** Add one workflow that installs only tracked runtime dependencies and runs the maintained synthetic smoke, syntax, JSON, dashboard-health/currentness, and whitespace checks without secrets or live services. Status: complete locally through 4BJ; durability is active through 4BJ-R.
-- **Task 3.3: Add isolated-browser CI coverage.** Add the separate development dependency and Chrome runner setup for the full maintained browser suite only after the core workflow proves stable. Status: planned behind Task 3.2.
+- **Task 3.2.1: Observe the core synthetic workflow through a minimal no-merge test PR.** Use one branch-only sanitized marker to trigger the durable workflow, verify the exact pull-request event/SHA/job and absence of deployment, and close the draft PR without merge after success. Status: complete through 4BK with one successful 52-second hosted run, closed-unmerged PR #87, and no deployment.
+- **Task 3.3: Add isolated-browser CI coverage.** Add the separate development dependency and Chrome runner setup for the full maintained browser suite only after the core workflow proves stable. Status: planned behind Task 3.2.1.
 
 ## Work Block 4BI-R Contract
 
