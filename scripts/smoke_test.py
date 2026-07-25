@@ -7553,6 +7553,621 @@ def main() -> None:
             "   ✅ All-entity direct, view, CSV, PDF, exclusions, empty ranges, and cleanup passed"
         )
 
+        # ── 8j. Financial read-model and export coverage ──────────────
+        print("\n8j. Financial read-model and export coverage…")
+        from core.reporting import (
+            effective_txns_cte,
+            get_account_summary,
+            get_category_totals_daterange,
+            get_income_vs_expenses_daterange,
+            get_merchant_totals_daterange,
+            get_month_over_month,
+            get_tax_summary,
+            get_transactions_daterange,
+        )
+        from web.routes.dashboard import _query_dashboard
+
+        read_model_start = "2032-04-01"
+        read_model_end = "2032-05-31"
+        read_model_empty_start = "2040-01-01"
+        read_model_empty_end = "2040-01-31"
+        read_model_entities = {
+            "personal": {
+                "display": "Personal",
+                "primary_category": "Food",
+                "split_category": "Healthcare",
+                "merchant": "Personal Read Model 4BE",
+                "primary_account": "Personal Primary 4BE",
+                "other_account": "Personal Other 4BE",
+            },
+            "company": {
+                "display": "BFM",
+                "primary_category": "Software",
+                "split_category": "Office Supplies",
+                "merchant": "BFM Read Model 4BE",
+                "primary_account": "BFM Primary 4BE",
+                "other_account": "BFM Other 4BE",
+            },
+            "luxelegacy": {
+                "display": "LL",
+                "primary_category": "Supplies",
+                "split_category": "Shipping",
+                "merchant": "LL Read Model 4BE",
+                "primary_account": "LL Primary 4BE",
+                "other_account": "LL Other 4BE",
+            },
+        }
+        report_contracts = {
+            "transactions": {
+                "label": "transactions",
+                "columns": [
+                    "Date",
+                    "Description",
+                    "Merchant",
+                    "Amount",
+                    "Category",
+                    "Subcategory",
+                    "Account",
+                    "Notes",
+                ],
+                "view_marker": lambda contract: contract["merchant"],
+                "csv_marker": lambda contract: contract["merchant"],
+            },
+            "categories": {
+                "label": "category_summary",
+                "columns": ["Category", "Transactions", "Total"],
+                "view_marker": lambda contract: contract["primary_category"],
+                "csv_marker": lambda contract: contract["primary_category"],
+            },
+            "merchants": {
+                "label": "merchant_summary",
+                "columns": ["Merchant", "Transactions", "Total"],
+                "view_marker": lambda contract: contract["merchant"],
+                "csv_marker": lambda contract: contract["merchant"],
+            },
+            "month_over_month": {
+                "label": "month_over_month",
+                "columns": None,
+                "view_marker": lambda contract: contract["primary_category"],
+                "csv_marker": lambda contract: contract["primary_category"],
+            },
+            "income_expenses": {
+                "label": "income_vs_expenses",
+                "columns": ["Month", "Expenses", "Income", "Net"],
+                "view_marker": lambda contract: "Total Expenses",
+                "csv_marker": lambda contract: "2032-04,66.00,50.00,-16.00",
+            },
+            "tax_summary": {
+                "label": "tax_summary",
+                "columns": ["Category", "Subcategory", "Transactions", "Total"],
+                "view_marker": lambda contract: contract["primary_category"],
+                "csv_marker": lambda contract: contract["primary_category"],
+            },
+            "accounts": {
+                "label": "account_summary",
+                "columns": [
+                    "Account",
+                    "Transactions",
+                    "Total Spending",
+                    "Total Income",
+                    "Net",
+                ],
+                "view_marker": lambda contract: contract["primary_account"],
+                "csv_marker": lambda contract: contract["primary_account"],
+            },
+        }
+        read_model_before_seed = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in read_model_entities
+        }
+        read_model_split_sequences = {}
+        for entity_key in read_model_entities:
+            read_conn = get_connection(entity_key)
+            split_sequence_row = read_conn.execute(
+                "SELECT seq FROM sqlite_sequence WHERE name='transaction_splits'"
+            ).fetchone()
+            read_model_split_sequences[entity_key] = (
+                split_sequence_row["seq"] if split_sequence_row else None
+            )
+            read_conn.close()
+
+        for entity_key, contract in read_model_entities.items():
+            read_conn = get_connection(entity_key)
+            txn_prefix = f"read-model-4be-{entity_key}"
+            source_filename = f"{txn_prefix}.csv"
+            rows = (
+                (
+                    f"{txn_prefix}-expense",
+                    "2032-04-02",
+                    -20.00,
+                    -2000,
+                    contract["primary_account"],
+                    contract["primary_category"],
+                    0.95,
+                ),
+                (
+                    f"{txn_prefix}-split-parent",
+                    "2032-04-03",
+                    -30.00,
+                    -3000,
+                    contract["primary_account"],
+                    "Internal Transfer",
+                    0.95,
+                ),
+                (
+                    f"{txn_prefix}-income",
+                    "2032-04-04",
+                    50.00,
+                    5000,
+                    contract["primary_account"],
+                    "Income",
+                    0.95,
+                ),
+                (
+                    f"{txn_prefix}-review",
+                    "2032-04-05",
+                    -5.00,
+                    -500,
+                    contract["primary_account"],
+                    contract["primary_category"],
+                    0.20,
+                ),
+                (
+                    f"{txn_prefix}-transfer",
+                    "2032-04-06",
+                    -7.00,
+                    -700,
+                    contract["primary_account"],
+                    "Internal Transfer",
+                    0.95,
+                ),
+                (
+                    f"{txn_prefix}-other-account",
+                    "2032-04-07",
+                    -11.00,
+                    -1100,
+                    contract["other_account"],
+                    contract["primary_category"],
+                    0.95,
+                ),
+                (
+                    f"{txn_prefix}-next-month",
+                    "2032-05-02",
+                    -9.00,
+                    -900,
+                    contract["primary_account"],
+                    contract["split_category"],
+                    0.95,
+                ),
+            )
+            for txn_id, txn_date, amount, amount_cents, account, category, confidence in rows:
+                read_conn.execute(
+                    "INSERT INTO transactions "
+                    "(transaction_id, date, description_raw, merchant_canonical, amount, "
+                    "amount_cents, currency, account, category, confidence, source_filename, "
+                    "imported_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, 'USD', ?, ?, ?, ?, "
+                    "'2032-06-01T00:00:00+00:00')",
+                    (
+                        txn_id,
+                        txn_date,
+                        contract["merchant"],
+                        contract["merchant"],
+                        amount,
+                        amount_cents,
+                        account,
+                        category,
+                        confidence,
+                        source_filename,
+                    ),
+                )
+            split_parent_id = f"{txn_prefix}-split-parent"
+            read_conn.executemany(
+                "INSERT INTO transaction_splits "
+                "(transaction_id, description, amount_cents, category, subcategory, "
+                "sort_order, source) "
+                "VALUES (?, ?, ?, ?, NULL, ?, 'manual')",
+                (
+                    (
+                        split_parent_id,
+                        f"{contract['merchant']} split one",
+                        -1000,
+                        contract["primary_category"],
+                        0,
+                    ),
+                    (
+                        split_parent_id,
+                        f"{contract['merchant']} split two",
+                        -2000,
+                        contract["split_category"],
+                        1,
+                    ),
+                ),
+            )
+            read_conn.commit()
+            read_conn.close()
+
+        read_model_seeded = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in read_model_entities
+        }
+
+        dashboard_base_params = {
+            "start": read_model_start,
+            "end": read_model_end,
+            "account": "",
+            "uncategorized": "",
+            "vendor_breakdown": "",
+            "possible_transfer": "",
+            "include_transfers": "",
+        }
+        with patch(
+            "socket.socket",
+            side_effect=AssertionError(
+                "financial read-model smoke forbids outbound networking"
+            ),
+        ):
+            with app.test_client() as read_model_client:
+                for entity_key, contract in read_model_entities.items():
+                    txn_prefix = f"read-model-4be-{entity_key}"
+                    split_parent_id = f"{txn_prefix}-split-parent"
+
+                    direct_txns = get_transactions_daterange(
+                        entity_key, read_model_start, read_model_end
+                    )
+                    _check(
+                        len(direct_txns) == 8
+                        and abs(float(direct_txns["amount"].sum()) - (-32.00)) < 0.001,
+                        f"read model {entity_key}: effective rows and signed total should reconcile",
+                    )
+                    read_conn = get_connection(entity_key)
+                    split_rows = read_conn.execute(
+                        f"WITH {effective_txns_cte('t')} "
+                        "SELECT amount_cents, category, is_split_piece "
+                        "FROM t WHERE transaction_id=? ORDER BY split_id",
+                        (split_parent_id,),
+                    ).fetchall()
+                    read_conn.close()
+                    _check(
+                        len(split_rows) == 2
+                        and [row["amount_cents"] for row in split_rows] == [-1000, -2000]
+                        and all(row["is_split_piece"] == 1 for row in split_rows)
+                        and {row["category"] for row in split_rows}
+                        == {
+                            contract["primary_category"],
+                            contract["split_category"],
+                        },
+                        f"read model {entity_key}: split pieces must replace the parent exactly",
+                    )
+
+                    category_df = get_category_totals_daterange(
+                        entity_key, read_model_start, read_model_end
+                    )
+                    merchant_df = get_merchant_totals_daterange(
+                        entity_key, read_model_start, read_model_end
+                    )
+                    month_df = get_month_over_month(
+                        entity_key, read_model_start, read_model_end
+                    )
+                    income_df = get_income_vs_expenses_daterange(
+                        entity_key, read_model_start, read_model_end
+                    )
+                    tax_df = get_tax_summary(
+                        entity_key, read_model_start, read_model_end
+                    )
+                    account_df = get_account_summary(
+                        entity_key, read_model_start, read_model_end
+                    )
+                    _check(
+                        int(category_df["count"].sum()) == 6
+                        and abs(float(category_df["total_amount"].sum()) - 75.00) < 0.001
+                        and "Income" not in set(category_df["category"])
+                        and "Internal Transfer" not in set(category_df["category"]),
+                        f"read model {entity_key}: category totals must use centralized exclusions",
+                    )
+                    _check(
+                        int(merchant_df["count"].sum()) == 6
+                        and abs(float(merchant_df["total_amount"].sum()) - 75.00) < 0.001,
+                        f"read model {entity_key}: merchant totals should reconcile to spending",
+                    )
+                    _check(
+                        set(month_df["month"]) == {"2032-04", "2032-05"}
+                        and abs(float(month_df["total_amount"].sum()) - 75.00) < 0.001,
+                        f"read model {entity_key}: month-over-month totals should preserve both months",
+                    )
+                    april_income = income_df[income_df["month"] == "2032-04"].iloc[0]
+                    may_income = income_df[income_df["month"] == "2032-05"].iloc[0]
+                    _check(
+                        abs(float(april_income["expenses"]) - 66.00) < 0.001
+                        and abs(float(april_income["income"]) - 50.00) < 0.001
+                        and abs(float(may_income["expenses"]) - 9.00) < 0.001
+                        and abs(float(may_income["income"])) < 0.001,
+                        f"read model {entity_key}: income and expense signs should remain stable",
+                    )
+                    _check(
+                        int(tax_df["count"].sum()) == 6
+                        and abs(float(tax_df["total_amount"].sum()) - 75.00) < 0.001,
+                        f"read model {entity_key}: tax summary should reconcile to spending",
+                    )
+                    primary_account = account_df[
+                        account_df["account"] == contract["primary_account"]
+                    ].iloc[0]
+                    _check(
+                        int(account_df["transactions"].sum()) == 7
+                        and abs(float(account_df["total_spending"].sum()) - 75.00) < 0.001
+                        and abs(float(account_df["total_income"].sum()) - 50.00) < 0.001
+                        and abs(float(account_df["net"].sum()) - (-25.00)) < 0.001
+                        and int(primary_account["transactions"]) == 6
+                        and abs(float(primary_account["net"]) - (-14.00)) < 0.001,
+                        f"read model {entity_key}: account counts and signed net should reconcile",
+                    )
+
+                    read_conn = get_connection(entity_key)
+                    dashboard = _query_dashboard(
+                        read_conn, dict(dashboard_base_params)
+                    )
+                    dashboard_with_transfers = _query_dashboard(
+                        read_conn,
+                        {**dashboard_base_params, "include_transfers": "1"},
+                    )
+                    dashboard_primary = _query_dashboard(
+                        read_conn,
+                        {**dashboard_base_params, "account": contract["primary_account"]},
+                    )
+                    dashboard_other = _query_dashboard(
+                        read_conn,
+                        {**dashboard_base_params, "account": contract["other_account"]},
+                    )
+                    read_conn.close()
+                    _check(
+                        dashboard["total_txn_count"] == 8
+                        and dashboard["spend_cents"] == 7500
+                        and dashboard["income_cents"] == 5000
+                        and dashboard["net_cents"] == -2500
+                        and dashboard["review_count"] == 1,
+                        f"dashboard {entity_key}: default KPIs should reconcile exactly",
+                    )
+                    _check(
+                        dashboard_with_transfers["total_txn_count"] == 8
+                        and dashboard_with_transfers["spend_cents"] == 8200
+                        and dashboard_with_transfers["income_cents"] == 5000
+                        and dashboard_with_transfers["net_cents"] == -3200,
+                        f"dashboard {entity_key}: include-transfers should add only transfer spend",
+                    )
+                    _check(
+                        dashboard_primary["total_txn_count"] == 7
+                        and dashboard_primary["spend_cents"] == 6400
+                        and dashboard_primary["income_cents"] == 5000
+                        and dashboard_other["total_txn_count"] == 1
+                        and dashboard_other["spend_cents"] == 1100
+                        and dashboard_other["income_cents"] == 0,
+                        f"dashboard {entity_key}: account filters should remain isolated",
+                    )
+
+                    read_model_client.set_cookie("entity", contract["display"])
+                    dashboard_query = (
+                        f"start={read_model_start}&end={read_model_end}"
+                    )
+                    dashboard_view = read_model_client.get(f"/?{dashboard_query}")
+                    dashboard_body = dashboard_view.get_data(as_text=True)
+                    _check(
+                        dashboard_view.status_code == 200
+                        and (
+                            f'<h1 class="page-title">{contract["display"]} Dashboard</h1>'
+                            in dashboard_body
+                        ),
+                        f"dashboard {entity_key}: rendered page should preserve entity identity",
+                    )
+
+                    for report_type, report_contract in report_contracts.items():
+                        prepared = _prepare_report(
+                            entity_key,
+                            report_type,
+                            read_model_start,
+                            read_model_end,
+                        )
+                        _check(
+                            prepared is not None
+                            and prepared[0] == report_contract["label"]
+                            and not prepared[1].empty
+                            and not prepared[2].empty,
+                            f"report {entity_key}/{report_type}: direct preparation should be non-empty",
+                        )
+                        if report_contract["columns"] is not None:
+                            _check(
+                                list(prepared[2].columns)
+                                == report_contract["columns"],
+                                f"report {entity_key}/{report_type}: output columns changed",
+                            )
+                        else:
+                            _check(
+                                list(prepared[2].columns)
+                                == [
+                                    "Category",
+                                    "2032-04",
+                                    "2032-05",
+                                    "Total",
+                                ],
+                                f"report {entity_key}/{report_type}: pivot columns changed",
+                            )
+
+                        report_query = (
+                            f"report_type={report_type}&start={read_model_start}"
+                            f"&end={read_model_end}"
+                        )
+                        report_view = read_model_client.get(
+                            f"/reports/view?{report_query}"
+                        )
+                        report_body = report_view.get_data(as_text=True)
+                        _check(
+                            report_view.status_code == 200
+                            and report_contract["view_marker"](contract)
+                            in report_body,
+                            f"report {entity_key}/{report_type}: rendered view should preserve its contract",
+                        )
+
+                        report_csv = read_model_client.get(
+                            f"/reports/export?{report_query}&format=csv"
+                        )
+                        csv_disposition = report_csv.headers.get(
+                            "Content-Disposition", ""
+                        )
+                        _check(
+                            report_csv.status_code == 200
+                            and report_csv.content_type.startswith("text/csv")
+                            and report_contract["csv_marker"](contract)
+                            in report_csv.get_data(as_text=True)
+                            and (
+                                f"{entity_key}_{report_contract['label']}_"
+                                f"{read_model_start}_{read_model_end}.csv"
+                            )
+                            in csv_disposition,
+                            f"report {entity_key}/{report_type}: CSV contract should remain stable",
+                        )
+
+                        report_pdf = read_model_client.get(
+                            f"/reports/export?{report_query}&format=pdf"
+                        )
+                        pdf_disposition = report_pdf.headers.get(
+                            "Content-Disposition", ""
+                        )
+                        _check(
+                            report_pdf.status_code == 200
+                            and report_pdf.content_type.startswith("application/pdf")
+                            and report_pdf.data.startswith(b"%PDF")
+                            and (
+                                f"{entity_key}_{report_contract['label']}_"
+                                f"{read_model_start}_{read_model_end}.pdf"
+                            )
+                            in pdf_disposition,
+                            f"report {entity_key}/{report_type}: PDF contract should remain stable",
+                        )
+
+                        if report_type != "transactions":
+                            _check(
+                                read_model_client.get(
+                                    f"/reports/export?{report_query}&format=qbo"
+                                ).status_code
+                                == 400,
+                                f"report {entity_key}/{report_type}: QBO should remain transaction-only",
+                            )
+
+                    transaction_query = (
+                        f"report_type=transactions&start={read_model_start}"
+                        f"&end={read_model_end}&format=qbo"
+                    )
+                    report_qbo = read_model_client.get(
+                        f"/reports/export?{transaction_query}"
+                    )
+                    qbo_disposition = report_qbo.headers.get(
+                        "Content-Disposition", ""
+                    )
+                    qbo_body = report_qbo.get_data(as_text=True)
+                    _check(
+                        report_qbo.status_code == 200
+                        and report_qbo.content_type.startswith("application/x-ofx")
+                        and f"<ACCTID>{entity_key.upper()}" in qbo_body
+                        and (
+                            f"{entity_key}_transactions_{read_model_start}_"
+                            f"{read_model_end}.qbo"
+                        )
+                        in qbo_disposition,
+                        f"report {entity_key}: transaction QBO contract should remain stable",
+                    )
+
+                    for report_type in report_contracts:
+                        _check(
+                            _prepare_report(
+                                entity_key,
+                                report_type,
+                                read_model_empty_start,
+                                read_model_empty_end,
+                            )
+                            is None,
+                            f"report {entity_key}/{report_type}: direct empty range should return no report",
+                        )
+                    empty_query = (
+                        f"report_type=transactions&start={read_model_empty_start}"
+                        f"&end={read_model_empty_end}"
+                    )
+                    empty_view = read_model_client.get(
+                        f"/reports/view?{empty_query}"
+                    )
+                    _check(
+                        empty_view.status_code == 200
+                        and "No data found for this date range."
+                        in empty_view.get_data(as_text=True)
+                        and read_model_client.get(
+                            f"/reports/export?{empty_query}&format=csv"
+                        ).status_code
+                        == 404,
+                        f"report {entity_key}: empty view/export behavior should remain stable",
+                    )
+
+                missing_view = read_model_client.get(
+                    "/reports/view?report_type=transactions"
+                )
+                _check(
+                    missing_view.status_code == 200
+                    and "Please select a date range."
+                    in missing_view.get_data(as_text=True)
+                    and read_model_client.get(
+                        "/reports/export?report_type=transactions&format=csv"
+                    ).status_code
+                    == 400,
+                    "report builder: missing-range view and export behavior should remain stable",
+                )
+
+        read_model_after_reads = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in read_model_entities
+        }
+        _check(
+            read_model_after_reads == read_model_seeded,
+            "financial read-model paths must not mutate any entity database",
+        )
+        for entity_key in read_model_entities:
+            read_conn = get_connection(entity_key)
+            read_conn.execute(
+                "DELETE FROM transaction_splits "
+                "WHERE transaction_id LIKE 'read-model-4be-%'"
+            )
+            read_conn.execute(
+                "DELETE FROM transactions "
+                "WHERE transaction_id LIKE 'read-model-4be-%'"
+            )
+            prior_split_sequence = read_model_split_sequences[entity_key]
+            if prior_split_sequence is None:
+                read_conn.execute(
+                    "DELETE FROM sqlite_sequence WHERE name='transaction_splits'"
+                )
+            else:
+                sequence_update = read_conn.execute(
+                    "UPDATE sqlite_sequence SET seq=? "
+                    "WHERE name='transaction_splits'",
+                    (prior_split_sequence,),
+                )
+                if sequence_update.rowcount == 0:
+                    read_conn.execute(
+                        "INSERT INTO sqlite_sequence(name, seq) "
+                        "VALUES ('transaction_splits', ?)",
+                        (prior_split_sequence,),
+                    )
+            read_conn.commit()
+            read_conn.close()
+        read_model_after_cleanup = {
+            entity_key: _database_snapshot(entity_key)
+            for entity_key in read_model_entities
+        }
+        _check(
+            read_model_after_cleanup == read_model_before_seed,
+            "financial read-model synthetic rows should be removed exactly",
+        )
+        print(
+            "   ✅ All-entity splits, signed totals, filters, report matrix, "
+            "CSV/PDF/QBO, empty states, isolation, denied-network, and cleanup passed"
+        )
+
         # ── 9. Saved Views CRUD ──────────────────────────────────────
         print("\n9. Saved Views CRUD tests…")
         import json as _json
