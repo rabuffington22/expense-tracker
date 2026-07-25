@@ -998,7 +998,7 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
 
 ### Confirmed Work Block 4BE-R: Financial Read-Model Coverage Durability Without Deployment
 
-Status: active after Ryan confirmation on 2026-07-25.
+Status: done and durable on `origin/main`; confirmed and completed on 2026-07-25 with zero workflow runs and no deployment.
 
 Parent task: Phase 4 Task 4, limited to the exact verified 4BE durability slice.
 
@@ -1029,6 +1029,8 @@ Dashboard closeout: show 4BE-R active with Task 4 current before staging. After 
 Report point: return source and closeout SHAs, exact published paths, remote alignment, zero-workflow/no-deployment result, verification, final worktree state, preserved exclusions, and the separate 4BF planning gate.
 
 Suggested next work block: 4BF for Task 1P.7.3 subscription detection and lifecycle coverage after a separate proposal and confirmation.
+
+Closeout result: full smoke, Python compilation, section 8j denied-network/read-only/exact-cleanup coverage, high-confidence sensitive-addition review, JSON, whitespace, dashboard refresh/health/generated/rendered state, exact changed/staged/committed paths, commit ancestry, live remote resolution, and all three preserved-file checks passed. Exact seven-path source commit `36007de4100b3ded048d9020403ac7d94fdbb706` is durable on `origin/main`; local `HEAD`, local `main`, tracking `origin/main`, live remote `main`, and GitHub all resolved to that SHA after the non-force push. GitHub reported zero workflow runs, so no Fly deployment or production access occurred. This sanitized closeout uses `[skip actions]`. Evidence: `command-center/logs/2026-07-25-financial-read-model-coverage-release-4be-r.md`.
 
 ### Confirmed Work Block 4BE: Financial Read-Model Reconciliation And Export Coverage
 

@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-25 2:53 AM CST",
+    "lastUpdated": "2026-07-25 2:58 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,27 +1619,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R all eight application-style clusters are durable deployed and health verified through 4AZ-R Tasks 1P.4.3b.1 through 1P.4.3b.2 policy artifacts are durable through 4BA-R Task 1P.4.4 is durable deployed and health verified through 4BB-R and Task 1P.6 is durable without deployment through 4BD-R"
+    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R all eight application-style clusters are durable deployed and health verified through 4AZ-R Tasks 1P.4.3b.1 through 1P.4.3b.2 policy artifacts are durable through 4BA-R Task 1P.4.4 is durable deployed and health verified through 4BB-R Task 1P.6 is durable without deployment through 4BD-R and Tasks 1P.7.1-1P.7.2 are durable without deployment through 4BE-R"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Work block 4BE-R is active for exact-scope durability of the verified seven-path 4BE package without workflow or deployment activity.",
+    "summary": "Tasks 1P.7.1-1P.7.2 are durable without deployment through 4BE-R; Task 1P.7.3 is current at the next planning gate.",
     "progress": 99
   },
   "currentTask": {
-    "title": "Task 4: Publish and verify explicitly approved repairs",
-    "owner": "Codex Desktop",
-    "status": "in-progress",
-    "supportingAgent": "Ryan confirmed exact-scope 4BE-R durability without workflow or deployment.",
-    "nextAction": "Reverify stage commit fast-forward and push the exact seven-path 4BE source set then verify zero workflow activity and publish the sanitized closeout.",
-    "blocker": "Stop for unexpected or sensitive paths verification failure live remote divergence non-fast-forward recovery push rejection workflow activity deployment or preserved-file overlap."
+    "title": "Task 1P.7.3: Preserve subscription detection and lifecycle behavior",
+    "owner": "Ryan",
+    "status": "awaiting-planning",
+    "supportingAgent": "Codex completed exact-scope 4BE-R durability with zero workflow runs and no deployment.",
+    "nextAction": "Request a bounded 4BF proposal before any Task 1P.7.3 implementation.",
+    "blocker": "No 4BF implementation block is confirmed."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-be-r",
     "label": "4BE-R",
     "name": "Financial Read-Model Coverage Durability Without Deployment",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
     "includedTasks": [
       "Task 4 exact verified 4BE durability slice",
@@ -1652,7 +1652,7 @@
     ],
     "recommendedAgent": "Codex Desktop",
     "whyThisAgent": "The block requires exact-path staging sensitive-addition review ancestry remote no-workflow verification and Runway OS stewardship.",
-    "runnerPath": "Verify active Runway OS rerun exact release checks resolve live remote main create a skip-actions source commit fast-forward and push main verify exact remote and zero workflows then publish a sanitized skip-actions closeout.",
+    "runnerPath": "Completed through exact release checks one skip-actions source commit clean main fast-forward non-force push exact remote and zero-workflow verification plus one sanitized skip-actions closeout.",
     "expectedFiles": [
       "Exact seven-path 4BE source package: scripts/smoke_test.py the 4BE evidence log and five Runway OS source or generated paths",
       "One sanitized 4BE-R closeout log plus five Runway OS source or generated paths"
@@ -1673,7 +1673,11 @@
       "Commit ancestry exact live remote SHA zero workflow activity for both commits final alignment and all preserved files"
     ],
     "nextReportPoint": "Return source and closeout SHAs exact published paths remote alignment zero-workflow no-deployment result final worktree preserved exclusions and the separate 4BF planning gate.",
-    "durability": "Active publication block; only the exact confirmed non-force skip-actions sequence is authorized."
+    "durability": "Exact source commit 36007de4100b3ded048d9020403ac7d94fdbb706 is durable on origin main with zero workflow runs and no deployment.",
+    "result": "The exact seven-path 4BE package is durable on origin main after a clean fast-forward and non-force push; all release checks passed and skip actions produced zero workflow runs.",
+    "evidence": [
+      "command-center/logs/2026-07-25-financial-read-model-coverage-release-4be-r.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -1698,20 +1702,29 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Complete exact-scope 4BE-R durability",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan confirmed the verified seven-path 4BE package may be made durable through exact-path skip-actions commits without workflow or deployment.",
-    "action": "Reverify stage commit cleanly fast-forward and push main verify exact remote and zero workflows then publish the sanitized closeout.",
+    "title": "Plan bounded 4BF subscription-lifecycle coverage",
+    "status": "waiting-on-ryan",
+    "owner": "Ryan",
+    "why": "4BE-R made Tasks 1P.7.1-1P.7.2 durable without deployment; Task 1P.7.3 is the next execution-sized but separately gated financial-behavior task.",
+    "action": "Request a just-in-time 4BF proposal for Task 1P.7.3 before implementation.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    {
+      "decision": "Request a bounded 4BF proposal for Task 1P.7.3 subscription detection and lifecycle coverage.",
+      "owner": "Ryan",
+      "status": "open",
+      "context": "4BE-R is complete and durable; no Task 1P.7.3 implementation is authorized."
+    }
+  ],
   "waitingOnRyan": {
-    "summary": "Nothing is waiting on Ryan while confirmed 4BE-R runs inside its exact publication boundary.",
-    "items": []
+    "summary": "Ryan may request the bounded 4BF proposal for Task 1P.7.3.",
+    "items": [
+      "Request 4BF planning before subscription-lifecycle implementation."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Work block 4BE-R is active for exact seven-path durability without workflow or deployment.",
+    "phaseQuestions": "Work block 4BE-R is durable; Task 1P.7.3 is the next separate planning gate.",
     "decisionQueue": "Tasks 1P.7.3-1P.7.4 CI workflow action deployment production Fly protected access repairs broader recovery and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
@@ -1776,7 +1789,7 @@
       "phaseId": "phase-4",
       "label": "4BE-R",
       "name": "Financial Read-Model Coverage Durability Without Deployment",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 4 exact verified 4BE durability slice",
         "Explicit seven-path source staging one skip-actions source commit clean main fast-forward non-force push exact remote and zero-workflow verification plus one skip-actions closeout"
@@ -1789,7 +1802,7 @@
       "owner": "Codex Desktop",
       "recommendedAgent": "Codex Desktop",
       "whyThisAgent": "The block requires exact-path staging sensitive-addition review ancestry remote no-workflow verification and Runway OS stewardship.",
-      "runnerPath": "Verify active Runway OS rerun exact release checks resolve live remote main create a skip-actions source commit fast-forward and push main verify exact remote and zero workflows then publish a sanitized skip-actions closeout.",
+      "runnerPath": "Completed through exact release checks one skip-actions source commit clean main fast-forward non-force push exact remote and zero-workflow verification plus one sanitized skip-actions closeout.",
       "expectedFiles": [
         "Exact seven-path 4BE source package",
         "One sanitized 4BE-R closeout log plus five Runway OS source or generated paths"
@@ -1810,7 +1823,11 @@
         "Commit ancestry exact live remote SHA zero workflow activity for both commits final alignment and all preserved files"
       ],
       "reportBack": "Return source and closeout SHAs exact published paths remote alignment zero-workflow no-deployment result final worktree preserved exclusions and the separate 4BF planning gate.",
-      "durability": "Active exact-scope publication block."
+      "durability": "Exact source commit 36007de4100b3ded048d9020403ac7d94fdbb706 is durable on origin main with zero workflow runs and no deployment.",
+      "result": "The exact seven-path 4BE package is durable on origin main after a clean fast-forward and non-force push; all release checks passed and skip actions produced zero workflow runs.",
+      "evidence": [
+        "command-center/logs/2026-07-25-financial-read-model-coverage-release-4be-r.md"
+      ]
     },
     {
       "id": "phase-4-block-be",
@@ -10031,9 +10048,9 @@
       "title": "Task 1P.7: Finish the remaining broad financial read-model regression coverage",
       "status": "active",
       "owner": "Ryan",
-      "summary": "Tasks 1P.7.1-1P.7.2 are complete locally through 4BE; subscription and Cash Flow lifecycle coverage remain visible and separately gated.",
-      "nextAction": "Choose exact-scope 4BE-R durability or park publication and request bounded 4BF planning for Task 1P.7.3.",
-      "blocker": "No durability or Task 1P.7.3 implementation block is confirmed."
+      "summary": "Tasks 1P.7.1-1P.7.2 are durable without deployment through 4BE-R; subscription and Cash Flow lifecycle coverage remain visible and separately gated.",
+      "nextAction": "Request bounded 4BF planning for Task 1P.7.3.",
+      "blocker": "No Task 1P.7.3 implementation block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -10041,7 +10058,7 @@
       "title": "Task 1P.7.1: Reconcile effective-transaction and dashboard totals",
       "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Maintained all-entity proof now reconciles exact split replacement centralized exclusions signed totals dashboard counts spend income net review account and transfer behavior entity identity denied networking read-only preservation and exact cleanup through 4BE."
+      "summary": "Maintained all-entity proof reconciles exact split replacement centralized exclusions signed totals dashboard counts spend income net review account and transfer behavior entity identity denied networking read-only preservation and exact cleanup and is durable through 4BE-R."
     },
     {
       "phaseId": "phase-4",
@@ -10049,17 +10066,17 @@
       "title": "Task 1P.7.2: Complete the standard-report and export matrix",
       "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Every non-recurring report passes through direct preparation rendered view CSV PDF transaction-only QBO stable filenames response types missing and empty ranges reconciled totals and all-entity isolation while the separate 4H recurring matrix remains passing."
+      "summary": "Every non-recurring report passes through direct preparation rendered view CSV PDF transaction-only QBO stable filenames response types missing and empty ranges reconciled totals and all-entity isolation while the separate 4H recurring matrix remains passing; coverage is durable through 4BE-R."
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T1P73",
       "title": "Task 1P.7.3: Preserve subscription detection and lifecycle behavior",
-      "status": "planned",
+      "status": "current",
       "owner": "Ryan",
       "summary": "Add maintained all-entity synthetic proof for suggestion cadence accept add detail update account information dismiss restore share delete persistence empty behavior denied networking and entity-local isolation.",
-      "nextAction": "After 4BE-R closes request a bounded 4BF proposal before implementation.",
-      "blocker": "4BE-R is active and no 4BF implementation block is confirmed."
+      "nextAction": "Request a bounded 4BF proposal before implementation.",
+      "blocker": "No 4BF implementation block is confirmed."
     },
     {
       "phaseId": "phase-4",
@@ -10089,11 +10106,12 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Publish and verify only explicitly approved repairs through exact-scope direct-main release blocks; 4BE-R is active for the seven-path financial read-model coverage package.",
-      "nextAction": "Reverify and publish the exact 4BE package with skip-actions and zero workflow activity.",
-      "blocker": "Stop for unexpected paths failed verification remote divergence non-fast-forward recovery workflow activity deployment or preserved-file overlap.",
+      "summary": "Publish and verify only explicitly approved repairs through exact-scope direct-main release blocks; the latest approved 4BE package is durable without deployment through 4BE-R.",
+      "nextAction": null,
+      "blocker": null,
+      "result": "Every explicitly approved set through 4BE-R is durable; latest source commit 36007de4 is on main with zero workflow runs and no deployment.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -10119,7 +10137,8 @@
         "command-center/logs/2026-07-23-cashflow-planning-style-compatibility-release-4av-r.md",
         "command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md",
         "command-center/logs/2026-07-24-final-csp-enforcement-release-4bb-r.md",
-        "command-center/logs/2026-07-24-installed-pwa-browser-boundary-coverage-release-4bd-r.md"
+        "command-center/logs/2026-07-24-installed-pwa-browser-boundary-coverage-release-4bd-r.md",
+        "command-center/logs/2026-07-25-financial-read-model-coverage-release-4be-r.md"
       ]
     },
     {
@@ -10518,9 +10537,17 @@
     {
       "name": "Work Block 4BE Financial Read-Model And Export Coverage Closeout",
       "path": "command-center/logs/2026-07-24-financial-read-model-export-coverage-4be.md"
+    },
+    {
+      "name": "Work Block 4BE-R Financial Read-Model Coverage Release Closeout",
+      "path": "command-center/logs/2026-07-25-financial-read-model-coverage-release-4be-r.md"
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-25",
+      "text": "Completed work block 4BE-R: exact seven-path source commit 36007de4 was fast-forwarded and pushed to main live remote and GitHub SHA alignment passed zero workflow runs were reported no deployment or production access occurred and all three preserved untracked files remained excluded."
+    },
     {
       "time": "2026-07-25",
       "text": "Ryan confirmed exact-scope 4BE-R durability: Codex may reverify and publish only the seven-path 4BE maintained-test and sanitized command-center package through two skip-actions commits with clean main fast-forward exact remote and zero-workflow verification while later tasks deployment protected access broader recovery and all three preserved untracked files remain excluded."
@@ -11463,10 +11490,11 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Complete exact-scope 4BE-R durability",
-    "description": "Publish the verified seven-path 4BE package and sanitized closeout with skip-actions verify exact remote alignment and zero workflow activity then restore Task 1P.7.3 to its separate planning gate."
+    "name": "Plan bounded 4BF subscription-lifecycle coverage",
+    "description": "Propose a separately confirmed maintained synthetic coverage block for Task 1P.7.3 without reopening durable 4BE-R scope or mixing in Cash Flow lifecycle work."
   },
   "verification": {
+    "phase4FinancialReadModelRelease": "pass; exact seven-path source commit 36007de4100b3ded048d9020403ac7d94fdbb706 is durable on main after full smoke compilation sensitive-addition JSON whitespace dashboard exact-path ancestry non-force push live remote GitHub SHA zero-workflow and preserved-file checks with no deployment or production access",
     "phase4FinancialReadModelBlock": "pass locally; 4BE adds one maintained two-month effective-ledger fixture per entity covering exact split replacement centralized exclusions signed direct and account totals dashboard count spend income net review account and transfer behavior and entity identity without product-source changes",
     "phase4FinancialReportCoverage": "pass; all seven non-recurring report families pass through direct preparation rendered view CSV PDF transaction-only QBO stable filenames response types missing and empty ranges all-entity isolation and the separate 4H Recurring Charges matrix remains passing",
     "phase4FinancialReadModelBoundaries": "pass; baseline and final full smoke Python compilation denied networking read-only preservation exact cleanup JSON whitespace dashboard refresh health generated and rendered state exact scope and all three preserved-file checks pass while product repair protected live GitHub workflow Fly and deployment work remained excluded",

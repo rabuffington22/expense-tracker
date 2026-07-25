@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Complete confirmed work block 4BE-R by making the exact verified seven-path 4BE package durable on `origin/main` without triggering a workflow or deployment.
+Request a bounded 4BF proposal for Task 1P.7.3 subscription detection and lifecycle coverage before any implementation.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; 4BE-R is the current exact-scope durability block under Task 4.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.2 are durable through 4BE-R, and Task 1P.7.3 is current at its next planning gate.
 
 ## Current Work Block
 
-Work block 4BE-R: Financial Read-Model Coverage Durability Without Deployment — active.
+Work block 4BE-R: Financial Read-Model Coverage Durability Without Deployment — done and durable on `origin/main` with zero workflow runs and no deployment.
 
 ## Current Task
 
-Task 4: Publish and verify explicitly approved repairs — current only for the exact verified 4BE durability slice.
+Task 1P.7.3: Preserve subscription detection and lifecycle behavior — current at the next planning gate; no 4BF implementation block is confirmed.
 
 ## Owner
 
-Codex Desktop owns exact-path verification, staging, commits, clean main fast-forward, non-force pushes, remote/no-workflow checks, and closeout. Ryan owns every expansion, recovery, deployment, live-action, and later-task decision.
+Ryan owns the next 4BF planning and confirmation decision. Codex owns the durable 4BE-R record and may not begin Task 1P.7.3 without a new confirmed block.
 
 ## Current Action
 
-Write and verify active state; reverify the exact seven-path 4BE package; create one `[skip actions]` source commit; cleanly fast-forward and push `main`; verify exact remote SHA and zero workflow activity; then publish one sanitized `[skip actions]` closeout.
+Request a just-in-time 4BF proposal for Task 1P.7.3 before subscription-lifecycle implementation.
 
 ## Work Block 4BE-R Contract
 
@@ -33,6 +33,17 @@ Write and verify active state; reverify the exact seven-path 4BE package; create
 - Stop for any unexpected or sensitive path; verification, cleanup, dashboard, scope, or preserved-file failure; local/live remote `main` divergence; non-fast-forward requirement; push rejection; any workflow run despite `[skip actions]`; deployment activity; or recovery beyond clean fast-forward and read-only diagnosis.
 - Verify full smoke; Python compilation; denied networking/read-only preservation/exact cleanup through the maintained runner; high-confidence sensitive-addition review; JSON; whitespace; dashboard refresh/health/generated/rendered state; exact changed/staged/committed paths; commit ancestry; exact live remote SHA; absence of workflow activity for both commits; final local/remote alignment; and all three preserved untracked files.
 - Report source and closeout commit SHAs, exact published paths, remote alignment, `[skip actions]`/zero-workflow/no-deployment result, final worktree state, preserved exclusions, and the separately gated 4BF planning pass.
+
+## Work Block 4BE-R Status
+
+- Ryan confirmed the exact 4BE-R proposal on 2026-07-25.
+- Full smoke, Python compilation, section 8j denied-network/read-only/exact-cleanup coverage, sensitive-addition, JSON, whitespace, dashboard, exact staging/commit, ancestry, live-remote, and preserved-file checks passed.
+- Exact seven-path source commit `36007de4100b3ded048d9020403ac7d94fdbb706` is durable on `origin/main`.
+- Local `HEAD`, local `main`, tracking `origin/main`, live remote `main`, and the GitHub commit API all resolved to the source SHA after the non-force push.
+- GitHub reported zero workflow runs for the source SHA. No Fly deployment or production access occurred.
+- No product/runtime/dependency/workflow/configuration, credential, protected-data, real-database, Plaid, downstream, PR, force-push, broader-recovery, or preserved-file action occurred.
+- This sanitized closeout is published separately with `[skip actions]`. Evidence: `command-center/logs/2026-07-25-financial-read-model-coverage-release-4be-r.md`.
+- Task 1P.7.3 returns to the next planning gate; proposed 4BF remains a separate Ryan decision.
 
 ## Work Block 4BE Contract
 
