@@ -3898,6 +3898,9 @@ def _assert_standalone_documents(
             f"{label}: {status} document must not leak exception detail",
         )
 
+    page.context.add_cookies(
+        [{"name": "entity", "value": "BFM", "url": base_url}]
+    )
     focused_response = page.goto(f"{base_url}/k/", wait_until="networkidle")
     _check(
         focused_response is not None and focused_response.status == 200,
@@ -3918,8 +3921,49 @@ def _assert_standalone_documents(
                 '.kd-fill.u-width-pct[class*="u-pct-"]'
             ).length,
             bfmLeak: document.body.innerText.includes("4AL BFM Checking"),
+            bfmFoodLeak: document.body.textContent.includes("4AM BFM Food"),
             focusVisible: document.body.innerText.includes("FOCUS SPENDING")
                 && document.body.innerText.includes("Food"),
+            accountCards: Array.from(
+                document.querySelectorAll(".kd-account-card")
+            ).map((card) => ({
+                name: card.querySelector(".kd-account-name")?.textContent.trim(),
+                balance: card.querySelector(".kd-account-balance")?.textContent.trim(),
+                limit: card.querySelector(".kd-account-limit")?.textContent.trim(),
+            })),
+            focusKpis: (() => {
+                const section = Array.from(
+                    document.querySelectorAll(".kd-section")
+                ).find(
+                    (candidate) => candidate.querySelector(
+                        ".kd-section-label"
+                    )?.textContent.trim() === "FOCUS SPENDING"
+                );
+                return Array.from(section?.querySelectorAll(".kd-kpi") || []).map(
+                    (kpi) => ({
+                        label: kpi.querySelector(".kd-kpi-label")?.textContent.trim(),
+                        value: kpi.querySelector(".kd-kpi-value")?.textContent.trim(),
+                    })
+                );
+            })(),
+            llKpis: (() => {
+                const section = Array.from(
+                    document.querySelectorAll(".kd-section")
+                ).find(
+                    (candidate) => candidate.querySelector(
+                        ".kd-section-label"
+                    )?.textContent.trim() === "LUXE LEGACY"
+                );
+                return Array.from(section?.querySelectorAll(".kd-kpi") || []).map(
+                    (kpi) => ({
+                        label: kpi.querySelector(".kd-kpi-label")?.textContent.trim(),
+                        value: kpi.querySelector(".kd-kpi-value")?.textContent.trim(),
+                    })
+                );
+            })(),
+            personalMarker: Array.from(
+                document.querySelectorAll(".kd-drill-name")
+            ).some((element) => element.textContent.trim() === "4AM Personal Food"),
         })"""
     )
     _check(
@@ -3930,8 +3974,34 @@ def _assert_standalone_documents(
         and focused_state["styleAttributeCount"] == 0
         and focused_state["boundedFillCount"] >= 2
         and not focused_state["bfmLeak"]
+        and not focused_state["bfmFoodLeak"]
         and focused_state["focusVisible"],
         f"{label}: /k/ must use local CSS and bounded bars while preserving Personal plus LL without BFM",
+    )
+    _check(
+        focused_state["accountCards"]
+        == [
+            {
+                "name": "Luxe Legacy",
+                "balance": "$4,250",
+                "limit": "Available",
+            }
+        ]
+        and focused_state["focusKpis"]
+        == [
+            {"label": "Budget", "value": "$500"},
+            {"label": "Spent", "value": "$12"},
+            {"label": "Left", "value": "$488"},
+        ]
+        and focused_state["llKpis"]
+        == [
+            {"label": "Revenue", "value": "$1,000"},
+            {"label": "Owner's Draw", "value": "$0"},
+            {"label": "Expenses", "value": "$363"},
+            {"label": "Total", "value": "$637"},
+        ]
+        and focused_state["personalMarker"],
+        f"{label}: /k/ must preserve the exact Personal and Luxe Legacy field contract while ignoring the BFM entity cookie; state={focused_state}",
     )
 
     toggles = page.locator('[data-kristine-action="toggle-category"]')
@@ -3980,6 +4050,9 @@ def _assert_standalone_documents(
         )
 
     page.evaluate("localStorage.setItem('theme', 'dark')")
+    page.context.add_cookies(
+        [{"name": "entity", "value": "Personal", "url": base_url}]
+    )
     page.goto(base_url, wait_until="networkidle")
     expected_status_errors = sorted(
         [
@@ -3992,6 +4065,342 @@ def _assert_standalone_documents(
     _check(
         observed_status_errors == expected_status_errors,
         f"{label}: only exact synthetic error-status console entries are expected",
+    )
+    del console_errors[console_error_start:]
+
+
+def _assert_installability_contract(page, base_url: str, label: str) -> None:
+    state = page.evaluate(
+        """async () => {
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            const appleLink = document.querySelector(
+                'link[rel="apple-touch-icon"]'
+            );
+            const manifestResponse = await fetch(manifestLink.href);
+            const manifest = await manifestResponse.json();
+            const loadImage = (url) => new Promise((resolve, reject) => {
+                const image = new Image();
+                image.onload = () => resolve({
+                    url,
+                    width: image.naturalWidth,
+                    height: image.naturalHeight,
+                });
+                image.onerror = () => reject(new Error(`image load failed: ${url}`));
+                image.src = url;
+            });
+            const icons = await Promise.all(
+                manifest.icons.map(async (icon) => ({
+                    ...icon,
+                    image: await loadImage(
+                        new URL(icon.src, manifestResponse.url).href
+                    ),
+                }))
+            );
+            const apple = await loadImage(appleLink.href);
+            const registration = await navigator.serviceWorker.ready;
+            return {
+                secureContext: window.isSecureContext,
+                manifestHref: manifestLink.href,
+                manifestStatus: manifestResponse.status,
+                manifestType: manifestResponse.headers.get("Content-Type"),
+                manifest,
+                icons,
+                appleHref: appleLink.href,
+                appleSizes: appleLink.sizes.value,
+                apple,
+                workerScope: registration.scope,
+                workerScript: registration.active?.scriptURL,
+            };
+        }"""
+    )
+    _check(
+        state["secureContext"]
+        and state["manifestHref"] == f"{base_url}/static/manifest.json"
+        and state["manifestStatus"] == 200
+        and state["manifestType"].startswith("application/json")
+        and state["manifest"]["name"] == "The Ledger"
+        and state["manifest"]["short_name"] == "The Ledger"
+        and state["manifest"]["description"]
+        == "Personal and business expense tracker"
+        and state["manifest"]["start_url"] == "/"
+        and state["manifest"]["id"] == "/"
+        and state["manifest"]["display"] == "standalone"
+        and state["manifest"]["orientation"] == "any"
+        and state["manifest"]["background_color"] == "#000000"
+        and state["manifest"]["theme_color"] == "#000000",
+        f"{label}: root document must expose the exact installability and manifest identity contract; state={state}",
+    )
+    _check(
+        [
+            {
+                "src": icon["src"],
+                "sizes": icon["sizes"],
+                "type": icon["type"],
+                "purpose": icon["purpose"],
+                "width": icon["image"]["width"],
+                "height": icon["image"]["height"],
+            }
+            for icon in state["icons"]
+        ]
+        == [
+            {
+                "src": "icon-192x192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any",
+                "width": 192,
+                "height": 192,
+            },
+            {
+                "src": "icon-512x512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any",
+                "width": 512,
+                "height": 512,
+            },
+            {
+                "src": "icon-512x512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable",
+                "width": 512,
+                "height": 512,
+            },
+        ]
+        and state["appleHref"]
+        == f"{base_url}/static/apple-touch-icon.png"
+        and state["appleSizes"] == "180x180"
+        and state["apple"]["width"] == 180
+        and state["apple"]["height"] == 180
+        and state["workerScope"] == f"{base_url}/"
+        and state["workerScript"] == f"{base_url}/sw.js",
+        f"{label}: declared icons and root worker inputs must be available at their exact dimensions and scope; state={state}",
+    )
+
+
+def _assert_offline_entity_isolation(
+    page,
+    context,
+    base_url: str,
+    label: str,
+    console_errors: list[str],
+) -> None:
+    console_error_start = len(console_errors)
+    for entity_value, expected_sidebar_class in (
+        ("Personal", "sidebar--personal"),
+        ("BFM", "sidebar--company"),
+        ("LL", "sidebar--luxelegacy"),
+    ):
+        context.add_cookies(
+            [{"name": "entity", "value": entity_value, "url": base_url}]
+        )
+        page.goto(base_url, wait_until="networkidle")
+        _check(
+            expected_sidebar_class
+            in page.locator("#sidebar-nav").get_attribute("class").split(),
+            f"{label}: {entity_value} must render online before the offline isolation probe",
+        )
+
+    if not page.evaluate("Boolean(navigator.serviceWorker.controller)"):
+        page.reload(wait_until="networkidle")
+    cache_state = page.evaluate(
+        """async () => {
+            await navigator.serviceWorker.ready;
+            const result = {};
+            for (const name of await caches.keys()) {
+                const cache = await caches.open(name);
+                result[name] = (await cache.keys()).map(
+                    (request) => new URL(request.url).pathname
+                ).sort();
+            }
+            return result;
+        }"""
+    )
+    cached_paths = [
+        path
+        for paths in cache_state.values()
+        for path in paths
+    ]
+    _check(
+        list(cache_state) == ["the-ledger-v5"]
+        and "/offline" in cached_paths
+        and all(
+            path == "/offline" or path.startswith("/static/")
+            for path in cached_paths
+        ),
+        f"{label}: worker caches must contain only the generic offline document and static assets; state={cache_state}",
+    )
+
+    offline_bodies: list[str] = []
+    try:
+        context.set_offline(True)
+        for entity_value in ("Personal", "BFM", "LL"):
+            context.add_cookies(
+                [{"name": "entity", "value": entity_value, "url": base_url}]
+            )
+            response = page.goto(
+                f"{base_url}/?synthetic-4bd-offline={entity_value}",
+                wait_until="domcontentloaded",
+                timeout=10_000,
+            )
+            offline_state = page.evaluate(
+                """() => ({
+                    body: document.body.innerText,
+                    title: document.title,
+                    offlineWrap: Boolean(document.querySelector(".offline-wrap")),
+                    maxWidth: getComputedStyle(
+                        document.querySelector(".offline-wrap")
+                    ).maxWidth,
+                })"""
+            )
+            _check(
+                response is not None
+                and response.status == 200
+                and offline_state["title"] == "Offline — The Ledger"
+                and offline_state["offlineWrap"]
+                and offline_state["maxWidth"] == "360px"
+                and "You're Offline" in offline_state["body"]
+                and "4AM Personal Food" not in offline_state["body"]
+                and "4AM BFM Food" not in offline_state["body"]
+                and "Luxe Legacy" not in offline_state["body"],
+                f"{label}: {entity_value} offline navigation must return only the generic data-free document; state={offline_state}",
+            )
+            offline_bodies.append(offline_state["body"])
+
+        offline_fetch_state = page.evaluate(
+            """async () => {
+                const style = await fetch("/static/style.css");
+                let dynamicFailed = false;
+                try {
+                    await fetch("/?synthetic-4bd-dynamic=1", {
+                        headers: {"Accept": "application/json"},
+                    });
+                } catch (_error) {
+                    dynamicFailed = true;
+                }
+                return {
+                    styleStatus: style.status,
+                    styleType: style.headers.get("Content-Type"),
+                    dynamicFailed,
+                };
+            }"""
+        )
+        _check(
+            len(set(offline_bodies)) == 1
+            and offline_fetch_state["styleStatus"] == 200
+            and offline_fetch_state["styleType"].startswith("text/css")
+            and offline_fetch_state["dynamicFailed"],
+            f"{label}: static cache-first must remain available while dynamic requests remain network-only; state={offline_fetch_state}",
+        )
+    finally:
+        context.set_offline(False)
+        context.add_cookies(
+            [{"name": "entity", "value": "Personal", "url": base_url}]
+        )
+        page.goto(base_url, wait_until="networkidle")
+    offline_console_errors = console_errors[console_error_start:]
+    _check(
+        offline_console_errors
+        and all(
+            "503 (Offline)" in message or "net::ERR_FAILED" in message
+            for message in offline_console_errors
+        ),
+        f"{label}: deliberate offline requests must produce only expected offline browser errors; errors={offline_console_errors}",
+    )
+    del console_errors[console_error_start:]
+
+
+def _assert_configured_auth_boundaries(
+    page,
+    base_url: str,
+    auth_password: str,
+    label: str,
+    console_errors: list[str],
+) -> None:
+    console_error_start = len(console_errors)
+    page.goto(base_url, wait_until="networkidle")
+    login_state = page.evaluate(
+        """() => ({
+            pathname: location.pathname,
+            nextQuery: new URL(location.href).searchParams.get("next"),
+            nextValue: document.querySelector('input[name="next"]')?.value,
+            passwordType: document.querySelector("#password")?.type,
+            source: document.documentElement.outerHTML,
+        })"""
+    )
+    _check(
+        login_state["pathname"] == "/auth/login"
+        and login_state["nextQuery"] == "/"
+        and login_state["nextValue"] == "/"
+        and login_state["passwordType"] == "password"
+        and auth_password not in login_state["source"]
+        and "APP_PASSWORD_HASH" not in login_state["source"]
+        and "subtle.digest" not in login_state["source"]
+        and "authOverlay" not in login_state["source"],
+        f"{label}: configured-auth full-page denial must expose only the standalone server-side login contract; state={login_state}",
+    )
+    boundary_state = page.evaluate(
+        """async () => {
+            const hx = await fetch("/", {
+                headers: {"HX-Request": "true"},
+                redirect: "manual",
+            });
+            const json = await fetch("/", {
+                headers: {"Content-Type": "application/json"},
+                redirect: "manual",
+            });
+            const [manifest, worker, offline, health] = await Promise.all([
+                fetch("/static/manifest.json"),
+                fetch("/sw.js"),
+                fetch("/offline"),
+                fetch("/health"),
+            ]);
+            return {
+                hxStatus: hx.status,
+                jsonStatus: json.status,
+                manifestStatus: manifest.status,
+                manifestType: manifest.headers.get("Content-Type"),
+                workerStatus: worker.status,
+                offlineStatus: offline.status,
+                healthStatus: health.status,
+            };
+        }"""
+    )
+    _check(
+        boundary_state
+        == {
+            "hxStatus": 401,
+            "jsonStatus": 401,
+            "manifestStatus": 200,
+            "manifestType": "application/json",
+            "workerStatus": 200,
+            "offlineStatus": 200,
+            "healthStatus": 200,
+        },
+        f"{label}: configured-auth browser request classes and exempt surfaces must remain exact; state={boundary_state}",
+    )
+
+    page.goto(
+        f"{base_url}/auth/login?next=//example.invalid",
+        wait_until="networkidle",
+    )
+    _check(
+        page.locator('input[name="next"]').get_attribute("value") == "/",
+        f"{label}: unsafe external return targets must normalize to the local root",
+    )
+    page.locator("#password").fill(auth_password)
+    with page.expect_navigation(wait_until="networkidle"):
+        page.get_by_role("button", name="Sign in", exact=True).click()
+    _check(
+        page.url.rstrip("/") == base_url,
+        f"{label}: successful synthetic sign-in must establish the session and return locally",
+    )
+    auth_boundary_errors = console_errors[console_error_start:]
+    _check(
+        len(auth_boundary_errors) == 2
+        and all("401 (UNAUTHORIZED)" in message for message in auth_boundary_errors),
+        f"{label}: deliberate unauthenticated HTMX and JSON requests must produce only their expected 401 browser errors; errors={auth_boundary_errors}",
     )
     del console_errors[console_error_start:]
 
@@ -4401,6 +4810,9 @@ def main() -> None:
 
                 page.goto(base_url, wait_until="networkidle")
                 _assert_shared_shell(page, "no-password shell")
+                _assert_installability_contract(
+                    page, base_url, "no-password installability"
+                )
 
                 theme_state = page.evaluate(
                     """() => ({
@@ -4549,6 +4961,13 @@ def main() -> None:
                     }"""
                 )
                 _check(worker_url.endswith("/sw.js"), "shared shell must register the same-origin service worker")
+                _assert_offline_entity_isolation(
+                    page,
+                    context,
+                    base_url,
+                    "no-password installed PWA",
+                    console_errors,
+                )
 
                 _assert_closed_mobile(page, "initial phone state")
 
@@ -4827,11 +5246,13 @@ def main() -> None:
                     and login_style_state["cardMaxWidth"] == "360px",
                     "configured-auth login must preserve its local CSS card layout without inline styles",
                 )
-                page.locator("#password").fill(auth_password)
-                with page.expect_navigation(wait_until="networkidle"):
-                    page.get_by_role("button", name="Sign in", exact=True).click()
-
-                _check(page.url.rstrip("/") == base_url, "configured-auth login must return to the app shell")
+                _assert_configured_auth_boundaries(
+                    page,
+                    base_url,
+                    auth_password,
+                    "configured-auth browser boundaries",
+                    auth_console_errors,
+                )
                 _assert_shared_shell(page, "configured-auth shell")
                 _assert_dashboard_report_fragments(
                     page, base_url, "configured-auth fragment execution"
@@ -4960,7 +5381,7 @@ def main() -> None:
         os.environ.clear()
         os.environ.update(original_environment)
 
-    print("Shared shell browser test passed: auth modes, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, mocked Plaid entry, standalone login/offline/error/k execution and style workflows, final strict/Link CSP enforcement, worker cache refresh, prohibited-source probes, status-only wording, split and planning CRUD, AI, CSRF, drawer, swaps, errors, network, and cleanup contracts are intact.")
+    print("Shared shell browser test passed: auth modes, manifest/icons/installability, root worker and cross-entity offline isolation, exact authenticated/no-password k fields, local assets, theme, HTMX, dashboard/report and transaction/modal fragments, categorization/upload, Cash Flow/Long-Term Planning, Short-Term Planning, Weekly/Waterfall, subscription, BFM-only payroll, mocked Plaid entry, standalone login/offline/error/k execution and style workflows, final strict/Link CSP enforcement, worker cache refresh, prohibited-source probes, status-only wording, split and planning CRUD, AI, CSRF, drawer, swaps, errors, network, and cleanup contracts are intact.")
 
 
 if __name__ == "__main__":

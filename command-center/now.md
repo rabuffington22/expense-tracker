@@ -2,27 +2,72 @@
 
 ## Active Objective
 
-Decide whether to authorize proposed work block 4BD for the bounded Task 1P.6 installed-PWA and browser-boundary regression slice.
+Make the exact verified 4BD maintained-test and sanitized command-center set durable on `main` without triggering GitHub Actions or a Fly deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.4 is complete through the durable, deployed enforcement and passed real Plaid runtime checkpoint in 4BC. Task 1P.6 is next.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.6 and `P3-3J-C01` are complete locally through 4BD, and confirmed 4BD-R now owns their exact durability slice.
 
 ## Current Work Block
 
-Work block 4BC: Real Plaid CSP Runtime Checkpoint — done locally and uncommitted.
+Work block 4BD-R: Installed-PWA Browser-Coverage Durability — active.
 
 ## Current Task
 
-Task 1P.6: Finish installed-PWA and browser-boundary regression coverage — awaiting a separate 4BD decision.
+Task 4: Publish and verify the exact approved 4BD set — current inside confirmed 4BD-R.
 
 ## Owner
 
-Ryan owns the decision whether to authorize proposed 4BD. Codex has no active implementation authority beyond the completed 4BC closeout.
+Codex Desktop owns exact-path verification, `[skip actions]` commits, the clean `main` fast-forward, non-force push, remote/no-workflow verification, and Runway OS closeout. Ryan retains every scope expansion, live action, deployment, protected-access, and Task 1P.7 decision.
 
 ## Current Action
 
-Review the completed 4BC result and decide whether to authorize a separately bounded 4BD planning and verification block for Task 1P.6.
+Verify the active 4BD-R dashboard, re-run the approved release checks, publish only the exact 4BD set with `[skip actions]`, prove no workflow or deployment starts, and publish one sanitized closeout.
+
+## Work Block 4BD-R Contract
+
+- Include Task 4 only for the exact verified 4BD set: explicit staging of the nine intended maintained-test and sanitized command-center paths; one `[skip actions]` source commit on `codex/pwa-browser-boundary-coverage`; clean fast-forward of local `main`; direct non-force push to `origin/main`; exact remote-SHA and no-workflow verification; then one sanitized `[skip actions]` closeout commit and push.
+- Exclude Task 1P.7, broader Task 2, Task 3 CI, product or asset repair, application/runtime/dependency/workflow/configuration changes beyond the already verified 4BD test, PR creation, deployment, production/demo/Fly access, credentials, protected data, real databases/uploads, Plaid, downstream systems, force push, broader recovery, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the duplicate 4AU log.
+- Use exact-path staging only. Preserve the verified manifest/icon/installability, root-worker/offline-isolation, configured-auth, and `/k/` coverage contract. Both commits use `[skip actions]`; no workflow dispatch, rerun, cancellation, deployment, or production health check is authorized.
+- No delegation or second opinion is needed because this is a deterministic durability sequence with exact paths, ancestry, remote, and no-workflow acceptance checks.
+- Stop for any unexpected or sensitive path; verification or dashboard failure; local/remote `main` divergence; non-fast-forward requirement; push rejection; any workflow run despite `[skip actions]`; preserved-file overlap; or recovery beyond clean fast-forward and read-only diagnosis.
+- Verify full smoke and isolated Chrome; Python compilation; denied networking and exact cleanup through the maintained runner; high-confidence sensitive-addition review; JSON; whitespace; dashboard refresh/health/generated/rendered state; exact changed/staged/committed paths; commit ancestry; exact remote SHA; absence of workflow activity; final local/remote alignment; and all three preserved untracked files.
+- Report the source and closeout commit SHAs, exact published paths, remote alignment, `[skip actions]`/no-deployment result, final worktree state, preserved exclusions, and the separately gated Task 1P.7 planning pass.
+
+## Work Block 4BD-R Status
+
+- Ryan confirmed the exact 4BD-R proposal on 2026-07-24.
+- Active command-center state and dashboard verification must pass before staging or committing.
+- Publication, remote verification, and closeout are in progress; no product implementation or deployment is included.
+
+## Task 1P.6 Just-In-Time Decomposition
+
+- Task 1P.6.1: prove the linked manifest, exact app identity/start/display fields, declared icon purposes and dimensions, same-origin assets, and root installability inputs.
+- Task 1P.6.2: prove root-scoped service-worker installation and activation, static-only caching, protected/dynamic network-only behavior, and generic cross-entity-safe offline navigation.
+- Task 1P.6.3: prove configured-auth full-page, HTMX/JSON, safe-return, exempt-surface, sign-in, and authenticated-shell browser boundaries.
+- Task 1P.6.4: prove the exact authenticated `/k/` synthetic Personal/Luxe Legacy field contract, BFM exclusion, route-owned context, no-password preservation, responsive behavior, and no protected cache reuse.
+- This decomposition changes only the command-center task inventory. Product code, maintained tests, dependencies, browser execution, protected or live access, GitHub durability, publication, and deployment remain unauthorized until Ryan confirms a work block.
+
+## Work Block 4BD Contract
+
+- Include Tasks 1P.6.1-1P.6.4 only: converge maintained isolated-browser proof for the manifest/icons/installability inputs, root-scoped service-worker installation and real offline entity isolation, configured-auth request and sign-in boundaries, and the exact authenticated/no-password `/k/` field and entity contract.
+- Exclude Task 1P.7, Task 3 CI, Task 4 publication, product or asset repair, authentication/cache/public-route behavior changes, credentials, protected data, real databases, production/demo, external networking, GitHub durability, deployment, workflows, Fly, downstream systems, `scripts/sync_prod_to_local.sh`, `command-center/now 2.md`, and the duplicate 4AU log.
+- Extend the maintained browser suite on `codex/pwa-browser-boundary-coverage`; use temporary synthetic Personal/BFM/Luxe Legacy data, fake authentication configuration, localhost only, denied non-localhost traffic, disposable browser state, and exact cleanup. Treat current product behavior as the contract and stop rather than repair a mismatch.
+- No delegation or second opinion is needed because the four tasks are deterministic coverage convergence in one existing harness.
+- Stop for any product/authentication/cache/entity/PWA defect requiring repair; a product or UX decision; protected, credential, real-data, live, production, or external dependency; scope expansion; plan-changing verification failure; failed cleanup or command-center health; or preserved-file overlap.
+- Verify baseline and final full smoke; the complete maintained isolated-Chrome suite; exact manifest/icon/installability, service-worker/offline-isolation, configured-auth, and `/k/` assertions; denied networking; zero unexpected browser errors; exact cleanup; Python compilation; JSON; whitespace; dashboard refresh/health/generated/rendered state; exact worktree scope; and all three preserved untracked files.
+- Keep all work local-only and uncommitted. Publication and any repair remain separately gated.
+- Report existing versus added coverage, exact findings, changed paths, test and cleanup results, local branch/durability, preserved exclusions, and whether Task 1P.6 can close or needs a separate repair proposal.
+
+## Work Block 4BD Status
+
+- Ryan confirmed the exact 4BD proposal on 2026-07-24.
+- `scripts/mobile_drawer_browser_test.py` now proves exact manifest/icon/installability inputs, root worker scope and static-only caching, real generic cross-entity offline navigation, configured-auth browser request classes and safe sign-in, and exact synthetic Personal/Luxe Legacy `/k/` fields with BFM exclusion.
+- Baseline and final full smoke and isolated-Chrome suites, Python compilation, denied networking, expected-error scoping, exact cleanup, JSON, whitespace, dashboard refresh/health, rendered inspection, scope review, and preserved-file checks pass.
+- No product defect or repair need was found. No product, dependency, workflow, credential, protected-data, real-database, production/demo, external, GitHub, deployment, Fly, downstream, or preserved-file action occurred.
+- Tasks 1P.6.1-1P.6.4, Task 1P.6, and `P3-3J-C01` are complete locally through 4BD.
+- 4BD remains local-only and uncommitted on `codex/pwa-browser-boundary-coverage`. Evidence: `command-center/logs/2026-07-24-installed-pwa-browser-boundary-coverage-4bd.md`.
+- Exact-scope 4BD-R durability/publication is the next separate decision. If publication is parked, propose 4BE for Task 1P.7.
 
 ## Work Block 4BC Contract
 

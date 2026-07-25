@@ -1741,7 +1741,7 @@ The source and maintained local proof are complete through 4BB. Commit, push, me
 
 ## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
 
-Status: partly addressed through work blocks 4A and 4AD; responsive-navigation coverage is maintained locally and broader browser/public coverage remains
+Status: resolved locally through work block 4BD; publication remains separate
 
 Severity: medium regression-confidence risk
 
@@ -1753,11 +1753,11 @@ Revisit: Phase 4 Task 2 alongside the selected authentication, cache, public-rou
 
 Summary:
 
-Work block 4A added maintained configured/no-password authentication, CSRF, safe redirect, exempt/public route, no-store, and service-worker source-contract coverage. Work block 4AD adds a maintained isolated-Chrome layer for mobile responsive navigation, including closed/open semantics, focus, Escape, scrim, body scroll lock, route and entity actions, exact `768px` behavior, desktop transition, denied external requests, console health, and cleanup. Manifest/icon, service-worker installation/offline isolation, and the remaining exact public/auth browser slices are still not maintained.
+Work block 4A added maintained configured/no-password authentication, CSRF, safe redirect, exempt/public route, no-store, and service-worker source-contract coverage. Work block 4AD added maintained isolated-Chrome mobile responsive-navigation proof. Work block 4BD converged the remaining browser boundaries in that same maintained isolated runner: exact manifest identity and icon dimensions, secure-context/root-worker installability inputs, static-only cache contents, real identical generic cross-entity offline navigation, configured-auth request classes and safe sign-in, absence of a client digest, and exact authenticated/no-password `/k/` Personal/Luxe Legacy fields with BFM exclusion.
 
 Impact:
 
-The highest-risk 3J boundaries can regress without repeatable detection; the audit evidence is deterministic but ephemeral.
+The selected 3J browser boundaries now have repeatable synthetic request and isolated-browser detection. Remaining risk is local durability/publication, not an unguarded acceptance boundary.
 
 Acceptance checks:
 
@@ -1767,4 +1767,4 @@ Acceptance checks:
 
 Remaining work:
 
-Add maintained isolated-browser coverage for service-worker installation/offline isolation, exact authenticated `/k/` fields, manifest/icons, and the remaining configured-auth/public browser boundaries. Responsive keyboard/navigation state is complete locally through 4AD; do not treat that focused slice as closing the broader PWA/browser item.
+Publish only through a separately authorized exact-scope 4BD-R block. Do not reopen the resolved item without contrary evidence.
