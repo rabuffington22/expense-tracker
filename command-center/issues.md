@@ -8,7 +8,7 @@ The Task 7 snapshot contains 42 unresolved behavioral or policy findings, 10 reg
 
 ## Cash Flow Shared Sibling Cards Can Misroute Writes Into The Active Entity
 
-Status: resolved locally through 4BH; durability and publication separately gated
+Status: resolved and durable without deployment through 4BI-R
 
 Severity: high entity-isolation and data-integrity risk
 
@@ -16,7 +16,7 @@ Captured: 2026-07-25
 
 Where seen: `web/templates/cashflow.html`, `web/static/cashflow.js`, `web/routes/cashflow.py`, and the disposable 4BG collision probe
 
-Revisit: exact-scope 4BH durability or Task 1P.7.4b coverage completion
+Revisit: only if maintained regression coverage fails or the shared-visibility product contract changes
 
 Summary:
 
@@ -36,7 +36,7 @@ Acceptance:
 - Luxe Legacy stays isolated.
 - Maintained temporary all-entity tests cover colliding IDs, rendered controls, direct POST attempts, denied networking, and exact cleanup.
 
-Work block 4BG stopped at this confirmed mismatch before maintained-test expansion. Work block 4BH now makes sibling cards view-only without account IDs or mutation targets, requires every included mutation route to receive the active cookie entity, and returns controlled HTTP 404 before database access for missing or mismatched targets. Maintained all-entity colliding-ID proof covers every included route, valid active-entity bank/card/recurring writes, rendered controls, isolated-browser behavior, Luxe Legacy isolation, denied networking, and exact row/sequence cleanup. Full smoke and maintained browser suites pass. The repair remains local and uncommitted; no migration, protected-data access, external call, publication, workflow, Fly action, or deployment occurred. Evidence: `command-center/logs/2026-07-25-cashflow-entity-boundary-repair-4bh.md`.
+Work block 4BG stopped at this confirmed mismatch before maintained-test expansion. Work block 4BH makes sibling cards view-only without account IDs or mutation targets, requires every included mutation route to receive the active cookie entity, and returns controlled HTTP 404 before database access for missing or mismatched targets. Work block 4BI completes the maintained financial-behavior matrix. The exact combined package is durable on `main` through 4BI-R with zero workflow runs and no deployment. Maintained all-entity colliding-ID proof covers every included route, valid active-entity bank/card/recurring writes, rendered controls, isolated-browser behavior, Luxe Legacy isolation, denied networking, and exact row/sequence cleanup. Evidence: `command-center/logs/2026-07-25-cashflow-boundary-financial-coverage-release-4bi-r.md`.
 
 ## Daily Plaid Sync Disabled For Inactivity
 

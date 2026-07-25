@@ -9,6 +9,7 @@ const statePath = path.join(commandCenterRoot, "state.json");
 const dashboardPath = path.join(commandCenterRoot, "index.html");
 const roadmapPath = path.join(commandCenterRoot, "roadmap.md");
 const queueRoot = path.join(commandCenterRoot, "agent-router", "queue");
+const checkOnly = process.argv.includes("--check");
 
 function countQueue(folder) {
   const dir = path.join(queueRoot, folder);
@@ -181,8 +182,12 @@ function replaceDashboardState(html, state) {
   return next.replace(/<title>[\s\S]*?<\/title>/, `<title>${state.project.name} Command Center</title>`);
 }
 
-const state = JSON.parse(fs.readFileSync(statePath, "utf8"));
-state.project.lastUpdated = formatCentralTimestamp();
+const originalState = fs.readFileSync(statePath, "utf8");
+const originalDashboard = fs.readFileSync(dashboardPath, "utf8");
+const state = JSON.parse(originalState);
+if (!checkOnly) {
+  state.project.lastUpdated = formatCentralTimestamp();
+}
 const isScratchProfile = state.project?.scaffold?.profile === "scratch";
 state.routerHealth = {
   ...(state.routerHealth || {}),
@@ -190,7 +195,7 @@ state.routerHealth = {
   summary: isScratchProfile
     ? "Scratch-project queue is clear; command-center state is local to this project."
     : "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
-  lastChecked: formatCentralTimestamp().slice(0, 10),
+  lastChecked: checkOnly ? state.routerHealth?.lastChecked : formatCentralTimestamp().slice(0, 10),
   command: "node command-center/agent-router/scripts/queue-summary.js",
   healthCommand: "node command-center/scripts/health-check.js",
   counts: {
@@ -216,6 +221,17 @@ state.verification = {
   dashboardRefresh: "pass"
 };
 validateState(state);
-fs.writeFileSync(statePath, `${JSON.stringify(state, null, 2)}\n`);
-fs.writeFileSync(dashboardPath, replaceDashboardState(fs.readFileSync(dashboardPath, "utf8"), state));
-console.log(`Refreshed ${path.relative(root, dashboardPath)} from ${path.relative(root, statePath)}`);
+const nextState = `${JSON.stringify(state, null, 2)}\n`;
+const nextDashboard = replaceDashboardState(originalDashboard, state);
+
+if (checkOnly) {
+  if (nextState !== originalState || nextDashboard !== originalDashboard) {
+    console.error("Generated command-center state is stale; run node command-center/scripts/refresh-dashboard.js");
+    process.exit(1);
+  }
+  console.log("Command center generated state is current");
+} else {
+  fs.writeFileSync(statePath, nextState);
+  fs.writeFileSync(dashboardPath, nextDashboard);
+  console.log(`Refreshed ${path.relative(root, dashboardPath)} from ${path.relative(root, statePath)}`);
+}

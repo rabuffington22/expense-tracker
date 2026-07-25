@@ -6,6 +6,7 @@ const vm = require("vm");
 
 const root = process.cwd();
 const commandCenter = path.join(root, "command-center");
+const ciMode = process.argv.includes("--ci");
 const watchedSourceFiles = [
   "command-center/roadmap.md",
   "command-center/now.md",
@@ -178,6 +179,8 @@ function validateRoadmapTaskInventory(state) {
 }
 
 function validateDashboardFreshness() {
+  if (ciMode) return;
+
   const stateStat = fs.statSync(statePath);
   const newerSources = [];
 

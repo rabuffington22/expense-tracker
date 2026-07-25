@@ -2,27 +2,67 @@
 
 ## Active Objective
 
-Decompose Task 3 just in time before proposing any safe synthetic CI implementation block.
+Publish the exact verified 4BJ synthetic CI foundation directly to `main` without deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 are durable without deployment, and Task 3 is the sole current planning gate.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 are durable without deployment, Tasks 3.1-3.2 are complete locally through 4BJ, and Task 4 is current for exact 4BJ-R durability.
 
 ## Current Work Block
 
-Work block 4BI-R: Cash Flow Boundary Repair And Financial-Coverage Durability Without Deployment — done and durable without deployment.
+Work block 4BJ-R: Safe Synthetic CI Durability Without Deployment — active.
 
 ## Current Task
 
-Task 3: Add safe CI checks — current for just-in-time decomposition only; implementation remains unconfirmed.
+Task 4: Publish and verify only explicitly approved repairs — current for the exact verified 4BJ source package.
 
 ## Owner
 
-Ryan owns the next planning decision. Codex may decompose Task 3 and propose a bounded 4BJ block only after a separate confirmation; no CI, workflow, deployment, production, or protected action is active.
+Codex owns exact-path verification, staging, commits, clean local-main fast-forward, non-force pushes, remote/no-workflow verification, dashboard stewardship, and final intake.
 
 ## Current Action
 
-Wait at the Task 3 planning gate. If Ryan confirms planning, inspect the current synthetic-test and workflow boundaries, decompose the task just in time, and propose 4BJ without implementing it.
+Reverify the exact 13-path 4BJ package, stage only those paths, create one `[skip actions]` source commit, cleanly fast-forward local `main`, push non-force, verify exact remote SHA and zero workflow runs, then publish one sanitized `[skip actions]` closeout commit.
+
+## Work Block 4BJ-R Contract
+
+- Include Task 4 only for the exact verified 4BJ package: `.github/workflows/synthetic-ci.yml`, `README.md`, `scripts/ci_safety_check.py`, `command-center/synthetic-ci-safety-contract.md`, the two command-center verification scripts, the 4BJ evidence log, and the six current Runway OS source/generated paths.
+- Exclude Task 3.3 browser CI, broader Task 2, further Task 4 scope, Phase 5, product/runtime/dependency/migration/authentication/CSRF/CSP changes, edits to either operational workflow, PR creation, workflow execution/dispatch/rerun, deployment, Fly, Plaid, production/demo/downstream, credentials, protected or real data, force push, conflict resolution, rebase, broader recovery, and the three preserved untracked files.
+- Use explicit-path staging and two `[skip actions]` commits. Ryan's direct-main instruction overrides the prior draft-PR proposal; `[skip actions]` keeps the automatic Fly deployment and every workflow run outside this release.
+- Stop for any unexpected or sensitive path; preserved-file overlap; verification, dashboard, or scope failure; live remote divergence; non-fast-forward requirement; push rejection; inability to verify GitHub; any workflow run or deployment despite `[skip actions]`; or recovery beyond read-only diagnosis.
+- Verify full synthetic smoke; the maintained CI safety checker; YAML, Python, JavaScript, and JSON syntax; generated-dashboard currentness and health; whitespace and high-confidence secret patterns; rendered dashboard; exact changed/staged/committed paths; ancestry; exact live remote/GitHub SHA; zero workflow activity for both commits; final local/remote alignment; and all preserved files.
+- Report source and closeout SHAs, exact published paths, ancestry and remote alignment, zero-workflow/no-deployment result, verification, final worktree, preserved exclusions, and the still-separate Task 3.3 gate.
+
+## Work Block 4BJ-R Status
+
+- Ryan directly authorized commit and non-force push to `main` on 2026-07-25.
+- The exact verified 4BJ package is being revalidated before staging.
+- No PR, workflow execution, deployment, Fly action, production access, protected-data access, force push, delegation, or second opinion is authorized.
+
+## Work Block 4BJ Contract
+
+- Include Task 3.1 (`P4-T31`) and Task 3.2 (`P4-T32`) only: freeze the exact pull-request, permission, immutable-action, Python 3.12, dependency, logging, network, timeout, command, and protected-data contract; then add one new PR-only core synthetic workflow, a maintained static safety check, compact maintained documentation, sanitized evidence, and Runway OS integration.
+- Exclude Task 3.3 browser CI, broader Task 2, Task 4 publication, Phase 5, edits to the two operational workflows, workflow enablement/execution/dispatch/rerun, staging, commit, push, PR, merge, deployment, product behavior, migrations, authentication/CSRF/CSP, Plaid, Fly, production/demo/downstream, credentials, real databases/uploads/financial rows, delegation/second opinion, and all three preserved untracked files.
+- Use `pull_request` targeting `main` only, `permissions: contents: read`, non-persistent checkout credentials, verified immutable official-action SHAs, Python 3.12, `requirements.txt` only, no dependency cache, and no artifact upload.
+- Stop for secrets or write permissions; push, workflow-dispatch, deploy, sync, or operational-workflow edits; mutable or credential-persistent actions; product changes needed for Linux/Python 3.12; Task 3.3 scope; failed verification/dashboard/scope/preserved-file checks; or any protected/live requirement.
+- Verify baseline and final full synthetic smoke, maintained static workflow assertions, YAML and relevant Python/JavaScript syntax, JSON, dashboard refresh/health/currentness and rendered state, whitespace, exact paths, zero staged changes, zero external actions, and preservation of the three unrelated untracked files.
+- Report the exact local workflow contract, verification, branch and worktree state, protected exclusions, and the separately gated 4BJ-R publication/observation proposal.
+
+## Work Block 4BJ Status
+
+- Ryan confirmed the exact recommended 4BJ proposal on 2026-07-25.
+- Tasks 3.1-3.2 are complete locally on `codex/safe-synthetic-ci`; the exact PR-to-`main`, read-only-token, non-persistent-checkout, immutable-action, Python 3.12, runtime-dependency-only, synthetic-command contract is maintained and fail-closed.
+- Baseline and final smoke, a fresh disposable Python 3.12 install and full smoke, YAML, Python/JavaScript syntax, JSON, generated-dashboard currentness, normal and CI health, whitespace, high-confidence secret-pattern, exact-scope, zero-staged, and preserved-file checks pass.
+- GitHub-hosted runner egress is not a general firewall; the approved network surface is pinned action retrieval and tracked dependency installation, with no secrets, write authority, protected data, real input, or other reviewed network command.
+- No staging, commit, push, PR, workflow action, deployment, production access, protected-data access, product change, operational-workflow edit, delegation, second opinion, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-25-safe-pr-synthetic-ci-foundation-4bj.md`.
+- Proposed 4BJ-R publication/observation is the next separate decision; Task 3.3 remains planned behind a stable live core run.
+
+## Task 3 Decomposition
+
+- **Task 3.1: Freeze the safe synthetic CI contract.** Define exact pull-request trigger, least-privilege token, immutable action reference, dependency, logging, network, timeout, command, and protected-data boundaries. Status: complete locally through 4BJ.
+- **Task 3.2: Implement the PR-only core synthetic CI foundation.** Add one workflow that installs only tracked runtime dependencies and runs the maintained synthetic smoke, syntax, JSON, dashboard-health/currentness, and whitespace checks without secrets or live services. Status: complete locally through 4BJ; durability is active through 4BJ-R.
+- **Task 3.3: Add isolated-browser CI coverage.** Add the separate development dependency and Chrome runner setup for the full maintained browser suite only after the core workflow proves stable. Status: planned behind Task 3.2.
 
 ## Work Block 4BI-R Contract
 

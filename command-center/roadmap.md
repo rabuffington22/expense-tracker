@@ -995,8 +995,79 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
       - **Task 1P.7.4a: Repair the Cash Flow shared-entity mutation boundary.** Make Personal/BFM sibling sections genuinely read-only, require every account/card/recurring mutation target to match the active cookie entity, preserve valid active-entity mutations, and add focused maintained colliding-ID, no-mutation, entity-isolation, denied-network, and exact-cleanup proof. Status: complete and durable without deployment through 4BI-R.
       - **Task 1P.7.4b: Complete Cash Flow financial-behavior coverage.** Resume the stopped 4BG matrix for manual bank/card persistence, stored liabilities, manual recurring add/projection/delete, representative automatic recurrence and date boundaries, empty states, Personal/BFM shared visibility, Luxe Legacy isolation, denied networking, and exact cleanup after Task 1P.7.4a passes. Status: complete and durable without deployment through 4BI-R.
 - **Task 2: Expand regression tests around repaired workflows and entity isolation.** Status: active as paired work only; 4C completed `P3-3A-C01`, 4D completed the payroll-boundary slice of `P3-3F-C01`, 4E completed the planning-boundary slice of `P3-3D-C01`, 4F completed the Owner Draw/source-selection slice of `P3-3I-C01`, 4G completed the workflow-visible result slice of `P3-3H-C01`, 4H completed the recurring-report slice of `P3-3C-C01`, 4I completed the transaction/cursor atomicity slice, 4J completed its reconciliation, link, liability, and freshness slice, 4K completed its item-isolation and observability slice, 4M completed its vendor-payment matching slice, 4P completed its payroll import and payload slice, 4Q completed its roster-validation slice, 4S completed the locked-payoff APR slice, 4T completed the snapshot-persistence slice of `P3-3D-C01`, 4V completed the `P3-3E-01`/`P3-3E-02` Weekly slice, 4W completed the `P3-3E-04` Weekly/Waterfall validation slice, 4AD completed the responsive-navigation slice of `P3-3J-C01`, 4AS completed its shared-shell/dashboard/report source-rendered and configured-auth/no-password all-entity responsive browser slice, 4AT completed its transaction/matching source-rendered and configured-auth/no-password all-entity responsive browser slice, 4AV completed its Cash Flow and planning source-rendered and configured-auth/no-password supported-boundary responsive browser slice, 4AW completed its Weekly/Waterfall source-rendered and configured-auth/no-password supported-boundary responsive browser slice, 4AX completed its Subscriptions/Payroll source-rendered/repeated-partial and configured-auth/no-password responsive browser slice, 4AY completed its Data Sources/Connected Accounts source, conditional-rendered, mocked-Plaid, all-entity, both-auth, phone/exact-768/desktop responsive browser slice, and 4AZ completed its login/offline/error/standalone source, rendered, request, cached-asset, both-auth, entity-boundary, phone/exact-768/desktop browser and visual slice.
-- **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.** Status: current planning gate; decompose just in time before proposing 4BJ, with implementation separately gated.
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4BI-R for the latest explicitly approved source set; every future publication remains separately gated.
+- **Task 3: Add CI checks that are safe for a private financial application and use only synthetic data.** The just-in-time 2026-07-25 pass split the umbrella into three visible tasks so core CI, browser CI, and publication are not conflated. Status: active at the 4BJ-R publication/observation decision after Tasks 3.1-3.2 completed locally.
+  - **Task 3.1: Freeze the safe synthetic CI contract.** Define the exact pull-request trigger, least-privilege token, immutable action references, Python/runtime alignment, dependency installation, logging, network, timeout, command, and protected-data boundaries before adding a workflow. Status: complete locally through 4BJ.
+  - **Task 3.2: Implement the PR-only core synthetic CI foundation.** Add one GitHub Actions workflow that runs only on pull requests targeting `main`, persists no checkout credentials, receives no secrets, performs no deploy or sync action, installs tracked runtime dependencies under Python 3.12, and runs the maintained synthetic smoke, relevant Python/JavaScript syntax, JSON, dashboard refresh/health/currentness, and whitespace checks. Status: complete locally through 4BJ; publication and execution remain separately gated.
+  - **Task 3.3: Add isolated-browser CI coverage.** Add the separate `requirements-dev.txt` and installed-Chrome runner path for the full maintained isolated-browser suite, preserving denied non-localhost traffic, synthetic all-entity data, expected-error scoping, and exact cleanup. Status: planned behind a stable core CI foundation because runner setup, runtime, and failure diagnosis differ.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: current for exact 4BJ-R direct-main durability without deployment.
+
+### Confirmed Work Block 4BJ-R: Safe Synthetic CI Durability Without Deployment
+
+Status: active; directly authorized by Ryan on 2026-07-25.
+
+Parent task: Phase 4 Task 4, limited to the exact verified 4BJ source package.
+
+Included: record 4BJ-R active; re-run the approved source-package checks; explicitly stage only `.github/workflows/synthetic-ci.yml`, `README.md`, `scripts/ci_safety_check.py`, `command-center/synthetic-ci-safety-contract.md`, `command-center/scripts/health-check.js`, `command-center/scripts/refresh-dashboard.js`, `command-center/logs/2026-07-25-safe-pr-synthetic-ci-foundation-4bj.md`, `command-center/decisions.md`, `command-center/index.html`, `command-center/issues.md`, `command-center/now.md`, `command-center/roadmap.md`, and `command-center/state.json`; create one `[skip actions]` source commit on `codex/safe-synthetic-ci`; cleanly fast-forward local `main`; non-force push `origin/main`; verify exact live remote/GitHub SHA and zero workflow activity; then publish one sanitized `[skip actions]` closeout commit.
+
+Excluded: Task 3.3 browser CI; broader Task 2; further Task 4; Phase 5; product, runtime, dependency, migration, authentication, CSRF, or CSP changes; edits to `.github/workflows/fly-deploy.yml` or `.github/workflows/daily-plaid-sync.yml`; PR creation; workflow execution, dispatch, or rerun; deployment; Fly; Plaid; production/demo/downstream; credentials; protected or real data; force push; conflict resolution; rebase; broader recovery; `scripts/sync_prod_to_local.sh`; `command-center/now 2.md`; and the unrelated duplicate 4AU log.
+
+Why this grouping: the workflow, fail-closed checker, safety contract, deterministic dashboard checks, maintained guidance, evidence, and Runway OS state form one auditable synthetic CI foundation. The direct-main request changes the publication route but does not expand implementation or live-operation scope.
+
+Owner and recommended agent: Codex Desktop without delegation or second opinion. Codex owns exact-path verification, sensitive-addition review, staging, commits, ancestry, clean local-main fast-forward, non-force pushes, remote/no-workflow verification, dashboard stewardship, and final intake.
+
+Runner path: continue on `codex/safe-synthetic-ci`; verify active Runway OS and GitHub prerequisites; re-run the complete source-package checks; stage the 13 approved paths only; create and inspect the source commit; cleanly fast-forward and push `main`; verify exact SHA and zero workflow activity; then write, verify, commit, and push the sanitized closeout.
+
+Defaults: explicit-path staging; two `[skip actions]` commits; direct non-force main publication without PR, workflow action, deployment, Fly, or production access; preserve all three unrelated untracked files; expected source parent `2babc9403f808ab65549751d11f5e3c429d8bf9d`, subject to immediate pre-stage revalidation.
+
+Blocking questions: none. Ryan's direct-main instruction resolves the publication route; `[skip actions]` preserves the separate deployment gate.
+
+Expansion candidates and questions: none. Browser CI, observed PR execution, deployment, and product work have different definitions of done.
+
+Stop conditions: any unexpected or sensitive path; preserved-file overlap; failed verification, dashboard, or scope check; live remote divergence; non-fast-forward requirement; push rejection; inability to verify GitHub; any workflow run or deployment despite `[skip actions]`; or recovery beyond read-only diagnosis.
+
+Verification: full `.venv/bin/python scripts/smoke_test.py`; `.venv/bin/python scripts/ci_safety_check.py`; workflow YAML, relevant Python and JavaScript syntax, JSON, dashboard refresh/currentness/health/generated/rendered state, whitespace, high-confidence sensitive-addition review, exact changed/staged/committed paths, ancestry, exact live remote/GitHub SHA, zero workflow activity for both commits, final local/remote alignment, and all three preserved files.
+
+Dashboard closeout: show 4BJ-R active with Task 4 current before staging. After remote verification, mark 4BJ-R and Tasks 3.1-3.2 durable without deployment, return Task 3 to the next just-in-time gate for Task 3.3, and refresh, health-check, and inspect the rendered dashboard.
+
+Report point: return source and closeout SHAs, exact published paths, ancestry and remote alignment, zero-workflow/no-deployment result, verification, final worktree, preserved exclusions, and the separate Task 3.3 gate.
+
+Suggested next work block: perform a just-in-time Task 3.3 browser-CI planning pass only after Ryan chooses whether the core PR workflow should first be exercised through a separately confirmed test PR.
+
+### Confirmed Work Block 4BJ: Safe PR-Only Synthetic CI Foundation
+
+Status: complete and locally verified; confirmed and completed on 2026-07-25; unpublished, uncommitted, and unstaged.
+
+Parent tasks: Phase 4 Task 3.1 (`P4-T31`) and Task 3.2 (`P4-T32`) only.
+
+Included: freeze the exact pull-request trigger, least-privilege token, immutable action references, Python/runtime alignment, dependency installation, logging, network, timeout, command, and protected-data boundaries; create local branch `codex/safe-synthetic-ci`; add one new PR-only core synthetic workflow targeting `main`; add maintained static safety assertions; update compact maintained CI guidance; write one sanitized evidence log; integrate and close the block in Runway OS.
+
+Excluded: Task 3.3 browser CI; broader Task 2; Task 4 publication; Phase 5; edits to `.github/workflows/fly-deploy.yml` or `.github/workflows/daily-plaid-sync.yml`; workflow enablement, execution, dispatch, or rerun; staging, commit, push, PR, merge, or deployment; product behavior; migrations; authentication, CSRF, or CSP; Plaid, Fly, production, demo, downstream, credentials, real databases, uploads, or financial rows; delegation or second opinion; `scripts/sync_prod_to_local.sh`; `command-center/now 2.md`; and the unrelated duplicate 4AU log.
+
+Why this grouping: Tasks 3.1-3.2 share one safety contract, workflow file, and deterministic local verification path. Task 3.3 requires a separate browser dependency, installed-Chrome runner, longer runtime, and different failure diagnosis, so its right design depends on observing the core foundation first.
+
+Owner and recommended agent: Codex Desktop without delegation or second opinion. Codex owns the contract, local source, maintained safety assertions, verification, dashboard stewardship, and final intake.
+
+Runner path: write and verify this active contract first; create `codex/safe-synthetic-ci`; re-run baseline smoke; resolve immutable official-action SHAs from their official repositories; implement only the approved workflow, safety check, documentation, evidence, and command-center paths; run complete local verification; then close 4BJ locally and uncommitted.
+
+Expected paths: new `.github/workflows/synthetic-ci.yml`; new `command-center/synthetic-ci-safety-contract.md`; one maintained standard-library workflow safety checker, expected at `scripts/ci_safety_check.py`; `README.md`; one sanitized 4BJ evidence log; and the Runway OS source/generated dashboard paths.
+
+Defaults: `pull_request` targeting `main` only; `permissions: contents: read`; checkout `persist-credentials: false`; official actions pinned to verified full commit SHAs; Python 3.12; install only `requirements.txt`; no dependency cache or artifact upload; no delegation or second opinion.
+
+Blocking questions: none.
+
+Expansion candidates and questions: none. Browser CI and publication introduce different risk and verification classes.
+
+Stop conditions: any secret or write permission; protected or live data/service requirement; push, `workflow_dispatch`, deployment, sync, or operational-workflow edit; inability to keep checkout non-persistent or action references immutable; Linux/Python 3.12 compatibility requiring product change; need for Task 3.3; failed verification, dashboard, scope, or preserved-file checks.
+
+Verification: baseline and final `.venv/bin/python scripts/smoke_test.py`; maintained static safety check; YAML syntax; relevant Python compilation and JavaScript syntax; JSON validation; dashboard refresh, health, generated currentness and rendered inspection; `git diff --check`; exact changed and staged paths; zero external actions; and all three preserved untracked files.
+
+Dashboard closeout: show 4BJ active with Task 3.1 current before branch/workflow work. At completion, mark Tasks 3.1-3.2 and 4BJ complete locally, keep Task 3 active, and make 4BJ-R publication/observation the next separate gate while Task 3.3 remains planned behind a stable live core run.
+
+Report point: return the exact local workflow contract, maintained safety guarantees, verification, changed paths, branch and zero-staged state, protected exclusions, and the separately gated 4BJ-R proposal.
+
+Suggested next work block: 4BJ-R to publish the exact verified source through a feature branch and draft PR and observe the core synthetic run without merge or deployment. Consider Task 3.3 only after the live core run is stable.
+
+Result: the new PR-to-`main` workflow grants `contents: read` only, persists no checkout credentials, pins the official checkout and setup-python actions to verified full commit SHAs, uses Python 3.12 and `requirements.txt` only, and runs the maintained safety, full synthetic smoke, syntax, JSON, generated-dashboard currentness, CI-health, and pull-request whitespace checks. Baseline and final local smoke plus a disposable Python 3.12 install and full smoke, YAML, Python/JavaScript syntax, JSON, dashboard, whitespace, secret-pattern, exact-scope, zero-staged, and preserved-file checks pass. GitHub-runner egress is explicitly bounded but not sandboxed: pinned actions and public dependency installation use normal network access, while the reviewed workflow contains no other network command and receives no secrets, write authority, protected data, or real input. No staging, commit, push, PR, workflow action, deployment, production/protected access, product change, operational-workflow edit, delegation, second opinion, or preserved-file mutation occurred. Evidence: `command-center/logs/2026-07-25-safe-pr-synthetic-ci-foundation-4bj.md`.
 
 ### Confirmed Work Block 4BI-R: Cash Flow Boundary Repair And Financial-Coverage Durability Without Deployment
 

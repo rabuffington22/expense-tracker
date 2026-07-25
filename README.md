@@ -88,6 +88,20 @@ Open [http://127.0.0.1:8501](http://127.0.0.1:8501). `run.py` loads the project-
 
 The smoke suite creates a temporary `DATA_DIR` and uses synthetic fixtures. It does not need a live server, production credentials, or real financial data.
 
+### Pull-request synthetic CI
+
+The `Synthetic CI` workflow is designed only for pull requests targeting `main`. It grants read-only repository contents, persists no checkout credentials, receives no secrets, installs only `requirements.txt` under Python 3.12, and runs the maintained core smoke, safety, syntax, JSON, dashboard-currentness/health, and whitespace checks. Official actions are pinned to full verified commit SHAs.
+
+The workflow never runs the separate browser suite, Plaid, Fly, production/demo, downstream, real databases, uploads, or financial rows. Its exact fail-closed contract is maintained in `command-center/synthetic-ci-safety-contract.md` and checked locally with:
+
+```bash
+.venv/bin/python scripts/ci_safety_check.py
+node command-center/scripts/refresh-dashboard.js --check
+node command-center/scripts/health-check.js --ci
+```
+
+Creating a test PR, executing the workflow, merging PR changes, deploying, and adding browser CI are separate authorization gates.
+
 ### Focused browser regression checks
 
 Install the separate local development dependencies and run the maintained mobile-drawer browser check with the installed Google Chrome channel:
