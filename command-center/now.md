@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Make the exact verified 4BD maintained-test and sanitized command-center set durable on `main` without triggering GitHub Actions or a Fly deployment.
+Run the just-in-time planning pass for Task 1P.7, decompose its broad financial read-model coverage into visible tasks, and propose a bounded 4BE block before implementation.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Task 1P.6 and `P3-3J-C01` are complete locally through 4BD, and confirmed 4BD-R now owns their exact durability slice.
+Phase 4: Core Repairs And Regression Coverage — active; Task 1P.6 and `P3-3J-C01` are durable through 4BD-R with no workflow or deployment, and Task 1P.7 is now the next planning gate.
 
 ## Current Work Block
 
-Work block 4BD-R: Installed-PWA Browser-Coverage Durability — active.
+Work block 4BD-R: Installed-PWA Browser-Coverage Durability — done and durable on `origin/main`.
 
 ## Current Task
 
-Task 4: Publish and verify the exact approved 4BD set — current inside confirmed 4BD-R.
+Task 1P.7: Finish the remaining broad financial read-model regression coverage — current at the just-in-time decomposition gate.
 
 ## Owner
 
-Codex Desktop owns exact-path verification, `[skip actions]` commits, the clean `main` fast-forward, non-force push, remote/no-workflow verification, and Runway OS closeout. Ryan retains every scope expansion, live action, deployment, protected-access, and Task 1P.7 decision.
+Ryan owns confirmation of the next 4BE proposal after Codex performs the bounded Task 1P.7 planning pass. Codex completed 4BD-R durability, remote verification, and Runway OS closeout.
 
 ## Current Action
 
-Verify the active 4BD-R dashboard, re-run the approved release checks, publish only the exact 4BD set with `[skip actions]`, prove no workflow or deployment starts, and publish one sanitized closeout.
+Decompose Task 1P.7 into visible execution-sized subtasks in Runway OS, refresh and inspect the dashboard, then propose only the next coherent 4BE work block for Ryan confirmation.
 
 ## Work Block 4BD-R Contract
 
@@ -37,8 +37,12 @@ Verify the active 4BD-R dashboard, re-run the approved release checks, publish o
 ## Work Block 4BD-R Status
 
 - Ryan confirmed the exact 4BD-R proposal on 2026-07-24.
-- Active command-center state and dashboard verification must pass before staging or committing.
-- Publication, remote verification, and closeout are in progress; no product implementation or deployment is included.
+- Exact nine-path source commit `1d9f4904d0e84cc1696f7e4d89a536668a161c1e` is durable on `origin/main`.
+- Full smoke, isolated Chrome, compilation, cleanup, sensitive-addition, JSON, whitespace, dashboard, exact staging/commit, ancestry, push, remote-SHA, no-workflow, and preserved-file checks passed.
+- GitHub reports zero workflow runs for the source SHA. No Fly deployment or production access occurred.
+- No product/runtime/dependency/workflow/configuration, credential, protected-data, real-database, Plaid, downstream, PR, force-push, broader-recovery, or preserved-file action occurred.
+- This sanitized closeout is published separately with `[skip actions]`. Evidence: `command-center/logs/2026-07-24-installed-pwa-browser-boundary-coverage-release-4bd-r.md`.
+- Task 1P.7 returns to the next planning gate and must be decomposed before 4BE is proposed.
 
 ## Task 1P.6 Just-In-Time Decomposition
 

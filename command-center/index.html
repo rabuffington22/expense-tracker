@@ -1602,7 +1602,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-24 7:49 PM CST",
+    "lastUpdated": "2026-07-24 7:59 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -1619,27 +1619,27 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R all eight application-style clusters are durable deployed and health verified through 4AZ-R Tasks 1P.4.3b.1 through 1P.4.3b.2 policy artifacts are durable through 4BA-R and Task 1P.4.4 is durable deployed and health verified through 4BB-R"
+    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R all eight application-style clusters are durable deployed and health verified through 4AZ-R Tasks 1P.4.3b.1 through 1P.4.3b.2 policy artifacts are durable through 4BA-R Task 1P.4.4 is durable deployed and health verified through 4BB-R and Task 1P.6 is durable without deployment through 4BD-R"
   },
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Task 1P.6 and P3-3J-C01 are complete locally through 4BD; confirmed 4BD-R now owns only their exact skip-actions durability slice.",
+    "summary": "Task 1P.6 and P3-3J-C01 are durable through 4BD-R with no workflow or deployment; Task 1P.7 is now the next just-in-time planning gate.",
     "progress": 99
   },
   "currentTask": {
-    "title": "Task 4: Publish and verify explicitly approved repairs",
-    "owner": "Codex Desktop",
-    "status": "active",
-    "supportingAgent": "No delegation or second opinion; Codex owns exact-path publication verification and Runway OS closeout.",
-    "nextAction": "Verify active 4BD-R then rerun the approved checks before any staging or commit.",
-    "blocker": "None; stop for scope drift verification failure main divergence push rejection unexpected workflow activity or preserved-file overlap."
+    "title": "Task 1P.7: Finish the remaining broad financial read-model regression coverage",
+    "owner": "Ryan",
+    "status": "awaiting-planning",
+    "supportingAgent": "Codex completed 4BD-R exact-path durability remote verification and Runway OS closeout.",
+    "nextAction": "Request the just-in-time Task 1P.7 decomposition and bounded 4BE proposal before implementation.",
+    "blocker": "Task 1P.7 remains a broad umbrella and has no confirmed implementation block."
   },
   "currentWorkBlock": {
     "id": "phase-4-block-bd-r",
     "label": "4BD-R",
     "name": "Installed-PWA Browser-Coverage Durability",
-    "status": "active",
+    "status": "done",
     "owner": "Codex Desktop",
     "includedTasks": [
       "Task 4 exact verified 4BD durability slice",
@@ -1673,7 +1673,11 @@
       "Commit ancestry exact remote SHA no workflow activity final alignment and all preserved files"
     ],
     "nextReportPoint": "Return source and closeout SHAs exact published paths remote alignment skip-actions no-deployment result final worktree state preserved exclusions and the Task 1P.7 planning gate.",
-    "durability": "Active; source and closeout publication not yet complete."
+    "durability": "Exact source commit 1d9f4904d0e84cc1696f7e4d89a536668a161c1e is durable on origin main with zero workflow runs and no deployment.",
+    "result": "The exact nine-path 4BD set is durable on origin main; all release checks passed and skip actions produced zero workflow runs.",
+    "evidence": [
+      "command-center/logs/2026-07-24-installed-pwa-browser-boundary-coverage-release-4bd-r.md"
+    ]
   },
   "routerHealth": {
     "status": "healthy",
@@ -1698,21 +1702,30 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Complete confirmed 4BD-R durability without deployment",
-    "status": "in-progress",
-    "owner": "Codex Desktop",
-    "why": "Ryan confirmed the exact verified 4BD test and sanitized command-center package for skip-actions publication.",
-    "action": "Rerun release checks publish only the exact 4BD set verify remote no-workflow state and publish a sanitized closeout.",
+    "title": "Decompose Task 1P.7 and propose bounded 4BE",
+    "status": "waiting-on-ryan",
+    "owner": "Ryan",
+    "why": "4BD-R made Task 1P.6 durable without deployment; Task 1P.7 remains one broad umbrella and must be decomposed before implementation sizing.",
+    "action": "Request a just-in-time planning pass that writes visible Task 1P.7 subtasks into Runway OS then proposes only the next coherent 4BE block.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [],
+  "decisionsNeeded": [
+    {
+      "decision": "Request the just-in-time Task 1P.7 decomposition and bounded 4BE proposal.",
+      "owner": "Ryan",
+      "status": "open",
+      "context": "4BD-R is complete and durable; no Task 1P.7 implementation is authorized."
+    }
+  ],
   "waitingOnRyan": {
-    "summary": "No Ryan input is currently required inside confirmed 4BD-R.",
-    "items": []
+    "summary": "Ryan may request the Task 1P.7 just-in-time planning pass and 4BE proposal.",
+    "items": [
+      "Request decomposition of Task 1P.7 and a bounded 4BE proposal before implementation."
+    ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Confirmed 4BD-R covers only exact skip-actions durability of the verified 4BD set.",
-    "decisionQueue": "Task 1P.7 CI workflow action deployment production access Fly protected access and every expansion remain separate Ryan gates.",
+    "phaseQuestions": "4BD-R is complete; Task 1P.7 requires just-in-time decomposition before a 4BE proposal.",
+    "decisionQueue": "Task 1P.7 implementation CI workflow action deployment production access Fly protected access and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -1776,7 +1789,7 @@
       "phaseId": "phase-4",
       "label": "4BD-R",
       "name": "Installed-PWA Browser-Coverage Durability",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 4 exact verified 4BD durability slice"
       ],
@@ -1809,7 +1822,11 @@
         "Commit ancestry exact remote SHA no workflow activity final alignment and all preserved files"
       ],
       "reportBack": "Return source and closeout SHAs exact published paths remote alignment skip-actions no-deployment result final worktree state preserved exclusions and the Task 1P.7 planning gate.",
-      "durability": "Active; source and closeout publication not yet complete."
+      "durability": "Exact source commit 1d9f4904d0e84cc1696f7e4d89a536668a161c1e is durable on origin main with zero workflow runs and no deployment.",
+      "result": "The exact nine-path 4BD set is durable on origin main; all release checks passed and skip actions produced zero workflow runs.",
+      "evidence": [
+        "command-center/logs/2026-07-24-installed-pwa-browser-boundary-coverage-release-4bd-r.md"
+      ]
     },
     {
       "id": "phase-4-block-bd",
@@ -9942,11 +9959,11 @@
       "phaseId": "phase-4",
       "taskId": "P4-T1P7",
       "title": "Task 1P.7: Finish the remaining broad financial read-model regression coverage",
-      "status": "planned",
-      "owner": "Codex Desktop",
+      "status": "current",
+      "owner": "Ryan",
       "summary": "Consume the unpaired remainder of P3-3C-C01 through one separately scoped synthetic verification block rather than mixing it into public-route mobile or browser-policy implementation.",
-      "nextAction": "After 4BD-R completes decompose Task 1P.7 just in time before proposing 4BE.",
-      "blocker": "Confirmed 4BD-R durability is current and no Task 1P.7 work block exists."
+      "nextAction": "Request the just-in-time Task 1P.7 decomposition and bounded 4BE proposal before implementation.",
+      "blocker": "Task 1P.7 remains a broad umbrella and has no confirmed implementation block."
     },
     {
       "phaseId": "phase-4",
@@ -9968,12 +9985,12 @@
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "current",
+      "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Publish and verify only explicitly approved repairs through exact-scope direct-main release blocks; confirmed 4BD-R now owns the exact verified 4BD skip-actions durability slice.",
-      "nextAction": "Complete confirmed 4BD-R with exact-path commits remote verification and no workflow or deployment.",
+      "summary": "Publish and verify only explicitly approved repairs through exact-scope direct-main release blocks; the latest approved 4BD set is durable without deployment through 4BD-R.",
+      "nextAction": null,
       "blocker": null,
-      "result": "Every explicitly approved repair through 4BB-R is durable deployed and health verified; latest source commit 6c2a2800 is on main automatic Fly run 30116007970 and deploy job 89556739589 passed and credential-free production health returned HTTP 200.",
+      "result": "Every explicitly approved set through 4BD-R is durable; latest source commit 1d9f4904 is on main with zero workflow runs and no deployment.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -9998,7 +10015,8 @@
         "command-center/logs/2026-07-21-mobile-drawer-accessibility-release-4ad-r.md",
         "command-center/logs/2026-07-23-cashflow-planning-style-compatibility-release-4av-r.md",
         "command-center/logs/2026-07-24-standalone-document-style-compatibility-release-4az-r.md",
-        "command-center/logs/2026-07-24-final-csp-enforcement-release-4bb-r.md"
+        "command-center/logs/2026-07-24-final-csp-enforcement-release-4bb-r.md",
+        "command-center/logs/2026-07-24-installed-pwa-browser-boundary-coverage-release-4bd-r.md"
       ]
     },
     {
