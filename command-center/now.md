@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish the exact verified 4BJ synthetic CI foundation directly to `main` without deployment.
+Confirm or revise a separately bounded synthetic test PR to observe the durable core CI workflow before browser-CI planning.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 are durable without deployment, Tasks 3.1-3.2 are complete locally through 4BJ, and Task 4 is current for exact 4BJ-R durability.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, and Task 3 is current at the separate observed-test-PR decision.
 
 ## Current Work Block
 
-Work block 4BJ-R: Safe Synthetic CI Durability Without Deployment — active.
+Work block 4BJ-R: Safe Synthetic CI Durability Without Deployment — done and durable on `main` without deployment.
 
 ## Current Task
 
-Task 4: Publish and verify only explicitly approved repairs — current for the exact verified 4BJ source package.
+Task 3: Add safe CI checks — current at the separately gated test-PR observation decision. Tasks 3.1-3.2 are durable; Task 3.3 remains planned.
 
 ## Owner
 
-Codex owns exact-path verification, staging, commits, clean local-main fast-forward, non-force pushes, remote/no-workflow verification, dashboard stewardship, and final intake.
+Ryan owns the next decision. Codex owns the durable 4BJ-R result and any separately confirmed exact-scope test-PR intake.
 
 ## Current Action
 
-Reverify the exact 13-path 4BJ package, stage only those paths, create one `[skip actions]` source commit, cleanly fast-forward local `main`, push non-force, verify exact remote SHA and zero workflow runs, then publish one sanitized `[skip actions]` closeout commit.
+Wait for Ryan to confirm or revise a synthetic test-PR block. The recommended block would create and observe a minimal PR without merge or deployment; Task 3.3 browser CI, product work, production, and protected access remain separate.
 
 ## Work Block 4BJ-R Contract
 
@@ -36,8 +36,13 @@ Reverify the exact 13-path 4BJ package, stage only those paths, create one `[ski
 ## Work Block 4BJ-R Status
 
 - Ryan directly authorized commit and non-force push to `main` on 2026-07-25.
-- The exact verified 4BJ package is being revalidated before staging.
-- No PR, workflow execution, deployment, Fly action, production access, protected-data access, force push, delegation, or second opinion is authorized.
+- Exact 13-path source commit `30b4cd97d749e244727a03400cdfa869c34c702b` has parent `2babc9403f808ab65549751d11f5e3c429d8bf9d` and is durable on `origin/main`.
+- Full smoke, maintained CI safety, YAML, Python/JavaScript syntax, JSON, dashboard, whitespace, secret-pattern, exact-path, ancestry, remote, and preserved-file checks pass.
+- Local `HEAD`, local `main`, tracking `origin/main`, live remote `main`, and the GitHub commit API aligned to the source SHA after the non-force push.
+- GitHub reported zero workflow runs for the source SHA because the commit used `[skip actions]`; no Fly deployment, PR, workflow action, production access, or protected-data access occurred.
+- Tasks 3.1-3.2 are durable without deployment through 4BJ-R. This sanitized closeout is published separately with `[skip actions]`.
+- Evidence: `command-center/logs/2026-07-25-safe-synthetic-ci-durability-4bj-r.md`.
+- An observed synthetic test PR and Task 3.3 browser CI remain separate Ryan gates.
 
 ## Work Block 4BJ Contract
 

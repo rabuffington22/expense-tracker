@@ -999,11 +999,11 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
   - **Task 3.1: Freeze the safe synthetic CI contract.** Define the exact pull-request trigger, least-privilege token, immutable action references, Python/runtime alignment, dependency installation, logging, network, timeout, command, and protected-data boundaries before adding a workflow. Status: complete locally through 4BJ.
   - **Task 3.2: Implement the PR-only core synthetic CI foundation.** Add one GitHub Actions workflow that runs only on pull requests targeting `main`, persists no checkout credentials, receives no secrets, performs no deploy or sync action, installs tracked runtime dependencies under Python 3.12, and runs the maintained synthetic smoke, relevant Python/JavaScript syntax, JSON, dashboard refresh/health/currentness, and whitespace checks. Status: complete locally through 4BJ; publication and execution remain separately gated.
   - **Task 3.3: Add isolated-browser CI coverage.** Add the separate `requirements-dev.txt` and installed-Chrome runner path for the full maintained isolated-browser suite, preserving denied non-localhost traffic, synthetic all-entity data, expected-error scoping, and exact cleanup. Status: planned behind a stable core CI foundation because runner setup, runtime, and failure diagnosis differ.
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: current for exact 4BJ-R direct-main durability without deployment.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4BJ-R for the latest explicitly approved source set; every future publication or execution remains separately gated.
 
 ### Confirmed Work Block 4BJ-R: Safe Synthetic CI Durability Without Deployment
 
-Status: active; directly authorized by Ryan on 2026-07-25.
+Status: done and durable without deployment; directly authorized and completed on 2026-07-25.
 
 Parent task: Phase 4 Task 4, limited to the exact verified 4BJ source package.
 
@@ -1032,6 +1032,8 @@ Dashboard closeout: show 4BJ-R active with Task 4 current before staging. After 
 Report point: return source and closeout SHAs, exact published paths, ancestry and remote alignment, zero-workflow/no-deployment result, verification, final worktree, preserved exclusions, and the separate Task 3.3 gate.
 
 Suggested next work block: perform a just-in-time Task 3.3 browser-CI planning pass only after Ryan chooses whether the core PR workflow should first be exercised through a separately confirmed test PR.
+
+Result: full synthetic smoke, the maintained CI safety checker under the project environment and Python 3.12, workflow YAML, relevant Python and JavaScript syntax, JSON, dashboard refresh/currentness/normal and CI health/generated/rendered state, whitespace, high-confidence secret-pattern review, exact changed/staged/committed paths, clean fast-forward ancestry, non-force push, live remote and GitHub SHA alignment, and all preserved-file checks passed. Exact 13-path source commit `30b4cd97d749e244727a03400cdfa869c34c702b`, with parent `2babc9403f808ab65549751d11f5e3c429d8bf9d`, was fast-forwarded and pushed non-force to `main`. GitHub reported zero workflow runs because the commit used `[skip actions]`; no PR, workflow action, Fly deployment, production access, protected-data access, or production health check occurred. Evidence: `command-center/logs/2026-07-25-safe-synthetic-ci-durability-4bj-r.md`.
 
 ### Confirmed Work Block 4BJ: Safe PR-Only Synthetic CI Foundation
 
