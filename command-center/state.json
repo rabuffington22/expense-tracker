@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-25 4:29 PM CST",
+    "lastUpdated": "2026-07-25 8:50 PM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,60 +27,60 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R Task 3.2.1 is complete through 4BK and Task 3 is current at the separate Task 3.3 planning gate.",
+    "summary": "Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R Task 3.2.1 is complete through 4BK and Tasks 3.3.1-3.3.2 are active at exact-path durability through confirmed 4BL-R.",
     "progress": 99
   },
   "currentTask": {
-    "title": "Task 3: Add safe CI checks",
-    "owner": "Ryan",
+    "title": "Task 4: Publish and verify explicitly approved repairs",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex holds the verified 4BK result and can run the separately requested just-in-time Task 3.3 planning pass.",
-    "nextAction": "Invoke or authorize the next work-block planning pass for Task 3.3 isolated-browser CI.",
-    "blocker": "Task 3.3 implementation workflow changes and any action-runtime response remain unplanned and unconfirmed."
+    "supportingAgent": "Ryan owns Task 3.3.3 hosted observation deployment production and every later gate.",
+    "nextAction": "Reverify stage commit fast-forward and publish the exact 4BL package with skip actions then publish the sanitized closeout.",
+    "blocker": "Task 3.3.3 hosted browser-CI observation remains separate."
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-bk",
-    "label": "4BK",
-    "name": "Core Synthetic CI Observation Through A No-Merge Test PR",
-    "status": "done",
+    "id": "phase-4-block-bl-r",
+    "label": "4BL-R",
+    "name": "Browser CI Foundation Durability Without Deployment",
+    "status": "active",
     "owner": "Codex Desktop",
     "includedTasks": [
-      "Task 3.2.1 P4-T321 observe one marker-only draft PR core Synthetic CI run and close without merge after success",
-      "Task 4 only for the sanitized evidence and exact-path skip-actions Runway OS closeout"
+      "Task 4 P4-T4 exact durability of the verified ten-path 4BL source package",
+      "Two explicit-path skip-actions commits clean local-main fast-forward non-force pushes exact remote SHA zero workflows and no deployment"
     ],
     "excludedTasks": [
-      "Task 3.3 browser CI broader Task 2 or Task 4 Phase 5 and workflow product runtime dependency migration authentication CSRF CSP changes",
-      "Merge deployment Fly Plaid production demo downstream credentials protected real-data manual dispatch rerun cancellation branch deletion force push conflict rebase and broader recovery",
+      "Task 3.3.3 hosted observation broader Task 2 or Task 4 Phase 5 PR creation and remote feature-branch publication",
+      "Workflow execution dispatch rerun cancellation merge-triggered deployment Fly Plaid production demo downstream credentials protected real-data product dependency browser-test runtime migration authentication CSRF CSP and operational-workflow changes",
+      "Force push rebase conflict resolution branch deletion broader recovery delegation and second opinion",
       "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
     ],
     "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "The block requires active-state stewardship exact-path staging branch commit and PR handling bounded run observation no-deployment proof safe PR closure sanitized closeout remote verification and final intake.",
-    "runnerPath": "Preserve the local planning changes create codex/synthetic-ci-observation commit only the sanitized trigger marker push and open a draft PR observe the automatic core run close unmerged after success return to main write the evidence closeout commit exact paths with skip actions push non-force and verify final state.",
+    "whyThisAgent": "The block requires exact-path verification staging commit ancestry non-force pushes remote and zero-workflow verification dashboard stewardship and final intake.",
+    "runnerPath": "Reverify the exact source set stage and commit ten paths with skip actions cleanly fast-forward local main push non-force verify exact remote SHA and zero workflows then publish one sanitized six-path skip-actions closeout.",
     "expectedFiles": [
-      "Branch-only command-center/logs/2026-07-25-core-synthetic-ci-observation-trigger-4bk.md",
-      "Five Runway OS source and generated dashboard paths plus one separate sanitized 4BK evidence log"
+      "Exact ten-path 4BL source package",
+      "Five Runway OS closeout paths plus command-center/logs/2026-07-25-browser-ci-foundation-durability-4bl-r.md"
     ],
     "defaults": [
-      "One draft PR one marker-only feature commit without skip token no merge close after success and retain remote branch",
-      "Leave a failed draft PR open for read-only diagnosis and do not repair rerun cancel or broaden scope",
-      "Use skip actions only for the sanitized exact-path main closeout with no deployment production or protected access",
+      "Two explicit-path skip-actions commits and direct non-force main publication without a PR",
+      "Expected source parent 7a5e21d9ba1363647c32cda23606fbdb9fa94827 subject to immediate pre-stage revalidation",
+      "Retain the local feature branch and create no remote feature branch",
+      "No hosted execution deployment production protected access delegation or second opinion",
       "Preserve all three unrelated untracked files"
     ],
     "stopConditions": [
-      "Workflow or remote-main drift unexpected workflow or Fly deployment missing failed or over-window core run",
-      "Any repair rerun workflow edit merge deployment protected access branch deletion broader recovery verification dashboard scope or preserved-file failure"
+      "Live-main drift unexpected sensitive or preserved path verification dashboard scope or cleanup failure",
+      "Non-fast-forward conflict rebase force-push push rejection broader recovery GitHub verification failure or workflow or deployment activity despite skip actions"
     ],
     "verification": [
-      "Local full smoke maintained CI safety JSON whitespace dashboard refresh currentness health and rendered active state",
-      "Exact marker-only diff stage commit ancestry remote branch draft PR event head SHA core run job steps no Fly and closed-unmerged status",
-      "Sanitized evidence exact closeout paths skip-actions commit live main SHA zero workflows final alignment and all preserved-file checks"
+      "Full smoke full isolated-browser coverage maintained CI safety workflow YAML Python JavaScript JSON and whitespace",
+      "Sensitive-addition dashboard refresh currentness health generated and rendered inspection",
+      "Exact changed staged committed paths ancestry live remote GitHub SHA zero workflows final alignment and all preserved-file checks"
     ],
-    "nextReportPoint": "Returned feature SHA PR URL and number run and job identifiers step conclusions closed-unmerged no-deployment result main closeout SHA final worktree preserved exclusions and separate Task 3.3 gate.",
-    "durability": "Hosted observation is durable in GitHub run 30175620834 and closed-unmerged PR 87; this sanitized closeout is published separately with skip actions.",
-    "result": "The marker-only pull-request run completed successfully in 52 seconds every reported core step passed no Fly deployment occurred and draft PR 87 closed without merge while the remote branch was retained.",
-    "evidence": [
-      "command-center/logs/2026-07-25-core-synthetic-ci-observation-4bk.md"
-    ]
+    "nextReportPoint": "Return source and closeout SHAs exact published paths ancestry zero-workflow no-deployment result final alignment worktree preserved exclusions and separate Task 3.3.3 gate.",
+    "durability": "Pending exact-path publication to main without deployment.",
+    "result": "Active; preflight verification and publication are in progress.",
+    "evidence": []
   },
   "routerHealth": {
     "status": "healthy",
@@ -105,30 +105,21 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan Task 3.3 Isolated-Browser CI",
-    "status": "awaiting-confirmation",
-    "owner": "Ryan",
-    "why": "The durable core workflow now has one successful hosted run; browser CI still has a separate dependency runner runtime cleanup and action-version contract.",
-    "action": "Invoke or authorize a just-in-time Task 3.3 planning pass before any browser-CI implementation or workflow change.",
+    "title": "Execute 4BL-R Browser CI Durability",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan confirmed exact-path durability of the verified 4BL source set while hosted observation and deployment remain separate.",
+    "action": "Reverify and publish the exact source and sanitized closeout with skip actions then verify zero workflows and final alignment.",
     "source": "command-center/roadmap.md"
   },
-  "decisionsNeeded": [
-    {
-      "decision": "Run the just-in-time Task 3.3 browser-CI planning pass.",
-      "owner": "Ryan",
-      "status": "pending",
-      "context": "Core CI passed once without deployment; browser dependencies runner setup cleanup runtime and the non-failing action-runtime annotation require separate sizing."
-    }
-  ],
+  "decisionsNeeded": [],
   "waitingOnRyan": {
-    "summary": "Task 3.3 just-in-time planning awaits Ryan direction.",
-    "items": [
-      "Invoke the work-block planner for Task 3.3 before any browser-CI implementation or workflow edit."
-    ]
+    "summary": "No current input is required during confirmed 4BL-R execution.",
+    "items": []
   },
   "questionBoundaries": {
-    "phaseQuestions": "Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment Task 3.2.1 is complete and Task 3.3 is the next planning gate.",
-    "decisionQueue": "Task 3.3 browser CI workflow or action-version changes merge deployment production Fly protected access and every expansion remain separate Ryan gates.",
+    "phaseQuestions": "Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment Task 3.2.1 is complete and Tasks 3.3.1-3.3.2 are complete locally through 4BL.",
+    "decisionQueue": "Task 3.3.3 hosted execution merge deployment production Fly protected access and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -187,6 +178,94 @@
     }
   ],
   "phaseWorkBlocks": [
+    {
+      "id": "phase-4-block-bl-r",
+      "phaseId": "phase-4",
+      "label": "4BL-R",
+      "name": "Browser CI Foundation Durability Without Deployment",
+      "status": "active",
+      "includedTasks": [
+        "Task 4 P4-T4 exact durability of the verified ten-path 4BL source package",
+        "Two explicit-path skip-actions commits clean local-main fast-forward non-force pushes exact remote SHA zero workflows and no deployment"
+      ],
+      "excludedTasks": [
+        "Task 3.3.3 hosted observation broader Task 2 or Task 4 Phase 5 PR creation and remote feature-branch publication",
+        "Workflow execution dispatch rerun cancellation merge-triggered deployment Fly Plaid production demo downstream credentials protected real-data product dependency browser-test runtime migration authentication CSRF CSP and operational-workflow changes",
+        "Force push rebase conflict resolution branch deletion broader recovery delegation and second opinion",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
+      ],
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "Exact-path verification staging commit ancestry non-force pushes remote and zero-workflow verification dashboard stewardship and final intake.",
+      "runnerPath": "Reverify the exact source set stage and commit ten paths with skip actions cleanly fast-forward local main push non-force verify exact remote SHA and zero workflows then publish one sanitized six-path skip-actions closeout.",
+      "expectedFiles": [
+        "Exact ten-path 4BL source package",
+        "Five Runway OS closeout paths plus command-center/logs/2026-07-25-browser-ci-foundation-durability-4bl-r.md"
+      ],
+      "defaults": [
+        "Two explicit-path skip-actions commits and direct non-force main publication without a PR",
+        "Expected source parent 7a5e21d9ba1363647c32cda23606fbdb9fa94827 subject to immediate pre-stage revalidation",
+        "Retain the local feature branch and create no remote feature branch",
+        "No hosted execution deployment production protected access delegation or second opinion",
+        "Preserve all three unrelated untracked files"
+      ],
+      "stopConditions": [
+        "Live-main drift unexpected sensitive or preserved path verification dashboard scope or cleanup failure",
+        "Non-fast-forward conflict rebase force-push push rejection broader recovery GitHub verification failure or workflow or deployment activity despite skip actions"
+      ],
+      "verification": [
+        "Full smoke full isolated-browser coverage maintained CI safety workflow YAML Python JavaScript JSON and whitespace",
+        "Sensitive-addition dashboard refresh currentness health generated and rendered inspection",
+        "Exact changed staged committed paths ancestry live remote GitHub SHA zero workflows final alignment and all preserved-file checks"
+      ],
+      "reportBack": "Return source and closeout SHAs exact published paths ancestry zero-workflow no-deployment result final alignment worktree preserved exclusions and separate Task 3.3.3 gate.",
+      "durability": "Pending exact-path publication to main without deployment.",
+      "result": "Active; preflight verification and publication are in progress.",
+      "evidence": []
+    },
+    {
+      "id": "phase-4-block-bl",
+      "phaseId": "phase-4",
+      "label": "4BL",
+      "name": "PR-Only Isolated-Browser CI Foundation",
+      "status": "done",
+      "includedTasks": [
+        "Task 3.3.1 P4-T331 freeze the isolated-browser CI and Node 24 action-runtime contract",
+        "Task 3.3.2 P4-T332 implement the PR-only isolated-browser CI job and maintained safety assertions locally"
+      ],
+      "excludedTasks": [
+        "Task 3.3.3 hosted observation broader Task 2 or Task 4 Phase 5 and product runtime dependency migration authentication CSRF CSP or browser-test changes",
+        "Staging commit push PR workflow action merge deployment Fly Plaid production demo downstream credentials protected real-data delegation second opinion and broader recovery",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
+      ],
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "Workflow safety design maintained static assertions deterministic local browser verification compact documentation and Runway OS stewardship.",
+      "runnerPath": "Write the active contract create codex/isolated-browser-ci upgrade the official action pins add the separate post-core Ubuntu 24.04 installed-Chrome job expand the checker and documentation run full local verification and close locally without staging or external action.",
+      "expectedFiles": [
+        ".github/workflows/synthetic-ci.yml scripts/ci_safety_check.py command-center/synthetic-ci-safety-contract.md README.md",
+        "One sanitized 4BL evidence log plus five Runway OS source and generated dashboard paths"
+      ],
+      "defaults": [
+        "PRs targeting main only contents read non-persistent checkout and exact immutable checkout v7.0.1 and setup-python v7.0.0 SHAs",
+        "Keep core on ubuntu-latest and add a separate needs-core ubuntu-24.04 browser job with installed Chrome Python 3.12 requirements-dev and 15-minute timeout",
+        "No browser download cache artifact service container environment publication hosted execution deployment protected access delegation or second opinion",
+        "Preserve all three unrelated untracked files"
+      ],
+      "stopConditions": [
+        "Linux portability requires product dependency or browser-test repair or any secret write permission persistent credential mutable action download protected live publication hosted execution or broader recovery need",
+        "Verification dashboard scope or preserved-file failure"
+      ],
+      "verification": [
+        "Final full synthetic smoke maintained CI safety full isolated-browser coverage and installed-Chrome workflow shape",
+        "YAML Python JavaScript JSON dashboard refresh currentness health rendered state and whitespace",
+        "Exact changed paths zero staged changes zero external actions and all preserved-file checks"
+      ],
+      "reportBack": "Return the exact local workflow contract checker coverage action-runtime remediation verification and browser runtime branch worktree protected exclusions and separate 4BL-R gate.",
+      "durability": "Local-only unpublished uncommitted and unstaged on codex/isolated-browser-ci.",
+      "result": "Tasks 3.3.1-3.3.2 are complete locally; full smoke passed in 8.86 seconds full configured-auth and no-password browser coverage passed in 287.25 seconds every static dashboard scope and preserved-file check passed and no staging or external action occurred.",
+      "evidence": [
+        "command-center/logs/2026-07-25-pr-only-isolated-browser-ci-foundation-4bl.md"
+      ]
+    },
     {
       "id": "phase-4-block-bk",
       "phaseId": "phase-4",
@@ -8951,11 +9030,11 @@
       "phaseId": "phase-4",
       "taskId": "P4-T3",
       "title": "Task 3: Add safe CI checks",
-      "status": "current",
+      "status": "active",
       "owner": "Ryan",
-      "summary": "Tasks 3.1 and 3.2 are durable without deployment through 4BJ-R and Task 3.2.1 completed successfully through 4BK; the umbrella is current at the Task 3.3 planning gate.",
-      "nextAction": "Invoke or authorize a just-in-time Task 3.3 planning pass.",
-      "blocker": "Task 3.3 implementation workflow changes and any action-runtime response are not yet planned or confirmed."
+      "summary": "Tasks 3.1 and 3.2 are durable without deployment through 4BJ-R Task 3.2.1 completed through 4BK and the Task 3.3 browser-CI umbrella is decomposed.",
+      "nextAction": "Confirm or revise local-only work block 4BL.",
+      "blocker": "Task 3.3.1 and Task 3.3.2 implementation remain unconfirmed."
     },
     {
       "phaseId": "phase-4",
@@ -9004,19 +9083,47 @@
       "phaseId": "phase-4",
       "taskId": "P4-T33",
       "title": "Task 3.3: Add isolated-browser CI coverage",
+      "status": "active",
+      "owner": "Codex Desktop",
+      "summary": "Umbrella for the isolated-browser action runtime contract local PR-only job implementation and later hosted no-merge observation."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T331",
+      "title": "Task 3.3.1: Freeze the isolated-browser CI and Node 24 action-runtime contract",
+      "status": "complete",
+      "owner": "Codex Desktop",
+      "summary": "Select immutable official v7 action SHAs explicit Ubuntu 24.04 installed Chrome Python 3.12 requirements-dev a separate post-core job 15-minute timeout and exact safety cleanup boundaries.",
+      "nextAction": "Preserve the frozen contract during Task 3.3.2 verification.",
+      "blocker": "None locally; publication and hosted observation remain separate."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T332",
+      "title": "Task 3.3.2: Implement the PR-only isolated-browser CI job and maintained safety assertions",
+      "status": "complete",
+      "owner": "Codex Desktop",
+      "summary": "The selected action pins separate post-core browser job fail-closed checker compact documentation sanitized evidence and Runway OS integration pass the full local 4BL matrix.",
+      "nextAction": "Preserve the verified local source set pending separately confirmed 4BL-R durability.",
+      "blocker": "Durability and hosted observation remain separate."
+    },
+    {
+      "phaseId": "phase-4",
+      "taskId": "P4-T333",
+      "title": "Task 3.3.3: Observe the hosted browser CI job through a no-merge test PR",
       "status": "planned",
       "owner": "Codex Desktop",
-      "summary": "Add the separate development dependency and installed-Chrome runner path for the full maintained isolated-browser suite only after Task 3.2.1 proves one stable hosted core run."
+      "summary": "After separate source durability trigger one marker-only draft PR verify exact core then browser behavior runtime cleanup annotations and no deployment then close without merge after success."
     },
     {
       "phaseId": "phase-4",
       "taskId": "P4-T4",
       "title": "Task 4: Publish and verify explicitly approved repairs",
-      "status": "done",
+      "status": "current",
       "owner": "Codex Desktop",
-      "summary": "Every explicitly approved set through 4BJ-R is durable; the safe synthetic CI source commit is on main with zero workflow runs and no deployment.",
-      "nextAction": null,
-      "blocker": null,
+      "summary": "Every prior approved set through 4BJ-R is durable and confirmed 4BL-R is publishing the exact verified browser-CI foundation without deployment or hosted execution.",
+      "nextAction": "Complete exact-path source and closeout publication with skip actions and verify zero workflows and final alignment.",
+      "blocker": "Task 3.3.3 hosted observation remains separate.",
       "result": "Every explicitly approved set through 4BJ-R is durable; source commit 30b4cd97 is on main with zero workflow runs and no deployment.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
@@ -9477,6 +9584,22 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-25",
+      "text": "Ryan confirmed exact-path 4BL-R browser-CI durability without deployment; Codex is activating the two-commit skip-actions direct-main contract before staging or publication."
+    },
+    {
+      "time": "2026-07-25",
+      "text": "Completed 4BL locally on codex/isolated-browser-ci: immutable Node 24 actions and the separate Ubuntu 24.04 installed-Chrome job are fail-closed full smoke passed in 8.86 seconds full browser coverage passed in 287.25 seconds and no staging publication hosted execution deployment protected access or preserved-file action occurred."
+    },
+    {
+      "time": "2026-07-25",
+      "text": "Ryan confirmed local-only work block 4BL for Tasks 3.3.1-3.3.2; Codex is activating the exact Node 24 action and Ubuntu 24.04 installed-Chrome PR-only contract before implementation and local verification."
+    },
+    {
+      "time": "2026-07-25",
+      "text": "Decomposed Task 3.3 into Node 24 action and runner contract local PR-only browser job implementation and later hosted no-merge observation after official action runner evidence and a 286.89-second local synthetic browser pass; proposed 4BL remains unconfirmed."
+    },
     {
       "time": "2026-07-25",
       "text": "Completed 4BK: marker-only draft PR 87 triggered exact pull-request run 30175620834 core job 89723824615 passed every reported step in 52 seconds no Fly deployment occurred the PR closed unmerged the remote branch was retained and Task 3.3 remains separately gated."
@@ -10502,10 +10625,15 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Plan Task 3.3 Isolated-Browser CI",
-    "description": "Run a just-in-time planning pass for browser dependency runner runtime cleanup and action-version boundaries before any browser-CI implementation or workflow change."
+    "name": "Complete 4BL-R Browser CI Durability",
+    "description": "Publish and verify the exact browser-CI foundation with two skip-actions commits while hosted observation and deployment remain separate."
   },
   "verification": {
+    "phase4BrowserCiFoundation": "pass locally; exact PR-only read-only Node 24 action contract and separate post-core Ubuntu 24.04 installed-Chrome job are implemented with a fail-closed maintained checker compact guidance sanitized evidence and Runway OS integration",
+    "phase4BrowserCiFoundationCoverage": "pass; full smoke completed in 8.86 seconds and full configured-auth and no-password isolated-browser coverage completed in 287.25 seconds with synthetic all-entity data mocked external seams denied non-localhost browser requests and exact cleanup",
+    "phase4BrowserCiFoundationBoundaries": "pass; YAML Python JavaScript JSON dashboard whitespace sensitive-addition branch base exact-path zero-staged and preserved-file checks pass and no product dependency browser-test operational-workflow publication hosted execution deployment protected live real-data delegation second-opinion or preserved-file action occurred",
+    "phase4BrowserCiPlanningBaseline": "pass; maintained isolated-browser matrix completed locally in 286.89 seconds with temporary synthetic all-entity data mocked external seams denied non-localhost browser requests both auth modes and exact cleanup",
+    "phase4BrowserCiOfficialInputs": "verified current official checkout v7.0.1 and setup-python v7.0.0 commits both declare Node 24 and the current official Ubuntu 24.04 image lists Google Chrome 150 while requirements-dev resolves current Playwright 1.61.0",
     "phase4CoreSyntheticCiObservation": "pass; marker-only draft PR 87 produced pull-request run 30175620834 and core job 89723824615 for exact SHA cde1360e0e9f2041ebace7cd6555e2a021bf6400 every reported step passed in 52 seconds no Fly deployment occurred the PR closed unmerged main never moved and the remote branch was retained",
     "phase4CoreSyntheticCiObservationAnnotation": "non-failing GitHub annotation; pinned checkout and setup-python action versions target Node.js 20 and were forced onto Node.js 24 no workflow edit or repair occurred and later response remains separately gated",
     "phase4SyntheticCiRelease": "pass; exact 13-path source commit 30b4cd97d749e244727a03400cdfa869c34c702b with expected parent 2babc9403f808ab65549751d11f5e3c429d8bf9d is durable on main after full smoke CI safety YAML syntax secret-pattern JSON whitespace dashboard exact-path ancestry non-force push live remote GitHub SHA zero-workflow and preserved-file checks with no deployment or production access",

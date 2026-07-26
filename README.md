@@ -90,9 +90,9 @@ The smoke suite creates a temporary `DATA_DIR` and uses synthetic fixtures. It d
 
 ### Pull-request synthetic CI
 
-The `Synthetic CI` workflow is designed only for pull requests targeting `main`. It grants read-only repository contents, persists no checkout credentials, receives no secrets, installs only `requirements.txt` under Python 3.12, and runs the maintained core smoke, safety, syntax, JSON, dashboard-currentness/health, and whitespace checks. Official actions are pinned to full verified commit SHAs.
+The `Synthetic CI` workflow is designed only for pull requests targeting `main`. It grants read-only repository contents, persists no checkout credentials, receives no secrets, and uses Python 3.12 with official actions pinned to full verified Node 24-compatible commits.
 
-The workflow never runs the separate browser suite, Plaid, Fly, production/demo, downstream, real databases, uploads, or financial rows. Its exact fail-closed contract is maintained in `command-center/synthetic-ci-safety-contract.md` and checked locally with:
+The core job installs `requirements.txt` and runs the maintained smoke, safety, syntax, JSON, dashboard-currentness/health, and whitespace checks. After core success, a separate Ubuntu 24.04 job verifies the runner's installed Google Chrome, installs tracked `requirements-dev.txt`, and runs the isolated browser suite. Both jobs use synthetic temporary data and never run Plaid, Fly, production/demo, downstream, real databases, uploads, or financial rows. The exact fail-closed contract is maintained in `command-center/synthetic-ci-safety-contract.md` and checked locally with:
 
 ```bash
 .venv/bin/python scripts/ci_safety_check.py
@@ -100,7 +100,7 @@ node command-center/scripts/refresh-dashboard.js --check
 node command-center/scripts/health-check.js --ci
 ```
 
-Creating a test PR, executing the workflow, merging PR changes, deploying, and adding browser CI are separate authorization gates.
+Publishing changes, creating a test PR, executing or rerunning the workflow, merging, and deploying are separate authorization gates.
 
 ### Focused browser regression checks
 
