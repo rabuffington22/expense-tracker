@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-26 8:11 AM CST",
+    "lastUpdated": "2026-07-26 10:16 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,64 +27,62 @@
   "phase": {
     "name": "Core Repairs And Regression Coverage",
     "status": "active",
-    "summary": "Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R Task 3.2.1 is complete through 4BK Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R Task 3.3.3 is complete through 4BO and the exact repair is durable deployed and health verified through stopped 4BP.",
+    "summary": "Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R Task 3.2.1 is complete through 4BK Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R Task 3.3.3 is complete through 4BO the exact repair is durable deployed and health verified through stopped 4BP and Fly deployment runtime durability is complete through 4BQ.",
     "progress": 99
   },
   "currentTask": {
     "title": "Task 4: Publish and verify explicitly approved repairs",
     "owner": "Ryan",
     "status": "active",
-    "supportingAgent": "Codex made the exact repair durable deployed and health verified then stopped 4BP at the prohibited deployment action-runtime warning.",
-    "nextAction": "Confirm revise or hold a separately planned 4BQ Fly Deploy Action Runtime Remediation block before Phase 4 completion reconciliation.",
+    "supportingAgent": "Codex completed exact Fly deployment runtime durability automatic hosted observation zero-annotation proof health verification and sanitized closeout through 4BQ.",
+    "nextAction": "Confirm revise or hold proposed 4BR Phase 4 Completion Reconciliation.",
     "blocker": null
   },
   "currentWorkBlock": {
-    "id": "phase-4-block-bp",
-    "label": "4BP",
-    "name": "Browser CI Portability Repair Durability And Release",
-    "status": "blocked",
+    "id": "phase-4-block-bq",
+    "label": "4BQ",
+    "name": "Fly Deploy Action Runtime And Toolchain Durability",
+    "status": "done",
     "owner": "Codex Desktop",
     "includedTasks": [
-      "Task 4 P4-T4 only for exact two-file repair durability automatic Fly observation credential-free production health and sanitized skip-actions Runway OS closeout"
+      "Task 4 P4-T4 only for exact Fly workflow runtime and toolchain durability automatic deployment observation zero-annotation proof credential-free health and sanitized skip-actions closeout"
     ],
     "excludedTasks": [
-      "PR 88 its marker commit or history remote feature-branch publication broader Task 2 or Task 4 Phase 4 completion reconciliation and Phase 5",
-      "Any further product test dependency workflow runner browser-version runtime migration authentication CSRF CSP or repair change manual dispatch rerun cancellation or non-automatic Fly mutation",
-      "Plaid production databases authenticated pages demo downstream credentials protected real data branch deletion force push rebase conflict resolution broader recovery delegation and second opinion",
+      "Daily Plaid Sync SYNC_SECRET Synthetic CI behavior application Dockerfile fly.toml Fly secrets configuration production databases authenticated pages Plaid demo downstream credentials protected real data",
+      "Manual workflow dispatch rerun cancellation non-automatic Fly mutation Phase 4 completion reconciliation Phase 5 PR remote feature branch branch deletion force push rebase conflict resolution broader recovery delegation and second opinion",
       "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
     ],
     "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "The block requires active-state stewardship exact-path source transfer complete local verification clean Git ancestry automatic deployment observation credential-free health proof stop enforcement sanitized closeout remote verification and final intake.",
-    "runnerPath": "Verify active Runway OS and exact live state create a clean local release branch apply only the two verified repair paths run the full safety bundle commit exact paths fast-forward and non-force push main observe only the exact automatic Fly run verify credential-free health then publish an exact-path skip-actions Runway OS closeout.",
+    "whyThisAgent": "The block requires active-state stewardship workflow-contract implementation maintained safety assertions complete local verification exact-path Git handling automatic deployment observation credential-free health proof stop enforcement sanitized closeout remote verification and final intake.",
+    "runnerPath": "Verify active state and exact live inputs create codex/fly-deploy-runtime-durability implement only the four-path package run full local proof commit exact paths fast-forward and non-force push main observe only the exact automatic deployment require pinned inputs zero annotations and HTTP 200 health then publish an exact skip-actions closeout.",
     "expectedFiles": [
-      "Source commit containing only web/static/style.css and scripts/mobile_drawer_browser_test.py",
-      "One automatic exact-SHA Fly Deploy run and credential-free production health result",
-      "One sanitized 4BP evidence log plus five Runway OS source and generated dashboard paths"
+      "Source commit containing only .github/workflows/fly-deploy.yml scripts/ci_safety_check.py command-center/fly-deploy-safety-contract.md and README.md",
+      "One exact automatic Fly Deploy run with pinned Ubuntu 24.04 action SHAs Fly CLI 0.4.74 zero annotations and credential-free production health",
+      "One sanitized 4BQ evidence log plus five Runway OS source and generated dashboard paths"
     ],
     "defaults": [
-      "Use a clean local branch from exact main one explicit two-path source commit without a skip token one clean fast-forward and one non-force main push",
-      "Do not reopen merge or mutate PR 88 and do not push the new release branch",
-      "Observe only the exact automatic Fly deployment and verify credential-free HTTP 200 health",
-      "Use skip actions only for the sanitized six-path closeout and keep Phase 4 reconciliation separately gated",
+      "Preserve both triggers without invoking workflow_dispatch and preserve the deploy command concurrency and sole literal secret reference without reading it",
+      "Use explicit Ubuntu 24.04 contents read a 20-minute timeout non-persistent checkout credentials checkout SHA 3d3c42e Fly setup SHA ed8efb3 and Fly CLI 0.4.74",
+      "Use one clean local branch one explicit four-path source commit without a skip token one clean fast-forward and one non-force main push with no PR or remote feature branch",
+      "Observe only the exact automatic deployment require zero annotations and HTTP 200 health and use skip actions only for the sanitized closeout",
       "Preserve all three unrelated untracked files"
     ],
     "stopConditions": [
-      "Main repair commit workflow expected-path verification dashboard sensitive-addition cleanup ancestry remote or preserved-file drift",
-      "Any conflict rebase force push non-fast-forward rejected push broader recovery missing failed wrong-SHA or unexpectedly annotated deployment credential-free health failure or second closeout workflow",
-      "Any need for repair dispatch rerun cancellation manual workflow non-automatic Fly protected access or excluded action"
+      "Official metadata successful-run input live-main workflow expected-path sensitive-addition preserved-file verification dashboard cleanup ancestry or remote drift or inability to preserve existing behavior",
+      "Any credential value protected access conflict rebase force push non-fast-forward rejected push broader recovery manual workflow action non-automatic Fly mutation or excluded work",
+      "A missing duplicated wrong-SHA failed wrongly pinned or annotated automatic deployment credential-free health failure or any closeout workflow"
     ],
     "verification": [
-      "Exact local tracking live and retained repair SHAs preserved hashes full smoke full configured-auth and no-password installed-Chrome coverage maintained CI safety relevant Python and JSON syntax dashboard refresh currentness health rendered state whitespace and sensitive additions",
-      "Exact changed staged and committed paths cleanup ancestry non-force main push exact automatic Fly source SHA job steps conclusions annotations and credential-free HTTP 200 health",
+      "Official action and Fly release metadata exact local tracking live SHAs preserved hashes full smoke full configured-auth and no-password installed-Chrome coverage extended maintained CI safety Python compilation JSON dashboard refresh currentness health rendered state whitespace and sensitive additions",
+      "Exact changed staged and committed paths cleanup ancestry non-force main push exact automatic event source SHA Ubuntu 24.04 action SHAs Fly CLI 0.4.74 steps conclusion duration zero annotations and credential-free HTTP 200 health",
       "Sanitized exact six-path skip-actions closeout zero closeout workflows final local tracking live alignment and all preserved-file checks"
     ],
-    "nextReportPoint": "Return source and closeout SHAs exact published paths successful automatic Fly run and health result the blocking Node 20 action-runtime warning final branch worktree preserved exclusions and separate remediation decision.",
-    "durability": "Exact source commit 9b26030419b318af100bdc7d871d6c976fd02709 is durable on main automatic Fly run 30203353270 passed and credential-free health returned HTTP 200 but 4BP is blocked by one prohibited Node 20 action-runtime warning.",
-    "result": "Full local verification passed the exact two-file source became durable automatic deployment and health passed and 4BP stopped without remediation when GitHub annotated actions checkout v4 for deprecated Node 20 runtime.",
+    "nextReportPoint": "Return source and closeout SHAs exact files runner action and tool versions workflow and job identifiers steps runtime zero annotations health final branch worktree preserved exclusions and Phase 4 reconciliation readiness.",
+    "durability": "Exact source commit b94009334cd129ccdb2f963a2e3d86045e0934d3 is durable on main automatic run 30207408610 passed in 44 seconds with zero annotations and credential-free health returned HTTP 200.",
+    "result": "Full local proof passed the exact four-path package is durable the automatic deployment used every pinned input and passed cleanly with zero annotations and production health is HTTP 200.",
     "evidence": [
-      "command-center/logs/2026-07-26-browser-ci-portability-local-repair-4bn.md",
-      "command-center/logs/2026-07-26-hosted-browser-ci-reobservation-4bo.md",
-      "command-center/logs/2026-07-26-browser-ci-portability-repair-release-4bp.md"
+      "command-center/logs/2026-07-26-browser-ci-portability-repair-release-4bp.md",
+      "command-center/logs/2026-07-26-fly-deploy-runtime-toolchain-durability-4bq.md"
     ]
   },
   "routerHealth": {
@@ -110,30 +108,30 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Decide 4BQ Fly Deploy Action Runtime Remediation",
+    "title": "Decide 4BR Phase 4 Completion Reconciliation",
     "status": "awaiting-confirmation",
     "owner": "Ryan",
-    "why": "4BP made the repair durable deployed and health verified but the automatic deployment emitted a prohibited Node 20 action-runtime warning for actions checkout v4.",
-    "action": "Confirm revise or hold a separately planned operational-workflow remediation block before Phase 4 completion reconciliation.",
+    "why": "4BQ completed the last observed deployment-runtime remediation with one clean zero-annotation automatic release and healthy production.",
+    "action": "Confirm revise or hold a bounded Phase 4 reconciliation block before any Phase 5 work.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
     {
-      "decision": "Whether to authorize a bounded Fly Deploy action-runtime remediation block",
+      "decision": "Whether to authorize 4BR Phase 4 Completion Reconciliation",
       "status": "waiting on Ryan",
-      "whyItMatters": "The 4BP source release and health passed but the deployment workflow still targets a deprecated Node.js runtime through actions checkout v4.",
-      "workaround": "Keep the durable healthy source release in place and perform no workflow edit rerun cancellation or additional deployment."
+      "whyItMatters": "Phase 4 implementation and deployment-runtime evidence are complete enough for a deliberate task issue and work-block reconciliation before Phase 5.",
+      "workaround": "Keep the verified healthy durable Phase 4 state unchanged and begin no Phase 5 work."
     }
   ],
   "waitingOnRyan": {
-    "summary": "Decide whether to confirm revise or hold separately planned 4BQ Fly Deploy Action Runtime Remediation.",
+    "summary": "Confirm revise or hold proposed 4BR Phase 4 Completion Reconciliation.",
     "items": [
-      "4BQ operational-workflow runtime remediation before Phase 4 completion reconciliation"
+      "4BR Phase 4 Completion Reconciliation"
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Tasks 1P.7.1-1P.7.4 Tasks 3.1-3.2 and Tasks 3.3.1-3.3.2 are durable without deployment Task 3.3.3 is complete through 4BO and the exact repair is durable deployed and health verified through stopped 4BP.",
-    "decisionQueue": "Any Fly Deploy workflow or action-pin remediation rerun dispatch cancellation further deployment protected access Phase 4 reconciliation and every expansion remain separate Ryan gates.",
+    "phaseQuestions": "Tasks 1P.7.1-1P.7.4 Tasks 3.1-3.2 and Tasks 3.3.1-3.3.2 are durable without deployment Task 3.3.3 is complete through 4BO the exact repair is durable deployed and health verified through stopped 4BP and Fly deployment runtime durability is complete through 4BQ.",
+    "decisionQueue": "4BR Phase 4 reconciliation every Phase 5 action manual workflow action Daily Plaid protected access broader Fly or application changes and every expansion remain separate Ryan gates.",
     "waitingScheduled": "Only outside-plan holds belong here; none are currently recorded."
   },
   "agents": [
@@ -192,6 +190,53 @@
     }
   ],
   "phaseWorkBlocks": [
+    {
+      "id": "phase-4-block-bq",
+      "phaseId": "phase-4",
+      "label": "4BQ",
+      "name": "Fly Deploy Action Runtime And Toolchain Durability",
+      "status": "done",
+      "includedTasks": [
+        "Task 4 P4-T4 only for exact Fly workflow runtime and toolchain durability automatic deployment observation zero-annotation proof credential-free health and sanitized skip-actions closeout"
+      ],
+      "excludedTasks": [
+        "Daily Plaid Sync SYNC_SECRET Synthetic CI behavior application Dockerfile fly.toml Fly secrets configuration production databases authenticated pages Plaid demo downstream credentials protected real data",
+        "Manual workflow dispatch rerun cancellation non-automatic Fly mutation Phase 4 completion reconciliation Phase 5 PR remote feature branch branch deletion force push rebase conflict resolution broader recovery delegation and second opinion",
+        "Pre-existing untracked scripts/sync_prod_to_local.sh unrelated command-center/now 2.md and duplicate 4AU log"
+      ],
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "Active-state stewardship workflow-contract implementation maintained safety assertions complete local verification exact-path Git handling automatic deployment observation credential-free health proof stop enforcement sanitized closeout remote verification dashboard currency and final intake.",
+      "runnerPath": "Verify active state and exact live inputs create codex/fly-deploy-runtime-durability implement only the four-path package run full local proof commit exact paths fast-forward and non-force push main observe only the exact automatic deployment require pinned inputs zero annotations and HTTP 200 health then publish an exact skip-actions closeout.",
+      "expectedFiles": [
+        "Source commit containing only .github/workflows/fly-deploy.yml scripts/ci_safety_check.py command-center/fly-deploy-safety-contract.md and README.md",
+        "One exact automatic Fly Deploy run with pinned Ubuntu 24.04 action SHAs Fly CLI 0.4.74 zero annotations and credential-free production health",
+        "One sanitized 4BQ evidence log plus five Runway OS source and generated dashboard paths"
+      ],
+      "defaults": [
+        "Preserve both triggers without invoking workflow_dispatch and preserve the deploy command concurrency and sole literal secret reference without reading it",
+        "Use explicit Ubuntu 24.04 contents read a 20-minute timeout non-persistent checkout credentials checkout SHA 3d3c42e Fly setup SHA ed8efb3 and Fly CLI 0.4.74",
+        "Use one clean local branch one explicit four-path source commit without a skip token one clean fast-forward and one non-force main push with no PR or remote feature branch",
+        "Observe only the exact automatic deployment require zero annotations and HTTP 200 health and use skip actions only for the sanitized closeout",
+        "Preserve all three unrelated untracked files"
+      ],
+      "stopConditions": [
+        "Official metadata successful-run input live-main workflow expected-path sensitive-addition preserved-file verification dashboard cleanup ancestry or remote drift or inability to preserve existing behavior",
+        "Any credential value protected access conflict rebase force push non-fast-forward rejected push broader recovery manual workflow action non-automatic Fly mutation or excluded work",
+        "A missing duplicated wrong-SHA failed wrongly pinned or annotated automatic deployment credential-free health failure or any closeout workflow"
+      ],
+      "verification": [
+        "Official action and Fly release metadata exact local tracking live SHAs preserved hashes full smoke full configured-auth and no-password installed-Chrome coverage extended maintained CI safety Python compilation JSON dashboard refresh currentness health rendered state whitespace and sensitive additions",
+        "Exact changed staged and committed paths cleanup ancestry non-force main push exact automatic event source SHA Ubuntu 24.04 action SHAs Fly CLI 0.4.74 steps conclusion duration zero annotations and credential-free HTTP 200 health",
+        "Sanitized exact six-path skip-actions closeout zero closeout workflows final local tracking live alignment and all preserved-file checks"
+      ],
+      "nextReportPoint": "Return source and closeout SHAs exact files runner action and tool versions workflow and job identifiers steps runtime annotations health final branch worktree preserved exclusions and Phase 4 reconciliation readiness.",
+      "durability": "Exact source commit b94009334cd129ccdb2f963a2e3d86045e0934d3 is durable on main automatic run 30207408610 passed in 44 seconds with zero annotations and credential-free health returned HTTP 200.",
+      "result": "Full local proof passed the exact four-path package is durable the automatic deployment used every pinned input and passed cleanly with zero annotations and production health is HTTP 200.",
+      "evidence": [
+        "command-center/logs/2026-07-26-browser-ci-portability-repair-release-4bp.md",
+        "command-center/logs/2026-07-26-fly-deploy-runtime-toolchain-durability-4bq.md"
+      ]
+    },
     {
       "id": "phase-4-block-bp",
       "phaseId": "phase-4",
@@ -9375,10 +9420,10 @@
       "title": "Task 4: Publish and verify explicitly approved repairs",
       "status": "current",
       "owner": "Ryan",
-      "summary": "Every prior approved set through 4BL-R is durable and 4BP made the exact two-file repair durable deployed and health verified but stopped at the Fly Deploy Node 20 action-runtime warning.",
-      "nextAction": "Confirm revise or hold a separately planned 4BQ Fly Deploy Action Runtime Remediation block before Phase 4 completion reconciliation.",
+      "summary": "Every prior approved set through 4BL-R is durable 4BP made the exact two-file repair durable deployed and health verified and 4BQ made the Fly deployment runtime and toolchain durable with one clean zero-annotation automatic release and healthy production.",
+      "nextAction": "Confirm revise or hold proposed 4BR Phase 4 Completion Reconciliation.",
       "blocker": null,
-      "result": "Exact source commit 9b26030 is durable deployed and health verified but 4BP remains blocked by one prohibited Node 20 action-runtime warning with no remediation performed.",
+      "result": "Exact source commit b940093 is durable deployed and health verified through automatic run 30207408610 with zero annotations; 4BQ is complete and 4BR remains separately gated.",
       "evidence": [
         "command-center/logs/2026-07-18-auth-repair-release-4b.md",
         "command-center/logs/2026-07-19-transaction-identity-release-4c-r.md",
@@ -9409,6 +9454,7 @@
         "command-center/logs/2026-07-25-subscription-lifecycle-coverage-release-4bf-r.md",
         "command-center/logs/2026-07-25-cashflow-boundary-financial-coverage-release-4bi-r.md",
         "command-center/logs/2026-07-25-safe-synthetic-ci-durability-4bj-r.md",
+        "command-center/logs/2026-07-26-fly-deploy-runtime-toolchain-durability-4bq.md",
         "command-center/logs/2026-07-25-browser-ci-foundation-durability-4bl-r.md"
       ]
     },
@@ -10904,10 +10950,14 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "name": "Decide 4BQ Fly Deploy Action Runtime Remediation",
-    "description": "Decide whether to authorize a bounded operational-workflow action-runtime repair before Phase 4 completion reconciliation while the healthy durable 4BP source release remains in place."
+    "name": "Decide 4BR Phase 4 Completion Reconciliation",
+    "description": "Confirm revise or hold a bounded reconciliation of Phase 4 tasks issues evidence and remaining gates before any Phase 5 action."
   },
   "verification": {
+    "phase4FlyDeployRuntimeDurability": "pass; exact four-path source commit b94009334cd129ccdb2f963a2e3d86045e0934d3 with expected parent d1c1a297e13ed30baa8afc0c3ffe54e69888e749 is durable on main after full smoke full installed-Chrome coverage safety-contract positive and negative checks Python compilation JSON dashboard rendered whitespace sensitive-addition exact-path ancestry non-force push remote and preserved-file checks",
+    "phase4FlyDeployRuntimeHosted": "pass; exact automatic push run 30207408610 and deploy job 89807770887 passed every step in 44 seconds on Ubuntu 24.04 using checkout 3d3c42e5aac5ba805825da76410c181273ba90b1 with persistent credentials disabled Fly setup ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 and Fly CLI 0.4.74",
+    "phase4FlyDeployRuntimeAnnotations": "pass; the exact source SHA has one automatic workflow the job annotation API returned an empty list and the Node.js 20 action warning that stopped 4BP did not recur",
+    "phase4FlyDeployRuntimeHealth": "pass; credential-free https://ledger-oak.fly.dev/health returned HTTP 200 with sanitized status ok after the exact deployment and no manual workflow or non-automatic Fly action occurred",
     "phase4BrowserCiPortabilityRelease": "stopped after durable release; exact source commit 9b26030419b318af100bdc7d871d6c976fd02709 with sole parent a577d14e53aa1b47feffb6617733f67e518cc46c contains only the two approved repair files matches hosted repair content and is durable on local tracking remote and GitHub main",
     "phase4BrowserCiPortabilityDeployment": "deployment pass but block stop; exact automatic push run 30203353270 and deploy job 89797056689 passed every step in 2 minutes 7 seconds and credential-free production health returned HTTP 200",
     "phase4BrowserCiPortabilityDeploymentAnnotation": "blocked; GitHub emitted one warning because operational workflow actions checkout v4 targets deprecated Node 20 and was forced onto Node 24 so no workflow edit rerun dispatch cancellation repair or broader recovery occurred",
