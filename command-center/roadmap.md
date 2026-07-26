@@ -891,7 +891,7 @@ Result: Ryan confirmed all four post-review decisions. Transaction identity and 
 
 ## Phase 4: Core Repairs And Regression Coverage
 
-Status: active and completion-ready through local-only work block 4BR; confirmed 4BR-R is active only for exact command-center durability and the Phase 4-to-Phase 5 transition
+Status: complete through work block 4BR-R; the exact 4BR reconciliation is durable on `main`, both publication commits use `[skip actions]`, and Phase 5 is active without beginning product review or implementation
 
 Goal: implement the highest-value fixes while strengthening repeatable verification.
 
@@ -1005,11 +1005,11 @@ Goal: implement the highest-value fixes while strengthening repeatable verificat
     - **Task 3.3.3: Observe the hosted browser CI job through a no-merge test PR.** Umbrella for the stopped first observation, local portability diagnosis/repair, and successful hosted reobservation. The first 4BM run proved exact core-before-browser order and setup but failed the Personal desktop transaction date-filter fixed-width assertion; 4BN repaired the intrinsic flex-item minimum sizing locally; and 4BO passed one clean hosted run. Status: complete through 4BO; PR #88 is closed unmerged and the branch is retained.
       - **Task 3.3.3a: Diagnose and repair hosted transaction date-filter sizing portability.** Use the exact 4BM evidence and read-only source inspection to identify the actual layout contract; add sanitized measured-state detail to the maintained failure message; apply at most the narrow Linux-portable CSS/browser-test change justified by the diagnosis; preserve phone, exact-768, and desktop transaction-filter behavior across Personal, BFM, and Luxe Legacy; run focused and full local verification; and close locally without staging, commit, push, PR mutation, workflow execution, or other external action. Status: complete locally through 4BN.
       - **Task 3.3.3b: Publish the verified portability repair and reobserve hosted browser CI.** After Task 3.3.3a passes and separate authorization, commit only the verified repair on the existing `codex/browser-ci-observation` branch; push once so the open draft PR automatically runs; verify exact event, SHA, core-then-browser order, environment, steps, diagnostics, cleanup, annotations, and no deployment; close PR #88 without merge only after a completely clean success; retain the branch; and perform the separately approved sanitized Runway OS closeout. Status: complete through 4BO with clean run `30202164293`, closed-unmerged PR #88, retained branch, and no deployment.
-- **Task 4: Publish and verify only explicitly approved repairs.** Status: current under confirmed 4BR-R only for exact two-commit command-center durability, zero-workflow proof, and the control-only Phase 4-to-Phase 5 transition.
+- **Task 4: Publish and verify only explicitly approved repairs.** Status: done through 4BR-R; the exact command-center reconciliation is durable, the transition closeout is the containing `[skip actions]` commit, and Phase 5 is active.
 
 ### Confirmed Work Block 4BR-R: Command-Center Durability And Phase Transition
 
-Status: active; confirmed on 2026-07-26.
+Status: complete; confirmed and completed on 2026-07-26.
 
 Parent task: Phase 4 Task 4 (`P4-T4`) only. Phase 5 Task 1 (`P5-T1`) may become the sole current planning gate at closeout, but no Phase 5 review or implementation is included.
 
@@ -1042,6 +1042,8 @@ Dashboard closeout: while active, show 4BR-R as the current work block under Pha
 Report point: return both commit SHAs, exact files, zero-workflow proof, final phase and task state, rendered-dashboard result, final branch and worktree state, preserved hashes, and any stop.
 
 Suggested next work block: 5A just-in-time Phase 5 Task 1 workflow-review decomposition and evidence baseline, with any design second opinion decided before polish implementation.
+
+Result: exact eight-path source commit `b6c7a05d2c7bce46fbfbe05b9cf2470a92460bc3` is durable on local, tracking, and live `main` with zero workflows and zero check runs. The containing exact six-path closeout commit marks 4BR-R and Phase 4 done, activates Phase 5 at zero percent, and makes Phase 5 Task 1 the sole current Ryan-owned planning gate without beginning review or implementation. Final intake verifies the containing closeout SHA, zero workflows, rendered state, preserved files, and final alignment.
 
 ### Confirmed Work Block 4BR: Phase 4 Completion Reconciliation
 
@@ -5087,11 +5089,11 @@ Result: the exact ten-path 4U source set was committed as `0222d30`, fast-forwar
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
-Status: planned
+Status: active at Task 1 for a separately planned and confirmed 5A work block; no Phase 5 review or implementation has begun
 
 Goal: make the product understandable, maintainable, and easy to re-enter after the critical repairs are complete.
 
-- **Task 1: Review desktop, mobile, and installed-PWA workflows for usability and accessibility.**
-- **Task 2: Polish high-friction journeys without widening financial or authentication risk.**
-- **Task 3: Finalize operator runbooks, current documentation, monitoring decisions, and release evidence.**
-- **Task 4: Close the roadmap with target-repo commit/push durability and a compact parent-project pointer.**
+- **Task 1: Review desktop, mobile, and installed-PWA workflows for usability and accessibility.** Status: current and Ryan-owned only for 5A planning and confirmation; no review has begun.
+- **Task 2: Polish high-friction journeys without widening financial or authentication risk.** Status: planned.
+- **Task 3: Finalize operator runbooks, current documentation, monitoring decisions, and release evidence.** Status: planned.
+- **Task 4: Close the roadmap with target-repo commit/push durability and a compact parent-project pointer.** Status: planned.

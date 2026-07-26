@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Execute confirmed 4BR-R exact command-center durability and the control-only Phase 4-to-Phase 5 transition without beginning Phase 5 review or implementation.
+Keep Phase 5 unchanged while Ryan decides whether to plan and confirm 5A for the Task 1 workflow-review decomposition and evidence baseline.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active and completion-ready at 100%; confirmed 4BR-R is active only for exact two-commit command-center durability, zero-workflow proof, and the Phase 4-to-Phase 5 transition.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 0%; Phase 4 is complete through 4BR-R, and no Phase 5 review or implementation has begun.
 
 ## Current Work Block
 
-Work block 4BR-R: Command-Center Durability And Phase Transition — active.
+Work block 4BR-R: Command-Center Durability And Phase Transition — complete.
 
 ## Current Task
 
-Task 4 — current only for confirmed 4BR-R publication, zero-workflow proof, and control-state transition.
+Phase 5 Task 1 — current only for a separately planned and confirmed 5A workflow-review block.
 
 ## Owner
 
-Codex Desktop owns exact-path Git handling, Runway OS stewardship, verification, zero-workflow proof, rendered inspection, stop enforcement, and final intake. Ryan retains every scope expansion, recovery, protected-access, product-policy, and Phase 5 execution decision.
+Ryan owns the 5A planning and confirmation decision plus every product, design, protected-access, publication, and broader-scope choice. Codex completed 4BR-R and owns no Phase 5 execution authority.
 
 ## Current Action
 
-Write and verify active 4BR-R state, reverify the exact eight-path 4BR package, and stop before staging unless every baseline, scope, dashboard, and preserved-file check passes.
+Plan, revise, or hold 5A before any desktop, mobile, installed-PWA, usability, accessibility, design-review, or product work begins.
 
 ## Work Block 4BR-R Contract
 
@@ -36,9 +36,13 @@ Write and verify active 4BR-R state, reverify the exact eight-path 4BR package, 
 ## Work Block 4BR-R Status
 
 - Ryan confirmed the exact recommended 4BR-R proposal on 2026-07-26.
-- Local `HEAD`, local `main`, `origin/main`, and live remote `main` align at `acc7e0a1dfadc4c6e28214a7748eb6f8696f5bfb`.
-- Zero files are staged, the command center is current and healthy, and all three preserved hashes match.
-- Active-state integration is in progress. No staging, commit, push, workflow, transition, or Phase 5 action has occurred.
+- Baseline local, tracking, and live `main` aligned at `acc7e0a1dfadc4c6e28214a7748eb6f8696f5bfb`; zero files were staged; the command center was current and healthy; and all three preserved hashes matched.
+- Full synthetic smoke, both maintained CI safety contracts, JSON, dashboard refresh/currentness/health, rendered active-state inspection, exact-path, whitespace, high-confidence sensitive-addition, product/browser-test ancestry, and preserved-file checks passed.
+- Exact eight-path source commit `b6c7a05d2c7bce46fbfbe05b9cf2470a92460bc3`, with sole parent `acc7e0a1dfadc4c6e28214a7748eb6f8696f5bfb`, is durable on local, tracking, and live `main`.
+- GitHub reported zero workflows and zero check runs for the source SHA on both the initial and delayed confirmation checks.
+- The containing exact six-path `[skip actions]` closeout marks 4BR-R and Phase 4 done, activates Phase 5 at zero percent, and makes Phase 5 Task 1 the sole current Ryan-owned planning gate.
+- No Phase 5 review or implementation, product/test/workflow/configuration change, PR, GitHub merge, workflow action, deployment, protected access, recovery, branch deletion, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-26-phase-4-completion-reconciliation-durability-4br-r.md`.
 
 ## Work Block 4BR Contract
 
