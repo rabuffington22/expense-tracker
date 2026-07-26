@@ -2,27 +2,47 @@
 
 ## Active Objective
 
-Await Ryan's separate decision on proposed work block 4BP after 4BO proved the exact two-file portability repair in hosted browser CI and closed PR #88 safely without merge.
+Hold 4BP at its explicit unexpected-deployment-annotation stop after the exact two-file repair became durable, automatically deployed, and credential-free health verified; await a separate Ryan decision on operational-workflow runtime remediation.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, Task 3.2.1 is complete through 4BK, Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R, and Task 3.3.3 is complete through 4BO.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, Task 3.2.1 is complete through 4BK, Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R, Task 3.3.3 is complete through 4BO, and the exact repair is durable and deployed through stopped 4BP.
 
 ## Current Work Block
 
-Work block 4BO: Hosted Browser CI Reobservation And Safe Closure — complete. The verified repair remains on the retained feature branch and is not durable on `main`.
+Work block 4BP: Browser CI Portability Repair Durability And Release — blocked at the explicit action-runtime annotation stop.
 
 ## Current Task
 
-Task 4: Publish and verify explicitly approved repairs — current only for the unconfirmed exact durability decision on the host-verified two-file repair behind proposed 4BP.
+Task 4: Publish and verify explicitly approved repairs — current for the separate decision on the deployment action-runtime warning exposed by 4BP.
 
 ## Owner
 
-Ryan owns the 4BP repair-durability decision. Codex has completed 4BO execution, hosted observation, safe PR closure, sanitized closeout, dashboard currency, and final intake.
+Ryan owns the separate operational-workflow remediation decision. Codex completed the authorized source durability, automatic deployment observation, credential-free health proof, exact stop enforcement, and sanitized blocked closeout.
 
 ## Current Action
 
-Confirm, revise, or hold proposed 4BP. No merge, `main` publication, deployment, or Phase 4 reconciliation is authorized by completed 4BO.
+Confirm, revise, or hold a separately planned operational-workflow runtime remediation block. No workflow edit, action-pin change, rerun, dispatch, cancellation, further deployment, or Phase 4 reconciliation is authorized by stopped 4BP.
+
+## Work Block 4BP Contract
+
+- Include Task 4 (`P4-T4`) only for exact durability and release of the host-verified portability repair: verify `main` at `a577d14e53aa1b47feffb6617733f67e518cc46c` and retained repair commit `bb6d14e7163e40976ffc2f0671509fd4b70f6a28`; create local `codex/browser-ci-portability-release` from verified `main`; apply only `web/static/style.css` and `scripts/mobile_drawer_browser_test.py` from the retained repair without its marker or history; run the complete local safety bundle; commit exactly those two files without a skip token; fast-forward local `main`; non-force push `main`; observe only the resulting automatic `Fly Deploy` for the exact source SHA; verify credential-free `https://ledger-oak.fly.dev/health` returns HTTP 200; then publish one sanitized 4BP evidence log plus five Runway OS paths in an exact `[skip actions]` closeout and verify zero closeout workflow activity.
+- Exclude reopening or merging PR #88, its marker commit or branch history, remote feature-branch publication, Phase 4 completion reconciliation, Phase 5, broader Task 2 or Task 4 work, any additional product/test/dependency/workflow/runner/browser-version/runtime/migration/authentication/CSRF/CSP change, manual workflow dispatch/rerun/cancellation, non-automatic Fly mutation, Plaid, production databases or authenticated pages, demo/downstream, credentials, protected or real data, force push, rebase, conflict resolution, branch deletion, broader recovery, delegation, second opinion, and all three preserved untracked files.
+- Use one clean local release branch from the exact verified `main`, one explicit two-path source commit without a skip token, one clean fast-forward, and one non-force `main` push. Observe only the automatic Fly workflow for the exact source SHA. Use `[skip actions]` only for the sanitized six-path closeout.
+- Stop for live-main, repair-commit, workflow, expected-path, sensitive-addition, preserved-file, verification, dashboard, cleanup, ancestry, or remote drift; any conflict, rebase, force-push, non-fast-forward, rejected push, or broader recovery need; a missing, failed, wrong-SHA, or unexpectedly annotated deployment; credential-free health failure; any second closeout workflow; or any protected, manual, or excluded action. Report the stop without dispatching, rerunning, cancelling, or repairing.
+- Verify full synthetic smoke; full configured-auth/no-password installed-Chrome coverage; maintained CI safety; relevant Python compilation and JSON; dashboard refresh/currentness/health and rendered state; whitespace, sensitive additions, exact changed/staged/committed paths, cleanup, ancestry, preserved hashes, live GitHub SHA, exact automatic Fly run/job/steps/annotations, credential-free HTTP 200 health, exact `[skip actions]` closeout, zero closeout workflows, and final local/tracking/live alignment.
+- Report the source and closeout SHAs, exact published paths, automatic Fly run and job identifiers and conclusions, annotations, credential-free health, final branch/worktree state, preserved exclusions, and the separately gated Phase 4 reconciliation decision.
+
+## Work Block 4BP Status
+
+- Ryan confirmed the exact recommended 4BP proposal on 2026-07-26.
+- Exact local, tracking, live GitHub, and remote `main` baseline plus retained repair commit, inactive Fly lane, correct production health endpoint, exact two-file patch, and all three preserved hashes passed preflight.
+- The clean local-only release branch received only `web/static/style.css` and `scripts/mobile_drawer_browser_test.py`. Full smoke, full configured-auth/no-password installed-Chrome coverage, maintained CI safety, compilation, JSON, dashboard, whitespace, sensitive-addition, cleanup, ancestry, exact-path, remote, and preserved-file verification passed.
+- Exact source commit `9b26030419b318af100bdc7d871d6c976fd02709` has parent `a577d14e53aa1b47feffb6617733f67e518cc46c`, matches hosted repair content, fast-forwarded local `main`, and is durable on remote and GitHub `main`.
+- Exactly one source-SHA workflow exists. Automatic `Fly Deploy` run `30203353270` and deploy job `89797056689` passed every step in 2 minutes 7 seconds, and credential-free production health returned HTTP 200.
+- GitHub emitted one warning because operational workflow `actions/checkout@v4` targets Node.js 20 and was forced onto Node.js 24. That annotation is an explicit 4BP stop condition.
+- 4BP is blocked rather than complete. No workflow edit, action-pin change, dispatch, rerun, cancellation, further repair, broader recovery, protected action, or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-26-browser-ci-portability-repair-release-4bp.md`.
 
 ## Work Block 4BO Contract
 
