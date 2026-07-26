@@ -2,27 +2,27 @@
 
 ## Active Objective
 
-Publish and verify the exact locally proven 4BL browser-CI foundation through confirmed work block 4BL-R without deployment or hosted execution.
+Confirm or revise work block 4BM for one hosted browser-CI observation through a no-merge draft PR now that the exact foundation is durable without deployment.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, Task 3.2.1 is complete through 4BK, and Tasks 3.3.1-3.3.2 are active at exact-path durability through confirmed 4BL-R.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, Task 3.2.1 is complete through 4BK, and Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R.
 
 ## Current Work Block
 
-Work block 4BL-R: Browser CI Foundation Durability Without Deployment — active.
+Work block 4BL-R: Browser CI Foundation Durability Without Deployment — done; both `[skip actions]` pushes completed with zero workflows and no deployment.
 
 ## Current Task
 
-Task 4: Publish and verify explicitly approved repairs — current inside confirmed 4BL-R. Tasks 3.3.1-3.3.2 are complete locally; Task 3.3.3 hosted observation remains planned and excluded.
+Task 3.3.3: Observe the hosted browser CI job through a no-merge test PR — current at the separate 4BM confirmation gate.
 
 ## Owner
 
-Codex Desktop owns confirmed 4BL-R execution. Ryan owns Task 3.3.3 hosted observation, deployment, production, and every later gate.
+Ryan owns the 4BM hosted-observation decision. Codex owns the durable 4BL-R result and can execute only a separately confirmed observation block.
 
 ## Current Action
 
-Reverify the exact ten-path 4BL source set; create and publish one `[skip actions]` source commit through a clean fast-forward to `main`; verify exact remote SHA and zero workflows; then publish one sanitized six-path `[skip actions]` closeout and verify final alignment.
+Wait for Ryan to confirm or revise 4BM. Hosted execution, PR creation, and observation remain unconfirmed; merge, deployment, production, protected access, and every workflow repair remain separate.
 
 ## Work Block 4BL-R Contract
 
@@ -32,6 +32,18 @@ Reverify the exact ten-path 4BL source set; create and publish one `[skip action
 - Stop for live-`main` drift from `7a5e21d9ba1363647c32cda23606fbdb9fa94827`; any unexpected, sensitive, or preserved path; verification/dashboard/scope/cleanup failure; non-fast-forward, conflict, rebase, force-push, push rejection, or broader recovery need; inability to verify GitHub; or any workflow/deployment activity despite `[skip actions]`. If a workflow unexpectedly starts, report rather than cancel it.
 - Verify full synthetic smoke and full configured-auth/no-password browser coverage; maintained CI safety; workflow YAML, Python, JavaScript, and JSON syntax; dashboard refresh/currentness/health and rendered state; whitespace and sensitive additions; exact changed/staged/committed paths; commit ancestry; live GitHub SHA and zero workflows after both pushes; final local/tracking/live alignment; and all three preserved files.
 - Report source and closeout SHAs, exact published paths, ancestry, zero-workflow/no-deployment result, final alignment/worktree, preserved exclusions, and separately gated Task 3.3.3.
+
+## Work Block 4BL-R Status
+
+- Ryan confirmed the exact recommended 4BL-R proposal on 2026-07-25.
+- Full smoke passed in 9.74 seconds; full configured-auth/no-password browser coverage passed in 287.69 seconds; CI safety, workflow YAML, Python/JavaScript/JSON, dashboard, whitespace, sensitive-addition, operational-workflow, exact-scope, and preserved-file checks passed.
+- Exact ten-path source commit `be14f5aa1e0733d6d12f57a221560eb96f95df5c` has expected parent `7a5e21d9ba1363647c32cda23606fbdb9fa94827` and is durable on `main`.
+- Local `HEAD`, local `main`, tracking `origin/main`, live remote `main`, and the GitHub commit API aligned to the source SHA after the non-force push.
+- GitHub reported zero workflow runs for the source SHA because the commit used `[skip actions]`; no Synthetic CI or Fly Deploy job started.
+- The evidence-log hard-break formatting was corrected before commit after the staged whitespace audit found three trailing-space lines. No source behavior changed.
+- This sanitized Runway OS closeout is published separately with `[skip actions]`.
+- Evidence: `command-center/logs/2026-07-25-browser-ci-foundation-durability-4bl-r.md`.
+- Tasks 3.3.1-3.3.2 are durable without deployment. Task 3.3.3 and proposed 4BM remain a separate Ryan gate.
 
 ## Work Block 4BL Contract
 
@@ -120,9 +132,9 @@ Reverify the exact ten-path 4BL source set; create and publish one `[skip action
 - **Task 3.2: Implement the PR-only core synthetic CI foundation.** Add one workflow that installs only tracked runtime dependencies and runs the maintained synthetic smoke, syntax, JSON, dashboard-health/currentness, and whitespace checks without secrets or live services. Status: complete locally through 4BJ; durability is active through 4BJ-R.
 - **Task 3.2.1: Observe the core synthetic workflow through a minimal no-merge test PR.** Use one branch-only sanitized marker to trigger the durable workflow, verify the exact pull-request event/SHA/job and absence of deployment, and close the draft PR without merge after success. Status: complete through 4BK with one successful 52-second hosted run, closed-unmerged PR #87, and no deployment.
 - **Task 3.3: Add isolated-browser CI coverage.** Umbrella for the action/runtime contract, local job implementation, and later hosted observation. Status: active and decomposed after the successful 4BK core run.
-- **Task 3.3.1: Freeze the isolated-browser CI and Node 24 action-runtime contract.** Select immutable official checkout/setup-python v7 SHAs, an explicit Ubuntu 24.04 runner with installed Google Chrome, Python 3.12, `requirements-dev.txt`, a separate job after core success, a 15-minute timeout, no cache/artifacts/secrets, reviewed network/logging boundaries, and exact temporary cleanup. Status: complete locally through active 4BL.
-- **Task 3.3.2: Implement the PR-only isolated-browser CI job and maintained safety assertions.** Upgrade the existing official action pins, add the separate browser job without changing the PR-only/read-only authority boundary, expand the fail-closed checker and compact maintained documentation, and verify the exact workflow locally. Status: complete locally through 4BL; durability awaits separate 4BL-R confirmation.
-- **Task 3.3.3: Observe the hosted browser CI job through a no-merge test PR.** After separately authorized durability, trigger one draft PR, verify exact core-then-browser job behavior, runtime, cleanup, annotations, and absence of deployment, then close without merge after success. Status: planned behind durable Task 3.3.2 and separately gated.
+- **Task 3.3.1: Freeze the isolated-browser CI and Node 24 action-runtime contract.** Select immutable official checkout/setup-python v7 SHAs, an explicit Ubuntu 24.04 runner with installed Google Chrome, Python 3.12, `requirements-dev.txt`, a separate job after core success, a 15-minute timeout, no cache/artifacts/secrets, reviewed network/logging boundaries, and exact temporary cleanup. Status: complete and durable without deployment through 4BL-R.
+- **Task 3.3.2: Implement the PR-only isolated-browser CI job and maintained safety assertions.** Upgrade the existing official action pins, add the separate browser job without changing the PR-only/read-only authority boundary, expand the fail-closed checker and compact maintained documentation, and verify the exact workflow locally. Status: complete and durable without deployment through 4BL-R.
+- **Task 3.3.3: Observe the hosted browser CI job through a no-merge test PR.** After separately authorized durability, trigger one draft PR, verify exact core-then-browser job behavior, runtime, cleanup, annotations, and absence of deployment, then close without merge after success. Status: current and awaiting separate 4BM confirmation.
 
 ## Work Block 4BI-R Contract
 
