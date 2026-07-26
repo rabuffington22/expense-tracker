@@ -2,27 +2,94 @@
 
 ## Active Objective
 
-Confirm or revise work block 4BM for one hosted browser-CI observation through a no-merge draft PR now that the exact foundation is durable without deployment.
+Await Ryan's separate decision on proposed work block 4BP after 4BO proved the exact two-file portability repair in hosted browser CI and closed PR #88 safely without merge.
 
 ## Current Phase
 
-Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, Task 3.2.1 is complete through 4BK, and Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R.
+Phase 4: Core Repairs And Regression Coverage — active; Tasks 1P.7.1-1P.7.4 and Tasks 3.1-3.2 are durable without deployment through 4BJ-R, Task 3.2.1 is complete through 4BK, Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R, and Task 3.3.3 is complete through 4BO.
 
 ## Current Work Block
 
-Work block 4BL-R: Browser CI Foundation Durability Without Deployment — done; both `[skip actions]` pushes completed with zero workflows and no deployment.
+Work block 4BO: Hosted Browser CI Reobservation And Safe Closure — complete. The verified repair remains on the retained feature branch and is not durable on `main`.
 
 ## Current Task
 
-Task 3.3.3: Observe the hosted browser CI job through a no-merge test PR — current at the separate 4BM confirmation gate.
+Task 4: Publish and verify explicitly approved repairs — current only for the unconfirmed exact durability decision on the host-verified two-file repair behind proposed 4BP.
 
 ## Owner
 
-Ryan owns the 4BM hosted-observation decision. Codex owns the durable 4BL-R result and can execute only a separately confirmed observation block.
+Ryan owns the 4BP repair-durability decision. Codex has completed 4BO execution, hosted observation, safe PR closure, sanitized closeout, dashboard currency, and final intake.
 
 ## Current Action
 
-Wait for Ryan to confirm or revise 4BM. Hosted execution, PR creation, and observation remain unconfirmed; merge, deployment, production, protected access, and every workflow repair remain separate.
+Confirm, revise, or hold proposed 4BP. No merge, `main` publication, deployment, or Phase 4 reconciliation is authorized by completed 4BO.
+
+## Work Block 4BO Contract
+
+- Include Task 3.3.3b (`P4-T333B`) plus Task 4 (`P4-T4`) only for the exact authorized publication and sanitized closeout: reverify 4BN; explicitly stage only `web/static/style.css` and `scripts/mobile_drawer_browser_test.py`; create one feature commit without a skip token on `codex/browser-ci-observation`; push once so draft PR #88 automatically runs `Synthetic CI`; verify the exact event, head SHA, core-before-browser order, environment, steps, diagnostics, cleanup, annotations, and absence of deployment; close PR #88 without merge only after a completely clean success; retain the remote branch; then publish one exact-path `[skip actions]` sanitized Runway OS closeout.
+- Exclude Task 3.3.3a beyond publishing its already-verified two-file result, broader Task 2 or Task 4 work, Phase 4 completion reconciliation, Phase 5, merge, repair durability on `main`, deployment, manual dispatch, rerun, cancellation, workflow/action/runner/browser-version/dependency changes, further repair, Fly, Plaid, production/demo/downstream, credentials, protected or real data, branch deletion, force push, rebase, conflict resolution, broader recovery, delegation, second opinion, and all three preserved untracked files.
+- Use one explicit two-path feature commit and one non-force feature-branch push. Treat success as both hosted jobs passing cleanly in order with no unexpected annotation or deployment. Close unmerged only after that success and retain the branch. Use `[skip actions]` only for the sanitized command-center closeout.
+- Stop for branch, PR, main, workflow, expected-path, verification, dashboard, sensitive-addition, cleanup, or preserved-file drift; a missing, failed, delayed, out-of-order, or unexpectedly annotated hosted job; any Fly deployment or unexpected workflow; or any need for repair, rerun, cancellation, workflow change, merge, force push, rebase, conflict resolution, protected access, or broader recovery. On a hosted stop, leave PR #88 open and do not retry or repair.
+- Verify full synthetic smoke; full configured-auth/no-password installed-Chrome coverage; maintained CI safety; relevant Python and JSON syntax; dashboard refresh/currentness/health and rendered state; whitespace, sensitive additions, exact paths, stage and commit contents, ancestry, push and PR state; hosted event, head SHA, job order, environment, steps, runtimes, cleanup, annotations, and no deployment; conditional closed-unmerged status; retained branch; exact `[skip actions]` closeout; zero closeout workflows; final remote alignment; and all preserved files.
+- Report the feature SHA, PR and workflow identifiers, job order and results, environment, runtimes, measured diagnostic result, annotations, cleanup, no-deployment proof, PR disposition, closeout SHA, final branch/worktree state, preserved exclusions, and separate repair-durability decision.
+
+## Work Block 4BO Status
+
+- Ryan confirmed the exact recommended 4BO proposal on 2026-07-26.
+- Active Runway OS JSON, refresh/currentness, health, rendered dashboard, full smoke, full configured-auth/no-password installed-Chrome coverage, maintained CI safety, Python compilation, whitespace, sensitive-addition, exact-path, branch, remote, and preserved-file preflight passed.
+- Exact two-file feature commit `bb6d14e7163e40976ffc2f0671509fd4b70f6a28` has parent `68959de40ca7de52cd20a0465d002ae4929c92ce` and contains only `web/static/style.css` and `scripts/mobile_drawer_browser_test.py`.
+- The one non-force feature push produced exact `pull_request` run `30202164293` and no other feature-SHA workflow.
+- Core job `89793869350` ran first and passed every step in 55 seconds. Browser job `89793962387` then passed every step and cleanup in 5 minutes 23 seconds on Ubuntu 24.04, Python 3.12.13, Chrome 150.0.7871.128, and Playwright 1.61.0.
+- Both jobs reported zero annotations. The complete hosted browser matrix passed the date-filter contract that stopped 4BM, and no Fly deployment occurred.
+- PR #88 closed without merge with `mergedAt` null. The remote observation branch remains retained at `bb6d14e`; remote `main` remained unchanged at `4e9c285`.
+- Evidence: `command-center/logs/2026-07-26-hosted-browser-ci-reobservation-4bo.md`.
+
+## Work Block 4BN Contract
+
+- Include Task 3.3.3a (`P4-T333A`) only: diagnose the exact 4BM Personal desktop date-filter width mismatch; add sanitized measured date-group and filter-bar values to the maintained failure output; apply at most the narrow flex-item/CSS correction justified by the diagnosis; preserve the 130px desktop, exact-768 two-column, phone stacking, no-overflow, no-style-attribute, all-entity, both-auth, denied-network, and exact-cleanup contracts; verify completely; and close Runway OS locally.
+- Exclude Task 3.3.3b, 4BO hosted reobservation, Task 4, staging, commit, push, PR #88 mutation or closure, workflow execution/rerun/cancellation, merge, branch deletion, publication, deployment, workflow/action/runner/browser-version/dependency changes, relaxed acceptance ranges, broader design/product/authentication/CSRF/CSP/migration work, Fly, Plaid, production/demo/downstream, credentials, protected or real data, Phase 4 reconciliation, delegation, second opinion, and all three preserved untracked files.
+- Diagnose before changing CSS. Preserve the existing visual and responsive contract; if intrinsic flex-item minimum sizing is confirmed, prefer the narrow minimum-size correction without weakening the desktop range. Use only sanitized dimensions in failure output.
+- Stop if the narrow hypothesis is disproved; a broader layout/design or acceptance decision is needed; any phone/exact-768/desktop, entity, auth, overflow, style, network, cleanup, or unrelated regression appears; any dependency/workflow/external action becomes necessary; or verification, dashboard, scope, sensitive-addition, exact-path, or preserved-file checks fail.
+- Verify focused computed layout across Personal, BFM, and Luxe Legacy at phone, exact-768, and desktop; sanitized measured failure output; full smoke; full configured-auth/no-password installed-Chrome browser coverage; maintained CI safety; relevant syntax; JSON; dashboard refresh/currentness/health and rendered state; whitespace; sensitive additions; exact changed paths; zero staged changes; zero external actions; and all preserved files.
+- Report the exact diagnosis, measured evidence, repair contract, visual/responsive behavior, focused and full verification, cleanup, changed paths, branch/worktree state, preserved exclusions, and separate 4BO gate.
+
+## Work Block 4BN Status
+
+- Ryan confirmed the exact recommended local-only 4BN proposal on 2026-07-26.
+- The tracked desktop flex item used a `130px` basis with `min-width: auto`; a temporary synthetic all-entity Chrome probe measured `132.44px`, confirming intrinsic minimum sizing could enlarge the date group.
+- The narrow repair adds `min-width: 0` to `.txn-filter-date` while retaining the `130px` basis and every existing responsive acceptance threshold. Maintained failures now expose only sanitized `dateWidth` and `filterWidth` values.
+- Post-repair probes measured exactly `130.00px` desktop width for Personal, BFM, and Luxe Legacy. Phone remained `340.75px` inside `368.06px`; exact-768 remained `350.94px` inside `739.31px`; no overflow or blocked-network attempt occurred.
+- Full smoke passed. A first concurrent browser invocation hit an unrelated dashboard-response timeout before the changed assertion; exact cleanup passed, and one clean non-concurrent rerun passed the complete both-auth, all-entity installed-Chrome suite.
+- JSON, generated-dashboard currentness/health, syntax, whitespace, scope, zero-stage, and preserved-file checks pass. The in-app browser blocked localhost reinspection under its URL policy after the server restart, so that rendered-dashboard limitation is explicit and no workaround was attempted.
+- All changes remain local, unstaged, uncommitted, and unpushed. PR #88 and its remote branch remain open/draft/unmerged and untouched; no workflow, deployment, protected-access, real-data, or preserved-file action occurred.
+- Evidence: `command-center/logs/2026-07-26-browser-ci-portability-local-repair-4bn.md`.
+
+## Task 3.3.3 Follow-Up Decomposition
+
+- **Task 3.3.3a (`P4-T333A`): Diagnose and repair hosted transaction date-filter sizing portability.** Use the 4BM evidence and read-only source inspection to identify the actual layout contract; add sanitized measured-state detail to the maintained failure message; apply at most the narrow CSS/browser-test change justified by the diagnosis; preserve phone, exact-768, and desktop transaction-filter behavior across Personal, BFM, and Luxe Legacy; run focused and full local verification; and close locally without staging or any external action. Status: complete locally through 4BN.
+- **Task 3.3.3b (`P4-T333B`): Publish the verified portability repair and reobserve hosted browser CI.** After Task 3.3.3a passes and separate authorization, commit only the verified repair on the existing observation branch, push once to trigger the automatic PR workflow, verify exact core-then-browser behavior and no deployment, close PR #88 without merge only after a completely clean success, retain the branch, and perform any separately approved sanitized closeout. Status: current but unconfirmed behind proposed 4BO.
+- Completed 4BN includes only Task 3.3.3a. Task 3.3.3b, proposed 4BO hosted reobservation, PR closure, Task 4 closeout, and Phase 4 completion reconciliation remain separate gates.
+
+## Work Block 4BM Contract
+
+- Include Task 3.3.3 (`P4-T333`) plus Task 4 only for sanitized evidence and the exact-path Runway OS closeout: create `codex/browser-ci-observation` from verified `main`; commit and push one branch-only sanitized marker without a skip token; open one draft PR to `main`; observe the automatic `Synthetic CI` pull-request run through exact core-then-browser order; verify event, head SHA, every step, installed Chrome, dependency installation, runtime, cleanup, annotations, and absence of Fly deployment; close without merge only after a completely successful clean run; retain the remote branch; then publish one exact-path `[skip actions]` sanitized closeout to `main`.
+- Exclude broader Task 2 or Task 4, Phase 5, workflow/product/runtime/dependency/browser-test/migration/authentication/CSRF/CSP changes, repair, manual dispatch, rerun, cancellation, merge, deployment, Fly, Plaid, production/demo/downstream, credentials, protected or real data, branch deletion, force push, rebase, conflict resolution, broader recovery, delegation, second opinion, and all three preserved untracked files.
+- Use one draft PR and one marker-only feature commit with no skip token. Close only after both jobs succeed cleanly with no unexpected annotation or deployment; retain the remote branch. Leave a failed, missing, over-time, out-of-order, or unexpectedly annotated draft PR open for read-only diagnosis only. Use `[skip actions]` only for the sanitized main closeout.
+- Stop for main or workflow drift; a missing, failed, over-time, or out-of-order job; any unexpected action/runtime annotation or Fly deployment; need for repair, rerun, cancellation, merge, workflow edit, protected action, branch deletion, rebase, force push, conflict resolution, or broader recovery; verification/dashboard/scope/cleanup failure; or preserved-file overlap.
+- Verify local full smoke, full isolated-browser coverage, maintained CI safety, JSON, dashboard, whitespace, sensitive additions, exact branch/marker/stage/commit/push/PR state, pull-request event and head SHA, every core and browser step, installed Chrome, runtimes, annotations, cleanup, no feature-SHA Fly deployment, closed-unmerged status, exact closeout paths, zero closeout workflows, final local/tracking/live alignment, and all preserved files.
+- Report feature SHA, PR URL/number, workflow and job identifiers, step conclusions and runtimes, Chrome version, annotations, cleanup and no-deployment result, closed-unmerged status, closeout SHA, final alignment/worktree, and preserved exclusions.
+
+## Work Block 4BM Status
+
+- Ryan confirmed the exact recommended 4BM proposal on 2026-07-26.
+- Local smoke, full configured-auth/no-password browser coverage, maintained CI safety, JSON, dashboard, health, and whitespace preflight passed.
+- Marker-only commit `68959de40ca7de52cd20a0465d002ae4929c92ce` produced draft PR #88 and exact pull-request run `30191944724`.
+- Core job `89766609536` passed every step in 48 seconds. Browser job `89766677978` started afterward on Ubuntu 24.04 with Python 3.12.13, Chrome 150.0.7871.128, and Playwright 1.61.0.
+- Browser setup and dependency installation passed, but the maintained suite failed after 27 seconds on the Personal desktop transaction date-filter fixed-width assertion. The job failed in 1 minute 5 seconds with exactly one exit-code annotation; the prior Node.js 20 annotation did not recur.
+- No Fly deployment or other feature-SHA workflow occurred. Remote `main` remained at `4e9c285dd0237a3c576143fd85587fbda60dfc47`.
+- PR #88 remains open, draft, and unmerged; the remote branch is retained. No repair, rerun, cancellation, closure, merge, workflow/product/dependency edit, deployment, protected access, or preserved-file action occurred.
+- Read-only inspection makes Linux Chrome intrinsic date-input minimum sizing a plausible cause, but the failed assertion did not log the measured width, so this is not yet a confirmed diagnosis.
+- Evidence: `command-center/logs/2026-07-26-hosted-browser-ci-observation-4bm.md`.
 
 ## Work Block 4BL-R Contract
 
