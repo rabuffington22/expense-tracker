@@ -188,10 +188,18 @@ Production uses `fly.toml`, a persistent `/data` volume, and Gunicorn on interna
 
 GitHub Actions currently owns two operational workflows:
 
-- `Fly Deploy`: a push to `main` deploys the production Fly app. It can also be dispatched manually.
+- `Fly Deploy`: a push to `main` deploys the production Fly app. It uses explicit Ubuntu 24.04, read-only repository permission, non-persistent checkout credentials, immutable Node 24-compatible checkout and Fly setup action commits, pinned Fly CLI `0.4.74`, one reviewed remote-only deploy command, and a 20-minute timeout. It can also be dispatched manually.
 - `Daily Plaid Sync`: runs at 09:17 UTC and calls the protected all-entity sync endpoint. It can also be dispatched manually.
 
 Feature-branch pushes and draft PRs do not match the production deploy trigger. Merging to `main`, manually dispatching either workflow, changing Fly secrets, and invoking a Plaid sync are live side effects and require an explicitly approved work block.
+
+The exact production deployment contract is maintained in `command-center/fly-deploy-safety-contract.md`. The standard-library checker validates both the PR-only Synthetic CI workflow and Fly Deploy workflow:
+
+```bash
+.venv/bin/python scripts/ci_safety_check.py
+```
+
+A passing safety check proves only tracked workflow structure. It does not read the Fly token or authorize a push, deployment, manual workflow action, or production access.
 
 The application exposes `/health` for a minimal health check. The production and demo roots may also be checked by HTTP status when a confirmed verification block allows external reads.
 

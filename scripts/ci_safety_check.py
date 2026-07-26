@@ -9,11 +9,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "synthetic-ci.yml"
+FLY_WORKFLOW = ROOT / ".github" / "workflows" / "fly-deploy.yml"
 DEV_REQUIREMENTS = ROOT / "requirements-dev.txt"
 BROWSER_TEST = ROOT / "scripts" / "mobile_drawer_browser_test.py"
 
 CHECKOUT_SHA = "3d3c42e5aac5ba805825da76410c181273ba90b1"
 SETUP_PYTHON_SHA = "5fda3b95a4ea91299a34e894583c3862153e4b97"
+FLY_SETUP_SHA = "ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1"
+FLYCTL_VERSION = "0.4.74"
 
 EXPECTED_USES = [
     f"actions/checkout@{CHECKOUT_SHA}",
@@ -85,6 +88,10 @@ BROWSER_SAFETY_ANCHORS = [
 
 def fail(message: str) -> None:
     raise SystemExit(f"synthetic CI safety check failed: {message}")
+
+
+def fly_fail(message: str) -> None:
+    raise SystemExit(f"Fly Deploy safety check failed: {message}")
 
 
 def significant_lines(source: str) -> list[str]:
@@ -189,7 +196,61 @@ def main() -> None:
     if browser_source.count("route.abort()") != 2:
         fail("browser suite must retain both non-localhost request denials")
 
+    if not FLY_WORKFLOW.is_file():
+        fly_fail(f"missing {FLY_WORKFLOW.relative_to(ROOT)}")
+
+    fly_source = FLY_WORKFLOW.read_text(encoding="utf-8")
+    expected_fly_lines = [
+        "name: Fly Deploy",
+        "on:",
+        "  push:",
+        "    branches:",
+        "      - main",
+        "  workflow_dispatch:",
+        "permissions:",
+        "  contents: read",
+        "jobs:",
+        "  deploy:",
+        "    name: Deploy app",
+        "    runs-on: ubuntu-24.04",
+        "    timeout-minutes: 20",
+        "    concurrency: deploy-group    # optional: ensure only one action runs at a time",
+        "    steps:",
+        "      - name: Checkout source",
+        f"        uses: actions/checkout@{CHECKOUT_SHA} # v7.0.1",
+        "        with:",
+        "          persist-credentials: false",
+        "      - name: Set up flyctl",
+        f"        uses: superfly/flyctl-actions/setup-flyctl@{FLY_SETUP_SHA} # v1",
+        "        with:",
+        f"          version: {FLYCTL_VERSION}",
+        "      - name: Deploy app",
+        "        run: flyctl deploy --remote-only",
+        "        env:",
+        "          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}",
+    ]
+    fly_lines = significant_lines(fly_source)
+    if fly_lines != expected_fly_lines:
+        fly_fail("reviewed workflow structure or values changed")
+
+    fly_uses = re.findall(
+        r"^\s*uses:\s*([^#\s]+)",
+        fly_source,
+        flags=re.MULTILINE,
+    )
+    expected_fly_uses = [
+        f"actions/checkout@{CHECKOUT_SHA}",
+        f"superfly/flyctl-actions/setup-flyctl@{FLY_SETUP_SHA}",
+    ]
+    if fly_uses != expected_fly_uses:
+        fly_fail(f"action list changed: {fly_uses!r}")
+    if any(not re.fullmatch(r"[^@]+@[0-9a-f]{40}", item) for item in fly_uses):
+        fly_fail("every action reference must use a full immutable commit SHA")
+    if fly_source.count("${{ secrets.") != 1:
+        fly_fail("workflow must contain exactly one reviewed secret reference")
+
     print("Synthetic CI safety contract passed")
+    print("Fly Deploy safety contract passed")
 
 
 if __name__ == "__main__":
