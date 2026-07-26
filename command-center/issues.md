@@ -4,7 +4,7 @@ These are known defects, risks, or rough edges. They are not active work unless 
 
 Phase 3 Task 7 is consolidated in `command-center/phase-3-findings-consolidation.md`. That catalog assigns stable IDs, explicit confidence, affected boundaries, sanitized reproductions, observed-versus-expected behavior, impacts, evidence sources, and dependency tags to the 55 Phase 3-derived entries below. The detailed acceptance checks remain authoritative in each matching issue section here.
 
-The Task 7 snapshot contains 42 unresolved behavioral or policy findings, 10 regression-coverage items, and three findings resolved and released through work blocks 4A-4B. The catalog's dependency tags support Task 8 sequencing but do not authorize or preselect a repair order.
+The local 4BR completion crosswalk reconciles the 55 Phase 3-derived entries to 52 resolved/durable items, two explicitly parked residual coverage items, and one planning/demo coverage item carried to Phase 5. Across this whole ledger, the four additional project issues are three resolved items and one monitored operational risk. Historical reproduction, “why not fixed,” and pre-release boundary paragraphs remain as captured evidence; each section's current `Status` line and the 4BR evidence log own present disposition.
 
 ## Cash Flow Shared Sibling Cards Can Misroute Writes Into The Active Entity
 
@@ -108,7 +108,7 @@ Work block 2B added a concise tracked `AGENTS.md` as canonical, reduced `CLAUDE.
 
 ## Planning Foundations Lack Tracked Regression And Demo Goal Evidence
 
-Status: boundary slice covered by work block 4E; remaining coverage parked for Phase 4 and demo review for Phase 5
+Status: carried-forward; selected Phase 4 boundary and defect coverage is complete, while demo-goal fidelity remains a Phase 5 review
 
 Severity: medium regression-confidence risk
 
@@ -203,7 +203,7 @@ Work block 4E added one early Luxe Legacy denial guard to each planning blueprin
 
 ## Automatic Goal Snapshots Erase Same-Day Review Notes
 
-Status: resolved locally in work block 4T; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4T-R
 
 Severity: medium planning-record persistence risk
 
@@ -238,7 +238,7 @@ Work block 4T replaced destructive same-day snapshot replacement with identity-s
 
 ## Negative Asset Appreciation Is Treated As Zero Growth
 
-Status: resolved locally through work block 4U; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4U-R
 
 Severity: medium long-term projection correctness risk
 
@@ -269,7 +269,7 @@ Positive and negative nonzero asset rates now use the same compound-growth and e
 
 ## Transaction Identity Can Collapse Distinct Transactions
 
-Status: open; discovered in work block 3A and confirmed on the Plaid path in work block 3G
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4C-R
 
 Severity: high financial-data completeness risk
 
@@ -300,7 +300,7 @@ Work block 3A is audit-only. Changing the primary identity contract requires rep
 
 ## Transaction Edit, Split, And Effective-Reporting Paths Lack Tracked Regression Coverage
 
-Status: parked for Phase 4 regression coverage
+Status: resolved and durable through maintained transaction, split, and effective-reporting coverage in 4C, 4AT-R, and 4BE-R
 
 Severity: medium regression-confidence risk
 
@@ -362,7 +362,7 @@ Work block 4M removed the nonexistent bank-side column dependency without a migr
 
 ## Vendor-Order Imports Discard Parsed Line Items
 
-Status: resolved locally through work block 4AK; publication remains separate
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4N-R
 
 Severity: high vendor-detail completeness risk
 
@@ -393,7 +393,7 @@ Work block 4N now saves each new Amazon or Henry Schein parent and every parsed 
 
 ## Vendor Categorization Can Escape The Category Source Of Truth
 
-Status: resolved locally in work block 4O; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4O-R
 
 Severity: high financial-classification integrity risk
 
@@ -429,7 +429,7 @@ Work block 4O makes `categories.md` authoritative for new in-scope inference and
 
 ## Task 2 Import And Categorization Paths Lack Tracked Regression Coverage
 
-Status: partly addressed through work blocks 4N and 4O
+Status: parked; selected Phase 4 import and categorization coverage is complete, while residual broad parser and operator-path coverage remains future paired work
 
 Severity: medium regression-confidence risk
 
@@ -522,7 +522,7 @@ Work block 4H constructs the SQL with the maintained entity-specific exclusion c
 
 ## Task 3 Financial Read-Model Paths Lack Tracked Regression Coverage
 
-Status: parked for Phase 4 regression coverage
+Status: resolved and durable through maintained read-model coverage in 4H-R, 4BE-R, 4BF-R, and 4BI-R
 
 Severity: medium regression-confidence risk
 
@@ -554,7 +554,7 @@ Tracked fixture and test expansion was explicitly excluded from audit work block
 
 ## Weekly Historical Views Mix Selected And Current Dates
 
-Status: resolved locally in work block 4V; release remains separate
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4V-R
 
 Severity: high financial-planning correctness risk
 
@@ -589,7 +589,7 @@ Work block 4V makes the selected ISO week's Monday the budget-month anchor, caps
 
 ## Weekly Credit-Card Bills Use Full Balance Instead Of Scheduled Payment
 
-Status: resolved locally in work block 4V; release remains separate
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4V-R
 
 Severity: high cash-planning correctness risk
 
@@ -624,7 +624,7 @@ Work block 4V carries `payment_amount_cents` through the card-due helper and mak
 
 ## Waterfall Payoff Average Excludes Deficit Months
 
-Status: resolved locally through work block 4X; publication not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4X-R
 
 Severity: high debt-planning correctness risk
 
@@ -655,7 +655,7 @@ Work block 4X uses the selected month and two preceding calendar months as a fix
 
 ## Invalid Weekly Paydown Dates Persist And Break The Page
 
-Status: resolved locally through work block 4W; publication not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4W-R
 
 Severity: medium functional-availability risk
 
@@ -686,7 +686,7 @@ Work block 4W now requires one canonical target date strictly later than the cur
 
 ## Waterfall Can Report Zero Months While Debt Remains
 
-Status: resolved locally through work block 4X; publication not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4X-R
 
 Severity: medium financial-display correctness risk
 
@@ -716,7 +716,7 @@ Work block 4X applies ceiling-to-whole-month display for positive debt and posit
 
 ## Waterfall Tax Fallback Can Disagree With Display And Crash On Non-Finite Input
 
-Status: resolved locally through work block 4Y; publication not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4Y-R
 
 Severity: medium scenario-integrity and availability risk
 
@@ -746,7 +746,7 @@ Work block 4Y parses the query once with finite decimal semantics, rounds half-u
 
 ## Weekly And Waterfall Paths Lack Tracked Regression Coverage
 
-Status: resolved locally through paired maintained coverage in work blocks 4V-4Y; 4Y publication not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4V-R to 4Y-R
 
 Severity: medium regression-confidence risk
 
@@ -777,7 +777,7 @@ Maintained sections 8a5 through 8a8 now pair all six `P3-3E` repairs with determ
 
 ## Non-BFM Entities Can Directly Access And Mutate Payroll
 
-Status: resolved locally in work block 4D; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4D-R
 
 Severity: high payroll/HR boundary risk
 
@@ -808,7 +808,7 @@ Resolution evidence:
 
 ## Payroll Preview Duplicates An Exact Existing Employee
 
-Status: resolved locally in work block 4P; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4P-R
 
 Severity: high payroll-history integrity risk
 
@@ -839,7 +839,7 @@ Work block 4P moves normalized-name assignment into explicit route data, renders
 
 ## Payroll Peer Averages Mix Hourly And Salary Units
 
-Status: resolved locally in work block 4R; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4R-R
 
 Severity: high compensation-comparison correctness risk
 
@@ -870,7 +870,7 @@ Work block 4R groups active employees by both maintained role and pay type, excl
 
 ## Payroll Employee Inputs Are Not Safely Normalized
 
-Status: resolved locally in work block 4Q; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4Q-R
 
 Severity: medium data-integrity and availability risk
 
@@ -901,7 +901,7 @@ Work block 4Q adds one shared pre-mutation employee validator across manual crea
 
 ## Canceling Payroll Preview Retains The Parsed Payload
 
-Status: resolved locally in work block 4P; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4P-R
 
 Severity: medium payroll-data retention risk
 
@@ -932,7 +932,7 @@ Work block 4P replaces preview's passive link with an explicit BFM-only POST can
 
 ## Malformed Payroll XLSX Raises Instead Of Returning An Import Error
 
-Status: resolved locally in work block 4P; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4P-R
 
 Severity: medium import-availability risk
 
@@ -963,7 +963,7 @@ Work block 4P places one sanitized error boundary around workbook-engine loading
 
 ## Payroll Lifecycle Paths Lack Tracked Regression Coverage
 
-Status: resolved locally through work blocks 4D, 4P, 4Q, and 4R; 4R release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4D-R and 4P-R to 4R-R
 
 Severity: medium regression-confidence risk
 
@@ -994,7 +994,7 @@ Every repaired 3F defect now has maintained synthetic coverage. The full suite r
 
 ## Plaid Persistence Errors Can Advance The Cursor Past Missing Data
 
-Status: resolved locally in work block 4I; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4I-R
 
 Severity: high financial-data completeness risk
 
@@ -1024,7 +1024,7 @@ Work block 4I now applies each item's accepted additions, modifications, removal
 
 ## Plaid Balance Reconciliation Is Unsafe On Disabled Or Partially Failed Items
 
-Status: resolved locally in work block 4J; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4J-R
 
 Severity: high account-state integrity risk
 
@@ -1054,7 +1054,7 @@ Work block 4J now records account freshness per Plaid item and reconciles cached
 
 ## Normal Cash Flow Refresh Skips Plaid Liabilities
 
-Status: resolved locally in work block 4J; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4J-R
 
 Severity: high cash-flow and payment accuracy risk
 
@@ -1084,7 +1084,7 @@ Work block 4J adds separate nullable per-item account and liability refresh mark
 
 ## Linking A Plaid Institution Can Delete Unrelated Manual Accounts
 
-Status: resolved locally in work block 4J; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4J-R
 
 Severity: high destructive account-state risk
 
@@ -1113,7 +1113,7 @@ Work block 4J removes the first-word institution/account-name deletion heuristic
 
 ## Plaid Balance Freshness Uses An Entity-Wide Maximum
 
-Status: resolved locally in work block 4J; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4J-R
 
 Severity: medium account-freshness risk
 
@@ -1142,7 +1142,7 @@ Work block 4J replaces the entity-wide row maximum with separate successful-refr
 
 ## Missing Plaid Modified Rows Are Reported As Updated
 
-Status: resolved locally in work block 4K; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4K-R
 
 Severity: medium sync-observability risk
 
@@ -1171,7 +1171,7 @@ Work block 4K uses the SQLite update row count and requires exactly one stored t
 
 ## One Corrupt Plaid Token Aborts Valid Sibling Items
 
-Status: resolved locally in work block 4K; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4K-R
 
 Severity: medium item-isolation and reliability risk
 
@@ -1199,7 +1199,7 @@ Work block 4K moves access-token decryption inside the per-item exception bounda
 
 ## Primary Plaid Paths Lack Tracked Regression Coverage
 
-Status: partially addressed through work block 4K; remaining broad primary Plaid coverage stays parked
+Status: parked; selected Phase 4 Plaid repair coverage is complete through 4I-R to 4K-R, while residual broad connection and operator-path coverage remains future paired work
 
 Severity: medium regression-confidence risk
 
@@ -1229,7 +1229,7 @@ Work block 4I adds the maintained transaction-pagination, cursor, rollback, exac
 
 ## Scheduled Plaid Sync Can Report Partial Failure As Success
 
-Status: resolved locally in work block 4G; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4G-R
 
 Severity: high operational reliability risk
 
@@ -1259,7 +1259,7 @@ Maintained synthetic coverage uses fake secrets and mocked entity results to ver
 
 ## Scheduled And Public Sync Paths Lack Shared Cross-Process Coordination
 
-Status: resolved locally in work block 4L; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free boundary verified through 4L-R
 
 Severity: high cursor and financial-data consistency risk
 
@@ -1290,7 +1290,7 @@ Work block 4L replaces the separate module-local sync locks with one non-blockin
 
 ## Public Background Sync Advances Past Removed Plaid Events
 
-Status: resolved locally in work block 4L; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free boundary verified through 4L-R
 
 Severity: high financial-data correctness risk
 
@@ -1320,7 +1320,7 @@ The dashboard worker now calls the maintained `_sync_entity` core instead of a d
 
 ## Public Background Sync Includes Vendor Plaid Items
 
-Status: resolved locally in work block 4L; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free boundary verified through 4L-R
 
 Severity: high workflow and data-boundary risk
 
@@ -1350,7 +1350,7 @@ The dashboard worker now reuses `_sync_entity`, whose item query explicitly sele
 
 ## One Scheduled Entity Exception Aborts Healthy Later Entities
 
-Status: resolved locally in work block 4L; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free boundary verified through 4L-R
 
 Severity: medium all-entity reliability risk
 
@@ -1380,7 +1380,7 @@ The scheduled route now initializes and syncs each configured entity inside its 
 
 ## Sync-All Runs Entity Setup Before Bearer Validation
 
-Status: resolved locally in work block 4L; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free boundary verified through 4L-R
 
 Severity: medium authorization-side-effect risk
 
@@ -1410,7 +1410,7 @@ Resolution:
 
 ## Failed Public Worker Launch Consumes Its Throttle Window
 
-Status: resolved locally in work block 4L; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free boundary verified through 4L-R
 
 Severity: medium background-sync availability risk
 
@@ -1439,7 +1439,7 @@ The dashboard route now serializes throttle and launch state inside one process,
 
 ## Background Sync Entry Points Lack Tracked Regression Coverage
 
-Status: resolved locally through work blocks 4G and 4L; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free boundary verified through 4G-R and 4L-R
 
 Severity: medium regression-confidence risk
 
@@ -1469,7 +1469,7 @@ Work block 4G maintains workflow-visible result coverage. Work block 4L adds sam
 
 ## Luxe Legacy Owner Draw Is Mirrored Despite The Exclusion Intent
 
-Status: resolved locally in work block 4F; release not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4F-R
 
 Severity: high downstream-data boundary risk
 
@@ -1499,7 +1499,7 @@ Work block 4F replaced the nonexistent LL `Owner Contribution` mirror exclusion 
 
 ## Luxe Legacy Mirror Idempotency Contract Permits Duplicate Conflict Keys
 
-Status: resolved locally in work block 4AA; publication not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4AA-R
 
 Severity: high downstream correctness and availability risk
 
@@ -1530,7 +1530,7 @@ Work block 4Z satisfied the tracked-contract gate without a downstream schema ch
 
 ## Luxe Legacy Mirror Accepts Empty Plaid Transaction IDs
 
-Status: resolved locally in work block 4AA; publication not authorized
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4AA-R
 
 Severity: medium downstream validation risk
 
@@ -1560,7 +1560,7 @@ Work block 4AA preserves SQL `NULL` exclusion and validates every selected non-n
 
 ## Luxe Legacy Downstream Mirror Lacks Tracked Regression Coverage
 
-Status: resolved locally through work blocks 4F and 4AA; publication not authorized for 4AA
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4F-R and 4AA-R
 
 Severity: medium regression-confidence risk
 
@@ -1652,7 +1652,7 @@ Work block 4A moved to service-worker cache v4, removed protected root and all d
 
 ## Public Dashboard Exposes Detailed Personal And Luxe Legacy Financial Information
 
-Status: resolved locally through work block 4AB; publication remains separate
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4AB-R
 
 Severity: high public financial-data exposure risk
 
@@ -1743,7 +1743,7 @@ Work block 4AD gives the hamburger an explicit drawer relationship and synchroni
 
 ## Session Cookie And Browser Security Policy Need Explicit Hardening
 
-Status: locally resolved through work block 4BB; publication, production inspection, and a real Plaid Link checkpoint remain separate
+Status: resolved, durable, automatically deployed, and credential-free health verified through 4AC-R and 4BB-R; real Plaid runtime verified through 4BC
 
 Severity: medium defense-in-depth risk
 
@@ -1773,7 +1773,7 @@ The source and maintained local proof are complete through 4BB. Commit, push, me
 
 ## PWA Public Auth And Responsive Boundaries Lack Tracked Regression Coverage
 
-Status: resolved locally through work block 4BD; publication remains separate
+Status: resolved and durable without deployment through 4BD-R
 
 Severity: medium regression-confidence risk
 
