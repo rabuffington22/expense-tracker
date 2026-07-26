@@ -4588,7 +4588,10 @@ tr.is-selected > td:first-child {
 .txn-filter-bar .form-group label {
     margin: 0;
 }
-.txn-filter-date { flex: 0 0 130px; }
+.txn-filter-date {
+    flex: 0 0 130px;
+    min-width: 0;
+}
 .txn-filter-category { flex: 0 0 140px; }
 .txn-filter-search {
     flex: 1 1 auto;
