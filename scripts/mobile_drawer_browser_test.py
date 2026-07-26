@@ -1287,6 +1287,10 @@ def _assert_transaction_matching_styles(page, base_url: str, label: str) -> None
                     };
                 }"""
             )
+            layout_detail = (
+                f"dateWidth={responsive_state['dateWidth']:.2f}, "
+                f"filterWidth={responsive_state['filterWidth']:.2f}"
+            )
             _check(
                 responsive_state["styleAttributes"] == 0,
                 f"{label}: {entity_name} {viewport_label} transactions must contain no style attributes",
@@ -1299,19 +1303,19 @@ def _assert_transaction_matching_styles(page, base_url: str, label: str) -> None
                 _check(
                     responsive_state["dateWidth"]
                     >= responsive_state["filterWidth"] - 40,
-                    f"{label}: {entity_name} phone filters must stack at full width",
+                    f"{label}: {entity_name} phone filters must stack at full width; {layout_detail}",
                 )
             elif viewport_label == "exact-768":
                 _check(
                     responsive_state["filterWidth"] * 0.4
                     <= responsive_state["dateWidth"]
                     <= responsive_state["filterWidth"] * 0.6,
-                    f"{label}: {entity_name} exact-768 filters must preserve the two-column layout",
+                    f"{label}: {entity_name} exact-768 filters must preserve the two-column layout; {layout_detail}",
                 )
             else:
                 _check(
                     125 <= responsive_state["dateWidth"] <= 135,
-                    f"{label}: {entity_name} desktop date filters must preserve their fixed width",
+                    f"{label}: {entity_name} desktop date filters must preserve their fixed width; {layout_detail}",
                 )
 
     page.context.add_cookies(
