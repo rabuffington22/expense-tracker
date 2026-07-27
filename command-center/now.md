@@ -2,27 +2,38 @@
 
 ## Active Objective
 
-Release the verified Phase 5 set through PR #89, one automatic production deployment, credential-free health verification, and one `[skip actions]` release closeout without starting another Phase 5 task.
+Hold the newly released and production-health-verified Phase 5 set stable while Ryan chooses the intended purpose of the recurring-charge surface before Task 2.4 implementation.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Tasks 1.1-1.4, Task 1, Task 2.1, Task 2.3, and Task 2.6 are complete through 5A-5C, 5E-5F, and verified draft-PR publication in 5F-RR. Task 2.2 and 5D remain parked. Task 3 remains planned. Task 4 is active through confirmed 5F-R2 for the exact production-release checkpoint.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; the verified 5A-5F set is durable, automatically deployed, and credential-free health verified through 5F-R2. Task 2.2 and 5D remain parked. Task 2.4 is the current Ryan decision, Task 2.5 remains a later Ryan decision, Tasks 2.7-2.8 and Task 3 remain planned or parked, and Task 4 retains later final parent-pointer work.
 
 ## Current Work Block
 
-Work block 5F-R2: Verified Draft PR Production Release — active. Publish the command-center activation state to PR #89, require fresh exact-head PR CI, mark the PR ready, merge it with a merge commit, observe its one automatic Fly Deploy, verify credential-free health, publish one six-path `[skip actions]` release closeout to `main`, prove zero second deployment, and stop.
+Work block 5F-R2: Verified Draft PR Production Release — done after fresh exact-head PR CI, PR #89 merge commit `e905e5c4ad406ebb7b5f10ea6d867d5724f662ce`, one successful automatic Fly deployment with zero annotations, credential-free `{"status":"ok"}`, and one six-path `[skip actions]` closeout with no second deployment.
 
 ## Current Task
 
-Phase 5 Task 4 (`P5-T4`) — current and Codex-owned only for confirmed 5F-R2. Task 3 and final Phase 5 durability and closeout remain incomplete.
+Phase 5 Task 2.4 (`P5-T24`) — current and Ryan-owned for the recurring-surface purpose decision. Decide whether the surface is a cancellation watchlist, a complete recurring-spend register, or a combined workflow before implementation.
 
 ## Owner
 
-Codex owns exact activation publication, PR readiness and merge, automatic deployment observation, bounded credential-free health verification, sanitized `[skip actions]` release closeout, dashboard currency, and stop enforcement. Ryan retains every scope change, rollback, repair, parked Luxe Legacy path, recurring-surface, Ask Opus data-handling, protected-access, and broader decision.
+Ryan owns the Task 2.4 product-purpose decision and every subsequent product, Task 3, final Phase 5, protected-access, and live-action gate. Codex has no active implementation or production authority after the 5F-R2 stop.
 
 ## Current Action
 
-Verify active 5F-R2 state and release preconditions; publish the exact five-path activation commit; require fresh core-then-browser PR CI; mark PR #89 ready and merge it with a merge commit; observe only the automatic exact-SHA Fly Deploy; require zero annotations; verify bounded credential-free `/health`; publish the exact six-path `[skip actions]` release closeout to `main`; prove no second deployment; retain the feature branch; and stop.
+Ryan chooses the intended purpose of Task 2.4's recurring surface. Until that decision and a separately confirmed implementation block, make no recurring-surface, product, Task 3, final Phase 5, Luxe Legacy, protected, workflow, or production change.
+
+## Work Block 5F-R2 Result
+
+- Exact five-path activation commit: `13d2f16a9cca8b8d4fb4900006dfaa9655824474`.
+- Activation Synthetic CI run `30262719321` passed core job `89966154249` and later browser job `89966350270`; both had zero annotations.
+- PR #89 was marked ready and merged using merge commit `e905e5c4ad406ebb7b5f10ea6d867d5724f662ce` with the exact expected parents.
+- Exactly one automatic push-triggered Fly Deploy run, `30263216876`, completed successfully; job `89967738107` passed every step with zero annotations.
+- Credential-free `https://ledger-oak.fly.dev/health` returned sanitized `{"status":"ok"}`.
+- The exact six-path closeout uses `[skip actions]` and requires no workflow on its SHA.
+- No additional product, Task 3, final Phase 5, Luxe Legacy, Plaid, Fly administration, protected-data, rollback, repair, manual workflow, branch-deletion, or preserved-file action occurred.
+- Evidence: `command-center/logs/2026-07-27-verified-draft-pr-production-release-5f-r2.md`.
 
 ## Confirmed Work Block 5F-R2
 
