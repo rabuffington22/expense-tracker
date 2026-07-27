@@ -5089,7 +5089,7 @@ Result: the exact ten-path 4U source set was committed as `0222d30`, fast-forwar
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
-Status: active at 44%; Personal and BFM local data is recovered and application-ready through completed 5G-RC-R and 5G-AV-R, and Task 2.4 plus 5G/5G-RS are complete locally after clean synthetic and rendered verification plus Ryan's exact closeout-dashboard attestation; publication remains separate
+Status: active at 44%; Personal and BFM local data is recovered and application-ready through completed 5G-RC-R and 5G-AV-R, and Task 2.4 plus 5G/5G-RS are complete, branch-durable, and hosted-verified through 5G-R on open draft PR #90; merge and production release remain separate
 
 Goal: make the product understandable, maintainable, and easy to re-enter after the critical repairs are complete.
 
@@ -5102,17 +5102,17 @@ Goal: make the product understandable, maintainable, and easy to re-enter after 
   - **Task 2.1: Repair synthetic demo fidelity.** Status: done locally through 5C. Personal/BFM use the exact maintained category domains, Personal has one debt-payoff and one savings goal, repeated seeds match, focused coverage passes, and rendered review no longer opens on orphan drift or missing goals.
   - **Task 2.2: Improve first-use and denied-state explanation.** Status: parked by Ryan until further notice together with Luxe Legacy setup and the associated 5D path. The combined Short-Term Planning empty-state action and Luxe Legacy empty/denied guidance remain unimplemented; existing Luxe Legacy isolation and fail-closed behavior stay unchanged.
   - **Task 2.3: Repair phone transaction density and entity context.** Status: done locally through 5E. Personal, BFM, and LL now use complete non-scrolling phone rows and a read-only shared mobile entity marker while preserving current fields, sort, copy, pagination, filters, HTMX, edit, exact-768/desktop table, drawer, and entity behavior.
-  - **Task 2.4: Revise the recurring-charge surface.** Status: done locally through 5G/5G-RS after successful recovery, durability, application-readiness verification, complete synthetic and rendered verification with no correction, and Ryan's exact closeout-dashboard attestation. Publication remains separate.
-  - **Task 2.5: Clarify Ask Opus purpose and privacy.** Status: Ryan-decision after active 5G-R. Freeze and verify data-scope, cross-entity scope, retention, and disclosure before changing the visible affordance or copy; no implementation is authorized.
+  - **Task 2.4: Revise the recurring-charge surface.** Status: done through 5G/5G-RS and branch-durable plus hosted-verified through 5G-R on open draft PR #90 after successful recovery, application-readiness proof, complete synthetic and rendered verification with no correction, Ryan's exact closeout-dashboard attestation, and two clean automatic PR heads. Merge and production release remain separate.
+  - **Task 2.5: Clarify Ask Opus purpose and privacy.** Status: current Ryan decision after completed 5G-R. Freeze and verify data-scope, cross-entity scope, retention, and disclosure before changing the visible affordance or copy; no implementation is authorized.
   - **Task 2.6: Reassess dashboard explanation and density.** Status: done locally through 5F. Categories with spending or budgets remain primary, only zero-spend/no-budget categories begin behind an exact-count accessible disclosure, budget context is textual, and the orphan notice is user-facing without changing financial or category semantics.
   - **Task 2.7: Resolve connections and capability discovery.** Status: parked. Revisit Data Sources, Connected Accounts, To Do entry points, and capability discovery as one later information-architecture slice.
   - **Task 2.8: Verify and improve offline recovery feedback.** Status: parked. Verify cache truth and retry feedback before making any data-safety claim.
 - **Task 3: Finalize operator runbooks, current documentation, monitoring decisions, and release evidence.** Status: planned.
-- **Task 4: Close the roadmap with target-repo commit/push durability and a compact parent-project pointer.** Status: active through confirmed 5G-R only for feature-branch durability and hosted draft-PR review of completed Task 2.4; merge, production release, final parent-pointer, and Phase 5 durability closeout remain separate.
+- **Task 4: Close the roadmap with target-repo commit/push durability and a compact parent-project pointer.** Status: Task 2.4 durability and hosted draft-PR review are done through 5G-R; 5G-R2 merge, production release, final parent-pointer, and Phase 5 durability closeout remain separate.
 
 ### Confirmed Work Block 5G-R: Recurring Review Branch Durability And Hosted Review
 
-Status: active.
+Status: done on open draft PR #90, conditional on the exact six-path closeout head satisfying the recorded automatic hosted verification contract.
 
 Included: Task 4 (`P5-T4`) only for exact feature-branch durability and hosted PR-only review of completed Task 2.4 and 5G/5G-RS. Revalidate the exact sixteen-path initial package; explicitly stage only those paths; create one release-candidate commit without a skip token; non-force push `codex/recurring-review-surface`; open one draft PR targeting `main`; observe automatic core-then-browser Synthetic CI; after a clean first pass publish one sanitized six-path closeout commit without a skip token; require the final PR head to pass the same workflow; prove zero Fly deployment; retain the branch; leave the PR open, draft, and unmerged; and stop.
 
@@ -5137,6 +5137,8 @@ Report point: return exact staged paths, commits, branch, draft PR, both hosted 
 Expansion candidates and questions: none.
 
 Suggested next work block: 5G-R2 for merge and production release only after clean hosted review and separate Ryan confirmation.
+
+Result: exact sixteen-path source commit `182cabd73640bfd6f8ce754740b5b20bbfc045dd` is durable on `codex/recurring-review-surface` and open draft PR [#90](https://github.com/rabuffington22/expense-tracker/pull/90), targeting unchanged `main` at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`. Automatic pull-request Synthetic CI run `30278240194` passed core job `90017670024` before browser job `90017941876`; every step succeeded, both jobs returned zero annotations, and no Fly Deploy run existed for the candidate SHA. The authorized six-path closeout commit is valid only after its own exact SHA passes the same automatic core-then-browser, zero-annotation, zero-deployment contract with PR #90 still open, draft, unmerged, and aligned to the retained branch. Task 2.5 returns to Ryan as the sole current planning decision; merge and production release remain separately gated as 5G-R2.
 
 ### Confirmed Work Block 5G-RS: Recurring Review Safe Resume And Local Closeout
 

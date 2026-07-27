@@ -2,27 +2,36 @@
 
 ## Active Objective
 
-Make the verified Task 2.4 Recurring Review package durable on its feature branch and obtain clean hosted PR-only review without merging or deploying.
+Keep the verified Recurring Review package on open draft PR #90 and decide separately whether to freeze the Task 2.5 Ask Opus data-handling contract or authorize 5G-R2 merge and production release.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 44%. Personal and BFM local data is recovered and application-ready through completed 5G-RC-R and 5G-AV-R. Task 2.4 and 5G/5G-RS are complete locally; confirmed 5G-R is active only for exact feature-branch durability and hosted draft-PR review. Merge, deployment, production, and every later Phase 5 decision remain separate.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 44%. Personal and BFM local data is recovered and application-ready through completed 5G-RC-R and 5G-AV-R. Task 2.4 and 5G/5G-RS are complete, and their exact package is branch-durable and hosted-verified through 5G-R on open draft PR #90. Merge, deployment, production, Task 2.5 implementation, and every later Phase 5 decision remain separate.
 
 ## Current Work Block
 
-Work block 5G-R — Recurring Review Branch Durability And Hosted Review — is active.
+Work block 5G-R — Recurring Review Branch Durability And Hosted Review — is done on open draft PR #90 after the candidate and exact six-path closeout head satisfy the automatic PR-only core-then-browser Synthetic CI contract with zero annotations and zero Fly deployment.
 
 ## Current Task
 
-Phase 5 Task 4 (`P5-T4`) — current only for branch durability and hosted review of completed Task 2.4. Final Phase 5 durability and parent closeout remain later.
+Phase 5 Task 2.5 (`P5-T25`) — current as a Ryan-owned planning decision. Freeze and verify Ask Opus data scope, cross-entity scope, retention, and disclosure before any implementation.
 
 ## Owner
 
-Codex Desktop owns exact-path validation, Git publication to the existing feature branch, draft-PR creation, hosted CI observation, zero-deployment proof, and Runway OS closeout. Ryan retains merge, production release, deployment, protected-data, Task 2.5, and every expansion decision.
+Ryan owns the Task 2.5 contract decision and separately retains 5G-R2 merge, production release, deployment, protected-data, and every expansion decision. Codex has no active implementation or publication authority after the 5G-R stop.
 
 ## Current Action
 
-Revalidate the exact sixteen-path initial package, stage only those paths, commit and non-force push `codex/recurring-review-surface`, open one draft PR targeting `main`, require clean automatic core-then-browser Synthetic CI on the source and closeout heads, prove zero Fly deployment, and stop with the PR open and unmerged.
+Ryan chooses whether to plan the Task 2.5 Ask Opus contract or separately confirm 5G-R2. Until then, leave PR #90 open, draft, and unmerged; retain the feature branch; perform no workflow action, product work, protected access, merge, deployment, production health request, or other sequel.
+
+## Work Block 5G-R Result
+
+- Source commit `182cabd73640bfd6f8ce754740b5b20bbfc045dd` contains exactly the approved sixteen paths and is published on `codex/recurring-review-surface`.
+- Draft PR [#90](https://github.com/rabuffington22/expense-tracker/pull/90) targets unchanged `main` and remains open, draft, and unmerged.
+- Candidate Synthetic CI run `30278240194` passed core job `90017670024` before browser job `90017941876`; every step succeeded and both jobs returned zero annotations.
+- The exact six-path closeout head must pass the same automatic PR-only contract before this result is final.
+- The candidate SHA had no Fly Deploy run or deployment. Merge, production release, and Task 2.5 implementation remain separately gated.
+- Evidence: `command-center/logs/2026-07-27-recurring-review-branch-durability-5g-r.md`.
 
 ## Confirmed Work Block 5G-R
 
