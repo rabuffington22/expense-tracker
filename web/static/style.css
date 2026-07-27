@@ -3614,8 +3614,15 @@ tr.is-selected > td:first-child {
     .cl-add-input--notes { max-width: 100%; flex: 1 1 100%; }
 }
 
-/* ── Subscription Tracker Page ───────────────── */
+/* ── Recurring Review Page ───────────────────── */
 .sub-page { max-width: 560px; }
+.sub-purpose {
+    margin: -0.15rem 0 1rem;
+    color: var(--text-muted);
+    font-size: var(--ui-font-sm);
+    line-height: 1.45;
+    max-width: 52ch;
+}
 .sub-panel { padding: 0.5rem 0.65rem; }
 .sub-row {
     padding: 0.35rem 0;
@@ -3817,32 +3824,83 @@ tr.is-selected > td:first-child {
 
 /* ── Subscription suggestions ──────────────────── */
 .sub-suggestions-section {
-    margin-bottom: 0.75rem;
+    margin: 1.15rem 0 0.75rem;
+    scroll-margin-top: 1rem;
+}
+.sub-section-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
 }
 .sub-section-label {
     font-size: var(--ui-font-xs);
     text-transform: uppercase;
     letter-spacing: var(--label-tracking);
     color: var(--text-muted);
-    margin-bottom: 0.35rem;
     font-weight: 600;
+}
+.sub-section-count {
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+    white-space: nowrap;
+}
+.sub-review-help {
+    color: var(--text-muted);
+    font-size: var(--ui-font-xs);
+    line-height: 1.4;
+    margin: 0 0 0.45rem;
+}
+.sub-review-feedback {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid rgba(62, 207, 142, 0.35);
+    border-radius: var(--radius);
+    background: rgba(62, 207, 142, 0.08);
+    color: var(--text);
+    font-size: var(--ui-font-sm);
+}
+.sub-review-feedback:focus {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+.sub-review-feedback-form {
+    flex: none;
+}
+.sub-review-undo {
+    border: none;
+    background: none;
+    color: var(--blue);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    padding: 0.2rem 0.35rem;
+    border-radius: 4px;
+}
+.sub-review-undo:hover {
+    background: rgba(47, 123, 255, 0.1);
 }
 .sub-suggest-form {
     display: inline;
 }
 .sub-suggest-btn {
-    background: none;
-    border: none;
+    background: var(--control-bg);
+    border: 1px solid var(--border);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: var(--ui-font-xs);
+    font-weight: 600;
     line-height: 1;
-    padding: 0.15rem 0.3rem;
-    border-radius: 4px;
+    padding: 0.3rem 0.45rem;
+    border-radius: 6px;
     transition: opacity 0.15s, background 0.15s;
-    opacity: 0.6;
+    opacity: 1;
 }
 .sub-suggest-btn:hover {
-    opacity: 1;
     background: var(--hover-bg);
 }
 .sub-suggest-btn--accept {
@@ -4282,6 +4340,16 @@ tr.is-selected > td:first-child {
     .sub-detail-edit-row { flex-wrap: wrap; }
     .sub-acctinfo-add-row { flex-wrap: wrap; }
     .sub-detail-edit-actions { flex-wrap: wrap; gap: 0.35rem; }
+    .sub-suggestion-row .sub-row-main { flex-wrap: wrap; }
+    .sub-suggestion-row .sub-row-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    .sub-review-feedback {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
 }
 
 /* ── Todo Queue Detail Modal ─────────────────── */

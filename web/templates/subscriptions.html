@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Subscription Tracker{% endblock %}
+{% block title %}Recurring Review{% endblock %}
 {% block head %}
 <script defer src="{{ url_for('static', filename='subscriptions.js') }}?v={{ cache_bust }}"></script>
 {% endblock %}
@@ -16,7 +16,7 @@
 <div class="sub-page">
 
 <div class="page-title-row">
-  <h1 class="page-title">Subscription Tracker</h1>
+  <h1 class="page-title">Recurring Review</h1>
   <button type="button" class="joker-btn"
           data-app-shell-action="open-ai-chat" data-ai-page="subscriptions"
           title="Ask Opus" aria-label="Ask Opus">
@@ -24,63 +24,16 @@
   </button>
 </div>
 
-{# ── Suggestions (auto-detected recurring charges) ─────────────────── #}
-{% if suggestions %}
-<div class="sub-suggestions-section">
-    <div class="sub-section-label">We found these recurring charges</div>
-    <div class="outline-panel sub-panel">
-        {% for s in suggestions %}
-        <div class="sub-row sub-suggestion-row" role="button" tabindex="0"
-             data-subscriptions-row data-subscriptions-action="open-suggestion"
-             data-suggestion-index="{{ loop.index0 }}">
-            <div class="sub-row-main">
-                <div class="sub-info">
-                    <span class="sub-merchant">{{ s.merchant_canonical }}</span>
-                    <span class="sub-amount">
-                        ${{ "%.0f"|format(s.amount_cents / 100) }}{% if s.frequency == 'weekly' %}/wk{% elif s.frequency == 'biweekly' %}/2wk{% elif s.frequency == 'monthly' %}/mo{% elif s.frequency == 'quarterly' %}/qtr{% elif s.frequency == 'annual' %}/yr{% endif %}
-                    </span>
-                </div>
-                <div class="sub-row-right">
-                    <span class="badge badge-blue">{{ s.cadence_label|lower }}</span>
-                    <form method="post"
-                          action="{{ url_for('subscriptions.accept') }}"
-                          class="sub-suggest-form">
-                        <input type="hidden" name="merchant"
-                               value="{{ s.merchant_canonical }}">
-                        <input type="hidden" name="merchant_canonical"
-                               value="{{ s.merchant_canonical }}">
-                        <input type="hidden" name="amount"
-                               value="{{ "%.2f"|format(s.amount_cents / 100) }}">
-                        <input type="hidden" name="frequency"
-                               value="{{ s.frequency }}">
-                        <button type="submit" class="sub-suggest-btn sub-suggest-btn--accept"
-                                title="Add to watchlist" aria-label="Add to watchlist">&#x2713;</button>
-                    </form>
-                    <form method="post"
-                          action="{{ url_for('subscriptions.dismiss') }}"
-                          class="sub-suggest-form">
-                        <input type="hidden" name="merchant_canonical"
-                               value="{{ s.merchant_canonical }}">
-                        <button type="submit" class="sub-suggest-btn sub-suggest-btn--dismiss"
-                                title="Dismiss" aria-label="Dismiss suggestion">&times;</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+<p class="sub-purpose">
+    Review charges detected from regular timing and amounts, then track the ones
+    you want to watch or cancel. Detection is a review aid, not a complete list.
+</p>
+
+{# ── Tracked recurring charges ─────────────────────────────────────── #}
+<div class="sub-section-heading">
+    <div class="sub-section-label">Tracked charges</div>
+    <span class="sub-section-count">{{ watchlist|length }} tracked</span>
 </div>
-
-{# ── Suggestion data for modal ── #}
-<template id="sub-suggestions-data" data-json>
-{{ suggestions|tojson }}
-</template>
-{% endif %}
-
-{# ── Watchlist ─────────────────────────────────────────────────────── #}
-{% if suggestions %}
-<div class="sub-section-label">Watchlist</div>
-{% endif %}
 
 <div class="outline-panel sub-panel">
     {% for sub in watchlist %}
@@ -115,15 +68,15 @@
 
     {% if not watchlist %}
     <div class="sub-empty">
-        No subscriptions being tracked yet.
+        No recurring charges are being tracked yet.
     </div>
     {% endif %}
 </div>
 
-{# ── Add subscription ─────────────────────────────────────────── #}
+{# ── Add tracked charge ───────────────────────────────────────── #}
 <div class="sub-add-section">
     <button type="button" class="sub-add-trigger" id="sub-add-trigger"
-            data-subscriptions-action="show-add">+ Add subscription</button>
+            data-subscriptions-action="show-add">+ Add recurring charge</button>
 
     <div class="outline-panel sub-add-panel" id="sub-add-panel" hidden>
         <form method="post" action="{{ url_for('subscriptions.add') }}" class="sub-add-form">
@@ -158,6 +111,86 @@
         </form>
     </div>
 </div>
+
+{# ── Suggestions (auto-detected recurring charges) ─────────────────── #}
+<section class="sub-suggestions-section" id="detected-review"
+         aria-labelledby="detected-review-label">
+    <div class="sub-section-heading">
+        <div class="sub-section-label" id="detected-review-label">
+            Detected charges to review
+        </div>
+        <span class="sub-section-count">{{ suggestions|length }} to review</span>
+    </div>
+
+    {% if undo_merchant %}
+    <div class="sub-review-feedback" role="status" tabindex="-1"
+         data-subscriptions-feedback>
+        <span>Dismissed <strong>{{ undo_merchant }}</strong> from review.</span>
+        <form method="post" action="{{ url_for('subscriptions.undismiss') }}"
+              class="sub-review-feedback-form">
+            <input type="hidden" name="merchant_canonical"
+                   value="{{ undo_merchant }}">
+            <button type="submit" class="sub-review-undo">Undo</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <p class="sub-review-help">
+        Track a charge to watch its status and cancellation progress, or dismiss
+        it from this review queue.
+    </p>
+
+    <div class="outline-panel sub-panel">
+        {% for s in suggestions %}
+        <div class="sub-row sub-suggestion-row" role="button" tabindex="0"
+             data-subscriptions-row data-subscriptions-action="open-suggestion"
+             data-suggestion-index="{{ loop.index0 }}">
+            <div class="sub-row-main">
+                <div class="sub-info">
+                    <span class="sub-merchant">{{ s.merchant_canonical }}</span>
+                    <span class="sub-amount">
+                        ${{ "%.0f"|format(s.amount_cents / 100) }}{% if s.frequency == 'weekly' %}/wk{% elif s.frequency == 'biweekly' %}/2wk{% elif s.frequency == 'monthly' %}/mo{% elif s.frequency == 'quarterly' %}/qtr{% elif s.frequency == 'annual' %}/yr{% endif %}
+                    </span>
+                </div>
+                <div class="sub-row-right">
+                    <span class="badge badge-blue">{{ s.cadence_label|lower }}</span>
+                    <form method="post"
+                          action="{{ url_for('subscriptions.accept') }}"
+                          class="sub-suggest-form">
+                        <input type="hidden" name="merchant"
+                               value="{{ s.merchant_canonical }}">
+                        <input type="hidden" name="merchant_canonical"
+                               value="{{ s.merchant_canonical }}">
+                        <input type="hidden" name="amount"
+                               value="{{ "%.2f"|format(s.amount_cents / 100) }}">
+                        <input type="hidden" name="frequency"
+                               value="{{ s.frequency }}">
+                        <button type="submit" class="sub-suggest-btn sub-suggest-btn--accept"
+                                title="Track recurring charge">Track</button>
+                    </form>
+                    <form method="post"
+                          action="{{ url_for('subscriptions.dismiss') }}"
+                          class="sub-suggest-form">
+                        <input type="hidden" name="merchant_canonical"
+                               value="{{ s.merchant_canonical }}">
+                        <button type="submit" class="sub-suggest-btn sub-suggest-btn--dismiss"
+                                title="Dismiss from review">Dismiss</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="sub-empty">
+            No detected recurring charges are waiting for review.
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{# ── Suggestion data for modal ── #}
+<template id="sub-suggestions-data" data-json>
+{{ suggestions|tojson }}
+</template>
 
 {# ── Dismissed suggestions ────────────────────────────────────── #}
 {% if dismissed %}

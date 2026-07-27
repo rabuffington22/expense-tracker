@@ -2,27 +2,107 @@
 
 ## Active Objective
 
-Decide whether to run bounded application verification against the recovered Personal and BFM databases before any 5G resume.
+Make the verified Task 2.4 Recurring Review package durable on its feature branch and obtain clean hosted PR-only review without merging or deploying.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Personal and BFM local data is recovered and the recovery record is durable on `main` through 5G-RC-R. Task 2.4 and 5G remain stopped before application access and product resume.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 44%. Personal and BFM local data is recovered and application-ready through completed 5G-RC-R and 5G-AV-R. Task 2.4 and 5G/5G-RS are complete locally; confirmed 5G-R is active only for exact feature-branch durability and hosted draft-PR review. Merge, deployment, production, and every later Phase 5 decision remain separate.
 
 ## Current Work Block
 
-No work block is active. Work block 5G-RC-R is complete; bounded application verification is the next Ryan decision.
+Work block 5G-R — Recurring Review Branch Durability And Hosted Review — is active.
 
 ## Current Task
 
-Phase 5 Task 2.4 (`P5-T24`) — current but blocked after successful data recovery and durable recovery-record publication. Product work remains local, stopped, and incomplete.
+Phase 5 Task 4 (`P5-T4`) — current only for branch durability and hosted review of completed Task 2.4. Final Phase 5 durability and parent closeout remain later.
 
 ## Owner
 
-Ryan owns the application-verification decision and any later 5G resume, product publication, deployment, or live action.
+Codex Desktop owns exact-path validation, Git publication to the existing feature branch, draft-PR creation, hosted CI observation, zero-deployment proof, and Runway OS closeout. Ryan retains merge, production release, deployment, protected-data, Task 2.5, and every expansion decision.
 
 ## Current Action
 
-Choose whether to authorize one separately bounded application-verification block. Until then, keep the recovered databases and protected recovery copies stable, do not open the application, and do not resume 5G.
+Revalidate the exact sixteen-path initial package, stage only those paths, commit and non-force push `codex/recurring-review-surface`, open one draft PR targeting `main`, require clean automatic core-then-browser Synthetic CI on the source and closeout heads, prove zero Fly deployment, and stop with the PR open and unmerged.
+
+## Confirmed Work Block 5G-R
+
+- Name: Recurring Review Branch Durability And Hosted Review.
+- Include Task 4 (`P5-T4`) only for durability of completed Task 2.4 and 5G/5G-RS.
+- Initial package: the seven verified Recurring Review product/test/documentation files, five command-center sources, three existing sanitized 5G verification logs, and one new sanitized 5G-R log.
+- Revalidate exact baseline, original and preserved hashes, empty index, full smoke, installed-Chrome suite, safety contracts, syntax, JSON, dashboard currentness/health, whitespace, sensitive additions, exact paths, and cleanup.
+- Explicitly stage only the sixteen approved paths; create one release-candidate commit; non-force push the existing feature branch; open one draft PR targeting `main`; observe only automatic PR Synthetic CI.
+- After a clean first pass, publish one sanitized six-path closeout commit without a skip token and require the final PR head to pass the same core-then-browser workflow.
+- Leave the PR open, draft, unmerged, and retain the branch.
+- Exclude merge, push to `main`, Fly deployment, production health, manual workflow action or repair, Plaid, protected data, Task 2.5, product correction, delegation, second opinion, and the three unrelated preserved files.
+- Stop for ref/path/preservation/sensitive/test/dashboard/whitespace/push/PR/check/annotation/zero-deployment drift or any need for repair, rerun, merge, protected access, or expansion.
+- Evidence: `command-center/logs/2026-07-27-recurring-review-branch-durability-5g-r.md`.
+
+## Completed Work Block 5G-RS
+
+- Name: Recurring Review Safe Resume And Local Closeout.
+- Include Task 2.4 (`P5-T24`) only.
+- Resume the existing seven-file Recurring Review implementation; verify its purpose, tracked-first order, exact review count, visible Track and Dismiss actions, immediate undo, durable restoration, lifecycle, entity, accessibility, responsive, and existing modal/detail behavior.
+- Use only fresh temporary synthetic Personal, BFM, and Luxe Legacy data. Never invoke `scripts/seed_demo_data.py`, resolve `DATA_DIR` to `local_state`, load `.env`, use credentials, or open recovered originals through SQLite or Flask.
+- Permit narrowly necessary corrections only within `README.md`, `scripts/smoke_test.py`, `web/routes/subscriptions.py`, `web/static/style.css`, `web/static/subscriptions.js`, `web/templates/subscriptions.html`, and `web/templates/todo.html`.
+- Exclude every other Phase 5 task, semantic/model/migration/authentication/CSP/PWA/Ask Opus/URL change, protected row data, Luxe Legacy setup, Plaid, staging, commit, GitHub, workflow, Fly, publication, deployment, production, delegation, and second opinion.
+- Stop for original or preserved-file drift, owner/sidecar, unsafe data path or environment, unexpected file, lifecycle/entity/accessibility/responsive regression, external-network attempt, cleanup failure, plan-changing verification failure, dashboard failure, or need for an excluded action.
+- Verification: accepted original hashes/metadata without SQLite; product/preserved hashes; full smoke; maintained installed-Chrome suite; temporary synthetic desktop, 390px, and exact-768 rendered inspection; syntax and CI safety; JSON; dashboard refresh/currentness/health; whitespace; exact paths; cleanup; empty real index.
+- Closeout: on pass, mark Task 2.4 and 5G/5G-RS complete locally, keep Phase 5 active, and wait for `5G-RS closeout dashboard verified` before declaring the block complete.
+- Evidence: `command-center/logs/2026-07-27-recurring-review-safe-resume-5g-rs.md`.
+
+## Work Block 5G-RS Verification Result
+
+- The preserved seven-file Recurring Review implementation required no correction.
+- Starting and postflight original hashes/metadata, owner/sidecar absence, product hashes, three unrelated preserved-file hashes, and empty real index all passed without SQLite or Flask access to originals.
+- Python/JavaScript syntax, Synthetic CI/Fly safety, full smoke, and the complete both-auth installed-Chrome suite passed using only temporary synthetic data with denied non-localhost networking and exact cleanup.
+- Synthetic installed-Chrome rendering passed for Personal desktop 1440x1000 with immediate undo, BFM exact-768, and Luxe Legacy 390px phone. All three showed tracked-first order, truthful counts, visible Track/Dismiss controls, readable responsive layout, and zero horizontal overflow.
+- The rendered pass had zero console errors, page errors, or denied requests. Its synthetic data, runner, and three screenshots were removed exactly with no owners.
+- Ryan returned the exact `5G-RS closeout dashboard verified` attestation after inspecting the sanitized closeout dashboard.
+- Task 2.4 and 5G/5G-RS are complete locally. Publication, 5G-R, Task 2.5, and every other sequel remain separately gated.
+
+## Confirmed Work Block 5G-AV-R
+
+- Name: Human-Verified Dashboard Re-entry And Application Check.
+- Include Task 2.4 (`P5-T24`) only for exact 5G-AV recovered-data application-readiness re-entry.
+- First checkpoint: write and refresh active state, pass JSON/currentness/health/whitespace/index checks, and wait for Ryan's rendered `active dashboard verified` handoff before protected access.
+- Verification stage: reuse the exact confirmed 5G-AV disposable-copy, sterile-environment, eight-route, sanitized-evidence, integrity/schema/aggregate, original-preservation, and exact-cleanup contract unchanged.
+- Closeout checkpoint: write and refresh pass/stop state, then wait for Ryan's rendered `closeout dashboard verified` handoff before declaring completion.
+- Both Ryan handoffs are evidence checkpoints inside this block, not authorization for 5G implementation, publication, or another sequel.
+- Exclude every other Phase 5 task, 5G resume or completion, product/test edits, original-database Flask access, protected output, GitHub, workflows, Fly, Plaid, deployment, production, publication, delegation, second opinion, and all three preserved unrelated files.
+- Stop for any dashboard mismatch, protected-copy prerequisite failure, original/network/credential/integrity/aggregate/route/browser/privacy/cleanup/worktree/dashboard/index/scope failure, or need for an excluded action.
+- Evidence: `command-center/logs/2026-07-27-human-verified-dashboard-reentry-5g-av-r.md`.
+
+## Work Block 5G-AV-R Verification Result
+
+- Ryan's rendered `active dashboard verified` handoff was accepted and unlocked only the confirmed protected-copy stage.
+- Both recovered originals matched the accepted hashes and metadata before and after, with no owners or WAL/SHM sidecars.
+- Byte-identical Personal and BFM copies ran in a mode-700 disposable directory through a sterile local Flask and fresh installed-Chrome context with no live credentials and denied non-localhost networking.
+- Dashboard, Transactions, To Do, and Recurring Review passed for both entities: eight of eight HTTP 200 responses, expected titles/headings, zero console errors, zero page errors, and zero denied requests.
+- Both copies passed integrity before and after. Copy-only initialization advanced tracked additive schema 57 to 58; category/subcategory deltas were Personal `0/+16` and BFM `-2/+22`; import profiles and every protected financial/workflow aggregate were unchanged.
+- The exact disposable directory and four derived temporary files were removed after all processes closed.
+- The original databases, existing seven modified 5G product/test/documentation files, three preserved unrelated untracked files, and empty real Git index remained unchanged.
+- Ryan returned the rendered `closeout dashboard verified` attestation. Both human checkpoints passed, so 5G-AV-R is complete locally while 5G remains stopped.
+
+## Work Block 5G-AV Stop
+
+- Active 5G-AV sources were written; JSON, dashboard generation/currentness, health, whitespace, and empty-index checks passed.
+- The in-app browser rejected the local `file:` dashboard URL and prohibited browser workarounds or alternate browser surfaces.
+- The required rendered dashboard inspection therefore could not be completed.
+- No process-owner, sidecar, database hash, metadata, copy, SQLite, Flask, installed-Chrome application-route, or aggregate-table check began.
+- The recovered original databases and protected recovery copies remain untouched; no disposable protected directory exists.
+- Evidence: `command-center/logs/2026-07-27-recovered-database-application-verification-5g-av.md`.
+
+## Confirmed Work Block 5G-AV
+
+- Name: Recovered-Database Application Verification.
+- Include Task 2.4 (`P5-T24`) only for its recovered-data application-readiness prerequisite.
+- Require no database-owning process or unexpected Personal/BFM WAL/SHM sidecar; record sanitized source hashes and metadata; create mode-700 byte-identical disposable copies outside the repository.
+- Run Flask and fresh installed-Chrome checks only against the disposable copies in a sterile child environment with a synthetic Flask secret, no authentication hash, no `.env` loading, no live-integration credentials, and denied non-localhost networking.
+- Verify Dashboard, Transactions, To Do, and Recurring Review for Personal and BFM using only response status, expected title/landmark presence, and error counts.
+- Permit initialization, migrations, WAL, and category synchronization only on the disposable copies. Compare integrity, schema version, and aggregate table-count deltas without retaining row values.
+- Exclude opening the originals through Flask; screenshots, traces, response/HTML dumps, console text, or financial values; 5G implementation resume; product/test changes; Luxe Legacy; Plaid; credentials; staging, commit, GitHub, workflows, Fly, deployment, production, delegation, and second opinion.
+- Stop for original drift, unexpected owner or sidecar, copy mismatch, original-path access, external networking, credentials, integrity or route failure, unexpected aggregate mutation, protected-output requirement, preserved-file drift, cleanup failure, dashboard failure, or need for an excluded action.
+- On completion or stop, remove the exact disposable copies, prove the originals and dirty worktree unchanged, refresh and health-check Runway OS, return the application-readiness result to Ryan, and do not resume 5G.
 
 ## Work Block 5G-RC-R Result
 

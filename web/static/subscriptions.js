@@ -121,7 +121,7 @@
                 clone.className = "sub-detail-form";
                 if (button && button.classList.contains("sub-suggest-btn--accept")) {
                     button.className = "btn btn-sm btn-primary";
-                    button.textContent = "Add to Watchlist";
+                    button.textContent = "Track";
                 } else if (button) {
                     button.className = "btn btn-sm btn-secondary";
                     button.textContent = "Dismiss";
@@ -486,6 +486,10 @@
             } catch (error) {
                 suggestions = [];
             }
+        }
+        var feedback = root.querySelector("[data-subscriptions-feedback]");
+        if (feedback) {
+            feedback.focus({preventScroll: true});
         }
     }
 

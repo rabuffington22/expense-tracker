@@ -124,12 +124,12 @@
     </div>
 </div>
 
-{# ── Subscriptions ───────────────────────────────────────────────────────── #}
-<div class="todo-section-label">Subscriptions</div>
+{# ── Recurring review ───────────────────────────────────────────────────── #}
+<div class="todo-section-label">Recurring Review</div>
 <div class="outline-panel">
     <div class="todo-list">
         <a href="{{ url_for('subscriptions.index') }}" class="todo-row todo-row--link">
-            <span class="todo-name">Subscription tracker</span>
+            <span class="todo-name">Recurring Review</span>
             <span class="todo-row-right">
                 {% if watchlist_count > 0 %}
                 <span class="badge badge-amber">{{ watchlist_count }}</span>
