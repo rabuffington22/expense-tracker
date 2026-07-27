@@ -2,27 +2,39 @@
 
 ## Active Objective
 
-Keep the verified Phase 5 set on open draft PR #89 and decide separately whether to authorize 5F-R2 for merge, automatic production deployment, credential-free health verification, and release closeout.
+Release the verified Phase 5 set through PR #89, one automatic production deployment, credential-free health verification, and one `[skip actions]` release closeout without starting another Phase 5 task.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Tasks 1.1-1.4, Task 1, Task 2.1, Task 2.3, and Task 2.6 are complete through 5A-5C, 5E-5F, and verified draft-PR publication in 5F-RR. Task 2.2 and 5D remain parked. Task 3 remains planned. Task 4 is the Ryan-owned 5F-R2 production-release decision.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Tasks 1.1-1.4, Task 1, Task 2.1, Task 2.3, and Task 2.6 are complete through 5A-5C, 5E-5F, and verified draft-PR publication in 5F-RR. Task 2.2 and 5D remain parked. Task 3 remains planned. Task 4 is active through confirmed 5F-R2 for the exact production-release checkpoint.
 
 ## Current Work Block
 
-Work block 5F-RR: Verified Set Branch Publication Retry — verified on open draft PR #89 after the candidate and the exact six-path closeout head satisfy the PR-only core-then-browser Synthetic CI contract with zero annotations and zero deployment. The branch remains open, draft, and unmerged.
+Work block 5F-R2: Verified Draft PR Production Release — active. Publish the command-center activation state to PR #89, require fresh exact-head PR CI, mark the PR ready, merge it with a merge commit, observe its one automatic Fly Deploy, verify credential-free health, publish one six-path `[skip actions]` release closeout to `main`, prove zero second deployment, and stop.
 
 ## Current Task
 
-Phase 5 Task 4 (`P5-T4`) — current and Ryan-owned for the separately confirmed 5F-R2 production-release decision. Merge, production release, Task 3, and final Phase 5 durability and closeout remain incomplete.
+Phase 5 Task 4 (`P5-T4`) — current and Codex-owned only for confirmed 5F-R2. Task 3 and final Phase 5 durability and closeout remain incomplete.
 
 ## Owner
 
-Ryan owns the 5F-R2 decision and retains every merge, production release, parked Luxe Legacy path, recurring-surface, Ask Opus data-handling, protected-access, and broader-scope decision. Codex has no active implementation or publication authority after the 5F-RR stop.
+Codex owns exact activation publication, PR readiness and merge, automatic deployment observation, bounded credential-free health verification, sanitized `[skip actions]` release closeout, dashboard currency, and stop enforcement. Ryan retains every scope change, rollback, repair, parked Luxe Legacy path, recurring-surface, Ask Opus data-handling, protected-access, and broader decision.
 
 ## Current Action
 
-Ryan decides whether to confirm 5F-R2. Until then, leave PR #89 open, draft, and unmerged; retain the feature branch; perform no workflow action, production access, deployment, product work, or Luxe Legacy setup.
+Verify active 5F-R2 state and release preconditions; publish the exact five-path activation commit; require fresh core-then-browser PR CI; mark PR #89 ready and merge it with a merge commit; observe only the automatic exact-SHA Fly Deploy; require zero annotations; verify bounded credential-free `/health`; publish the exact six-path `[skip actions]` release closeout to `main`; prove no second deployment; retain the feature branch; and stop.
+
+## Confirmed Work Block 5F-R2
+
+- Name: Verified Draft PR Production Release.
+- Include Task 4 (`P5-T4`) only for the release checkpoint of the verified 5A-5F set on PR #89.
+- Publish one exact five-path active-state commit without a skip token and require fresh exact-head core-then-browser Synthetic CI with zero annotations.
+- Mark PR #89 ready, merge it with a merge commit, observe only its automatic push-triggered Fly Deploy, require every step to succeed with zero annotations, and verify credential-free `https://ledger-oak.fly.dev/health`.
+- Publish one sanitized six-path `[skip actions]` command-center closeout directly to `main`, prove it caused no second deployment, retain the feature branch, and stop.
+- Exclude Tasks 2.2 and 5D, Tasks 2.4-2.8, Task 3, final Phase 5 closeout, further product or test work, workflow changes or manual actions, Luxe Legacy setup, Plaid, Fly administration, protected or real data, rollback or repair, branch deletion, delegation, second opinion, and all three preserved unrelated files.
+- Stop for any ref, PR, CI, annotation, merge, deployment, health, skip-action, exact-path, sensitive-data, cleanup, dashboard, or preserved-file drift, or any need for rollback, repair, rerun, cancellation, protected access, or excluded work.
+- Verify local safety, exact paths, active and closeout dashboard states, PR checks and annotations, merge SHA and parents, exact automatic deployment steps and annotations, bounded credential-free health, closeout no-second-deployment proof, refs, ancestry, and preserved hashes.
+- On success, mark 5F-R2 done, keep Phase 5 at 38%, do not claim Task 3 or final Phase 5 completion, and return the next Task 2 direction choice to Ryan.
 
 ## Work Block 5F-RR Result
 
