@@ -4,6 +4,7 @@ import os
 import sys
 import sqlite3
 import hashlib
+import json
 import random
 from datetime import datetime, timedelta
 
@@ -12,19 +13,18 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA_DIR = os.environ.get("DATA_DIR", "./local_state")
 os.makedirs(DATA_DIR, exist_ok=True)
 
+from core.categories import load_categories
 from core.db import init_db, get_db_path
 
 # ── Personal seed data ──────────────────────────────────────────────────────
 
 PERSONAL_MERCHANTS = {
-    "Groceries": [
+    "Food": [
         ("HEB GROCERY", 45, 120),
         ("WHOLE FOODS", 60, 150),
         ("COSTCO", 100, 300),
         ("TARGET", 25, 80),
         ("TRADER JOES", 30, 90),
-    ],
-    "Dining": [
         ("CHICK-FIL-A", 8, 18),
         ("CHIPOTLE", 10, 22),
         ("STARBUCKS", 4, 9),
@@ -32,12 +32,18 @@ PERSONAL_MERCHANTS = {
         ("WHATABURGER", 8, 15),
         ("OLIVE GARDEN", 30, 70),
     ],
-    "Gas & Auto": [
+    "Transportation": [
         ("SHELL OIL", 35, 65),
         ("EXXONMOBIL", 30, 60),
         ("BUCCEES", 40, 70),
         ("DISCOUNT TIRE", 100, 400),
         ("AUTOZONE", 15, 60),
+        ("SOUTHWEST AIRLINES", 200, 450),
+        ("ENTERPRISE RENT", 50, 120),
+        ("JIFFY LUBE", 40, 80),
+        ("TEXPRESS TOLLS", 15, 30),
+        ("PARK PLACE MOTORS", 100, 500),
+        ("UBER", 10, 35),
     ],
     "Utilities": [
         ("ONCOR ELECTRIC", 120, 250),
@@ -45,31 +51,23 @@ PERSONAL_MERCHANTS = {
         ("CITY OF DALLAS WATER", 50, 100),
         ("AT&T INTERNET", 65, 65),
     ],
-    "Subscriptions": [
+    "Streaming": [
         ("NETFLIX", 15, 23),
         ("SPOTIFY", 11, 11),
-        ("APPLE ICLOUD", 3, 3),
         ("YOUTUBE PREMIUM", 14, 14),
         ("AMAZON PRIME", 15, 15),
-        ("CHATGPT PLUS", 20, 20),
     ],
     "Health & Beauty": [
         ("CVS PHARMACY", 10, 50),
         ("WALGREENS", 8, 35),
         ("GREAT CLIPS", 18, 25),
+        ("LIFETIME FITNESS", 80, 80),
+        ("PELOTON", 44, 44),
+        ("SUPERCUTS", 20, 35),
+        ("MASSAGE ENVY", 70, 100),
+        ("ULTA BEAUTY", 15, 60),
     ],
-    "Kids": [
-        ("KUMON", 150, 150),
-        ("CHUCKE CHEESE", 25, 60),
-        ("FIVE BELOW", 10, 30),
-        ("NIKE STORE", 40, 120),
-    ],
-    "Household": [
-        ("HOME DEPOT", 20, 150),
-        ("LOWES", 25, 200),
-        ("AMAZON", 10, 100),
-    ],
-    "Pet Supplies": [
+    "Pets": [
         ("PETSMART", 20, 80),
         ("CHEWY", 30, 70),
     ],
@@ -86,72 +84,55 @@ PERSONAL_MERCHANTS = {
         ("AMC THEATRES", 15, 30),
         ("TICKETMASTER", 40, 120),
         ("BARNES & NOBLE", 10, 35),
-    ],
-    "Travel": [
         ("MARRIOTT", 150, 350),
-        ("SOUTHWEST AIRLINES", 200, 450),
-        ("ENTERPRISE RENT", 50, 120),
+        ("CHUCKE CHEESE", 25, 60),
+        ("APPLE ICLOUD", 3, 3),
+        ("CHATGPT PLUS", 20, 20),
     ],
-    "Home Improvement": [
+    "Home": [
+        ("HOME DEPOT", 20, 150),
+        ("LOWES", 25, 200),
+        ("AMAZON", 10, 100),
         ("MENARDS", 20, 100),
         ("ACE HARDWARE", 10, 50),
+        ("HOA MANAGEMENT", 175, 175),
     ],
-    "Gifts & Donations": [
+    "Gifts": [
         ("HALLMARK", 5, 20),
         ("CHURCHES ONLINE", 100, 100),
         ("GOODWILL", 15, 40),
+        ("GATEWAY CHURCH", 200, 200),
+        ("ST JUDE DONATION", 50, 50),
+        ("RED CROSS", 25, 100),
     ],
-    "Electronics": [
+    "Shopping": [
         ("BEST BUY", 30, 200),
         ("MICRO CENTER", 20, 150),
-    ],
-    "Fitness & Wellness": [
-        ("LIFETIME FITNESS", 80, 80),
-        ("PELOTON", 44, 44),
+        ("FIVE BELOW", 10, 30),
     ],
     "Education": [
+        ("KUMON", 150, 150),
         ("UDEMY", 12, 15),
         ("COURSERA", 50, 50),
     ],
-    "Housing": [
+    "Mortgage": [
         ("CORNERSTONE MORTGAGE", 2200, 2200),
-        ("HOA MANAGEMENT", 175, 175),
     ],
     "Student Loans": [
         ("NELNET STUDENT LOAN", 350, 350),
         ("NAVIENT", 280, 280),
     ],
-    "Medical": [
+    "Healthcare": [
         ("BAYLOR SCOTT WHITE", 50, 300),
         ("CVS MINUTE CLINIC", 25, 75),
         ("DR SMITH DDS", 150, 400),
         ("VISION CENTER", 100, 250),
-    ],
-    "Personal Care": [
-        ("SUPERCUTS", 20, 35),
-        ("MASSAGE ENVY", 70, 100),
-        ("ULTA BEAUTY", 15, 60),
-    ],
-    "Taxes": [
-        ("DENTON COUNTY TAX", 400, 400),
-        ("TURBOTAX", 80, 150),
     ],
     "Ranch": [
         ("TRACTOR SUPPLY CO", 30, 200),
         ("ATWOODS", 15, 120),
         ("COTTON ELECTRIC", 80, 150),
         ("RURAL KING", 20, 90),
-    ],
-    "Charity": [
-        ("GATEWAY CHURCH", 200, 200),
-        ("ST JUDE DONATION", 50, 50),
-        ("RED CROSS", 25, 100),
-    ],
-    "Auto & Transport": [
-        ("JIFFY LUBE", 40, 80),
-        ("TEXPRESS TOLLS", 15, 30),
-        ("PARK PLACE MOTORS", 100, 500),
-        ("UBER", 10, 35),
     ],
 }
 
@@ -163,32 +144,23 @@ PERSONAL_INCOME = [
 
 # Account assignment: map merchant categories to account names
 PERSONAL_ACCOUNT_MAP = {
-    "Groceries": "Primary Checking",
-    "Dining": "Visa Rewards",
-    "Gas & Auto": "Visa Rewards",
+    "Food": "Primary Checking",
+    "Transportation": "Visa Rewards",
     "Utilities": "Primary Checking",
-    "Subscriptions": "Visa Rewards",
+    "Streaming": "Visa Rewards",
     "Health & Beauty": "Amex",
-    "Kids": "Primary Checking",
-    "Household": "Amex",
-    "Pet Supplies": "Store Card",
+    "Pets": "Store Card",
     "Clothing": "Store Card",
     "Insurance": "Primary Checking",
     "Entertainment": "Visa Rewards",
-    "Travel": "Amex",
-    "Home Improvement": "Primary Checking",
-    "Gifts & Donations": "Primary Checking",
-    "Electronics": "Amex",
-    "Fitness & Wellness": "Primary Checking",
+    "Home": "Amex",
+    "Gifts": "Primary Checking",
+    "Shopping": "Amex",
     "Education": "Visa Rewards",
-    "Housing": "Primary Checking",
+    "Mortgage": "Primary Checking",
     "Student Loans": "Primary Checking",
-    "Medical": "Visa Rewards",
-    "Personal Care": "Visa Rewards",
-    "Taxes": "Primary Checking",
+    "Healthcare": "Visa Rewards",
     "Ranch": "Primary Checking",
-    "Charity": "Primary Checking",
-    "Auto & Transport": "Visa Rewards",
 }
 
 PERSONAL_ACCOUNTS = [
@@ -222,41 +194,46 @@ BUSINESS_MERCHANTS = {
         ("GITHUB", 21, 21),
         ("GOOGLE WORKSPACE", 14, 14),
     ],
-    "Travel": [
+    "Transportation": [
         ("DELTA AIR LINES", 250, 650),
         ("UNITED AIRLINES", 200, 550),
         ("HILTON HOTELS", 150, 350),
         ("MARRIOTT", 180, 400),
         ("UBER", 15, 45),
         ("LYFT", 12, 40),
+        ("ENTERPRISE FLEET", 400, 400),
+        ("SHELL FLEET CARD", 150, 300),
+        ("FIRESTONE AUTO", 80, 250),
     ],
-    "Professional Services": [
+    "Accounting": [
         ("SMITH & ASSOCIATES CPA", 500, 500),
-        ("BAKER LAW GROUP", 750, 750),
-        ("CREATIVE MARKETING CO", 1500, 1500),
     ],
     "Marketing": [
         ("GOOGLE ADS", 200, 800),
         ("META ADS", 150, 600),
         ("LINKEDIN ADS", 100, 400),
         ("MAILCHIMP", 50, 50),
+        ("CREATIVE MARKETING CO", 1500, 1500),
     ],
     "Insurance": [
         ("HARTFORD BUSINESS INS", 350, 350),
         ("HISCOX PROFESSIONAL", 180, 180),
+        ("UNITED HEALTHCARE", 1200, 1200),
+        ("METLIFE DENTAL", 350, 350),
+        ("VSP VISION", 120, 120),
     ],
     "Utilities": [
         ("COMCAST BUSINESS", 120, 120),
         ("AT&T BUSINESS", 85, 85),
         ("DALLAS ELECTRIC", 200, 350),
     ],
-    "Meals & Entertainment": [
+    "Food": [
         ("STARBUCKS", 5, 12),
         ("PANERA BREAD", 10, 18),
         ("RUTH'S CHRIS", 80, 200),
         ("CAPITAL GRILLE", 100, 250),
     ],
-    "Equipment": [
+    "Electronics": [
         ("DELL TECHNOLOGIES", 800, 2500),
         ("APPLE STORE", 500, 1500),
         ("BEST BUY BUSINESS", 200, 800),
@@ -265,58 +242,43 @@ BUSINESS_MERCHANTS = {
         ("ADP PAYROLL", 8500, 8500),
         ("GUSTO PAYROLL", 3200, 3200),
     ],
-    "Rent & Facilities": [
+    "Rent": [
         ("REGUS OFFICE", 1200, 1200),
         ("WEWORK", 800, 800),
     ],
-    "Training & Development": [
+    "Professional Development": [
         ("OREILLY MEDIA", 50, 50),
         ("LINKEDIN LEARNING", 30, 30),
         ("AWS TRAINING", 300, 500),
     ],
-    "Shipping & Logistics": [
+    "Shipping": [
         ("USPS", 8, 25),
         ("FEDEX", 15, 60),
         ("UPS STORE", 10, 45),
     ],
-    "Taxes & Licenses": [
+    "Taxes": [
         ("TX COMPTROLLER", 500, 2000),
         ("IRS EFTPS", 2000, 5000),
     ],
-    "Legal": [
-        ("BAKER MCKENZIE LLP", 500, 2000),
-        ("LEGALZOOM", 30, 150),
-    ],
-    "Consulting": [
-        ("MCKINSEY & CO", 2000, 5000),
-        ("DELOITTE CONSULTING", 1500, 4000),
-    ],
-    "Employee Benefits": [
-        ("UNITED HEALTHCARE", 1200, 1200),
+    "Retirement": [
         ("FIDELITY 401K", 800, 800),
-        ("METLIFE DENTAL", 350, 350),
-        ("VSP VISION", 120, 120),
     ],
-    "Banking & Fees": [
+    "Fees": [
         ("CHASE WIRE FEE", 25, 35),
         ("BANK SERVICE CHARGE", 15, 30),
         ("MERCHANT PROCESSING FEE", 50, 200),
+        ("LEGALZOOM", 30, 150),
     ],
-    "Client Gifts": [
+    "Staff Gifts": [
         ("HARRY & DAVID", 40, 120),
         ("TIFFANY & CO", 80, 250),
         ("EDIBLE ARRANGEMENTS", 50, 90),
     ],
-    "Vehicle & Fleet": [
-        ("ENTERPRISE FLEET", 400, 400),
-        ("SHELL FLEET CARD", 150, 300),
-        ("FIRESTONE AUTO", 80, 250),
-    ],
-    "Cleaning & Maintenance": [
+    "Facilities": [
         ("JANI-KING", 350, 350),
         ("SERVPRO", 200, 500),
     ],
-    "Subscriptions": [
+    "IT": [
         ("WALL STREET JOURNAL", 40, 40),
         ("BLOOMBERG TERMINAL", 250, 250),
         ("SALESFORCE CRM", 150, 150),
@@ -332,26 +294,23 @@ BUSINESS_INCOME = [
 BUSINESS_ACCOUNT_MAP = {
     "Office Supplies": "Business Checking",
     "Software": "Business Amex",
-    "Travel": "Business Amex",
-    "Professional Services": "Business Checking",
+    "Transportation": "Business Amex",
+    "Accounting": "Business Checking",
     "Marketing": "Business Amex",
     "Insurance": "Business Checking",
     "Utilities": "Business Checking",
-    "Meals & Entertainment": "Business Amex",
-    "Equipment": "Business Amex",
+    "Food": "Business Amex",
+    "Electronics": "Business Amex",
     "Payroll": "Business Checking",
-    "Rent & Facilities": "Business Checking",
-    "Training & Development": "Business Amex",
-    "Shipping & Logistics": "Business Checking",
-    "Taxes & Licenses": "Business Checking",
-    "Legal": "Business Checking",
-    "Consulting": "Business Checking",
-    "Employee Benefits": "Business Checking",
-    "Banking & Fees": "Business Checking",
-    "Client Gifts": "Business Amex",
-    "Vehicle & Fleet": "Business Checking",
-    "Cleaning & Maintenance": "Business Checking",
-    "Subscriptions": "Business Amex",
+    "Rent": "Business Checking",
+    "Professional Development": "Business Amex",
+    "Shipping": "Business Checking",
+    "Taxes": "Business Checking",
+    "Retirement": "Business Checking",
+    "Fees": "Business Checking",
+    "Staff Gifts": "Business Amex",
+    "Facilities": "Business Checking",
+    "IT": "Business Amex",
 }
 
 BUSINESS_ACCOUNTS = [
@@ -379,64 +338,6 @@ BUSINESS_LARGE_TXNS = [
     ("SERVER HARDWARE", -3200.00),
     ("ANNUAL SOFTWARE LICENSE", -1800.00),
 ]
-
-# ── Extra categories + subcategories for demo richness ───────────────────────
-
-PERSONAL_EXTRA_CATEGORIES = {
-    # category: [subcategories]
-    "Groceries": ["Produce", "Meat & Seafood", "Dairy", "Bakery", "Frozen", "Snacks", "Beverages", "Organic", "Bulk Items"],
-    "Dining": ["Fast Food", "Casual Dining", "Fine Dining", "Coffee & Tea", "Delivery", "Bars & Pubs", "Food Trucks", "Brunch"],
-    "Gas & Auto": ["Gas", "Oil Change", "Tires", "Car Wash", "Repairs", "Parking", "Tolls", "Registration"],
-    "Utilities": ["Electric", "Gas", "Water", "Internet", "Phone", "Trash & Recycling"],
-    "Subscriptions": ["Streaming Video", "Streaming Music", "Cloud Storage", "News & Magazines", "Software", "Gaming", "Fitness Apps"],
-    "Health & Beauty": ["Pharmacy", "Vitamins", "Skincare", "Haircare", "Dental", "Vision", "Therapy", "Gym & Fitness"],
-    "Kids": ["School Supplies", "Tutoring", "Activities", "Toys", "Clothing", "Diapers & Wipes", "Childcare", "Sports & Camps"],
-    "Household": ["Cleaning Supplies", "Furniture", "Decor", "Kitchen", "Storage", "Laundry", "Garden & Outdoor", "Smart Home"],
-    "Pet Supplies": ["Food", "Toys", "Vet Visits", "Grooming", "Medications", "Boarding"],
-    "Clothing": ["Women", "Men", "Kids", "Shoes", "Accessories", "Activewear", "Outerwear"],
-    "Insurance": ["Auto", "Home", "Life", "Umbrella", "Renters"],
-    "Entertainment": ["Movies", "Concerts", "Sports Events", "Theme Parks", "Books", "Games", "Hobbies"],
-    "Travel": ["Flights", "Hotels", "Car Rental", "Luggage", "Excursions", "Travel Insurance"],
-    "Home Improvement": ["Tools", "Hardware", "Paint", "Flooring", "Plumbing", "Electrical", "Landscaping"],
-    "Education": ["Tuition", "Books & Supplies", "Online Courses", "Certifications"],
-    "Gifts & Donations": ["Birthday", "Holiday", "Wedding", "Charity", "Religious"],
-    "Electronics": ["Computers", "Phones", "Tablets", "Accessories", "Smart Home", "Audio"],
-    "Fitness & Wellness": ["Gym Membership", "Classes", "Equipment", "Supplements", "Massage & Spa"],
-    "Housing": ["Mortgage", "Rent", "HOA Fees", "Property Tax", "Home Warranty"],
-    "Student Loans": ["Federal", "Private", "Refinanced"],
-    "Medical": ["Primary Care", "Dental", "Vision", "Urgent Care", "Specialist", "Prescriptions"],
-    "Personal Care": ["Haircut", "Spa & Massage", "Skincare", "Nails"],
-    "Taxes": ["Property Tax", "Income Tax", "Tax Prep"],
-    "Ranch": ["Feed & Supplies", "Equipment", "Fencing", "Utilities", "Vet"],
-    "Charity": ["Church", "Nonprofit", "Disaster Relief"],
-    "Auto & Transport": ["Oil Change", "Tolls", "Repairs", "Rideshare", "Parking"],
-}
-
-BUSINESS_EXTRA_CATEGORIES = {
-    "Office Supplies": ["Paper & Printing", "Writing Supplies", "Desk Accessories", "Filing & Storage", "Breakroom Supplies"],
-    "Software": ["Accounting", "CRM", "Project Management", "Design", "Communication", "Security", "Hosting"],
-    "Travel": ["Flights", "Hotels", "Ground Transport", "Per Diem", "Conference Travel", "Client Visits"],
-    "Professional Services": ["Legal", "Accounting & Tax", "Consulting", "Recruiting", "IT Support"],
-    "Marketing": ["Digital Ads", "Social Media", "Email Marketing", "Print & Direct Mail", "Events & Sponsorships", "Content Creation", "SEO & Analytics"],
-    "Insurance": ["General Liability", "Professional Liability", "Workers Comp", "Property", "Cyber Insurance"],
-    "Utilities": ["Internet", "Phone", "Electric", "Water", "Security System"],
-    "Meals & Entertainment": ["Client Meals", "Team Lunches", "Coffee Runs", "Holiday Events", "Happy Hours"],
-    "Equipment": ["Computers", "Monitors & Displays", "Networking", "Furniture", "Printers", "Audio/Video"],
-    "Payroll": ["Salaries", "Contractor Payments", "Bonuses", "Payroll Taxes", "Benefits"],
-    "Rent & Facilities": ["Office Rent", "Coworking", "Storage", "Maintenance", "Janitorial"],
-    "Training & Development": ["Conferences", "Online Courses", "Certifications", "Books & Resources", "Team Workshops"],
-    "Shipping & Logistics": ["USPS", "FedEx", "UPS", "Freight", "Packaging Materials"],
-    "Taxes & Licenses": ["Federal Tax", "State Tax", "Business License", "Permits", "Franchise Tax"],
-    "Legal": ["Contracts", "Compliance", "Litigation", "Intellectual Property"],
-    "Consulting": ["Strategy", "IT Consulting", "Management", "Financial Advisory"],
-    "Employee Benefits": ["Health Insurance", "401k Match", "Dental", "Vision", "Life Insurance"],
-    "Banking & Fees": ["Wire Fees", "Service Charges", "Merchant Processing", "ACH Fees"],
-    "Client Gifts": ["Holiday Gifts", "Thank You Gifts", "Event Gifts"],
-    "Vehicle & Fleet": ["Lease Payments", "Fuel", "Maintenance", "Insurance"],
-    "Cleaning & Maintenance": ["Janitorial", "Landscaping", "Repairs", "Pest Control"],
-    "Subscriptions": ["News & Media", "Industry Reports", "CRM", "Data Services"],
-}
-
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -472,7 +373,7 @@ def seed_transactions(c, merchants, income_sources, account_map, large_txns, tod
         for merchant_name, min_amt, max_amt in merchant_list:
             account = account_map.get(category, "Primary Checking")
 
-            if category in ("Subscriptions", "Software"):
+            if category in ("Streaming", "Software", "IT"):
                 # Monthly on a fixed day
                 day = random.randint(1, 28)
                 d = start
@@ -484,9 +385,10 @@ def seed_transactions(c, merchants, income_sources, account_map, large_txns, tod
                             txn_count += 1
                     d += timedelta(days=1)
 
-            elif category in ("Insurance", "Utilities", "Housing", "Student Loans",
-                              "Employee Benefits", "Cleaning & Maintenance",
-                              "Vehicle & Fleet", "Charity"):
+            elif category in (
+                "Insurance", "Utilities", "Mortgage", "Student Loans",
+                "Payroll", "Rent", "Retirement", "Facilities",
+            ):
                 # Monthly on a fixed day
                 day = random.randint(5, 25)
                 d = start
@@ -498,7 +400,7 @@ def seed_transactions(c, merchants, income_sources, account_map, large_txns, tod
                             txn_count += 1
                     d += timedelta(days=1)
 
-            elif category in ("Professional Services", "Taxes", "Consulting", "Legal"):
+            elif category in ("Accounting", "Taxes"):
                 # Quarterly-ish
                 for _ in range(random.randint(2, 4)):
                     d = start + timedelta(days=random.randint(0, total_days))
@@ -509,11 +411,9 @@ def seed_transactions(c, merchants, income_sources, account_map, large_txns, tod
 
             else:
                 # Variable frequency
-                if category in ("Groceries",):
+                if category == "Food":
                     times_per_month = random.randint(4, 8)
-                elif category in ("Dining", "Meals & Entertainment"):
-                    times_per_month = random.randint(3, 6)
-                elif category in ("Gas & Auto", "Travel"):
+                elif category == "Transportation":
                     times_per_month = random.randint(2, 4)
                 elif category == "Marketing":
                     times_per_month = random.randint(2, 3)
@@ -610,12 +510,12 @@ def seed_manual_recurring(c, recurring, accounts):
     return count
 
 
-def seed_categories(c, extra_categories):
-    """Seed extra categories and subcategories. Returns (cat_count, sub_count)."""
+def seed_categories(c, entity_key):
+    """Seed the exact maintained category domain. Returns (cat_count, sub_count)."""
     now = datetime.now().isoformat()
     cat_count = 0
     sub_count = 0
-    for category, subcategories in extra_categories.items():
+    for category, subcategories in load_categories(entity_key).items():
         try:
             c.execute(
                 "INSERT OR IGNORE INTO categories (name, created_at) VALUES (?,?)",
@@ -636,8 +536,8 @@ def seed_categories(c, extra_categories):
     return cat_count, sub_count
 
 
-def seed_planning(c, entity_key):
-    """Seed Long-Term Planning items + Short-Term Planning budgets and action items."""
+def seed_planning(c, entity_key, today):
+    """Seed long-term items, short-term budgets/actions, and Personal goals."""
     now = datetime.now().isoformat()
 
     # ── Long-Term Planning settings ─────────────────────────────────────
@@ -684,21 +584,21 @@ def seed_planning(c, entity_key):
     # ── Short-Term Planning: budgets + action items ─────────────────────
     c.execute("DELETE FROM budget_items")
     c.execute("DELETE FROM action_items")
+    c.execute("DELETE FROM goal_snapshots")
+    c.execute("DELETE FROM short_term_goals")
 
     if entity_key == "personal":
         budgets = [
-            ("Housing", 237500, "fixed"), ("Student Loans", 63000, "fixed"),
+            ("Mortgage", 237500, "fixed"), ("Student Loans", 63000, "fixed"),
             ("Insurance", 31000, "fixed"), ("Utilities", 27500, "fixed"),
-            ("Groceries", 80000, "focus"), ("Dining", 40000, "focus"),
+            ("Food", 120000, "focus"),
             ("Entertainment", 15000, "focus"), ("Clothing", 20000, "focus"),
-            ("Gas & Auto", 30000, "focus"), ("Health & Beauty", 15000, "focus"),
-            ("Kids", 25000, "focus"), ("Fitness & Wellness", 12400, "focus"),
-            ("Household", 20000, "other"), ("Pet Supplies", 10000, "other"),
-            ("Electronics", 15000, "other"), ("Medical", 20000, "other"),
-            ("Education", 10000, "other"), ("Gifts & Donations", 15000, "other"),
-            ("Ranch", 25000, "other"), ("Charity", 27500, "other"),
-            ("Auto & Transport", 15000, "other"), ("Personal Care", 10000, "other"),
-            ("Travel", 30000, "other"),
+            ("Transportation", 45000, "focus"),
+            ("Health & Beauty", 27400, "focus"),
+            ("Home", 20000, "other"), ("Pets", 10000, "other"),
+            ("Shopping", 15000, "other"), ("Healthcare", 20000, "other"),
+            ("Education", 10000, "other"), ("Gifts", 42500, "other"),
+            ("Ranch", 25000, "other"),
         ]
         actions = [
             ("Pay mortgage", "1", 1), ("Pay car loan", "3", 2),
@@ -707,18 +607,17 @@ def seed_planning(c, entity_key):
         ]
     else:
         budgets = [
-            ("Payroll", 1200000, "fixed"), ("Rent & Facilities", 200000, "fixed"),
+            ("Payroll", 1200000, "fixed"), ("Rent", 200000, "fixed"),
             ("Insurance", 53000, "fixed"), ("Utilities", 40500, "fixed"),
-            ("Employee Benefits", 247000, "fixed"),
+            ("Retirement", 80000, "fixed"),
             ("Software", 50000, "focus"), ("Marketing", 80000, "focus"),
-            ("Equipment", 40000, "focus"), ("Office Supplies", 25000, "focus"),
-            ("Meals & Entertainment", 30000, "focus"),
-            ("Travel", 60000, "other"), ("Professional Services", 50000, "other"),
-            ("Training & Development", 15000, "other"), ("Shipping & Logistics", 8000, "other"),
-            ("Taxes & Licenses", 100000, "other"), ("Legal", 25000, "other"),
-            ("Consulting", 50000, "other"), ("Banking & Fees", 10000, "other"),
-            ("Client Gifts", 10000, "other"), ("Vehicle & Fleet", 50000, "other"),
-            ("Cleaning & Maintenance", 40000, "other"),
+            ("Electronics", 40000, "focus"), ("Office Supplies", 25000, "focus"),
+            ("Food", 30000, "focus"),
+            ("Transportation", 110000, "other"), ("Accounting", 50000, "other"),
+            ("Professional Development", 15000, "other"), ("Shipping", 8000, "other"),
+            ("Taxes", 100000, "other"), ("Fees", 35000, "other"),
+            ("Staff Gifts", 10000, "other"), ("Facilities", 40000, "other"),
+            ("IT", 50000, "other"),
         ]
         actions = [
             ("Process payroll", "1", 1), ("Pay office rent", "1", 2),
@@ -734,11 +633,43 @@ def seed_planning(c, entity_key):
         c.execute("INSERT INTO action_items (title, status, due_date, is_recurring, sort_order) VALUES (?,?,?,?,?)",
                   (title, "pending", due, 1 if due else 0, sort))
 
-    return len(items), len(budgets), len(actions)
+    goals = []
+    if entity_key == "personal":
+        goals = [
+            (
+                "Pay Off Visa Rewards",
+                "debt_payoff",
+                0,
+                (today + timedelta(days=548)).isoformat(),
+                "avalanche",
+                50000,
+                json.dumps(["Visa Rewards"]),
+                "Synthetic demo goal",
+            ),
+            (
+                "Build Emergency Fund",
+                "savings",
+                2000000,
+                (today + timedelta(days=365)).isoformat(),
+                None,
+                75000,
+                json.dumps(["Savings"]),
+                "Synthetic demo goal",
+            ),
+        ]
+        c.executemany(
+            "INSERT INTO short_term_goals "
+            "(name, goal_type, target_amount_cents, target_date, strategy, "
+            "monthly_amount_cents, linked_accounts, status, notes) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, 'active', ?)",
+            goals,
+        )
+
+    return len(items), len(budgets), len(actions), len(goals)
 
 
 def seed_entity(entity_key, merchants, income_sources, account_map,
-                accounts_def, recurring_def, large_txns, extra_categories):
+                accounts_def, recurring_def, large_txns):
     """Seed a complete entity with transactions, accounts, and recurring."""
     init_db(entity_key)
     db_path = get_db_path(entity_key)
@@ -752,24 +683,28 @@ def seed_entity(entity_key, merchants, income_sources, account_map,
         c.execute("DELETE FROM transactions")
         c.execute("DELETE FROM account_balances")
         c.execute("DELETE FROM manual_recurring")
-        c.execute("DELETE FROM categories")
-        c.execute("DELETE FROM subcategories")
         conn.commit()
+
+    # Migrations may have seeded an older default catalog even in a fresh DB.
+    # The disposable demo databases use the exact maintained domain instead.
+    c.execute("DELETE FROM subcategories")
+    c.execute("DELETE FROM categories")
 
     today = datetime.now().date()
     start = today - timedelta(days=180)  # 6 months of data
+    random.seed(f"ledger-demo-{entity_key}-{today.isoformat()}")
 
-    cat_count, sub_count = seed_categories(c, extra_categories)
+    cat_count, sub_count = seed_categories(c, entity_key)
     txn_count = seed_transactions(c, merchants, income_sources, account_map, large_txns, today, start)
     acct_count = seed_accounts(c, accounts_def)
     rec_count = seed_manual_recurring(c, recurring_def, accounts_def)
-    plan_count, budget_count, action_count = seed_planning(c, entity_key)
+    plan_count, budget_count, action_count, goal_count = seed_planning(c, entity_key, today)
 
     conn.commit()
     conn.close()
     print(f"  {entity_key}: seeded {txn_count} txns, {acct_count} accounts, {rec_count} recurring, "
           f"{cat_count} categories, {sub_count} subcategories, {plan_count} planning items, "
-          f"{budget_count} budgets, {action_count} action items")
+          f"{budget_count} budgets, {action_count} action items, {goal_count} goals")
 
 
 if __name__ == "__main__":
@@ -779,7 +714,6 @@ if __name__ == "__main__":
         "personal",
         PERSONAL_MERCHANTS, PERSONAL_INCOME, PERSONAL_ACCOUNT_MAP,
         PERSONAL_ACCOUNTS, PERSONAL_RECURRING, PERSONAL_LARGE_TXNS,
-        PERSONAL_EXTRA_CATEGORIES,
     )
 
     seed_entity(
@@ -787,7 +721,6 @@ if __name__ == "__main__":
         BUSINESS_MERCHANTS, BUSINESS_INCOME,
         {**BUSINESS_ACCOUNT_MAP, "_income": "Business Checking"},
         BUSINESS_ACCOUNTS, BUSINESS_RECURRING, BUSINESS_LARGE_TXNS,
-        BUSINESS_EXTRA_CATEGORIES,
     )
 
     print("Done!")

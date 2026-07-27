@@ -2,27 +2,226 @@
 
 ## Active Objective
 
-Keep Phase 5 unchanged while Ryan decides whether to plan and confirm 5A for the Task 1 workflow-review decomposition and evidence baseline.
+Release the verified Phase 5 set through PR #89, one automatic production deployment, credential-free health verification, and one `[skip actions]` release closeout without starting another Phase 5 task.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 0%; Phase 4 is complete through 4BR-R, and no Phase 5 review or implementation has begun.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Tasks 1.1-1.4, Task 1, Task 2.1, Task 2.3, and Task 2.6 are complete through 5A-5C, 5E-5F, and verified draft-PR publication in 5F-RR. Task 2.2 and 5D remain parked. Task 3 remains planned. Task 4 is active through confirmed 5F-R2 for the exact production-release checkpoint.
 
 ## Current Work Block
 
-Work block 4BR-R: Command-Center Durability And Phase Transition — complete.
+Work block 5F-R2: Verified Draft PR Production Release — active. Publish the command-center activation state to PR #89, require fresh exact-head PR CI, mark the PR ready, merge it with a merge commit, observe its one automatic Fly Deploy, verify credential-free health, publish one six-path `[skip actions]` release closeout to `main`, prove zero second deployment, and stop.
 
 ## Current Task
 
-Phase 5 Task 1 — current only for a separately planned and confirmed 5A workflow-review block.
+Phase 5 Task 4 (`P5-T4`) — current and Codex-owned only for confirmed 5F-R2. Task 3 and final Phase 5 durability and closeout remain incomplete.
 
 ## Owner
 
-Ryan owns the 5A planning and confirmation decision plus every product, design, protected-access, publication, and broader-scope choice. Codex completed 4BR-R and owns no Phase 5 execution authority.
+Codex owns exact activation publication, PR readiness and merge, automatic deployment observation, bounded credential-free health verification, sanitized `[skip actions]` release closeout, dashboard currency, and stop enforcement. Ryan retains every scope change, rollback, repair, parked Luxe Legacy path, recurring-surface, Ask Opus data-handling, protected-access, and broader decision.
 
 ## Current Action
 
-Plan, revise, or hold 5A before any desktop, mobile, installed-PWA, usability, accessibility, design-review, or product work begins.
+Verify active 5F-R2 state and release preconditions; publish the exact five-path activation commit; require fresh core-then-browser PR CI; mark PR #89 ready and merge it with a merge commit; observe only the automatic exact-SHA Fly Deploy; require zero annotations; verify bounded credential-free `/health`; publish the exact six-path `[skip actions]` release closeout to `main`; prove no second deployment; retain the feature branch; and stop.
+
+## Confirmed Work Block 5F-R2
+
+- Name: Verified Draft PR Production Release.
+- Include Task 4 (`P5-T4`) only for the release checkpoint of the verified 5A-5F set on PR #89.
+- Publish one exact five-path active-state commit without a skip token and require fresh exact-head core-then-browser Synthetic CI with zero annotations.
+- Mark PR #89 ready, merge it with a merge commit, observe only its automatic push-triggered Fly Deploy, require every step to succeed with zero annotations, and verify credential-free `https://ledger-oak.fly.dev/health`.
+- Publish one sanitized six-path `[skip actions]` command-center closeout directly to `main`, prove it caused no second deployment, retain the feature branch, and stop.
+- Exclude Tasks 2.2 and 5D, Tasks 2.4-2.8, Task 3, final Phase 5 closeout, further product or test work, workflow changes or manual actions, Luxe Legacy setup, Plaid, Fly administration, protected or real data, rollback or repair, branch deletion, delegation, second opinion, and all three preserved unrelated files.
+- Stop for any ref, PR, CI, annotation, merge, deployment, health, skip-action, exact-path, sensitive-data, cleanup, dashboard, or preserved-file drift, or any need for rollback, repair, rerun, cancellation, protected access, or excluded work.
+- Verify local safety, exact paths, active and closeout dashboard states, PR checks and annotations, merge SHA and parents, exact automatic deployment steps and annotations, bounded credential-free health, closeout no-second-deployment proof, refs, ancestry, and preserved hashes.
+- On success, mark 5F-R2 done, keep Phase 5 at 38%, do not claim Task 3 or final Phase 5 completion, and return the next Task 2 direction choice to Ryan.
+
+## Work Block 5F-RR Result
+
+- Candidate commit `a87676235c5d79b4347517962cd3ce8a3134b482` contains exactly the approved 76 paths and is published on `codex/phase-5-usability-baseline`.
+- Draft PR [#89](https://github.com/rabuffington22/expense-tracker/pull/89) targets `main` and remains open, draft, and unmerged.
+- Candidate Synthetic CI run `30239840256` passed every core and browser step in order; both jobs returned zero annotations.
+- The exact six-path closeout head is required to pass the same automatic PR-only contract before this result is final.
+- No Fly Deploy run or deployment occurred. `main` remains at the accepted baseline.
+- Evidence: `command-center/logs/2026-07-27-verified-set-branch-publication-retry-5f-rr.md`.
+
+## Confirmed Work Block 5F-RR
+
+- Name: Verified Set Branch Publication Retry.
+- Include Task 4 (`P5-T4`) only for branch durability and hosted PR-only review of the verified Tasks 1.1-1.4, 2.1, 2.3, and 2.6 outputs.
+- Revalidate and explicitly stage the exact 76-path candidate: 17 tracked modifications and 59 intended untracked Phase 5 artifacts, logs, handoff files, contracts, and evidence.
+- Create one release-candidate commit without a skip token, non-force push `codex/phase-5-usability-baseline`, and open one draft PR targeting `main`.
+- Require automatic PR-only Synthetic CI in core-then-browser order. After a clean first pass, add one sanitized six-path closeout commit without a skip token and require the final PR head to pass the same workflow.
+- Leave the PR open, draft, and unmerged; retain the remote branch; require zero Fly deployment.
+- Reuse the completed local installed-Chrome pass only if product and browser-test hashes remain unchanged; hosted browser CI still runs on both PR heads.
+- Exclude Tasks 2.2, 2.4-2.5, 2.7-2.8, and 3; further product/test edits; Luxe Legacy setup or downstream writes; push or merge to `main`; production deployment or health access; ready-for-review transition; manual workflow dispatch, rerun, cancellation, or repair; protected/live/real-data access; force push, rebase, conflict resolution, branch deletion, broader recovery, delegation, second opinion; and the three preserved unrelated files.
+- Stop on ref, candidate, stage, commit, PR, workflow, annotation, zero-deployment, scope, sensitive-data, cleanup, dashboard, or preserved-file drift; any failed, missing, delayed, or out-of-order hosted job; or any need for repair, rerun, merge, protected action, or excluded work.
+- Verify full smoke, maintained CI/Fly safety, syntax, JSON, dashboard currentness/health/rendered state, whitespace, sensitive additions, cleanup, exact paths/stage/commits/ancestry, preserved hashes, draft PR base/head/state, both exact-SHA hosted runs and job order, annotations, zero Fly deployment, and final branch/PR alignment.
+- On success, mark 5F-RR done on the verified open draft PR, keep Phase 5 at 38%, return Task 4 to Ryan, and propose separately confirmed 5F-R2 for merge and production release.
+
+## Confirmed Work Block 5F-W
+
+- Name: Evidence Whitespace And Provenance Normalization.
+- Include Task 4 (`P5-T4`) only for the local evidence-package prerequisite revealed by 5F-R.
+- Replace only intentional terminal two-space Markdown hard breaks in the eleven identified evidence, log, handoff-copy, and intake Markdown files with terminal backslashes; remove only extra blank EOF lines so every affected file ends with exactly one newline.
+- Keep the canonical Phase 5 baseline and workflow-review contract byte-identical to their handoff copies after normalization.
+- Recompute only the two affected entries in `command-center/handoffs/claude-design/2026-07-26-ledger-usability-5b/context/packet-manifest.sha256`.
+- Preserve the original response ZIP and all five returned Claude artifacts byte-for-byte; preserve the hashes recorded in the local response intake manifest.
+- Use temporary preimages and exact diffs to prove only the allowed transformations; use a disposable alternate Git index for the complete intended-candidate `git diff --cached --check` while keeping the real index empty.
+- Reuse the completed 5F-R browser result only if product and browser-test hashes remain unchanged; do not rerun the long browser suite by default.
+- Exclude every product, maintained-test, workflow, dependency, runtime, configuration, category, database, authentication, PWA, Ask Opus, recurring-surface, or Luxe Legacy setup change; all protected/live access; real staging; commit, push, PR, workflow, merge, deployment, production health, and downstream action; delegation or second opinion; and all three preserved untracked files.
+- Stop for any semantic-content change beyond line-break encoding and terminal blank-line cleanup; any unexpected manifest or returned-artifact change; product/test drift; sensitive or preserved-file overlap; failed smoke, safety, dashboard, whitespace, cleanup, or provenance verification; or any need for real staging, external access, publication, or broader repair.
+- Verify full synthetic smoke, maintained CI/Fly safety, Python and tracked-JavaScript syntax, JSON, dashboard refresh/currentness/health and rendered state, exact normalized paths and transforms, canonical/copy equality, manifest truth, returned-artifact hashes, high-confidence sensitive additions, cleanup, alternate-index candidate whitespace, zero real staging, and preserved-file hashes.
+- On success, mark 5F-W done locally, keep Phase 5 at 38%, return Task 4 to Ryan, and propose 5F-RR as a separately confirmed branch-publication retry. Production remains a later 5F-R2 gate.
+
+## Work Block 5F-W Result
+
+- Eleven files received the exact deterministic approved transform: 41 terminal two-space hard breaks became terminal backslashes and four surplus EOF blank lines were removed.
+- Both canonical 5A artifacts remain byte-identical to their handoff copies.
+- Only the two affected packet-manifest entries changed; all 27 packet entries verify.
+- The original Downloads ZIP, preserved repo ZIP, all five returned Claude artifacts, response-intake recorded hashes, product files, maintained tests, README, and three preserved unrelated files remain byte-identical.
+- Full smoke, Synthetic CI and Fly safety, syntax, JSON, dashboard currentness/health/rendered state, tracked whitespace, sensitive-addition, cleanup, and alternate-index checks passed.
+- The complete 75-path pre-closeout candidate passed disposable-index `git diff --cached --check`; the real Git index remained empty.
+- No product, live, protected, GitHub, deployment, Luxe Legacy setup, downstream, delegation, second-opinion, or preserved-file action occurred.
+- Evidence: `command-center/logs/2026-07-27-evidence-whitespace-provenance-normalization-5f-w.md`.
+
+## Work Block 5F-R Stop
+
+- All active-state, branch, remote-main, GitHub-authentication, preserved-file, CI/Fly safety, full smoke, complete both-auth browser, syntax, JSON, dashboard, rendered, sensitive-pattern, and cleanup checks passed.
+- The exact approved seventy-four-path candidate was staged; only the three preserved files remained outside the index.
+- The required staged `git diff --check` found trailing-space Markdown hard breaks and extra blank EOF lines across Phase 5 evidence, logs, handoff copies, and intake files.
+- Some affected handoff artifacts are tied to packet manifests and prior provenance claims, so normalization is not a mechanical publication step.
+- Codex removed only the staged state, preserved every working-tree file, and performed no commit or external action.
+- Evidence: `command-center/logs/2026-07-26-phase-5-verified-set-branch-durability-hosted-review-5f-r.md`.
+
+## Confirmed Work Block 5F-R
+
+- Name: Phase 5 Verified Set Branch Durability And Hosted Review.
+- Include Task 4 (`P5-T4`) only for branch durability and hosted CI review of the already-complete Tasks 1.1-1.4, 2.1, 2.3, and 2.6 outputs.
+- Revalidate and explicitly stage only the approved seventeen tracked Phase 5 paths, fifty-seven intended untracked Phase 5 artifacts/logs/handoff files, active Runway OS state, and later one sanitized 5F-R closeout log.
+- Create one exact release-candidate commit, non-force push `codex/phase-5-usability-baseline`, open one draft PR to `main`, and observe its automatic PR-only core-then-browser Synthetic CI.
+- After a clean first hosted pass, publish one sanitized branch closeout commit and require the final PR head to pass the same hosted workflow.
+- Leave the PR open, draft, and unmerged; retain the remote branch; require zero Fly deployment.
+- Exclude Tasks 2.2, 2.4-2.5, 2.7-2.8, and 3; further product or test edits; Luxe Legacy setup or downstream writes; push or merge to `main`; ready-for-review transition; production/deployment/health action; manual workflow action; protected access; broader recovery; and all three preserved untracked files.
+- Stop on main or scope drift, unexpected or sensitive paths, failed local or hosted verification, unexpected annotations or workflow, any Fly deployment, push or PR mismatch, preserved-file overlap, or any need for repair, rerun, merge, protected action, or excluded work.
+- Verify full smoke, complete both-auth browser coverage, maintained CI and Fly safety, syntax, JSON, dashboard currentness/health/rendered state, whitespace, sensitive additions, cleanup, exact paths/stage/commits, ancestry, preserved hashes, draft PR base/head, final-head hosted job order and steps, annotations, zero deployment, and final branch/PR alignment.
+
+## Confirmed Work Block 5F
+
+- Name: Dashboard Category Signal And Density.
+- Include Task 2.6 (`P5-T26`) only.
+- Keep categories with spending or a configured budget visible; collapse only categories with zero spending and no configured budget behind a clearly labeled keyboard-accessible exact-count disclosure.
+- Add visible textual budget context using existing computed amounts and percentages so green, yellow, and red are not the only signal.
+- Replace the internal-facing `categories.md` orphan warning with concise user-facing wording while preserving its count, truthful condition, reassignment link, and once-per-session behavior.
+- Preserve all category totals, budget calculations, reporting rules, category definitions, drill-downs, subcategory modal behavior, Details/Compare views, repeated HTMX swaps, responsiveness, authentication, CSP, PWA, entity isolation, and supported Luxe Legacy behavior.
+- Verify Personal and BFM at 390px, exact 768px, and desktop; treat Luxe Legacy as regression-only and do not reopen setup.
+- Exclude Task 2.2 and 5D; Tasks 2.4-2.5 and 2.7-2.8; Tasks 3-4; full-application color redesign; financial/query/reporting/database/category-domain/authentication/PWA/Ask Opus changes; protected or live data/systems; staging, commit, push, PR, workflow, deployment; and all preserved untracked files.
+- Stop if implementation requires financial or category semantics, makes inactive data undiscoverable, breaks keyboard/drill/HTMX/responsive behavior, widens into another chart or task, touches Luxe Legacy setup, needs protected/live access, expands to unexpected paths, or produces a plan-changing verification, dashboard, cleanup, scope, or preservation failure.
+- Verify baseline and final smoke; focused Personal/BFM inactive-count, disclosure, budget-text, orphan-warning, keyboard, drill, subcategory, and HTMX behavior; complete configured-auth/no-password browser coverage; all-entity responsive regression; rendered evidence; denied networking; zero unexpected errors; exact cleanup; JSON, dashboard currentness/health, whitespace, exact paths, zero staging, and preserved hashes.
+
+## Work Block 5F Result
+
+- Personal now keeps 17 spending-or-budgeted categories primary and starts 15 zero-spend/no-budget categories behind an exact-count disclosure; the category fragment fell from 1,018.46px to 668.63px without overflow.
+- BFM keeps 19 categories primary and starts 10 zero-spend/no-budget categories collapsed. Its two zero-spend budgeted categories remain visible with `0% of $1,000` and `0% of $500`.
+- Every primary category row visibly says either `{percent}% of ${budget}` or `No budget`; existing amounts, percentages, thresholds, totals, inclusion, category definitions, and drill behavior remain unchanged.
+- The native-button disclosure passed pointer, Enter, Space, focus, ARIA, exact-count, HTMX, subcategory, both-auth, phone, exact-768, and desktop coverage.
+- The orphan notice is now user-facing, counted, linked to `Review and reassign`, and still once per session per entity.
+- Baseline and final full smoke, complete maintained browser coverage, syntax, disposable Personal/BFM inspection, Luxe Legacy regression-only rendering, cleanup, JSON, dashboard, whitespace, exact-scope, zero-staging, and preserved-file checks passed.
+- Evidence: `command-center/logs/2026-07-26-dashboard-category-signal-density-5f.md`.
+- No publication, live-system, protected-data, sequel, Luxe Legacy setup, or preserved-file action occurred.
+
+## Confirmed Work Block 5E
+
+- Name: Phone Transaction Clarity And Entity Context.
+- Include Task 2.3 (`P5-T23`) only.
+- At the existing phone breakpoint, replace the 560px horizontally scrolling transaction presentation with compact rows that keep date, description, amount, category, and subcategory readable and preserve the existing row-to-edit-modal affordance.
+- Preserve existing sorting, copy, pagination, badges, empty state, filters, HTMX swaps, exact-768 and desktop tables, current financial/query behavior, and entity isolation.
+- Add a concise read-only current-entity marker to the shared mobile header using the existing Personal, BFM, and LL labels; preserve the logo, hamburger, and all drawer semantics.
+- Add focused maintained browser coverage and inspect sanitized disposable Personal, BFM, and LL phone results.
+- Exclude Task 2.2 and 5D; Tasks 2.4-2.8 and Tasks 3-4; inline editing, new financial fields, route/query/database/category changes, drawer markup or entity switching, authentication, PWA/service-worker changes, live data or systems, staging, commit, push, PR, workflow, deployment, and all preserved untracked files.
+- Stop if the work requires new product semantics, route/query/data changes, drawer mutation, a wider responsive change, protected/live access, unexpected paths, or a plan-changing verification, dashboard, cleanup, accessibility, or preservation failure.
+- Verify baseline and final smoke; focused all-entity 390px rows, fields, sorting, repeated HTMX, edit modal, marker, overflow, and console behavior; exact-768/desktop preservation; the complete maintained configured-auth/no-password browser suite; rendered evidence; exact cleanup; JSON, dashboard currentness/health, whitespace, exact paths, zero staging, and preserved hashes.
+
+## Work Block 5E Result
+
+- Personal, BFM, and LL transaction results now use compact two-line rows only at the existing phone breakpoint while retaining date, description, amount, category, subcategory, all five sort controls, copy, pagination, badges, empty state, filters, repeated HTMX swaps, and the current edit modal.
+- The shared mobile header visibly identifies Personal, BFM, or LL without becoming a switcher; a screen-reader-only `Current entity:` prefix supplies explicit context.
+- Final 390px measurements are 390px document width and 368px wrapper scroll/client width for all three entities, down from the accepted 560px table baseline; exact-768 and desktop remain tables.
+- Baseline and final full smoke passed. The complete maintained configured-auth/no-password browser suite passed against the final source with denied networking, zero unexpected browser/page errors, and exact temporary cleanup.
+- Four sanitized synthetic screenshots were directly inspected. The final visual run produced zero blocked requests, console errors, or page errors.
+- No excluded financial, route, query, database, category, drawer, entity-switching, authentication, PWA, live, GitHub, deployment, sequel, or preserved-file action occurred.
+- Evidence: `command-center/logs/2026-07-26-phone-transaction-clarity-5e.md` and `command-center/artifacts/phase-5/5e/`.
+
+## Confirmed Work Block 5C
+
+- Name: Demo Fidelity Repair.
+- Include Task 2.1 (`P5-T21`) only.
+- Align the Personal/BFM demo seed to entity-specific `categories.md`; do not edit `categories.md` or suppress truthful product warnings.
+- Add exactly one synthetic Personal debt-payoff goal and one synthetic Personal savings goal using existing synthetic accounts, with deterministic rerun behavior and no cross-entity leakage.
+- Add focused maintained disposable-data coverage and inspect rendered Personal Dashboard and Short-Term Planning locally.
+- Exclude all product templates/styles/routes, Tasks 2.2-2.8, live/demo/production actions, protected data, Git publication, and the three preserved untracked files.
+- Stop for ambiguous category mappings, need for migration or product semantics, verification/rendered mismatch, protected or live dependency, scope expansion, dashboard failure, or preserved-file mutation.
+
+## Work Block 5C Result
+
+- The synthetic Personal/BFM category and subcategory tables now come directly from the authoritative `categories.md` parser.
+- Every seeded merchant category and budget category is valid for its entity.
+- Same-day reseeding is deterministic, and repeated output matches exactly.
+- Personal has exactly one linked debt-payoff goal and one linked savings goal; BFM has zero goals; Luxe Legacy remains untouched.
+- Full baseline and final smoke passed; the final suite includes focused seed-domain, goal, repeatability, isolation, and Luxe Legacy preservation assertions.
+- Rendered Personal Dashboard and Short-Term Planning inspection passed with no orphan-category warning, both goal cards visible, and zero console warnings/errors.
+- The managed localhost root is absent after recoverable cleanup to Trash.
+- No excluded product/live/GitHub/protected action or preserved-file mutation occurred.
+- Evidence: `command-center/logs/2026-07-26-demo-fidelity-repair-5c.md`.
+
+## Work Block 5B Status
+
+- The original `/Users/ryanbuffington/Downloads/Ledger usability review.zip` is preserved unchanged with SHA-256 `2d356dd26c2b2184eeaf591b5f58f218bde6119791ea68336ac20a3a9faa195b`.
+- The five extracted return files are preserved unchanged under the repo packet with exact hashes: one complete critique, one manifest, and three directly inspected synthetic annotations.
+- The return passed traversal, file-type, executable/symlink, nested-archive, provenance, credential, database, statement/export, protected-data, and visual-content checks.
+- Every 5A and reviewer finding, strength, priority, principle, question, parked idea, and implementation note is classified in `command-center/phase-5-usability-findings-intake.md`.
+- Source inspection confirmed that recurring detection has no kind model, mobile transactions preserve an edit path, demo category drift is hard-coded seed drift, and Ask Opus sends detailed context to OpenRouter and retains capped temporary chat history.
+- Task 2 is decomposed into eight bounded units. Task 2.1 is recommended first because it removes review-distorting demo drift without an unresolved product, privacy, or live-data decision.
+- No Task 2 implementation, product/test/configuration change, staging, commit, push, PR, workflow, deployment, protected access, live action, or preserved-file mutation occurred.
+
+## Work Block 5B Contract
+
+- Include Task 1.3 (`P5-T13`) and Task 1.4 (`P5-T14`) only.
+- Review the seven 5A findings through the narrow focus of cross-surface explanation, discoverability, information hierarchy, and mobile density while preserving the recorded strengths.
+- Use Claude Design for critique and revised-direction advice only. Permit lightweight annotations or mockups for at most three high-leverage recommendations; do not request code, implementation, unrestricted redesign, or work-block selection.
+- Codex creates the repo packet at `command-center/handoffs/claude-design/2026-07-26-ledger-usability-5b/`, copies it to `~/Downloads/claude-design-ledger-usability-5b-2026-07-26`, and opens Claude Design. Ryan manually uploads the packet, pastes the prepared prompt, and saves the response as `~/Downloads/claude-design-ledger-usability-5b-response-2026-07-26`.
+- Treat the returned critique as opinion evidence. Preserve it unchanged, then classify every 5A and reviewer finding as adopt, ignore, park, or Ryan-decision before recommending a separately confirmed Task 2 block.
+- Exclude Tasks 2-4 implementation, product/test/configuration changes, protected or real financial data, credentials, databases, retained uploads, production/demo/Plaid/Fly/downstream access, staging, commit, push, PR, merge, workflow action, deployment, and all three preserved untracked files.
+- Stop for protected-boundary or sanitization failure, scope widening, implementation code or live-action requests, uncertain packet/response provenance, missing return artifacts, material product-direction questions, verification/dashboard failure, or preserved-file mutation.
+- Verify exact packet and Downloads-copy manifests and hashes; sanitize all packet and response artifacts; inventory and preserve the returned response unchanged; classify every finding; run JSON, dashboard refresh/currentness/health and rendered-state inspection, `git diff --check`, zero-staging, exact-path, and preserved-hash checks.
+
+## Work Block 5A Status
+
+- Task 1.1 froze the J1-J5 Personal, BFM, Luxe Legacy, and installed-PWA matrix plus eleven heuristics, sanitized evidence labels, privacy boundary, and stop conditions.
+- Task 1.2 completed the matrix with eleven retained synthetic screenshots, direct visual inspection, route/DOM measurements, and zero qualitative-session console warnings/errors.
+- Full smoke passed in 8.56 seconds. The complete maintained configured-auth/no-password installed-Chrome suite passed all entities, route families, responsive/interaction contracts, installability/standalone/offline behavior, strict CSP, denied networking, and exact cleanup.
+- The managed `expense_5a_review_*` root was absent after shutdown.
+- The packet records seven provisional friction clusters and seven strengths without accepting design direction or changing product/test/configuration sources.
+- No second opinion, staging, commit, push, PR, workflow, deployment, protected/live access, or preserved-file mutation occurred.
+- Evidence: `command-center/phase-5-workflow-review-contract.md`, `command-center/phase-5-usability-baseline.md`, `command-center/artifacts/phase-5/5a/`, and `command-center/logs/2026-07-26-cross-surface-usability-baseline-5a.md`.
+
+## Work Block 5A Contract
+
+- Include Task 1.1 (`P5-T11`) and Task 1.2 (`P5-T12`) only.
+- Use Personal, BFM, Luxe Legacy, and installed-PWA representative journeys at desktop 1200px plus highest-value phone 390px and exact tablet 768px paths.
+- Evaluate navigation clarity, hierarchy, labels, keyboard/focus and touch behavior, responsive overflow, empty/error states, entity clarity, standalone continuity, and planning demo-goal fidelity.
+- Use only disposable synthetic data, denied non-localhost networking, current maintained guardrails, sanitized retained artifacts, and exact cleanup.
+- Do not change product or maintained-test sources; do not obtain the Task 1.3 critique; do not implement Task 2; do not stage, commit, push, open a PR, execute a workflow, deploy, access protected data, or touch a preserved untracked file.
+- Stop for any protected-boundary, product/design-decision, scope, sanitization, cleanup, verification, dashboard, exact-path, or preserved-file failure.
+
+## Phase 5 Task 1 Decomposition
+
+- Task 1.1 (`P5-T11`) freezes the representative journey matrix, review heuristics, evidence format, privacy boundary, and stop conditions.
+- Task 1.2 (`P5-T12`) captures a local disposable-synthetic desktop, mobile, and installed-PWA usability baseline, including the carried-forward planning demo-goal fidelity question.
+- Task 1.3 (`P5-T13`) obtains a narrow critique-only Claude Design second opinion from the sanitized evidence packet; the critique is evidence, not accepted direction.
+- Task 1.4 (`P5-T14`) reconciles Codex and reviewer findings, identifies Ryan decisions, and recommends the first bounded Task 2 polish block without implementing it.
+- Work blocks 5A and 5B and Tasks 1.1-1.4 are complete locally on `codex/phase-5-usability-baseline`.
+- Task 2 is decomposed in the roadmap and findings intake; Task 2.1 is the sole planning gate for proposed 5C.
 
 ## Work Block 4BR-R Contract
 

@@ -418,9 +418,13 @@ def create_app():
         if orphans and not session.get(orphan_key):
             n = len(orphans)
             word = "category" if n == 1 else "categories"
-            link = '<a href="/categorize/orphans">Reassign them</a>'
+            verb = "has" if n == 1 else "have"
+            link = '<a href="/categorize/orphans">Review and reassign</a>'
             flash(
-                Markup(f"{n} {word} removed from categories.md still have transactions. {link}."),
+                Markup(
+                    f"{n} {word} no longer in your category list still {verb} transactions. "
+                    f"{link}."
+                ),
                 "warning",
             )
             session[orphan_key] = True

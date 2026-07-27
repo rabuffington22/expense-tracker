@@ -50,6 +50,24 @@
         row.classList.toggle(row.dataset.fragmentOpenClass, !open);
     }
 
+    function toggleInactiveCategories(button) {
+        var target = document.getElementById(button.dataset.fragmentTarget || "");
+        if (!target) {
+            return;
+        }
+        var show = target.hidden;
+        target.hidden = !show;
+        button.setAttribute("aria-expanded", show ? "true" : "false");
+        var collapsedLabel = button.querySelector("[data-fragment-collapsed-label]");
+        var expandedLabel = button.querySelector("[data-fragment-expanded-label]");
+        if (collapsedLabel) {
+            collapsedLabel.hidden = show;
+        }
+        if (expandedLabel) {
+            expandedLabel.hidden = !show;
+        }
+    }
+
     function modalElements(kind) {
         var prefix = kind === "detail" ? "detail-iu" : "iu";
         return {
@@ -243,6 +261,8 @@
             toggleAiDetail(control);
         } else if (action === "toggle-category") {
             toggleCategoryGroup(control);
+        } else if (action === "toggle-inactive-categories") {
+            toggleInactiveCategories(control);
         } else if (action === "open-subcategory-popup") {
             openSubcategoryPopup();
         } else if (action === "open-insight-modal") {

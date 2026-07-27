@@ -10,6 +10,7 @@ Usage:
 """
 
 import io
+import json
 import os
 import sqlite3 as sqlite3_module
 import subprocess
@@ -1090,6 +1091,178 @@ def main() -> None:
             "category domain: maintained entity definitions should remain available",
         )
         print("   ✅ Entity inference, stable ties, zero-mutation rejection, valid writes, skip sentinel, isolation, denied-network, and cleanup passed")
+
+        # ── 7d2. Demo seed fidelity and idempotency ────────────────
+        print("\n7d2. Demo seed fidelity and idempotency…")
+        with tempfile.TemporaryDirectory(prefix="expense_demo_seed_") as demo_tmp:
+            demo_root = Path(demo_tmp)
+            ll_demo_path = demo_root / "luxelegacy.sqlite"
+            ll_demo_conn = sqlite3_module.connect(ll_demo_path)
+            ll_demo_conn.execute("CREATE TABLE sentinel (value TEXT NOT NULL)")
+            ll_demo_conn.execute("INSERT INTO sentinel (value) VALUES ('untouched')")
+            ll_demo_conn.commit()
+            ll_demo_conn.close()
+            ll_before = ll_demo_path.read_bytes()
+
+            demo_env = os.environ.copy()
+            demo_env["DATA_DIR"] = str(demo_root)
+            demo_env["PYTHONHASHSEED"] = "0"
+
+            def _run_demo_seed():
+                result = subprocess.run(
+                    [sys.executable, str(PROJECT_ROOT / "scripts" / "seed_demo_data.py")],
+                    cwd=PROJECT_ROOT,
+                    env=demo_env,
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                    check=False,
+                )
+                _check(
+                    result.returncode == 0,
+                    "demo seed failed: {}".format(
+                        (result.stderr or result.stdout).strip()[-500:]
+                    ),
+                )
+
+            def _demo_snapshot(entity_key):
+                db_path = demo_root / (
+                    "personal.sqlite" if entity_key == "personal" else "company.sqlite"
+                )
+                conn_demo = sqlite3_module.connect(db_path)
+                try:
+                    categories = {
+                        row[0]
+                        for row in conn_demo.execute(
+                            "SELECT name FROM categories"
+                        ).fetchall()
+                    }
+                    subcategories = {
+                        (row[0], row[1])
+                        for row in conn_demo.execute(
+                            "SELECT category_name, name FROM subcategories"
+                        ).fetchall()
+                    }
+                    transactions = tuple(
+                        conn_demo.execute(
+                            "SELECT transaction_id, date, description_raw, amount_cents, "
+                            "account, category FROM transactions "
+                            "ORDER BY transaction_id"
+                        ).fetchall()
+                    )
+                    budgets = tuple(
+                        conn_demo.execute(
+                            "SELECT category, monthly_budget_cents, budget_section "
+                            "FROM budget_items ORDER BY category"
+                        ).fetchall()
+                    )
+                    goals = tuple(
+                        conn_demo.execute(
+                            "SELECT name, goal_type, target_amount_cents, target_date, "
+                            "strategy, monthly_amount_cents, linked_accounts, status, notes "
+                            "FROM short_term_goals ORDER BY goal_type, name"
+                        ).fetchall()
+                    )
+                    accounts = {
+                        row[0]
+                        for row in conn_demo.execute(
+                            "SELECT account_name FROM account_balances"
+                        ).fetchall()
+                    }
+                    recurring = tuple(
+                        conn_demo.execute(
+                            "SELECT a.account_name, r.merchant, r.amount_cents, r.day_of_month "
+                            "FROM manual_recurring r "
+                            "JOIN account_balances a ON a.id = r.account_id "
+                            "ORDER BY a.account_name, r.merchant"
+                        ).fetchall()
+                    )
+                    return {
+                        "categories": categories,
+                        "subcategories": subcategories,
+                        "transactions": transactions,
+                        "budgets": budgets,
+                        "goals": goals,
+                        "accounts": accounts,
+                        "recurring": recurring,
+                    }
+                finally:
+                    conn_demo.close()
+
+            _run_demo_seed()
+            first_demo = {
+                entity_key: _demo_snapshot(entity_key)
+                for entity_key in ("personal", "company")
+            }
+
+            for entity_key, snapshot in first_demo.items():
+                domain = load_categories(entity_key)
+                expected_categories = set(domain)
+                expected_subcategories = {
+                    (category, subcategory)
+                    for category, subcategories in domain.items()
+                    for subcategory in subcategories
+                }
+                transaction_categories = {
+                    row[5] for row in snapshot["transactions"] if row[5]
+                }
+                budget_categories = {row[0] for row in snapshot["budgets"]}
+                _check(
+                    snapshot["categories"] == expected_categories,
+                    f"demo seed {entity_key}: categories drift from categories.md",
+                )
+                _check(
+                    snapshot["subcategories"] == expected_subcategories,
+                    f"demo seed {entity_key}: subcategories drift from categories.md",
+                )
+                _check(
+                    transaction_categories <= expected_categories,
+                    f"demo seed {entity_key}: transaction category outside categories.md",
+                )
+                _check(
+                    budget_categories <= expected_categories,
+                    f"demo seed {entity_key}: budget category outside categories.md",
+                )
+
+            personal_goals = first_demo["personal"]["goals"]
+            _check(
+                len(personal_goals) == 2
+                and {row[1] for row in personal_goals} == {
+                    "debt_payoff", "savings"
+                },
+                "demo seed personal: expected one debt-payoff and one savings goal",
+            )
+            for goal in personal_goals:
+                linked_accounts = set(json.loads(goal[6]))
+                _check(
+                    linked_accounts
+                    and linked_accounts <= first_demo["personal"]["accounts"],
+                    f"demo seed personal: invalid linked accounts for {goal[0]}",
+                )
+                _check(
+                    goal[7] == "active" and goal[8] == "Synthetic demo goal",
+                    f"demo seed personal: invalid active synthetic goal metadata for {goal[0]}",
+                )
+            _check(
+                first_demo["company"]["goals"] == (),
+                "demo seed company: Personal goals leaked across entities",
+            )
+
+            _run_demo_seed()
+            second_demo = {
+                entity_key: _demo_snapshot(entity_key)
+                for entity_key in ("personal", "company")
+            }
+            _check(
+                second_demo == first_demo,
+                "demo seed: repeated same-day seed was not deterministic and idempotent",
+            )
+            _check(
+                ll_demo_path.read_bytes() == ll_before,
+                "demo seed: Luxe Legacy database was touched",
+            )
+
+        print("   ✅ Exact category domains, two Personal goals, repeatability, isolation, and LL preservation passed")
 
         # ── 7e. Vendor payment matching integrity ───────────────────
         print("\n7e. Vendor payment matching integrity tests…")
@@ -10850,12 +11023,108 @@ def main() -> None:
             "dashboard insight detail: Python-rendered modal controls must use the delegated action contract",
         )
 
+        density_client = no_auth_app.test_client()
+        density_client.set_cookie("entity", "Personal")
+        synthetic_budget_status = [
+            {
+                "category": "Food",
+                "spent_cents": 5000,
+                "budget_cents": 10000,
+                "pct": 50,
+            },
+            {
+                "category": "Childcare",
+                "spent_cents": 0,
+                "budget_cents": 5000,
+                "pct": 0,
+            },
+            {
+                "category": "Streaming",
+                "spent_cents": 2000,
+                "budget_cents": 0,
+                "pct": 0,
+            },
+            {
+                "category": "ATM Withdrawals",
+                "spent_cents": 0,
+                "budget_cents": 0,
+                "pct": 0,
+            },
+        ]
+        with patch(
+            "web.routes.short_term_planning._get_budget_status",
+            return_value=synthetic_budget_status,
+        ):
+            density_response = density_client.get(
+                "/dashboard/detail-categories?period=this_month"
+            )
+        density_html = density_response.get_data(as_text=True)
+        density_primary, density_inactive = density_html.split(
+            '<div class="dcat-inactive">', 1
+        )
+        inactive_count_match = _re.search(
+            r">\s*(\d+) inactive\s+categor(?:y|ies)\s*</button>",
+            density_inactive,
+        )
+        _check(
+            density_response.status_code == 200
+            and ">Food</a>" in density_primary
+            and "50% of $100" in density_primary
+            and ">Childcare</a>" in density_primary
+            and "0% of $50" in density_primary
+            and ">Streaming</a>" in density_primary
+            and "No budget" in density_primary
+            and ">ATM Withdrawals</a>" not in density_primary,
+            "dashboard category density: spending and budgeted categories must remain visible with textual budget context",
+        )
+        _check(
+            inactive_count_match is not None
+            and int(inactive_count_match.group(1))
+            == density_inactive.count('class="dcat-name"')
+            == 1
+            and ">ATM Withdrawals</a>" in density_inactive
+            and 'aria-expanded="false"' in density_inactive
+            and 'aria-controls="dcat-inactive-categories"' in density_inactive
+            and 'id="dcat-inactive-categories"' in density_inactive
+            and " hidden" in density_inactive,
+            "dashboard category density: only zero-spend no-budget categories must start behind an exact-count accessible disclosure",
+        )
+        _check(
+            "toggleInactiveCategories" in fragment_source
+            and '"toggle-inactive-categories"' in fragment_source
+            and 'button.setAttribute("aria-expanded"' in fragment_source,
+            "dashboard category density: delegated controller must preserve disclosure state across swapped fragments",
+        )
+
+        orphan_notice_client = no_auth_app.test_client()
+        orphan_notice_client.set_cookie("entity", "Personal")
+        with patch(
+            "web.get_category_orphans",
+            return_value=["Synthetic retired category"],
+        ):
+            first_orphan_notice = orphan_notice_client.get("/").get_data(
+                as_text=True
+            )
+            second_orphan_notice = orphan_notice_client.get("/").get_data(
+                as_text=True
+            )
+        orphan_notice = (
+            "1 category no longer in your category list still has transactions."
+        )
+        _check(
+            orphan_notice in first_orphan_notice
+            and ">Review and reassign</a>" in first_orphan_notice
+            and "categories.md" not in first_orphan_notice
+            and orphan_notice not in second_orphan_notice,
+            "dashboard category notice: orphan guidance must be user-facing, linked, counted, and once per session",
+        )
+
         _check(
             '"allowEval":false' in base_source and '"allowScriptTags":false' in base_source,
             "dashboard/report fragments: global HTMX execution switches must be disabled",
         )
 
-        print("   ✅ Migrated fragment sources, delegated controller, rendered asset, Python response, and disabled HTMX switches passed")
+        print("   ✅ Migrated fragment sources, category density and notice behavior, delegated controller, rendered asset, Python response, and disabled HTMX switches passed")
 
         # ── 11d. Transaction and supporting modal fragment execution ────────────────
         print("\n11d. Transaction and supporting modal fragment execution…")
@@ -12281,6 +12550,10 @@ def main() -> None:
             and ".body-scroll-locked" in style_source
             and ".ie-guide--visible" in style_source,
             "shared/dashboard styles: local CSS must provide the complete bounded percentage and state-class contract",
+        )
+        _check(
+            ".dcat-grid--inactive[hidden]" in style_source,
+            "dashboard category density: disclosure CSS must preserve the native hidden state",
         )
 
         style_client = no_auth_app.test_client()

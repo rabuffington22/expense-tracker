@@ -1,51 +1,55 @@
-{% if categories %}
+{# ── Macro for a single category + subcategories ───────── #}
+{% macro cat_block(cat) %}
+{% set subs = subcats.get(cat.name, []) %}
+{% set has_subs = subs|length > 1 or (subs|length == 1 and subs[0].name != 'General') %}
+<div class="dcat-row{% if has_subs %} dcat-row--expandable{% endif %}"
+     {% if has_subs %}data-fragment-action="toggle-category"
+     data-fragment-subs-class="dcat-subs"
+     data-fragment-open-class="dcat-row--open"{% endif %}>
+  <a class="dcat-name" href="{{ drill(category_id=cat.cat_id) }}"
+     data-fragment-action="ignore">{{ cat.name }}</a>
+  <div class="dcat-track">
+    <div class="dcat-fill u-width-pct u-pct-{{ [0, [cat.pct|int, 100]|min]|max }}{% if cat.bar_color is defined %} dcat-fill--{{ cat.bar_color }}{% endif %}{% if cat.pct < 15 %} dcat-fill--narrow{% endif %}">
+      {% if cat.total_cents > 0 %}<span class="dcat-bar-label">${{ "{:,.0f}".format(cat.total_cents / 100) }}</span>{% endif %}
+    </div>
+  </div>
+  {% if cat.budget_cents is defined and cat.budget_cents > 0 %}
+  <span class="dcat-budget">{{ cat.budget_pct }}% of ${{ "{:,.0f}".format(cat.budget_cents / 100) }}</span>
+  {% else %}
+  <span class="dcat-budget dcat-budget--none">No budget</span>
+  {% endif %}
+  {% if has_subs %}
+  <span class="dcat-chevron">›</span>
+  {% else %}
+  <span class="dcat-chevron dcat-chevron--empty"></span>
+  {% endif %}
+</div>
+{% if has_subs %}
+<div class="dcat-subs" hidden>
+  {% set sub_max = subs|map(attribute='cents')|max %}
+  {% for s in subs %}
+  <div class="dcat-sub-row" role="button" tabindex="0"
+       hx-get="{{ url_for('dashboard.subcategory_txns', category_id=cat.cat_id, subcategory=s.name, start=start, end=end) }}"
+       hx-target="#dcat-popup-body" hx-swap="innerHTML"
+       data-fragment-action="open-subcategory-popup">
+    <span class="dcat-sub-name">{{ s.name }}</span>
+    <span class="dcat-sub-spacer"></span>
+    <span class="dcat-sub-value">${{ "{:,.0f}".format(s.cents / 100) }}</span>
+    <span class="dcat-chevron dcat-chevron--empty"></span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% if categories or inactive_categories %}
 {% set half = (categories|length + 1) // 2 %}
 {% set col_left = categories[:half] %}
 {% set col_right = categories[half:] %}
 <div class="outline-band">
   <div class="band-label">Categories</div>
+  {% if categories %}
   <div class="band-body dcat-grid">
-
-    {# ── Macro for a single category + subcategories ───── #}
-    {% macro cat_block(cat) %}
-    {% set subs = subcats.get(cat.name, []) %}
-    {% set has_subs = subs|length > 1 or (subs|length == 1 and subs[0].name != 'General') %}
-    <div class="dcat-row{% if has_subs %} dcat-row--expandable{% endif %}"
-         {% if has_subs %}data-fragment-action="toggle-category"
-         data-fragment-subs-class="dcat-subs"
-         data-fragment-open-class="dcat-row--open"{% endif %}>
-      <a class="dcat-name" href="{{ drill(category_id=cat.cat_id) }}"
-         data-fragment-action="ignore">{{ cat.name }}</a>
-      <div class="dcat-track">
-        <div class="dcat-fill u-width-pct u-pct-{{ [0, [cat.pct|int, 100]|min]|max }}{% if cat.bar_color is defined %} dcat-fill--{{ cat.bar_color }}{% endif %}{% if cat.pct < 15 %} dcat-fill--narrow{% endif %}">
-          {% if cat.total_cents > 0 %}<span class="dcat-bar-label">${{ "{:,.0f}".format(cat.total_cents / 100) }}</span>{% endif %}
-        </div>
-      </div>
-      <span class="dcat-budget">{% if cat.budget_cents is defined and cat.budget_cents > 0 %}${{ "{:,.0f}".format(cat.budget_cents / 100) }}{% endif %}</span>
-      {% if has_subs %}
-      <span class="dcat-chevron">›</span>
-      {% else %}
-      <span class="dcat-chevron dcat-chevron--empty"></span>
-      {% endif %}
-    </div>
-    {% if has_subs %}
-    <div class="dcat-subs" hidden>
-      {% set sub_max = subs|map(attribute='cents')|max %}
-      {% for s in subs %}
-      <div class="dcat-sub-row" role="button" tabindex="0"
-           hx-get="{{ url_for('dashboard.subcategory_txns', category_id=cat.cat_id, subcategory=s.name, start=start, end=end) }}"
-           hx-target="#dcat-popup-body" hx-swap="innerHTML"
-           data-fragment-action="open-subcategory-popup">
-        <span class="dcat-sub-name">{{ s.name }}</span>
-        <span class="dcat-sub-spacer"></span>
-        <span class="dcat-sub-value">${{ "{:,.0f}".format(s.cents / 100) }}</span>
-        <span class="dcat-chevron dcat-chevron--empty"></span>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
-    {% endmacro %}
-
     {# ── Left column ───────────────────────────────────── #}
     <div class="dcat-col">
       {% for cat in col_left %}
@@ -61,6 +65,37 @@
     </div>
 
   </div>
+  {% endif %}
+  {% if inactive_categories %}
+  <div class="dcat-inactive">
+    <button type="button"
+            class="dcat-inactive-toggle"
+            aria-expanded="false"
+            aria-controls="dcat-inactive-categories"
+            data-fragment-action="toggle-inactive-categories"
+            data-fragment-target="dcat-inactive-categories">
+      <span data-fragment-collapsed-label>Show</span>
+      <span data-fragment-expanded-label hidden>Hide</span>
+      {{ inactive_categories|length }} inactive
+      {% if inactive_categories|length == 1 %}category{% else %}categories{% endif %}
+    </button>
+    <div id="dcat-inactive-categories"
+         class="dcat-grid dcat-grid--inactive"
+         hidden>
+      {% set inactive_half = (inactive_categories|length + 1) // 2 %}
+      <div class="dcat-col">
+        {% for cat in inactive_categories[:inactive_half] %}
+        {{ cat_block(cat) }}
+        {% endfor %}
+      </div>
+      <div class="dcat-col">
+        {% for cat in inactive_categories[inactive_half:] %}
+        {{ cat_block(cat) }}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
   {% if uncategorized_cents > 0 %}
   <div class="dcat-uncategorized">
     <a class="dcat-row" href="{{ drill(uncategorized='1') }}">

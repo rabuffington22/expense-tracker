@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% block title %}Subscription Tracker{% endblock %}
+{% block head %}
+<script defer src="{{ url_for('static', filename='subscriptions.js') }}?v={{ cache_bust }}"></script>
+{% endblock %}
+
+{% block content %}
+<div data-subscriptions-controller
+     data-detail-url="{{ url_for('subscriptions.detail', sub_id=0) }}"
+     data-update-url="{{ url_for('subscriptions.update', sub_id=0) }}"
+     data-delete-url="{{ url_for('subscriptions.delete', sub_id=0) }}"
+     data-tips-url="{{ url_for('subscriptions.generate_tips', sub_id=0) }}"
+     data-account-add-url="{{ url_for('subscriptions.add_account_info', sub_id=0) }}"
+     data-account-delete-url="{{ url_for('subscriptions.delete_account_info', field_id=0) }}"
+     data-share-url="{{ url_for('subscriptions.share_text', sub_id=0) }}">
+<div class="sub-page">
+
+<div class="page-title-row">
+  <h1 class="page-title">Subscription Tracker</h1>
+  <button type="button" class="joker-btn"
+          data-app-shell-action="open-ai-chat" data-ai-page="subscriptions"
+          title="Ask Opus" aria-label="Ask Opus">
+    <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
+  </button>
+</div>
+
+{# ── Suggestions (auto-detected recurring charges) ─────────────────── #}
+{% if suggestions %}
+<div class="sub-suggestions-section">
+    <div class="sub-section-label">We found these recurring charges</div>
+    <div class="outline-panel sub-panel">
+        {% for s in suggestions %}
+        <div class="sub-row sub-suggestion-row" role="button" tabindex="0"
+             data-subscriptions-row data-subscriptions-action="open-suggestion"
+             data-suggestion-index="{{ loop.index0 }}">
+            <div class="sub-row-main">
+                <div class="sub-info">
+                    <span class="sub-merchant">{{ s.merchant_canonical }}</span>
+                    <span class="sub-amount">
+                        ${{ "%.0f"|format(s.amount_cents / 100) }}{% if s.frequency == 'weekly' %}/wk{% elif s.frequency == 'biweekly' %}/2wk{% elif s.frequency == 'monthly' %}/mo{% elif s.frequency == 'quarterly' %}/qtr{% elif s.frequency == 'annual' %}/yr{% endif %}
+                    </span>
+                </div>
+                <div class="sub-row-right">
+                    <span class="badge badge-blue">{{ s.cadence_label|lower }}</span>
+                    <form method="post"
+                          action="{{ url_for('subscriptions.accept') }}"
+                          class="sub-suggest-form">
+                        <input type="hidden" name="merchant"
+                               value="{{ s.merchant_canonical }}">
+                        <input type="hidden" name="merchant_canonical"
+                               value="{{ s.merchant_canonical }}">
+                        <input type="hidden" name="amount"
+                               value="{{ "%.2f"|format(s.amount_cents / 100) }}">
+                        <input type="hidden" name="frequency"
+                               value="{{ s.frequency }}">
+                        <button type="submit" class="sub-suggest-btn sub-suggest-btn--accept"
+                                title="Add to watchlist" aria-label="Add to watchlist">&#x2713;</button>
+                    </form>
+                    <form method="post"
+                          action="{{ url_for('subscriptions.dismiss') }}"
+                          class="sub-suggest-form">
+                        <input type="hidden" name="merchant_canonical"
+                               value="{{ s.merchant_canonical }}">
+                        <button type="submit" class="sub-suggest-btn sub-suggest-btn--dismiss"
+                                title="Dismiss" aria-label="Dismiss suggestion">&times;</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{# ── Suggestion data for modal ── #}
+<template id="sub-suggestions-data" data-json>
+{{ suggestions|tojson }}
+</template>
+{% endif %}
+
+{# ── Watchlist ─────────────────────────────────────────────────────── #}
+{% if suggestions %}
+<div class="sub-section-label">Watchlist</div>
+{% endif %}
+
+<div class="outline-panel sub-panel">
+    {% for sub in watchlist %}
+    <div class="sub-row sub-watchlist-row" data-sub-id="{{ sub.id }}"
+         data-subscriptions-row data-subscriptions-action="open-watchlist"
+         role="button" tabindex="0">
+        <div class="sub-row-main">
+            <div class="sub-info">
+                <span class="sub-merchant">{{ sub.merchant }}</span>
+                {% if sub.amount_cents %}
+                <span class="sub-amount">
+                    ${{ "%.0f"|format(sub.amount_cents / 100) }}{% if sub.frequency == 'weekly' %}/wk{% elif sub.frequency == 'biweekly' %}/2wk{% elif sub.frequency == 'monthly' %}/mo{% elif sub.frequency == 'quarterly' %}/qtr{% elif sub.frequency == 'annual' %}/yr{% endif %}
+                </span>
+                {% endif %}
+            </div>
+            <div class="sub-row-right">
+                {% if sub.status == 'cancelling' %}
+                <span class="badge badge-amber">cancelling</span>
+                {% else %}
+                <span class="badge badge-muted">watching</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if sub.notes %}
+        <div class="sub-notes-preview" id="sub-notes-{{ sub.id }}">
+            <span class="sub-notes-text">{{ sub.notes }}</span>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if not watchlist %}
+    <div class="sub-empty">
+        No subscriptions being tracked yet.
+    </div>
+    {% endif %}
+</div>
+
+{# ── Add subscription ─────────────────────────────────────────── #}
+<div class="sub-add-section">
+    <button type="button" class="sub-add-trigger" id="sub-add-trigger"
+            data-subscriptions-action="show-add">+ Add subscription</button>
+
+    <div class="outline-panel sub-add-panel" id="sub-add-panel" hidden>
+        <form method="post" action="{{ url_for('subscriptions.add') }}" class="sub-add-form">
+            <div class="sub-add-row">
+                <label class="sub-edit-label">Name</label>
+                <input type="text" name="merchant" placeholder="e.g. Adobe Creative Cloud"
+                       class="sub-input sub-input--name" required>
+            </div>
+            <div class="sub-add-row">
+                <label class="sub-edit-label">Cost</label>
+                <span class="sub-dollar">$</span>
+                <input type="text" name="amount" placeholder="0"
+                       class="sub-input sub-input--amount" inputmode="decimal">
+                <select name="frequency" class="sub-select sub-select--freq">
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Biweekly</option>
+                    <option value="monthly" selected>Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="annual">Annual</option>
+                </select>
+            </div>
+            <div class="sub-add-row">
+                <label class="sub-edit-label">Notes</label>
+                <input type="text" name="notes" placeholder="Optional — how to cancel, etc."
+                       class="sub-input sub-input--notes">
+            </div>
+            <div class="sub-add-actions">
+                <button type="submit" class="btn btn-sm btn-primary">Add</button>
+                <button type="button" class="btn btn-sm btn-secondary"
+                        data-subscriptions-action="hide-add">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ── Dismissed suggestions ────────────────────────────────────── #}
+{% if dismissed %}
+<div class="sub-dismissed-section">
+    <button type="button" class="sub-dismissed-trigger" id="sub-dismissed-trigger"
+            data-subscriptions-action="toggle-dismissed"
+            aria-controls="sub-dismissed-list" aria-expanded="false">
+        Show {{ dismissed|length }} dismissed
+        <span class="sub-dismissed-chevron" id="sub-dismissed-chevron">&#x203A;</span>
+    </button>
+    <div class="sub-dismissed-list" id="sub-dismissed-list" hidden>
+        {% for merchant in dismissed %}
+        <div class="sub-dismissed-row">
+            <span class="sub-dismissed-name">{{ merchant }}</span>
+            <form method="post" action="{{ url_for('subscriptions.undismiss') }}" class="sub-dismissed-form">
+                <input type="hidden" name="merchant_canonical" value="{{ merchant }}">
+                <button type="submit" class="sub-dismissed-undo" title="Restore">Undo</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+</div>{# .sub-page #}
+
+{# ── Detail Modal (shared by suggestions + watchlist) ──────────── #}
+<div class="tq-modal-scrim" id="sub-detail-scrim"
+     data-subscriptions-action="close-on-scrim" hidden>
+    <div class="outline-panel tq-modal-card sub-detail-card" role="dialog" aria-modal="true">
+        <div class="tq-modal-top">
+            <button type="button" class="cf-edit-btn tq-modal-close"
+                    data-subscriptions-action="close-detail"
+                    title="Close" aria-label="Close">&times;</button>
+        </div>
+        <div class="sub-detail-body">
+            <div class="sub-detail-title" id="sub-detail-title"></div>
+            <div class="sub-detail-meta" id="sub-detail-meta"></div>
+
+            {# ── Stats box ── #}
+            <div class="sub-detail-box has-title">
+                <div class="sub-detail-box-title">Summary</div>
+                <div class="sub-detail-stats">
+                    <div class="sub-detail-stat">
+                        <span class="sub-detail-stat-label">Charges detected</span>
+                        <span class="sub-detail-stat-value" id="sub-detail-count"></span>
+                    </div>
+                    <div class="sub-detail-stat">
+                        <span class="sub-detail-stat-label">Period</span>
+                        <span class="sub-detail-stat-value" id="sub-detail-period"></span>
+                    </div>
+                    <div class="sub-detail-stat">
+                        <span class="sub-detail-stat-label">Amount</span>
+                        <span class="sub-detail-stat-value" id="sub-detail-amount-range"></span>
+                    </div>
+                    {# Payment method row — shown inline with stats when available #}
+                    <div class="sub-detail-stat" id="sub-detail-payment-row" hidden>
+                        <span class="sub-detail-stat-label">Charges to</span>
+                        <span class="sub-detail-stat-value" id="sub-detail-payment"></span>
+                    </div>
+                </div>
+            </div>
+
+            {# ── Recent charges box ── #}
+            <div class="sub-detail-box has-title">
+                <div class="sub-detail-box-title">Recent Charges</div>
+                <div class="sub-detail-charges-section">
+                    <div class="sub-detail-charges" id="sub-detail-charges"></div>
+                </div>
+            </div>
+
+            {# ── Account info box (watchlist only) ── #}
+            <div class="sub-detail-box has-title" id="sub-detail-acctinfo-section" hidden>
+                <div class="sub-detail-box-title">Account Info</div>
+                <div class="sub-detail-acctinfo-fields" id="sub-detail-acctinfo-fields"></div>
+                <div class="sub-acctinfo-add-row" id="sub-acctinfo-add-row">
+                    <select class="sub-select sub-acctinfo-type" id="sub-acctinfo-type">
+                        <option value="Email">Email</option>
+                        <option value="Username">Username</option>
+                        <option value="Password">Password</option>
+                        <option value="Account #">Account #</option>
+                        <option value="Phone">Phone</option>
+                        <option value="PIN">PIN</option>
+                        <option value="Website">Website</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="text" class="sub-input sub-acctinfo-value"
+                           id="sub-acctinfo-value" placeholder="Enter value"
+                           data-subscriptions-enter-action="add-account-info">
+                    <button type="button" class="sub-acctinfo-add-btn"
+                            id="sub-acctinfo-add-btn"
+                            data-subscriptions-action="add-account-info"
+                            title="Add field" aria-label="Add account info field">+</button>
+                </div>
+            </div>
+
+            {# ── Tips box (watchlist only) ── #}
+            <div class="sub-detail-box has-title" id="sub-detail-tips-section" hidden>
+                <div class="sub-detail-box-title">How to Cancel</div>
+                <div class="sub-detail-tips" id="sub-detail-tips"></div>
+                <button type="button" class="sub-tips-fetch-btn" id="sub-tips-fetch-btn"
+                        data-subscriptions-action="fetch-tips"
+                        hidden>AI Cancellation Tips</button>
+            </div>
+
+            {# ── Timeline box (watchlist only) ── #}
+            <div class="sub-detail-box has-title" id="sub-detail-timeline-section" hidden>
+                <div class="sub-detail-box-title">Timeline</div>
+                <div class="sub-detail-timeline" id="sub-detail-timeline"></div>
+            </div>
+        </div>
+
+        {# ── Footer: suggestion mode (accept/dismiss) ── #}
+        <div class="sub-detail-footer" id="sub-detail-footer"></div>
+
+        {# ── Footer: watchlist mode (edit controls) ── #}
+        <div class="sub-detail-footer sub-detail-footer--edit" id="sub-detail-edit-footer" hidden>
+            <form method="post" id="sub-detail-edit-form" class="sub-detail-edit-form">
+                <div class="sub-detail-edit-row">
+                    <label class="sub-edit-label">Status</label>
+                    <select name="status" class="sub-select" id="sub-detail-status">
+                        <option value="watching">Watching</option>
+                        <option value="cancelling">Cancelling</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="sub-detail-edit-row">
+                    <label class="sub-edit-label">Notes</label>
+                    <textarea name="notes" class="sub-textarea" id="sub-detail-notes"
+                              rows="2" placeholder="How to cancel, contact info, progress..."></textarea>
+                </div>
+                <div class="sub-detail-edit-actions">
+                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                    <button type="button" class="sub-phone-btn" id="sub-phone-btn"
+                            data-subscriptions-action="copy-share"
+                            title="Copy all info to clipboard">
+                        Phone a Friend</button>
+                    <button type="button" class="sub-delete-btn" id="sub-detail-delete-btn"
+                            data-subscriptions-action="remove-watchlist">
+                        Remove from list</button>
+                </div>
+            </form>
+            <form method="post" id="sub-detail-delete-form" class="sub-detail-delete-form" hidden>
+            </form>
+        </div>
+    </div>
+</div>
+
+</div>{# subscriptions controller #}
+{% endblock %}

@@ -9,7 +9,7 @@
 </div>
 
 <div class="table-wrap">
-  <table>
+  <table class="txn-results-table">
     <thead>
       <tr>
         <th class="txn-sort txn-col-date"
@@ -44,7 +44,7 @@
         {% include "components/txn_row.html" %}
       {% endfor %}
       {% if not txns %}
-      <tr><td colspan="5" class="text-sm text-muted txn-empty">No transactions match your filters.</td></tr>
+      <tr class="txn-empty-row"><td colspan="5" class="text-sm text-muted txn-empty">No transactions match your filters.</td></tr>
       {% endif %}
     </tbody>
   </table>
