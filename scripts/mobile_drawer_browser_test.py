@@ -186,6 +186,9 @@ def _assert_shared_shell(page, label: str) -> None:
             await new Promise((resolve) => setTimeout(resolve, 400));
             const requestOpacity = getComputedStyle(indicator).opacity;
             indicator.remove();
+            const mobileHeader = document.querySelector('.mobile-header');
+            const entityMarker = document.querySelector('.mobile-entity-marker');
+            const activeEntity = document.querySelector('.sb-entity button.active');
             return {
                 themeAsset: Boolean(document.querySelector('script[src*="theme-init.js"]')),
                 shellAsset: Boolean(document.querySelector('script[src*="app-shell.js"]')),
@@ -203,6 +206,20 @@ def _assert_shared_shell(page, label: str) -> None:
                     window.aiChatOpen,
                     window.aiChatClose,
                 ].every((value) => typeof value === 'function'),
+                viewportWidth: window.innerWidth,
+                mobileHeaderVisible: Boolean(
+                    mobileHeader && mobileHeader.getBoundingClientRect().height > 0
+                ),
+                entityMarkerText: entityMarker && entityMarker.querySelector(
+                    '[data-mobile-entity-value]'
+                ).textContent.trim(),
+                entityMarkerLabel: entityMarker && entityMarker.querySelector(
+                    '.mobile-entity-marker-label'
+                ).textContent.trim(),
+                entityMarkerVisible: Boolean(
+                    entityMarker && entityMarker.getBoundingClientRect().width > 0
+                ),
+                activeEntityText: activeEntity && activeEntity.textContent.trim(),
             };
         }"""
     )
@@ -213,6 +230,16 @@ def _assert_shared_shell(page, label: str) -> None:
     _check(not state["injectedIndicatorStyle"], f"{label}: HTMX indicator style tag must be absent")
     _check(state["hiddenOpacity"] == "0" and state["requestOpacity"] == "1", f"{label}: local indicator CSS must preserve behavior")
     _check(state["shellFunctions"], f"{label}: compatibility globals must remain available")
+    _check(
+        state["entityMarkerLabel"] == "Current entity:"
+        and state["entityMarkerText"] == state["activeEntityText"],
+        f"{label}: shared shell must expose the active entity through one read-only marker",
+    )
+    if state["viewportWidth"] <= 768:
+        _check(
+            state["mobileHeaderVisible"] and state["entityMarkerVisible"],
+            f"{label}: mobile header must visibly retain the current entity",
+        )
 
 
 def _assert_plaid_document_policy(page, response, label: str) -> None:
@@ -693,6 +720,43 @@ def _assert_dashboard_report_fragments(page, base_url: str, label: str) -> None:
         and "sidebar--personal" in initial["sidebarClass"]
         and initial["sidebarAccent"] == "#003eb6",
         f"{label}: dashboard shell and fragments must use local bounded classes with no style attributes",
+    )
+
+    inactive_toggle = page.locator(
+        '#detail-categories [data-fragment-action="toggle-inactive-categories"]'
+    )
+    page.wait_for_selector(
+        '#detail-categories [data-fragment-action="toggle-inactive-categories"]'
+    )
+    inactive_categories = page.locator("#dcat-inactive-categories")
+    inactive_label_parts = inactive_toggle.inner_text().split()
+    inactive_count = int(inactive_label_parts[1])
+    visible_budget_contexts = page.locator(
+        "#detail-categories .dcat-row:visible .dcat-budget"
+    ).all_text_contents()
+    _check(
+        inactive_toggle.get_attribute("aria-expanded") == "false"
+        and inactive_categories.is_hidden()
+        and inactive_count
+        == inactive_categories.locator(".dcat-row").count()
+        and all(context.strip() for context in visible_budget_contexts)
+        and any("% of $" in context for context in visible_budget_contexts)
+        and any("No budget" in context for context in visible_budget_contexts),
+        f"{label}: dashboard must start with an exact-count collapsed inactive set and textual budget context",
+    )
+    inactive_toggle.press("Enter")
+    _check(
+        inactive_toggle.get_attribute("aria-expanded") == "true"
+        and inactive_toggle.inner_text().startswith("Hide ")
+        and inactive_categories.is_visible(),
+        f"{label}: Enter must expand the inactive category disclosure",
+    )
+    inactive_toggle.press("Space")
+    _check(
+        inactive_toggle.get_attribute("aria-expanded") == "false"
+        and inactive_toggle.inner_text().startswith("Show ")
+        and inactive_categories.is_hidden(),
+        f"{label}: Space must collapse the inactive category disclosure",
     )
 
     hover_column = page.locator("#ie-line-chart .ie-hover-col").first
@@ -1275,6 +1339,12 @@ def _assert_transaction_matching_styles(page, base_url: str, label: str) -> None
                 """() => {
                     const dateGroup = document.querySelector(".txn-filter-date");
                     const filter = document.querySelector(".txn-filter-bar");
+                    const tableWrap = document.querySelector("#txn-results .table-wrap");
+                    const table = document.querySelector("#txn-results .txn-results-table");
+                    const row = document.querySelector("#txn-results tr.txn-clickable");
+                    const rowCells = row ? Array.from(row.querySelectorAll("td")) : [];
+                    const marker = document.querySelector(".mobile-entity-marker");
+                    const activeEntity = document.querySelector(".sb-entity button.active");
                     return {
                         styleAttributes: document.querySelectorAll(
                             "#main-content [style]"
@@ -1284,6 +1354,24 @@ def _assert_transaction_matching_styles(page, base_url: str, label: str) -> None
                         pageOverflow:
                             document.documentElement.scrollWidth
                             > window.innerWidth + 1,
+                        tableWrapOverflow:
+                            tableWrap.scrollWidth > tableWrap.clientWidth + 1,
+                        tableDisplay: getComputedStyle(table).display,
+                        rowDisplay: getComputedStyle(row).display,
+                        rowCellCount: rowCells.length,
+                        visibleRowCellCount: rowCells.filter(
+                            (cell) => cell.getBoundingClientRect().width > 0
+                        ).length,
+                        visibleSortControls: Array.from(
+                            document.querySelectorAll(
+                                '#txn-results [data-transaction-fragment-action="sort"]'
+                            )
+                        ).filter((control) => control.getBoundingClientRect().width > 0).length,
+                        markerText: marker.querySelector(
+                            '[data-mobile-entity-value]'
+                        ).textContent.trim(),
+                        markerVisible: marker.getBoundingClientRect().width > 0,
+                        activeEntityText: activeEntity.textContent.trim(),
                     };
                 }"""
             )
@@ -1305,6 +1393,40 @@ def _assert_transaction_matching_styles(page, base_url: str, label: str) -> None
                     >= responsive_state["filterWidth"] - 40,
                     f"{label}: {entity_name} phone filters must stack at full width; {layout_detail}",
                 )
+                _check(
+                    not responsive_state["tableWrapOverflow"]
+                    and responsive_state["tableDisplay"] == "block"
+                    and responsive_state["rowDisplay"] == "grid"
+                    and responsive_state["rowCellCount"] == 5
+                    and responsive_state["visibleRowCellCount"] == 5,
+                    f"{label}: {entity_name} phone transactions must render all five fields as complete non-scrolling rows; state={responsive_state}",
+                )
+                _check(
+                    responsive_state["visibleSortControls"] == 5,
+                    f"{label}: {entity_name} phone transactions must retain all five sort controls",
+                )
+                _check(
+                    responsive_state["markerVisible"]
+                    and responsive_state["markerText"]
+                    == responsive_state["activeEntityText"],
+                    f"{label}: {entity_name} phone transactions must visibly retain the active entity",
+                )
+                with page.expect_response(
+                    lambda response: "/transactions/edit-row/" in response.url
+                ) as response_info:
+                    page.locator("#txn-results tr.txn-clickable").first.click()
+                _check(
+                    response_info.value.status == 200,
+                    f"{label}: {entity_name} phone transaction row must preserve its edit request",
+                )
+                page.wait_for_selector("#txn-modal .txn-modal-backdrop")
+                page.locator(
+                    '#txn-modal [data-transaction-fragment-action="close-transaction-modal"]'
+                ).click()
+                _check(
+                    page.locator("#txn-modal").inner_html() == "",
+                    f"{label}: {entity_name} phone edit modal must close cleanly",
+                )
             elif viewport_label == "exact-768":
                 _check(
                     responsive_state["filterWidth"] * 0.4
@@ -1312,10 +1434,20 @@ def _assert_transaction_matching_styles(page, base_url: str, label: str) -> None
                     <= responsive_state["filterWidth"] * 0.6,
                     f"{label}: {entity_name} exact-768 filters must preserve the two-column layout; {layout_detail}",
                 )
+                _check(
+                    responsive_state["tableDisplay"] == "table"
+                    and responsive_state["rowDisplay"] == "table-row",
+                    f"{label}: {entity_name} exact-768 transactions must retain the table presentation",
+                )
             else:
                 _check(
                     125 <= responsive_state["dateWidth"] <= 135,
                     f"{label}: {entity_name} desktop date filters must preserve their fixed width; {layout_detail}",
+                )
+                _check(
+                    responsive_state["tableDisplay"] == "table"
+                    and responsive_state["rowDisplay"] == "table-row",
+                    f"{label}: {entity_name} desktop transactions must retain the table presentation",
                 )
 
     page.context.add_cookies(

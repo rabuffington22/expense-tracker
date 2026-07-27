@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ entity_display }} Dashboard — The Ledger{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1 class="page-title">{{ entity_display }} Dashboard</h1>
+  <div class="dash-view-toggle">
+    <button class="seg-item active" data-view="details" data-dashboard-page-action="set-view">Details</button>
+    <button class="seg-item" data-view="compare" data-dashboard-page-action="set-view">Compare</button>
+  </div>
+  <button type="button" class="ask-opus-btn" data-app-shell-action="open-ai-chat" data-ai-page="dashboard" title="Ask Opus" aria-label="Ask Opus">Ask Opus</button>
+</div>
+
+<!-- Dashboard body -->
+<div id="dashboard-body" class="dash-body">
+  {% include "components/dashboard_body.html" %}
+</div>
+
+{# ── Subcategory Transactions Popup ───────────────────────────────── #}
+<div class="tq-modal-scrim" id="dcat-popup-scrim" data-dashboard-page-action="close-subcategory-popup-on-backdrop" hidden>
+    <div class="outline-panel tq-modal-card" role="dialog" aria-modal="true">
+        <div class="tq-modal-top">
+            <button type="button" class="cf-edit-btn tq-modal-close"
+                    data-dashboard-page-action="close-subcategory-popup" title="Close" aria-label="Close">&times;</button>
+        </div>
+        <div id="dcat-popup-body" class="tq-modal-body">
+            <div class="tq-loading">Loading&hellip;</div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

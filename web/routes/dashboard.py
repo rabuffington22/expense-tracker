@@ -1480,6 +1480,19 @@ def detail_categories():
         displayed_names = [c["name"] for c in top]
         subcats = _query_subcategory_rollups(conn, start, end, displayed_names)
 
+        # Keep spending and budgeted categories in the primary scoreboard.
+        # Zero-spend categories without a configured budget remain available
+        # through the fragment's exact-count disclosure.
+        inactive_categories = [
+            category
+            for category in top
+            if category["total_cents"] == 0
+            and category.get("budget_cents", 0) == 0
+        ]
+        visible_categories = [
+            category for category in top if category not in inactive_categories
+        ]
+
         # Uncategorized spending total (Needs Review + null/empty category)
         _cte = effective_txns_cte("t")
         uncategorized_row = conn.execute(
@@ -1507,7 +1520,8 @@ def detail_categories():
     period_labels = _build_period_labels()
 
     return render_template("components/dashboard_detail_cats.html",
-                           categories=top,
+                           categories=visible_categories,
+                           inactive_categories=inactive_categories,
                            period=period,
                            period_label=period_labels.get(period, period),
                            start=start, end=end,

@@ -184,7 +184,7 @@ After a successful LL Plaid sync, an optional bridge can upsert eligible transac
 
 ## Deployment and operations
 
-Production uses `fly.toml`, a persistent `/data` volume, and Gunicorn on internal port 8080. The demo uses `fly.demo.toml`, its own app and volume, a separate entity override, and synthetic seed data.
+Production uses `fly.toml`, a persistent `/data` volume, and Gunicorn on internal port 8080. The demo uses `fly.demo.toml`, its own app and volume, a separate entity override, and synthetic seed data. `scripts/seed_demo_data.py` reads the maintained Personal and BFM category domains from `categories.md`, produces deterministic same-day synthetic reseeds, and gives the Personal demo one debt-payoff goal plus one savings goal; it does not seed Luxe Legacy.
 
 GitHub Actions currently owns two operational workflows:
 

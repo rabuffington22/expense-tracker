@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Transactions — The Ledger{% endblock %}
+
+{% block content %}
+<div class="page-title-row" data-transaction-page-controller
+     data-all-subcategories-url="{{ url_for('transactions.all_subcategories') }}"
+     data-suggest-url-template="{{ url_for('transactions.suggest', txn_id='__TXN__') }}">
+  <h1 class="page-title">Transactions</h1>
+  <button type="button" class="joker-btn" data-app-shell-action="open-ai-chat" data-ai-page="transactions" title="Ask Opus" aria-label="Ask Opus">
+    <img src="{{ url_for('static', filename='joker-button.png') }}" alt="" class="joker-btn-img">
+  </button>
+</div>
+
+<!-- Filter bar (outside HTMX target — always visible) -->
+<div class="outline-panel txn-filter-bar">
+  <form id="txn-filter-form"
+        hx-get="{{ url_for('transactions.partial') }}"
+        hx-target="#txn-results"
+        hx-swap="innerHTML"
+        hx-push-url="true">
+
+    <!-- Single row: filters (fixed) + search (fills remaining) -->
+    <div class="form-row">
+      <div class="form-group txn-filter-date">
+        <label class="text-xs text-muted" for="start">From</label>
+        <input type="date" id="start" name="start" value="{{ params.start }}" class="input-sm txn-filter-control">
+      </div>
+      <div class="form-group txn-filter-date">
+        <label class="text-xs text-muted" for="end">To</label>
+        <input type="date" id="end" name="end" value="{{ params.end }}" class="input-sm txn-filter-control">
+      </div>
+      <div class="form-group txn-filter-category">
+        <label class="text-xs text-muted" for="category_id">Category</label>
+        <select id="category_id" name="category_id" class="input-sm txn-filter-control"
+                data-transaction-page-change="filter-subcategories">
+          <option value="">All</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if params.category_id == cat.id|string %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group txn-filter-category">
+        <label class="text-xs text-muted" for="subcategory">Subcategory</label>
+        <select id="subcategory" name="subcategory" class="input-sm txn-filter-control"
+                data-current="{{ params.subcategory }}">
+          <option value="">All</option>
+        </select>
+      </div>
+      <div class="form-group txn-filter-date">
+        <label class="text-xs text-muted" for="account">Account</label>
+        <select id="account" name="account" class="input-sm txn-filter-control">
+          <option value="">All</option>
+          {% for acct in accounts %}
+          <option value="{{ acct }}" {% if params.account == acct %}selected{% endif %}>{{ acct }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group txn-filter-search">
+        <input type="text" id="q" name="q" value="{{ params.q }}" placeholder="Search..." class="input-sm txn-filter-control">
+      </div>
+      <div class="form-group txn-filter-action">
+        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+      </div>
+      <div class="form-group txn-filter-action">
+        <a href="{{ url_for('transactions.index') }}" class="btn btn-secondary btn-sm">Clear</a>
+      </div>
+    </div>
+
+    <!-- Hidden sort fields (updated by JS on column header click) -->
+    <input type="hidden" name="sort" id="sort-field" value="{{ params.sort }}">
+    <input type="hidden" name="dir" id="dir-field" value="{{ params.dir }}">
+  </form>
+</div>
+
+<!-- Edit modal container -->
+<div id="txn-modal"></div>
+
+<!-- Results container — HTMX swap target (D3) -->
+<div id="txn-results">
+  {% include "components/txn_results.html" %}
+</div>
+
+{% endblock %}
