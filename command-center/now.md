@@ -2,27 +2,102 @@
 
 ## Active Objective
 
-Hold the newly released and production-health-verified Phase 5 set stable while Ryan chooses the intended purpose of the recurring-charge surface before Task 2.4 implementation.
+Make the completed Personal/BFM recovery record durable on `main` without publishing the incomplete 5G product changes or triggering deployment.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; the verified 5A-5F set is durable, automatically deployed, and credential-free health verified through 5F-R2. Task 2.2 and 5D remain parked. Task 2.4 is the current Ryan decision, Task 2.5 remains a later Ryan decision, Tasks 2.7-2.8 and Task 3 remain planned or parked, and Task 4 retains later final parent-pointer work.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Personal and BFM local data is recovered and verified through 5G-RC. Recovery-record durability block 5G-RC-R is active; Task 2.4 and 5G remain stopped before application access and product resume.
 
 ## Current Work Block
 
-Work block 5F-R2: Verified Draft PR Production Release — done after fresh exact-head PR CI, PR #89 merge commit `e905e5c4ad406ebb7b5f10ea6d867d5724f662ce`, one successful automatic Fly deployment with zero annotations, credential-free `{"status":"ok"}`, and one six-path `[skip actions]` closeout with no second deployment.
+Work block 5G-RC-R: Recovery Record Direct-Main Durability — active.
 
 ## Current Task
 
-Phase 5 Task 2.4 (`P5-T24`) — current and Ryan-owned for the recurring-surface purpose decision. Decide whether the surface is a cancellation watchlist, a complete recurring-spend register, or a combined workflow before implementation.
+Phase 5 Task 2.4 (`P5-T24`) — current but blocked after successful data recovery. Only the recovery record is being made durable; product work remains local, stopped, and incomplete.
 
 ## Owner
 
-Ryan owns the Task 2.4 product-purpose decision and every subsequent product, Task 3, final Phase 5, protected-access, and live-action gate. Codex has no active implementation or production authority after the 5F-R2 stop.
+Codex owns only the exact direct-main recovery-record publication. Ryan retains application verification, 5G resume, product publication, deployment, and every later live-action decision.
 
 ## Current Action
 
-Ryan chooses the intended purpose of Task 2.4's recurring surface. Until that decision and a separately confirmed implementation block, make no recurring-surface, product, Task 3, final Phase 5, Luxe Legacy, protected, workflow, or production change.
+Explicitly stage the five command-center sources and three recovery logs; commit with `[skip actions]`; push the exact fast-forward commit directly to `main`; prove no workflow or deployment occurred; publish one sanitized command-center-only `[skip actions]` closeout; verify final alignment; and stop.
+
+## Confirmed Work Block 5G-RC-R
+
+- Name: Recovery Record Direct-Main Durability.
+- Include exactly `command-center/decisions.md`, `index.html`, `now.md`, `roadmap.md`, `state.json`, and the 5G stop, 5G-RA, and 5G-RC logs in the activation/source commit.
+- Push directly to `main` from exact aligned base `3ffd94bafc2eba375a795ed3e5df26e3615e79c4`; use `[skip actions]` and require zero workflow or deployment.
+- Then publish one sanitized closeout commit containing only the five command-center sources plus one 5G-RC-R log, also with `[skip actions]`, and verify final local/main/origin alignment and zero workflows.
+- Exclude README, all 5G product/test files, databases, `local_state`, protected recovery copies, application access, 5G resume, the three preserved unrelated files, PRs, workflow dispatch, deployment, production, and every other live action.
+- Stop for ref drift, unexpected stage or diff, sensitive data, whitespace or dashboard failure, push rejection, any workflow/deployment, or need for force, rebase, repair, or excluded action.
+
+## Confirmed Work Block 5G-RC
+
+- Name: Immediate Personal/BFM Snapshot Recovery.
+- Include only `local_state/personal.sqlite*` and `local_state/company.sqlite*`, exact snapshot `com.apple.TimeMachine.2026-07-27-071321.local`, and one exact protected post-incident safety-copy directory under `local_state/backups/`.
+- Permit a direct macOS administrator prompt for the exact read-only snapshot mount; Ryan enters any credential directly.
+- Verify the snapshot database file sets and SQLite integrity before replacement; preserve file ownership and modes; replace only the exact Personal/BFM SQLite sets; prove current files match the snapshot source and pass integrity; unmount and clean temporary access.
+- Exclude row-value reporting, application access, migrations, seed/sync, Luxe Legacy, product work, 5G resume, staging, commit, GitHub, workflows, Fly, Plaid, deployment, production, and every other live action.
+- Stop for snapshot/path ambiguity, absent base databases, integrity failure, writable snapshot access, unexpected active database process, inability to create or verify safety copies, replacement/equality/integrity failure, unexpected path, or cleanup failure.
+- On success, mark recovery complete and return application verification and 5G resume as separately confirmed gates.
+
+## Work Block 5G-RC Result
+
+- Protected post-incident safety copies exist at `local_state/backups/5g-recovery-20260727-0753-post-seed/`.
+- Exact snapshot `com.apple.TimeMachine.2026-07-27-071321.local` was exposed through Time Machine as protected read-only source `Data@snap-79315582`.
+- The snapshot contained exact Personal and BFM base databases without matching WAL/SHM sidecars.
+- Finder copied both into protected snapshot staging. Both differed from the post-seed files and passed SQLite integrity.
+- Atomic exact-target replacement restored Personal and BFM with original ownership and mode.
+- Live restored hashes match staged snapshot hashes and both live databases pass integrity.
+- Aggregate recovery checks restored 691 Personal and 1,303 BFM transactions, exactly matching the pre-seed counts, plus the associated account, category, planning, budget, action, snapshot, and goal table aggregates.
+- The exact recovery snapshot was unmounted successfully without force. Four unrelated older system-managed read-only mounts remained busy and were left to macOS rather than force-unmounted.
+- No application access, migration, seed, sync, Luxe Legacy action, 5G resume, Git staging, publication, workflow, deployment, production, or live action occurred.
+- Evidence: `command-center/logs/2026-07-27-immediate-personal-bfm-snapshot-recovery-5g-rc.md`.
+
+## Confirmed Work Block 5G-RA
+
+- Name: Personal/BFM Local-Database Recovery Assessment.
+- Include only the exact pre-incident snapshot `com.apple.TimeMachine.2026-07-27-071321.local` and snapshot copies of `local_state/personal.sqlite` and `local_state/company.sqlite`.
+- Permit read-only snapshot metadata, an exact temporary read-only mount only if necessary and possible without a privilege prompt, file existence/size/modification-time checks, and SQLite `PRAGMA integrity_check` with sanitized aggregate-only output.
+- Exclude row queries or inspection, copying, restoring, replacing, exporting, opening the application, running seed/migration/sync/backup utilities, touching current database contents, Luxe Legacy, 5G implementation or resume, staging, commit, publication, GitHub, deployment, production, or any live action.
+- Stop on snapshot or path ambiguity, a missing database, inability to prove read-only access, a privilege or `sudo` requirement, integrity failure, unexpected path, current-database metadata change, cleanup failure, or need for any excluded action.
+- Verify the exact snapshot identifier and timestamp, current database metadata before and after, snapshot file metadata, read-only mount status if mounted, integrity output only, exact unmount/temporary cleanup, empty real index, and preserved unrelated-file hashes.
+- On success or stop, close 5G-RA with a recoverability assessment and return a separately gated restore proposal. Do not restore or resume 5G inside this block.
+
+## Work Block 5G-RA Stop
+
+- Read-only system metadata confirmed exact snapshot `com.apple.TimeMachine.2026-07-27-071321.local` on APFS Data volume `/dev/disk3s5`, UUID `B0AB8CCC-80CA-4A76-970F-DB1279B16571`, XID `79315582`.
+- One exact non-privileged `mount_apfs` attempt used `rdonly,nobrowse`, the exact snapshot name, exact Data-volume device, and a disposable temporary directory.
+- macOS returned `Operation not permitted` with exit code 77.
+- No snapshot was mounted, no snapshot database path was accessed, and no file-presence or integrity result exists.
+- The empty temporary directory was removed. Current Personal/BFM size and modification times remained unchanged, preserved hashes remained unchanged, and the real Git index remained empty.
+- Evidence: `command-center/logs/2026-07-27-personal-bfm-local-database-recovery-assessment-5g-ra.md`.
+
+## Work Block 5G Stop
+
+- `.venv/bin/python scripts/seed_demo_data.py --help` was invoked during rendered-inspection setup.
+- The utility has no help parser, retained default `DATA_DIR=./local_state`, and executed its destructive seed path.
+- Its sanitized output reported deletion and replacement of 691 Personal and 1,303 BFM transactions; tracked source also deletes and reseeds account balances, manual recurring rows, categories, subcategories, planning items, budgets, action items, goal snapshots, and short-term goals.
+- `local_state/backups/` is empty and no duplicate Personal/BFM databases exist inside the repo.
+- macOS reports pre-incident local Time Machine snapshot `com.apple.TimeMachine.2026-07-27-071321.local`.
+- No recovery, copy, restore, row inspection, additional database action, staging, commit, publication, workflow, deployment, or production action occurred after the stop.
+- The local 5G source/test changes passed full smoke and complete both-auth installed-Chrome coverage before the incident, but rendered inspection and final closeout are incomplete.
+- Evidence: `command-center/logs/2026-07-27-recurring-review-cancellation-clarity-5g-stop.md`.
+
+## Confirmed Work Block 5G
+
+- Name: Recurring Review And Cancellation Clarity.
+- Include Task 2.4 (`P5-T24`) only.
+- Treat `/subscriptions/` as a combined workflow for reviewing detected recurring charges and tracking selected charges for watching or cancellation; do not claim complete recurring-spend coverage.
+- Keep `/subscriptions/` unchanged; default the visible surface name to `Recurring Review`; show concise purpose copy, tracked charges before the detected-review queue, an exact remaining-review count, visible Track and Dismiss actions, and an immediate accessible undo path after dismissal.
+- Preserve existing watching/cancelling/cancelled persistence, manual add, detail modal, charge history, notes, account information, cancellation tips, dismissed-item restoration, entity isolation, authentication, CSP, PWA, and responsive behavior.
+- Exclude Task 2.2 and 5D, Task 2.5, Tasks 2.7-2.8, Tasks 3-4, new recurring kinds or classification, detection thresholds or semantics, migrations, financial logic, authentication/session changes, URL changes, Ask Opus changes, Luxe Legacy setup, protected or real data, Plaid, Fly, workflows, staging, commit, push, PR, deployment, production, delegation, second opinion, and all three preserved unrelated files.
+- Use Codex Desktop on local `codex/recurring-review-surface`; expected product paths are the subscriptions route/template/controller/style, To Do label, focused synthetic coverage, and README, plus sanitized evidence and Runway OS closeout.
+- Stop if implementation requires a kind model, migration, detector change, persistent classification, financial semantic change, authentication/session contract change, protected or live access, unexpected paths, preserved-file overlap, or plan-changing lifecycle, entity, accessibility, responsive, cleanup, dashboard, or verification failure.
+- Verify baseline and final smoke; focused temporary all-entity lifecycle, order, count, Track, Dismiss, decrement, undo, restoration, empty-state, manual-add, status, notes, detail, account-info, cancellation-tip, and deletion behavior; complete configured-auth/no-password browser coverage; phone, tablet, desktop, keyboard, console, denied-network, and exact cleanup; syntax, JSON, dashboard, rendered state, whitespace, exact scope, empty index, and preserved hashes.
+- On success, mark Task 2.4 and 5G complete locally, keep Phase 5 active, return exact product and verification results, and stop before a separately confirmed 5G-R durability or release decision.
 
 ## Work Block 5F-R2 Result
 
