@@ -2,27 +2,36 @@
 
 ## Active Objective
 
-Publish the exact verified local 5A-5F set to the existing feature branch, open one draft PR to `main`, require clean PR-only hosted verification on both the candidate and sanitized closeout heads, and stop unmerged with zero deployment.
+Keep the verified Phase 5 set on open draft PR #89 and decide separately whether to authorize 5F-R2 for merge, automatic production deployment, credential-free health verification, and release closeout.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Tasks 1.1-1.4, Task 1, Task 2.1, Task 2.3, and Task 2.6 are complete locally through 5A-5C and 5E-5F. Task 2.2 and 5D remain parked. 5F-R remains stopped, its local 5F-W prerequisite is complete, and 5F-RR is active for exact branch publication and hosted PR-only verification.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Tasks 1.1-1.4, Task 1, Task 2.1, Task 2.3, and Task 2.6 are complete through 5A-5C, 5E-5F, and verified draft-PR publication in 5F-RR. Task 2.2 and 5D remain parked. Task 3 remains planned. Task 4 is the Ryan-owned 5F-R2 production-release decision.
 
 ## Current Work Block
 
-Work block 5F-RR: Verified Set Branch Publication Retry — active on `codex/phase-5-usability-baseline`. Revalidate and explicitly stage the exact 76-path verified candidate, create one release-candidate commit, push the feature branch, open one draft PR to `main`, require core-then-browser Synthetic CI, publish one sanitized six-path closeout commit after a clean first pass, require final-head CI, and stop with the draft PR open and unmerged.
+Work block 5F-RR: Verified Set Branch Publication Retry — verified on open draft PR #89 after the candidate and the exact six-path closeout head satisfy the PR-only core-then-browser Synthetic CI contract with zero annotations and zero deployment. The branch remains open, draft, and unmerged.
 
 ## Current Task
 
-Phase 5 Task 4 (`P5-T4`) — current and Codex-owned only for confirmed 5F-RR branch publication and hosted PR-only verification. Merge, production release, Task 3, and final Phase 5 durability and closeout remain incomplete.
+Phase 5 Task 4 (`P5-T4`) — current and Ryan-owned for the separately confirmed 5F-R2 production-release decision. Merge, production release, Task 3, and final Phase 5 durability and closeout remain incomplete.
 
 ## Owner
 
-Codex owns exact-path revalidation, staging, two feature-branch commits, non-force push, one draft PR, both hosted CI observations, zero-deployment proof, Runway OS currency, and stop enforcement. Ryan retains every merge, production release, parked Luxe Legacy path, recurring-surface, Ask Opus data-handling, protected-access, and broader-scope decision.
+Ryan owns the 5F-R2 decision and retains every merge, production release, parked Luxe Legacy path, recurring-surface, Ask Opus data-handling, protected-access, and broader-scope decision. Codex has no active implementation or publication authority after the 5F-RR stop.
 
 ## Current Action
 
-Record and verify active 5F-RR state; revalidate the exact 76-path candidate, preserved hashes, refs, safety contracts, smoke, syntax, dashboard, whitespace, sensitive additions, and cleanup; explicitly stage and commit only the approved candidate; push the feature branch; open one draft PR to `main`; observe automatic core-then-browser Synthetic CI; after a clean first pass publish the sanitized closeout commit; require the final head to pass; and stop unmerged with zero Fly deployment.
+Ryan decides whether to confirm 5F-R2. Until then, leave PR #89 open, draft, and unmerged; retain the feature branch; perform no workflow action, production access, deployment, product work, or Luxe Legacy setup.
+
+## Work Block 5F-RR Result
+
+- Candidate commit `a87676235c5d79b4347517962cd3ce8a3134b482` contains exactly the approved 76 paths and is published on `codex/phase-5-usability-baseline`.
+- Draft PR [#89](https://github.com/rabuffington22/expense-tracker/pull/89) targets `main` and remains open, draft, and unmerged.
+- Candidate Synthetic CI run `30239840256` passed every core and browser step in order; both jobs returned zero annotations.
+- The exact six-path closeout head is required to pass the same automatic PR-only contract before this result is final.
+- No Fly Deploy run or deployment occurred. `main` remains at the accepted baseline.
+- Evidence: `command-center/logs/2026-07-27-verified-set-branch-publication-retry-5f-rr.md`.
 
 ## Confirmed Work Block 5F-RR
 

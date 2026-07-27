@@ -5108,11 +5108,11 @@ Goal: make the product understandable, maintainable, and easy to re-enter after 
   - **Task 2.7: Resolve connections and capability discovery.** Status: parked. Revisit Data Sources, Connected Accounts, To Do entry points, and capability discovery as one later information-architecture slice.
   - **Task 2.8: Verify and improve offline recovery feedback.** Status: parked. Verify cache truth and retry feedback before making any data-safety claim.
 - **Task 3: Finalize operator runbooks, current documentation, monitoring decisions, and release evidence.** Status: planned.
-- **Task 4: Close the roadmap with target-repo commit/push durability and a compact parent-project pointer.** Status: current and Codex-owned only for confirmed 5F-RR exact feature-branch publication and hosted PR-only verification after clean 5F-W completion; merge, production release, and final Phase 5 durability and closeout remain separate Ryan gates.
+- **Task 4: Close the roadmap with target-repo commit/push durability and a compact parent-project pointer.** Status: current and Ryan-owned for the separately confirmed 5F-R2 production-release decision after verified open-draft publication in 5F-RR; merge, production release, and final Phase 5 durability and closeout remain separate gates.
 
 ### Confirmed Work Block 5F-RR: Verified Set Branch Publication Retry
 
-Status: active on `codex/phase-5-usability-baseline`; exact candidate remains local and the real Git index is empty before revalidation.
+Status: verified on open draft PR [#89](https://github.com/rabuffington22/expense-tracker/pull/89); the exact six-path closeout head must satisfy its automatic final-head Synthetic CI contract before the result is final.
 
 Included: Task 4 (`P5-T4`) only for exact feature-branch durability and hosted PR-only review of the verified 5A-5F outputs from Tasks 1.1-1.4 (`P5-T11`-`P5-T14`), Task 2.1 (`P5-T21`), Task 2.3 (`P5-T23`), and Task 2.6 (`P5-T26`). Revalidate the exact 76-path candidate; explicitly stage only its 17 tracked modifications and 59 intended untracked Phase 5 artifacts, logs, handoff files, contracts, and evidence; create one release-candidate commit without a skip token; non-force push the current feature branch; open one draft PR targeting `main`; observe automatic PR-only core-then-browser Synthetic CI; after a clean first pass create one sanitized six-path closeout commit without a skip token; require final-head CI; retain the remote branch; leave the PR open, draft, and unmerged; and verify zero Fly deployment.
 
@@ -5139,6 +5139,8 @@ Report point: return exact candidate and closeout SHAs, draft PR URL and base/he
 Expansion candidates and questions: none. Merge and production introduce a higher-risk automatic deployment and remain excluded. No clarification is required inside 5F-RR.
 
 Suggested next work block: 5F-R2 to separately authorize merge to `main`, observe only the resulting automatic Fly deployment, verify credential-free production health, and record the release closeout without beginning Task 3 or final Phase 5 closeout.
+
+Result: the exact 76-path candidate was committed as `a87676235c5d79b4347517962cd3ce8a3134b482`, non-force pushed to `codex/phase-5-usability-baseline`, and opened as draft PR [#89](https://github.com/rabuffington22/expense-tracker/pull/89) targeting `main`. Candidate pull-request Synthetic CI run `30239840256` passed every core step in job `89894583340` and every later browser step in job `89894693185`; both jobs had zero annotations, and the candidate SHA had no Fly Deploy run. Local preflight, exact-path, provenance, preserved-file, cleanup, and zero-deployment checks passed. The one authorized sanitized six-path closeout commit carries this result and must itself pass the same exact-head PR-only contract before completion may be claimed. The PR remains open, draft, and unmerged; production and 5F-R2 remain separately gated. Evidence: `command-center/logs/2026-07-27-verified-set-branch-publication-retry-5f-rr.md`.
 
 ### Confirmed Work Block 5F-R: Phase 5 Verified Set Branch Durability And Hosted Review
 
