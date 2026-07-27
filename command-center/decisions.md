@@ -2,6 +2,10 @@
 
 ## Accepted
 
+### 2026-07-27 — Accept 5G-RC-R recovery-record durability on main
+
+Exact eight-path recovery-record source commit `77236737c7e8218e8570bb3a358e2d83db054945`, with expected parent `3ffd94bafc2eba375a795ed3e5df26e3615e79c4`, is durable on `origin/main`. Exact-path, staged-diff, whitespace, and high-confidence sensitive-addition checks passed, and GitHub reported zero workflow runs and zero check runs for the source commit. This containing six-path command-center-only closeout also uses `[skip actions]`, marks 5G-RC-R complete, and requires final exact-ref and zero-workflow confirmation. The incomplete README, test, route, controller, style, and template changes remain local; the application was not opened; 5G was not resumed; and no PR, workflow, deployment, production, protected-data, database, recovery-copy, or preserved unrelated-file action occurred. Ryan now owns the separately gated application-verification decision.
+
 ### 2026-07-27 — Authorize 5G-RC-R recovery-record direct-main durability
 
 Ryan instructed Codex to commit and push to `main`. Because the worktree also contains incomplete 5G product changes and three preserved unrelated files, this authority is bounded to the completed recovery record only. From exact aligned base `3ffd94bafc2eba375a795ed3e5df26e3615e79c4`, Codex may explicitly stage the five command-center sources and three 5G stop/assessment/recovery logs; commit them with `[skip actions]`; fast-forward push directly to `origin/main`; require zero workflow or deployment; then publish one sanitized six-path command-center-only closeout commit, also with `[skip actions]`, and verify final alignment and zero workflows. README, tests, subscription product files, databases, protected recovery copies, application access, 5G resume, product publication, PR creation, workflow action, deployment, production, and the three preserved unrelated files remain excluded. Any ref, scope, sensitive-data, staged-path, verification, dashboard, whitespace, push, zero-workflow, or preserved-file drift, or need for force, rebase, conflict resolution, repair, deployment, or excluded action triggers a stop.

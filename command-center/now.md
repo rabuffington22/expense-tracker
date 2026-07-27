@@ -2,27 +2,37 @@
 
 ## Active Objective
 
-Make the completed Personal/BFM recovery record durable on `main` without publishing the incomplete 5G product changes or triggering deployment.
+Decide whether to run bounded application verification against the recovered Personal and BFM databases before any 5G resume.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Personal and BFM local data is recovered and verified through 5G-RC. Recovery-record durability block 5G-RC-R is active; Task 2.4 and 5G remain stopped before application access and product resume.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 38%; Personal and BFM local data is recovered and the recovery record is durable on `main` through 5G-RC-R. Task 2.4 and 5G remain stopped before application access and product resume.
 
 ## Current Work Block
 
-Work block 5G-RC-R: Recovery Record Direct-Main Durability — active.
+No work block is active. Work block 5G-RC-R is complete; bounded application verification is the next Ryan decision.
 
 ## Current Task
 
-Phase 5 Task 2.4 (`P5-T24`) — current but blocked after successful data recovery. Only the recovery record is being made durable; product work remains local, stopped, and incomplete.
+Phase 5 Task 2.4 (`P5-T24`) — current but blocked after successful data recovery and durable recovery-record publication. Product work remains local, stopped, and incomplete.
 
 ## Owner
 
-Codex owns only the exact direct-main recovery-record publication. Ryan retains application verification, 5G resume, product publication, deployment, and every later live-action decision.
+Ryan owns the application-verification decision and any later 5G resume, product publication, deployment, or live action.
 
 ## Current Action
 
-Explicitly stage the five command-center sources and three recovery logs; commit with `[skip actions]`; push the exact fast-forward commit directly to `main`; prove no workflow or deployment occurred; publish one sanitized command-center-only `[skip actions]` closeout; verify final alignment; and stop.
+Choose whether to authorize one separately bounded application-verification block. Until then, keep the recovered databases and protected recovery copies stable, do not open the application, and do not resume 5G.
+
+## Work Block 5G-RC-R Result
+
+- Exact eight-path recovery-record source commit `77236737c7e8218e8570bb3a358e2d83db054945`, with expected parent `3ffd94bafc2eba375a795ed3e5df26e3615e79c4`, is durable on `origin/main`.
+- Exact staged-path, staged-diff, whitespace, and high-confidence sensitive-addition checks passed.
+- GitHub reported zero Actions workflow runs and zero check runs for the source commit; no deployment occurred.
+- This containing six-path command-center-only closeout also uses `[skip actions]` and requires the same final zero-workflow and exact-ref proof.
+- The incomplete README, test, route, controller, style, and template changes remain local and unpublished.
+- No application access, migration, database write, 5G resume, product publication, PR, workflow action, deployment, production, or preserved unrelated-file action occurred.
+- Evidence: `command-center/logs/2026-07-27-recovery-record-direct-main-durability-5g-rc-r.md`.
 
 ## Confirmed Work Block 5G-RC-R
 

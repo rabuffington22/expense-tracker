@@ -5089,7 +5089,7 @@ Result: the exact ten-path 4U source set was committed as `0222d30`, fast-forwar
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
-Status: active at 38%; Personal and BFM local data is recovered and verified through 5G-RC, recovery-record durability block 5G-RC-R is active, and Task 2.4 plus local-only 5G remain stopped before application access or product resume
+Status: active at 38%; Personal and BFM local data is recovered and the recovery record is durable on `main` through 5G-RC-R, while Task 2.4 and local-only 5G remain stopped before application access or product resume
 
 Goal: make the product understandable, maintainable, and easy to re-enter after the critical repairs are complete.
 
@@ -5102,7 +5102,7 @@ Goal: make the product understandable, maintainable, and easy to re-enter after 
   - **Task 2.1: Repair synthetic demo fidelity.** Status: done locally through 5C. Personal/BFM use the exact maintained category domains, Personal has one debt-payoff and one savings goal, repeated seeds match, focused coverage passes, and rendered review no longer opens on orphan drift or missing goals.
   - **Task 2.2: Improve first-use and denied-state explanation.** Status: parked by Ryan until further notice together with Luxe Legacy setup and the associated 5D path. The combined Short-Term Planning empty-state action and Luxe Legacy empty/denied guidance remain unimplemented; existing Luxe Legacy isolation and fail-closed behavior stay unchanged.
   - **Task 2.3: Repair phone transaction density and entity context.** Status: done locally through 5E. Personal, BFM, and LL now use complete non-scrolling phone rows and a read-only shared mobile entity marker while preserving current fields, sort, copy, pagination, filters, HTMX, edit, exact-768/desktop table, drawer, and entity behavior.
-  - **Task 2.4: Revise the recurring-charge surface.** Status: current but blocked after 5G stopped at a protected local-database boundary. 5G-RA confirmed the exact pre-incident snapshot exists but could not mount it without privilege escalation; the combined review-and-track implementation remains local, stopped, and incomplete.
+  - **Task 2.4: Revise the recurring-charge surface.** Status: current but blocked after successful Personal/BFM recovery and durable recovery-record publication. The combined review-and-track implementation remains local, stopped, and incomplete; bounded application verification and any 5G resume are separate Ryan gates.
   - **Task 2.5: Clarify Ask Opus purpose and privacy.** Status: Ryan-decision. Freeze and verify data-scope, cross-entity scope, retention, and disclosure before changing the visible affordance or copy.
   - **Task 2.6: Reassess dashboard explanation and density.** Status: done locally through 5F. Categories with spending or budgets remain primary, only zero-spend/no-budget categories begin behind an exact-count accessible disclosure, budget context is textual, and the orphan notice is user-facing without changing financial or category semantics.
   - **Task 2.7: Resolve connections and capability discovery.** Status: parked. Revisit Data Sources, Connected Accounts, To Do entry points, and capability discovery as one later information-architecture slice.
@@ -5112,7 +5112,7 @@ Goal: make the product understandable, maintainable, and easy to re-enter after 
 
 ### Confirmed Work Block 5G-RC-R: Recovery Record Direct-Main Durability
 
-Status: active under Ryan's direct commit-and-push instruction.
+Status: complete; recovery record durable on `main` without workflow or deployment.
 
 Included: from exact aligned base `3ffd94bafc2eba375a795ed3e5df26e3615e79c4`, explicitly stage the five command-center sources plus the 5G stop, 5G-RA, and 5G-RC logs; require exact diff and sensitive-data review; commit with `[skip actions]`; push the fast-forward commit directly to `origin/main`; prove GitHub recorded no workflow or deployment for that SHA; then write one sanitized 5G-RC-R closeout log, update only the five command-center sources, commit those six paths with `[skip actions]`, push directly to `origin/main`, and verify no workflow plus final local branch, local `main`, and remote `main` alignment.
 
@@ -5123,6 +5123,8 @@ Stop conditions: local or remote `main` drift; unexpected staged path, diff, or 
 Verification: GitHub authentication; exact refs and ancestry; explicit paths; JSON; dashboard refresh, health, and rendered state; whitespace; sensitive additions; exact staged diff; `[skip actions]` commit messages; fast-forward direct-main pushes; exact remote SHA; zero workflows/check runs/deployment for both commits; empty final index; preserved hashes; and retained incomplete product changes only in the local worktree.
 
 Report point: return both commit SHAs, exact published paths, zero-workflow/deployment proof, final refs, retained local product work, preserved exclusions, and the still-separate application-verification and 5G-resume gates.
+
+Result: exact eight-path recovery-record source commit `77236737c7e8218e8570bb3a358e2d83db054945`, with expected parent `3ffd94bafc2eba375a795ed3e5df26e3615e79c4`, is durable on `origin/main`. Exact-path, staged-diff, whitespace, and high-confidence sensitive-addition checks passed, and GitHub reported zero workflow runs and zero check runs for the source commit. The containing exact six-path command-center-only closeout uses `[skip actions]`, records the completed recovery as durable, and requires final exact-ref and zero-workflow confirmation. The incomplete README and 5G product/test changes remain local; no application access, 5G resume, product publication, PR, workflow action, deployment, production, database, protected recovery-copy, or preserved unrelated-file action occurred. Evidence: `command-center/logs/2026-07-27-recovery-record-direct-main-durability-5g-rc-r.md`.
 
 ### Confirmed Work Block 5G-RC: Immediate Personal/BFM Snapshot Recovery
 

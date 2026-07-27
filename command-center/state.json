@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-27 8:22 AM CST",
+    "lastUpdated": "2026-07-27 8:28 AM CST",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,23 +27,23 @@
   "phase": {
     "name": "UX Polish, Operations, And Durable Handoff",
     "status": "active",
-    "summary": "Phase 5 is active at thirty-eight percent. Personal and BFM local data is recovered and verified through 5G-RC. Recovery-record durability block 5G-RC-R is active while Task 2.4 and 5G remain stopped before application access or product resume.",
+    "summary": "Phase 5 is active at thirty-eight percent. Personal and BFM local data is recovered and the recovery record is durable on main through 5G-RC-R. Task 2.4 and 5G remain stopped before application access or product resume.",
     "progress": 38
   },
   "currentTask": {
     "title": "Task 2.4: Revise the recurring-charge surface",
-    "owner": "Codex Desktop",
-    "status": "blocked-publication-active",
-    "supportingAgent": "Codex may publish only the exact recovery record directly to main with skip-actions.",
-    "nextAction": "Publish exact recovery-record commits to main prove zero workflows and stop before application access or 5G resume.",
-    "blocker": "Data recovery is complete but application access and 5G resume remain separately gated."
+    "owner": "Ryan",
+    "status": "blocked-recovery-complete",
+    "supportingAgent": "Codex may plan bounded application verification only after a new Ryan authorization.",
+    "nextAction": "Choose whether to authorize bounded application verification before any 5G resume.",
+    "blocker": "Application access and 5G resume remain separately gated after completed recovery and durable recovery-record publication."
   },
   "currentWorkBlock": {
     "id": "phase-5-block-g-rc-r",
     "phaseId": "phase-5",
     "label": "5G-RC-R",
     "name": "Recovery Record Direct-Main Durability",
-    "status": "active",
+    "status": "complete",
     "includedTasks": [
       "Commit exact five command-center sources plus three 5G recovery logs with skip-actions",
       "Fast-forward push directly to origin main and prove zero workflow or deployment",
@@ -77,8 +77,10 @@
     ],
     "nextReportPoint": "Return both direct-main commits zero-workflow proof final alignment retained local product work and separate next gates.",
     "durability": "Recovery-record direct-main publication only; product resume product publication deployment production and live action remain unauthorized.",
-    "result": null,
-    "evidence": [],
+    "result": "Exact eight-path source commit 77236737c7e8218e8570bb3a358e2d83db054945 is durable on origin main with zero workflow runs and zero check runs. The containing six-path skip-actions closeout records final durability while incomplete 5G product work remains local and application access remains gated.",
+    "evidence": [
+      "command-center/logs/2026-07-27-recovery-record-direct-main-durability-5g-rc-r.md"
+    ],
     "owner": "Codex Desktop"
   },
   "routerHealth": {
@@ -104,11 +106,11 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Publish the completed recovery record to main",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan instructed direct-main durability while incomplete product changes must remain local and deployment must remain suppressed.",
-    "action": "Publish exact skip-actions recovery-record and closeout commits prove zero workflows and stop.",
+    "title": "Decide bounded application verification after recovery",
+    "status": "waiting-on-ryan",
+    "owner": "Ryan",
+    "why": "Recovery and recovery-record durability are complete but opening the application may create SQLite sidecars or apply migrations.",
+    "action": "Choose whether to authorize one bounded application-verification block before any 5G resume.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
@@ -197,7 +199,7 @@
       "phaseId": "phase-5",
       "label": "5G-RC-R",
       "name": "Recovery Record Direct-Main Durability",
-      "status": "active",
+      "status": "complete",
       "includedTasks": [
         "Commit exact five command-center sources plus three 5G recovery logs with skip-actions",
         "Fast-forward push directly to origin main and prove zero workflow or deployment",
@@ -231,7 +233,11 @@
         "Final local branch local main and origin main alignment empty index retained local product work and preserved hashes"
       ],
       "reportBack": "Return both direct-main commits zero-workflow proof final alignment retained local product work and separate next gates.",
-      "durability": "Recovery-record direct-main publication only; product resume product publication deployment production and live action remain unauthorized."
+      "durability": "Recovery-record direct-main publication only; product resume product publication deployment production and live action remain unauthorized.",
+      "result": "Exact eight-path source commit 77236737c7e8218e8570bb3a358e2d83db054945 is durable on origin main with zero workflow runs and zero check runs. The containing six-path skip-actions closeout records final durability while incomplete 5G product work remains local and application access remains gated.",
+      "evidence": [
+        "command-center/logs/2026-07-27-recovery-record-direct-main-durability-5g-rc-r.md"
+      ]
     },
     {
       "id": "phase-5-block-g-rc",
@@ -10208,8 +10214,8 @@
       "taskId": "P5-T24",
       "title": "Task 2.4: Revise the recurring-charge surface",
       "status": "current",
-      "owner": "Codex Desktop",
-      "summary": "Personal and BFM local data is recovered and verified through 5G-RC. Only recovery-record durability is active in 5G-RC-R; Task 2.4 product work remains local, stopped, and incomplete."
+      "owner": "Ryan",
+      "summary": "Personal and BFM local data is recovered and the recovery record is durable on main through 5G-RC-R. Task 2.4 product work remains local, stopped, and incomplete pending a separate Ryan application-verification decision."
     },
     {
       "phaseId": "phase-5",
