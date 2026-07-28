@@ -5089,7 +5089,7 @@ Result: the exact ten-path 4U source set was committed as `0222d30`, fast-forwar
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
-Status: active at 50%; Task 4.1 and 5G-R2 are complete; Task 4.2 and confirmed 5H-R are active for exact Ask and operator package branch durability plus hosted draft-PR review while provider verification, merge, deployment, production, final closeout, and parked Task 2 work remain separate
+Status: active at 50%; Tasks 4.1-4.2 are complete through 5G-R2 and 5H-R; the Ask and operator package is durable and hosted-verified on clean draft PR #91 with zero deployment; Task 4.3 is current for Ryan-owned protected planning while merge, deployment, production, final closeout, and parked Task 2 work remain separate
 
 Goal: make the product understandable, maintainable, and easy to re-enter after the critical repairs are complete.
 
@@ -5115,14 +5115,40 @@ Goal: make the product understandable, maintainable, and easy to re-enter after 
   - **Task 3.5: Finalize maintained documentation and the release handoff.** Status: done locally through completed 5L with source-linked startup/configuration/sync-contract/time-label corrections, reconciled runbook/matrix, and one compact operator/release handoff.
 - **Task 4: Close the roadmap with target-repo and parent-project durability.** Status: active umbrella; execution remains split across Tasks 4.1-4.5.
   - **Task 4.1 (`P5-T41`): Release Recurring Review from verified draft PR #90.** Status: done through 5G-R2; merged as `d81ed7078e741a0c7613e7898312ce01cd359f45`, automatically deployed once, and health-verified.
-  - **Task 4.2 (`P5-T42`): Preserve Ask Opus and Task 3 artifacts durably.** Status: active through confirmed 5H-R; preserve the accepted dirty-worktree boundaries and publish only the exact verified package to a retained draft PR.
-  - **Task 4.3 (`P5-T43`): Verify protected OpenRouter account controls.** Status: planned and protected; requires a separate target-specific authorization.
+  - **Task 4.2 (`P5-T42`): Preserve Ask Opus and Task 3 artifacts durably.** Status: done through 5H-R on clean draft PR #91; candidate and closeout heads passed automatic hosted verification with zero annotations and zero deployment.
+  - **Task 4.3 (`P5-T43`): Verify protected OpenRouter account controls.** Status: current and decision-needed after completed failed-safe 5H-PV found required logging/use controls off but an unexpected enabled Broadcast trace control.
   - **Task 4.4 (`P5-T44`): Release Ask Opus and its operator handoff package.** Status: planned; durability, hosted review, merge, deployment, and health evidence must be bounded from provider verification.
   - **Task 4.5 (`P5-T45`): Complete final target-repo and parent-project durability closeout.** Status: planned; only after prior Task 4 release and evidence gates are resolved.
 
+### Confirmed Work Block 5H-PV: OpenRouter Account Privacy Verification
+
+Status: complete with a failed-safe release gate; Task 4.3 remains current and Task 4.4 is not ready.
+
+Included: Task 4.3 (`P5-T43`) only. Preserve branch `codex/ask-opus-privacy`, head `257bec901e88b830fcafe6067c8174cd6a5213b6`, the accepted dirty command-center closeout, empty real index, and three unrelated files; write and refresh active state; have Ryan authenticate directly and attest that the session is the exact OpenRouter account owning The Ledger production API key without sharing credentials or MFA; inspect only OpenRouter Use of Inputs/Outputs, Private Input & Output Logging, the paid-model provider data-collection or training policy, and Anthropic account-level ZDR state; record only sanitized setting names and states; classify the result as passed, failed-safe, or inconclusive; close Task 4.3 automatically when supported; and stop.
+
+Excluded: every OpenRouter setting change; API keys, secret values, account identifiers, billing, credits, generations, prompts, completions, or log contents; provider requests or financial questions; Tasks 4.4-4.5; PR #91 ready transition, mutation, merge, workflow action, deployment, production, or health access; application, test, workflow, dependency, runtime, configuration, authentication, database, or documentation changes outside the exact command-center closeout; Fly; Plaid; parent updates; delegation; second opinion; and the duplicate 4AU log, `command-center/now 2.md`, and `scripts/sync_prod_to_local.sh`.
+
+Why this grouping: all included observations belong to one exact provider account, one protected UI session, one privacy question, and one sanitized evidence path. Remediation and release introduce separate mutation and live-action risk classes and depend on this result.
+
+Owner and recommended agent: Ryan owns authentication, MFA, exact-account attestation, and every mutable account decision. Codex Desktop uses the protected Chrome session for read-only inspection and owns sanitized evidence, Runway OS currency, and final intake. No delegation or second opinion is useful for this routine exact-state observation.
+
+Runner path: record active state and baseline; preserve branch, head, dirty paths, index, and excluded hashes; receive Ryan's safe authenticated handoff; inspect the four exact account controls without opening sensitive content or changing state; record sanitized evidence; classify the result; update the release evidence and handoff; close automatically when supported; refresh and health-check the dashboard; and stop.
+
+Expected surfaces: OpenRouter Privacy and Observability settings read-only; `now.md`, `roadmap.md`, `decisions.md`, `state.json`, generated `index.html`, the Phase 5 release-evidence map and handoff, and one sanitized 5H-PV log. No product, test, configuration, secret, provider-request, GitHub, deployment, or production surface.
+
+Defaults: Use of Inputs/Outputs and Private Input & Output Logging must both be off to pass. Paid-provider policy and Anthropic account-level ZDR are recorded as defense-in-depth context because the application enforces `provider.zdr: true` and `provider.data_collection: "deny"` per request. No screenshot is tracked. Routine dashboard verification is automatic.
+
+Stop conditions: Ryan cannot attest the account owns The Ledger production key; account administration or required controls are unavailable; a required setting is enabled, ambiguous, or hidden; inspection requires keys, logs, prompts, billing, other sensitive content, a mutation, or provider request; unexpected local path, branch, head, index, or preserved-hash drift; or failed JSON, dashboard, health, whitespace, sensitive-data, or exact-scope verification.
+
+Verification and report point: exact Ryan account attestation without secret exposure; direct read-only state observation for all four controls; no setting mutation, provider request, key/log/billing access, or protected value recorded; sanitized evidence; exact branch, head, index, and three-file preservation; JSON; automated dashboard refresh, currentness, health, and exactly-one-current-task proof; whitespace; sensitive-data scan; exact changed paths; result classification; and a clear statement whether Task 4.4 is ready for planning or a separately authorized remediation is required.
+
+Suggested next work block: if 5H-PV passes, propose 5H-R2 for Task 4.4 exact-head Ask Opus and operator-package release. If it fails safe or remains inconclusive, propose one separate target-specific account-settings remediation or evidence block.
+
+Result: Ryan retained credentials, MFA, account identity, and every setting decision and confirmed the authenticated session appeared to be the account owning The Ledger production API key. Read-only observation established that Use of Inputs and Outputs was off, Private Input & Output Logging was off, paid endpoints that train on request data were off, and Anthropic account-level ZDR was off while the application continues to require per-request `zdr: true`. An adjacent Broadcast control was unexpectedly enabled and described as automatically sending request traces to external observability platforms. Destination and payload configuration were outside scope and remain unknown. No setting changed and no provider request, key, log, billing, prompt, financial, GitHub, workflow, deployment, production, application, or parent action occurred. 5H-PV stopped failed-safe; Task 4.3 remains current and decision-needed; Task 4.4 remains closed. Evidence: `command-center/logs/2026-07-28-openrouter-account-privacy-verification-5h-pv.md`.
+
 ### Confirmed Work Block 5H-R: Ask and Operator Package Branch Durability and Hosted Review
 
-Status: closeout publication in progress after a clean candidate draft-PR pass; exact final-head CI remains required.
+Status: done; exact candidate and closeout commits are durable and hosted-verified on clean draft PR #91 with zero deployment.
 
 Included: Task 4.2 (`P5-T42`) only. Preserve the accepted dirty worktree, empty real index, and three unrelated files; revalidate remote `main` at `d81ed7078e741a0c7613e7898312ce01cd359f45`; fetch only that exact ref; prove it is a tree-identical descendant of local head `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a`; fast-forward `codex/ask-opus-privacy` without changing working files; revalidate the exact 31-path candidate consisting of 19 tracked modifications and 12 intended untracked Ask, operator, monitoring, handoff, and evidence artifacts; run the complete local verification contract; explicitly stage only those paths; commit and non-force push the new branch; open one draft PR targeting `main`; observe automatic core-then-browser Synthetic CI; publish one exact eight-path sanitized closeout commit; require final-head CI; prove zero Fly deployment; retain the branch; leave the PR open, draft, and unmerged; close Task 4.2 locally; and stop.
 
@@ -5143,6 +5169,8 @@ Stop conditions: remote `main` drift; ancestry or tree-identity mismatch; any wo
 Verification and report point: exact local and hosted refs; identical-tree fast-forward; exact 31 paths and three exclusions; workflow safety, smoke, browser, syntax, JSON, dashboard, whitespace, sensitive, cleanup, index, and preservation checks; commit ancestry; draft PR base/head/diff; candidate and final CI jobs/steps/annotations; zero deployment; retained branch; empty index; automated dashboard closeout; and the separately gated Task 4.3 decision.
 
 Candidate result: guarded fast-forward to exact post-PR-#90 `main` preserved all working files and exclusions; the complete local verification contract passed; exact 31-path candidate commit `f7482a95e754160905a79ec0130ef8faf0a48784` was pushed normally; draft PR #91 targets `main`; Synthetic CI run `30329875129` passed core job `90182588590` then browser job `90182722250` with every step successful and zero annotations; and the candidate caused zero Fly deployments. The exact eight-path closeout and final-head hosted gate remain.
+
+Final result: exact eight-path closeout commit `257bec901e88b830fcafe6067c8174cd6a5213b6` passed automatic Synthetic CI run `30330294465`, core job `90183802342`, and browser job `90183953333` with every step successful and zero annotations. Both heads caused zero Fly deployments; `main` remained unchanged; the branch was retained; PR #91 remained clean, open, draft, and unmerged; the index returned empty; and all three excluded files remained preserved. Task 4.2 and 5H-R are complete. Evidence: `command-center/logs/2026-07-27-ask-operator-package-durability-5h-r.md`.
 
 ### Confirmed Work Block 5G-R2: Recurring Review Exact-Head Production Release
 

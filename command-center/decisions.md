@@ -2,6 +2,30 @@
 
 ## Accepted
 
+### 2026-07-28 — Directly authorize main push despite the unresolved Broadcast gate
+
+After receiving the exact warning that the current branch would publish the full Ask Opus and operator package, include the nine current command-center closeout paths, trigger the production Fly deployment, and release while OpenRouter Broadcast remains enabled and unreviewed, Ryan explicitly directed: “Push to main despite the unresolved Broadcast gate.”
+
+This direct request authorizes one exact fast-forward push of the current verified Ask branch plus the nine confirmed command-center paths to remote `main`. The three unrelated files remain excluded. No OpenRouter mutation, Broadcast inspection, provider request, manual workflow action, production health request, additional push, rollback, repair, branch deletion, Task 4.5, parent update, or parked Task 2 work is authorized.
+
+### 2026-07-28 — Close 5H-PV failed-safe on an enabled Broadcast control
+
+The protected read-only OpenRouter observation completed without exposing credentials, MFA, keys, identifiers, billing, prompts, completions, generations, log contents, or financial questions and without changing any setting. Use of inputs and outputs was off, Private Input & Output Logging was off, paid endpoints that train on request data were off, and Anthropic account-level ZDR was off while The Ledger's per-request `zdr: true` remains enforced.
+
+An adjacent Observability Broadcast control was unexpectedly enabled and described as automatically sending request traces to external observability platforms. The confirmed block did not authorize opening destinations, inspecting payload configuration, or changing the control, so 5H-PV stops failed-safe. Task 4.3 remains current and decision-needed, Task 4.4 is not ready for release planning, and any Broadcast inspection or remediation requires a separate exact block. Evidence: `command-center/logs/2026-07-28-openrouter-account-privacy-verification-5h-pv.md`.
+
+### 2026-07-28 — Confirm 5H-PV OpenRouter account privacy verification
+
+Ryan confirmed Task 4.3 (`P5-T43`) only. Codex Desktop may preserve the accepted local branch, head, dirty command-center closeout, empty real index, and three unrelated files; write and refresh active 5H-PV; receive a Ryan-controlled authenticated handoff to the exact OpenRouter account that owns The Ledger production API key; inspect only OpenRouter Use of Inputs/Outputs, Private Input & Output Logging, the paid-model provider data-collection or training policy, and Anthropic account-level ZDR state; record only sanitized setting names and states; classify the result as passed, failed-safe, or inconclusive; close Task 4.3 automatically when supported; and stop.
+
+Ryan retains credentials, MFA, account identity, and every setting decision. Setting changes, API keys, secrets, identifiers, billing, credits, generations, prompts, completions, log contents, provider requests, financial questions, Tasks 4.4-4.5, PR #91 mutation, ready transition, merge, workflow action, deployment, production, health access, application changes, Fly, Plaid, parent updates, delegation, second opinion, and the three unrelated files remain excluded. An unverified target account, unavailable admin visibility, enabled or ambiguous required control, sensitive-content dependency, mutation requirement, local preservation drift, or failed command-center verification triggers a sanitized stop without remediation or expansion. Routine dashboard activation and closeout are automated and require no Ryan visual attestation.
+
+### 2026-07-27 — Complete 5H-R and Task 4.2 on clean draft PR #91
+
+Task 4.2 and 5H-R are complete. The exact 31-path candidate is commit `f7482a95e754160905a79ec0130ef8faf0a48784`; exact eight-path closeout commit `257bec901e88b830fcafe6067c8174cd6a5213b6` is the retained branch and draft PR #91 head. Candidate Synthetic CI run `30329875129` and final-head run `30330294465` each passed core then browser, every step succeeded, and both heads have zero annotations and zero Fly deployments.
+
+Remote `main` remained `d81ed7078e741a0c7613e7898312ce01cd359f45`; PR #91 remained clean, open, draft, and unmerged; the branch was retained; the real index returned empty; and the duplicate 4AU log, `command-center/now 2.md`, and `scripts/sync_prod_to_local.sh` remained excluded and unchanged. Task 4.3 becomes the sole current Ryan-owned protected planning gate. No provider access, ready transition, merge, deployment, production, health, parent, or other sequel is authorized.
+
 ### 2026-07-27 — Accept the clean 5H-R candidate and publish the exact closeout
 
 The exact 31-path Ask and operator candidate is commit-durable as `f7482a95e754160905a79ec0130ef8faf0a48784` on retained branch `codex/ask-opus-privacy` and open draft PR #91 targeting `main`. The guarded fast-forward to `d81ed7078e741a0c7613e7898312ce01cd359f45` preserved the identical tree, dirty candidate, empty index, and excluded-file hashes. Local workflow safety, full smoke, complete two-auth browser, syntax, JSON, dashboard, health, whitespace, sensitive-addition, exact-path, and cleanup checks passed.

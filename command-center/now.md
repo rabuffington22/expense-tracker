@@ -2,29 +2,56 @@
 
 ## Active Objective
 
-Publish the exact verified Ask Opus and Task 3 package to a retained draft PR without provider access, merge, deployment, or production action.
+Resolve the failed-safe OpenRouter Broadcast boundary before any Ask Opus release decision.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 50%. Task 4.1 and 5G-R2 are complete. Task 4.2 and confirmed 5H-R are active for exact Ask Opus and Task 3 branch durability plus hosted draft-PR review while protected provider verification, merge, deployment, production, and final closeout remain separate.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 50%. Tasks 4.1-4.2 are complete through 5G-R2 and 5H-R. The exact Ask and operator package is durable and hosted-verified on clean draft PR #91 with zero deployment. The 5H-PV observation completed failed-safe: required logging and use controls were off, but an enabled Broadcast trace control keeps Task 4.3 current and decision-needed while remediation, merge, deployment, production, and final closeout remain separate.
 
 ## Current Work Block
 
-Work block 5H-R — Ask and Operator Package Branch Durability and Hosted Review — is active after Ryan's confirmation.
+Work block 5H-PV — OpenRouter Account Privacy Verification — is complete with a failed-safe release gate.
 
 ## Current Task
 
-Phase 5 Task 4.2 (`P5-T42`) — preserve Ask Opus and Task 3 artifacts durably; active.
+Phase 5 Task 4.3 (`P5-T43`) — verify protected OpenRouter account controls; current and decision-needed because enabled Broadcast remains unreviewed.
 
 ## Owner
 
-Codex Desktop owns confirmed 5H-R execution. Ryan retains protected provider verification, merge, deployment, production, remediation, Task 4.3-4.5, and every expansion decision.
+Ryan owns every Broadcast inspection or setting-change decision and every merge, deployment, production, Task 4.4-4.5, and expansion decision. Codex Desktop completed the constrained read-only observation and owns no remediation or sequel without confirmation.
 
 ## Current Action
 
-Publish the exact eight-path sanitized closeout to draft PR #91, then require its exact head to pass automatic core-then-browser Synthetic CI with zero annotations and zero Fly deployment. Task 4.2 remains active until that final gate passes.
+Request a fresh target-specific Broadcast-boundary proposal. Task 4.4 remains closed until a later block establishes whether a destination is configured, what request-trace fields can be transmitted, and whether remediation is required. No provider inspection, setting change, PR action, merge, deployment, production, health, or protected-data action is active.
 
-## Work Block 5H-R Candidate Result
+## Work Block 5H-PV Result
+
+- Ryan retained credentials, MFA, account identity, and setting authority and confirmed the authenticated session appeared to be the account owning The Ledger production API key.
+- Use of inputs and outputs / workspace data-discount permission: off.
+- Private Input & Output Logging / prompt storage: off.
+- Paid endpoints that train on request data: off.
+- Anthropic account-level ZDR: off; The Ledger's per-request `zdr: true` remains the enforced ZDR boundary.
+- Unexpected adjacent Broadcast control: enabled and described as automatically sending request traces to external observability platforms.
+- Broadcast destination, active integration, and transmitted fields remain unknown because opening them was outside the confirmed block.
+- No setting, provider request, key, log, billing, prompt, financial, GitHub, workflow, deployment, production, or application action occurred.
+- 5H-PV is complete failed-safe. Task 4.3 remains current and decision-needed; Task 4.4 is not ready.
+- Evidence: `command-center/logs/2026-07-28-openrouter-account-privacy-verification-5h-pv.md`.
+
+## Confirmed Work Block 5H-PV
+
+- Name: OpenRouter Account Privacy Verification.
+- Include Task 4.3 (`P5-T43`) only.
+- Preserve branch `codex/ask-opus-privacy`, head `257bec901e88b830fcafe6067c8174cd6a5213b6`, the accepted local command-center closeout, empty real index, and three unrelated files.
+- Ryan authenticates directly and attests that the session is the exact account owning The Ledger production API key; no credential or MFA value is shared.
+- Codex inspects only OpenRouter Use of Inputs/Outputs, Private Input & Output Logging, paid-model provider data-collection or training policy, and Anthropic account-level ZDR state.
+- Required pass condition: Use of Inputs/Outputs is off and Private Input & Output Logging is off. Paid-provider policy and Anthropic ZDR are recorded as defense-in-depth context because the application already enforces per-request `zdr: true` and `data_collection: "deny"`.
+- Record only sanitized setting names and enabled or disabled states; do not open keys, logs, generations, prompts, completions, billing, credits, or account identifiers.
+- Exclude every setting change, provider request, real financial question, Tasks 4.4-4.5, PR #91 mutation, ready transition, merge, workflow action, deployment, production, health, application change, Fly, Plaid, parent update, delegation, second opinion, and the three unrelated files.
+- Stop without remediation if the account cannot be established, admin visibility is unavailable, a required control is enabled or ambiguous, sensitive content is required, any mutation is needed, or local preservation or automated command-center verification fails.
+- Routine dashboard activation and closeout are automatic and require no Ryan visual attestation.
+- Result: the four named controls were observed read-only, but an unexpected enabled Broadcast control kept the release gate closed. The block stopped without opening destinations or changing state.
+
+## Work Block 5H-R Result
 
 - Local head `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a` and post-PR-#90 `main` `d81ed7078e741a0c7613e7898312ce01cd359f45` had identical tree `8b072b9e101e7fd21b20f9b486a6d85a45551f6b`.
 - The guarded fast-forward changed no working file, index entry, candidate fingerprint, or preserved-file fingerprint.
@@ -33,7 +60,11 @@ Publish the exact eight-path sanitized closeout to draft PR #91, then require it
 - Draft PR #91 targets `main` from retained branch `codex/ask-opus-privacy`.
 - Candidate Synthetic CI run `30329875129`, core job `90182588590`, and browser job `90182722250` passed in order with every step successful and zero annotations.
 - Candidate Fly Deploy runs: zero.
-- The exact eight-path closeout and final automatic hosted verification remain inside 5H-R; no other sequel is authorized.
+- Exact eight-path closeout commit `257bec901e88b830fcafe6067c8174cd6a5213b6` passed final Synthetic CI run `30330294465`, core job `90183802342`, and browser job `90183953333`; every step succeeded with zero annotations.
+- Both candidate and closeout heads caused zero Fly deployments.
+- Remote `main` remained unchanged; the branch was retained; PR #91 remained clean, open, draft, and unmerged.
+- The real index is empty and the three unrelated files remain outside the package.
+- Task 4.2 and 5H-R are complete. Task 4.3 remains a separate Ryan-owned protected planning gate.
 
 ## Confirmed Work Block 5H-R
 
@@ -186,8 +217,8 @@ Publish the exact eight-path sanitized closeout to draft PR #91, then require it
 
 - Task 4 (`P5-T4`) — complete target and parent durability closeout; active umbrella.
 - Task 4.1 (`P5-T41`) — release Recurring Review from verified draft PR #90; done through 5G-R2.
-- Task 4.2 (`P5-T42`) — preserve Ask Opus and Task 3 artifacts durably; current for Ryan-owned planning.
-- Task 4.3 (`P5-T43`) — verify protected OpenRouter account controls; planned and separately gated.
+- Task 4.2 (`P5-T42`) — preserve Ask Opus and Task 3 artifacts durably; done through 5H-R on draft PR #91.
+- Task 4.3 (`P5-T43`) — verify protected OpenRouter account controls; current for Ryan-owned planning and separately gated.
 - Task 4.4 (`P5-T44`) — release Ask Opus and its operator handoff package; planned.
 - Task 4.5 (`P5-T45`) — complete final target-repo and parent-project durability closeout; planned.
 

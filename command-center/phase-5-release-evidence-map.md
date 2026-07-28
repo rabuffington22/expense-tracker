@@ -1,8 +1,8 @@
 # Phase 5 Release-Evidence And Unresolved-Gates Map
 
-Date: 2026-07-27
+Date: 2026-07-28
 
-Status: reconciled through the clean 5H-R candidate; final closeout-head hosted verification pending
+Status: reconciled through completed failed-safe 5H-PV
 
 ## Evidence Labels
 
@@ -22,7 +22,7 @@ These labels are cumulative only when the cited evidence establishes each step. 
 
 | Surface | Exact evidence | Classification | Meaning |
 | --- | --- | --- | --- |
-| Ask and operator candidate | `codex/ask-opus-privacy` at `f7482a95e754160905a79ec0130ef8faf0a48784`; draft PR #91; candidate CI `30329875129`; zero annotations and zero deployment | Durable and hosted-verified candidate | The exact 31-path Ask, test, operator, monitoring, handoff, and evidence package is reviewable; final closeout-head verification remains pending. |
+| Ask and operator package | `codex/ask-opus-privacy` at closeout `257bec901e88b830fcafe6067c8174cd6a5213b6`; candidate `f7482a95e754160905a79ec0130ef8faf0a48784`; draft PR #91; CI runs `30329875129` and `30330294465`; zero annotations and zero deployment | Durable and hosted-verified | The exact Ask, test, operator, monitoring, handoff, evidence, and closeout package is reviewable and unreleased. |
 | Remote `main` | `d81ed7078e741a0c7613e7898312ce01cd359f45` | Durable and merged | Current hosted `main` is the exact PR #90 merge. |
 | PR #89 | merged 2026-07-27; head `13d2f16a9cca8b8d4fb4900006dfaa9655824474`; merge `e905e5c4ad406ebb7b5f10ea6d867d5724f662ce` | Hosted-verified and merged | This is the released Phase 5 usability-set path. |
 | PR #89 Synthetic CI | run `30262719321` on `13d2f16a9cca8b8d4fb4900006dfaa9655824474`; core job `89966154249`; browser job `89966350270`; success; zero annotations | Hosted-verified | Exact activation head passed ordered core and browser checks. |
@@ -33,7 +33,7 @@ These labels are cumulative only when the cited evidence establishes each step. 
 | PR #90 Synthetic CI | candidate run `30278240194` on `182cabd73640bfd6f8ce754740b5b20bbfc045dd`; current-head run `30279361029` on `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a`; current core job `90021492054`; current browser job `90021772511`; success; zero annotations | Hosted-verified | Both the product candidate and the final command-center closeout head passed. |
 | PR #90 Fly Deploy | run `30327566484` on merge `d81ed7078e741a0c7613e7898312ce01cd359f45`; job `90176026100`; success; zero annotations; exactly one run for the merge | Deployed | The exact merge triggered one automatic deployment. |
 | PR #90 production observation | one authorized `/health` request returned HTTP 200 and `status: ok` after run `30327566484` | Historical production-verified | Establishes the dated post-deploy health checkpoint for 5G-R2. |
-| OpenRouter account controls | no account or provider access in 5K | Protected and pending | Local request controls are not evidence of mutable account settings. |
+| OpenRouter account controls | protected read-only 5H-PV observation: use of inputs/outputs off; private I/O logging off; paid-training endpoints off; Anthropic account ZDR off; adjacent Broadcast enabled | Protected, observed, and failed-safe | Required logging/use controls are off, but the enabled unreviewed external trace path keeps the release gate closed. |
 
 5K hosted metadata was read-only. Separately confirmed 5G-R2 later performed the exact ready transition, merge, automatic deployment observation, and one health request recorded above; it used no manual workflow action or Fly administration.
 
@@ -66,7 +66,8 @@ These labels are cumulative only when the cited evidence establishes each step. 
 | 5J | Local synthetic operator re-entry drill | Candidate-durable and hosted-verified through 5H-R | The evidence is durable on draft PR #91; no production claim. |
 | 5K | Release-evidence reconciliation | Candidate-durable and hosted-verified through 5H-R | Included in draft PR #91; later evidence overrides its dated hosted facts. |
 | 5L | Maintained documentation and release handoff | Candidate-durable and hosted-verified through 5H-R | Included in draft PR #91; not merged or deployed. |
-| 5H-R | Ask and operator package durability | Candidate head hosted-verified; closeout head pending | Exact 31-path candidate passed; final exact eight-path closeout gate remains. |
+| 5H-R | Ask and operator package durability | Durable and hosted-verified on clean draft PR #91 | Candidate and closeout heads passed; zero deployment; merge and release remain separate. |
+| 5H-PV | OpenRouter account privacy verification | Protected read-only observation; failed-safe | Required logging/use controls were off, but enabled Broadcast remains unreviewed; Task 4.4 is not ready. |
 
 The detailed block definitions and sanitized evidence paths remain in [`roadmap.md`](roadmap.md), [`state.json`](state.json), and the dated [`logs/`](logs/) directory.
 
@@ -89,9 +90,11 @@ The detailed block definitions and sanitized evidence paths remain in [`roadmap.
 
 ### Ask Opus and operator handoff
 
-- The exact Ask Opus privacy implementation, maintained tests, operator runbook, monitoring matrix, drill evidence, release map, handoff, and Runway OS package is candidate-durable on draft PR #91 at `f7482a95e754160905a79ec0130ef8faf0a48784`.
-- Candidate Synthetic CI `30329875129` passed both ordered jobs with zero annotations and zero deployment.
-- Boundary: final closeout-head hosted verification, provider verification, merge, deployment, production, and later release decisions remain separate.
+- The exact Ask Opus privacy implementation, maintained tests, operator runbook, monitoring matrix, drill evidence, release map, handoff, and Runway OS package is durable on draft PR #91 through candidate `f7482a95e754160905a79ec0130ef8faf0a48784` and closeout `257bec901e88b830fcafe6067c8174cd6a5213b6`.
+- Synthetic CI runs `30329875129` and `30330294465` each passed both ordered jobs with zero annotations and zero deployment.
+- The 5H-PV protected observation found required content-use and private I/O logging controls off and the paid-model training policy off. Anthropic account ZDR was off while per-request ZDR remains enforced in code.
+- An adjacent Broadcast control was enabled; its destination and trace payload remain unreviewed.
+- Boundary: provider remediation, merge, deployment, production, and later release decisions remain separate.
 
 ## Unresolved Gates
 
@@ -99,8 +102,8 @@ The detailed block definitions and sanitized evidence paths remain in [`roadmap.
 | --- | --- | --- | --- |
 | Task 3.5 maintained documentation and compact handoff | Pending; sole current planning task | Confirmed 5L scope, source-linked corrections, local verification, and a compact release handoff | Ryan confirms a separate block |
 | Recurring Review merge and production release | Complete through 5G-R2 | No further release action; use the exact merge, deploy, and dated health evidence above | Complete |
-| Ask Opus durability/publication | Candidate-durable on draft PR #91; final closeout head pending | Exact closeout commit and automatic final-head CI with zero annotations and zero deployment | Confirmed 5H-R |
-| OpenRouter account-setting verification | Protected and pending | Human-completed provider-account observation of the exact logging/use/privacy settings, recorded without secrets or financial content | Ryan at a protected handoff |
+| Ask Opus durability/publication | Complete through 5H-R on draft PR #91 | No further durability action; use exact candidate and closeout evidence above | Complete |
+| OpenRouter account-setting verification | Protected observation complete but failed-safe | Separate bounded evidence for Broadcast destination and transmitted fields, followed by a distinct remediation decision if needed | Ryan confirms a new protected block |
 | Ask Opus production use | Not authorized | Durable implementation, protected provider-setting evidence, explicit release authority, exact deployment evidence, and separately authorized production observation | Ryan |
 | Current production/demo health | Externally unverified-current | A separately authorized credential-free observation tied to a stated target and purpose | Ryan |
 | Parked Tasks 2.2, 2.7, and 2.8 | Parked | Explicit reopening and a new bounded proposal | Ryan |
@@ -112,7 +115,7 @@ There is no blocking contradiction between local Git, current remote `main`, PR 
 
 1. the first usability set is merged, deployed, and historically health-verified;
 2. Recurring Review is merged, deployed, and historically health-verified through 5G-R2;
-3. Ask Opus and the operator/release-handoff artifacts are candidate-durable and hosted-verified on draft PR #91, with final closeout-head verification pending;
-4. provider settings remain protected, and the dated health result does not create continuous-currentness evidence.
+3. Ask Opus and the operator/release-handoff artifacts are durable and hosted-verified on clean draft PR #91 with zero deployment;
+4. required OpenRouter logging/use controls are off, but enabled Broadcast remains a protected unresolved trace path, and the dated health result does not create continuous-currentness evidence.
 
 Task 3.4 is complete on that factual basis. Every publication, provider, merge, deployment, production, Task 3.5, and Task 4 action remains separately gated.

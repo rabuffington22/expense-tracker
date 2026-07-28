@@ -2,7 +2,7 @@
 
 Date: 2026-07-27
 
-Status: closeout published; exact final-head hosted verification pending
+Status: complete
 
 ## Authorized Scope
 
@@ -49,3 +49,18 @@ Provider access, Tasks 4.3-4.5, further product work, PR ready, merge, deploymen
 ## Final Gate
 
 This closeout is valid only if its exact commit becomes PR #91's head, receives one automatic pull-request Synthetic CI run with core then browser successful, has zero annotations, causes zero Fly Deploy runs, leaves remote `main` unchanged, retains the branch, and keeps the PR open, draft, and unmerged. Any mismatch stops without repair or rerun.
+
+## Final Result
+
+- Exact closeout head: `257bec901e88b830fcafe6067c8174cd6a5213b6`.
+- Automatic final-head Synthetic CI run: `30330294465`.
+- Core job `90183802342`: successful with every step successful.
+- Browser job `90183953333`: successful with every step successful.
+- Final-head annotations: zero.
+- Final-head Fly Deploy runs: zero.
+- Remote `main` remained `d81ed7078e741a0c7613e7898312ce01cd359f45`.
+- Remote `codex/ask-opus-privacy` remained retained at the exact closeout head.
+- PR #91 remained clean, open, draft, and unmerged.
+- The real Git index was empty after publication; the three unrelated files remained untracked and unchanged.
+
+Task 4.2 and 5H-R are complete. The exact Ask and operator package is commit-durable and hosted-verified on draft PR #91. Provider verification, PR ready, merge, deployment, production, and Tasks 4.3-4.5 remain separately gated.
