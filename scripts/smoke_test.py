@@ -8412,10 +8412,17 @@ def main() -> None:
                     empty_body = empty_response.get_data(as_text=True)
                     _check(
                         empty_response.status_code == 200
-                        and "No subscriptions being tracked yet."
+                        and "<title>Recurring Review" in empty_body
+                        and "No recurring charges are being tracked yet."
+                        in empty_body
+                        and "No detected recurring charges are waiting for review."
+                        in empty_body
+                        and "0 tracked" in empty_body
+                        and "0 to review" in empty_body
+                        and "Detection is a review aid, not a complete list."
                         in empty_body
                         and "Subscription 4BF" not in empty_body,
-                        f"subscriptions {entity_key}: empty watchlist should remain renderable",
+                        f"subscriptions {entity_key}: empty combined review workflow should remain truthful and renderable",
                     )
 
         cadence_samples = {
@@ -8620,6 +8627,17 @@ def main() -> None:
                     index_body = index_response.get_data(as_text=True)
                     _check(
                         index_response.status_code == 200
+                        and "<title>Recurring Review" in index_body
+                        and index_body.index("Tracked charges")
+                        < index_body.index("Detected charges to review")
+                        and "0 tracked" in index_body
+                        and f"{len(expected_merchants)} to review" in index_body
+                        and index_body.count(">Track</button>") == len(
+                            expected_merchants
+                        )
+                        and index_body.count(">Dismiss</button>") == len(
+                            expected_merchants
+                        )
                         and all(
                             merchant in index_body
                             for merchant in expected_merchants
@@ -8630,7 +8648,7 @@ def main() -> None:
                         and f"{merchant_prefix} excluded category"
                         not in index_body
                         and f"{merchant_prefix} income" not in index_body,
-                        f"subscriptions {entity_key}: rendered suggestions should preserve detection boundaries",
+                        f"subscriptions {entity_key}: tracked-first rendered review should expose exact progress and preserve detection boundaries",
                     )
 
                     accepted_merchant = f"{merchant_prefix} monthly"
@@ -8644,8 +8662,11 @@ def main() -> None:
                         },
                     )
                     _check(
-                        accept_response.status_code == 302,
-                        f"subscriptions {entity_key}: accepting a suggestion should redirect",
+                        accept_response.status_code == 302
+                        and accept_response.headers["Location"].endswith(
+                            "/subscriptions/#detected-review"
+                        ),
+                        f"subscriptions {entity_key}: tracking a suggestion should return to the review queue",
                     )
                     subscription_conn = get_connection(entity_key)
                     accepted_row = subscription_conn.execute(
@@ -8678,6 +8699,18 @@ def main() -> None:
                         f"subscriptions {entity_key}: accepted suggestion should persist and leave detection",
                     )
                     accepted_id = accepted_row["id"]
+                    tracked_index = subscription_client.get("/subscriptions/")
+                    tracked_body = tracked_index.get_data(as_text=True)
+                    _check(
+                        tracked_index.status_code == 200
+                        and "1 tracked" in tracked_body
+                        and f"{len(expected_merchants) - 1} to review"
+                        in tracked_body
+                        and tracked_body.index(accepted_merchant)
+                        < tracked_body.index("Detected charges to review")
+                        and "watching" in tracked_body,
+                        f"subscriptions {entity_key}: tracking should decrement review progress and move the item into the leading tracked section",
+                    )
 
                     manual_merchant = f"Manual 4BF {display}"
                     add_response = subscription_client.post(
@@ -8852,8 +8885,26 @@ def main() -> None:
                     subscription_conn.close()
                     _check(
                         dismiss_response.status_code == 302
+                        and dismiss_response.headers["Location"].endswith(
+                            "/subscriptions/?dismissed=1#detected-review"
+                        )
                         and dismissed_merchant not in dismissed_suggestions,
-                        f"subscriptions {entity_key}: dismissal should hide the suggestion",
+                        f"subscriptions {entity_key}: dismissal should hide the suggestion and return an immediate undo state",
+                    )
+                    dismissed_page = subscription_client.get(
+                        dismiss_response.headers["Location"]
+                    )
+                    dismissed_body = dismissed_page.get_data(as_text=True)
+                    _check(
+                        dismissed_page.status_code == 200
+                        and "data-subscriptions-feedback" in dismissed_body
+                        and f"Dismissed <strong>{dismissed_merchant}</strong>"
+                        in dismissed_body
+                        and 'class="sub-review-undo">Undo</button>'
+                        in dismissed_body
+                        and f"{len(expected_merchants) - 2} to review"
+                        in dismissed_body,
+                        f"subscriptions {entity_key}: dismissed review item should expose exact decremented progress and accessible immediate undo",
                     )
                     restore_response = subscription_client.post(
                         "/subscriptions/undismiss",
@@ -8869,8 +8920,20 @@ def main() -> None:
                     subscription_conn.close()
                     _check(
                         restore_response.status_code == 302
+                        and restore_response.headers["Location"].endswith(
+                            "/subscriptions/#detected-review"
+                        )
                         and dismissed_merchant in restored_suggestions,
-                        f"subscriptions {entity_key}: restore should return the suggestion",
+                        f"subscriptions {entity_key}: immediate or durable restore should return the suggestion to review",
+                    )
+                    restored_page = subscription_client.get("/subscriptions/")
+                    restored_body = restored_page.get_data(as_text=True)
+                    _check(
+                        restored_page.status_code == 200
+                        and f"{len(expected_merchants) - 1} to review"
+                        in restored_body
+                        and dismissed_merchant in restored_body,
+                        f"subscriptions {entity_key}: restore should reconcile queue progress",
                     )
 
                     delete_response = subscription_client.post(
@@ -11887,7 +11950,15 @@ def main() -> None:
             and 'data-subscriptions-action="add-account-info"' in subscriptions_source
             and 'data-subscriptions-action="fetch-tips"' in subscriptions_source
             and 'data-subscriptions-action="copy-share"' in subscriptions_source
-            and 'data-subscriptions-action="remove-watchlist"' in subscriptions_source,
+            and 'data-subscriptions-action="remove-watchlist"' in subscriptions_source
+            and "<h1 class=\"page-title\">Recurring Review</h1>"
+            in subscriptions_source
+            and subscriptions_source.index("Tracked charges")
+            < subscriptions_source.index("Detected charges to review")
+            and "{{ suggestions|length }} to review" in subscriptions_source
+            and "data-subscriptions-feedback" in subscriptions_source
+            and ">Track</button>" in subscriptions_source
+            and ">Dismiss</button>" in subscriptions_source,
             "subscriptions: template must expose the complete delegated controller and inert-data contract",
         )
         _check(
@@ -11895,7 +11966,11 @@ def main() -> None:
             and "{%" not in subscriptions_asset_source
             and ".onclick" not in subscriptions_asset_source
             and "data-subscriptions-action" in subscriptions_asset_source
-            and "subscriptionsEnterAction" in subscriptions_asset_source,
+            and "subscriptionsEnterAction" in subscriptions_asset_source
+            and 'root.querySelector("[data-subscriptions-feedback]")'
+            in subscriptions_asset_source
+            and "feedback.focus({preventScroll: true})"
+            in subscriptions_asset_source,
             "subscriptions: page controller must remain template-free and own delegated actions",
         )
 
@@ -11913,7 +11988,13 @@ def main() -> None:
             "/static/subscriptions.js" in rendered_subscriptions
             and "data-subscriptions-controller" in rendered_subscriptions
             and 'data-app-shell-action="open-ai-chat"' in rendered_subscriptions
-            and 'data-ai-page="subscriptions"' in rendered_subscriptions,
+            and 'data-ai-page="subscriptions"' in rendered_subscriptions
+            and "<h1 class=\"page-title\">Recurring Review</h1>"
+            in rendered_subscriptions
+            and rendered_subscriptions.index("Tracked charges")
+            < rendered_subscriptions.index("Detected charges to review")
+            and "0 tracked" in rendered_subscriptions
+            and "0 to review" in rendered_subscriptions,
             "subscriptions: rendered route must expose the maintained controller and AI seam",
         )
 
@@ -13142,9 +13223,10 @@ def main() -> None:
         ).read_text()
 
         _check(
-            not style_attribute_pattern.search(payroll_style_source)
+            not style_attribute_pattern.search(subscriptions_style_source)
+            and not style_attribute_pattern.search(payroll_style_source)
             and "style=" not in payroll_route_source,
-            "subscriptions/payroll styles: Payroll template and route-generated partial source must contain no style attributes",
+            "subscriptions/payroll styles: templates and route-generated partial source must contain no style attributes",
         )
         _check(
             all(
@@ -13178,6 +13260,10 @@ def main() -> None:
                 selector in style_source
                 for selector in (
                     ".u-clipboard-proxy",
+                    ".sub-purpose",
+                    ".sub-section-heading",
+                    ".sub-review-feedback",
+                    ".sub-review-undo",
                     '.sub-dismissed-trigger[aria-expanded="true"] .sub-dismissed-chevron',
                     ".pr-role--providers",
                     ".pr-role--nurses",

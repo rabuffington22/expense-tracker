@@ -1,4 +1,4 @@
-"""Subscription Tracker — tag recurring charges to consider cancelling."""
+"""Recurring Review — review recurring charges and track cancellation work."""
 
 from __future__ import annotations
 
@@ -408,7 +408,7 @@ def get_watchlist_count(conn) -> int:
 
 @bp.route("/")
 def index():
-    """Render the subscription tracker page."""
+    """Render the recurring review page."""
     conn = get_connection(g.entity_key)
     try:
         watchlist = _get_watchlist(conn)
@@ -420,17 +420,24 @@ def index():
                 r["merchant_canonical"]
                 for r in conn.execute(
                     "SELECT merchant_canonical FROM subscription_dismissals "
-                    "ORDER BY dismissed_at DESC"
+                    "ORDER BY dismissed_at DESC, id DESC"
                 ).fetchall()
             ]
         except Exception:
             dismissed = []
+
+        undo_merchant = (
+            dismissed[0]
+            if request.args.get("dismissed") == "1" and dismissed
+            else None
+        )
 
         return render_template(
             "subscriptions.html",
             watchlist=watchlist,
             suggestions=suggestions,
             dismissed=dismissed,
+            undo_merchant=undo_merchant,
         )
     finally:
         conn.close()
@@ -562,7 +569,9 @@ def accept():
         conn.commit()
     finally:
         conn.close()
-    return redirect(url_for("subscriptions.index"))
+    return redirect(
+        url_for("subscriptions.index", _anchor="detected-review")
+    )
 
 
 @bp.route("/dismiss", methods=["POST"])
@@ -581,7 +590,13 @@ def dismiss():
         conn.commit()
     finally:
         conn.close()
-    return redirect(url_for("subscriptions.index"))
+    return redirect(
+        url_for(
+            "subscriptions.index",
+            dismissed="1",
+            _anchor="detected-review",
+        )
+    )
 
 
 @bp.route("/undismiss", methods=["POST"])
@@ -600,7 +615,9 @@ def undismiss():
         conn.commit()
     finally:
         conn.close()
-    return redirect(url_for("subscriptions.index"))
+    return redirect(
+        url_for("subscriptions.index", _anchor="detected-review")
+    )
 
 
 @bp.route("/generate-tips/<int:sub_id>", methods=["POST"])

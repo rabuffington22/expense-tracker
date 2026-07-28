@@ -160,7 +160,7 @@ Transaction IDs are deterministic, so importing the same normalized bank transac
 | Dashboard | `/` | KPI comparisons, trends, insights, recurring items, and review status |
 | To Do | `/todo/` | Review queues, recurring work, tasks, cut list, and workflow entry points |
 | Transactions | `/transactions/` | Filtering, saved views, inline edits, rules, suggestions, and splits |
-| Subscriptions | `/subscriptions/` | Recurring-subscription detection, tracking, account notes, and cancellation tips |
+| Recurring Review | `/subscriptions/` | Review cadence-based recurring-charge detections and track selected charges, account notes, and cancellation progress without claiming complete coverage |
 | Cash Flow | `/cashflow/` | Manual/Plaid balances, liabilities, and upcoming recurring charges |
 | Short-Term Planning | `/planning/short-term` | Goals, budgets, action items, progress, and plan locking |
 | Long-Term Planning | `/planning/` | Asset/liability projections and milestone planning |
