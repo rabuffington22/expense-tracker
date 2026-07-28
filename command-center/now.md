@@ -2,27 +2,93 @@
 
 ## Active Objective
 
-Decide the disposition of optional parked Phase 5 work after completing the final target-repo and parent-project durability closeout.
+Select the next project objective before proposing a separate Phase 5 transition and Phase 6 intake.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 75%. Tasks 1, 3, and 4 are done; Task 4.5 and final target-plus-parent durability are complete through 5M. Task 2 is the sole current planning task because optional Tasks 2.2, 2.7, and 2.8 remain parked and require a separate disposition decision before Phase 5 closure.
+Phase 5: UX Polish, Operations, And Durable Handoff — required work is 100% complete through 5N. Tasks 1, 3, and 4 are done; Task 2's required children are complete; optional Tasks 2.2, 2.7, and 2.8 remain parked. Phase 5 remains active and Task 2 remains the sole current transition gate because the dashboard requires one active phase and one current task until Ryan selects a successor direction.
 
 ## Current Work Block
 
-Work block 5M — Final Target and Parent Durability Closeout — is done through the containing target `[skip actions]` publication. No successor work block is active.
+Work block 5N-R2 — Corrected State Assertion And Exact 5N Durability Resume — is done through the containing `[skip actions]` durability package and its required post-push conditions.
 
 ## Current Task
 
-Phase 5 Task 2 (`P5-T2`) — decide the disposition of optional parked Tasks 2.2, 2.7, and 2.8 before Phase 5 closure; current planning.
+Phase 5 Task 2 (`P5-T2`) — required children complete; current only as the transition gate until a separately chosen successor direction can support an honest phase transition.
 
 ## Owner
 
-Ryan owns the optional-work and Phase 5 closure decision. Codex Desktop owns bounded 5N planning, Runway OS stewardship, and verification.
+Ryan owns the next-direction decision and every future parked-task reopening. Codex Desktop owns later bounded transition planning, Runway OS stewardship, and verification.
 
 ## Current Action
 
-Define a separately confirmable `5N — Optional-Parked Phase 5 Closeout Decision` for Tasks 2.2, 2.7, and 2.8 planning only. No parked-task implementation, Phase 5 closure, product work, provider work, production action, or successor execution is active.
+Wait for Ryan to choose the next project objective. Do not reopen optional work, close Phase 5, create Phase 6, or begin another work block without a separate proposal and confirmation.
+
+## Work Block 5N-R2 Result
+
+- The stopped 5N-R assertion error was isolated to nonexistent `.tasks[]`; the actual command-center schema is `.phaseTasks[]`.
+- The corrected active-state assertion passed with exactly one active Phase 5, one active 5N-R2 block, one current `P5-T2`, 100% required Phase 5 completion, and all three optional tasks parked.
+- Exactly four whitespace bytes were removed from lines 3 and 4 of the existing 5N log; no other log content changed.
+- The exact eight-path package closes in the containing `Record optional Phase 5 disposition [skip actions]` commit only after the corrected final verification, exact live-main alignment, and zero workflows, checks, statuses, or deployments pass.
+- 5N-R remains stopped; 5N-R2 and 5N are done through the containing durability package and post-push conditions.
+- Phase 5 remains active, Task 2 remains current solely as the transition gate, Tasks 2.2, 2.7, and 2.8 remain parked, and no successor starts.
+
+## Confirmed Work Block 5N-R2
+
+- Status: done through the containing `[skip actions]` durability package and required post-push conditions.
+- Name: Corrected State Assertion And Exact 5N Durability Resume.
+- Included Task 2 (`P5-T2`) only as the unchanged current transition gate; no product task is reopened or implemented.
+- Preserve the exact eight-path 5N package and exact local, cached, and live `main` baseline `ac5361e5b2be55356538ae44b28127ce0fc19097`.
+- Record that 5N-R stopped before normalization because its assertion incorrectly queried nonexistent `.tasks[]`; use the actual `.phaseTasks[]` schema.
+- Remove only the two trailing-space pairs from lines 3 and 4 of the existing 5N log; stage only the existing eight paths; and run the corrected verification bundle once.
+- If verification passes, commit the same eight paths as `Record optional Phase 5 disposition [skip actions]`, non-force push detached `HEAD:main`, prove exact live alignment and zero workflows, checks, statuses, or deployments, and stop.
+- Keep required Phase 5 work at 100%, Phase 5 active, Task 2 current solely as the transition gate, and Tasks 2.2, 2.7, and 2.8 parked.
+- Exclude every other edit or path, another repair or verification retry, parked-task implementation or reopening, Phase 5 closure, Phase 6 creation, successor selection, product, test, workflow mutation, provider, production, database, financial, protected, parent, delegation, second-opinion, force-push, rebase, or conflict-resolution action.
+- Stop without repair or retry on any new ref, index, path, content, JSON, dashboard, currentness, health, accounting, whitespace, sensitive-content, staging, commit, push, live-remote, or zero-activity failure or drift.
+- Verification: exact eight staged paths and no unstaged changes; valid JSON; dashboard refresh/currentness/health; exactly one active Phase 5, one active work block, and one current task using `.phaseTasks[]`; 100% required completion; parked tasks unchanged; no stale 5M or Task 4 control text; clean cached diff; sensitive-content and exact-scope checks; exact commit ancestry; live alignment; zero workflows, checks, statuses, and deployments; empty final index.
+
+## Confirmed Work Block 5N-R
+
+- Status: stopped before normalization because the active-state assertion queried nonexistent `.tasks[]` instead of `.phaseTasks[]`.
+- Name: Exact Two-Line Whitespace Recovery And 5N Durability Resume.
+- Preserve the exact staged eight-path 5N package and exact clean local, cached, and live `main` baseline `ac5361e5b2be55356538ae44b28127ce0fc19097`.
+- Record this recovery authorization inside the existing package before normalization.
+- Remove only the two trailing-space pairs from lines 3 and 4 of `command-center/logs/2026-07-28-optional-parked-phase-5-disposition-transition-readiness-5n.md`; restage only that log for the normalization; and run the original verification exactly once.
+- If verification passes, commit the same eight paths as `Record optional Phase 5 disposition [skip actions]`, non-force push detached `HEAD:main`, prove exact live alignment and zero workflows, checks, statuses, or deployments, and stop.
+- Keep required Phase 5 work at 100%, Phase 5 active, Task 2 current solely as the transition gate, and Tasks 2.2, 2.7, and 2.8 parked.
+- Exclude every other edit or path, another repair or verification retry, parked-task implementation or reopening, Phase 5 closure, Phase 6 creation, successor selection, product, test, workflow mutation, provider, production, database, financial, protected, parent, delegation, second-opinion, force-push, rebase, or conflict-resolution action.
+- Stop without another repair or retry on any new ref, index, path, content, JSON, dashboard, currentness, health, accounting, whitespace, sensitive-content, staging, commit, push, live-remote, or zero-activity failure or drift.
+- Verification: exact eight staged paths and no unstaged changes; valid JSON; dashboard refresh/currentness/health; exactly one active Phase 5 and current Task 2; 100% required completion; parked tasks unchanged; no stale 5M or Task 4 control text; clean cached diff; sensitive-content and exact-scope checks; exact commit ancestry; live alignment; zero workflows, checks, statuses, and deployments; empty final index.
+
+## Work Block 5N Result
+
+- Required Phase 5 work is 100% complete, with optional parked work shown separately.
+- Task 2.2 remains parked under Ryan's explicit Luxe Legacy setup and 5D hold.
+- Task 2.7 remains parked as a future information-architecture slice.
+- Task 2.8 remains parked as a future offline-truth and retry-feedback slice.
+- No parked task was reopened or implemented, and no new offline runtime or data-safety claim was made.
+- The stale 5M `nextMilestone`, pending Task 4 durability gate, release sequence, and handoff remaining-gate text are reconciled.
+- Phase 5 remains active and Task 2 remains current only because the command-center contract requires one active phase and one current task until Ryan selects a successor direction.
+- The exact eight-path command-center package closes in the containing `Record optional Phase 5 disposition [skip actions]` commit only after exact live-main alignment and zero workflows, checks, statuses, or deployments pass.
+- No product, test, workflow, parent, provider, production, database, financial, protected, delegation, second-opinion, Phase 5 closure, Phase 6 creation, or successor action occurred.
+- Evidence: `command-center/logs/2026-07-28-optional-parked-phase-5-disposition-transition-readiness-5n.md`.
+
+## Confirmed Work Block 5N
+
+- Status: done through the containing `[skip actions]` durability package and required post-push conditions.
+- Name: Optional-Parked Phase 5 Disposition And Transition Readiness.
+- Include Task 2 (`P5-T2`) required-versus-optional completion accounting and disposition-only treatment of Tasks 2.2 (`P5-T22`), 2.7 (`P5-T27`), and 2.8 (`P5-T28`).
+- Retain Task 2.2 and 5D under Ryan's explicit Luxe Legacy hold; retain Task 2.7 as a future information-architecture slice; retain Task 2.8 as a future offline-truth and retry-feedback slice.
+- Report required Phase 5 work as complete while keeping Phase 5 active and Task 2 current solely as the transition gate. Do not invent Phase 6 before Ryan selects the next objective.
+- Correct the stale `nextMilestone`, release-evidence Task 4 durability gate, release sequence, and release-handoff remaining-gate text; add one sanitized 5N closeout log.
+- Verify and explicitly stage only `command-center/now.md`, `command-center/roadmap.md`, `command-center/decisions.md`, `command-center/state.json`, generated `command-center/index.html`, `command-center/phase-5-release-evidence-map.md`, `command-center/phase-5-release-handoff.md`, and the new 5N log.
+- Commit as `Record optional Phase 5 disposition [skip actions]`; non-force push detached `HEAD:main`; prove exact live alignment and zero workflows, checks, statuses, or deployments; and stop.
+- Exclude every parked-task implementation or reopening, rerun of completed Phase 5 work, Phase 5 closure, Phase 6 creation, next-direction selection, product, test, workflow, dependency, configuration, database, authentication, financial-data, provider, Fly, Plaid, production-health, parent-project, delegation, second-opinion, force-push, rebase, conflict-resolution, repair, retry, protected-data, and unrelated-path action.
+- Defaults: required Phase 5 completion is 100%; optional parked work is shown separately; current cache and offline isolation proof remains valid without a new data-safety claim; no product smoke or browser session is needed for this command-center-only package.
+- Stop on baseline or path drift, sensitive content, a need to reopen or implement parked work, a need to invent the next phase, failed JSON/dashboard/health/currentness/accounting/whitespace/scope verification, push rejection or need for repair/retry, uncertain live alignment, or any workflow, check, status, or deployment starting.
+- Verification: exact clean `ac5361e5b2be55356538ae44b28127ce0fc19097` baseline; valid JSON; dashboard refresh/currentness/health; exactly one active Phase 5 and current Task 2; required completion at 100%; parked tasks unchanged; no stale 5M or Task 4 pending control text; exact eight-path package; whitespace and sensitive-content checks; explicit staging; commit ancestry; live remote alignment; zero workflows, checks, statuses, and deployments; empty final index.
+- Report back: return exact dispositions, corrected stale fields, exact package, verification, commit and push result, zero-workflow proof, preserved exclusions, and the remaining next-direction transition gate.
+- Suggested next block: none automatically. A separate Phase 5 transition and Phase 6 intake can be proposed only after Ryan chooses the next objective.
 
 ## Work Block 5M Result
 

@@ -2,6 +2,36 @@
 
 ## Accepted
 
+### 2026-07-28 — Complete 5N-R2 corrected recovery and resume exact 5N durability
+
+The command-center schema was confirmed to use `phaseTasks`; the stopped 5N-R failure was an assertion-command error, not state corruption. Active 5N-R2 passed JSON, dashboard refresh, health, currentness, exact-path, exact-ref, one-active-phase, one-active-work-block, one-current-task, 100%-required-completion, and three-parked-task checks using `.phaseTasks[]`.
+
+Exactly the two known trailing-space pairs were removed from lines 3 and 4 of the existing 5N log. The same exact eight-path package proceeds through one corrected final verification, commit `Record optional Phase 5 disposition [skip actions]`, non-force detached `HEAD:main` push, live alignment, and zero workflow, check, status, and deployment proof. Those post-push conditions govern the prepared done state. 5N-R remains stopped; 5N-R2 and 5N become done when the containing durability conditions pass. Phase 5 stays active at 100% required completion, Task 2 stays current solely as the transition gate, Tasks 2.2, 2.7, and 2.8 stay parked, and no successor starts.
+
+### 2026-07-28 — Authorize corrected 5N-R2 assertion and exact durability resume
+
+Ryan directly authorized correction of the known verification-command error and completion of the already bounded recovery. The repository state uses top-level `phaseTasks`, not `tasks`; 5N-R therefore stopped before normalization when its assertion attempted to iterate over nonexistent `.tasks[]`. JSON parsing, dashboard refresh, health, and generated-currentness had passed, the exact eight-path union remained preserved, both trailing-space pairs remained unchanged, and local, cached, and live `main` remained `ac5361e5b2be55356538ae44b28127ce0fc19097`.
+
+Codex Desktop may record active 5N-R2 inside the same eight-path package; use `.phaseTasks[]` for the task assertion; remove only the four known whitespace bytes; stage only the same eight paths; run the corrected verification bundle once; and, only if it passes, commit as `Record optional Phase 5 disposition [skip actions]`, non-force push detached `HEAD:main`, prove exact live alignment and zero workflows, checks, statuses, or deployments, and stop. Every other path, repair, retry, product or parked-task action, phase transition, successor, provider, production, parent, protected-data, delegation, second-opinion, rebase, force-push, and conflict-resolution action remains excluded. Any new failure or drift stops without another repair or retry.
+
+### 2026-07-28 — Authorize exact 5N-R whitespace recovery and durability resume
+
+The first 5N verification pass stopped before commit or push because the exact staged eight-path package contained two Markdown hard-break trailing-space pairs on lines 3 and 4 of the new 5N log. All other baseline and scope conditions remain preserved at `ac5361e5b2be55356538ae44b28127ce0fc19097`.
+
+Ryan authorized one exact recovery: record 5N-R inside the existing package; remove only those four whitespace bytes; restage only the log for that normalization; run the original verification once; and, only if it passes, commit the unchanged eight paths as `Record optional Phase 5 disposition [skip actions]`, non-force push detached `HEAD:main`, and prove exact live alignment plus zero workflows, checks, statuses, or deployments. Any new failure or drift stops the block without another repair, retry, rebase, force push, conflict resolution, path expansion, or sequel.
+
+### 2026-07-28 — Complete 5N optional-work disposition and preserve transition readiness
+
+Required Phase 5 work is complete. Task 2.2 (`P5-T22`) remains parked under Ryan's explicit Luxe Legacy setup and 5D hold; Task 2.7 (`P5-T27`) remains parked as a future information-architecture slice; and Task 2.8 (`P5-T28`) remains parked as a future offline-truth and retry-feedback slice. None was reopened or implemented. Phase 5 required-work completion is reported at 100% with optional parked work shown separately.
+
+The stale 5M milestone, pending Task 4 durability gate, release sequence, and handoff remaining-gate text are reconciled. Phase 5 remains active and Task 2 remains the sole current transition gate because the command-center contract requires exactly one active phase and current task. 5N does not invent Phase 6 or choose the next objective. The exact eight-path command-center package closes in the containing `Record optional Phase 5 disposition [skip actions]` commit only after live-main alignment and zero workflows, checks, statuses, or deployments pass. No successor starts automatically.
+
+### 2026-07-28 — Confirm 5N optional-parked Phase 5 disposition and transition readiness
+
+Ryan confirmed the exact proposed 5N scope. Codex Desktop may preserve the clean detached target baseline at `ac5361e5b2be55356538ae44b28127ce0fc19097`; write and verify active 5N; retain Tasks 2.2 (`P5-T22`), 2.7 (`P5-T27`), and 2.8 (`P5-T28`) as optional parked work without reopening them; report required Phase 5 work as complete while preserving Phase 5 as the sole active phase and Task 2 as the sole current transition gate; correct stale 5M-era milestone, release-evidence, and release-handoff statements; add one sanitized 5N log; verify the exact command-center-only package; commit it as `Record optional Phase 5 disposition [skip actions]`; non-force push detached `HEAD:main`; prove exact live-main alignment and zero workflows, checks, statuses, or deployments; and stop.
+
+Task 2.2 or 5D implementation or reopening; Task 2.7 information-architecture implementation; Task 2.8 service-worker, offline-copy, retry, or PWA implementation; reruns of Tasks 1, 3, 4, or completed Task 2 children; Phase 5 closure; Phase 6 creation; next-direction selection; product, test, workflow, dependency, configuration, database, authentication, financial-data, provider, Fly, Plaid, production-health, parent-project, delegation, second-opinion, force-push, rebase, conflict-resolution, repair, retry, protected-data, and unrelated-path work remain excluded. Any baseline, path, sensitive-content, JSON, dashboard, health, currentness, required-versus-optional accounting, staging, commit, push, live-remote, or zero-workflow drift triggers a stop without expansion.
+
 ### 2026-07-28 — Complete 5M final target and parent durability closeout
 
 The exact parent package is committed and pushed on parent `main` as `391debe28ea58349c65312eeb0987e9b516babd9`. It contains only the sanitized Expense Tracker pointer and reusable closeout lesson. Parent command-center health, agent-router health, JSON, generated-state equality, whitespace, sensitive-content, exact-path, commit-ancestry, clean-worktree, cached-ref, and live-ref checks passed, and the parent repository has no configured GitHub workflows.
