@@ -2,27 +2,169 @@
 
 ## Active Objective
 
-Resolve the failed-safe OpenRouter Broadcast boundary before any Ask Opus release decision.
+Decide the disposition of optional parked Phase 5 work after completing the final target-repo and parent-project durability closeout.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 50%. Tasks 4.1-4.2 are complete through 5G-R2 and 5H-R. The exact Ask and operator package is durable and hosted-verified on clean draft PR #91 with zero deployment. The 5H-PV observation completed failed-safe: required logging and use controls were off, but an enabled Broadcast trace control keeps Task 4.3 current and decision-needed while remediation, merge, deployment, production, and final closeout remain separate.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 75%. Tasks 1, 3, and 4 are done; Task 4.5 and final target-plus-parent durability are complete through 5M. Task 2 is the sole current planning task because optional Tasks 2.2, 2.7, and 2.8 remain parked and require a separate disposition decision before Phase 5 closure.
 
 ## Current Work Block
 
-Work block 5H-PV — OpenRouter Account Privacy Verification — is complete with a failed-safe release gate.
+Work block 5M — Final Target and Parent Durability Closeout — is done through the containing target `[skip actions]` publication. No successor work block is active.
 
 ## Current Task
 
-Phase 5 Task 4.3 (`P5-T43`) — verify protected OpenRouter account controls; current and decision-needed because enabled Broadcast remains unreviewed.
+Phase 5 Task 2 (`P5-T2`) — decide the disposition of optional parked Tasks 2.2, 2.7, and 2.8 before Phase 5 closure; current planning.
 
 ## Owner
 
-Ryan owns every Broadcast inspection or setting-change decision and every merge, deployment, production, Task 4.4-4.5, and expansion decision. Codex Desktop completed the constrained read-only observation and owns no remediation or sequel without confirmation.
+Ryan owns the optional-work and Phase 5 closure decision. Codex Desktop owns bounded 5N planning, Runway OS stewardship, and verification.
 
 ## Current Action
 
-Request a fresh target-specific Broadcast-boundary proposal. Task 4.4 remains closed until a later block establishes whether a destination is configured, what request-trace fields can be transmitted, and whether remediation is required. No provider inspection, setting change, PR action, merge, deployment, production, health, or protected-data action is active.
+Define a separately confirmable `5N — Optional-Parked Phase 5 Closeout Decision` for Tasks 2.2, 2.7, and 2.8 planning only. No parked-task implementation, Phase 5 closure, product work, provider work, production action, or successor execution is active.
+
+## Work Block 5M Result
+
+- The exact two-path parent pointer package is committed and pushed on parent `main` as `391debe28ea58349c65312eeb0987e9b516babd9`.
+- The parent recovery restored only the two generated timestamp/currentness files to parent `HEAD`; parent command-center health, router health, JSON, generated-state equality, whitespace, sensitive-content, exact-path, commit-ancestry, clean-worktree, cached-ref, and live-ref checks passed without rerunning the mutating refresh command.
+- The target closeout is limited to the exact twelve command-center paths recorded in `command-center/logs/2026-07-28-phase-5-target-parent-durability-closeout-5m.md`.
+- The containing target commit uses `Complete target and parent durability closeout [skip actions]`; exact live-main alignment and zero workflow, check, and deployment results are required post-push conditions.
+- 5M, Task 4.5, and Task 4 are done when those post-push conditions pass. Phase 5 remains active at 75%, Task 2 becomes the sole current planning task, and Tasks 2.2, 2.7, and 2.8 remain parked.
+- No product, test, workflow mutation, provider, production, database, financial-data, protected-data, delegation, second-opinion, Phase 5 closure, or parked-task implementation occurred.
+
+## Confirmed 5M Recovery And Resume
+
+- The first parent verification pass revealed that `node command-center/scripts/refresh-dashboard.js --check` refreshes the parent `state.json` and generated dashboard instead of acting as a check-only command.
+- That produced two excluded unstaged timestamp/currentness paths, so 5M stopped before any commit or push.
+- Ryan confirmed the exact recovery: restore only parent `command-center/state.json` and `command-center/index.html` byte-for-byte to parent `HEAD`; retain the approved staged pointer and closeout artifact; reverify the parent package without invoking the mutating refresh command; then resume 5M.
+- No other cleanup, parent state change, scope expansion, retry path, product work, or successor is authorized. Any further drift or failure triggers another stop.
+
+## Confirmed Work Block 5M
+
+- Status: done through the containing target publication and its required post-push conditions.
+- Name: Final Target and Parent Durability Closeout.
+- Include Task 4.5 (`P5-T45`) only.
+- Preserve target detached `HEAD` and cached `origin/main` at `ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7`, the empty real index, and the exact eleven-path local closeout.
+- Revalidate the clean parent `main` baseline at `8ec40dfda5f2c994cc0ea161c832828262626fec`.
+- Add only the sanitized Expense Tracker pointer in `scratch-projects/README.md` and the compact reusable parent closeout artifact `command-center/existing-projects/expense-tracker-phase-5-durability-closeout-2026-07-28.md`; verify, explicitly stage, commit, and non-force push those two paths to parent `main`.
+- Add one target 5M closeout log and complete the exact twelve-path target command-center package: the existing eleven paths plus `command-center/logs/2026-07-28-phase-5-target-parent-durability-closeout-5m.md`.
+- Mark 5M, Task 4.5, and Task 4 done only after the parent publication passes. Keep Phase 5 active at 75%, make Task 2 the sole current planning task, and keep Tasks 2.2, 2.7, and 2.8 parked.
+- Commit the target package as `Complete target and parent durability closeout [skip actions]`; non-force push detached `HEAD:main`; prove exact remote alignment and zero target workflows, checks, or deployments; and stop.
+- Exclude Tasks 2.2, 2.7, and 2.8 implementation or reopening; Tasks 4.1 through 4.4 reruns; Phase 5 closure or next-direction selection; product, test, workflow, dependency, configuration, database, authentication, financial-data, provider, Fly, Plaid, production-health, PR, merge, manual-workflow, force-push, rebase, conflict-resolution, delegation, second-opinion, protected-data, and unrelated-path work.
+- Use the generic parent pointer and lesson without mutable child-state duplication or financial detail. Publish parent first so the final target closeout can record the exact parent commit.
+- Stop without repair, retry, rebase, force push, or expansion for target or parent ref, index, cleanliness, or path drift; unexpected or sensitive content; failed JSON, dashboard, health, currentness, whitespace, phase/task, staging, commit, remote, or parent-policy verification; push rejection; live-remote uncertainty; or any target workflow, check, or deployment starting.
+- Recovery addendum: Ryan separately authorized one exact restoration of the two parent generated timestamp/currentness files to parent `HEAD`, retention of the approved staged two-path package, verification without the mutating parent refresh command, and continuation of 5M. This does not waive any later stop condition.
+- Verify target and parent exact baselines, explicit staged paths and diffs, JSON, dashboard refresh/currentness/health, parent router health, whitespace, sanitized content, commit ancestry, live remote SHAs, empty final indexes, the target exact twelve-path package, the parent exact two-path package, Phase 5 at 75%, Task 4 and Task 4.5 done, Task 2 sole current, parked tasks unchanged, and zero target workflows, checks, and deployments.
+- Report both commit SHAs and push results, exact path packages, zero-workflow proof, final phase/task state, preserved exclusions, and the separate next 5N planning decision.
+- Suggested next block: `5N — Optional-Parked Phase 5 Closeout Decision` for Tasks 2.2, 2.7, and 2.8 planning only. No successor starts automatically.
+- Result: the exact parent package is durable at `391debe28ea58349c65312eeb0987e9b516babd9`; the exact twelve-path target closeout is carried by its containing `[skip actions]` commit; Phase 5 remains active at 75%; Task 2 is the sole current planning task; optional Tasks 2.2, 2.7, and 2.8 remain parked.
+
+## Work Block 5H-BR2 Result
+
+- Ryan returned the exact approved successful outcome after one Broadcast toggle and one reload.
+- Broadcast was disabled immediately and remained disabled after the reload.
+- Ryan attested that no other setting changed and no broader confirmation was accepted.
+- No screenshot or destination-specific detail entered chat or tracked evidence.
+- After a separate direct Ryan request, Codex opened the exact OpenRouter Observability URL in a fresh Chrome tab but did not inspect page content or interact with any provider control. Ryan remained the sole Broadcast operator and provider-state observer.
+- No destination, test trace, other provider setting, GitHub, workflow, Fly, production, Plaid, database, product, test, configuration, commit, push, parent action, delegation, or second opinion occurred.
+- 5H-BR2 and Task 4.3 are done locally. Task 4.4 remains done. Task 4.5 is the sole current planning task. Phase 5 remains active and no successor work block started.
+- Evidence: `command-center/logs/2026-07-28-openrouter-broadcast-human-attestation-5h-br2.md`.
+
+## Confirmed Work Block 5H-BR2
+
+- Status: done locally.
+- Name: Ryan-Performed Broadcast Disablement and Value-Free Persistence Attestation.
+- Include Task 4.3 (`P5-T43`) only.
+- Preserve detached `HEAD` and cached `origin/main` at `ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7`, the empty real index, and the existing ten-path local 5H-BR closeout.
+- Codex writes and verifies active Runway OS, then performs no browser, Chrome, Computer Use, screenshot, DOM, console, log, or OpenRouter inspection.
+- Ryan directly establishes the exact OpenRouter account and Default Workspace containing The Ledger production API key without sharing protected values.
+- Ryan visually identifies only the Broadcast switch. If enabled, toggle it off exactly once and accept a confirmation only when limited exactly to disabling Broadcast in the current workspace. If already disabled, make no provider change.
+- Ryan verifies disabled state immediately, reloads exactly once, verifies Broadcast remains disabled, and reports only one approved value-free outcome phrase.
+- Retain the configured destination untouched. Do not send screenshots or report destination name, type, URL, endpoint, credentials, identifiers, Privacy Mode, filtering, sampling, traces, prompts, completions, generations, logs, keys, billing, or financial data.
+- Exclude Task 4.4 action, Task 4.5, parked Task 2 work, every provider request or test trace, every other OpenRouter setting, GitHub, workflow, Fly, production, Plaid, database, product, test, configuration, commit, push, parent action, delegation, second opinion, and every unrelated path.
+- Stop without retry if exact account or production-key workspace cannot be established; the workspace or Broadcast control is missing, duplicated, ambiguous, or unreadable; disabling requires destination interpretation or action; a confirmation is broader than exact Broadcast disablement; authentication or the page is interrupted after the toggle; the one toggle does not clearly disable Broadcast; the one reload shows Broadcast enabled; another setting changes; a screenshot or destination-specific report would be required; or local ref, index, path, JSON, dashboard, currentness, health, whitespace, sensitive-data, or scope verification fails.
+- Successful outcome phrase after one toggle: `Broadcast disabled after one toggle and remained disabled after one reload; no other setting changed and no broader confirmation was accepted.`
+- Successful outcome phrase when already disabled: `Broadcast was already disabled and remained disabled after one reload; no setting changed.`
+- Stop phrase: `Stopped before completion; provider state is uncertain and no retry occurred.`
+- Closeout: if Ryan returns either successful outcome, mark 5H-BR2 and Task 4.3 done, keep Task 4.4 done, and make Task 4.5 the sole current planning task while keeping Phase 5 active. If Ryan returns the stop phrase or any uncertainty, mark 5H-BR2 stopped, retain Task 4.3 current and decision-needed, keep Task 4.5 planned, activate no successor, and report the stop.
+- Evidence target: `command-center/logs/2026-07-28-openrouter-broadcast-human-attestation-5h-br2.md`.
+
+## Work Block 5H-BR Result
+
+- Ryan safely attested that the authenticated OpenRouter account was exact and Default Workspace contained The Ledger production API key.
+- The expected authenticated Observability page loaded.
+- The Broadcast switch remained enabled.
+- Exactly one generic configured-destination section was present.
+- Before any setting interaction, the ordinary read-only page representation exposed destination-specific configuration details that the confirmed block prohibited inspecting or retaining.
+- The protected-detail exposure triggered the stop condition. No destination-specific detail is repeated or retained.
+- No Broadcast toggle, confirmation, destination opening or edit, reload after mutation, retry, provider request, test trace, stored-trace inspection, other setting change, production request, GitHub action, commit, push, Task 4.5, parent action, delegation, or second opinion occurred.
+- 5H-BR stopped before mutation. Task 4.3 remains current and decision-needed; Task 4.4 remains done; Task 4.5 remains planned.
+- Evidence: `command-center/logs/2026-07-28-openrouter-broadcast-disablement-5h-br.md`.
+
+## Confirmed Work Block 5H-BR
+
+- Name: OpenRouter Broadcast Disablement and Persistent-State Verification.
+- Include Task 4.3 (`P5-T43`) only.
+- Preserve detached `HEAD` and cached `origin/main` at `ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7`, the empty real index, and the existing nine-path local 5H-BV closeout.
+- Ryan directly attests, without sharing credentials, MFA values, keys, or identifiers, that the authenticated OpenRouter account is exact and Default Workspace contains The Ledger production API key.
+- Revalidate only the Broadcast switch and the generic configured-destination count. If Broadcast is already disabled, make no mutation and verify persistence after one reload. If enabled, toggle only Broadcast at most once; accept only an exact disable-Broadcast confirmation for the current workspace; verify disabled immediately and after exactly one reload.
+- Retain the configured destination untouched and unopened. Do not inspect or change destination name, type, URL, endpoint, credentials, identifiers, Privacy Mode, filtering, sampling, traces, prompts, completions, generations, logs, or billing.
+- Exclude Task 4.4 action, Task 4.5, parked Task 2 work, every provider request or test trace, every other OpenRouter setting, GitHub, workflow, Fly, production, Plaid, database, product, test, configuration, commit, push, parent action, delegation, second opinion, and every unrelated path.
+- Stop without retry if exact account or production-key workspace cannot be attested; the control or provider state is missing, ambiguous, multiple, or materially drifted; a broader confirmation or destination action is required; browser control or authentication is interrupted after the toggle; the one toggle does not disable Broadcast; the one reload shows Broadcast enabled; protected content appears; or local ref, index, path, JSON, dashboard, currentness, health, whitespace, sensitive-data, or scope verification fails.
+- Closeout: if immediate and persistent disabled-state verification passes, mark 5H-BR and Task 4.3 done and make Task 4.5 the sole current planning task while keeping Task 4.4 done and Phase 5 active. If the result is failed or ambiguous, retain Task 4.3 current and decision-needed, keep Task 4.5 planned, activate no successor, and report the stop.
+- Evidence target: `command-center/logs/2026-07-28-openrouter-broadcast-disablement-5h-br.md`.
+
+## Work Block 5H-BV Result
+
+- Ryan directly attested that the authenticated OpenRouter session was the account owning The Ledger production API key; no credential, MFA value, key, or account identifier was shared.
+- The current Broadcast switch was enabled.
+- The Broadcast section displayed exactly one generic `Configured` marker, supporting a `configured-active` classification at the observed Default Workspace surface.
+- Current official OpenRouter documentation states that enabled Broadcast sends traces to configured destinations. Generic eligible categories include request and response content, token usage, cost, timing, model and provider information, tool activity, and optional user, session, or custom trace metadata when supplied.
+- Per-destination Privacy Mode can remove prompt and completion content while retaining the other categories. Privacy Mode, API-key filtering, and sampling were not visible in the safe summary and were not opened.
+- The released Ask route supplies system and current-user message content, including the approved active-entity page summary and question, but does not supply optional Broadcast user, session, or custom trace fields. Its per-request ZDR and data-collection denial do not disable the separate Broadcast path.
+- No destination value, stored trace, prompt, completion, generation, provider request, test event, setting change, production request, GitHub action, commit, push, Task 4.5, or parent action occurred.
+- 5H-BV is complete locally. Task 4.3 remains current and decision-needed; Task 4.4 remains done; Task 4.5 remains planned.
+- Evidence: `command-center/logs/2026-07-28-openrouter-broadcast-boundary-evidence-5h-bv.md`.
+
+## Confirmed Work Block 5H-BV
+
+- Name: OpenRouter Broadcast Boundary Evidence.
+- Include Task 4.3 (`P5-T43`) only.
+- Preserve detached `HEAD` and cached `origin/main` at `ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7`, the empty real index, and the existing eight-path local 5H-R2 closeout.
+- Ryan authenticates directly and attests that the session is the account owning The Ledger production API key; no credential or MFA value enters chat.
+- Revalidate Broadcast enabled or disabled state. If enabled, inspect only read-only configuration summaries and current official provider descriptions sufficient to classify destination presence, integration activity, and generic trace-field categories eligible for transmission.
+- Record destination state only as `none`, `configured-inactive`, `configured-active`, or `indeterminate`; record generic field categories only, never destination values or actual trace content.
+- If Broadcast is disabled, stop provider inspection without opening destination details. If enabled, return evidence and a remediation recommendation without changing state.
+- Exclude every setting change, disablement, destination deletion, integration repair, test event, provider request, stored trace, log, prompt, completion, generation, actual payload, key, credential, account identifier, destination value, billing or credit surface, financial data, Task 4.4 action, Task 4.5, parked Task 2 work, GitHub, workflow, Fly, production, Plaid, database, product, test, configuration, commit, push, parent action, delegation, and second opinion.
+- Stop if exact-account ownership is unavailable; evidence requires mutation, a test request, stored traces, or unavoidable protected-value capture; the provider state is ambiguous or contradictory; or local baseline, path, index, JSON, dashboard, whitespace, sensitive-data, or scope verification fails.
+- Closeout: if Broadcast is disabled, mark Task 4.3 done and make Task 4.5 current. If Broadcast is enabled or evidence is inconclusive, keep Task 4.3 current and decision-needed and keep Task 4.5 planned. Use automated dashboard verification and stop local-only without commit or push.
+
+## Work Block 5H-R2 Result
+
+- Live GitHub `main` revalidated at exact release SHA `ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7`.
+- The release has sole parent `257bec901e88b830fcafe6067c8174cd6a5213b6`, is exactly one commit ahead and zero behind, and changes exactly the nine approved command-center paths.
+- GitHub classified PR #91 closed and merged; its recorded head and merge SHA are both `257bec901e88b830fcafe6067c8174cd6a5213b6`; 5H-R2 made no PR mutation.
+- Exactly one automatic push-event `Fly Deploy` run exists for the release SHA: run `30350587286`.
+- Deploy job `90246858468` and every returned step completed successfully with zero annotations.
+- The one authorized credential-free `https://ledger-oak.fly.dev/health` request returned HTTP 200 with sanitized `status: ok`.
+- No retry, repair, rollback, commit, push, PR or workflow mutation, Fly administration, OpenRouter access, Broadcast inspection, protected data, financial data, Task 4.5, parent action, delegation, or second opinion occurred.
+- Task 4.4 is done. Task 4.3 remains current and decision-needed because Broadcast destination, active integration, and transmitted fields remain unknown. Task 4.5 remains planned.
+- The closeout is local-only and uncommitted.
+- Evidence: `command-center/logs/2026-07-28-ask-exact-main-deployment-observation-5h-r2.md`.
+
+## Confirmed Work Block 5H-R2
+
+- Name: Ask Exact-Main Deployment Observation and Release Closeout.
+- Include Task 4.4 (`P5-T44`) only.
+- Preserve exact local head, cached `origin/main`, and local `codex/ask-opus-privacy` at `ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7`; require parent `257bec901e88b830fcafe6067c8174cd6a5213b6`; and require the intervening release delta to remain exactly nine command-center paths.
+- Revalidate live `main` read-only; inspect PR #91's resulting state and exactly one automatic push-event Fly Deploy for the exact release SHA; require every job and step successful with zero annotations and no duplicate deployment.
+- Make exactly one credential-free production `/health` request after deployment evidence passes; require HTTP 200 and sanitized `status: ok`.
+- Update only sanitized Runway OS release evidence, handoff, state, generated dashboard, and one 5H-R2 log; close locally without commit or push.
+- Keep Task 4.3 current and decision-needed after closeout because Broadcast destination, active integration, and transmitted fields remain unknown; keep Task 4.5 planned.
+- Exclude Task 4.3 provider inspection or remediation, Task 4.5, OpenRouter access or mutation, product/test/workflow/configuration/database changes, workflow dispatch/rerun/cancellation, Fly administration, PR mutation, rollback, repair, another commit or push, protected or financial data, parked Task 2 work, parent updates, delegation, and second opinion.
+- Stop without retry or repair on ref, ancestry, nine-path delta, workflow event, exact-SHA, deployment-count, job, step, annotation, health, protected-data, mutation, path, preservation, JSON, dashboard, whitespace, sensitive-data, or scope drift.
+- Routine dashboard activation and closeout use automated currentness and health verification; no Ryan visual attestation is required.
 
 ## Work Block 5H-PV Result
 

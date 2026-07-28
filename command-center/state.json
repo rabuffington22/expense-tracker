@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-28 5:23 AM CDT",
+    "lastUpdated": "2026-07-28 10:38 AM CDT",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -22,70 +22,71 @@
     "localGit": "required",
     "githubRemote": "https://github.com/rabuffington22/expense-tracker.git",
     "parentTracking": "pointer-only",
-    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R all eight application-style clusters are durable deployed and health verified through 4AZ-R Tasks 1P.4.3b.1 through 1P.4.3b.2 policy artifacts are durable through 4BA-R Task 1P.4.4 is durable deployed and health verified through 4BB-R Task 1P.6 is durable without deployment through 4BD-R Tasks 1P.7.1-1P.7.4 are durable without deployment through 4BE-R 4BF-R and 4BI-R Tasks 3.1-3.2 are durable without deployment through 4BJ-R and Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R"
+    "durabilityStatus": "Task 1P.4.2 is durable through 4AR-R all eight application-style clusters are durable deployed and health verified through 4AZ-R Tasks 1P.4.3b.1 through 1P.4.3b.2 policy artifacts are durable through 4BA-R Task 1P.4.4 is durable deployed and health verified through 4BB-R Task 1P.6 is durable without deployment through 4BD-R Tasks 1P.7.1-1P.7.4 are durable without deployment through 4BE-R 4BF-R and 4BI-R Tasks 3.1-3.2 are durable without deployment through 4BJ-R Tasks 3.3.1-3.3.2 are durable without deployment through 4BL-R and final Phase 5 target-plus-parent durability closes through 5M with parent commit 391debe28ea58349c65312eeb0987e9b516babd9 and the containing target skip-actions commit"
   },
   "phase": {
     "name": "UX Polish, Operations, And Durable Handoff",
     "status": "active",
-    "summary": "Phase 5 is active at fifty percent. Tasks 4.1 and 4.2 are complete through 5G-R2 and 5H-R. The Ask and operator package is durable and hosted verified on clean draft PR 91 with zero deployment. Completed 5H-PV found required logging and use controls off but enabled Broadcast keeps Task 4.3 current and decision-needed while remediation merge deployment production and final closeout remain separate.",
-    "progress": 50
+    "summary": "Phase 5 is active at seventy-five percent. Tasks 1 3 and 4 are done and final target-plus-parent durability is complete through 5M. Task 2 is the sole current planning task because optional Tasks 2.2 2.7 and 2.8 remain parked and require a separate disposition decision before phase closure.",
+    "progress": 75
   },
   "currentTask": {
-    "title": "Task 4.3: Verify protected OpenRouter account controls",
+    "title": "Task 2: Polish high-friction journeys",
     "owner": "Ryan",
-    "status": "decision-needed",
-    "supportingAgent": "Codex completed the constrained read-only 5H-PV observation and stopped without opening Broadcast destinations or changing state.",
-    "nextAction": "Request a fresh target-specific Broadcast-boundary proposal before any Ask Opus release planning.",
-    "blocker": "OpenRouter Broadcast is enabled and its destination active integration and transmitted trace fields remain unknown; Task 4.4 stays closed."
+    "status": "current",
+    "supportingAgent": "Codex Desktop owns bounded 5N planning Runway OS stewardship and verification.",
+    "nextAction": "Define and confirm a separate 5N planning block for Tasks 2.2 2.7 and 2.8 disposition before any implementation or Phase 5 closure.",
+    "blocker": "Optional parked-work disposition and Phase 5 closure remain separate Ryan decisions; no successor work block is active."
   },
   "currentWorkBlock": {
-    "id": "phase-5-block-h-pv",
+    "id": "phase-5-block-m",
     "phaseId": "phase-5",
-    "label": "5H-PV",
-    "name": "OpenRouter Account Privacy Verification",
+    "label": "5M",
+    "name": "Final Target and Parent Durability Closeout",
     "status": "done",
     "includedTasks": [
-      "Task 4.3 P5-T43 only",
-      "Ryan-controlled authentication and exact-account attestation without credential or MFA sharing",
-      "Read-only observation of Use of Inputs and Outputs Private Input and Output Logging paid-provider policy and Anthropic account-level ZDR with sanitized evidence"
+      "Task 4.5 P5-T45 only",
+      "Exact two-path sanitized parent pointer and reusable closeout artifact publication",
+      "Exact twelve-path target command-center closeout publication with skip-actions and zero-workflow proof"
     ],
     "excludedTasks": [
-      "Every provider setting change API key secret identifier billing credit generation prompt completion log content provider request and real financial question",
-      "Tasks 4.4 through 4.5 PR 91 mutation ready transition merge workflow action deployment production health application Fly Plaid and parent work",
-      "Delegation second opinion parked Task 2 work and the three preserved unrelated files"
+      "Tasks 2.2 2.7 and 2.8 implementation or reopening Tasks 4.1 through 4.4 reruns and Phase 5 closure or next-direction selection",
+      "Product test workflow dependency configuration database authentication financial provider Fly Plaid production-health PR merge or manual-workflow work",
+      "Force push rebase conflict resolution retry delegation second opinion protected data and unrelated paths"
     ],
-    "recommendedAgent": "Ryan authenticated handoff plus Codex Desktop read-only inspection",
-    "whyThisAgent": "Ryan must retain credentials MFA and account identity while Codex can inspect the bounded provider UI state and steward sanitized evidence without delegation.",
-    "runnerPath": "Record active state preserve the exact local baseline receive Ryan's safe authenticated handoff inspect only four account controls without mutation classify the result close automatically when supported and stop.",
+    "recommendedAgent": "Codex Desktop",
+    "whyThisAgent": "The block requires exact two-repository orchestration parent-boundary stewardship explicit-path publication zero-workflow proof and Runway OS closeout.",
+    "runnerPath": "Verify exact target baseline record and verify active 5M revalidate live and cached parent baseline create and verify exactly two sanitized parent paths explicitly commit and push parent main write target closeout and final state explicitly commit exact twelve target paths with skip-actions push detached HEAD to main verify live alignment and zero workflows checks and deployments report and stop.",
     "expectedFiles": [
-      "OpenRouter Privacy and Observability settings read-only",
-      "Command-center now roadmap decisions state generated dashboard release evidence release handoff and one sanitized 5H-PV log",
-      "No product test configuration secret provider-request GitHub deployment production or preserved unrelated path"
+      "Parent scratch-projects README and one command-center existing-projects Expense Tracker closeout artifact",
+      "Target command-center now roadmap decisions state generated dashboard release evidence release handoff four existing July 28 closeout logs and one new 5M log",
+      "No product test workflow provider production database financial or unrelated path"
     ],
     "defaults": [
-      "Use of Inputs and Outputs and Private Input and Output Logging must both be off to pass",
-      "Paid-provider policy and Anthropic account-level ZDR are defense-in-depth context because each Ask request enforces ZDR and denial of data-collecting providers",
-      "Track no screenshot and use automated dashboard activation and closeout without Ryan visual attestation"
+      "Use a generic parent pointer and reusable lesson without financial detail or mutable child-state duplication",
+      "Publish parent first and target second using direct non-force target HEAD to main with skip-actions",
+      "Leave Phase 5 active at seventy-five percent make Task 2 sole current keep Tasks 2.2 2.7 and 2.8 parked and run no product smoke or browser session"
     ],
     "stopConditions": [
-      "Ryan cannot attest the account owns The Ledger production key or required administrative visibility is unavailable",
-      "A required control is enabled ambiguous hidden or inspection requires sensitive content mutation or a provider request",
-      "Any unexpected local path branch head index preserved-hash dashboard sensitive-data or scope failure"
+      "Target or parent ref cleanliness index or expected-path drift unexpected or sensitive content or a parent pointer that requires detailed child state",
+      "JSON dashboard currentness health parent-router whitespace phase-task staging commit remote or exact-scope verification fails",
+      "A push is rejected or requires force rebase conflict resolution another commit or retry live remote cannot be verified or any target workflow check or deployment starts"
     ],
     "verification": [
-      "Exact Ryan account attestation without secret exposure and direct state observation for all four named controls",
-      "No mutation provider request key log billing or protected value access and sanitized evidence only",
-      "Exact branch head index and preserved hashes JSON automated dashboard currentness health whitespace sensitive and exact-scope checks"
+      "Target exact refs empty index starting eleven paths and parent clean aligned baseline with exact two-path diff staged package commit ancestry checks and live remote alignment",
+      "Target exact twelve-path diff staged package valid JSON dashboard refresh currentness health whitespace sensitive-content commit ancestry and live remote alignment",
+      "Phase 5 seventy-five percent Tasks 4 and 4.5 done Task 2 sole current parked tasks unchanged zero target workflows checks and deployments and empty final indexes"
     ],
-    "nextReportPoint": "Returned exact sanitized states and the failed-safe Broadcast stop; Task 4.4 is not ready and separate provider evidence or remediation is required.",
-    "durability": "Protected read-only account observation only; settings mutation provider request release merge deployment production and every later Task 4 action remain unauthorized.",
+    "nextReportPoint": "Return both commit SHAs and push results exact path packages zero-workflow proof final phase and task state preserved boundaries and the separate next 5N planning decision.",
+    "recoveryAuthorization": "After the first parent verification pass stopped before commit or push because refresh-dashboard with check rewrote two excluded generated timestamp-currentness paths Ryan authorized one exact restoration of parent state and index to parent HEAD retention and reverification of the approved staged two-path package without rerunning the mutating refresh command and continuation of 5M. Every later stop condition remains unchanged.",
+    "durability": "Parent exact two-path package is durable at 391debe28ea58349c65312eeb0987e9b516babd9 and the exact twelve-path target closeout is carried by the containing skip-actions commit with post-push live-alignment and zero-workflow conditions.",
     "evidence": [
-      "command-center/logs/2026-07-28-openrouter-account-privacy-verification-5h-pv.md",
+      "command-center/logs/2026-07-28-phase-5-target-parent-durability-closeout-5m.md",
       "command-center/phase-5-release-evidence-map.md",
       "command-center/phase-5-release-handoff.md"
     ],
-    "owner": "Ryan and Codex Desktop",
-    "result": "Ryan-controlled read-only observation found use of inputs and outputs off Private Input and Output Logging off paid endpoints that train on request data off and Anthropic account-level ZDR off while per-request ZDR remains enforced. An adjacent Broadcast trace control was enabled so 5H-PV stopped failed-safe without opening destinations or changing state. Task 4.3 remains current and decision-needed and Task 4.4 is not ready."
+    "owner": "Codex Desktop",
+    "result": "The first parent pass stopped safely on excluded generated timestamp-currentness drift. Ryan authorized one exact recovery only those two generated parent files were restored and the approved two-path parent package passed all checks then committed and pushed as 391debe28ea58349c65312eeb0987e9b516babd9. The exact twelve-path target package closes in the containing skip-actions commit. Phase 5 remains active at seventy-five percent Task 2 becomes the sole current planning task Tasks 2.2 2.7 and 2.8 remain parked and no successor starts."
   },
   "routerHealth": {
     "status": "healthy",
@@ -110,36 +111,30 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Request a bounded OpenRouter Broadcast-boundary proposal",
-    "status": "decision-needed",
+    "title": "Plan optional parked Phase 5 work disposition",
+    "status": "planning",
     "owner": "Ryan",
-    "why": "5H-PV completed the four-control observation but enabled Broadcast creates an unreviewed external request-trace path.",
-    "action": "Confirm a separate protected block to establish whether a Broadcast destination is configured and what fields are transmitted before deciding on remediation.",
+    "why": "5M completed Task 4 while optional Tasks 2.2 2.7 and 2.8 remain parked and should not make the required Phase 5 work appear incomplete.",
+    "action": "Define and confirm one bounded 5N planning block before implementing parked work or closing Phase 5.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
     {
-      "decision": "Authorize 5G-R2 merge and production release after clean hosted review",
-      "status": "later Ryan decision",
-      "whyItMatters": "5G-R stops with a clean draft PR and cannot merge or deploy without a separate exact release block.",
-      "workaround": "Retain the verified draft PR and feature branch without merging."
-    },
-    {
-      "decision": "Authorize a bounded OpenRouter Broadcast evidence or remediation block before Task 4.4",
-      "status": "later Ryan decision",
-      "whyItMatters": "Enabled Broadcast may send request traces externally and its destination and payload remain outside the completed observation.",
-      "workaround": "Keep PR 91 open draft and Ask Opus unused with real financial questions."
+      "decision": "Decide the Phase 5 disposition of optional parked Tasks 2.2 2.7 and 2.8",
+      "status": "current Ryan planning decision",
+      "whyItMatters": "Required Phase 5 work is complete while the optional parked items need an explicit retain park reopen or move-later classification before phase closure.",
+      "workaround": "Keep Phase 5 active at seventy-five percent with Task 2 current and no parked-task implementation."
     }
   ],
   "waitingOnRyan": {
-    "summary": "Task 4.3 waits for a separate Broadcast-boundary decision after completed failed-safe 5H-PV.",
+    "summary": "Task 2 is current in planning and waits for a separately proposed and confirmed 5N optional-work disposition block.",
     "items": [
-      "Request or confirm a bounded OpenRouter Broadcast evidence or remediation proposal."
+      "Review and confirm the bounded 5N planning proposal before any parked-task implementation or Phase 5 closure."
     ]
   },
   "questionBoundaries": {
     "phaseQuestions": "Tasks 1.1 through 1.4 Task 2.1 Task 2.3 Task 2.4 Task 2.5 and Task 2.6 are complete with Task 2.4 branch-durable and hosted-verified through 5G-R and Task 2.5 complete locally through 5H-B; Task 2.2 and 5D remain parked.",
-    "decisionQueue": "Task 4.2 and 5H-R are complete; 5H-PV completed failed-safe and Task 4.3 remains current for a Broadcast-boundary decision while Tasks 4.4 through 4.5 merge deployment production parked Task 2 work and final closeout remain separate gates.",
+    "decisionQueue": "Task 4 and Task 4.5 are complete through 5M; Task 2 is the sole current planning gate while optional Tasks 2.2 2.7 and 2.8 remain parked and Phase 5 closure remains separate.",
     "waitingScheduled": "Luxe Legacy setup and the Task 2.2 and 5D path are parked until Ryan explicitly reopens them."
   },
   "agents": [
@@ -198,6 +193,253 @@
     }
   ],
   "phaseWorkBlocks": [
+    {
+      "id": "phase-5-block-m",
+      "phaseId": "phase-5",
+      "label": "5M",
+      "name": "Final Target and Parent Durability Closeout",
+      "status": "done",
+      "includedTasks": [
+        "Task 4.5 P5-T45 only",
+        "Exact two-path sanitized parent pointer and reusable closeout artifact publication",
+        "Exact twelve-path target command-center closeout publication with skip-actions and zero-workflow proof"
+      ],
+      "excludedTasks": [
+        "Tasks 2.2 2.7 and 2.8 implementation or reopening Tasks 4.1 through 4.4 reruns and Phase 5 closure or next-direction selection",
+        "Product test workflow dependency configuration database authentication financial provider Fly Plaid production-health PR merge or manual-workflow work",
+        "Force push rebase conflict resolution retry delegation second opinion protected data and unrelated paths"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block requires exact two-repository orchestration parent-boundary stewardship explicit-path publication zero-workflow proof and Runway OS closeout.",
+      "runnerPath": "Verify exact target baseline record and verify active 5M revalidate live and cached parent baseline create and verify exactly two sanitized parent paths explicitly commit and push parent main write target closeout and final state explicitly commit exact twelve target paths with skip-actions push detached HEAD to main verify live alignment and zero workflows checks and deployments report and stop.",
+      "expectedFiles": [
+        "Parent scratch-projects README and one command-center existing-projects Expense Tracker closeout artifact",
+        "Target command-center now roadmap decisions state generated dashboard release evidence release handoff four existing July 28 closeout logs and one new 5M log",
+        "No product test workflow provider production database financial or unrelated path"
+      ],
+      "defaults": [
+        "Use a generic parent pointer and reusable lesson without financial detail or mutable child-state duplication",
+        "Publish parent first and target second using direct non-force target HEAD to main with skip-actions",
+        "Leave Phase 5 active at seventy-five percent make Task 2 sole current keep Tasks 2.2 2.7 and 2.8 parked and run no product smoke or browser session"
+      ],
+      "stopConditions": [
+        "Target or parent ref cleanliness index or expected-path drift unexpected or sensitive content or a parent pointer that requires detailed child state",
+        "JSON dashboard currentness health parent-router whitespace phase-task staging commit remote or exact-scope verification fails",
+        "A push is rejected or requires force rebase conflict resolution another commit or retry live remote cannot be verified or any target workflow check or deployment starts"
+      ],
+      "verification": [
+        "Target exact refs empty index starting eleven paths and parent clean aligned baseline with exact two-path diff staged package commit ancestry checks and live remote alignment",
+        "Target exact twelve-path diff staged package valid JSON dashboard refresh currentness health whitespace sensitive-content commit ancestry and live remote alignment",
+        "Phase 5 seventy-five percent Tasks 4 and 4.5 done Task 2 sole current parked tasks unchanged zero target workflows checks and deployments and empty final indexes"
+      ],
+      "reportBack": "Return both commit SHAs and push results exact path packages zero-workflow proof final phase and task state preserved boundaries and the separate next 5N planning decision.",
+      "recoveryAuthorization": "After the first parent verification pass stopped before commit or push because refresh-dashboard with check rewrote two excluded generated timestamp-currentness paths Ryan authorized one exact restoration of parent state and index to parent HEAD retention and reverification of the approved staged two-path package without rerunning the mutating refresh command and continuation of 5M. Every later stop condition remains unchanged.",
+      "durability": "Parent exact two-path package is durable at 391debe28ea58349c65312eeb0987e9b516babd9 and the exact twelve-path target closeout is carried by the containing skip-actions commit with post-push live-alignment and zero-workflow conditions.",
+      "evidence": [
+        "command-center/logs/2026-07-28-phase-5-target-parent-durability-closeout-5m.md",
+        "command-center/phase-5-release-evidence-map.md",
+        "command-center/phase-5-release-handoff.md"
+      ],
+      "result": "The first parent pass stopped safely on excluded generated timestamp-currentness drift. Ryan authorized one exact recovery only those two generated parent files were restored and the approved two-path parent package passed all checks then committed and pushed as 391debe28ea58349c65312eeb0987e9b516babd9. The exact twelve-path target package closes in the containing skip-actions commit. Phase 5 remains active at seventy-five percent Task 2 becomes the sole current planning task Tasks 2.2 2.7 and 2.8 remain parked and no successor starts."
+    },
+    {
+      "id": "phase-5-block-h-br2",
+      "phaseId": "phase-5",
+      "label": "5H-BR2",
+      "name": "Ryan-Performed Broadcast Disablement and Value-Free Persistence Attestation",
+      "status": "done",
+      "includedTasks": [
+        "Task 4.3 P5-T43 only",
+        "Codex durable setup and value-free handoff with no browser or provider-page access",
+        "Ryan-controlled exact-account and production-key-workspace establishment one Broadcast toggle maximum exact confirmation boundary immediate disabled-state proof one reload persistent-state proof and one sanitized outcome"
+      ],
+      "excludedTasks": [
+        "Task 4.4 action Task 4.5 and parked Tasks 2.2 2.7 and 2.8",
+        "All Codex browser Chrome Computer Use screenshot DOM console log and OpenRouter inspection plus destination opening interpretation editing deletion or reporting",
+        "Destination values Privacy Mode filtering sampling traces prompts completions generations logs keys identifiers billing provider requests test traces other OpenRouter settings and financial data",
+        "GitHub workflow Fly production Plaid database product test configuration commit push parent action delegation second opinion and unrelated paths"
+      ],
+      "owner": "Ryan and Codex Desktop",
+      "recommendedAgent": "Ryan for the provider action and Codex Desktop for Runway OS stewardship",
+      "whyThisAgent": "Ryan can operate the protected provider surface without transmitting destination details while Codex preserves exact scope captures only a value-free outcome and performs local verification.",
+      "runnerPath": "Capture exact local baseline record and verify active state provide the safe manual handoff initialize no browser tooling have Ryan establish the exact account and production-key workspace operate only Broadcast at most once accept only an exact disable confirmation verify disabled immediately reload once verify persistence return one approved phrase write sanitized evidence close automatically and stop.",
+      "expectedFiles": [
+        "Ryan-only OpenRouter Default Workspace Observability Broadcast switch and exact disable confirmation only if required",
+        "Command-center now roadmap decisions state generated dashboard release evidence release handoff and one sanitized 5H-BR2 log",
+        "No product test workflow configuration database GitHub production parent-project commit push or unrelated path"
+      ],
+      "defaults": [
+        "Ryan performs the provider action manually and Codex performs no provider-page access",
+        "Retain the configured destination untouched use at most one toggle one exact confirmation and one reload and report only one approved value-free outcome",
+        "Use no retry exploratory expansion provider request test trace other setting Task 4.5 commit or push and use automated dashboard verification"
+      ],
+      "stopConditions": [
+        "Exact account or production-key workspace cannot be established or the workspace or Broadcast control is missing duplicated ambiguous or unreadable",
+        "Disabling requires destination interpretation or action a broader confirmation or a screenshot or destination-specific report",
+        "Authentication or the page is interrupted after the toggle the one toggle does not clearly disable Broadcast the one reload shows enabled another setting changes or local baseline path index JSON dashboard currentness health exactly-one-current-task whitespace sensitive-data preservation or scope verification fails"
+      ],
+      "verification": [
+        "Fresh exact account and production-key-workspace establishment without protected values one approved value-free outcome and no more than one Broadcast toggle",
+        "Immediate and one-reload persistent disabled state no broader confirmation other setting destination-specific detail screenshot provider test trace or Codex content inspection with the later direct Ryan request limited to exact-page navigation",
+        "Exact local refs empty index starting ten paths final eleven paths JSON automated dashboard currentness health exactly-one-current-task whitespace sensitive and scope checks"
+      ],
+      "reportBack": "Return the sanitized outcome whether a mutation occurred confirmation scope immediate and persistent state Task 4.3 disposition local paths verification preserved boundaries and the next Ryan decision.",
+      "durability": "Ryan-performed protected one-setting remediation and local Runway OS closeout only; a later direct Ryan request authorized exact-page navigation without inspection or control interaction while destination configuration other settings Task 4.5 parent action commit push and successor remained unauthorized.",
+      "evidence": [
+        "command-center/logs/2026-07-28-openrouter-broadcast-human-attestation-5h-br2.md",
+        "command-center/phase-5-release-evidence-map.md",
+        "command-center/phase-5-release-handoff.md"
+      ],
+      "result": "Ryan returned the approved successful outcome after one Broadcast toggle and one reload. Broadcast was disabled immediately and remained disabled after the reload no other setting changed and no broader confirmation was accepted. No screenshot or destination-specific detail entered evidence. Under a later direct Ryan request Codex opened the exact Observability URL without inspecting page content or interacting with any provider control. Ryan remained the sole Broadcast operator and state observer. Task 4.3 and 5H-BR2 are done Task 4.4 remains done Task 4.5 is the sole current planning task and no successor work block started."
+    },
+    {
+      "id": "phase-5-block-h-br",
+      "phaseId": "phase-5",
+      "label": "5H-BR",
+      "name": "OpenRouter Broadcast Disablement and Persistent-State Verification",
+      "status": "stopped",
+      "includedTasks": [
+        "Task 4.3 P5-T43 only",
+        "Ryan-controlled exact-account and Default Workspace production-key attestation without credential MFA key or identifier sharing",
+        "One Broadcast disable action maximum exact confirmation boundary immediate disabled-state proof one reload persistent-state proof sanitized evidence and automated closeout"
+      ],
+      "excludedTasks": [
+        "Task 4.4 action Task 4.5 and parked Tasks 2.2 2.7 and 2.8",
+        "Destination opening inspection editing deletion values Privacy Mode filtering sampling traces prompts completions generations logs keys identifiers billing provider requests test traces other OpenRouter settings and financial data",
+        "GitHub workflow Fly production Plaid database product test configuration commit push parent action delegation second opinion and unrelated paths"
+      ],
+      "owner": "Ryan and Codex Desktop",
+      "recommendedAgent": "Ryan-assisted Codex Desktop",
+      "whyThisAgent": "Ryan retains protected identity authentication credential workspace-attestation and risk authority while Codex performs the exact one-setting mutation persistent-state proof sanitized evidence and Runway OS stewardship.",
+      "runnerPath": "Capture exact local baseline record and verify active state receive Ryan's safe exact-account and production-key-workspace handoff revalidate only Broadcast and the generic configured marker make no mutation if already disabled otherwise toggle only Broadcast once accept only an exact disable confirmation verify immediately reload once verify persistence write sanitized evidence close automatically and stop.",
+      "expectedFiles": [
+        "OpenRouter Default Workspace Observability Broadcast switch only and an exact disable confirmation only if required",
+        "Command-center now roadmap decisions state generated dashboard release evidence release handoff and one sanitized 5H-BR log",
+        "No product test workflow configuration database GitHub production parent-project commit push or unrelated path"
+      ],
+      "defaults": [
+        "Retain the configured destination untouched and make no mutation if Broadcast is already disabled",
+        "Use at most one toggle one exact confirmation and one reload and send no provider request or test trace",
+        "Use no retry exploratory expansion other setting Task 4.5 commit or push and use automated dashboard verification"
+      ],
+      "stopConditions": [
+        "Exact-account or production-key-workspace attestation cannot be established or the expected workspace control or generic configured marker is missing multiple ambiguous or materially drifted",
+        "Disabling requires destination action a broader confirmation protected-value capture or browser control is interrupted after the toggle",
+        "The one toggle does not disable Broadcast the one reload shows enabled an unrelated setting changes or local baseline path index JSON dashboard currentness health exactly-one-current-task whitespace sensitive-data preservation or scope verification fails"
+      ],
+      "verification": [
+        "Exact account and production-key-workspace attestation without secret exposure sanitized pre-state and no more than one Broadcast toggle",
+        "Immediate and one-reload persistent disabled state destination retained unopened and undeleted and no provider request test trace other setting or hosted action",
+        "Exact local ref empty index starting nine paths final ten paths JSON automated dashboard currentness health exactly-one-current-task whitespace sensitive and scope checks"
+      ],
+      "reportBack": "Return whether a mutation occurred whether an exact confirmation appeared the immediate and persistent state Task 4.3 disposition local paths verification preserved boundaries and the next Ryan decision.",
+      "durability": "Protected one-setting remediation and local Runway OS closeout only; destination configuration provider requests other settings Task 4.5 parent action commit push and successor remain unauthorized.",
+      "evidence": [
+        "command-center/logs/2026-07-28-openrouter-broadcast-disablement-5h-br.md",
+        "command-center/phase-5-release-evidence-map.md",
+        "command-center/phase-5-release-handoff.md"
+      ],
+      "result": "Ryan attested the exact account and production-key workspace. The expected authenticated Observability page loaded Broadcast remained enabled and exactly one generic configured-destination section was present. Before any setting interaction the ordinary read-only page representation exposed excluded destination-specific details. The block stopped before any click no detail is retained no provider setting changed and Task 4.3 remains current and decision-needed."
+    },
+    {
+      "id": "phase-5-block-h-bv",
+      "phaseId": "phase-5",
+      "label": "5H-BV",
+      "name": "OpenRouter Broadcast Boundary Evidence",
+      "status": "done",
+      "includedTasks": [
+        "Task 4.3 P5-T43 only",
+        "Ryan-controlled exact-account authentication without credential or MFA sharing",
+        "Read-only current Broadcast state destination and integration classification generic eligible trace-field categories sanitized evidence and automated closeout"
+      ],
+      "excludedTasks": [
+        "Task 4.4 release or production action Task 4.5 and parked Tasks 2.2 2.7 and 2.8",
+        "Every setting change disablement destination deletion integration repair test event provider request stored trace log prompt completion generation actual payload key credential identifier destination value billing credit and financial-data surface",
+        "GitHub workflow Fly production Plaid database product test configuration commit push parent action delegation second opinion and unrelated paths"
+      ],
+      "owner": "Ryan and Codex Desktop",
+      "recommendedAgent": "Ryan-assisted Codex Desktop",
+      "whyThisAgent": "Ryan retains the protected identity authentication credential setting and risk-acceptance boundary while Codex performs exact read-only observation sanitized evidence and Runway OS stewardship.",
+      "runnerPath": "Capture exact local baseline record and verify active state receive Ryan's safe authenticated handoff revalidate Broadcast state inspect only safe read-only destination integration and generic field-category descriptions write sanitized evidence classify close automatically and stop.",
+      "expectedFiles": [
+        "Read-only OpenRouter Privacy or Observability settings and current official Broadcast documentation when needed",
+        "Command-center now roadmap decisions state generated dashboard release evidence release handoff and one sanitized 5H-BV log",
+        "No product test workflow configuration database GitHub production parent-project commit push or unrelated path"
+      ],
+      "defaults": [
+        "Treat provider state as mutable and stop without opening destination details when Broadcast is disabled",
+        "When enabled record destination presence only as none configured-inactive configured-active or indeterminate plus generic field categories",
+        "Use no remediation retry exploratory expansion test request mutation commit or push and use automated dashboard verification"
+      ],
+      "stopConditions": [
+        "Exact-account ownership cannot be established",
+        "Evidence requires mutation a test request stored traces or unavoidable protected-value capture or the provider state is ambiguous or contradictory",
+        "An unexpected path sensitive value baseline drift staging change or JSON dashboard currentness health exactly-one-current-task whitespace preservation or scope failure appears"
+      ],
+      "verification": [
+        "Exact account attestation without secret exposure direct current Broadcast-state observation and sanitized destination and integration classification",
+        "Generic eligible field categories tied to the provider surface or current official documentation and proof of no setting destination trace provider-request or hosted mutation",
+        "Exact local ref index path and prior-closeout preservation JSON automated dashboard currentness health exactly-one-current-task whitespace sensitive and scope checks"
+      ],
+      "reportBack": "Return the sanitized Broadcast state destination and integration classification generic field categories limitations Task 4.3 disposition local paths verification preserved boundaries and next Ryan decision.",
+      "durability": "Protected read-only evidence and local Runway OS closeout only; every remediation provider request setting change Task 4.5 parent action commit push and successor remain unauthorized.",
+      "evidence": [
+        "command-center/logs/2026-07-28-openrouter-broadcast-boundary-evidence-5h-bv.md",
+        "command-center/phase-5-release-evidence-map.md",
+        "command-center/phase-5-release-handoff.md"
+      ],
+      "result": "Ryan attested the exact account. Read-only observation found Broadcast enabled and exactly one configured destination marker at the observed Default Workspace supporting configured-active classification. Official documentation establishes eligible request response token cost timing model provider tool and optional metadata categories. Destination Privacy Mode API-key filtering and sampling were not opened. No destination value trace provider request test event setting change production GitHub commit push Task 4.5 or parent action occurred. Task 4.3 remains current and decision-needed."
+    },
+    {
+      "id": "phase-5-block-h-r2",
+      "phaseId": "phase-5",
+      "label": "5H-R2",
+      "name": "Ask Exact-Main Deployment Observation and Release Closeout",
+      "status": "done",
+      "includedTasks": [
+        "Task 4.4 P5-T44 only",
+        "Preserve and revalidate exact release head ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7 parent 257bec901e88b830fcafe6067c8174cd6a5213b6 and the nine command-center-only path delta",
+        "Read-only live-main PR 91 and exact automatic Fly Deploy observation followed by one credential-free production health request and sanitized local closeout"
+      ],
+      "excludedTasks": [
+        "Task 4.3 Broadcast destination integration transmitted-field inspection setting change or remediation and Task 4.5",
+        "OpenRouter access or mutation product test workflow dependency configuration database provider protected or financial-data work",
+        "Workflow dispatch rerun cancellation Fly administration PR mutation rollback repair commit push parent update parked Task 2 work delegation second opinion and unrelated paths"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block requires exact-SHA GitHub observation one minimal health request sanitized evidence and Runway OS stewardship rather than implementation or subjective review.",
+      "runnerPath": "Record active state preserve exact local baseline revalidate live main inspect PR and deployment read-only make one health request only after deployment passes write sanitized local evidence close Task 4.4 if supported restore Task 4.3 current verify automatically and stop.",
+      "expectedFiles": [
+        "Read-only GitHub remote-main PR 91 workflow run job step and annotation metadata plus one credential-free production health request",
+        "Command-center now roadmap decisions state generated dashboard release evidence release handoff and one sanitized 5H-R2 log",
+        "No product test workflow provider database protected-data commit push or unrelated path"
+      ],
+      "defaults": [
+        "Use one bounded read-only hosted observation and exactly one credential-free health request",
+        "Use no retry repair rollback mutation commit or push and make no claim that Broadcast is resolved or waived",
+        "Use automated dashboard activation and closeout without Ryan visual attestation"
+      ],
+      "stopConditions": [
+        "Live main ancestry or nine-path delta drifts",
+        "Automatic deployment is missing duplicated tied to the wrong event or SHA nonterminal beyond the bounded observation unsuccessful or annotated",
+        "Health is not HTTP 200 with sanitized status ok evidence requires protected content or mutation an unexpected path appears or preservation dashboard sensitive-data or scope verification fails"
+      ],
+      "verification": [
+        "Exact live ref sole parent ancestry nine-path delta PR state workflow event and SHA exact deployment count job and step conclusions and zero annotations",
+        "One HTTP 200 sanitized status-ok health result no external mutation and sanitized evidence only",
+        "Exact local changed paths JSON automated dashboard currentness health exactly-one-current-task whitespace sensitive and scope checks"
+      ],
+      "reportBack": "Returned exact live ref deployment and health evidence PR state local changed paths and Task 4.4 closeout while Task 4.3 remains current and Task 4.5 remains planned.",
+      "durability": "Exact release is durable merged deployed and historically production-health verified; the 5H-R2 Runway OS closeout remains local-only and uncommitted.",
+      "result": "Live main revalidated at ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7 with sole parent 257bec901e88b830fcafe6067c8174cd6a5213b6 and exactly nine command-center paths. PR 91 was closed and classified merged without mutation. Exactly one automatic push-event Fly Deploy run 30350587286 and job 90246858468 completed successfully with every returned step successful and zero annotations. The one authorized credential-free health request returned HTTP 200 and status ok. Task 4.4 is done Task 4.3 is current and Task 4.5 remains planned.",
+      "evidence": [
+        "command-center/logs/2026-07-28-ask-exact-main-deployment-observation-5h-r2.md",
+        "command-center/phase-5-release-evidence-map.md",
+        "command-center/phase-5-release-handoff.md"
+      ]
+    },
     {
       "id": "phase-5-block-h-pv",
       "phaseId": "phase-5",
@@ -10712,9 +10954,9 @@
       "phaseId": "phase-5",
       "taskId": "P5-T2",
       "title": "Task 2: Polish high-friction journeys",
-      "status": "active",
-      "owner": "Codex",
-      "summary": "Active umbrella decomposed into Tasks 2.1 through 2.8 after 5B intake; Tasks 2.1 2.3 2.4 and 2.6 are done locally, Task 2.2 is parked, Task 2.5 is the current Ryan planning decision, and Tasks 2.7 and 2.8 remain separate."
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "Sole current planning umbrella after 5M. Completed children remain done while optional Tasks 2.2 2.7 and 2.8 remain parked pending a separate disposition and Phase 5 closeout decision."
     },
     {
       "phaseId": "phase-5",
@@ -10844,9 +11086,9 @@
       "phaseId": "phase-5",
       "taskId": "P5-T4",
       "title": "Task 4: Complete target and parent durability closeout",
-      "status": "active",
-      "owner": "Ryan",
-      "summary": "Active closeout umbrella decomposed into Tasks 4.1 through 4.5 so release durability protected provider verification and final parent closeout remain separately confirmable."
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Complete through 5M with Tasks 4.1 through 4.5 done the exact two-path parent package durable at 391debe28ea58349c65312eeb0987e9b516babd9 and the exact twelve-path target package carried by the containing skip-actions commit."
     },
     {
       "phaseId": "phase-5",
@@ -10868,25 +11110,25 @@
       "phaseId": "phase-5",
       "taskId": "P5-T43",
       "title": "Task 4.3: Verify protected OpenRouter account controls",
-      "status": "current",
-      "owner": "Ryan",
-      "summary": "Current and decision-needed after completed failed-safe 5H-PV found required controls off but an enabled unreviewed Broadcast trace path; Task 4.4 remains closed."
+      "status": "done",
+      "owner": "Ryan and Codex Desktop",
+      "summary": "Complete locally through 5H-BR2; Ryan disabled Broadcast with one toggle and attested immediate and one-reload persistent disabled state no other setting changed no broader confirmation was accepted and no destination-specific detail entered evidence."
     },
     {
       "phaseId": "phase-5",
       "taskId": "P5-T44",
       "title": "Task 4.4: Release Ask Opus and its operator handoff package",
-      "status": "planned",
-      "owner": "Ryan",
-      "summary": "Planned after durability and protected account-control gates are resolved."
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Complete through 5H-R2 with exact live main one automatic exact-SHA Fly deployment every returned step successful zero annotations and one HTTP 200 status-ok health result."
     },
     {
       "phaseId": "phase-5",
       "taskId": "P5-T45",
       "title": "Task 4.5: Complete final target and parent durability closeout",
-      "status": "planned",
-      "owner": "Ryan",
-      "summary": "Planned only after prior Task 4 release and evidence gates are resolved."
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Complete through 5M with the exact parent package durable at 391debe28ea58349c65312eeb0987e9b516babd9 and the exact twelve-path target closeout carried by the containing skip-actions commit subject to successful post-push live-alignment and zero-workflow proof."
     }
   ],
   "architecture": [
@@ -10917,6 +11159,22 @@
     }
   ],
   "artifacts": [
+    {
+      "name": "Work Block 5M Final Target And Parent Durability Closeout",
+      "path": "command-center/logs/2026-07-28-phase-5-target-parent-durability-closeout-5m.md"
+    },
+    {
+      "name": "Work Block 5H-BR2 OpenRouter Broadcast Human Attestation",
+      "path": "command-center/logs/2026-07-28-openrouter-broadcast-human-attestation-5h-br2.md"
+    },
+    {
+      "name": "Work Block 5H-BV OpenRouter Broadcast Boundary Evidence",
+      "path": "command-center/logs/2026-07-28-openrouter-broadcast-boundary-evidence-5h-bv.md"
+    },
+    {
+      "name": "Work Block 5H-R2 Ask Exact-Main Deployment Observation Closeout",
+      "path": "command-center/logs/2026-07-28-ask-exact-main-deployment-observation-5h-r2.md"
+    },
     {
       "name": "Phase 5 Operator And Release Handoff",
       "path": "command-center/phase-5-release-handoff.md"
@@ -11335,6 +11593,18 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-28",
+      "text": "Completed 5M and Task 4 durability closeout through the containing target skip-actions commit after one exact authorized recovery. The approved two-path parent package passed health router-health JSON generated-state whitespace sensitive exact-path ancestry clean-ref and live-ref checks and is durable at 391debe28ea58349c65312eeb0987e9b516babd9. The exact twelve-path target closeout carries the local evidence package Phase 5 remains active at seventy-five percent Task 2 becomes the sole current planning task optional Tasks 2.2 2.7 and 2.8 remain parked and no successor started."
+    },
+    {
+      "time": "2026-07-28",
+      "text": "Completed 5H-BR2 and Task 4.3 locally: Ryan disabled Broadcast with one toggle and attested immediate and one-reload persistent disabled state no other setting changed no broader confirmation was accepted and no destination-specific detail entered evidence. Under a later direct Ryan request Codex opened the exact Observability URL without inspecting page content or controls. Task 4.4 remains done Task 4.5 is the sole current planning task and no successor started."
+    },
+    {
+      "time": "2026-07-28",
+      "text": "Completed 5H-BV with remediation-needed evidence: Ryan attested the exact OpenRouter account the current Broadcast switch was enabled exactly one configured destination marker was visible official documentation established eligible request response token cost timing model provider tool and optional metadata categories destination Privacy Mode API-key filtering and sampling remained uninspected no setting provider request test trace protected value production GitHub commit push Task 4.5 or parent action occurred and Task 4.3 remains current and decision-needed."
+    },
     {
       "time": "2026-07-27",
       "text": "Completed 5H-R and Task 4.2: exact 31-path candidate f7482a95e754160905a79ec0130ef8faf0a48784 and eight-path closeout 257bec901e88b830fcafe6067c8174cd6a5213b6 are on clean open draft PR 91 both automatic Synthetic CI runs passed core then browser with every step successful zero annotations and zero deployment main stayed unchanged the branch was retained the index returned empty three unrelated files remained excluded and Task 4.3 becomes the sole current Ryan-owned protected planning gate."
@@ -12540,12 +12810,20 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "title": "Decide 5F-W evidence whitespace and provenance normalization",
-    "status": "ready-for-planning",
+    "title": "Define final target and parent durability closeout",
+    "status": "planning",
     "owner": "Ryan",
-    "target": "Define one local-only normalization block that can make the Phase 5 evidence package pass repository-wide whitespace checks while keeping manifests provenance and returned Claude artifacts truthful before renewed publication."
+    "target": "Confirm a bounded 5M work block before any target-repo publication or parent-project mutation."
   },
   "verification": {
+    "phase5BroadcastHumanAttestation": "pass locally; Ryan returned the approved value-free outcome after one Broadcast toggle and one reload Broadcast was disabled immediately and remained disabled after the reload no other setting changed no broader confirmation was accepted and no screenshot or destination-specific detail entered evidence",
+    "phase5BroadcastRemediation": "stopped before mutation; exact-account and production-key-workspace attestation passed the expected authenticated Observability route loaded Broadcast remained enabled exactly one generic configured-destination section was present but the ordinary read-only page representation exposed excluded destination-specific details before any click no detail is retained and no retry occurred",
+    "phase5BroadcastEvidence": "pass with remediation-needed result; Ryan attested the exact account Broadcast was enabled exactly one configured destination marker was visible and current official documentation established eligible request response token cost timing model provider tool and optional metadata categories",
+    "phase5BroadcastLimitations": "pass with transparent navigation exception; under a later direct Ryan request Codex opened the exact Observability URL without inspecting page content or interacting with any control while destination Privacy Mode API-key filtering sampling values and actual traces remained unopened and no test event production GitHub commit push Task 4.5 parent delegation or second-opinion action occurred",
+    "phase5AskExactMainRelease": "pass; live GitHub main is ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7 with sole parent 257bec901e88b830fcafe6067c8174cd6a5213b6 exactly one commit ahead zero behind and exactly the nine approved command-center paths",
+    "phase5AskExactMainDeployment": "pass; exactly one automatic push-event Fly Deploy run 30350587286 existed for the release SHA and deploy job 90246858468 plus every returned step completed successfully with zero annotations",
+    "phase5AskExactMainHealth": "pass; the one authorized credential-free production health request returned HTTP 200 with sanitized status ok",
+    "phase5AskExactMainBoundaries": "pass; PR 91 was observed read-only as closed and merged no hosted mutation retry repair rollback commit push Fly administration OpenRouter Broadcast protected-data Task 4.5 parent delegation or second-opinion action occurred and the closeout remains local-only",
     "phase5VerifiedSetDurability": "stopped locally before commit; full application browser safety syntax JSON dashboard rendered sensitive-pattern cleanup and preserved-file verification passed but exact seventy-four-path staged diff check found Markdown hard-break whitespace and blank EOF defects in evidence and handoff files tied to manifests and provenance so staged state was removed and no external action occurred",
     "phase5UsabilityBaseline": "pass locally; J1 through J5 contract complete full synthetic smoke passed in 8.56 seconds complete configured-auth no-password installed-Chrome suite passed all three entities installed standalone offline responsive interaction strict-CSP denied-network zero-unexpected-error and exact-cleanup contracts eleven synthetic screenshots were visually inspected and the managed qualitative temporary root was removed",
     "phase4FlyDeployRuntimeDurability": "pass; exact four-path source commit b94009334cd129ccdb2f963a2e3d86045e0934d3 with expected parent d1c1a297e13ed30baa8afc0c3ffe54e69888e749 is durable on main after full smoke full installed-Chrome coverage safety-contract positive and negative checks Python compilation JSON dashboard rendered whitespace sensitive-addition exact-path ancestry non-force push remote and preserved-file checks",
