@@ -2,6 +2,12 @@
 
 ## Accepted
 
+### 2026-07-27 — Accept the clean 5H-R candidate and publish the exact closeout
+
+The exact 31-path Ask and operator candidate is commit-durable as `f7482a95e754160905a79ec0130ef8faf0a48784` on retained branch `codex/ask-opus-privacy` and open draft PR #91 targeting `main`. The guarded fast-forward to `d81ed7078e741a0c7613e7898312ce01cd359f45` preserved the identical tree, dirty candidate, empty index, and excluded-file hashes. Local workflow safety, full smoke, complete two-auth browser, syntax, JSON, dashboard, health, whitespace, sensitive-addition, exact-path, and cleanup checks passed.
+
+Candidate Synthetic CI run `30329875129` passed core job `90182588590` then browser job `90182722250`, every step succeeded, annotations are zero, and no Fly deployment occurred. Codex may now publish only the exact eight-path sanitized closeout. Task 4.2 and 5H-R become complete only if that exact final PR head passes the same automatic ordered workflow with zero annotations and zero deployment while the PR remains open, draft, and unmerged and `main` remains unchanged. Any mismatch stops without repair or rerun.
+
 ### 2026-07-27 — Confirm 5H-R Ask and operator package durability
 
 Ryan confirmed Task 4.2 (`P5-T42`) only. Codex Desktop may preserve the accepted dirty worktree, empty real index, and three unrelated files; revalidate and fetch exact remote `main` `d81ed7078e741a0c7613e7898312ce01cd359f45`; prove it is a tree-identical descendant of local head `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a`; fast-forward `codex/ask-opus-privacy` without changing working files; revalidate and verify the exact 31-path Ask/operator candidate; explicitly stage and commit only those paths; non-force push the new branch; open one draft PR to `main`; require candidate and exact eight-path closeout heads to pass automatic core-then-browser Synthetic CI with zero annotations; prove zero Fly deployment; retain the branch; leave the PR open, draft, and unmerged; close Task 4.2 locally; and stop.

@@ -2,7 +2,7 @@
 
 Date: 2026-07-27
 
-Status: updated through completed work block 5G-R2; Recurring Review is released while Ask durability, provider verification, Ask release, and final parent durability remain separately gated
+Status: updated through the clean 5H-R candidate; exact closeout-head hosted verification remains pending while provider verification, Ask release, and final parent durability stay separate
 
 ## Re-entry
 
@@ -17,8 +17,8 @@ Status: updated through completed work block 5G-R2; Recurring Review is released
 | --- | --- | --- | --- |
 | First Phase 5 usability set: 5A, 5B, 5C, 5E, 5F, and 5F-W | Merged through PR #89, deployed by exact merge-SHA workflow, and historically health-verified on 2026-07-27 | [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md), [5F-R2 evidence](logs/2026-07-27-verified-draft-pr-production-release-5f-r2.md) | No release action for this package; current runtime health still requires a separately authorized observation |
 | Recurring Review: 5G, 5G-RS, 5G-R, and 5G-R2 | Merged through PR #90 as `d81ed7078e741a0c7613e7898312ce01cd359f45`, automatically deployed once, and health-verified on 2026-07-27 | [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md), [5G-R2 evidence](logs/2026-07-27-recurring-review-production-release-5g-r2.md) | No further release action for this package; proceed only to a separately confirmed Ask durability block |
-| Ask Opus privacy implementation: 5H-A and 5H-B | Local-only on the accepted dirty worktree; local synthetic and rendered proof exists; provider settings are not established | [`ask-opus-data-handling-contract.md`](ask-opus-data-handling-contract.md), [5H-B evidence](logs/2026-07-27-ask-opus-privacy-contract-implementation-5h-b.md) | Define exact 5H-R durability packaging; complete protected provider-account verification before production retention claims |
-| Operator and release artifacts: 5I, 5J, 5K, and 5L | Local-only, source-linked, synthetically exercised where applicable, and automatically dashboard-verified | [`operator-runbook.md`](operator-runbook.md), [`operations-monitoring-matrix.md`](operations-monitoring-matrix.md), [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md) | Include only through a separately confirmed exact-path publication block |
+| Ask Opus privacy implementation: 5H-A and 5H-B | Candidate-durable and hosted-verified on draft PR #91 at `f7482a95e754160905a79ec0130ef8faf0a48784`; provider settings are not established | [`ask-opus-data-handling-contract.md`](ask-opus-data-handling-contract.md), [5H-B evidence](logs/2026-07-27-ask-opus-privacy-contract-implementation-5h-b.md) | Complete the exact 5H-R closeout-head gate, then separately authorize protected provider verification |
+| Operator and release artifacts: 5I, 5J, 5K, and 5L | Candidate-durable and hosted-verified on draft PR #91; not merged or deployed | [`operator-runbook.md`](operator-runbook.md), [`operations-monitoring-matrix.md`](operations-monitoring-matrix.md), [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md) | Complete the exact closeout-head hosted gate; no release authority follows |
 | Recovery records: 5G-RC through 5G-RC-R | Sanitized recovery record is durable on current `main`; protected observations remain historical and target-specific | [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md) | No reuse authority; any database inspection, recovery, or application re-entry needs a new exact protected block |
 
 ## Recommended Release Sequence
@@ -26,7 +26,7 @@ Status: updated through completed work block 5G-R2; Recurring Review is released
 The lowest-ambiguity sequence is:
 
 1. Recurring Review release is complete through 5G-R2;
-2. preserve the local Ask Opus work and define exact durability packaging against post-PR-#90 `main`;
+2. complete the exact 5H-R closeout-head hosted gate for draft PR #91;
 3. verify the mutable OpenRouter account controls at a separate protected human handoff;
 4. authorize Ask Opus merge, deployment, and production observation only after both durability and provider gates are satisfied;
 5. perform final Task 4 target and parent durability closeout last.
@@ -60,7 +60,7 @@ See [`operations-monitoring-matrix.md`](operations-monitoring-matrix.md).
 | Gate | Required before action |
 | --- | --- |
 | 5G-R2 Recurring Review release | Complete; exact merge, automatic deploy, health, and preservation evidence recorded |
-| 5H-R Ask Opus durability | Exact path inventory, intended branch/base, local revalidation, staging/commit/push/PR authority, and preservation plan |
+| 5H-R Ask Opus durability | Candidate complete on draft PR #91; exact closeout-head automatic CI and zero-deployment proof remain |
 | OpenRouter provider verification | Ryan-completed protected account-setting observation without sharing credentials, secrets, or financial questions |
 | Ask Opus production release | Durable Ask package, provider-setting evidence, exact merge/deploy authority, and separately authorized production observation |
 | Current production or demo health | Separately authorized credential-free observation tied to a named target and purpose |

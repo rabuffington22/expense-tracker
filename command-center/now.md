@@ -22,7 +22,18 @@ Codex Desktop owns confirmed 5H-R execution. Ryan retains protected provider ver
 
 ## Current Action
 
-Preserve the accepted local candidate; prove the post-PR-#90 main tree is identical; fast-forward without changing the worktree; verify and publish only the exact 31 intended paths; open and verify a retained draft PR; publish the exact sanitized closeout; prove zero deployment; and stop.
+Publish the exact eight-path sanitized closeout to draft PR #91, then require its exact head to pass automatic core-then-browser Synthetic CI with zero annotations and zero Fly deployment. Task 4.2 remains active until that final gate passes.
+
+## Work Block 5H-R Candidate Result
+
+- Local head `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a` and post-PR-#90 `main` `d81ed7078e741a0c7613e7898312ce01cd359f45` had identical tree `8b072b9e101e7fd21b20f9b486a6d85a45551f6b`.
+- The guarded fast-forward changed no working file, index entry, candidate fingerprint, or preserved-file fingerprint.
+- Workflow safety, full temporary-synthetic smoke, complete two-auth installed-browser, syntax, JSON, dashboard, health, whitespace, sensitive-addition, exact-path, index, and cleanup checks passed.
+- Exactly 31 intended paths entered candidate commit `f7482a95e754160905a79ec0130ef8faf0a48784`.
+- Draft PR #91 targets `main` from retained branch `codex/ask-opus-privacy`.
+- Candidate Synthetic CI run `30329875129`, core job `90182588590`, and browser job `90182722250` passed in order with every step successful and zero annotations.
+- Candidate Fly Deploy runs: zero.
+- The exact eight-path closeout and final automatic hosted verification remain inside 5H-R; no other sequel is authorized.
 
 ## Confirmed Work Block 5H-R
 

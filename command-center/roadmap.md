@@ -5122,7 +5122,7 @@ Goal: make the product understandable, maintainable, and easy to re-enter after 
 
 ### Confirmed Work Block 5H-R: Ask and Operator Package Branch Durability and Hosted Review
 
-Status: active after Ryan's confirmation.
+Status: closeout publication in progress after a clean candidate draft-PR pass; exact final-head CI remains required.
 
 Included: Task 4.2 (`P5-T42`) only. Preserve the accepted dirty worktree, empty real index, and three unrelated files; revalidate remote `main` at `d81ed7078e741a0c7613e7898312ce01cd359f45`; fetch only that exact ref; prove it is a tree-identical descendant of local head `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a`; fast-forward `codex/ask-opus-privacy` without changing working files; revalidate the exact 31-path candidate consisting of 19 tracked modifications and 12 intended untracked Ask, operator, monitoring, handoff, and evidence artifacts; run the complete local verification contract; explicitly stage only those paths; commit and non-force push the new branch; open one draft PR targeting `main`; observe automatic core-then-browser Synthetic CI; publish one exact eight-path sanitized closeout commit; require final-head CI; prove zero Fly deployment; retain the branch; leave the PR open, draft, and unmerged; close Task 4.2 locally; and stop.
 
@@ -5141,6 +5141,8 @@ Defaults: two commits, candidate then closeout; normal non-force push; draft PR 
 Stop conditions: remote `main` drift; ancestry or tree-identity mismatch; any worktree/index/preserved-hash change from the guarded fast-forward; candidate path-count or content drift; failed local verification; excluded or sensitive staged content; non-fast-forward push; unexpected existing branch or PR; PR base/head/diff/mergeability drift; failed, missing, delayed, reordered, or annotated hosted check; any Fly deployment; cleanup residue; command-center failure; or need for repair, rerun, protected access, or expansion.
 
 Verification and report point: exact local and hosted refs; identical-tree fast-forward; exact 31 paths and three exclusions; workflow safety, smoke, browser, syntax, JSON, dashboard, whitespace, sensitive, cleanup, index, and preservation checks; commit ancestry; draft PR base/head/diff; candidate and final CI jobs/steps/annotations; zero deployment; retained branch; empty index; automated dashboard closeout; and the separately gated Task 4.3 decision.
+
+Candidate result: guarded fast-forward to exact post-PR-#90 `main` preserved all working files and exclusions; the complete local verification contract passed; exact 31-path candidate commit `f7482a95e754160905a79ec0130ef8faf0a48784` was pushed normally; draft PR #91 targets `main`; Synthetic CI run `30329875129` passed core job `90182588590` then browser job `90182722250` with every step successful and zero annotations; and the candidate caused zero Fly deployments. The exact eight-path closeout and final-head hosted gate remain.
 
 ### Confirmed Work Block 5G-R2: Recurring Review Exact-Head Production Release
 
