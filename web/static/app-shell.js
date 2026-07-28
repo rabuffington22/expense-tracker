@@ -4,7 +4,37 @@
 
     var drawerMedia = window.matchMedia("(max-width: 768px)");
     var drawerCloseTimer = null;
-    var aiCurrentPage = "general";
+    var aiCurrentPage = "";
+    var aiPageContracts = {
+        dashboard: {
+            label: "Dashboard",
+            data: "monthly totals, category totals, aggregate merchants, and trends",
+        },
+        transactions: {
+            label: "Transactions",
+            data: "90-day totals, category totals, and aggregate merchants; no transaction rows or exact dates",
+        },
+        planning: {
+            label: "Long-Term Planning",
+            data: "age, inflation, milestone projections, and aggregate assets and liabilities; no account or item names",
+        },
+        "short-term-planning": {
+            label: "Short-Term Planning",
+            data: "goal, balance, budget, and progress summaries; no account names or strategy notes",
+        },
+        subscriptions: {
+            label: "Recurring Review",
+            data: "tracked merchant, amount, frequency, and status summaries; no notes",
+        },
+        cashflow: {
+            label: "Cash Flow",
+            data: "aggregate balances, utilization, payment days, and recurring schedule; no account or merchant names",
+        },
+        reports: {
+            label: "Reports",
+            data: "monthly and category totals",
+        },
+    };
     var initialized = false;
 
     function syncThemeUI(theme) {
@@ -164,11 +194,15 @@
     }
 
     function aiChatOpen(page) {
-        page = page || "general";
+        var contract = aiPageContracts[page];
+        if (!contract) {
+            return;
+        }
         var thread = document.getElementById("ai-chat-thread");
         var empty = document.getElementById("ai-chat-empty");
         var pageInput = document.getElementById("ai-chat-page");
-        var clearButton = document.getElementById("ai-chat-clear-btn");
+        var pageLabel = document.getElementById("ai-chat-page-label");
+        var dataLabel = document.getElementById("ai-chat-data-label");
         var scrim = document.getElementById("ai-chat-scrim");
         var input = document.getElementById("ai-chat-input");
 
@@ -182,17 +216,32 @@
         }
 
         pageInput.value = page;
-        if (clearButton) {
-            clearButton.setAttribute("hx-vals", JSON.stringify({ page: page }));
-            if (window.htmx) {
-                window.htmx.process(clearButton);
-            }
+        if (pageLabel) {
+            pageLabel.textContent = contract.label;
+        }
+        if (dataLabel) {
+            dataLabel.textContent = contract.data;
         }
 
         scrim.hidden = false;
         document.body.classList.add("body-scroll-locked");
         input.focus();
         aiScrollThread();
+    }
+
+    function aiChatClear() {
+        var thread = document.getElementById("ai-chat-thread");
+        var empty = document.getElementById("ai-chat-empty");
+        var input = document.getElementById("ai-chat-input");
+        if (thread) {
+            thread.replaceChildren();
+        }
+        if (empty) {
+            empty.hidden = false;
+        }
+        if (input) {
+            input.focus();
+        }
     }
 
     function aiChatClose(event) {
@@ -411,7 +460,9 @@
         } else if (action === "toggle-theme") {
             toggleTheme();
         } else if (action === "open-ai-chat") {
-            aiChatOpen(control.dataset.aiPage || "general");
+            aiChatOpen(control.dataset.aiPage || "");
+        } else if (action === "clear-ai-chat") {
+            aiChatClear();
         }
     }
 

@@ -2465,16 +2465,9 @@ def _assert_weekly_waterfall_pages(page, base_url: str, label: str) -> None:
         '[data-app-shell-action="open-ai-chat"][data-ai-page="weekly"]'
     )
     _check(
-        weekly_ai.count() == 1,
-        f"{label}: Weekly must expose the maintained app-shell AI action",
+        weekly_ai.count() == 0,
+        f"{label}: Weekly must omit Ask until a dedicated context exists",
     )
-    weekly_ai.click()
-    _check(
-        page.locator("#ai-chat-scrim").is_visible()
-        and page.locator("#ai-chat-page").input_value() == "weekly",
-        f"{label}: Weekly AI entry must preserve its page context",
-    )
-    page.locator("[data-ai-chat-close]").click()
 
     page.goto(f"{base_url}/waterfall/", wait_until="networkidle")
     _check(
@@ -2485,13 +2478,10 @@ def _assert_weekly_waterfall_pages(page, base_url: str, label: str) -> None:
     waterfall_ai = page.locator(
         '[data-app-shell-action="open-ai-chat"][data-ai-page="waterfall"]'
     )
-    waterfall_ai.click()
     _check(
-        page.locator("#ai-chat-scrim").is_visible()
-        and page.locator("#ai-chat-page").input_value() == "waterfall",
-        f"{label}: Waterfall AI entry must preserve its page context",
+        waterfall_ai.count() == 0,
+        f"{label}: Waterfall must omit Ask until a dedicated context exists",
     )
-    page.locator("[data-ai-chat-close]").click()
 
     actual_view = page.locator("#wf-view-actual")
     target_view = page.locator("#wf-view-target")
@@ -5067,7 +5057,12 @@ def main() -> None:
                     """() => ({
                         hidden: document.getElementById('ai-chat-scrim').hidden,
                         page: document.getElementById('ai-chat-page').value,
-                        clearValues: document.getElementById('ai-chat-clear-btn').getAttribute('hx-vals'),
+                        clearAction: document.getElementById('ai-chat-clear-btn').dataset.appShellAction,
+                        clearHasServerPost: document.getElementById('ai-chat-clear-btn').hasAttribute('hx-post'),
+                        pageLabel: document.getElementById('ai-chat-page-label').textContent,
+                        dataLabel: document.getElementById('ai-chat-data-label').textContent,
+                        disclosure: document.getElementById('ai-chat-disclosure').textContent,
+                        describedBy: document.querySelector('.ai-chat-modal').getAttribute('aria-describedby'),
                         focused: document.activeElement === document.getElementById('ai-chat-input'),
                         bodyClass: document.body.classList.contains('body-scroll-locked'),
                         inlineStyle: document.body.hasAttribute('style'),
@@ -5078,12 +5073,25 @@ def main() -> None:
                     ai_open == {
                         "hidden": False,
                         "page": "dashboard",
-                        "clearValues": '{"page":"dashboard"}',
+                        "clearAction": "clear-ai-chat",
+                        "clearHasServerPost": False,
+                        "pageLabel": "Dashboard",
+                        "dataLabel": "monthly totals, category totals, aggregate merchants, and trends",
+                        "disclosure": ai_open["disclosure"],
+                        "describedBy": "ai-chat-disclosure",
                         "focused": True,
                         "bodyClass": True,
                         "inlineStyle": False,
                         "overflow": "hidden",
-                    },
+                    }
+                    and "Personal only" in ai_open["disclosure"]
+                    and "Nothing is sent until you submit" in ai_open["disclosure"]
+                    and "OpenRouter" in ai_open["disclosure"]
+                    and "Claude Opus" in ai_open["disclosure"]
+                    and "zero-data-retention" in ai_open["disclosure"]
+                    and "Request metadata may be retained" in ai_open["disclosure"]
+                    and "stores no conversation transcript" in ai_open["disclosure"]
+                    and "AI output can be wrong" in ai_open["disclosure"],
                     "AI modal open behavior must survive handler migration",
                 )
                 ai_events = page.evaluate(
@@ -5117,6 +5125,62 @@ def main() -> None:
                     },
                     "AI HTMX lifecycle listeners must preserve thinking and reset behavior",
                 )
+                ai_clear = page.evaluate(
+                    """() => {
+                        const thread = document.getElementById('ai-chat-thread');
+                        const pair = document.createElement('div');
+                        pair.className = 'ai-chat-pair';
+                        pair.textContent = 'synthetic visible response';
+                        thread.appendChild(pair);
+                        document.getElementById('ai-chat-empty').hidden = true;
+                        document.getElementById('ai-chat-clear-btn').click();
+                        return {
+                            childCount: thread.childElementCount,
+                            emptyVisible: !document.getElementById('ai-chat-empty').hidden,
+                            inputFocused: document.activeElement === document.getElementById('ai-chat-input'),
+                        };
+                    }"""
+                )
+                _check(
+                    ai_clear
+                    == {
+                        "childCount": 0,
+                        "emptyVisible": True,
+                        "inputFocused": True,
+                    },
+                    "AI Clear must affect only the visible browser thread",
+                )
+                ai_original_viewport = page.viewport_size
+                for ai_width in (390, 768, 1440):
+                    page.set_viewport_size({"width": ai_width, "height": 900})
+                    ai_layout = page.evaluate(
+                        """() => {
+                            const modal = document.querySelector('.ai-chat-modal');
+                            const disclosure = document.getElementById('ai-chat-disclosure');
+                            const form = document.getElementById('ai-chat-form');
+                            const box = modal.getBoundingClientRect();
+                            return {
+                                modalVisible: Boolean(modal.getClientRects().length),
+                                disclosureVisible: Boolean(disclosure.getClientRects().length),
+                                formVisible: Boolean(form.getClientRects().length),
+                                fitsViewport: box.left >= 0 && box.right <= innerWidth,
+                                documentOverflow: document.documentElement.scrollWidth
+                                    > document.documentElement.clientWidth + 1,
+                            };
+                        }"""
+                    )
+                    _check(
+                        ai_layout
+                        == {
+                            "modalVisible": True,
+                            "disclosureVisible": True,
+                            "formVisible": True,
+                            "fitsViewport": True,
+                            "documentOverflow": False,
+                        },
+                        f"AI modal disclosure must remain complete and non-overflowing at {ai_width}px",
+                    )
+                page.set_viewport_size(ai_original_viewport)
                 page.locator("[data-ai-chat-close]").click()
                 _check(
                     page.evaluate(

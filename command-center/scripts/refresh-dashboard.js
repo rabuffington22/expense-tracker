@@ -10,6 +10,7 @@ const dashboardPath = path.join(commandCenterRoot, "index.html");
 const roadmapPath = path.join(commandCenterRoot, "roadmap.md");
 const queueRoot = path.join(commandCenterRoot, "agent-router", "queue");
 const checkOnly = process.argv.includes("--check");
+const timestampCheck = process.argv.includes("--timestamp-check");
 
 function countQueue(folder) {
   const dir = path.join(queueRoot, folder);
@@ -159,10 +160,26 @@ function formatCentralTimestamp(date = new Date()) {
       day: "2-digit",
       hour: "numeric",
       minute: "2-digit",
-      hour12: true
+      hour12: true,
+      timeZoneName: "short"
     }).formatToParts(date).map((part) => [part.type, part.value])
   );
-  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute} ${parts.dayPeriod} CST`;
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute} ${parts.dayPeriod} ${parts.timeZoneName}`;
+}
+
+if (timestampCheck) {
+  const cases = [
+    [new Date("2026-01-15T12:00:00Z"), "2026-01-15 6:00 AM CST"],
+    [new Date("2026-07-15T12:00:00Z"), "2026-07-15 7:00 AM CDT"]
+  ];
+  for (const [date, expected] of cases) {
+    const actual = formatCentralTimestamp(date);
+    if (actual !== expected) {
+      throw new Error(`Central timestamp mismatch: expected "${expected}", received "${actual}"`);
+    }
+  }
+  console.log("Central timestamp check passed for winter CST and summer CDT");
+  process.exit(0);
 }
 
 function replaceDashboardState(html, state) {

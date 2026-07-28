@@ -111,6 +111,10 @@ After meaningful changes to phase, task, work block, owner, blocker, next action
 
 Do not call Runway OS current if refresh or health check fails.
 
+Routine command-center state changes do not require Ryan to inspect or attest to the rendered dashboard. Codex closes those changes from JSON validation, dashboard refresh, generated-state equality, health, exactly-one-current-task validation, generated marker and relevant diff inspection, and any block-specific checks.
+
+Ask Ryan for dashboard visual review only when the dashboard's own layout, styling, interaction, or information presentation materially changed; automated checks cannot establish the intended result; or Ryan explicitly requests a visual checkpoint. A Codex browser limitation on local `file:` navigation is not by itself a reason to stop or transfer routine dashboard verification to Ryan. Separate human gates that are inherent to protected access, MFA, product judgment, live action, or another confirmed block remain unchanged.
+
 ## Git And Durability
 
 - Use `codex/` branches for Runway OS or implementation work unless Ryan specifies otherwise.

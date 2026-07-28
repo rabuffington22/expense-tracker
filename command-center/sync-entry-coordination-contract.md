@@ -1,6 +1,6 @@
-# Work Block 4L Proposed Sync-Entry Coordination Contract
+# Sync-Entry Coordination Contract
 
-Status: proposed for the confirmed read-only second opinion; no product implementation has started.
+Status: implemented, durable, deployed, and credential-free boundary verified through work blocks 4L-4L-R on 2026-07-19; retained as the reviewed historical implementation contract
 
 ## Objective
 

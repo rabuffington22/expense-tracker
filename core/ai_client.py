@@ -31,6 +31,7 @@ def chat_completion(
     max_tokens: int = 1000,
     system: str | None = None,
     timeout: int = 45,
+    provider: dict | None = None,
 ) -> str | None:
     """Send a chat completion request to OpenRouter.
 
@@ -40,6 +41,7 @@ def chat_completion(
         max_tokens: Max response tokens.
         system: Optional system prompt.
         timeout: Request timeout in seconds.
+        provider: Optional OpenRouter provider-routing requirements.
 
     Returns:
         Response text string, or None on failure.
@@ -54,6 +56,8 @@ def chat_completion(
             "max_tokens": max_tokens,
             "messages": messages,
         }
+        if provider:
+            body["provider"] = dict(provider)
         if system:
             body["messages"] = [{"role": "system", "content": system}] + body["messages"]
 

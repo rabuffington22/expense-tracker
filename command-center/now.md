@@ -2,27 +2,230 @@
 
 ## Active Objective
 
-Keep the verified Recurring Review package on open draft PR #90 and decide separately whether to freeze the Task 2.5 Ask Opus data-handling contract or authorize 5G-R2 merge and production release.
+Publish the exact verified Ask Opus and Task 3 package to a retained draft PR without provider access, merge, deployment, or production action.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — active at 44%. Personal and BFM local data is recovered and application-ready through completed 5G-RC-R and 5G-AV-R. Task 2.4 and 5G/5G-RS are complete, and their exact package is branch-durable and hosted-verified through 5G-R on open draft PR #90. Merge, deployment, production, Task 2.5 implementation, and every later Phase 5 decision remain separate.
+Phase 5: UX Polish, Operations, And Durable Handoff — active at 50%. Task 4.1 and 5G-R2 are complete. Task 4.2 and confirmed 5H-R are active for exact Ask Opus and Task 3 branch durability plus hosted draft-PR review while protected provider verification, merge, deployment, production, and final closeout remain separate.
 
 ## Current Work Block
 
-Work block 5G-R — Recurring Review Branch Durability And Hosted Review — is done on open draft PR #90 after the candidate and exact six-path closeout head satisfy the automatic PR-only core-then-browser Synthetic CI contract with zero annotations and zero Fly deployment.
+Work block 5H-R — Ask and Operator Package Branch Durability and Hosted Review — is active after Ryan's confirmation.
 
 ## Current Task
 
-Phase 5 Task 2.5 (`P5-T25`) — current as a Ryan-owned planning decision. Freeze and verify Ask Opus data scope, cross-entity scope, retention, and disclosure before any implementation.
+Phase 5 Task 4.2 (`P5-T42`) — preserve Ask Opus and Task 3 artifacts durably; active.
 
 ## Owner
 
-Ryan owns the Task 2.5 contract decision and separately retains 5G-R2 merge, production release, deployment, protected-data, and every expansion decision. Codex has no active implementation or publication authority after the 5G-R stop.
+Codex Desktop owns confirmed 5H-R execution. Ryan retains protected provider verification, merge, deployment, production, remediation, Task 4.3-4.5, and every expansion decision.
 
 ## Current Action
 
-Ryan chooses whether to plan the Task 2.5 Ask Opus contract or separately confirm 5G-R2. Until then, leave PR #90 open, draft, and unmerged; retain the feature branch; perform no workflow action, product work, protected access, merge, deployment, production health request, or other sequel.
+Preserve the accepted local candidate; prove the post-PR-#90 main tree is identical; fast-forward without changing the worktree; verify and publish only the exact 31 intended paths; open and verify a retained draft PR; publish the exact sanitized closeout; prove zero deployment; and stop.
+
+## Confirmed Work Block 5H-R
+
+- Name: Ask and Operator Package Branch Durability and Hosted Review.
+- Include Task 4.2 (`P5-T42`) only.
+- Preserve the dirty worktree, empty real index, and three unrelated untracked files.
+- Revalidate remote `main` at `d81ed7078e741a0c7613e7898312ce01cd359f45`; fetch only that exact ref; prove it is a tree-identical descendant of local head `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a`; and fast-forward `codex/ask-opus-privacy` without changing working files.
+- Revalidate the exact 31-path package: 19 tracked modifications and 12 intended untracked Ask, operator, monitoring, handoff, and evidence artifacts.
+- Run workflow safety, full temporary-synthetic smoke, complete both-auth installed-browser, syntax, JSON, dashboard, whitespace, sensitive-addition, exact-path, cleanup, index, and preservation verification.
+- Explicitly stage only the 31 approved paths; commit; non-force push the new remote branch; open one draft PR targeting `main`; and require automatic core-then-browser Synthetic CI with zero annotations and zero Fly deployment.
+- Publish one exact eight-path sanitized closeout commit; require final-head Synthetic CI with zero annotations and zero deployment; retain the branch; leave the PR open, draft, and unmerged; close Task 4.2 locally; and stop.
+- Exclude Tasks 4.3-4.5; OpenRouter/provider access; further product or defect work; PR ready, merge, deployment, production, or health access; manual workflow action; push to `main`; rebase, stash, cherry-pick, force push, conflict resolution, or branch deletion; Plaid; Fly administration; credentials; protected or real data; parked Task 2 work; parent updates; delegation; second opinion; and the three unrelated files.
+- Stop on remote-main, ancestry, tree, fast-forward, path, test, staging, sensitive-data, push, PR, CI, annotation, zero-deployment, cleanup, index, preservation, dashboard, or scope drift without repair or rerun.
+- Routine dashboard activation and closeout are automatic and require no Ryan visual attestation.
+
+## Work Block 5G-R2 Result
+
+- Exact preflight preserved remote `main` `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, PR #90 head `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a`, clean mergeability, successful Synthetic CI run `30279361029`, both successful jobs, all successful steps, and zero annotations.
+- PR #90 was marked ready and merged normally as `d81ed7078e741a0c7613e7898312ce01cd359f45`, with the exact frozen `main` and PR head as parents.
+- Automatic Fly Deploy run `30327566484`, job `90176026100`, and every step succeeded with zero annotations.
+- Exactly one deployment exists for the merge SHA.
+- The single credential-free production `/health` request returned HTTP 200 with `{"status":"ok"}`.
+- The feature branch remains retained at the exact PR head.
+- The accepted dirty local worktree remained unstaged, uncommitted, and unpublished; the real index and preserved-file hashes remained unchanged.
+- Evidence: `command-center/logs/2026-07-27-recurring-review-production-release-5g-r2.md`.
+
+## Confirmed Work Block 5G-R2
+
+- Name: Recurring Review Exact-Head Production Release.
+- Include Task 4.1 (`P5-T41`) only.
+- Preserve the current dirty worktree, local branch/head, empty real index, and three unrelated untracked files.
+- Revalidate remote `main` at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`; PR #90 open, draft, mergeable, based on `main`, and headed by `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a`; and exact-head Synthetic CI successful with zero annotations.
+- Mark PR #90 ready, merge it using a normal merge commit without protection bypass or branch deletion, and verify exact parents.
+- Observe only the resulting automatic exact-merge-SHA Fly Deploy; require all jobs and steps successful with zero annotations.
+- Make one credential-free production `/health` request.
+- Record sanitized local evidence, close Task 4.1, make Task 4.2 the next planning task, and verify the dashboard automatically.
+- Exclude Tasks 4.2-4.5; Ask durability/provider verification/release; parked Task 2 work; local fetch/checkout/rebase/staging/commit/push; publication of the dirty worktree; manual workflow or deployment action; Fly administration; Plaid; authenticated production; protected or real financial data; branch deletion; rollback; repair; parent updates; delegation; and second opinion.
+- Stop on any ref, PR, check, annotation, merge-parent, deployment, health, local baseline, index, preservation, protected-data, or scope drift without repair or expansion.
+- No human dashboard inspection is required for routine closeout.
+
+## Work Block 5L Result
+
+- `README.md` now foregrounds that ordinary startup can use and initialize or migrate the resolved `DATA_DIR`, which defaults to `./local_state`.
+- `.env.example` now exactly covers all twelve operator-configurable variables documented in README using safe placeholders or development defaults.
+- `sync-entry-coordination-contract.md` now truthfully records its implemented, durable, deployed, and historically verified 4L-4L-R lifecycle while preserving the reviewed contract body.
+- The dashboard formatter now uses `CST` in winter and `CDT` in summer; deterministic January and July fixtures pass.
+- The operator runbook and monitoring matrix distinguish resolved documentation defects from real monitoring and protected-currentness decisions.
+- `command-center/phase-5-release-handoff.md` separates released PR #89 work, hosted-only PR #90 work, local-only Ask/operator work, protected provider verification, monitoring decisions, and every remaining release gate.
+- No monitoring cadence was invented and no product/test/workflow/database/provider/external/publication/merge/deployment/production/Task 4 action occurred.
+- Evidence: `command-center/phase-5-release-handoff.md` and `command-center/logs/2026-07-27-maintained-documentation-release-handoff-5l.md`.
+
+## Confirmed Work Block 5L
+
+- Name: Maintained Documentation and Compact Release Handoff.
+- Include Task 3.5 (`P5-T35`) only.
+- Add the prominent local-startup data/migration warning to `README.md`.
+- Align `.env.example` with operator-configurable variables documented in README using safe placeholders only.
+- Correct the stale “proposed” lifecycle label in `sync-entry-coordination-contract.md` without rewriting its historical reviewed contract.
+- Replace the dashboard formatter's year-round `CST` with seasonally accurate Central Time and prove winter/summer behavior.
+- Reconcile the operator runbook and monitoring matrix; create `command-center/phase-5-release-handoff.md` and one sanitized 5L log.
+- Exclude Task 4; 5G-R2; 5H-R; provider verification; parked Task 2 work; application behavior; maintained product tests; workflows; dependencies; databases; authentication; protected data; external-currentness queries; publication; PR/workflow mutation; merge; deployment; production; parent updates; delegation; and second opinion.
+- Stop for any need for excluded behavior, live/protected evidence, invented currentness or cadence, release-sequencing decision, unexpected path or baseline drift, or failed configuration, timestamp, link, JSON, dashboard, health, whitespace, sensitive-value, preservation, or scope proof.
+- Closeout: mark Task 3.5 and 5L complete locally, keep Phase 5 active at 50%, make Task 4 the sole current Ryan-owned planning gate, verify the dashboard automatically, and stop without a human visual checkpoint.
+- Evidence: `command-center/phase-5-release-handoff.md` and `command-center/logs/2026-07-27-maintained-documentation-release-handoff-5l.md`.
+
+## Work Block 5K Result
+
+- Current remote `main` is `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` and contains PR #89 merge `e905e5c4ad406ebb7b5f10ea6d867d5724f662ce` plus three later `[skip actions]` command-center commits.
+- PR #89's activation head passed Synthetic CI run `30262719321`; its merge passed Fly Deploy run `30263216876`; all exact jobs succeeded with zero annotations. Its post-deploy health evidence is historical, not a claim of current health.
+- PR #90 remains open, clean, draft, and unmerged at `eccb0adb93a32d84127c5cb8d4d924a812ff0e8a`. Exact-head Synthetic CI run `30279361029` passed core and browser jobs with zero annotations; there is no merge, deployment, or production evidence.
+- The first usability set is merged/deployed/historically production-verified; Recurring Review is durable and hosted-verified only; Ask Opus and operator/handoff artifacts are local-only; current runtime health is externally unverified; provider account settings remain protected.
+- No contradiction, protected/live access, external mutation, or excluded action occurred.
+- Evidence: `command-center/phase-5-release-evidence-map.md` and `command-center/logs/2026-07-27-phase-5-release-evidence-reconciliation-5k.md`.
+
+## Confirmed Work Block 5K
+
+- Name: Phase 5 Release-Evidence and Unresolved-Gates Reconciliation.
+- Include Task 3.4 (`P5-T34`) only.
+- Distinguish local-only, commit-durable, hosted-verified, merged, deployed, historical production-verified, externally unverified-current, protected, and pending evidence.
+- Reconcile current local Git state and Phase 5 sanitized evidence with read-only GitHub metadata for remote `main`, PR #89, PR #90, and exact relevant Synthetic CI and Fly Deploy runs.
+- Do not fetch or change refs; query each necessary hosted surface once and record sanitized project-control metadata only.
+- Create `command-center/phase-5-release-evidence-map.md`, one sanitized 5K log, and a narrow Phase 5 evidence-row update in the monitoring matrix.
+- Exclude Task 3.5; parked Tasks 2.2/2.7/2.8; Task 4; product/test/README/workflow/dependency/runtime/configuration/database/migration changes; provider accounts; OpenRouter, Fly, Plaid, deployed application, demo, production, or health-endpoint access; staging, commit, push, PR mutation, workflow dispatch/rerun/cancellation, merge, deployment, rollback, parent updates, delegation, and second opinion.
+- Stop for a local/hosted contradiction that prevents factual classification, unavailable or sensitive metadata, evidence not tied to an exact SHA, need for protected/live access or mutation, urgent repair, unexpected path or baseline drift, or failed link/JSON/dashboard/health/currentness/whitespace/sensitive/scope verification.
+- Closeout: on a supported result, mark Task 3.4 and 5K complete locally, make Task 3.5 the sole current Ryan-owned planning task, verify the dashboard automatically, and stop without a human visual checkpoint.
+- Evidence: `command-center/phase-5-release-evidence-map.md` and `command-center/logs/2026-07-27-phase-5-release-evidence-reconciliation-5k.md`.
+
+## Confirmed Work Block 5J
+
+- Name: Local Synthetic Operator Re-entry Drill.
+- Include Task 3.3 (`P5-T33`) only.
+- Re-enter through the 5I authority and risk-classification sequence; preserve the current dirty worktree, branch/head, empty index, and unrelated files.
+- Run `.venv/bin/python scripts/ci_safety_check.py`, `.venv/bin/python scripts/smoke_test.py`, and `.venv/bin/python scripts/mobile_drawer_browser_test.py` once.
+- Permit only the smoke suite's source-defined demo-seeder subprocess inside its explicit disposable `TemporaryDirectory` with resolved `DATA_DIR` and exact cleanup; never invoke the seeder directly.
+- Allow only temporary synthetic Personal, BFM, and Luxe Legacy data, ephemeral localhost, both authentication modes, blocked non-localhost browser requests, sanitized output, and exact cleanup.
+- Permit narrow validation-status/evidence annotations in the 5I runbook and monitoring matrix plus one sanitized 5J log and Runway OS closeout.
+- Exclude Tasks 3.4-3.5; parked Tasks 2.2/2.7/2.8; Task 4; defect repair; product/test/workflow/dependency/runtime/configuration/migration/substantive README changes; external-currentness or GitHub/PR/workflow checks; `.env`, credentials, real databases, protected data, direct `run.py` startup, direct seed/sync/recovery/provider/Fly/Plaid commands, staging, commit, push, PR mutation, merge, deployment, production, parent updates, delegation, and second opinion.
+- Stop without repair or blind retry for any unresolved/non-temporary data path, credential/protected/external dependency, direct operational action, failing suite, cleanup residue, unexpected process/request/path, branch/head/index/preserved-file drift, or failed JSON/dashboard/health/currentness/whitespace/sensitive check.
+- Closeout: on a clean pass, mark Task 3.3 and 5J complete locally, make Task 3.4 the sole current Ryan-owned planning task, refresh and health-check the dashboard, and wait for Ryan's exact `5J dashboard verified` attestation.
+- Evidence: `command-center/logs/2026-07-27-local-synthetic-operator-reentry-drill-5j.md`.
+
+## Work Block 5J Result
+
+- The workflow safety checker passed the Synthetic CI and Fly Deploy contracts.
+- The full smoke suite passed on its first and only run with temporary synthetic Personal, BFM, and Luxe Legacy data, maintained denied-network seams, its internally guarded disposable demo-seeder proof, and exact cleanup.
+- The complete installed-Chrome suite passed on its first and only run in both authentication modes with ephemeral localhost, blocked non-localhost requests, mocked external seams, console/page-error checks, and exact temporary-data/server cleanup.
+- Product, maintained-test, branch/head, empty-index, and preserved-file baselines remained unchanged.
+- The runbook and monitoring matrix now accurately label the source-defined local re-entry path as locally verified through 5J.
+- No repair, `.env`, credential, real database, protected content, external currentness, GitHub/PR/workflow observation, provider account, product/test/workflow/dependency/configuration/README change, publication, merge, deployment, or production action occurred.
+- Evidence: `command-center/logs/2026-07-27-local-synthetic-operator-reentry-drill-5j.md`.
+- Automated JSON, refresh, generated-state equality, health, exactly-one-current-task, generated-marker, relevant-diff, whitespace, sensitive-value, scope, branch/head, empty-index, and preserved-file checks passed.
+- Ryan directed that routine command-center closeouts no longer require his rendered-dashboard attestation; human visual review is reserved for material dashboard presentation changes, insufficient automated proof, or an explicit request.
+- Task 3.3 and 5J are complete locally. Task 3.4 remains planning-only and requires a separate confirmed work block.
+
+## Confirmed Work Block 5I
+
+- Name: Operator Re-entry and Monitoring Contract.
+- Include Tasks 3.1-3.2 (`P5-T31`-`P5-T32`) only.
+- Reconcile tracked architecture, setup, verification, deployment, synchronization, recovery, AI, data, durability, safety-contract, and sanitized evidence sources.
+- Create `command-center/operator-runbook.md`, `command-center/operations-monitoring-matrix.md`, and one sanitized 5I evidence log.
+- Distinguish source-verified facts, mutable externally unverified state, protected observations, and separately authorized remediation.
+- Exclude Task 3.3-3.5, Tasks 2.2/2.7/2.8, Task 4, README/product/test/workflow/runtime/configuration changes, external-currentness checks, provider-account verification, protected data, operational command execution, staging, commit, push, PR mutation, workflow action, merge, deployment, production, and parent updates.
+- Do not probe a script with `--help` unless tracked source proves the path non-mutating; invoke no seed, sync, transfer, recovery, deployment, or provider command.
+- Stop for a material source contradiction requiring Ryan, protected/live dependency, external-currentness requirement, scope expansion, unexpected path, sensitive addition, preserved-file or index drift, PR drift, or failed JSON/dashboard/health/whitespace verification.
+- Verification: source links; complete normal/failure/escalation/recovery guidance; monitoring owner/signal/cadence/threshold/observation/evidence/remediation fields; no unsupported currentness claims; JSON; dashboard refresh/currentness/health; generated-state inspection; whitespace; sensitive patterns; exact paths; empty index; preserved hashes; and unchanged PR #90.
+- Closeout: mark Tasks 3.1-3.2 and 5I done locally and make Task 3.3 the sole current Ryan-owned planning task. If browser policy still blocks local-file rendering, wait for Ryan's `5I dashboard verified` attestation before declaring the block complete.
+
+## Work Block 5I Result
+
+- Created `command-center/operator-runbook.md` with the exact authority sequence, evidence labels, risk classes, safe re-entry, local verification, destructive-utility, CI, deployment, Plaid, monitoring, Ask Opus, recovery, and failure/escalation boundaries.
+- Created `command-center/operations-monitoring-matrix.md` with owner, signal, cadence/threshold, allowed observation, evidence, status basis, and remediation gate for every maintained operational surface.
+- Confirmed that normal `run.py` startup defaults to `./local_state` and application access can initialize, migrate, create sidecars, and synchronize categories.
+- Confirmed that `scripts/seed_demo_data.py` has no help parser and any main invocation can destructively reseed Personal and BFM; source review is the only safe default.
+- Recorded the stale “proposed” header in `sync-entry-coordination-contract.md`, incomplete `.env.example` inventory, missing prominent local-startup data warning, absent continuous health/backup/runtime-maintenance cadences, externally unverified monitor/provider state, and hard-coded `CST` dashboard timestamp label for later Task 3 work.
+- Every new local link resolves; currentness language, matrix fields, secret patterns, protected values, JSON, dashboard generation/currentness, health, whitespace, exact paths, empty index, preserved hashes, branch/head, and unchanged PR #90 checks passed.
+- No synthetic drill, external currentness, provider-account, product, test, README, workflow, configuration, protected-data, operational-command, staging, publication, merge, deployment, or production action occurred.
+- Evidence: `command-center/logs/2026-07-27-operator-reentry-monitoring-contract-5i.md`.
+- Ryan returned the exact `5I dashboard verified` attestation after inspecting the sanitized rendered closeout dashboard.
+- Tasks 3.1-3.2 and 5I are complete locally. Task 3.3 remains planning-only and requires a separate confirmed work block.
+
+## Task 3 Inventory
+
+- Task 3.1 (`P5-T31`) — inventory safe operator re-entry paths and protected boundaries; done locally through 5I.
+- Task 3.2 (`P5-T32`) — draft the consolidated operator runbook and monitoring/maintenance matrix; done locally through 5I.
+- Task 3.3 (`P5-T33`) — prove the runbook with a local synthetic re-entry drill; done locally through 5J.
+- Task 3.4 (`P5-T34`) — reconcile Phase 5 release evidence, durability, and unresolved gates; done locally through 5K.
+- Task 3.5 (`P5-T35`) — finalize maintained documentation and the release handoff; done locally through 5L.
+
+## Task 4 Inventory
+
+- Task 4 (`P5-T4`) — complete target and parent durability closeout; active umbrella.
+- Task 4.1 (`P5-T41`) — release Recurring Review from verified draft PR #90; done through 5G-R2.
+- Task 4.2 (`P5-T42`) — preserve Ask Opus and Task 3 artifacts durably; current for Ryan-owned planning.
+- Task 4.3 (`P5-T43`) — verify protected OpenRouter account controls; planned and separately gated.
+- Task 4.4 (`P5-T44`) — release Ask Opus and its operator handoff package; planned.
+- Task 4.5 (`P5-T45`) — complete final target-repo and parent-project durability closeout; planned.
+
+## Work Block 5H-B Result
+
+- Ask accepts seven exact page identifiers and rejects missing, General, Weekly, Waterfall, or crafted pages before context or provider work.
+- Every supported context is active-entity and summary-first; cross-entity General append behavior, account/item names, exact transaction dates, free-form strategies, notes, and disallowed merchant labels are absent.
+- The server transcript directory, history load/save behavior, and `/ai/clear` route are removed. Each provider request contains one fresh summary and one current question; Clear affects only the visible browser thread.
+- Ask-specific OpenRouter requests enforce `zdr: true` and `data_collection: "deny"` without changing other AI request shapes.
+- The modal now discloses page purpose, active entity, sent categories, OpenRouter-to-Claude-Opus routing, request metadata, no Ledger transcript, and fallibility before submission.
+- Weekly and Waterfall no longer expose Ask.
+- Focused synthetic coverage found and corrected an existing Ask-only SQLite `%%Y-%%m` date-format defect that silently omitted current-month categories and merchants.
+- Baseline and final full smoke plus complete both-auth installed-browser suites passed. Exact Personal/BFM/LL allowlists, invalid-page pre-data rejection, provider serialization, no transcript, browser-local Clear, 390/768/1440 layout, direct desktop/phone inspection, denied networking, console health, cleanup, and preserved boundaries passed.
+- No `.env`, credential, existing chat file, real database or row, provider account, live API, PR mutation, workflow, merge, deployment, or production action occurred.
+- Evidence: `command-center/logs/2026-07-27-ask-opus-privacy-contract-implementation-5h-b.md`.
+
+## Confirmed Work Block 5H-B
+
+- Name: Ask Opus Privacy Contract Implementation.
+- Include Task 2.5 (`P5-T25`) only.
+- Adopt explicit submission, active-entity summary-first context, exact page allowlists, no server transcript, browser-only Clear, per-request ZDR plus denial of data-collecting providers, truthful disclosure, and fail-closed behavior.
+- Disable Weekly and Waterfall Ask triggers until dedicated minimum-data contracts exist.
+- Exclude combined Personal/BFM mode, account/asset/liability labels, exact transaction dates, free-form goal strategies, unrelated AI features, other Phase 5 tasks, protected data, credentials, existing chat files, live provider access, PR #90 mutation, staging, commit, push, merge, deployment, production, delegation, and second opinion.
+- Create local `codex/ask-opus-privacy` from the exact verified PR #90 head while carrying only the existing unstaged 5H-A control artifacts; leave the remote branch and draft PR unchanged.
+- Verify exact synthetic page payloads, entity isolation, unknown-page rejection before data access, absence of transcript filesystem behavior, provider privacy payload, browser-only Clear, disclosure, modal/accessibility/responsive behavior, both authentication modes, denied external networking, cleanup, dashboard, scope, index, and preserved files.
+- Stop for any need for real data, credential or provider access, cross-entity or disallowed identifiers, provider-policy ambiguity, unexpected path, branch/PR drift, or plan-changing verification failure.
+- Report the final page contract, privacy payload, retention behavior, disclosure, disabled surfaces, exact changes, complete verification, and separate 5H-R/provider-account gates.
+
+## Work Block 5H-A Result
+
+- Six effective contexts silently include Personal and BFM data; Transactions and Reports are entity-local, and Luxe Legacy has no configured cross-entity peer.
+- Weekly and Waterfall normalize to shared `general` context and history, while Clear targets different page-specific paths and does not remove the history actually used.
+- Local question/answer history is capped at 40 messages but has no TTL, visible restoration, or documented permission lifecycle.
+- The current OpenRouter request has no per-request provider privacy controls; actual account logging/use settings and selected provider retention are not established.
+- The recommended contract is explicit-submit-only, active-entity, summary-first, no broad fallback, no server transcript by default, per-request ZDR plus denial of data-collecting providers, separately verified account settings, truthful disclosure, and fail-closed behavior.
+- No protected data, existing chat file, credential, account setting, live API, product, GitHub, workflow, merge, deployment, or production state was accessed or changed.
+- Decision packet: `command-center/ask-opus-data-handling-contract.md`.
+- Evidence: `command-center/logs/2026-07-27-ask-opus-data-handling-contract-audit-5h-a.md`.
+
+## Confirmed Work Block 5H-A
+
+- Name: Ask Opus Data-Handling Contract Audit.
+- Include Task 2.5 (`P5-T25`) only for its contract prerequisite.
+- Inspect tracked source and maintained tests plus current public official provider documentation.
+- Produce a page/context matrix, risk and mismatch inventory, recommended contract, alternatives, Ryan decision prompt, and later implementation acceptance criteria.
+- Recommend explicit-submission-only transmission, entity-local defaults, no silent page fallback, minimum page-relevant data, no invisible indefinite transcript, and truthful provider/data/scope/retention disclosure.
+- Exclude product/test/configuration changes, existing chat files, protected or real data, credentials, live AI/API calls, Task 2.5 implementation, other phase tasks, Git/GitHub mutation, PR #90 changes, merge, deployment, delegation, second opinion, and the three preserved unrelated files.
+- Stop for protected/live access, unsupported disclosure-critical provider claims, urgent repair, product implementation, expansion, or failed exact-path, sensitive-data, JSON, dashboard, health, or whitespace verification.
+- Evidence: `command-center/logs/2026-07-27-ask-opus-data-handling-contract-audit-5h-a.md`.
 
 ## Work Block 5G-R Result
 

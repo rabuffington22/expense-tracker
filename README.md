@@ -29,7 +29,7 @@ The demo overrides this map with `ENTITIES=Personal:personal,Business:company` a
 - Dashboard analysis, transaction filtering, saved views, subscriptions, cash flow, and monthly reports
 - Long-term planning, short-term goals and budgets, weekly check-ins, and BFM-to-Personal waterfall planning
 - BFM employee roster and Phoenix/CyberPayroll import
-- Optional OpenRouter-powered chat, category suggestions, subscription tips, and dashboard analysis
+- Optional OpenRouter-powered Ask Opus explanations with active-entity page summaries, plus category suggestions, subscription tips, and dashboard analysis
 - PWA manifest, static/offline-only service-worker caching, data-free offline fallback, mobile navigation, and dark/light themes
 - Standalone mobile-oriented dashboard at `/k/`; it uses the main session gate when authentication is configured
 
@@ -79,6 +79,8 @@ python run.py
 ```
 
 Open [http://127.0.0.1:8501](http://127.0.0.1:8501). `run.py` loads the project-root `.env` file and starts Flask on port 8501. Local data defaults to `./local_state/`.
+
+**Check `DATA_DIR` before ordinary startup.** If it is unset, the application uses `./local_state/`. Starting the app and opening normal pages can create the data directory and SQLite WAL/SHM sidecars, initialize entity databases, apply pending additive migrations, and synchronize category metadata. Do not use `python run.py` merely to inspect recovered or otherwise protected databases. Use the synthetic suites below for ordinary verification; any access to real or recovered data requires a separately approved target-specific block.
 
 ### Synthetic smoke test
 
@@ -136,6 +138,8 @@ When `APP_PASSWORD_HASH` is configured, Flask redirects unauthenticated full-pag
 
 Every HTML response, including directly navigated fragments and error documents, carries the strict core Content Security Policy. Successfully rendered Plaid Link documents use a response-scoped variant with one fresh nonce on the exact Plaid initializer plus only the selected sandbox or production Link origins; redirects, authentication responses, and render failures remain on the strict policy. Static assets, the manifest, and `/sw.js` do not receive an HTML document policy, while the service worker adds the strict header to its emergency HTML fallback. Maintained tests exercise this behavior with temporary synthetic databases, a mocked initializer, and denied non-localhost networking. A real Plaid Link open and any publication remain separately authorized operational checkpoints.
 
+Ask Opus is optional and sends nothing when its modal opens. Submission sends one fresh, active-entity, page-specific summary and the current question through OpenRouter to Claude Opus. The application does not send prior questions, store a server-side conversation transcript, silently combine Personal and BFM, or fall back from an unknown page to broader data. Ask requests require zero-data-retention routing and reject data-collecting providers; OpenRouter may retain request metadata, and mutable account settings require separate operator verification before production retention claims. Weekly and Waterfall do not expose Ask until they have dedicated minimum-data contracts. Other optional AI features have separate request shapes and are not covered by this Ask Opus contract.
+
 ## Data layout and handling
 
 With the default local configuration:
@@ -149,7 +153,7 @@ local_state/
 └── backups/
 ```
 
-Real databases, WAL/SHM files, `.env`, uploads, backups, statements, exports, and temporary financial payloads are ignored and must remain outside Git history. Parsed upload and AI-chat intermediates use temporary directories so Flask's cookie session stays below its size limit.
+Real databases, WAL/SHM files, `.env`, uploads, backups, statements, exports, and temporary financial payloads are ignored and must remain outside Git history. Parsed upload intermediates use temporary directories so Flask's cookie session stays below its size limit. Ask Opus keeps only the visible browser thread and writes no server-side transcript.
 
 Transaction IDs are deterministic, so importing the same normalized bank transaction again does not create a duplicate. Reporting uses centralized exclusion rules and replaces a split parent transaction with its categorized split pieces when splits exist.
 

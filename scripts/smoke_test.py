@@ -1865,6 +1865,352 @@ def main() -> None:
 
         print("   ✅ All route regression tests passed")
 
+        # ── 8ai. Ask Opus privacy contract ──────────────────────────
+        print("\n8ai. Ask Opus privacy contract…")
+
+        import core.ai_client as ai_client_core
+        import web.routes.ai as ai_routes
+        from datetime import date as _date
+
+        _check(
+            ai_routes._VALID_PAGES
+            == {
+                "planning",
+                "short-term-planning",
+                "dashboard",
+                "transactions",
+                "subscriptions",
+                "cashflow",
+                "reports",
+            },
+            "Ask Opus: page allowlist must contain only supported exact contexts",
+        )
+        _check(
+            "/ai/clear" not in {rule.rule for rule in app.url_map.iter_rules()},
+            "Ask Opus: server-side Clear route must be absent",
+        )
+        ai_source = (PROJECT_ROOT / "web" / "routes" / "ai.py").read_text()
+        _check(
+            all(
+                marker not in ai_source
+                for marker in (
+                    "_TEMP_DIR",
+                    "_get_conversation_path",
+                    "_load_conversation",
+                    "_save_conversation",
+                    "tempfile",
+                )
+            ),
+            "Ask Opus: server-side transcript code must be absent",
+        )
+
+        with app.test_client() as ask_client:
+            ask_client.set_cookie("entity", "Personal")
+            with ask_client.session_transaction() as ask_session:
+                ask_session["_csrf_token"] = "ask-opus-5h-b-csrf"
+
+            for invalid_page in ("", "general", "weekly", "waterfall", "crafted"):
+                with patch.object(ai_routes, "_gather_context") as gather_mock, patch.object(
+                    ai_routes, "chat_completion"
+                ) as chat_mock:
+                    invalid_response = ask_client.post(
+                        "/ai/ask",
+                        data={
+                            "_csrf_token": "ask-opus-5h-b-csrf",
+                            "page": invalid_page,
+                            "question": "Synthetic question",
+                        },
+                    )
+                _check(
+                    invalid_response.status_code == 400,
+                    f"Ask Opus: {invalid_page!r} must fail closed with 400",
+                )
+                _check(
+                    gather_mock.call_count == 0 and chat_mock.call_count == 0,
+                    f"Ask Opus: {invalid_page!r} must fail before context or provider work",
+                )
+
+            for valid_page in sorted(ai_routes._VALID_PAGES):
+                with patch.object(
+                    ai_routes,
+                    "_gather_context",
+                    return_value=f"SYNTHETIC-{valid_page}-CONTEXT",
+                ) as gather_mock, patch.object(
+                    ai_routes,
+                    "chat_completion",
+                    return_value="Synthetic answer",
+                ) as chat_mock:
+                    for question in ("First synthetic question", "Second synthetic question"):
+                        valid_response = ask_client.post(
+                            "/ai/ask",
+                            data={
+                                "_csrf_token": "ask-opus-5h-b-csrf",
+                                "page": valid_page,
+                                "question": question,
+                            },
+                        )
+                        _check(
+                            valid_response.status_code == 200,
+                            f"Ask Opus: {valid_page} synthetic request must succeed",
+                        )
+                _check(
+                    gather_mock.call_count == 2
+                    and all(
+                        call.args == ("personal", valid_page)
+                        for call in gather_mock.call_args_list
+                    ),
+                    f"Ask Opus: {valid_page} must gather only the active entity",
+                )
+                _check(
+                    chat_mock.call_count == 2,
+                    f"Ask Opus: {valid_page} must make one provider call per submit",
+                )
+                for call in chat_mock.call_args_list:
+                    kwargs = call.kwargs
+                    _check(
+                        kwargs["provider"]
+                        == {"zdr": True, "data_collection": "deny"},
+                        f"Ask Opus: {valid_page} must enforce private provider routing",
+                    )
+                    _check(
+                        len(kwargs["messages"]) == 1
+                        and kwargs["messages"][0]["role"] == "user"
+                        and "approved current-page summary"
+                        in kwargs["messages"][0]["content"],
+                        f"Ask Opus: {valid_page} must send one independent question",
+                    )
+
+        class _SyntheticOpenRouterResponse:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, traceback):
+                return False
+
+            def read(self):
+                return json.dumps(
+                    {"choices": [{"message": {"content": "synthetic"}}]}
+                ).encode("utf-8")
+
+        prior_key = ai_client_core._api_key
+        prior_checked = ai_client_core._checked
+        try:
+            ai_client_core._api_key = "synthetic-key"
+            ai_client_core._checked = True
+            with patch.object(
+                ai_client_core.urllib.request,
+                "urlopen",
+                return_value=_SyntheticOpenRouterResponse(),
+            ) as urlopen_mock:
+                provider_result = ai_client_core.chat_completion(
+                    messages=[{"role": "user", "content": "synthetic"}],
+                    provider={"zdr": True, "data_collection": "deny"},
+                )
+            provider_body = json.loads(
+                urlopen_mock.call_args.args[0].data.decode("utf-8")
+            )
+            _check(
+                provider_result == "synthetic"
+                and provider_body["provider"]
+                == {"zdr": True, "data_collection": "deny"},
+                "Ask Opus: serialized OpenRouter payload must contain exact privacy controls",
+            )
+        finally:
+            ai_client_core._api_key = prior_key
+            ai_client_core._checked = prior_checked
+
+        entity_markers = {
+            "personal": "PERSONAL5HB",
+            "company": "BFM5HB",
+            "luxelegacy": "LL5HB",
+        }
+        marker_date = _date.today().isoformat()
+        for entity_key, marker in entity_markers.items():
+            marker_conn = get_connection(entity_key)
+            marker_conn.execute(
+                "INSERT INTO transactions "
+                "(transaction_id,date,description_raw,merchant_canonical,amount,"
+                "category,source_filename,imported_at) VALUES (?,?,?,?,?,?,?,?)",
+                (
+                    f"{marker}-TXN",
+                    marker_date,
+                    f"{marker}-RAW",
+                    f"{marker}-MERCHANT",
+                    -999999.0,
+                    f"{marker}-CATEGORY",
+                    "ask-opus-5h-b",
+                    marker_date,
+                ),
+            )
+            cursor = marker_conn.execute(
+                "INSERT INTO account_balances "
+                "(account_name,balance_cents,account_type,credit_limit_cents,"
+                "payment_due_day,payment_amount_cents,sort_order) "
+                "VALUES (?,?,?,?,?,?,?)",
+                (
+                    f"{marker}-PRIVATE-ACCOUNT",
+                    123400,
+                    "credit_card",
+                    500000,
+                    12,
+                    25000,
+                    999,
+                ),
+            )
+            account_id = cursor.lastrowid
+            marker_conn.execute(
+                "INSERT INTO manual_recurring "
+                "(account_id,merchant,amount_cents,day_of_month) VALUES (?,?,?,?)",
+                (account_id, f"{marker}-PRIVATE-RECURRING", 3300, 18),
+            )
+            marker_conn.execute(
+                "INSERT INTO planning_items "
+                "(item_type,name,current_value_cents,annual_rate_bps,"
+                "monthly_contrib_cents,monthly_payment_cents,sort_order) "
+                "VALUES ('asset',?,?,?,?,?,?)",
+                (f"{marker}-PRIVATE-ASSET", 500000, 500, 10000, 0, 999),
+            )
+            marker_conn.execute(
+                "INSERT INTO short_term_goals "
+                "(name,goal_type,target_date,strategy,monthly_amount_cents,"
+                "linked_accounts,status) VALUES (?,?,?,?,?,?,?)",
+                (
+                    f"{marker}-GOAL",
+                    "savings",
+                    "2030-01-01",
+                    f"{marker}-PRIVATE-STRATEGY",
+                    15000,
+                    json.dumps([f"{marker}-PRIVATE-ACCOUNT"]),
+                    "active",
+                ),
+            )
+            marker_conn.execute(
+                "INSERT INTO subscription_watchlist "
+                "(merchant,amount_cents,frequency,status,notes) VALUES (?,?,?,?,?)",
+                (
+                    f"{marker}-SUBSCRIPTION",
+                    1900,
+                    "monthly",
+                    "watching",
+                    f"{marker}-PRIVATE-NOTE",
+                ),
+            )
+            marker_conn.execute(
+                "INSERT INTO budget_items (category,monthly_budget_cents) VALUES (?,?)",
+                (f"{marker}-CATEGORY", 90000),
+            )
+            marker_conn.commit()
+            marker_conn.close()
+
+        try:
+            for entity_key, marker in entity_markers.items():
+                contexts = {
+                    page: ai_routes._gather_context(entity_key, page)
+                    for page in ai_routes._VALID_PAGES
+                }
+                other_markers = {
+                    value for key, value in entity_markers.items()
+                    if key != entity_key
+                }
+                _check(
+                    all(
+                        other not in context
+                        for context in contexts.values()
+                        for other in other_markers
+                    ),
+                    f"Ask Opus: {entity_key} contexts must not contain another entity",
+                )
+                for private_suffix in (
+                    "PRIVATE-ACCOUNT",
+                    "PRIVATE-ASSET",
+                    "PRIVATE-STRATEGY",
+                    "PRIVATE-NOTE",
+                    "PRIVATE-RECURRING",
+                ):
+                    _check(
+                        all(
+                            f"{marker}-{private_suffix}" not in context
+                            for context in contexts.values()
+                        ),
+                        f"Ask Opus: {entity_key} must exclude {private_suffix}",
+                    )
+                _check(
+                    marker_date not in contexts["transactions"],
+                    f"Ask Opus: {entity_key} transactions must omit exact dates",
+                )
+                approved_fields = {
+                    "dashboard": f"{marker}-MERCHANT",
+                    "transactions": f"{marker}-MERCHANT",
+                    "subscriptions": f"{marker}-SUBSCRIPTION",
+                    "short-term-planning": f"{marker}-GOAL",
+                }
+                for page, approved_marker in approved_fields.items():
+                    _check(
+                        approved_marker in contexts[page],
+                        f"Ask Opus: {entity_key} {page} must retain "
+                        f"approved marker {approved_marker}",
+                    )
+        finally:
+            for entity_key, marker in entity_markers.items():
+                marker_conn = get_connection(entity_key)
+                marker_conn.execute(
+                    "DELETE FROM manual_recurring WHERE merchant=?",
+                    (f"{marker}-PRIVATE-RECURRING",),
+                )
+                marker_conn.execute(
+                    "DELETE FROM account_balances WHERE account_name=?",
+                    (f"{marker}-PRIVATE-ACCOUNT",),
+                )
+                marker_conn.execute(
+                    "DELETE FROM planning_items WHERE name=?",
+                    (f"{marker}-PRIVATE-ASSET",),
+                )
+                marker_conn.execute(
+                    "DELETE FROM short_term_goals WHERE name=?",
+                    (f"{marker}-GOAL",),
+                )
+                marker_conn.execute(
+                    "DELETE FROM subscription_watchlist WHERE merchant=?",
+                    (f"{marker}-SUBSCRIPTION",),
+                )
+                marker_conn.execute(
+                    "DELETE FROM budget_items WHERE category=?",
+                    (f"{marker}-CATEGORY",),
+                )
+                marker_conn.execute(
+                    "DELETE FROM transactions WHERE transaction_id=?",
+                    (f"{marker}-TXN",),
+                )
+                marker_conn.commit()
+                remaining = marker_conn.execute(
+                    "SELECT "
+                    "(SELECT COUNT(*) FROM transactions WHERE transaction_id=?), "
+                    "(SELECT COUNT(*) FROM account_balances WHERE account_name=?), "
+                    "(SELECT COUNT(*) FROM planning_items WHERE name=?), "
+                    "(SELECT COUNT(*) FROM short_term_goals WHERE name=?), "
+                    "(SELECT COUNT(*) FROM subscription_watchlist WHERE merchant=?), "
+                    "(SELECT COUNT(*) FROM budget_items WHERE category=?)",
+                    (
+                        f"{marker}-TXN",
+                        f"{marker}-PRIVATE-ACCOUNT",
+                        f"{marker}-PRIVATE-ASSET",
+                        f"{marker}-GOAL",
+                        f"{marker}-SUBSCRIPTION",
+                        f"{marker}-CATEGORY",
+                    ),
+                ).fetchone()
+                _check(
+                    tuple(remaining) == (0, 0, 0, 0, 0, 0),
+                    f"Ask Opus: {entity_key} marker cleanup failed",
+                )
+                marker_conn.close()
+
+        print(
+            "   ✅ Exact pages, fail-closed dispatch, active-entity summaries, "
+            "privacy routing, no transcript, approved fields, denied identifiers, "
+            "all-entity isolation, no network, and cleanup passed"
+        )
+
         # ── 8a. Luxe Legacy planning route boundary ────────────────
         print("\n8a. Luxe Legacy planning route boundary…")
 
@@ -11842,12 +12188,12 @@ def main() -> None:
             "Weekly/Waterfall: source templates must contain no inline execution",
         )
         _check(
-            'data-app-shell-action="open-ai-chat"' in weekly_source
-            and 'data-ai-page="weekly"' in weekly_source
+            'data-app-shell-action="open-ai-chat"' not in weekly_source
+            and 'data-ai-page="weekly"' not in weekly_source
             and "waterfall.js" in waterfall_source
             and "data-waterfall-controller" in waterfall_source
-            and 'data-app-shell-action="open-ai-chat"' in waterfall_source
-            and 'data-ai-page="waterfall"' in waterfall_source
+            and 'data-app-shell-action="open-ai-chat"' not in waterfall_source
+            and 'data-ai-page="waterfall"' not in waterfall_source
             and 'data-waterfall-action="switch-view"' in waterfall_source
             and 'data-waterfall-action="toggle-breakdown"' in waterfall_source
             and 'data-waterfall-action="set-mode"' in waterfall_source
@@ -11876,11 +12222,11 @@ def main() -> None:
             "Weekly/Waterfall: rendered routes must contain no inline execution",
         )
         _check(
-            'data-app-shell-action="open-ai-chat"' in rendered_weekly
-            and 'data-ai-page="weekly"' in rendered_weekly
+            'data-app-shell-action="open-ai-chat"' not in rendered_weekly
+            and 'data-ai-page="weekly"' not in rendered_weekly
             and "/static/waterfall.js" in rendered_waterfall
             and "data-waterfall-controller" in rendered_waterfall,
-            "Weekly/Waterfall: rendered routes must expose maintained AI and controller assets",
+            "Weekly/Waterfall: rendered routes must omit Ask and preserve controller assets",
         )
 
         all_template_source = "\n".join(
@@ -11923,7 +12269,7 @@ def main() -> None:
             "Weekly/Waterfall: maintained aggregate inventory must match the post-4AR CSP contract",
         )
 
-        print("   ✅ Two source templates, rendered routes, page controller, AI seams, and exact residual inventory passed")
+        print("   ✅ Two source templates, rendered routes, page controller, disabled Ask seams, and exact residual inventory passed")
 
         # ── 11j. Subscription-page execution ────────────────────────
         print("\n11j. Subscription-page execution…")
