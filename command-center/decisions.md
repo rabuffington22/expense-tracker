@@ -2,6 +2,40 @@
 
 ## Accepted
 
+### 2026-07-29 — Close 5R-R on exact decision schema and release closeout recovery
+
+The preserved 5R-R baseline passed with the exact ten-path working set, empty index, local `main` `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, live and cached merge head `ddc2f02f10fad85fb9936806b5fd84eda806069c`, retained feature branch `c5de027162e6e57ba720b90694d08f106851f4f5`, exact merge ancestry and sixteen-path package, merged PR #92, sole successful Fly Deploy run `30464960703`, successful job `90620267980`, zero annotations, and the existing one-request HTTP 200 `status: ok` health evidence.
+
+The recovery replaced only the invalid decision-queue fields with the established `decision`, `status`, `whyItMatters`, and `workaround` schema. No renderer, product, test, workflow, deployment, health, provider, protected, transition, or successor action occurred. The active and final command-center source, generated, health, currentness, whitespace, task-accounting, and rendered gates passed.
+
+Work block 5R remains historically stopped at its original final rendered verification after the product release succeeded. Work block 5R-R is done subject to the containing exact ten-path `[skip actions]` commit being based directly on merge head `ddc2f02f10fad85fb9936806b5fd84eda806069c`, reaching live `main` non-force, retaining local `main` and the feature branch, and producing zero workflows, checks, statuses, or deployments. Task 2.8 remains released, Task 2 returns to Ryan solely as the transition gate, Tasks 2.2 and 2.7 remain parked, Phase 5 remains active at 100%, and no successor starts.
+
+### 2026-07-29 — Confirm 5R-R exact decision-queue schema recovery and release closeout resume
+
+Ryan confirmed the exact proposed 5R-R scope. Codex Desktop must first record and render active 5R-R inside the preserved ten-path closeout working set. The recovery may then replace only the invalid `decisionsNeeded` field shape with the established `decision`, `status`, `whyItMatters`, and `workaround` schema; reconcile 5R as historically stopped at rendered verification after its successful product release; reconcile 5R-R as the exact closeout recovery; and resume the same ten-path `[skip actions]` durability path from merge head `ddc2f02f10fad85fb9936806b5fd84eda806069c`.
+
+The release may not be repeated. PR #92, Fly Deploy run `30464960703`, job `90620267980`, and the one HTTP 200 `status: ok` health result are existing read-only evidence. Tasks 2.2 (`P5-T22`) and 2.7 (`P5-T27`), every product or test change, another PR or merge mutation, deployment, health request, workflow action, Fly operation, Phase 5 transition, Phase 6 creation, successor work, delegation, second opinion, and unrelated work remain excluded.
+
+The recovery must stop without a second correction or retry if exact refs, the ten-path union, empty index, release evidence, active or final rendered dashboard, JSON, currentness, health, whitespace, task accounting, staging, commit parent, non-force push, retained branches, or zero-closeout-workflow evidence differs. On full pass only, commit exactly the ten paths as `Record offline recovery production release [skip actions]`, push detached `HEAD:main` non-force, prove zero workflows, checks, statuses, or deployments for the closeout SHA, and stop.
+
+### 2026-07-29 — Record 5R release pass and rendered-closeout stop
+
+The exact 5R fail-closed preflight passed. PR #92 remained the clean, mergeable, three-commit, sixteen-path package at recovery head `c5de027162e6e57ba720b90694d08f106851f4f5`, and recovery-head Synthetic CI run `30460422095` passed core before browser with every required step successful, zero annotations, and zero deployment.
+
+PR #92 was marked ready and merged normally as `ddc2f02f10fad85fb9936806b5fd84eda806069c`, with first parent `ab7fea3155847209d693558a9e5a9ba39e163d7a` and second parent `c5de027162e6e57ba720b90694d08f106851f4f5`. The feature branch was retained and local `refs/heads/main` remained untouched at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`.
+
+Exactly one automatic push-event Fly Deploy, run `30464960703` and job `90620267980`, ran for the merge SHA. Every returned step passed and the job had zero annotations. The one authorized credential-free production `/health` request then returned HTTP 200 with sanitized `status: ok`.
+
+Task 2.8 (`P5-T28`) is done, merged, deployed, and historically production-health-verified through 5R. Task 2 (`P5-T2`) remains current solely as Ryan's Phase 5 transition decision gate. Tasks 2.2 (`P5-T22`) and 2.7 (`P5-T27`) remain parked, Phase 5 remains active at 100% required completion, and no successor starts. Final rendered inspection later found the transition decision used fields the dashboard does not consume, so 5R stopped before its exact ten-path `[skip actions]` closeout was staged, committed, or pushed. The release evidence remains valid; closeout durability resumes only through confirmed 5R-R.
+
+### 2026-07-29 — Confirm 5R offline recovery production release
+
+Ryan confirmed the exact proposed 5R scope. Codex Desktop must first record and render active 5R, then preserve local `refs/heads/main` at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` without checkout or mutation; require cached and live `origin/main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`; require local, cached, and live `codex/offline-recovery-feedback` at recovery head `c5de027162e6e57ba720b90694d08f106851f4f5`; require PR #92 open, draft, clean, mergeable, based on `main`, three commits ahead, zero behind, and exactly sixteen paths; and revalidate the exact recovery-head Synthetic CI run `30460422095` with core before browser, every required step successful, zero annotations, and zero deployment.
+
+Only on complete fail-closed preflight may Codex mark PR #92 ready, merge it with a normal merge commit without bypass or branch deletion, verify the exact two parents, observe only the resulting automatic exact-merge-SHA Fly Deploy, require every job and step successful with zero annotations, and make exactly one credential-free production `/health` request requiring HTTP 200 and sanitized `status: ok`. On full pass, Codex may write one exact ten-path sanitized command-center closeout, commit it as `Record offline recovery production release [skip actions]` from the exact fetched merge head without moving local `main`, non-force push it directly to `main`, and prove that the closeout caused no second workflow or deployment.
+
+Task 2.8 (`P5-T28`) is included only for release of the frozen verified package, and Task 2 (`P5-T2`) is included only for status accounting. Tasks 2.2 (`P5-T22`) and 2.7 (`P5-T27`), completed Tasks 1, 3, and 4, every other Task 2 child, Phase 5 closure, Phase 6 creation, successor execution, product or test changes, workflow changes, local product-suite reruns, manual workflow action, repair, rollback, retry, force push, rebase, conflict resolution, feature-branch deletion, protected/provider/database/financial/parent action, delegation, second opinion, and unrelated work remain excluded. Any exact-target, PR, CI, merge, deployment, health, closeout, no-second-workflow, dashboard, health-check, or scope failure stops 5R without repair or expansion.
+
 ### 2026-07-29 — Close 5Q-R2 on corrected ref semantics and exact hosted evidence
 
 The fail-closed reconciliation passed under `set -euo pipefail` with explicit assertion handling. Local `refs/heads/main` remained untouched at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` and remained an ancestor of exact cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`. Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, their exact ancestry and path sets, frozen implementation hashes, local/cached/live feature-branch alignment, clean open draft PR #92, and the empty real index all passed.

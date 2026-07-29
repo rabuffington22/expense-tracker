@@ -3,7 +3,7 @@
 Date: 2026-07-28
 Work block: 5P Offline Retry Controller Availability And Truthful Feedback Repair
 Task: 2.8 (`P5-T28`)
-Status: evidence accepted and Task 2.8 closed locally through 5P-R; 5P remains historically stopped
+Status: Task 2.8 released through 5R; 5P remains historically stopped
 
 ## Source-Backed Defect
 
@@ -109,3 +109,19 @@ Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684` and closeout `c10c4a3f3ba73
 Existing automatic candidate run `30446979383` and closeout run `30447811416` each remained the only workflow for its SHA. Core completed before browser, every required step passed, all four jobs had zero annotations, and no Fly deployment or deployment workflow appeared.
 
 The exact eight-path recovery closeout is valid only if its immutable automatic recovery-head Synthetic CI passes core before browser with every required step successful, zero annotations, zero deployment, exact local/remote feature-branch equality, preserved local-main and remote-main semantics, and PR #92 still clean, open, draft, and unmerged. On that gate, 5Q-R2 is done, 5Q-R and 5Q remain stopped, Task 2.8 is branch/draft-PR durable and hosted verified, Task 2 remains current, Tasks 2.2 and 2.7 remain parked, Phase 5 remains active at 100%, and production release remains a separately confirmed 5R boundary.
+
+## 5R Production Release Outcome
+
+Recovery-head Synthetic CI run `30460422095` passed core before browser with every required step successful, zero annotations, and zero deployment. Exact PR #92 remained clean, mergeable, three commits ahead, zero behind, and sixteen paths before Ryan-authorized release.
+
+PR #92 was marked ready and merged normally as `ddc2f02f10fad85fb9936806b5fd84eda806069c`, with exact parents `ab7fea3155847209d693558a9e5a9ba39e163d7a` and `c5de027162e6e57ba720b90694d08f106851f4f5`. The feature branch remains retained and local `refs/heads/main` remains untouched at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`.
+
+Exactly one automatic push-event Fly Deploy ran for the merge SHA: run `30464960703`, job `90620267980`, every returned step successful, zero annotations. The one authorized credential-free production `/health` request returned HTTP 200 with sanitized `status: ok`.
+
+Task 2.8 is done, merged, deployed, and historically production-health-verified through 5R. This does not establish continuous currentness, authenticated behavior, database state, or broader privacy claims. Task 2 remains current solely as Ryan's transition decision gate, Tasks 2.2 and 2.7 remain parked, Phase 5 remains active at 100%, and no successor starts.
+
+## 5R-R Exact Closeout Recovery
+
+The successful 5R release evidence remained unchanged, but 5R is historically stopped because its final rendered closeout inspection exposed an invalid decision-queue field shape before staging, commit, or push. Confirmed 5R-R preserved the exact ten-path working set and release evidence, rendered its active state, and replaced only the invalid fields with established `decision`, `status`, `whyItMatters`, and `workaround` fields.
+
+The final source, JSON, generated currentness, health, whitespace, task accounting, and rendered decision title, reason, and safe waiting posture passed. No renderer source, product, test, workflow, deployment, health request, provider, protected, transition, or successor action occurred. The exact closeout is durable only if its containing `[skip actions]` commit has direct parent `ddc2f02f10fad85fb9936806b5fd84eda806069c`, reaches live `main` non-force, retains local `main` and the feature branch, and produces zero workflow activity.

@@ -2,27 +2,76 @@
 
 ## Active Objective
 
-Choose whether to authorize the separately gated Task 2.8 production release after exact ref-semantics recovery and hosted closeout.
+Choose the next objective before any Phase 5 transition or successor intake.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — required work remains 100% complete. Work block 5Q-R2 is done subject to the automatic recovery-head verification required by its immutable closeout. Work block 5Q-R remains stopped at final reconciliation on its invalid equality assertion. Optional Tasks 2.2 and 2.7 remain parked. Task 2 remains current solely as the transition gate and Phase 5 remains active.
+Phase 5: UX Polish, Operations, And Durable Handoff — required work remains 100% complete. Work block 5R-R is done after the exact decision-queue schema and rendered closeout recovery passed. Work block 5R remains historically stopped at final rendered verification after PR #92 merged normally as `ddc2f02f10fad85fb9936806b5fd84eda806069c`, automatic Fly Deploy run `30464960703` passed, and the one authorized production health request returned HTTP 200 with `status: ok`. Optional Tasks 2.2 and 2.7 remain parked. Task 2 remains current solely as Ryan's transition decision gate and Phase 5 remains active.
 
 ## Current Work Block
 
-Work block 5Q-R2 — Exact Main-Ref Semantics Recovery And Hosted Closeout — is done subject to its automatic recovery-head gate. Work block 5Q-R is stopped at final reconciliation; 5Q remains stopped before branch creation; 5P-R remains done locally; and 5P remains historically stopped on disposable rendered-probe scope drift.
+Work block 5R-R — Exact Decision-Queue Schema Recovery And Release Closeout Resume — is done subject to its exact containing `[skip actions]` commit and zero-workflow post-push gates. Work block 5R is stopped at rendered closeout verification after its product release succeeded. Work block 5Q-R2 is done; 5Q-R is stopped at final reconciliation; 5Q remains stopped before branch creation; 5P-R remains done locally; and 5P remains historically stopped on disposable rendered-probe scope drift.
 
 ## Current Task
 
-Phase 5 Task 2 (`P5-T2`) — remain current solely as the transition gate after Task 2.8 ref-semantics recovery and hosted closeout through 5Q-R2.
+Phase 5 Task 2 (`P5-T2`) — remain current solely as Ryan's transition decision gate after released Task 2.8 (`P5-T28`).
 
 ## Owner
 
-Ryan owns the decision whether to separately confirm 5R production release or choose another objective. Codex retains no active successor authority.
+Ryan owns the next-objective choice. Codex Desktop may propose a separately bounded transition intake only after Ryan supplies that direction.
 
 ## Current Action
 
-Decide whether to separately confirm 5R — Offline Recovery Production Release. No merge, push to `main`, deployment, production request, phase transition, or successor is active.
+Wait for Ryan to name the next objective. Do not begin Phase 5 transition, Phase 6 creation, parked-task work, or successor execution without a separately confirmed block.
+
+## Confirmed Work Block 5R-R
+
+- Status: done subject to the containing exact ten-path `[skip actions]` commit and zero-workflow post-push gates.
+- Name: Exact Decision-Queue Schema Recovery And Release Closeout Resume.
+- Include Task 2.8 (`P5-T28`) release-closeout accounting only and Task 2 (`P5-T2`) recovery accounting only.
+- Preserve the exact ten-path working set, empty index, local `main` `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, merge head and cached remote `main` `ddc2f02f10fad85fb9936806b5fd84eda806069c`, and retained feature branch `c5de027162e6e57ba720b90694d08f106851f4f5`.
+- Reuse PR #92 merge, Fly Deploy run `30464960703`, job `90620267980`, zero annotations, and the one HTTP 200 `status: ok` health result read-only. Do not repeat any release action or health request.
+- Replace only the invalid `decisionsNeeded` object fields with `decision`, `status`, `whyItMatters`, and `workaround`. Do not change the dashboard renderer.
+- Reconcile 5R as historically stopped at rendered verification and 5R-R as the exact recovery. On full pass, carry the same ten paths onto detached merge head `ddc2f02f10fad85fb9936806b5fd84eda806069c`, commit as `Record offline recovery production release [skip actions]`, non-force push `HEAD:main`, and prove zero workflow activity for the closeout SHA.
+- Exclude Tasks 2.2 (`P5-T22`) and 2.7 (`P5-T27`); every other completed phase task; another PR or merge action; workflow action; deployment; health request; Fly operation; product, test, renderer, dependency, configuration, database, authentication, financial, provider, protected-data, or parent change; Phase 5 transition; Phase 6; successor; delegation; second opinion; force push; rebase; branch deletion; and unrelated work.
+- Stop without a second correction or retry on any ref, path, index, release-evidence, active-render, final-render, JSON, currentness, health, whitespace, task-accounting, staging, parent, push, retained-branch, zero-workflow, or exact-scope failure.
+- Verification: exact refs and ten paths; empty index; unchanged release evidence; valid JSON; dashboard refresh, currentness, health, and one rendered active inspection; established decision schema; one rendered final inspection showing the actual decision, reason, and waiting posture; exact staging and commit parent; non-force live-main alignment; retained feature branch and local `main`; zero workflows, checks, statuses, or deployments for the closeout SHA; clean final worktree.
+- Dashboard closeout: mark 5R-R done, retain 5R as historically stopped at rendered verification, keep Phase 5 active at 100%, Task 2 current under Ryan solely as the transition gate, Task 2.8 done and released, Tasks 2.2 and 2.7 parked, and no successor.
+- Report back: refs, schema correction, rendered state, ten paths, closeout SHA and parent, push and zero-workflow evidence, retained refs, exclusions, and any stop.
+- Suggested next block: `5S — Phase 5 Transition And Next-Objective Intake` only after Ryan names the next objective.
+
+## Work Block 5R-R Result
+
+- The exact ten-path working set, empty index, local `main`, live and cached merge head, retained feature branch, merge ancestry, PR #92 result, sole successful Fly Deploy, zero annotations, and existing one-request health evidence passed.
+- Active 5R-R rendered correctly. The recovery then replaced only the invalid decision fields with the established `decision`, `status`, `whyItMatters`, and `workaround` schema; no renderer source changed.
+- Final source, JSON, dashboard refresh, generated currentness, health, whitespace, task accounting, and rendered decision title, reason, and waiting posture passed.
+- 5R remains historically stopped at its original rendered verification. 5R-R is done subject to the containing exact ten-path `[skip actions]` commit reaching live `main` non-force with zero workflows, checks, statuses, or deployments.
+- Task 2.8 remains released; Task 2 is current solely as Ryan's transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 remains active at 100%; no successor starts.
+
+## Confirmed Work Block 5R
+
+- Status: stopped at final rendered closeout verification after exact merge, automatic deployment, and one health request passed; no closeout commit or push occurred.
+- Name: Offline Recovery Production Release.
+- Include Task 2.8 (`P5-T28`) only for release of the exact verified PR #92 package, plus Task 2 (`P5-T2`) status accounting only.
+- Preserve local `refs/heads/main` at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` without checkout or mutation; require cached/live `origin/main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`; and require local/cached/live `codex/offline-recovery-feedback` plus PR #92 head at `c5de027162e6e57ba720b90694d08f106851f4f5`.
+- Require PR #92 open, draft, clean, mergeable, based on `main`, three commits ahead, zero behind, and exactly sixteen paths. Revalidate recovery-head Synthetic CI run `30460422095`, core before browser, every required step successful, zero annotations, and zero deployment.
+- Only on complete preflight, mark PR #92 ready and merge with a normal merge commit without bypass or branch deletion. Verify exact parents, observe only the resulting automatic exact-merge-SHA Fly Deploy, require every step successful and zero annotations, then make exactly one credential-free production `/health` request requiring HTTP 200 and sanitized `status: ok`.
+- On full release pass, write one exact ten-path sanitized command-center closeout; base it on the exact fetched merge head without moving local `main`; commit as `Record offline recovery production release [skip actions]`; non-force push directly to `main`; and prove the closeout caused no second workflow or deployment.
+- Exact closeout paths: `command-center/decisions.md`, generated `command-center/index.html`, one new sanitized 5R log, `command-center/now.md`, `command-center/phase-5-offline-recovery-truth-audit.md`, `command-center/phase-5-release-evidence-map.md`, `command-center/phase-5-release-handoff.md`, `command-center/phase-5-usability-findings-intake.md`, `command-center/roadmap.md`, and `command-center/state.json`.
+- Exclude Tasks 2.2 (`P5-T22`) and 2.7 (`P5-T27`); completed Tasks 1, 3, and 4 and every other Task 2 child; Phase 5 closure; Phase 6 creation; successor execution; product, test, workflow, dependency, configuration, database, authentication, financial, provider, protected-data, or parent change; local product-suite rerun; manual workflow action; Fly administration; repair; rollback; retry; force push; rebase; conflict resolution; feature-branch deletion; delegation; second opinion; and unrelated work.
+- Use fail-closed assertions throughout. Reuse the unchanged exact-head CI and run no manual rerun. Retain the feature branch. Permit exactly one automatic deployment and one health request.
+- Stop without repair or expansion on any target-ref, commit-chain, path-set, PR-state, mergeability, CI, annotation, deployment, health, closeout, no-second-workflow, JSON, dashboard, health-check, whitespace, task-accounting, or exact-scope failure.
+- Verification: exact refs, ancestry, three commits, sixteen PR paths, final-head CI, normal merge SHA and parents, exactly one automatic push-event Fly Deploy, all deployment steps successful, zero annotations, one HTTP 200 `status: ok`, exact ten-path closeout, non-force live-main alignment, no second workflow or deployment, retained feature branch, preserved local `main`, clean index/worktree, JSON, dashboard currentness, health, rendered markers, whitespace, and task accounting.
+- Report back: preflight refs and PR state; merge SHA and parents; deployment run, job, steps, and annotations; health result; closeout SHA; no-second-workflow proof; retained branch; final dashboard/task state; exclusions; and any stop.
+- Suggested next block: `5S — Phase 5 Transition And Next-Objective Intake` only after Ryan names the next objective. No transition starts inside 5R.
+
+## Work Block 5R Result
+
+- Exact preflight passed with local `main` preserved at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, live baseline `ab7fea3155847209d693558a9e5a9ba39e163d7a`, recovery head `c5de027162e6e57ba720b90694d08f106851f4f5`, clean mergeable PR #92, three commits, sixteen paths, and recovery-head Synthetic CI run `30460422095` fully successful with zero annotations and zero deployment.
+- PR #92 was marked ready and merged normally as `ddc2f02f10fad85fb9936806b5fd84eda806069c`, with exact parents `ab7fea3155847209d693558a9e5a9ba39e163d7a` and `c5de027162e6e57ba720b90694d08f106851f4f5`. The feature branch remains retained.
+- Exactly one automatic push-event Fly Deploy ran for the merge SHA: run `30464960703`, job `90620267980`, all returned steps successful, zero annotations.
+- The one authorized credential-free production `/health` request returned HTTP 200 with sanitized `status: ok`.
+- Task 2.8 is done, merged, deployed, and historically production-health-verified. Task 2 remains current solely as Ryan's transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 remains active at 100%; no successor starts.
 
 ## Confirmed Work Block 5Q-R2
 

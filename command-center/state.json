@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-29 9:18 AM CDT",
+    "lastUpdated": "2026-07-29 10:34 AM CDT",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,75 +27,77 @@
   "phase": {
     "name": "UX Polish, Operations, And Durable Handoff",
     "status": "active",
-    "summary": "Phase 5 required work remains one hundred percent complete. Work block 5Q-R2 is done subject to the automatic recovery-head verification required by its immutable closeout. Work block 5Q-R remains stopped at final reconciliation. Tasks 2.2 and 2.7 remain parked and Task 2 remains current solely as the transition gate.",
+    "summary": "Phase 5 required work remains one hundred percent complete. Work block 5R-R is done after the exact decision-queue schema and rendered closeout recovery passed. Work block 5R remains stopped at final rendered verification after its merge deployment and one health request passed. Task 2.8 is released Tasks 2.2 and 2.7 remain parked and Task 2 remains current solely as Ryan's transition decision gate.",
     "progress": 100
   },
   "currentTask": {
     "title": "Task 2: Polish high-friction journeys",
     "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Codex has no active successor authority after 5Q-R2 closeout.",
-    "nextAction": "Choose whether to separately confirm 5R Offline Recovery Production Release or select another objective.",
-    "blocker": "Merge push to main deployment production verification and phase transition remain separately gated."
+    "supportingAgent": "Codex Desktop can propose the separately bounded transition intake after Ryan supplies the next objective.",
+    "nextAction": "Ryan names the next objective before any Phase 5 transition Phase 6 creation parked-task work or successor execution.",
+    "blocker": "The next objective is not selected and transition remains separately gated."
   },
   "currentWorkBlock": {
-    "id": "phase-5-block-q-r2",
+    "id": "phase-5-block-r-r",
     "phaseId": "phase-5",
-    "label": "5Q-R2",
-    "name": "Exact Main-Ref Semantics Recovery And Hosted Closeout",
+    "label": "5R-R",
+    "name": "Exact Decision-Queue Schema Recovery And Release Closeout Resume",
     "status": "done",
     "includedTasks": [
-      "Task 2.8 P5-T28 exact Git and ref verification-semantic recovery plus acceptance of already-passing branch PR and hosted evidence",
-      "Task 2 P5-T2 status accounting only while it remains the sole current transition gate",
-      "Preserve local main 7d8ce1a without mutation and verify it remains an ancestor of exact cached and live origin main ab7fea3",
-      "Preserve candidate 3edccc0 closeout c10c4a3 exact feature-branch alignment open draft PR 92 and two existing successful Synthetic CI runs",
-      "Use fail-closed shell semantics and only on pass write explicitly stage commit and non-force push one exact eight-path command-center recovery closeout",
-      "Observe only the automatic recovery-head Synthetic CI and stop with PR 92 open draft and unmerged"
+      "Task 2.8 P5-T28 release-closeout accounting only",
+      "Task 2 P5-T2 exact recovery accounting only",
+      "Preserve the exact ten-path 5R closeout working set empty index local main 7d8ce1a merge head ddc2f02 and feature branch c5de027",
+      "Reuse PR 92 merge Fly Deploy run 30464960703 job 90620267980 zero annotations and one HTTP 200 status ok health result read-only",
+      "Replace only invalid decisionsNeeded fields with decision status whyItMatters and workaround and change no renderer source",
+      "On full pass commit the exact ten paths from the merge head with skip actions push HEAD main non-force and prove zero workflow activity"
     ],
     "excludedTasks": [
-      "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 every other Task 2 child Phase 5 closure Phase 6 creation and successor execution",
-      "Moving updating resetting checking out or deleting local main",
-      "Product maintained-test README CSP-contract dependency workflow configuration local smoke product-browser screenshot or rendered-product work",
-      "Manual workflow action merge push to main deployment production health repair rebase force push conflict resolution protected provider database financial parent delegation second opinion and unrelated work"
+      "Task 2.2 P5-T22 Task 2.7 P5-T27 every other completed phase task Phase 5 closure Phase 6 next-objective selection and successor execution",
+      "Another PR merge deployment health request workflow action Fly operation or release mutation",
+      "Product maintained-test renderer dependency configuration database authentication financial provider protected-data parent or unrelated changes",
+      "Second correction retry repair force push rebase branch deletion delegation and second opinion"
     ],
     "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "Command-center stewardship fail-closed Git reconciliation exact-path staging non-force feature-branch publication hosted evidence intake dashboard currency and final reporting form one controlled boundary owned by Codex.",
-    "runnerPath": "Current Codex task through active-state write rendered dashboard inspection fail-closed ref and evidence reconciliation one exact eight-path closeout commit non-force feature-branch push automatic recovery-head Synthetic CI and stop unmerged.",
+    "whyThisAgent": "Command-center stewardship one exact state-schema correction rendered verification explicit-path Git handling zero-workflow proof and final intake form one controlled recovery boundary owned by Codex.",
+    "runnerPath": "Current Codex task through active-state write and render fail-closed recovery preflight one exact decision-schema correction one final render detached merge-head exact-path commit non-force direct-main push zero-workflow proof and stop.",
     "expectedFiles": [
-      "Only the existing eight command-center paths change with no new project file",
-      "Local and remote codex/offline-recovery-feedback and open draft PR 92",
-      "Two existing Synthetic CI runs read-only and one new automatic recovery-head Synthetic CI run"
+      "Exactly the existing ten 5R command-center closeout paths",
+      "No product test renderer workflow dependency configuration or new log path",
+      "Read-only GitHub evidence plus one non-force skip-actions push to main"
     ],
     "defaults": [
-      "Treat local main as an informational stale ancestor preserve it exactly at 7d8ce1a and never mutate it",
-      "Treat cached and live origin main ab7fea3 as the publication baseline and preserve candidate and closeout ancestry",
-      "Use set -euo pipefail plus explicit assertion handling and never infer success from a trailing marker",
-      "Use commit Record offline recovery ref-semantics closeout non-force push the same branch and no skip token",
-      "Run no local product suite or existing workflow rerun keep Tasks 2.2 and 2.7 parked and activate no successor"
+      "Use the established decision whyItMatters workaround field schema and change no renderer source",
+      "Reuse existing release evidence and make no new deployment health request or product-suite run",
+      "Retain 5R as historically stopped at rendered verification and close the durability recovery only through 5R-R",
+      "Commit Record offline recovery production release skip actions from exact merge head and push non-force",
+      "Keep Phase 5 active Task 2 current Task 2.8 released Tasks 2.2 and 2.7 parked and activate no successor"
     ],
     "stopConditions": [
-      "Observed local-main remote-main feature-branch PR-head commit-chain ancestry path-set frozen implementation existing-CI annotation or zero-deployment evidence differs",
-      "Local main changes or requires checkout reset update deletion or other mutation",
-      "Active or closeout state exceeds the exact eight command-center paths or any repair retry credential protected production transition or expansion becomes necessary",
-      "Staging commit ancestry non-force push remote alignment automatic recovery-head CI core-before-browser order required step annotation or zero-deployment verification fails",
-      "JSON dashboard currentness health whitespace exactly-one-current-task or exact-scope verification fails"
+      "Any local cached or live ref merge ancestry retained branch release evidence ten-path working set or empty-index evidence differs",
+      "The active dashboard or one final rendered decision title reason or waiting posture fails",
+      "A second schema correction retry renderer change product change deployment health request workflow action or expansion becomes necessary",
+      "JSON generated currentness health whitespace task accounting staging commit message parent non-force push live-main alignment or clean-worktree verification fails",
+      "Any workflow check status or deployment appears for the skip-actions closeout SHA"
     ],
     "verification": [
-      "Fail-closed exact local-main informational ref ancestor relation cached and live remote baseline feature-branch PR and commit-chain proof",
-      "Exact candidate sixteen-path set closeout eight-path set and unchanged implementation paths after the candidate",
-      "Existing candidate and closeout automatic Synthetic CI core before browser every required step successful zero annotations and zero deployment",
-      "Exact recovery eight-path staging commit ancestry non-force push local and remote equality and one automatic recovery-head Synthetic CI with the same hosted gates",
-      "Final dashboard shows active Phase 5 done 5Q-R2 stopped 5Q-R and 5Q done P5-T28 current P5-T2 parked P5-T22 and P5-T27 and no active successor"
+      "Exact refs ten paths empty index and unchanged PR 92 merge deployment annotation and health evidence",
+      "Valid JSON dashboard refresh currentness health and rendered active 5R-R state",
+      "Established decision status whyItMatters workaround schema and one final rendered inspection",
+      "Exact ten-path staging commit parent message non-force live-main alignment retained local main and feature branch",
+      "Zero workflows checks statuses or deployments for the closeout SHA clean final worktree and final Phase 5 task accounting"
     ],
-    "nextReportPoint": "Return corrected ref semantics preserved local main candidate closeout and recovery SHAs exact paths PR state all three CI heads jobs order annotations zero-deployment evidence final dashboard state exclusions and unmerged status.",
-    "durability": "Exact ref-semantics reconciliation passed with local main preserved and the eight-path recovery record is valid only after its automatic recovery-head hosted gate passes.",
+    "nextReportPoint": "Return refs schema correction rendered state exact ten paths closeout SHA and parent push zero-workflow evidence retained refs exclusions and any stop.",
+    "durability": "5R-R is done only after the exact ten-path skip-actions closeout is live on main with zero workflow activity and the final dashboard renders the intended decision card.",
     "evidence": [
       "command-center/phase-5-usability-findings-intake.md",
       "command-center/phase-5-offline-recovery-truth-audit.md",
-      "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
+      "command-center/phase-5-release-evidence-map.md",
+      "command-center/phase-5-release-handoff.md",
+      "command-center/logs/2026-07-29-offline-recovery-production-release-5r.md"
     ],
     "owner": "Codex Desktop",
-    "result": "Fail-closed reconciliation passed under set -euo pipefail with explicit assertions. Local main remained untouched at 7d8ce1a and remained an ancestor of cached and live origin main ab7fea3. Candidate 3edccc0 closeout c10c4a3 exact ancestry path sets frozen implementation hashes zero implementation drift empty index exact feature-branch alignment clean open draft PR 92 and existing automatic runs 30446979383 plus 30447811416 passed. Core completed before browser every required step passed all four jobs had zero annotations and no deployment workflow appeared. This eight-path closeout is valid only if its exact automatic recovery-head run passes all immutable gates."
+    "result": "The exact ten-path baseline active render established decision schema correction final source JSON currentness health whitespace task accounting and rendered decision title reason and waiting posture passed. 5R remains historically stopped and 5R-R is done subject to the containing skip-actions commit and zero-workflow post-push gates."
   },
   "routerHealth": {
     "status": "healthy",
@@ -120,30 +122,30 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Decide whether to release offline recovery",
+    "title": "Choose the next objective",
     "status": "decision-needed",
     "owner": "Ryan",
-    "why": "5Q-R2 corrected the invalid local-main equality semantics and accepted the exact Task 2.8 branch PR and hosted evidence while release remained excluded.",
-    "action": "Separately confirm 5R only after the immutable recovery head passes automatic Synthetic CI or choose another objective.",
+    "why": "5R-R recovered the exact Task 2.8 closeout while required Phase 5 work remains complete and the two remaining optional tasks stay parked. A truthful transition needs Ryan's next objective.",
+    "action": "Name the next objective before Codex proposes a separate 5S transition and intake block.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
     {
-      "decision": "Choose whether to confirm 5R Offline Recovery Production Release or select another objective before Phase 5 transition",
+      "decision": "Select the next objective before Phase 5 transition",
       "status": "current Ryan decision",
-      "whyItMatters": "5Q-R2 stops with PR 92 open and unmerged; merge deployment production verification and Phase 5 transition require separate authority.",
-      "workaround": "Keep Phase 5 active with Task 2 current solely as the transition gate and Tasks 2.2 and 2.7 parked."
+      "whyItMatters": "Required Phase 5 work is complete Task 2.8 is released and the two remaining optional tasks are parked so a truthful successor requires Ryan's direction.",
+      "workaround": "Keep Phase 5 active at one hundred percent with Task 2 current solely as the transition gate and start no parked-task or successor work."
     }
   ],
   "waitingOnRyan": {
-    "summary": "Ryan may separately confirm 5R after the exact recovery-head gate passes or select another objective. No release action is active.",
+    "summary": "5R-R is done subject to its containing skip-actions durability gates. Ryan's next-objective choice is required before a separately bounded transition intake.",
     "items": [
-      "Decide whether to confirm 5R Offline Recovery Production Release after recovery-head verification."
+      "Name the next objective."
     ]
   },
   "questionBoundaries": {
     "phaseQuestions": "Tasks 1.1 through 1.4 Task 2.1 Task 2.3 Task 2.4 Task 2.5 and Task 2.6 are complete with Task 2.4 branch-durable and hosted-verified through 5G-R and Task 2.5 complete locally through 5H-B; Task 2.2 and 5D remain parked.",
-    "decisionQueue": "5P-R accepts the unchanged green 5P evidence and completes Task 2.8 locally. 5Q remains stopped on its false-positive assertion. 5Q-R remains stopped at final reconciliation on invalid local-main equality semantics. 5Q-R2 is done subject to its immutable automatic recovery-head gate. Tasks 2.2 and 2.7 remain parked and 5R is separately gated.",
+    "decisionQueue": "5R-R recovered the exact release closeout and 5R remains historically stopped at rendered verification. Task 2.8 is released Tasks 2.2 and 2.7 remain parked and Ryan must choose the next objective before transition.",
     "waitingScheduled": "Luxe Legacy setup and the Task 2.2 and 5D path are parked until Ryan explicitly reopens them."
   },
   "agents": [
@@ -202,6 +204,129 @@
     }
   ],
   "phaseWorkBlocks": [
+    {
+      "id": "phase-5-block-r-r",
+      "phaseId": "phase-5",
+      "label": "5R-R",
+      "name": "Exact Decision-Queue Schema Recovery And Release Closeout Resume",
+      "status": "done",
+      "includedTasks": [
+        "Task 2.8 P5-T28 release-closeout accounting only",
+        "Task 2 P5-T2 exact recovery accounting only",
+        "Preserve the exact ten-path 5R closeout working set empty index local main 7d8ce1a merge head ddc2f02 and feature branch c5de027",
+        "Reuse PR 92 merge Fly Deploy run 30464960703 job 90620267980 zero annotations and one HTTP 200 status ok health result read-only",
+        "Replace only invalid decisionsNeeded fields with decision status whyItMatters and workaround and change no renderer source",
+        "On full pass commit the exact ten paths from the merge head with skip actions push HEAD main non-force and prove zero workflow activity"
+      ],
+      "excludedTasks": [
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 every other completed phase task Phase 5 closure Phase 6 next-objective selection and successor execution",
+        "Another PR merge deployment health request workflow action Fly operation or release mutation",
+        "Product maintained-test renderer dependency configuration database authentication financial provider protected-data parent or unrelated changes",
+        "Second correction retry repair force push rebase branch deletion delegation and second opinion"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "Command-center stewardship one exact state-schema correction rendered verification explicit-path Git handling zero-workflow proof and final intake form one controlled recovery boundary owned by Codex.",
+      "runnerPath": "Current Codex task through active-state write and render fail-closed recovery preflight one exact decision-schema correction one final render detached merge-head exact-path commit non-force direct-main push zero-workflow proof and stop.",
+      "expectedFiles": [
+        "Exactly the existing ten 5R command-center closeout paths",
+        "No product test renderer workflow dependency configuration or new log path",
+        "Read-only GitHub evidence plus one non-force skip-actions push to main"
+      ],
+      "defaults": [
+        "Use the established decision whyItMatters workaround field schema and change no renderer source",
+        "Reuse existing release evidence and make no new deployment health request or product-suite run",
+        "Retain 5R as historically stopped at rendered verification and close the durability recovery only through 5R-R",
+        "Commit Record offline recovery production release skip actions from exact merge head and push non-force",
+        "Keep Phase 5 active Task 2 current Task 2.8 released Tasks 2.2 and 2.7 parked and activate no successor"
+      ],
+      "stopConditions": [
+        "Any local cached or live ref merge ancestry retained branch release evidence ten-path working set or empty-index evidence differs",
+        "The active dashboard or one final rendered decision title reason or waiting posture fails",
+        "A second schema correction retry renderer change product change deployment health request workflow action or expansion becomes necessary",
+        "JSON generated currentness health whitespace task accounting staging commit message parent non-force push live-main alignment or clean-worktree verification fails",
+        "Any workflow check status or deployment appears for the skip-actions closeout SHA"
+      ],
+      "verification": [
+        "Exact refs ten paths empty index and unchanged PR 92 merge deployment annotation and health evidence",
+        "Valid JSON dashboard refresh currentness health and rendered active 5R-R state",
+        "Established decision status whyItMatters workaround schema and one final rendered inspection",
+        "Exact ten-path staging commit parent message non-force live-main alignment retained local main and feature branch",
+        "Zero workflows checks statuses or deployments for the closeout SHA clean final worktree and final Phase 5 task accounting"
+      ],
+      "reportBack": "Return refs schema correction rendered state exact ten paths closeout SHA and parent push zero-workflow evidence retained refs exclusions and any stop.",
+      "nextBlock": "5S Phase 5 Transition And Next-Objective Intake only after Ryan names the next objective.",
+      "durability": "5R-R is done only after the exact ten-path skip-actions closeout is live on main with zero workflow activity and the final dashboard renders the intended decision card.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/phase-5-release-evidence-map.md",
+        "command-center/phase-5-release-handoff.md",
+        "command-center/logs/2026-07-29-offline-recovery-production-release-5r.md"
+      ],
+      "result": "The exact ten-path baseline active render established decision schema correction final source JSON currentness health whitespace task accounting and rendered decision title reason and waiting posture passed. 5R remains historically stopped and 5R-R is done subject to the containing skip-actions commit and zero-workflow post-push gates."
+    },
+    {
+      "id": "phase-5-block-r",
+      "phaseId": "phase-5",
+      "label": "5R",
+      "name": "Offline Recovery Production Release",
+      "status": "stopped-rendered-verification",
+      "includedTasks": [
+        "Task 2.8 P5-T28 only for release of the exact verified PR 92 package",
+        "Task 2 P5-T2 status accounting only while it remains the sole current transition gate",
+        "Preserve local main 7d8ce1a without mutation require cached and live origin main ab7fea3 and feature branch plus PR head c5de027",
+        "Require PR 92 open draft clean mergeable three commits ahead zero behind exactly sixteen paths and exact recovery-head Synthetic CI success",
+        "Only on preflight pass mark ready merge normally retain the branch and observe exactly one automatic merge-SHA Fly Deploy",
+        "Make exactly one credential-free production health request and only on full pass publish one exact ten-path skip-actions closeout directly to main"
+      ],
+      "excludedTasks": [
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 every other Task 2 child Phase 5 closure Phase 6 creation next-objective selection and successor execution",
+        "Moving updating resetting checking out or deleting local main",
+        "Product maintained-test workflow dependency configuration database authentication financial provider protected-data parent or unrelated changes and local product-suite reruns",
+        "Manual workflow action Fly administration repair rollback retry force push rebase conflict resolution feature-branch deletion delegation and second opinion"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "Exact Git and PR orchestration automatic workflow observation one bounded public health request command-center stewardship stop enforcement and final intake form one controlled release boundary owned by Codex.",
+      "runnerPath": "Current Codex task through active-state write rendered dashboard inspection fail-closed preflight normal PR ready and merge automatic Fly Deploy one health request exact ten-path skip-actions closeout direct-main push zero-second-workflow proof and stop.",
+      "expectedFiles": [
+        "The existing exact sixteen-path PR 92 package merges unchanged",
+        "Exactly ten command-center paths form the sanitized release closeout including one new 5R log",
+        "PR 92 one automatic Fly Deploy and one credential-free production health request are the only external surfaces"
+      ],
+      "defaults": [
+        "Reuse unchanged exact-head Synthetic CI and create no activation commit or manual rerun",
+        "Use a normal merge commit retain the feature branch and preserve local main at 7d8ce1a",
+        "Permit exactly one automatic deployment and one credential-free health request",
+        "Use fail-closed assertions and commit Record offline recovery production release skip actions for the exact closeout",
+        "Keep Phase 5 active Task 2 current Tasks 2.2 and 2.7 parked and activate no successor"
+      ],
+      "stopConditions": [
+        "Any local cached or live ref PR base head state draft mergeability ahead-behind commit-chain path-set check job-order step annotation or zero-deployment evidence differs",
+        "Ready or merge requires bypass conflict handling force rebase deletion or a different merge method or exact merge SHA and parents differ",
+        "Automatic deployment is missing duplicated wrong-event wrong-SHA unsuccessful annotated or nonterminal beyond the bounded workflow window",
+        "The one health request is not HTTP 200 with sanitized status ok or the closeout exceeds ten paths cannot push non-force or triggers any workflow",
+        "JSON dashboard currentness health rendered whitespace task-accounting preservation exact-scope verification fails or credentials repair rollback retry protected content transition or expansion becomes necessary"
+      ],
+      "verification": [
+        "Exact baseline refs ancestry three commits sixteen PR paths and unchanged final-head Synthetic CI success with zero annotations and deployment",
+        "Exact ready transition normal merge SHA and two parents retained feature branch and exactly one automatic push-event Fly Deploy",
+        "Every deployment job and step successful zero annotations and one HTTP 200 sanitized status ok health result",
+        "Exact ten-path skip-actions closeout live-main alignment preserved local main clean index and worktree and zero second workflow or deployment",
+        "Final dashboard shows active Phase 5 done 5R done P5-T28 current P5-T2 parked P5-T22 and P5-T27 and no active successor"
+      ],
+      "reportBack": "Return preflight refs PR transition merge SHA and parents deployment run job steps annotations health result closeout SHA no-second-workflow proof retained branch final dashboard state exclusions and any stop.",
+      "nextBlock": "5S Phase 5 Transition And Next-Objective Intake only after Ryan names the next objective.",
+      "durability": "Release passed exact normal merge one automatic deployment and one health result and the exact ten-path skip-actions closeout aligns on live main with no second workflow.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/phase-5-release-evidence-map.md",
+        "command-center/phase-5-release-handoff.md"
+      ],
+      "result": "PR 92 merged normally as ddc2f02 with exact parents ab7fea3 and c5de027. Automatic Fly Deploy run 30464960703 job 90620267980 passed every returned step with zero annotations and the one authorized health request returned HTTP 200 status ok. Final rendered closeout inspection then exposed an invalid decision field shape so no closeout commit or push occurred and recovery moved to 5R-R."
+    },
     {
       "id": "phase-5-block-q-r2",
       "phaseId": "phase-5",
@@ -11562,7 +11687,7 @@
       "title": "Task 2: Polish high-friction journeys",
       "status": "current",
       "owner": "Ryan",
-      "summary": "Required children and optional Task 2.8 are done. Task 2.8 has exact candidate and closeout heads on open draft PR 92 and 5Q-R2 passed corrected ref-semantics plus prior hosted-evidence reconciliation subject to its automatic recovery-head gate. Task 2 remains current solely as the transition gate while optional Tasks 2.2 and 2.7 remain parked."
+      "summary": "Required children and optional Task 2.8 are done. Task 2.8 is merged deployed and historically production-health-verified through 5R with its exact closeout recovered through 5R-R. Task 2 remains current solely as Ryan's transition decision gate and optional Tasks 2.2 and 2.7 remain parked."
     },
     {
       "phaseId": "phase-5",
@@ -11638,7 +11763,7 @@
       "title": "Task 2.8: Verify and improve offline recovery feedback",
       "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Done locally through 5P-R with exact candidate 3edccc0 closeout c10c4a3 open draft PR 92 and two green automatic hosted heads. Work block 5Q-R remains stopped on invalid local-main equality semantics and 5Q-R2 passed corrected fail-closed reconciliation subject to its automatic recovery-head gate.",
+      "summary": "Done merged deployed and historically production-health-verified through 5R with recovery head c5de027 normal merge ddc2f02 automatic Fly Deploy run 30464960703 and one HTTP 200 status ok health result.",
       "nextAction": null,
       "blocker": null,
       "result": "The exact offline controller is available from the static-only cache Retry reports accessible checking failure and restored states through one network-only health request the narrow generic-screen statement is supported and broader privacy claims remain unsupported."
@@ -13439,12 +13564,15 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "title": "Choose whether to release offline recovery",
+    "title": "Choose the next objective",
     "status": "decision-needed",
     "owner": "Ryan",
-    "target": "After the exact 5Q-R2 recovery head passes automatic Synthetic CI confirm 5R separately or select another objective while PR 92 remains draft and unmerged."
+    "target": "Name the next objective before any separately bounded Phase 5 transition and Phase 6 intake proposal."
   },
   "verification": {
+    "phase5OfflineRecoveryCloseoutRecovery": "pass subject to containing-commit post-push proof through 5R-R; exact ten-path baseline active render established decision status whyItMatters workaround schema final source JSON currentness health whitespace task accounting and rendered title reason and waiting posture passed while exact merge-parent skip-actions durability and zero-closeout-workflow proof are verified after the immutable commit",
+    "phase5OfflineRecoveryProductionRelease": "release pass but closeout stopped through 5R; exact PR 92 merged normally as ddc2f02 with parents ab7fea3 and c5de027 automatic Fly Deploy run 30464960703 job 90620267980 passed every returned step with zero annotations and the one authorized health request returned HTTP 200 status ok but final rendered closeout verification exposed invalid decision fields before staging commit or push",
+    "phase5OfflineRecoveryRecoveryHead": "pass; recovery commit c5de027 automatic Synthetic CI run 30460422095 completed core before browser every required step succeeded annotations were zero no deployment appeared branch refs aligned and PR 92 remained clean open draft and unmerged",
     "phase5OfflineRecoveryRefSemanticsRecovery": "pass subject to immutable recovery-head proof through 5Q-R2; fail-closed explicit assertions preserved local main 7d8ce1a as an informational ancestor of cached and live remote baseline ab7fea3 and exact candidate closeout path hash feature-branch PR prior-CI annotation and zero-deployment evidence passed",
     "phase5OfflineRecoveryHostedReviewRecovery": "stopped through 5Q-R at final reconciliation; exact candidate 3edccc0 closeout c10c4a3 open draft PR 92 candidate run 30446979383 and closeout run 30447811416 passed all branch hosted annotation and zero-deployment gates but local main remained older ancestor 7d8ce1a rather than remote baseline ab7fea3 and the shell equality assertion did not fail closed",
     "phase5OfflineRecoveryHostedReviewCloseoutGate": "the exact eight-path 5Q-R2 recovery record is valid only if its automatic recovery-head Synthetic CI passes core before browser every step successful zero annotations zero deployment preserved local-main and remote-main semantics exact local and remote feature-branch equality and PR 92 open draft and unmerged",

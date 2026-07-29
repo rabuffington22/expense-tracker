@@ -1,8 +1,8 @@
 # Phase 5 Release-Evidence And Unresolved-Gates Map
 
-Date: 2026-07-28
+Date: 2026-07-29
 
-Status: reconciled through 5N optional-work disposition and transition readiness; the final 5M target-and-parent durability package is complete, required Phase 5 work is 100% complete, and optional Tasks 2.2, 2.7, and 2.8 remain parked separately
+Status: reconciled through 5R-R exact release-closeout recovery; required Phase 5 work is 100% complete, Task 2.8 is released, optional Tasks 2.2 and 2.7 remain parked, and no successor is active
 
 ## Evidence Labels
 
@@ -38,6 +38,7 @@ These labels are cumulative only when the cited evidence establishes each step. 
 | PR #90 Fly Deploy | run `30327566484` on merge `d81ed7078e741a0c7613e7898312ce01cd359f45`; job `90176026100`; success; zero annotations; exactly one run for the merge | Deployed | The exact merge triggered one automatic deployment. |
 | PR #90 production observation | one authorized `/health` request returned HTTP 200 and `status: ok` after run `30327566484` | Historical production-verified | Establishes the dated post-deploy health checkpoint for 5G-R2. |
 | OpenRouter account controls | protected 5H-PV and 5H-BV observations plus Ryan-performed 5H-BR2 remediation: required logging/use controls off; Ryan disabled Broadcast with one toggle and attested immediate and one-reload persistent disabled state; destination details remain uninspected | Protected, remediated, and historically verified | The previously active configured Broadcast path was disabled at the observed workspace. Provider state remains externally mutable, and this dated attestation is not continuous-currentness evidence. |
+| Offline recovery / PR #92 | recovery head `c5de027162e6e57ba720b90694d08f106851f4f5`; Synthetic CI run `30460422095`; normal merge `ddc2f02f10fad85fb9936806b5fd84eda806069c`; Fly Deploy run `30464960703`, job `90620267980`; one HTTP 200 `status: ok` health result; exact command-center closeout recovered through 5R-R | Durable, hosted-verified, merged, deployed, and historical production-verified; closeout durable through containing `[skip actions]` commit after post-push gates pass | Task 2.8 is released. 5R remains historically stopped at rendered closeout verification; 5R-R owns the exact corrected closeout. Local `main` remained preserved and the feature branch was retained. |
 
 5K hosted metadata was read-only. Separately confirmed 5G-R2 later performed the exact ready transition, merge, automatic deployment observation, and one health request recorded above; it used no manual workflow action or Fly administration.
 
@@ -78,6 +79,8 @@ These labels are cumulative only when the cited evidence establishes each step. 
 | 5H-R2 | Ask exact-main deployment observation and release closeout | Merged, deployed, and historical production-verified; closeout local-only | Exact live main, one automatic deployment, every step, zero annotations, and one HTTP 200 `status: ok` health result passed. |
 | 5M | Final target and parent durability closeout | Durable on parent and target `main`; zero workflow activity | Parent pointer and reusable lesson are durable at `391debe28ea58349c65312eeb0987e9b516babd9`; the target twelve-path package is carried by `ac5361e5b2be55356538ae44b28127ce0fc19097`. |
 | 5N | Optional-parked Phase 5 disposition and transition readiness | Command-center-only durability through the containing `[skip actions]` commit | Required Phase 5 work is complete; Tasks 2.2, 2.7, and 2.8 remain optional and parked; no product work or successor phase starts. |
+| 5R | Offline recovery production release | Merged, deployed, and historical production-verified | PR #92 merged normally, exactly one automatic Fly Deploy passed, and the one authorized health request returned HTTP 200 `status: ok`; Task 2.8 is released. |
+| 5R-R | Exact decision-queue schema recovery and release closeout resume | Command-center closeout durable through the containing `[skip actions]` commit after post-push gates pass | Corrected only the invalid decision field shape, preserved 5R as historically stopped, rendered the final next-objective gate correctly, and repeated no release action. |
 
 The detailed block definitions and sanitized evidence paths remain in [`roadmap.md`](roadmap.md), [`state.json`](state.json), and the dated [`logs/`](logs/) directory.
 
@@ -117,8 +120,8 @@ The detailed block definitions and sanitized evidence paths remain in [`roadmap.
 | Ask Opus durability/publication | Complete through exact-main 5H-R2 release | No further Task 4.4 release action; use exact candidate, closeout, deployment, and dated health evidence above | Complete |
 | OpenRouter account-setting verification | Complete through 5H-BR2; Ryan attested Broadcast disabled immediately and after one reload | No further Task 4.3 action; any later currentness claim requires a separately authorized observation | Complete |
 | Ask Opus production release | Complete through 5H-R2; the separate Broadcast risk was later resolved through 5H-BR2 | No further Task 4.3 or 4.4 action | Complete |
-| Current production health | Historically verified through one 5H-R2 health request | A new separately authorized observation is required for any later current-health claim | Ryan |
-| Parked Tasks 2.2, 2.7, and 2.8 | Optional and parked through 5N | Explicit reopening and a new bounded proposal | Ryan |
+| Current production health | Historically verified through the one 5R health request on 2026-07-29 | A new separately authorized observation is required for any later current-health claim | Ryan |
+| Parked Tasks 2.2 and 2.7 | Optional and parked | Explicit reopening and a new bounded proposal | Ryan |
 | Final Task 4 durability and parent pointer | Complete through 5M | No further Task 4 or parent action | Complete |
 | Phase 5 transition | Required work complete; Phase 5 remains active because no successor direction exists | Ryan selects the next objective before a separate transition and Phase 6 intake block is proposed | Ryan |
 
@@ -131,4 +134,4 @@ There is no blocking contradiction between local Git, live remote `main`, PR #89
 3. Ask Opus and the operator/release-handoff artifacts are merged, deployed, and historically health-verified through exact-main 5H-R2;
 4. required OpenRouter logging/use controls are off, and Ryan later disabled Broadcast in 5H-BR2 with one toggle and attested immediate and one-reload persistent disabled state; no destination-specific detail is retained, and neither that dated attestation nor the dated health result creates continuous-currentness evidence.
 
-Tasks 4.3 and 4.4 are complete on that factual basis, Task 4.5 target-plus-parent durability is complete through 5M, and 5N classifies the remaining Tasks 2.2, 2.7, and 2.8 as optional parked work. Required Phase 5 work is complete; the remaining gate is Ryan's next-direction choice before a truthful phase transition.
+Tasks 4.3 and 4.4 are complete on that factual basis, Task 4.5 target-plus-parent durability is complete through 5M, and Task 2.8 is released through 5R. Tasks 2.2 and 2.7 remain optional parked work. Required Phase 5 work is complete; the remaining gate is Ryan's next-direction choice before a truthful phase transition.

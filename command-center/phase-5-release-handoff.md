@@ -1,8 +1,8 @@
 # Phase 5 Operator And Release Handoff
 
-Date: 2026-07-28
+Date: 2026-07-29
 
-Status: updated through 5N optional-work disposition and transition readiness; required Phase 5 work is 100% complete, optional Tasks 2.2, 2.7, and 2.8 remain parked separately, and no successor phase has been invented
+Status: updated through 5R-R exact offline-recovery closeout recovery; required Phase 5 work is 100% complete, Task 2.8 is released, optional Tasks 2.2 and 2.7 remain parked, and no successor phase has been invented
 
 ## Re-entry
 
@@ -21,6 +21,7 @@ Status: updated through 5N optional-work disposition and transition readiness; r
 | Operator and release artifacts: 5I, 5J, 5K, and 5L | Included in exact application release `ef2fff586dbaf31b1f8d3e7d7024b55aedbd30c7`, automatically deployed and historically health-verified through 5H-R2 | [`operator-runbook.md`](operator-runbook.md), [`operations-monitoring-matrix.md`](operations-monitoring-matrix.md), [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md) | No further Task 4.4 or Task 4.5 durability action |
 | Final target and parent durability: 5M | Parent pointer and reusable lesson are durable at `391debe28ea58349c65312eeb0987e9b516babd9`; the exact twelve-path target closeout is carried by `ac5361e5b2be55356538ae44b28127ce0fc19097` | [5M evidence](logs/2026-07-28-phase-5-target-parent-durability-closeout-5m.md), [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md) | No further Task 4 or parent action |
 | Optional-work disposition and transition readiness: 5N | Required Phase 5 work is complete; Tasks 2.2, 2.7, and 2.8 remain optional and parked; the command center preserves one active phase and current transition gate | [5N evidence](logs/2026-07-28-optional-parked-phase-5-disposition-transition-readiness-5n.md), [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md) | Ryan selects the next objective before a separate transition and Phase 6 intake proposal |
+| Offline recovery: 5P-R, 5Q-R2, 5R, and 5R-R | PR #92 merged normally as `ddc2f02f10fad85fb9936806b5fd84eda806069c`, automatic Fly Deploy run `30464960703` passed with zero annotations, the one authorized health request returned HTTP 200 `status: ok`, and 5R-R recovered the exact command-center closeout without repeating release action | [5R and 5R-R evidence](logs/2026-07-29-offline-recovery-production-release-5r.md), [`phase-5-offline-recovery-truth-audit.md`](phase-5-offline-recovery-truth-audit.md) | No further Task 2.8 release action; current runtime health requires a separately authorized observation |
 | Recovery records: 5G-RC through 5G-RC-R | Sanitized recovery record is durable on current `main`; protected observations remain historical and target-specific | [`phase-5-release-evidence-map.md`](phase-5-release-evidence-map.md) | No reuse authority; any database inspection, recovery, or application re-entry needs a new exact protected block |
 
 ## Recommended Release Sequence
@@ -31,7 +32,7 @@ The lowest-ambiguity sequence is:
 2. 5H-R durability is complete and the package was released through exact-main 5H-R2 after Ryan's explicit override;
 3. treat Task 4.3 as complete through Ryan's value-free 5H-BR2 Broadcast disablement and one-reload persistence attestation;
 4. final Task 4 target and parent durability closeout is complete through 5M;
-5. retain Tasks 2.2, 2.7, and 2.8 as optional parked work through 5N and wait for Ryan's next-direction choice before a phase transition.
+5. treat Task 2.8 as released through 5R, retain Tasks 2.2 and 2.7 as optional parked work, and wait for Ryan's next-direction choice before a phase transition.
 
 This is a recommendation, not release authority. A later block must recheck every mutable hosted fact.
 
@@ -65,11 +66,11 @@ See [`operations-monitoring-matrix.md`](operations-monitoring-matrix.md).
 | 5H-R Ask Opus durability | Complete through candidate and closeout CI; the package later entered exact `main` through the separately authorized direct push |
 | OpenRouter provider verification | Complete through 5H-BR2; Ryan attested Broadcast disabled immediately and after one reload, with no destination-specific detail retained |
 | Ask Opus production release | Complete through 5H-R2 exact-main deployment and dated minimal health observation; Broadcast was later disabled through Ryan's 5H-BR2 attestation |
-| Current production or demo health | Production was historically verified by the one 5H-R2 request; any later currentness claim requires a new exact observation |
-| Parked Tasks 2.2, 2.7, and 2.8 | Optional and retained; explicit reopening and a new bounded proposal |
+| Current production or demo health | Production was historically verified by the one 5R request on 2026-07-29; any later currentness claim requires a new exact observation |
+| Parked Tasks 2.2 and 2.7 | Optional and retained; explicit reopening and a new bounded proposal |
 | Task 4 target and parent closeout | Complete through 5M; no further Task 4 or parent action |
 | Phase 5 transition | Ryan must select the next objective before a separate transition and Phase 6 intake proposal |
 
 ## Handoff Boundary
 
-Task 3.5 and Tasks 4.1-4.5 are complete through the exact 5H-R2 release evidence, Ryan's value-free 5H-BR2 Broadcast disablement and one-reload persistence attestation, the parent durability commit `391debe28ea58349c65312eeb0987e9b516babd9`, and target 5M commit `ac5361e5b2be55356538ae44b28127ce0fc19097`. Work block 5N reports required Phase 5 work at 100% and retains Tasks 2.2, 2.7, and 2.8 as optional parked work. Phase 5 remains active and Task 2 remains current solely as the transition gate because no successor direction exists. No successor work block is active. This handoff authorizes no sequel; current Git and hosted state override this dated document whenever a later authorized block begins.
+Task 3.5 and Tasks 4.1-4.5 are complete through the exact 5H-R2 release evidence, Ryan's value-free 5H-BR2 Broadcast disablement and one-reload persistence attestation, the parent durability commit `391debe28ea58349c65312eeb0987e9b516babd9`, and target 5M commit `ac5361e5b2be55356538ae44b28127ce0fc19097`. Task 2.8 is released through exact 5R merge `ddc2f02f10fad85fb9936806b5fd84eda806069c`, automatic Fly Deploy run `30464960703`, and the dated one-request production-health result; 5R-R recovers its exact command-center closeout while preserving 5R's historical rendered-verification stop. Required Phase 5 work remains 100% complete; Tasks 2.2 and 2.7 remain optional parked work. Phase 5 remains active and Task 2 remains current solely as Ryan's transition gate because no successor direction exists. No successor work block is active. This handoff authorizes no sequel; current Git and hosted state override this dated document whenever a later authorized block begins.
