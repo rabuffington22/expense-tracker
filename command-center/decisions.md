@@ -2,6 +2,14 @@
 
 ## Accepted
 
+### 2026-07-29 — Close 5Q-R on exact draft-PR durability and hosted verification
+
+The corrected high-confidence scan ran exactly once with `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}` and returned the defined clean-no-match result. The exact sixteen-path Task 2.8 candidate was explicitly staged and committed as `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684` with parent `ab7fea3155847209d693558a9e5a9ba39e163d7a`, non-force pushed on `codex/offline-recovery-feedback`, and opened as draft PR #92 to `main`.
+
+Automatic candidate Synthetic CI run `30446979383` passed core job `90559647367` before browser job `90559854180`; every required step passed, both jobs had zero annotations, and no Fly deployment or deployment workflow appeared. The preferred GitHub connector lacked repository write access, so the authenticated procedure-approved `gh` fallback created the same bounded draft PR without retry or scope expansion.
+
+The one eight-path command-center closeout is immutable before its hosted run exists and is therefore valid only if its exact automatic final-head Synthetic CI passes core before browser with every step successful, zero annotations, zero deployment, exact local/remote alignment, and PR #92 still open, draft, and unmerged. On that gate, 5Q-R is done; 5Q remains stopped; Task 2.8 is branch/draft-PR durable and hosted verified; Task 2 remains current solely as the Phase 5 transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 stays active at 100% required completion; and no successor starts. Merge, push to `main`, deployment, production health, phase transition, and 5R remain separately gated.
+
 ### 2026-07-29 — Confirm 5Q-R exact scan assertion recovery and hosted-review resume
 
 Ryan confirmed the exact proposed 5Q-R scope. Codex Desktop may first record and render active 5Q-R; preserve stopped 5Q, local/cached/live `main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact sixteen-path candidate, empty real index, and eight frozen implementation and contract hashes; replace only the false-positive `sk-` detector with `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}`; run that corrected high-confidence scan exactly once with fail-closed result semantics; and only on clean no-match resume the unchanged 5Q branch, explicit-path candidate commit, non-force feature-branch push, one draft PR to `main`, automatic candidate Synthetic CI observation, bounded eight-path closeout commit, automatic final-head Synthetic CI observation, and stop unmerged.

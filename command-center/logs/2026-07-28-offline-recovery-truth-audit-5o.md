@@ -145,3 +145,17 @@ Ryan confirmed the exact 5Q-R assertion recovery and unchanged hosted-review res
 The recovery preserves stopped 5Q, local/cached/live `main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact sixteen-path candidate, empty real index, and eight frozen implementation and contract hashes. It replaces only the false-positive `sk-` detector with the non-token-prefix expression `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}` and runs the corrected scan once. Exit 1 is clean no-match, exit 0 is an actual match and stop, and exit 2 or higher is scan failure and stop.
 
 Only on clean no-match may Codex resume the unchanged `codex/offline-recovery-feedback` branch, explicit-path candidate commit, non-force push, one draft PR, automatic candidate Synthetic CI, bounded eight-path closeout commit, automatic final-head Synthetic CI, and stop unmerged. No second scan correction or rerun, local product suite, workflow mutation, merge, deployment, production health, protected access, phase transition, successor, delegation, or second opinion is authorized.
+
+## 5Q-R Outcome
+
+Complete subject to the immutable closeout commit's exact automatic final-head verification.
+
+The corrected scan ran exactly once with `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}` and returned the defined clean-no-match result. No second pattern correction, exploration, or rerun occurred.
+
+The exact sixteen-path Task 2.8 candidate was explicitly staged and committed as `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, whose parent is exact baseline `ab7fea3155847209d693558a9e5a9ba39e163d7a`. The candidate was non-force pushed on `codex/offline-recovery-feedback`. Draft PR #92 targets `main` and remained open, draft, and unmerged at the candidate head.
+
+Automatic candidate Synthetic CI run `30446979383` passed core job `90559647367` before browser job `90559854180`. Every required step passed, both jobs returned zero annotations, and no Fly deployment or deployment workflow appeared for the candidate SHA. The preferred GitHub connector could not create the PR because its integration lacked repository write access; the authenticated procedure-approved `gh` fallback created the same bounded draft PR without retry or broader GitHub action.
+
+This eight-path closeout is the only post-candidate project change. Because its automatic hosted run cannot exist until the immutable closeout is committed and pushed, this result is valid only if that exact final head passes core before browser with every step successful, zero annotations, zero deployment, exact local/remote alignment, and PR #92 still open, draft, and unmerged.
+
+On that final-head pass, Task 2.8 remains done and becomes feature-branch/draft-PR durable with hosted verification; Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; 5Q stays historically stopped; Phase 5 remains active at 100% required completion; and no successor starts. No local product suite, merge, push to `main`, deployment, production health, provider, protected-data, database, phase transition, successor, delegation, or second-opinion action occurred. A 5R production release requires a separate Ryan confirmation.

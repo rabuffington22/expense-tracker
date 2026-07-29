@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-29 6:15 AM CDT",
+    "lastUpdated": "2026-07-29 6:29 AM CDT",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,23 +27,23 @@
   "phase": {
     "name": "UX Polish, Operations, And Durable Handoff",
     "status": "active",
-    "summary": "Phase 5 required work remains one hundred percent complete. Work block 5Q-R is active for one exact false-positive scan assertion recovery and the unchanged Task 2.8 feature-branch and hosted-review resume. Tasks 2.2 and 2.7 remain parked and Task 2 remains current solely as the transition gate.",
+    "summary": "Phase 5 required work remains one hundred percent complete. Work block 5Q-R is done with Task 2.8 feature-branch and draft-PR durability plus hosted verification subject to its exact immutable final-head gate. Tasks 2.2 and 2.7 remain parked and Task 2 remains current solely as the transition gate.",
     "progress": 100
   },
   "currentTask": {
     "title": "Task 2: Polish high-friction journeys",
-    "owner": "Codex Desktop",
+    "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Ryan retains every later merge deployment production release next-objective and phase-transition decision.",
-    "nextAction": "Execute confirmed 5Q-R through one corrected fail-closed sensitive scan and only on pass resume the unchanged exact branch draft-PR candidate CI closeout and final-head CI flow.",
-    "blocker": "Stop without correction retry or expansion on any corrected-scan baseline GitHub CI deployment or command-center verification failure."
+    "supportingAgent": "Codex has no active successor authority after 5Q-R closeout.",
+    "nextAction": "Choose whether to separately confirm 5R Offline Recovery Production Release or select another objective.",
+    "blocker": "Merge push to main deployment production verification and phase transition remain separately gated."
   },
   "currentWorkBlock": {
     "id": "phase-5-block-q-r",
     "phaseId": "phase-5",
     "label": "5Q-R",
     "name": "Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume",
-    "status": "active",
+    "status": "done",
     "includedTasks": [
       "Task 2.8 P5-T28 exact false-positive sensitive-scan assertion recovery and unchanged sixteen-path branch durability plus hosted draft-PR review resume",
       "Task 2 P5-T2 status accounting only while it remains the sole current transition gate",
@@ -88,14 +88,14 @@
       "Final dashboard shows active Phase 5 done 5Q-R stopped 5Q done 5P-R stopped 5P done P5-T28 current P5-T2 parked P5-T22 and P5-T27 and no active successor"
     ],
     "nextReportPoint": "Return corrected scan disposition branch candidate and closeout SHAs exact paths draft PR URL candidate and final CI runs jobs steps order annotations zero-deployment evidence final task state preserved exclusions and confirmation the PR remains unmerged.",
-    "durability": "Active exact assertion-recovery feature-branch draft-PR and hosted-review resume with no merge deployment production action phase transition or successor.",
+    "durability": "Exact sixteen-path candidate 3edccc0 is durable on codex/offline-recovery-feedback and open draft PR 92 with candidate hosted verification; the closeout record is valid only after its exact automatic final-head gate passes.",
     "evidence": [
       "command-center/phase-5-usability-findings-intake.md",
       "command-center/phase-5-offline-recovery-truth-audit.md",
       "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
     ],
     "owner": "Codex Desktop",
-    "result": null
+    "result": "The corrected sensitive scan ran once and returned clean no-match. Exact candidate 3edccc0 with parent ab7fea3 was explicitly staged committed and non-force pushed on codex/offline-recovery-feedback. Draft PR 92 remains open draft and unmerged. Automatic candidate Synthetic CI run 30446979383 passed core job 90559647367 before browser job 90559854180 with every step successful zero annotations and zero deployment. The preferred GitHub connector lacked repository write access and the procedure-approved authenticated gh fallback created the same bounded PR without retry. This closeout is valid only if its exact automatic final-head run passes all immutable gates."
   },
   "routerHealth": {
     "status": "healthy",
@@ -120,28 +120,30 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Recover the exact scan assertion and resume hosted review",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "why": "Ryan confirmed one precise fail-closed correction for the sole 5Q blocker and the unchanged completed Task 2.8 package is ready for branch durability and hosted review.",
-    "action": "Run the corrected scan once and only on pass complete the unchanged draft-PR candidate and final-head Synthetic CI flow then stop unmerged.",
+    "title": "Decide whether to release offline recovery",
+    "status": "decision-needed",
+    "owner": "Ryan",
+    "why": "5Q-R made the exact Task 2.8 package feature-branch and draft-PR durable with candidate hosted verification while merge deployment and production verification remained excluded.",
+    "action": "Separately confirm 5R only after the immutable closeout head passes automatic Synthetic CI or choose another objective.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
     {
-      "decision": "Select the next project objective before Phase 5 can transition to a truthful successor phase",
+      "decision": "Choose whether to confirm 5R Offline Recovery Production Release or select another objective before Phase 5 transition",
       "status": "current Ryan decision",
-      "whyItMatters": "The dashboard requires one active phase and one current task and 5P-R is not authorized to invent Phase 6.",
-      "workaround": "Keep Phase 5 active with Task 2 current solely as the transition gate after Task 2.8 closes locally."
+      "whyItMatters": "5Q-R stops with draft PR 92 open and unmerged; merge deployment production verification and Phase 5 transition require separate authority.",
+      "workaround": "Keep Phase 5 active with Task 2 current solely as the transition gate and Tasks 2.2 and 2.7 parked."
     }
   ],
   "waitingOnRyan": {
-    "summary": "No Ryan action is required during active 5Q-R. Merge deployment production release and phase transition remain separately gated.",
-    "items": []
+    "summary": "Ryan may separately confirm 5R after the exact final-head gate passes or select another objective. No release action is active.",
+    "items": [
+      "Decide whether to confirm 5R Offline Recovery Production Release after final-head verification."
+    ]
   },
   "questionBoundaries": {
     "phaseQuestions": "Tasks 1.1 through 1.4 Task 2.1 Task 2.3 Task 2.4 Task 2.5 and Task 2.6 are complete with Task 2.4 branch-durable and hosted-verified through 5G-R and Task 2.5 complete locally through 5H-B; Task 2.2 and 5D remain parked.",
-    "decisionQueue": "5P-R accepts the unchanged green 5P evidence and completes Task 2.8 locally. 5Q remains stopped on its false-positive assertion and 5Q-R is active for the exact corrected scan plus unchanged hosted-review resume. Tasks 2.2 and 2.7 remain parked.",
+    "decisionQueue": "5P-R accepts the unchanged green 5P evidence and completes Task 2.8 locally. 5Q remains stopped on its false-positive assertion. 5Q-R is done with exact branch and draft-PR durability plus hosted verification subject to its immutable final-head gate. Tasks 2.2 and 2.7 remain parked and 5R is separately gated.",
     "waitingScheduled": "Luxe Legacy setup and the Task 2.2 and 5D path are parked until Ryan explicitly reopens them."
   },
   "agents": [
@@ -205,7 +207,7 @@
       "phaseId": "phase-5",
       "label": "5Q-R",
       "name": "Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume",
-      "status": "active",
+      "status": "done",
       "includedTasks": [
         "Task 2.8 P5-T28 exact false-positive sensitive-scan assertion recovery and unchanged sixteen-path branch durability plus hosted draft-PR review resume",
         "Task 2 P5-T2 status accounting only while it remains the sole current transition gate",
@@ -252,13 +254,13 @@
       ],
       "reportBack": "Return corrected scan disposition branch candidate and closeout SHAs exact paths draft PR URL candidate and final CI runs jobs steps order annotations zero-deployment evidence final task state preserved exclusions and confirmation the PR remains unmerged.",
       "nextBlock": "5R Offline Recovery Production Release only after final-head CI passes and Ryan separately confirms merge deployment and production verification.",
-      "durability": "Active exact assertion-recovery feature-branch draft-PR and hosted-review resume with no merge deployment production action phase transition or successor.",
+      "durability": "Exact sixteen-path candidate 3edccc0 is durable on codex/offline-recovery-feedback and open draft PR 92 with candidate hosted verification; the closeout record is valid only after its exact automatic final-head gate passes.",
       "evidence": [
         "command-center/phase-5-usability-findings-intake.md",
         "command-center/phase-5-offline-recovery-truth-audit.md",
         "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
       ],
-      "result": null
+      "result": "The corrected sensitive scan ran once and returned clean no-match. Exact candidate 3edccc0 with parent ab7fea3 was explicitly staged committed and non-force pushed on codex/offline-recovery-feedback. Draft PR 92 remains open draft and unmerged. Automatic candidate Synthetic CI run 30446979383 passed core job 90559647367 before browser job 90559854180 with every step successful zero annotations and zero deployment. The preferred GitHub connector lacked repository write access and the procedure-approved authenticated gh fallback created the same bounded PR without retry. This closeout is valid only if its exact automatic final-head run passes all immutable gates."
     },
     {
       "id": "phase-5-block-q",
@@ -11500,7 +11502,7 @@
       "title": "Task 2: Polish high-friction journeys",
       "status": "current",
       "owner": "Ryan",
-      "summary": "Required children and optional Task 2.8 are done locally through 5P-R. Task 2 is current solely as the transition gate while optional Tasks 2.2 and 2.7 remain parked."
+      "summary": "Required children and optional Task 2.8 are done. Task 2.8 is feature-branch and draft-PR durable with candidate hosted verification through 5Q-R subject to its immutable final-head gate. Task 2 is current solely as the transition gate while optional Tasks 2.2 and 2.7 remain parked."
     },
     {
       "phaseId": "phase-5",
@@ -11576,7 +11578,7 @@
       "title": "Task 2.8: Verify and improve offline recovery feedback",
       "status": "done",
       "owner": "Codex Desktop",
-      "summary": "Done locally through 5P-R. The separately authorized recovery accepts the unchanged green 5P smoke installed-Chrome direct-render and cleanup evidence while preserving 5P as historically stopped-scope-drift.",
+      "summary": "Done locally through 5P-R and feature-branch plus open draft-PR durable with candidate hosted verification through 5Q-R. The exact candidate is 3edccc0 on PR 92; the closeout is valid only after its immutable automatic final-head gate passes.",
       "nextAction": null,
       "blocker": null,
       "result": "The exact offline controller is available from the static-only cache Retry reports accessible checking failure and restored states through one network-only health request the narrow generic-screen statement is supported and broader privacy claims remain unsupported."
@@ -12140,6 +12142,10 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-29",
+      "text": "Completed the bounded 5Q-R branch and hosted-review recovery subject to its immutable final-head gate. The corrected sensitive scan ran once and returned clean no-match. Exact candidate 3edccc0 from baseline ab7fea3 is on codex/offline-recovery-feedback and open draft PR 92. Candidate Synthetic CI run 30446979383 passed core 90559647367 before browser 90559854180 with every step successful zero annotations and zero deployment. Task 2.8 is branch and draft-PR durable Task 2 remains current Tasks 2.2 and 2.7 remain parked Phase 5 remains active and no successor started."
+    },
     {
       "time": "2026-07-28",
       "text": "Completed 5P-R and Task 2.8 locally by accepting the unchanged green 5P evidence through a separately authorized command-center-only recovery. Exact refs sixteen paths empty index frozen hashes audit log prior smoke and installed-Chrome passes later phone render cleanup lightweight syntax JSON dashboard health whitespace and sensitive-content checks passed. 5P remains historically stopped M-05 is resolved Task 2 is the sole current transition gate Tasks 2.2 and 2.7 remain parked and no successor started."
@@ -13365,13 +13371,14 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "title": "Complete exact scan recovery and hosted review resume",
-    "status": "active",
-    "owner": "Codex Desktop",
-    "target": "Pass one corrected fail-closed scan then leave one exact draft PR open and unmerged after candidate and final-head Synthetic CI pass with zero deployment."
+    "title": "Choose whether to release offline recovery",
+    "status": "decision-needed",
+    "owner": "Ryan",
+    "target": "After the exact 5Q-R closeout head passes automatic Synthetic CI confirm 5R separately or select another objective while PR 92 remains draft and unmerged."
   },
   "verification": {
-    "phase5OfflineRecoveryHostedReviewRecovery": "active through 5Q-R; exact false-positive sk-token-boundary correction and unchanged ab7fea3 sixteen-path branch draft-PR candidate and final-head Synthetic CI zero-deployment resume is confirmed",
+    "phase5OfflineRecoveryHostedReviewRecovery": "pass through the 5Q-R candidate gate and subject to immutable final-head proof; the corrected sensitive scan ran once and returned clean no-match exact candidate 3edccc0 from ab7fea3 is durable on codex/offline-recovery-feedback and open draft PR 92 candidate Synthetic CI run 30446979383 passed core 90559647367 before browser 90559854180 with every step successful zero annotations and zero deployment",
+    "phase5OfflineRecoveryHostedReviewCloseoutGate": "the exact eight-path closeout record is valid only if its automatic final-head Synthetic CI passes core before browser with every required step successful zero annotations zero deployment exact local and remote head equality and PR 92 still open draft and unmerged",
     "phase5OfflineRecoveryHostedReview": "stopped before branch creation; activation JSON dashboard health rendered inspection exact refs sixteen-path union empty index frozen hashes lightweight syntax and whitespace passed but the sensitive scan sk-prefix detector matched ordinary ask-prefixed artifact names and no correction rerun Git GitHub workflow deployment or successor occurred",
     "phase5OfflineRecoveryEvidenceAcceptance": "pass locally through 5P-R; exact refs sixteen paths empty index and eight frozen hashes were preserved the audit log local diff prior smoke and installed-Chrome passes later direct phone render and cleanup record agreed lightweight JavaScript and Python syntax passed and no suite browser screenshot product execution implementation edit Git hosted protected transition or successor action occurred",
     "phase5OfflineRecoveryCloseout": "pass locally through 5P-R; 5P remains historically stopped-scope-drift Task 2.8 and M-05 are done Task 2 is current solely as the transition gate Tasks 2.2 and 2.7 remain parked Phase 5 remains active at one hundred percent required completion and no successor starts",

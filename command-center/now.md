@@ -2,31 +2,31 @@
 
 ## Active Objective
 
-Recover the exact false-positive sensitive-scan assertion and, only on pass, resume the unchanged Task 2.8 feature-branch and hosted-review flow.
+Choose whether to authorize the separately gated Task 2.8 production release after exact feature-branch durability and hosted review passed.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — required work remains 100% complete. Work block 5Q-R is active for one exact false-positive scan recovery and the unchanged Task 2.8 feature-branch and hosted-review resume. Optional Tasks 2.2 and 2.7 remain parked. Task 2 remains current solely as the transition gate and Phase 5 remains active.
+Phase 5: UX Polish, Operations, And Durable Handoff — required work remains 100% complete. Work block 5Q-R is done with Task 2.8 branch/draft-PR durability and candidate hosted verification complete; its closeout head remains subject to the automatic final-head gate recorded below. Optional Tasks 2.2 and 2.7 remain parked. Task 2 remains current solely as the transition gate and Phase 5 remains active.
 
 ## Current Work Block
 
-Work block 5Q-R — Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume — is active. Work block 5Q remains stopped before branch creation; 5P-R remains done locally; and 5P remains historically stopped on disposable rendered-probe scope drift.
+Work block 5Q-R — Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume — is done subject to the automatic final-head verification required by its immutable closeout. Work block 5Q remains stopped before branch creation; 5P-R remains done locally; and 5P remains historically stopped on disposable rendered-probe scope drift.
 
 ## Current Task
 
-Phase 5 Task 2 (`P5-T2`) — status accounting only while 5Q-R recovers the scan assertion and resumes the completed Task 2.8 durability flow; remain current solely as the transition gate.
+Phase 5 Task 2 (`P5-T2`) — remain current solely as the transition gate after Task 2.8 became branch/draft-PR durable and candidate-hosted-verified through 5Q-R.
 
 ## Owner
 
-Codex Desktop owns exact 5Q-R scan recovery, Git, draft-PR, hosted-evidence, Runway OS, and verification execution. Ryan retains every later merge, deployment, production release, next-objective, and phase-transition decision.
+Ryan owns the decision whether to separately confirm 5R production release or choose another objective. Codex retains no active successor authority.
 
 ## Current Action
 
-Execute exact 5Q-R: run one corrected fail-closed sensitive scan and, only on pass, complete the unchanged feature-branch, draft-PR, candidate-CI, bounded closeout, and final-head-CI flow before stopping unmerged.
+Decide whether to separately confirm 5R — Offline Recovery Production Release. No merge, push to `main`, deployment, production request, phase transition, or successor is active.
 
 ## Confirmed Work Block 5Q-R
 
-- Status: active.
+- Status: done, contingent on the automatic final-head verification for the immutable closeout commit.
 - Name: Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume.
 - Include Task 2.8 (`P5-T28`) for one exact false-positive scan assertion recovery and the unchanged sixteen-path feature-branch and hosted draft-PR review resume, plus Task 2 (`P5-T2`) status accounting only.
 - Preserve stopped 5Q, local/cached/live `main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact sixteen-path union, empty real index, and the eight frozen implementation and contract hashes.
@@ -38,6 +38,17 @@ Execute exact 5Q-R: run one corrected fail-closed sensitive scan and, only on pa
 - Verification: exact baseline and candidate; active rendered command-center inspection; one clean corrected scan; exact staging and commit tree; draft PR base/head/draft/unmerged state; candidate and final-head Synthetic CI with core before browser, every required step successful, and zero annotations; zero Fly deployment for both SHAs; final local/remote branch alignment; Task 2 current; Task 2.8 done and branch/PR durable; Tasks 2.2 and 2.7 parked; 5Q stopped; 5Q-R done; Phase 5 active; no successor.
 - Report back: corrected scan disposition, branch, candidate and closeout SHAs, exact paths, PR URL, runs, jobs, steps, order, annotations, zero-deployment result, final task state, preserved exclusions, and confirmation that the PR remains unmerged.
 - Suggested next block: separately confirm 5R — Offline Recovery Production Release — only after the final PR head passes.
+
+## Work Block 5Q-R Result
+
+- The corrected scan ran exactly once with `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}` and returned the defined clean-no-match result. No second correction, exploration, or rerun occurred.
+- The exact sixteen-path candidate was explicitly staged and committed as `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, with parent `ab7fea3155847209d693558a9e5a9ba39e163d7a`, then non-force pushed on `codex/offline-recovery-feedback`.
+- Draft PR [#92](https://github.com/rabuffington22/expense-tracker/pull/92) targets `main`, remains open, draft, and unmerged, and carried the exact candidate head into automatic Synthetic CI run `30446979383`.
+- Candidate CI passed core job `90559647367` before browser job `90559854180`; every required step passed, both jobs had zero annotations, and no Fly deployment or deployment workflow appeared for the candidate SHA.
+- The preferred GitHub connector could not create the PR because its integration lacked repository write access. The authenticated `gh` fallback permitted by the publication procedure created the same bounded draft PR; no retry or broader GitHub action occurred.
+- This eight-path closeout is the only post-candidate project change. Its commit and automatic final-head run are verified after the immutable record is pushed; this result is valid only if that exact head passes with the same job order, all steps successful, zero annotations, zero deployment, exact local/remote alignment, and the PR still draft/open/unmerged.
+- Task 2.8 remains done and is now feature-branch/draft-PR durable with candidate hosted verification. Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; 5Q remains stopped; Phase 5 remains active at 100% required completion; and no successor starts.
+- No local smoke, product-browser, screenshot, or rendered-product suite was rerun. No product, maintained-test, README, CSP-contract, workflow, merge, `main` push, deployment, production-health, protected-data, provider, database, phase-transition, successor, delegation, or second-opinion action occurred.
 
 ## Confirmed Work Block 5Q
 

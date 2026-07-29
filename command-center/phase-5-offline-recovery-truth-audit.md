@@ -77,3 +77,13 @@ Ryan confirmed the exact 5Q-R scope on 2026-07-29. Codex Desktop recorded active
 The recovery preserves stopped 5Q, local/cached/live `main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact sixteen-path Task 2.8 candidate, empty real index, and eight frozen implementation and contract hashes. It replaces only the false-positive `sk-` detector with `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}` and permits exactly one fail-closed scan: `rg` exit 1 is clean no-match, exit 0 is an actual match and stop, and exit 2 or higher is scan failure and stop.
 
 Only after clean no-match may the unchanged 5Q feature-branch, draft-PR, candidate Synthetic CI, bounded eight-path closeout, final-head Synthetic CI, zero-deployment, and stop-unmerged flow resume. No second scan correction or rerun, project-source change, local product suite, workflow mutation, merge, push to `main`, deployment, production health, protected access, transition, successor, delegation, or second opinion is authorized.
+
+## 5Q-R Hosted Review Outcome
+
+The corrected scan ran exactly once and returned the defined clean-no-match result. No second correction, exploration, or rerun occurred. The eight frozen implementation and contract paths remained unchanged from their accepted 5P-R hashes.
+
+The exact sixteen-path candidate is committed as `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684` with parent `ab7fea3155847209d693558a9e5a9ba39e163d7a`, non-force pushed on `codex/offline-recovery-feedback`, and presented by open draft PR #92 to `main`. Automatic candidate Synthetic CI run `30446979383` passed core job `90559647367` before browser job `90559854180`; every required step passed, both jobs had zero annotations, and no Fly deployment or deployment workflow appeared.
+
+The preferred GitHub connector lacked repository write access when asked to create the draft PR. The authenticated procedure-approved `gh` fallback created the same bounded PR without retry or expansion.
+
+The single eight-path command-center closeout is valid only if the exact automatic final-head Synthetic CI triggered by its push passes core before browser with every required step successful, zero annotations, zero deployment, exact local/remote equality, and PR #92 still open, draft, and unmerged. On that pass, 5Q-R is done, Task 2.8 is branch/draft-PR durable and hosted verified, Task 2 remains current solely as the transition gate, Tasks 2.2 and 2.7 remain parked, Phase 5 remains active at 100%, and no successor starts. Production release remains a separately confirmed 5R boundary.
