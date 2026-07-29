@@ -11251,7 +11251,15 @@ def main() -> None:
         sw_source = (PROJECT_ROOT / "web" / "static" / "sw.js").read_text()
         precache = sw_source.split("const PRECACHE_URLS = [", 1)[1].split("];", 1)[0]
         _check("'/'" not in precache, "service worker: protected root must not be precached")
-        _check("the-ledger-v5" in sw_source, "service worker: cache version should invalidate old dynamic caches")
+        _check("the-ledger-v6" in sw_source, "service worker: cache version should invalidate old dynamic caches")
+        _check(
+            "'/static/standalone-documents.js'" in precache,
+            "service worker: the exact offline controller request must be precached",
+        )
+        _check(
+            "'/health'" not in precache,
+            "service worker: the Retry health endpoint must remain network-only",
+        )
         _check("networkFirst" not in sw_source, "service worker: dynamic cache fallback should be removed")
         _check(sw_source.count("caches.match(request)") == 1, "service worker: only static cache-first may match the request URL")
         _check(sw_source.count("cache.put(request") == 1, "service worker: only static assets may be cached at runtime")
@@ -12808,8 +12816,25 @@ def main() -> None:
             )
             and "kristine.js" in standalone_sources[4]
             and 'data-standalone-action="retry"' in standalone_sources[0]
+            and 'data-offline-retry-status' in standalone_sources[0]
+            and 'role="status"' in standalone_sources[0]
+            and 'aria-live="polite"' in standalone_sources[0]
+            and 'data-retry-url="{{ url_for(\'health\') }}"'
+            in standalone_sources[0]
+            and "?v={{ cache_bust }}" not in standalone_sources[0]
             and 'data-kristine-action="toggle-category"' in standalone_sources[4],
             "standalone documents: family controllers and delegated actions must be explicit",
+        )
+        _check(
+            "This offline screen is generic and does not include account or transaction details."
+            in standalone_sources[0]
+            and "Checking your connection\\u2026" in standalone_asset
+            and "Still offline. Check your connection and try again."
+            in standalone_asset
+            and "Connection restored. Reloading\\u2026" in standalone_asset
+            and 'cache: "no-store"' in standalone_asset
+            and 'headers: {"Accept": "application/json"}' in standalone_asset,
+            "standalone documents: offline safety and Retry feedback must remain exact",
         )
         _check(
             "{{" not in standalone_asset
@@ -12905,6 +12930,14 @@ def main() -> None:
             )
             and "/static/kristine.js" in rendered_standalone[4],
             "standalone documents: rendered responses must load their local controllers",
+        )
+        _check(
+            "/static/standalone-documents.js?v=" not in rendered_standalone[0]
+            and 'data-retry-url="/health"' in rendered_standalone[0]
+            and 'role="status"' in rendered_standalone[0]
+            and "This offline screen is generic and does not include account or transaction details."
+            in rendered_standalone[0],
+            "standalone documents: rendered offline controller and truthful feedback contract must remain exact",
         )
 
         print("   ✅ Five source templates, local controllers, exact statuses, no exception leakage, rendered responses, and final aggregate inventory passed")
@@ -14262,7 +14295,7 @@ def main() -> None:
             "final CSP: source must generate 128-bit nonces and stamp only a completed rendered response",
         )
         _check(
-            "the-ledger-v5" in sw_source
+            "the-ledger-v6" in sw_source
             and f'const CORE_CSP_POLICY = "{CORE_CSP_POLICY}";'
             in sw_source
             and "'Content-Security-Policy': CORE_CSP_POLICY"

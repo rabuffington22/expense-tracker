@@ -2,27 +2,222 @@
 
 ## Active Objective
 
-Select the next project objective before proposing a separate Phase 5 transition and Phase 6 intake.
+Choose whether to authorize the separately gated Task 2.8 production release after exact ref-semantics recovery and hosted closeout.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — required work is 100% complete through 5N. Tasks 1, 3, and 4 are done; Task 2's required children are complete; optional Tasks 2.2, 2.7, and 2.8 remain parked. Phase 5 remains active and Task 2 remains the sole current transition gate because the dashboard requires one active phase and one current task until Ryan selects a successor direction.
+Phase 5: UX Polish, Operations, And Durable Handoff — required work remains 100% complete. Work block 5Q-R2 is done subject to the automatic recovery-head verification required by its immutable closeout. Work block 5Q-R remains stopped at final reconciliation on its invalid equality assertion. Optional Tasks 2.2 and 2.7 remain parked. Task 2 remains current solely as the transition gate and Phase 5 remains active.
 
 ## Current Work Block
 
-Work block 5N-R2 — Corrected State Assertion And Exact 5N Durability Resume — is done through the containing `[skip actions]` durability package and its required post-push conditions.
+Work block 5Q-R2 — Exact Main-Ref Semantics Recovery And Hosted Closeout — is done subject to its automatic recovery-head gate. Work block 5Q-R is stopped at final reconciliation; 5Q remains stopped before branch creation; 5P-R remains done locally; and 5P remains historically stopped on disposable rendered-probe scope drift.
 
 ## Current Task
 
-Phase 5 Task 2 (`P5-T2`) — required children complete; current only as the transition gate until a separately chosen successor direction can support an honest phase transition.
+Phase 5 Task 2 (`P5-T2`) — remain current solely as the transition gate after Task 2.8 ref-semantics recovery and hosted closeout through 5Q-R2.
 
 ## Owner
 
-Ryan owns the next-direction decision and every future parked-task reopening. Codex Desktop owns later bounded transition planning, Runway OS stewardship, and verification.
+Ryan owns the decision whether to separately confirm 5R production release or choose another objective. Codex retains no active successor authority.
 
 ## Current Action
 
-Wait for Ryan to choose the next project objective. Do not reopen optional work, close Phase 5, create Phase 6, or begin another work block without a separate proposal and confirmation.
+Decide whether to separately confirm 5R — Offline Recovery Production Release. No merge, push to `main`, deployment, production request, phase transition, or successor is active.
+
+## Confirmed Work Block 5Q-R2
+
+- Status: done, contingent on the automatic recovery-head verification for the immutable closeout commit.
+- Name: Exact Main-Ref Semantics Recovery And Hosted Closeout.
+- Include Task 2.8 (`P5-T28`) only for exact Git/ref verification-semantic recovery and acceptance of the already-passing branch, PR, and hosted evidence, plus Task 2 (`P5-T2`) status accounting only.
+- Preserve local `refs/heads/main` at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` without checkout or mutation and require it to remain an ancestor of exact cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`.
+- Preserve candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, local/remote `codex/offline-recovery-feedback`, and draft PR #92 at the exact closeout head.
+- Reconcile existing candidate run `30446979383` and closeout run `30447811416` without rerun. On pass, write one exact eight-path command-center recovery commit, non-force push the same branch, observe only its automatic Synthetic CI, and stop with PR #92 open, draft, and unmerged.
+- Exclude Task 2.2 (`P5-T22`), Task 2.7 (`P5-T27`), completed Tasks 1, 3, and 4 and every other Task 2 child; moving, updating, resetting, checking out, or deleting local `main`; product, maintained-test, README, CSP-contract, dependency, workflow, or configuration change; local product-suite or browser rerun; manual workflow action; merge; push to `main`; deployment; production health; rebase; force push; conflict resolution; protected/provider/database/financial/parent action; delegation; second opinion; Phase 5 transition; Phase 6; successor; and unrelated work.
+- Use `set -euo pipefail` plus explicit assertion handling. A trailing pass marker never substitutes for assertion results.
+- Stop without correction, retry, or expansion on ref, ancestry, commit-chain, PR, path, frozen-hash, existing-CI, staging, non-fast-forward, automatic-CI, annotation, job-order, unexpected-deployment, JSON, dashboard, health, whitespace, task-accounting, or exact-scope failure.
+- Verification: exact local-main informational ref and ancestor relation; exact cached/live remote baseline; exact candidate and closeout ancestry and path sets; unchanged implementation paths after the candidate; exact local/remote branch and PR state; existing two Synthetic CI runs with core before browser, every step successful, zero annotations, and zero deployment; exact eight-path recovery commit and remote alignment; one automatic recovery-head Synthetic CI with the same gates; final dashboard showing 5Q-R2 done, 5Q-R stopped, 5Q stopped, Task 2 current, Task 2.8 done and branch/PR durable, Tasks 2.2 and 2.7 parked, Phase 5 active, and no successor.
+- Report back: corrected ref semantics, preserved local `main`, candidate/closeout/recovery SHAs, exact paths, PR state, all three CI heads and jobs, annotations, zero-deployment proof, dashboard state, exclusions, and unmerged status.
+- Suggested next block: separately confirm 5R — Offline Recovery Production Release — only after the exact 5Q-R2 recovery head passes.
+
+## Work Block 5Q-R2 Result
+
+- The fail-closed reconciliation passed under `set -euo pipefail` with explicit assertion handling. No trailing marker substituted for a failed assertion.
+- Local `refs/heads/main` remained untouched at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` and is an ancestor of exact cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`.
+- Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684` has exact parent `ab7fea3155847209d693558a9e5a9ba39e163d7a`; closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa` has exact parent `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`; local, cached, and live feature-branch refs and PR #92 aligned at the closeout head before this recovery record.
+- The exact candidate sixteen-path set, closeout eight-path set, empty index, frozen implementation hashes, and zero implementation drift after the candidate passed.
+- Draft PR #92 remained clean, open, draft, and unmerged. Existing candidate run `30446979383` and closeout run `30447811416` each remained the only workflow for its SHA; core completed before browser, every step passed, all four jobs had zero annotations, and no Fly deployment or deployment workflow appeared.
+- This eight-path recovery closeout is the only new project change. Its commit and automatic recovery-head run are verified after the immutable record is pushed; this result is valid only if that exact head passes core before browser with every required step successful, zero annotations, zero deployment, exact local/remote feature-branch alignment, local `main` still preserved, cached/live `origin/main` unchanged, and PR #92 still clean, open, draft, and unmerged.
+- On that recovery-head pass, 5Q-R2 is done; 5Q-R and 5Q remain stopped; Task 2.8 is done and feature-branch/draft-PR durable with hosted verification; Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 remains active at 100% required completion; and no successor starts.
+- No local-main mutation, product/test/contract/workflow change, local product-suite or browser rerun, existing workflow rerun, merge, push to `main`, deployment, production health, protected/provider/database/financial/parent action, delegation, second opinion, phase transition, Phase 6, or successor occurred.
+
+## Confirmed Work Block 5Q-R
+
+- Status: stopped at final reconciliation on the invalid local-`main` equality assertion.
+- Name: Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume.
+- Include Task 2.8 (`P5-T28`) for one exact false-positive scan assertion recovery and the unchanged sixteen-path feature-branch and hosted draft-PR review resume, plus Task 2 (`P5-T2`) status accounting only.
+- Preserve stopped 5Q, local/cached/live `main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact sixteen-path union, empty real index, and the eight frozen implementation and contract hashes.
+- Replace only the false-positive `sk-` detector with `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}`. Run the corrected scan once. Treat `rg` exit 1 as clean no-match, exit 0 as an actual match and stop, and exit 2 or higher as scan failure and stop.
+- Only on pass, create `codex/offline-recovery-feedback`; explicitly stage and commit only the candidate; non-force push; open one draft PR to `main`; observe automatic candidate Synthetic CI; write one bounded eight-path command-center closeout commit; push the same branch; observe automatic final-head Synthetic CI; and stop with the PR open, draft, and unmerged.
+- Reuse accepted 5P-R local smoke, installed-Chrome, and direct-render evidence only while frozen hashes remain unchanged. Run no local smoke, product-browser, screenshot, or rendered-product suite.
+- Exclude Tasks 2.2 and 2.7; completed Tasks 1, 3, and 4 and other Task 2 children; rewriting stopped 5Q; any second scan correction, exploration, or rerun; product, maintained-test, README, CSP-contract, dependency, environment, configuration, or workflow change beyond the frozen candidate; merge; push to `main`; deployment; production health; manual workflow action; repair; rebase; force push; conflict resolution; provider, database, financial, protected, parent, delegation, second-opinion, Phase 5 transition, Phase 6, successor, and unrelated work.
+- Stop without correction, retry, or expansion on corrected-scan, ref, path, index, hash, sensitive-content, branch, PR, ancestry, staging, remote-alignment, CI, annotation, job-order, unexpected-deployment, JSON, dashboard, health, whitespace, task-accounting, or exact-scope failure.
+- Verification: exact baseline and candidate; active rendered command-center inspection; one clean corrected scan; exact staging and commit tree; draft PR base/head/draft/unmerged state; candidate and final-head Synthetic CI with core before browser, every required step successful, and zero annotations; zero Fly deployment for both SHAs; final local/remote branch alignment; Task 2 current; Task 2.8 done and branch/PR durable; Tasks 2.2 and 2.7 parked; 5Q stopped; 5Q-R done; Phase 5 active; no successor.
+- Report back: corrected scan disposition, branch, candidate and closeout SHAs, exact paths, PR URL, runs, jobs, steps, order, annotations, zero-deployment result, final task state, preserved exclusions, and confirmation that the PR remains unmerged.
+- Suggested next block: separately confirm 5R — Offline Recovery Production Release — only after the final PR head passes.
+
+## Work Block 5Q-R Result
+
+- The corrected scan ran exactly once with `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}` and returned the defined clean-no-match result. No second correction, exploration, or rerun occurred.
+- The exact sixteen-path candidate was explicitly staged and committed as `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, with parent `ab7fea3155847209d693558a9e5a9ba39e163d7a`, then non-force pushed on `codex/offline-recovery-feedback`.
+- Draft PR [#92](https://github.com/rabuffington22/expense-tracker/pull/92) targets `main`, remains open, draft, and unmerged, and carried the exact candidate head into automatic Synthetic CI run `30446979383`.
+- Candidate CI passed core job `90559647367` before browser job `90559854180`; every required step passed, both jobs had zero annotations, and no Fly deployment or deployment workflow appeared for the candidate SHA.
+- The preferred GitHub connector could not create the PR because its integration lacked repository write access. The authenticated `gh` fallback permitted by the publication procedure created the same bounded draft PR; no retry or broader GitHub action occurred.
+- This eight-path closeout is the only post-candidate project change. Its commit and automatic final-head run are verified after the immutable record is pushed; this result is valid only if that exact head passes with the same job order, all steps successful, zero annotations, zero deployment, exact local/remote alignment, and the PR still draft/open/unmerged.
+- Task 2.8 remains done and is now feature-branch/draft-PR durable with candidate hosted verification. Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; 5Q remains stopped; Phase 5 remains active at 100% required completion; and no successor starts.
+- No local smoke, product-browser, screenshot, or rendered-product suite was rerun. No product, maintained-test, README, CSP-contract, workflow, merge, `main` push, deployment, production-health, protected-data, provider, database, phase-transition, successor, delegation, or second-opinion action occurred.
+- The automatic closeout-head run later passed every hosted gate, but final reconciliation found local `refs/heads/main` at older commit `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` rather than `ab7fea3155847209d693558a9e5a9ba39e163d7a`. The verification command incorrectly continued past its failed bracket assertion because it lacked fail-closed shell handling. Per the confirmed stop rule, 5Q-R is stopped despite otherwise-green evidence; no ref was moved and no repair occurred inside 5Q-R.
+
+## Confirmed Work Block 5Q
+
+- Status: stopped before branch creation.
+- Name: Offline Recovery Branch Durability And Hosted Review.
+- Include Task 2.8 (`P5-T28`) for exact sixteen-path feature-branch durability and hosted draft-PR review only, plus Task 2 (`P5-T2`) status accounting while it remains the sole current transition gate.
+- Preserve local, cached, and live `main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact sixteen-path union, empty real index, and frozen implementation and contract hashes.
+- Create `codex/offline-recovery-feedback`; explicitly stage and commit only the candidate; non-force push; open one draft PR to `main`; observe automatic candidate Synthetic CI; write one bounded eight-path command-center closeout commit; push the same branch; observe automatic final-head Synthetic CI; stop with the draft PR open and unmerged.
+- Reuse accepted 5P-R local smoke, installed-Chrome, and direct-render evidence only while frozen hashes remain unchanged. Run no local smoke, Chrome, browser, screenshot, or rendered-probe suite in 5Q.
+- Exclude Tasks 2.2 and 2.7; completed Tasks 1, 3, and 4 and other Task 2 children; product, maintained-test, README, CSP-contract, dependency, environment, configuration, workflow, browser, screenshot, suite, or rendered-probe change or rerun beyond the frozen candidate; merge; push to `main`; deployment; production health; manual workflow action, rerun, cancellation, or repair; rebase; force push; conflict resolution; provider, database, financial, protected, parent, delegation, second-opinion, Phase 5 transition, Phase 6, successor, and unrelated work.
+- Stop without repair, retry, or expansion on ref, path, index, hash, sensitive-content, branch, PR, ancestry, staging, remote-alignment, CI, annotation, job-order, unexpected-deployment, JSON, dashboard, health, whitespace, task-accounting, or exact-scope drift.
+- Verification: exact baseline and candidate; valid JSON; dashboard refresh and health; whitespace and sensitive-content checks; exact staging and commit tree; draft PR base/head/draft/unmerged state; candidate and final-head Synthetic CI with core before browser, every required step successful, and zero annotations; zero Fly deployment for both SHAs; final local and remote feature-branch alignment; Task 2 current; Task 2.8 done and branch/PR durable; Tasks 2.2 and 2.7 parked; 5P historical stop; 5P-R and 5Q done; Phase 5 active; no successor.
+- Report back: branch, candidate and closeout SHAs, exact paths, PR URL, runs, jobs, steps, order, annotations, zero-deployment result, final task state, preserved exclusions, and confirmation that the PR remains unmerged.
+- Suggested next block: separately confirm 5R — Offline Recovery Production Release — only after the final PR head passes.
+
+## Work Block 5Q Result
+
+- Activation-state JSON, dashboard refresh, health, rendered inspection, exact local/cached/live refs, sixteen-path union, empty index, eight frozen implementation and contract hashes, lightweight JavaScript and Python syntax, and whitespace verification passed.
+- The high-confidence sensitive-content command then exited nonzero because its `sk-` detector also matched ordinary tracked `ask-` artifact names such as Ask Opus evidence paths.
+- The result is a verification-command false positive, not evidence that a secret was found. The scan nevertheless failed under 5Q's exact stop rule.
+- No scan correction or rerun, branch creation, staging, commit, push, PR, workflow, deployment, production health, repair, retry, phase transition, or successor occurred.
+- Detached `HEAD`, the exact sixteen-path local candidate, and the empty Git index remain preserved. No local or remote `codex/offline-recovery-feedback` branch and no matching PR exist.
+- Task 2.8 remains done locally; Task 2 remains the sole current transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 remains active at 100% required completion.
+- Any resumption requires a separately confirmed exact 5Q-R assertion recovery.
+
+## Confirmed Work Block 5P-R
+
+- Status: done locally.
+- Name: Exact Evidence Acceptance And Task 2.8 Closeout.
+- Include Task 2.8 (`P5-T28`) evidence acceptance and local closeout plus Task 2 (`P5-T2`) status accounting only.
+- Preserve exact local, cached, and live `main` ref `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact sixteen-path stopped 5P union, empty real index, and the eight frozen implementation and contract hashes.
+- Reconcile only the existing smoke, installed-Chrome, direct-render, cleanup, audit, and log evidence. Keep 5P historically stopped and accept its green evidence only through 5P-R.
+- Exclude product, test, README, CSP-contract, dependency, environment, workflow, browser, screenshot, suite, rendered-probe, Task 2.2, Task 2.7, completed-task, Phase 5 closure, Phase 6, successor, Git, hosted, provider, protected, parent, delegation, second-opinion, and unrelated work.
+- Stop on ref, path, index, frozen-hash, evidence-consistency, syntax, JSON, dashboard, health, whitespace, sensitive-content, task-accounting, cleanup, or exact-scope drift; or any need for a rerun, repair, external access, publication, transition, or successor.
+- Closeout: on pass, mark 5P-R and Task 2.8 done, M-05 resolved through 5P-R, Task 2 current solely as the transition gate, Tasks 2.2 and 2.7 parked, Phase 5 active at 100%, and no successor active. On failure, keep Task 2.8 current and decision-needed with the exact sanitized blocker.
+- Report back: accepted evidence, frozen hashes and paths, final task and finding dispositions, dashboard and health results, preserved exclusions, and confirmation that no rerun or external action occurred.
+
+## Work Block 5P-R Result
+
+- Local, cached, and live `main` remained exact at `ab7fea3155847209d693558a9e5a9ba39e163d7a`; the intended sixteen-path union and empty real index were preserved.
+- All eight frozen implementation and contract hashes remained unchanged before and after reconciliation.
+- The local diff, offline truth audit, existing 5O/5P log, one prior smoke pass, one prior installed-Chrome pass, later direct 390×844 render, and exact cleanup record agreed.
+- Lightweight JavaScript and Python syntax passed. No smoke, Chrome, browser, screenshot, rendered probe, product execution, or implementation file was rerun or changed.
+- 5P remains historically stopped-scope-drift. The separately authorized 5P-R accepts the unchanged green evidence; Task 2.8 and M-05 are done locally; Task 2 is the sole current transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 stays active at 100% required completion; and no successor starts.
+- No staging, commit, push, GitHub, workflow, deployment, production, provider, database, protected-data, parent, delegation, second-opinion, Phase 5 transition, or Phase 6 action occurred.
+
+## Confirmed Work Block 5P
+
+- Status: stopped on disposable rendered-probe scope drift.
+- Name: Offline Retry Controller Availability And Truthful Feedback Repair.
+- Include Task 2.8 (`P5-T28`) implementation and verification plus Task 2 (`P5-T2`) status accounting at closeout.
+- Precache the exact unversioned `/static/standalone-documents.js` request, remove the cache-busting query from `offline.html` only, bump the Ledger worker cache from v5 to v6, and preserve cleanup of every older cache.
+- Add the exact narrow statement `This offline screen is generic and does not include account or transaction details.` Do not make broader storage, device, synchronization, encryption, or retention claims.
+- On Retry, use one cache-disabled same-origin network-only `/health` request. Show accessible `Checking your connection…`, `Still offline. Check your connection and try again.`, and `Connection restored. Reloading…` feedback with coherent disabled/busy state.
+- Preserve generic 360px design, error-document behavior, strict CSP, static-only caching, entity isolation, and every protected/dynamic network-only boundary.
+- Add maintained smoke and fresh-first-offline installed-Chrome regression coverage; update README, CSP compatibility, Phase 5 findings, one new offline truth audit, the existing 5O log, and Runway OS.
+- Exclude Tasks 2.2 and 2.7; completed Tasks 1, 3, and 4; broader PWA/authentication/session/CSRF/CSP-policy/routing/financial/database/category/entity/offline-data behavior; dependencies; environments; workflows; publication; staging; commit; push; GitHub; deployment; production; providers; protected data; parent action; delegation; second opinion; Phase 5 closure; Phase 6; and successors.
+- Stop on baseline, ref, index, unrelated-path, cache-boundary, health-contract, product-decision, protected-data, external-service, static, syntax, full-suite, fresh-offline, accessibility, console, cleanup, rendered, JSON, dashboard, health, whitespace, sensitive-content, or exact-scope failure. Do not repeat a failed full suite.
+- Closeout: on complete pass, mark Task 2.8 done, restore Task 2 as the transition gate, mark M-05 resolved through 5P, keep Tasks 2.2 and 2.7 parked, and activate no successor. On failure, keep Task 2.8 current and decision-needed with the exact sanitized blocker.
+- Report back: exact defect repaired, cache contents, Retry behavior offline and after restoration, approved safety wording, accessibility and phone-width result, suite outcomes, cleanup, tracked paths, Task 2.8 disposition, and preserved exclusions.
+
+## Work Block 5P Result
+
+- The bounded local repair is present: `the-ledger-v6` precaches the exact unversioned offline controller while retaining `/offline` plus static-only cache contents and old-cache cleanup; Retry uses one same-origin cache-disabled `/health` request with accessible Checking, Still offline, and Connection restored states; and the page uses only the approved narrow generic-screen statement.
+- Static checks passed. The full maintained smoke suite passed once. The full maintained installed-Chrome suite passed once, including the fresh-worker exact-controller path, identical Personal/BFM/LL generic fallback, offline failure feedback without navigation, restored reload to the requested LL page, expected denied-network errors, and exact cleanup.
+- The first separate 390×844 rendered-inspection harness timed out because it queried a nonexistent `data-offline-retry` selector instead of `.offline-btn`. Codex corrected and repeated the disposable probe before recognizing that 5P required a stop on rendered-probe failure and authorized one disposable inspection.
+- The later direct render passed with a centered 360px layout, no horizontal overflow, exact generic safety copy, visible polite still-offline status, and an enabled Retry control. The screenshot, synthetic data, browser, and server were removed.
+- The later pass does not erase the stop-condition and exact-scope drift. 5P is stopped rather than complete; Task 2.8 remains current and decision-needed; M-05 remains unresolved; Task 2 is not restored as the transition gate; and no successor starts.
+- No maintained suite was repeated. No staging, commit, push, GitHub, workflow, deployment, production, provider, protected-data, database, parent, delegation, second-opinion, parked-task, Phase 5 transition, Phase 6, or successor action occurred.
+
+## Work Block 5O-R2 Result
+
+- The exact active-state gate passed with refs at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the expected six command-center paths, empty index, zero product/test diff, valid task accounting, dashboard health, and two spaced 5O-R2 markers.
+- The ignored primary-checkout virtual environment passed read-only preflight at Python 3.14.3; both requirement-file hashes matched, required imports succeeded, and installed Google Chrome was present. No package manager or environment mutation occurred.
+- The full maintained smoke suite passed once.
+- The full maintained installed-Chrome suite passed once, including cross-entity offline isolation, static-only caching, denied-network behavior, both auth modes, expected errors, and exact cleanup.
+- The one disposable 390×844 probe then timed out after ten seconds waiting for Playwright to observe a navigation event after Retry was clicked while offline.
+- Per the stop condition, no probe repair, instrumentation change, substitution, or retry; no final Retry-after-restoration or allowable-language conclusion; and no product/test mutation, environment mutation, staging, commit, push, hosted action, or successor occurred.
+- Cleanup verification found no matching temporary probe root or surviving probe process.
+- Task 2.8 remains current and decision-needed. Any probe-instrumentation correction or audit resume requires a separately confirmed exact block.
+
+## Confirmed Work Block 5O-R2
+
+- Status: stopped during the disposable probe after runtime preflight and both maintained suites passed.
+- Name: Read-Only Shared Runtime Selection And Offline Truth Audit Resume.
+- Include Task 2.8 (`P5-T28`) verification and evidence only plus Task 2 (`P5-T2`) status accounting at closeout.
+- Select `/Users/ryanbuffington/Documents/GitHub/expense-tracker/.venv/bin/python` by absolute path as an ignored read-only runner. Revalidate Python 3.14.3, package health, matching `requirements.txt` and `requirements-dev.txt`, Flask and Playwright imports, and installed Google Chrome before suite execution.
+- Invoke no package manager, create no worktree virtual environment or symlink, set `PYTHONDONTWRITEBYTECODE=1`, and make no Python 3.12 or production-parity claim.
+- Run the maintained smoke and installed-Chrome suites once each. Only if both pass, run one disposable localhost denied-network probe of actual fallback, Retry while offline, Retry after restoration, cache contents, identical entity-independent fallback, expected browser errors, phone-width presentation, and exact cleanup.
+- Expected tracked surfaces: the existing six-path closeout; `command-center/phase-5-usability-findings-intake.md`; one new `command-center/phase-5-offline-recovery-truth-audit.md`; and the existing sanitized 5O log. Product, test, dependency, environment, and primary-checkout sources remain read-only.
+- Exclude Task 2.8 product or maintained-test implementation; Tasks 2.2 and 2.7; completed Tasks 1, 3, and 4; Phase 5 closure; Phase 6; environment creation, link, install, upgrade, or repair; a second attempt after any failure; staging; commit; push; GitHub; workflows; deployment; production; provider; database; financial; protected; parent; delegation; second opinion; and unrelated work.
+- Stop on ref, index, path, product/test-diff, state, marker, interpreter, requirement-hash, package-health, import, Chrome, suite, browser, cache-safety, cleanup, sensitive-content, or scope drift; any need for environment mutation; any real-data, credential, protected-data, external-service, or non-localhost dependency; or any original 5O stop condition. Do not repair, substitute, or retry.
+- Closeout: if no product change is needed, mark Task 2.8 done and restore Task 2 as the transition gate. If implementation is justified, keep Task 2.8 current and decision-needed without a successor. If evidence contradicts the safety contract or verification fails, stop with the exact sanitized blocker.
+- Report back: interpreter disposition, suite results, cache and fallback truth, Retry behavior, phone-width state, safe and unsafe wording, cleanup, tracked paths, Task 2.8 disposition, preserved exclusions, and whether 5P is justified.
+
+## Work Block 5O-R Result
+
+- The corrected active-state verification passed once with exact local, cached, and live `main` refs, the expected six command-center paths, empty index, zero product/test diff, valid state accounting, dashboard health, two actual spaced 5O-R markers, and two Task 2.8 title markers.
+- Read-only source inspection confirmed the intended contract: cache `the-ledger-v5` precaches `/offline` and static assets only; same-origin static assets use cache-first; HTML navigations use network-only with a generic fallback; HTMX/API and other dynamic requests use network-only; cross-origin requests are not intercepted; Retry delegates to `window.location.reload()`.
+- The prescribed `.venv/bin/python scripts/smoke_test.py` command then exited with status 127 because `.venv/bin/python` is absent in this worktree. The maintained smoke suite did not start.
+- Per the confirmed stop condition, no runtime repair or substitution, retry, installed-browser suite, disposable denied-network Retry probe, rendered phone-width audit, final allowable-language conclusion, product/test mutation, staging, commit, push, hosted action, or successor occurred.
+- Task 2.8 remains current and decision-needed. A separately confirmed exact environment recovery is required before any suite restart or audit resume.
+
+## Confirmed Work Block 5O-R
+
+- Status: stopped during audit because the prescribed smoke runtime was absent.
+- Name: Exact Rendered-Marker Assertion Recovery And Offline Truth Audit Resume.
+- Included Task 2.8 (`P5-T28`) verification and evidence only; Task 2 (`P5-T2`) remains the required-complete umbrella.
+- Preserve detached `HEAD`, cached `origin/main`, and live `main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact stopped six-path command-center closeout, empty real index, and zero product/test diff.
+- Correct only the active verification command from the compact rendered marker to the actual spaced marker, run it once, and resume the unchanged source, maintained-suite, disposable denied-network Retry, and phone-width audit only on pass.
+- Expected tracked surfaces remain `command-center/now.md`, `command-center/roadmap.md`, `command-center/decisions.md`, `command-center/state.json`, generated `command-center/index.html`, `command-center/phase-5-usability-findings-intake.md`, one new offline-recovery truth audit, and the existing sanitized 5O log.
+- Exclude Task 2.8 product or maintained-test implementation; Tasks 2.2 and 2.7; completed Tasks 1, 3, and 4; Phase 5 closure; Phase 6; repair; retry; staging; commit; push; GitHub; workflow; deployment; production; provider; database; financial; protected; parent; delegation; second-opinion; and unrelated work.
+- Stop on ref, index, path, product/test-diff, state, marker, suite, browser, cache-safety, cleanup, sensitive-content, or scope drift; any need beyond the exact assertion-command correction; or any original 5O stop condition. Do not repair or retry.
+- Verification: exact refs and stopped six-path baseline; valid JSON; dashboard refresh/currentness/health; one active Phase 5; one active 5O-R; current `P5-T28`; an actual spaced rendered 5O-R marker with no compact-marker requirement; full smoke and installed-browser success; exact static cache and network-only truth; identical data-free fallback across entities; actual Retry result offline and after restoration; rendered phone-width inspection; exact cleanup; expected final paths; whitespace and sensitive-content checks; no product/test diff; empty index.
+- Closeout: if no product change is needed, mark Task 2.8 done and restore Task 2 as the transition gate. If implementation is justified, keep Task 2.8 current and decision-needed without a successor. If evidence contradicts the safety contract or any verification fails, stop with the exact sanitized blocker.
+- Report back: exact cache and fallback truth, Retry behavior, safe and unsafe wording, verification and cleanup, tracked paths, Task 2.8 disposition, preserved exclusions, and whether a separate 5P proposal is justified.
+
+## Work Block 5O Result
+
+- JSON validation, dashboard refresh, command-center health, and generated-state currentness passed.
+- State accounting was correct: Phase 5 remained the sole active phase at 100% required completion, 5O was the sole active block, `P5-T28` was the sole current task, and `P5-T22` plus `P5-T27` remained parked.
+- Exact command-center path scope, empty index, and zero product/test diff passed.
+- The activation verification then exited before its pass marker because it searched generated `index.html` for compact `"label":"5O"` while the embedded generated JSON truthfully uses spaced `"label": "5O"`.
+- Read-only diagnosis found two spaced 5O markers and two current Task 2.8 title markers. This was a verification-command formatting error, not dashboard or state corruption.
+- Per the confirmed stop condition, no source-contract inspection, smoke suite, installed-browser suite, disposable probe, rendered audit, product/test change, staging, commit, push, hosted action, or successor occurred.
+- 5O is stopped before audit. Task 2.8 remains current and decision-needed; any resume requires a separate exact recovery confirmation.
+
+## Confirmed Work Block 5O
+
+- Status: stopped before audit on an incorrect compact rendered-marker assertion; no audit action occurred.
+- Name: Offline Recovery Truth Audit.
+- Include Task 2.8 (`P5-T28`) verification and evidence only. Task 2 (`P5-T2`) remains the required-complete umbrella and is not the current transition gate during the audit.
+- Establish the exact static-cache contents, network-only protected/dynamic behavior, entity-independent data-free fallback, actual Retry behavior while offline and after connectivity restoration, rendered phone-width state, and the narrow data-safety language current source can prove.
+- Use only tracked source inspection, maintained synthetic smoke and installed-browser suites, and one disposable local denied-network probe. Retain no real data, credential, protected content, or unnecessary screenshot.
+- Expected tracked surfaces: `command-center/now.md`, `command-center/roadmap.md`, `command-center/decisions.md`, `command-center/state.json`, generated `command-center/index.html`, `command-center/phase-5-usability-findings-intake.md`, one new offline-recovery truth audit, and one sanitized 5O log.
+- Exclude Task 2.8 product copy, JavaScript, service-worker, or maintained-test implementation; Task 2.2 (`P5-T22`); Task 2.7 (`P5-T27`); completed Tasks 1, 3, and 4 or other Task 2 children; Phase 5 closure; Phase 6 creation; publication; staging; commit; push; GitHub; workflow; deployment; production; provider; database; financial; protected; parent; delegation; second-opinion; and unrelated work.
+- Stop on local, cached, or live ref, cleanliness, index, or expected-path drift; any real-data, credential, protected-data, external-service, or non-localhost dependency; evidence that protected or entity-specific content is cached; maintained-suite failure; unexpected browser error; cleanup residue; unclassifiable Retry behavior; need for product or test mutation; or failed JSON, dashboard, currentness, health, task-accounting, whitespace, sensitive-content, preservation, or scope verification.
+- Defaults: no product or test change; no retained screenshot unless synthetic and necessary; no tracked test addition; no staging, commit, push, hosted action, or production observation.
+- Verification: exact clean `ab7fea3155847209d693558a9e5a9ba39e163d7a` local, cached, and live baseline; valid JSON; dashboard refresh/currentness/health; exactly one active Phase 5, one active 5O, and current `P5-T28`; full smoke and installed-browser success; cache contents limited to `/offline` plus static assets; network-only protected/dynamic responses; identical data-free fallback across Personal, BFM, and LL; actual Retry result offline and after restoration; rendered phone-width inspection; expected browser errors only; exact cleanup; exact command-center paths; whitespace and sensitive-content checks; no product/test diff; empty index.
+- Closeout: if no change is needed, mark Task 2.8 done and restore Task 2 as the transition gate. If a bounded implementation is warranted, keep Task 2.8 current and decision-needed without activating a successor. If safety evidence contradicts the contract, stop with the exact sanitized blocker.
+- Report back: return exact cache and fallback truth, Retry behavior, safe and unsafe wording, verification and cleanup, tracked paths, Task 2.8 disposition, preserved exclusions, and whether a separate 5P implementation proposal is justified.
+- Suggested next block: conditional `5P — Offline Recovery Feedback Implementation` only if 5O supports a precise change; otherwise return to separate Phase 5 transition and Phase 6 intake planning.
 
 ## Work Block 5N-R2 Result
 

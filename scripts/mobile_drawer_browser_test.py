@@ -3982,6 +3982,10 @@ def _assert_standalone_documents(
                 (script) => !script.src
             ).length,
             retryAction: document.querySelector(".offline-btn").dataset.standaloneAction,
+            retryUrl: document.querySelector(".offline-btn").dataset.retryUrl,
+            statusRole: document.querySelector("[data-offline-retry-status]").getAttribute("role"),
+            statusLive: document.querySelector("[data-offline-retry-status]").getAttribute("aria-live"),
+            safety: document.querySelector(".offline-safety").textContent.trim(),
             bodyDisplay: getComputedStyle(document.body).display,
             wrapMaxWidth: getComputedStyle(
                 document.querySelector(".offline-wrap")
@@ -3999,10 +4003,17 @@ def _assert_standalone_documents(
             "assetCount": 1,
             "inlineCount": 0,
             "retryAction": "retry",
+            "retryUrl": "/health",
+            "statusRole": "status",
+            "statusLive": "polite",
+            "safety": (
+                "This offline screen is generic and does not include "
+                "account or transaction details."
+            ),
             "bodyDisplay": "flex",
             "wrapMaxWidth": "360px",
         },
-        f"{label}: offline document must preserve local CSS layout early theme and delegated retry without inline styles",
+        f"{label}: offline document must preserve local CSS layout early theme truthful copy and delegated retry without inline styles",
     )
     with page.expect_navigation(wait_until="networkidle"):
         page.get_by_role("button", name="Retry", exact=True).click()
@@ -4387,8 +4398,9 @@ def _assert_offline_entity_isolation(
         for path in paths
     ]
     _check(
-        list(cache_state) == ["the-ledger-v5"]
+        list(cache_state) == ["the-ledger-v6"]
         and "/offline" in cached_paths
+        and "/static/standalone-documents.js" in cached_paths
         and all(
             path == "/offline" or path.startswith("/static/")
             for path in cached_paths
@@ -4416,6 +4428,18 @@ def _assert_offline_entity_isolation(
                     maxWidth: getComputedStyle(
                         document.querySelector(".offline-wrap")
                     ).maxWidth,
+                    controllerCount: document.querySelectorAll(
+                        'script[src$="/static/standalone-documents.js"]'
+                    ).length,
+                    retryVisible: Boolean(
+                        document.querySelector(".offline-btn").getClientRects().length
+                    ),
+                    statusRole: document.querySelector(
+                        "[data-offline-retry-status]"
+                    ).getAttribute("role"),
+                    statusLive: document.querySelector(
+                        "[data-offline-retry-status]"
+                    ).getAttribute("aria-live"),
                 })"""
             )
             _check(
@@ -4424,13 +4448,42 @@ def _assert_offline_entity_isolation(
                 and offline_state["title"] == "Offline — The Ledger"
                 and offline_state["offlineWrap"]
                 and offline_state["maxWidth"] == "360px"
+                and offline_state["controllerCount"] == 1
+                and offline_state["retryVisible"]
+                and offline_state["statusRole"] == "status"
+                and offline_state["statusLive"] == "polite"
                 and "You're Offline" in offline_state["body"]
+                and (
+                    "This offline screen is generic and does not include "
+                    "account or transaction details."
+                )
+                in offline_state["body"]
                 and "4AM Personal Food" not in offline_state["body"]
                 and "4AM BFM Food" not in offline_state["body"]
                 and "Luxe Legacy" not in offline_state["body"],
                 f"{label}: {entity_value} offline navigation must return only the generic data-free document; state={offline_state}",
             )
             offline_bodies.append(offline_state["body"])
+            if entity_value == "Personal":
+                offline_url = page.url
+                page.get_by_role("button", name="Retry", exact=True).click()
+                page.wait_for_function(
+                    """() => {
+                        const status = document.querySelector(
+                            "[data-offline-retry-status]"
+                        );
+                        const button = document.querySelector(".offline-btn");
+                        return status
+                            && status.textContent
+                                === "Still offline. Check your connection and try again."
+                            && !button.disabled
+                            && !button.hasAttribute("aria-busy");
+                    }"""
+                )
+                _check(
+                    page.url == offline_url,
+                    f"{label}: offline Retry must remain on the generic fallback",
+                )
 
         offline_fetch_state = page.evaluate(
             """async () => {
@@ -4457,6 +4510,23 @@ def _assert_offline_entity_isolation(
             and offline_fetch_state["dynamicFailed"],
             f"{label}: static cache-first must remain available while dynamic requests remain network-only; state={offline_fetch_state}",
         )
+
+        context.set_offline(False)
+        with page.expect_navigation(wait_until="networkidle", timeout=15_000):
+            page.get_by_role("button", name="Retry", exact=True).click()
+        restored_state = page.evaluate(
+            """() => ({
+                offlineWrap: Boolean(document.querySelector(".offline-wrap")),
+                sidebarClass: document.querySelector("#sidebar-nav").className,
+                viewportWidth: innerWidth,
+            })"""
+        )
+        _check(
+            not restored_state["offlineWrap"]
+            and "sidebar--luxelegacy" in restored_state["sidebarClass"]
+            and restored_state["viewportWidth"] == 390,
+            f"{label}: restored Retry must reload the requested LL page at phone width; state={restored_state}",
+        )
     finally:
         context.set_offline(False)
         context.add_cookies(
@@ -4467,7 +4537,9 @@ def _assert_offline_entity_isolation(
     _check(
         offline_console_errors
         and all(
-            "503 (Offline)" in message or "net::ERR_FAILED" in message
+            "503 (Offline)" in message
+            or "net::ERR_FAILED" in message
+            or "net::ERR_INTERNET_DISCONNECTED" in message
             for message in offline_console_errors
         ),
         f"{label}: deliberate offline requests must produce only expected offline browser errors; errors={offline_console_errors}",
@@ -4599,8 +4671,8 @@ def _assert_csp_enforcement(
         worker_state = page.evaluate(
             """async (expectedPolicy) => {
                 const current = await navigator.serviceWorker.ready;
-                await caches.delete("the-ledger-v5");
-                const oldCache = await caches.open("the-ledger-v4");
+                await caches.delete("the-ledger-v6");
+                const oldCache = await caches.open("the-ledger-v5");
                 await oldCache.put(
                     "/offline",
                     new Response(
@@ -4632,7 +4704,7 @@ def _assert_csp_enforcement(
                         });
                     });
                 }
-                const cache = await caches.open("the-ledger-v5");
+                const cache = await caches.open("the-ledger-v6");
                 const offline = await cache.match("/offline");
                 const keys = await caches.keys();
                 return {
@@ -4654,7 +4726,7 @@ def _assert_csp_enforcement(
             worker_state["activeScript"].endswith(
                 "/sw.js?synthetic-4bb-refresh=1"
             )
-            and worker_state["cacheKeys"] == ["the-ledger-v5"]
+            and worker_state["cacheKeys"] == ["the-ledger-v6"]
             and worker_state["offlineFound"]
             and worker_state["policyMatches"]
             and "Headerless synthetic old offline"
