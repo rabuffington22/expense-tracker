@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
     <title>Offline — The Ledger</title>
-    <script src="{{ url_for('static', filename='standalone-documents.js') }}?v={{ cache_bust }}"></script>
+    <script src="{{ url_for('static', filename='standalone-documents.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="standalone-message standalone-message--offline">
@@ -13,7 +13,14 @@
         <div class="offline-icon">&#x1F50C;</div>
         <div class="offline-title">You're Offline</div>
         <p class="offline-msg">The Ledger needs an internet connection to load your financial data. Please check your connection and try again.</p>
-        <button class="offline-btn" data-standalone-action="retry">Retry</button>
+        <p class="offline-safety">This offline screen is generic and does not include account or transaction details.</p>
+        <p class="offline-status" data-offline-retry-status role="status" aria-live="polite"></p>
+        <button
+            type="button"
+            class="offline-btn"
+            data-standalone-action="retry"
+            data-retry-url="{{ url_for('health') }}"
+        >Retry</button>
     </div>
 </body>
 </html>

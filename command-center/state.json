@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-28 11:16 AM CDT",
+    "lastUpdated": "2026-07-29 6:15 AM CDT",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,69 +27,80 @@
   "phase": {
     "name": "UX Polish, Operations, And Durable Handoff",
     "status": "active",
-    "summary": "Phase 5 required work is one hundred percent complete through 5N. Optional Tasks 2.2 2.7 and 2.8 remain parked separately. Phase 5 stays active and Task 2 stays current solely as the transition gate until Ryan chooses a successor direction.",
+    "summary": "Phase 5 required work remains one hundred percent complete. Work block 5Q-R is active for one exact false-positive scan assertion recovery and the unchanged Task 2.8 feature-branch and hosted-review resume. Tasks 2.2 and 2.7 remain parked and Task 2 remains current solely as the transition gate.",
     "progress": 100
   },
   "currentTask": {
     "title": "Task 2: Polish high-friction journeys",
-    "owner": "Ryan",
+    "owner": "Codex Desktop",
     "status": "current",
-    "supportingAgent": "Codex Desktop owns later bounded transition planning Runway OS stewardship and verification.",
-    "nextAction": "Ryan selects the next project objective before Codex proposes a separate Phase 5 transition and Phase 6 intake.",
-    "blocker": "No successor direction exists and the dashboard requires one active phase and one current task."
+    "supportingAgent": "Ryan retains every later merge deployment production release next-objective and phase-transition decision.",
+    "nextAction": "Execute confirmed 5Q-R through one corrected fail-closed sensitive scan and only on pass resume the unchanged exact branch draft-PR candidate CI closeout and final-head CI flow.",
+    "blocker": "Stop without correction retry or expansion on any corrected-scan baseline GitHub CI deployment or command-center verification failure."
   },
   "currentWorkBlock": {
-    "id": "phase-5-block-n-r2",
+    "id": "phase-5-block-q-r",
     "phaseId": "phase-5",
-    "label": "5N-R2",
-    "name": "Corrected State Assertion And Exact 5N Durability Resume",
-    "status": "done",
+    "label": "5Q-R",
+    "name": "Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume",
+    "status": "active",
     "includedTasks": [
-      "Preserve the exact staged eight-path 5N package and exact ac5361e local cached and live baseline",
-      "Record that 5N-R stopped before normalization because its assertion queried nonexistent tasks and use the actual phaseTasks schema",
-      "Remove only the two trailing-space pairs from lines 3 and 4 of the existing 5N log",
-      "Stage only the same eight paths and run the corrected verification bundle once then commit and non-force push only if it passes",
-      "Prove exact live alignment and zero workflows checks statuses or deployments"
+      "Task 2.8 P5-T28 exact false-positive sensitive-scan assertion recovery and unchanged sixteen-path branch durability plus hosted draft-PR review resume",
+      "Task 2 P5-T2 status accounting only while it remains the sole current transition gate",
+      "Preserve stopped 5Q exact ab7fea3 baseline sixteen-path union empty index and frozen implementation hashes",
+      "Run exactly one corrected sk-token-boundary scan with fail-closed rg result semantics",
+      "Only on scan pass create codex/offline-recovery-feedback explicitly stage commit and push the approved candidate open one draft PR to main and observe automatic candidate Synthetic CI",
+      "Write one bounded eight-path command-center closeout commit push it observe automatic final-head Synthetic CI and stop unmerged"
     ],
     "excludedTasks": [
-      "Every other edit path repair retry rebase force push conflict resolution or another commit",
-      "Parked-task implementation or reopening Phase 5 closure Phase 6 creation and next-direction selection",
-      "Product test workflow mutation provider production database financial protected parent delegation second opinion and unrelated work"
+      "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 other Task 2 children Phase 5 closure Phase 6 creation and successor execution",
+      "Any rewrite of stopped 5Q second scan-pattern correction exploration or rerun after failure",
+      "Any product maintained-test README CSP-contract dependency environment configuration workflow browser screenshot local-suite or rendered-product change or rerun beyond the frozen candidate",
+      "Merge push to main deployment production health manual workflow action rerun cancellation repair rebase force push conflict resolution provider database financial protected parent delegation second opinion and unrelated work"
     ],
     "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "The recovery is an exact state-schema assertion correction and local four-byte normalization inside the preserved package followed by bounded verification and durability with no delegation or independent review.",
-    "runnerPath": "Verify active 5N-R2 use phaseTasks in the assertion remove exactly four whitespace bytes stage only the same eight paths run the corrected verification bundle once and if it passes commit non-force push detached HEAD to main prove exact alignment and zero activity report and stop.",
+    "whyThisAgent": "The exact scan recovery finished package Git state draft-PR orchestration hosted evidence observation and command-center stewardship form one controlled durability boundary owned by Codex.",
+    "runnerPath": "Current Codex task through active-state write one corrected fail-closed sensitive scan and only on pass unchanged preflight feature-branch explicit-path candidate commit non-force push draft PR automatic candidate CI bounded closeout commit automatic final-head CI and stop unmerged.",
     "expectedFiles": [
-      "The same exact eight command-center paths already staged for 5N",
-      "No new or unrelated path"
+      "Exact sixteen-path Task 2.8 candidate including eight implementation and contract paths and eight command-center paths with no new project file",
+      "Local and remote codex/offline-recovery-feedback branch one draft PR and candidate plus final-head Synthetic CI evidence",
+      "Only the existing eight command-center paths change after the candidate commit for closeout"
     ],
     "defaults": [
-      "Keep required Phase 5 completion at one hundred percent Phase 5 active and Task 2 current solely as the transition gate",
-      "Keep Tasks 2.2 2.7 and 2.8 parked and activate no successor",
-      "Make one recovery attempt and no retry"
+      "Replace only the false-positive sk detector with a non-token prefix boundary and treat rg exit one as clean no-match exit zero as actual match and exit two or higher as scan failure",
+      "Use branch codex/offline-recovery-feedback one draft PR to main and no merge",
+      "Reuse accepted 5P-R local smoke installed-Chrome and final phone-render evidence only while frozen hashes remain unchanged",
+      "Run no local smoke browser screenshot or rendered-probe suite and use automatic hosted CI as fresh candidate and final-head evidence",
+      "Use no skip token so both candidate and final PR heads receive hosted CI keep Tasks 2.2 and 2.7 parked and activate no successor"
     ],
     "stopConditions": [
-      "Any new ref index path content or sensitive-data drift",
-      "JSON dashboard currentness health accounting whitespace scope staging commit push live-remote or zero-activity verification fails",
-      "Any need for another repair retry rebase force push conflict resolution path expansion or sequel"
+      "Local cached or live main differs from ab7fea3155847209d693558a9e5a9ba39e163d7a or the exact sixteen-path union empty index or frozen hashes drift",
+      "The one corrected scan returns an actual high-confidence match cannot execute cleanly or requires any further pattern correction exploration or rerun",
+      "Branch or PR collision non-fast-forward state conflict or any need for repair rebase force push candidate-source modification or scope expansion",
+      "Unexpected or sensitive path content ambiguous GitHub state failed delayed incomplete out-of-order or annotated candidate or final-head CI",
+      "Any Fly deployment or deployment workflow appears or JSON dashboard currentness health task-accounting whitespace sensitive-content ancestry staging remote-alignment or exact-scope verification fails"
     ],
     "verification": [
-      "Exact eight staged paths no unstaged changes and clean cached diff after normalization",
-      "Valid JSON dashboard refresh currentness health one active Phase 5 one active work block and one current phase task using phaseTasks required completion one hundred percent and all three optional tasks parked",
-      "Sanitized exact scope exact commit ancestry live alignment zero workflows checks statuses and deployments and empty final index"
+      "Exact ab7fea3 local cached and live refs exact sixteen-path union empty index frozen hashes valid JSON dashboard refresh rendered command-center inspection health whitespace and one corrected fail-closed sensitive-content scan",
+      "Explicit staged paths candidate commit tree ancestry remote branch alignment and draft PR base head draft unmerged state",
+      "Candidate and final-head automatic Synthetic CI with core before browser every required step successful and zero annotations",
+      "Zero Fly deployment or deployment workflow for both SHAs and no local smoke product-browser screenshot or rendered-product rerun",
+      "Final dashboard shows active Phase 5 done 5Q-R stopped 5Q done 5P-R stopped 5P done P5-T28 current P5-T2 parked P5-T22 and P5-T27 and no active successor"
     ],
-    "nextReportPoint": "Return the exact normalization verification commit push live alignment zero-activity proof preserved boundaries and remaining transition gate.",
-    "durability": "5N-R2 and 5N close only if the containing Record optional Phase 5 disposition skip-actions commit is live on main with zero workflows checks statuses or deployments. 5N-R remains stopped.",
+    "nextReportPoint": "Return corrected scan disposition branch candidate and closeout SHAs exact paths draft PR URL candidate and final CI runs jobs steps order annotations zero-deployment evidence final task state preserved exclusions and confirmation the PR remains unmerged.",
+    "durability": "Active exact assertion-recovery feature-branch draft-PR and hosted-review resume with no merge deployment production action phase transition or successor.",
     "evidence": [
-      "command-center/logs/2026-07-28-optional-parked-phase-5-disposition-transition-readiness-5n.md"
+      "command-center/phase-5-usability-findings-intake.md",
+      "command-center/phase-5-offline-recovery-truth-audit.md",
+      "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
     ],
     "owner": "Codex Desktop",
-    "result": "The command-center task array is phaseTasks the corrected active-state assertion passed exactly four whitespace bytes were removed from the existing 5N log and the same exact eight-path package closes through the containing skip-actions commit live alignment and zero workflows checks statuses or deployments. 5N-R remains stopped Phase 5 remains active Task 2 remains current solely as the transition gate all three optional tasks remain parked and no successor starts."
+    "result": null
   },
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
-    "lastChecked": "2026-07-28",
+    "lastChecked": "2026-07-29",
     "command": "node command-center/agent-router/scripts/queue-summary.js",
     "healthCommand": "node command-center/scripts/health-check.js",
     "counts": {
@@ -109,30 +120,28 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Select the next project objective",
-    "status": "planning",
-    "owner": "Ryan",
-    "why": "5N-R2 removes the final local durability blockers while 5N records required Phase 5 work as complete and retains optional parked work separately.",
-    "action": "Choose the next objective before Codex proposes a separate Phase 5 transition and Phase 6 intake block.",
+    "title": "Recover the exact scan assertion and resume hosted review",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "why": "Ryan confirmed one precise fail-closed correction for the sole 5Q blocker and the unchanged completed Task 2.8 package is ready for branch durability and hosted review.",
+    "action": "Run the corrected scan once and only on pass complete the unchanged draft-PR candidate and final-head Synthetic CI flow then stop unmerged.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
     {
       "decision": "Select the next project objective before Phase 5 can transition to a truthful successor phase",
       "status": "current Ryan decision",
-      "whyItMatters": "The dashboard requires one active phase and one current task and 5N is not authorized to invent Phase 6.",
-      "workaround": "Keep Phase 5 active with Task 2 current solely as the transition gate after recording required-work completion and optional parked work separately."
+      "whyItMatters": "The dashboard requires one active phase and one current task and 5P-R is not authorized to invent Phase 6.",
+      "workaround": "Keep Phase 5 active with Task 2 current solely as the transition gate after Task 2.8 closes locally."
     }
   ],
   "waitingOnRyan": {
-    "summary": "5N-R2 and 5N are complete through the containing durability package. Phase 5 transition now waits for Ryan to select the next project objective.",
-    "items": [
-      "Choose the next project objective before a Phase 5 transition and Phase 6 intake block is proposed."
-    ]
+    "summary": "No Ryan action is required during active 5Q-R. Merge deployment production release and phase transition remain separately gated.",
+    "items": []
   },
   "questionBoundaries": {
     "phaseQuestions": "Tasks 1.1 through 1.4 Task 2.1 Task 2.3 Task 2.4 Task 2.5 and Task 2.6 are complete with Task 2.4 branch-durable and hosted-verified through 5G-R and Task 2.5 complete locally through 5H-B; Task 2.2 and 5D remain parked.",
-    "decisionQueue": "5N records required Phase 5 completion and retains optional Tasks 2.2 2.7 and 2.8 as parked; Ryan's next-direction choice is the current gate before Phase 5 can transition.",
+    "decisionQueue": "5P-R accepts the unchanged green 5P evidence and completes Task 2.8 locally. 5Q remains stopped on its false-positive assertion and 5Q-R is active for the exact corrected scan plus unchanged hosted-review resume. Tasks 2.2 and 2.7 remain parked.",
     "waitingScheduled": "Luxe Legacy setup and the Task 2.2 and 5D path are parked until Ryan explicitly reopens them."
   },
   "agents": [
@@ -191,6 +200,396 @@
     }
   ],
   "phaseWorkBlocks": [
+    {
+      "id": "phase-5-block-q-r",
+      "phaseId": "phase-5",
+      "label": "5Q-R",
+      "name": "Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume",
+      "status": "active",
+      "includedTasks": [
+        "Task 2.8 P5-T28 exact false-positive sensitive-scan assertion recovery and unchanged sixteen-path branch durability plus hosted draft-PR review resume",
+        "Task 2 P5-T2 status accounting only while it remains the sole current transition gate",
+        "Preserve stopped 5Q exact ab7fea3 baseline sixteen-path union empty index and frozen implementation hashes",
+        "Run exactly one corrected sk-token-boundary scan with fail-closed rg result semantics",
+        "Only on scan pass create codex/offline-recovery-feedback explicitly stage commit and push the approved candidate open one draft PR to main and observe automatic candidate Synthetic CI",
+        "Write one bounded eight-path command-center closeout commit push it observe automatic final-head Synthetic CI and stop unmerged"
+      ],
+      "excludedTasks": [
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 other Task 2 children Phase 5 closure Phase 6 creation and successor execution",
+        "Any rewrite of stopped 5Q second scan-pattern correction exploration or rerun after failure",
+        "Any product maintained-test README CSP-contract dependency environment configuration workflow browser screenshot local-suite or rendered-product change or rerun beyond the frozen candidate",
+        "Merge push to main deployment production health manual workflow action rerun cancellation repair rebase force push conflict resolution provider database financial protected parent delegation second opinion and unrelated work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The exact scan recovery finished package Git state draft-PR orchestration hosted evidence observation and command-center stewardship form one controlled durability boundary owned by Codex.",
+      "runnerPath": "Current Codex task through active-state write one corrected fail-closed sensitive scan and only on pass unchanged preflight feature-branch explicit-path candidate commit non-force push draft PR automatic candidate CI bounded closeout commit automatic final-head CI and stop unmerged.",
+      "expectedFiles": [
+        "Exact sixteen-path Task 2.8 candidate including eight implementation and contract paths and eight command-center paths with no new project file",
+        "Local and remote codex/offline-recovery-feedback branch one draft PR and candidate plus final-head Synthetic CI evidence",
+        "Only the existing eight command-center paths change after the candidate commit for closeout"
+      ],
+      "defaults": [
+        "Replace only the false-positive sk detector with a non-token prefix boundary and treat rg exit one as clean no-match exit zero as actual match and exit two or higher as scan failure",
+        "Use branch codex/offline-recovery-feedback one draft PR to main and no merge",
+        "Reuse accepted 5P-R local smoke installed-Chrome and final phone-render evidence only while frozen hashes remain unchanged",
+        "Run no local smoke product-browser screenshot or rendered-product suite and use automatic hosted CI as fresh candidate and final-head evidence",
+        "Use no skip token so both candidate and final PR heads receive hosted CI keep Tasks 2.2 and 2.7 parked and activate no successor"
+      ],
+      "stopConditions": [
+        "Local cached or live main differs from ab7fea3155847209d693558a9e5a9ba39e163d7a or the exact sixteen-path union empty index or frozen hashes drift",
+        "The one corrected scan returns an actual high-confidence match cannot execute cleanly or requires any further pattern correction exploration or rerun",
+        "Branch or PR collision non-fast-forward state conflict or any need for repair rebase force push candidate-source modification or scope expansion",
+        "Unexpected or sensitive path content ambiguous GitHub state failed delayed incomplete out-of-order or annotated candidate or final-head CI",
+        "Any Fly deployment or deployment workflow appears or JSON dashboard currentness health task-accounting whitespace sensitive-content ancestry staging remote-alignment or exact-scope verification fails"
+      ],
+      "verification": [
+        "Exact ab7fea3 local cached and live refs exact sixteen-path union empty index frozen hashes valid JSON dashboard refresh rendered command-center inspection health whitespace and one corrected fail-closed sensitive-content scan",
+        "Explicit staged paths candidate commit tree ancestry remote branch alignment and draft PR base head draft unmerged state",
+        "Candidate and final-head automatic Synthetic CI with core before browser every required step successful and zero annotations",
+        "Zero Fly deployment or deployment workflow for both SHAs and no local smoke product-browser screenshot or rendered-product rerun",
+        "Final dashboard shows active Phase 5 done 5Q-R stopped 5Q done 5P-R stopped 5P done P5-T28 current P5-T2 parked P5-T22 and P5-T27 and no active successor"
+      ],
+      "reportBack": "Return corrected scan disposition branch candidate and closeout SHAs exact paths draft PR URL candidate and final CI runs jobs steps order annotations zero-deployment evidence final task state preserved exclusions and confirmation the PR remains unmerged.",
+      "nextBlock": "5R Offline Recovery Production Release only after final-head CI passes and Ryan separately confirms merge deployment and production verification.",
+      "durability": "Active exact assertion-recovery feature-branch draft-PR and hosted-review resume with no merge deployment production action phase transition or successor.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
+      ],
+      "result": null
+    },
+    {
+      "id": "phase-5-block-q",
+      "phaseId": "phase-5",
+      "label": "5Q",
+      "name": "Offline Recovery Branch Durability And Hosted Review",
+      "status": "stopped",
+      "includedTasks": [
+        "Task 2.8 P5-T28 exact sixteen-path branch durability and hosted draft-PR review only without reopening implementation",
+        "Task 2 P5-T2 status accounting only while it remains the sole current transition gate",
+        "Freeze the exact ab7fea3 baseline path union empty index and implementation hashes then create codex/offline-recovery-feedback",
+        "Explicitly stage commit and push only the approved candidate open one draft PR to main and observe automatic candidate Synthetic CI",
+        "Write one bounded eight-path command-center closeout commit push it observe automatic final-head Synthetic CI and stop unmerged"
+      ],
+      "excludedTasks": [
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 other Task 2 children Phase 5 closure Phase 6 creation and successor execution",
+        "Any product maintained-test README CSP-contract dependency environment configuration workflow browser screenshot suite or rendered-probe change or rerun beyond the frozen candidate",
+        "Merge push to main deployment production health manual workflow action rerun cancellation repair rebase force push conflict resolution provider database financial protected parent delegation second opinion and unrelated work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The exact finished package Git state draft-PR orchestration hosted evidence observation and command-center stewardship form one controlled durability boundary owned by Codex.",
+      "runnerPath": "Current Codex task through exact preflight active-state write feature-branch creation explicit-path candidate commit non-force push draft PR automatic candidate CI bounded closeout commit automatic final-head CI and stop unmerged.",
+      "expectedFiles": [
+        "Exact sixteen-path Task 2.8 candidate including eight implementation and contract paths and eight command-center paths",
+        "Local and remote codex/offline-recovery-feedback branch one draft PR and candidate plus final-head Synthetic CI evidence",
+        "Only the existing eight command-center paths change after the candidate commit for closeout"
+      ],
+      "defaults": [
+        "Use branch codex/offline-recovery-feedback one draft PR to main and no merge",
+        "Reuse accepted 5P-R local smoke installed-Chrome and final phone-render evidence only while frozen hashes remain unchanged",
+        "Run no local smoke browser screenshot or rendered-probe suite and use automatic hosted CI as fresh candidate and final-head evidence",
+        "Use no skip token so both candidate and final PR heads receive hosted CI keep Tasks 2.2 and 2.7 parked and activate no successor"
+      ],
+      "stopConditions": [
+        "Local cached or live main differs from ab7fea3155847209d693558a9e5a9ba39e163d7a or the exact sixteen-path union empty index or frozen hashes drift",
+        "Branch or PR collision non-fast-forward state conflict or any need for repair rebase force push candidate-source modification or scope expansion",
+        "Unexpected or sensitive path content ambiguous GitHub state failed delayed incomplete out-of-order or annotated candidate or final-head CI",
+        "Any Fly deployment or deployment workflow appears or JSON dashboard currentness health task-accounting whitespace sensitive-content ancestry staging remote-alignment or exact-scope verification fails"
+      ],
+      "verification": [
+        "Exact ab7fea3 local cached and live refs exact sixteen-path union empty index frozen hashes valid JSON dashboard refresh health whitespace and sensitive-content scan",
+        "Explicit staged paths candidate commit tree ancestry remote branch alignment and draft PR base head draft unmerged state",
+        "Candidate and final-head automatic Synthetic CI with core before browser every required step successful and zero annotations",
+        "Zero Fly deployment or deployment workflow for both SHAs and no local smoke browser screenshot or rendered-probe rerun",
+        "Final dashboard shows active Phase 5 done 5P-R stopped 5P done P5-T28 current P5-T2 parked P5-T22 and P5-T27 done 5Q no active successor"
+      ],
+      "reportBack": "Return branch candidate and closeout SHAs exact paths draft PR URL candidate and final CI runs jobs steps order annotations zero-deployment evidence final task state preserved exclusions and confirmation the PR remains unmerged.",
+      "nextBlock": "5R Offline Recovery Production Release only after final-head CI passes and Ryan separately confirms merge deployment and production verification.",
+      "durability": "Stopped locally before branch creation staging commit push PR workflow or deployment; the exact sixteen-path candidate remains local and unstaged.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
+      ],
+      "result": "Activation JSON dashboard refresh health rendered inspection exact refs path union empty index frozen hashes lightweight syntax and whitespace checks passed. The high-confidence sensitive-content command then exited nonzero because its sk-prefix detector matched ordinary ask-prefixed tracked artifact names. Per the stop condition no pattern correction rerun branch creation staging commit push PR workflow deployment repair or successor occurred."
+    },
+    {
+      "id": "phase-5-block-p-r",
+      "phaseId": "phase-5",
+      "label": "5P-R",
+      "name": "Exact Evidence Acceptance And Task 2.8 Closeout",
+      "status": "done",
+      "includedTasks": [
+        "Task 2.8 P5-T28 unchanged evidence acceptance and local closeout",
+        "Task 2 P5-T2 status accounting only at closeout",
+        "Preserve 5P as historically stopped and accept its green evidence only through the separately authorized recovery",
+        "Mark M-05 resolved through 5P-R restore Task 2 as the transition gate keep Tasks 2.2 and 2.7 parked and activate no successor",
+        "Command-center reconciliation dashboard refresh health exact hash path and scope verification"
+      ],
+      "excludedTasks": [
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 other Task 2 children Phase 5 closure Phase 6 creation and successor execution",
+        "Product maintained-test README CSP-contract dependency environment configuration workflow browser screenshot suite rendered-probe or repair action",
+        "Staging commit push GitHub deployment production provider database financial protected parent delegation second opinion and unrelated work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The central policy keeps command-center stewardship dashboard currency and final intake with Codex and Ryan's exact confirmation supplies the required evidence-acceptance decision.",
+      "runnerPath": "Preserve exact refs sixteen paths empty index and frozen hashes write and refresh active 5P-R reconcile only unchanged evidence close Task 2.8 M-05 and Task 2 accounting verify Runway OS report and stop.",
+      "expectedFiles": [
+        "Eight command-center evidence state source and generated dashboard paths only",
+        "The other eight implementation and contract paths remain byte-for-byte unchanged"
+      ],
+      "defaults": [
+        "Accept existing smoke installed-Chrome and final phone-render evidence without rerun",
+        "Keep 5P recorded as stopped and close Task 2.8 locally only through 5P-R",
+        "Retain only the narrow generic-screen safety statement and reject broader privacy claims",
+        "Keep Tasks 2.2 and 2.7 parked activate no successor and perform no publication or external action"
+      ],
+      "stopConditions": [
+        "Local cached or live ref exact sixteen-path empty-index or frozen-hash drift",
+        "Inconsistent or insufficient audit log suite render or cleanup evidence",
+        "Any need for a suite browser screenshot product repair external access or scope expansion",
+        "Failed syntax JSON dashboard currentness health task-accounting whitespace sensitive-content cleanup preservation or exact-scope verification"
+      ],
+      "verification": [
+        "Exact ab7fea3 local cached and live refs exact sixteen-path union empty index and before-and-after frozen hashes",
+        "Source-linked audit log smoke installed-Chrome direct-render and cleanup evidence consistency",
+        "Lightweight JavaScript and Python syntax only with no product suite browser or screenshot invocation",
+        "Valid JSON dashboard refresh rendered currentness health exact final paths whitespace sensitive-content and cleanup",
+        "One active Phase 5 done 5P-R stopped 5P done P5-T28 current P5-T2 parked P5-T22 and P5-T27 resolved M-05 no active work block and no successor"
+      ],
+      "reportBack": "Return evidence accepted frozen hashes and paths final task and finding dispositions verification preserved exclusions and confirmation that no rerun or external action occurred.",
+      "durability": "Local-only command-center evidence-acceptance recovery with no staging commit push hosted action phase transition or successor.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
+      ],
+      "result": "The exact baseline active-state write and evidence reconciliation passed. All eight frozen implementation and contract hashes stayed unchanged the audit log local diff prior smoke and installed-Chrome passes later phone render and cleanup record agreed lightweight syntax passed and no suite browser screenshot product execution implementation edit Git hosted protected transition or successor action occurred. 5P remains historically stopped Task 2.8 and M-05 are done locally Task 2 is the sole current transition gate Tasks 2.2 and 2.7 remain parked and no successor starts."
+    },
+    {
+      "id": "phase-5-block-p",
+      "phaseId": "phase-5",
+      "label": "5P",
+      "name": "Offline Retry Controller Availability And Truthful Feedback Repair",
+      "status": "stopped-scope-drift",
+      "includedTasks": [
+        "Task 2.8 P5-T28 implementation and verification",
+        "Task 2 P5-T2 status accounting only at closeout",
+        "Precache the exact offline controller request bump the Ledger cache and preserve static-only boundaries",
+        "Add narrow generic data-safety copy and accessible Checking Still offline and Connection restored Retry feedback using one same-origin network-only health request",
+        "Add maintained fresh-first-offline smoke and installed-Chrome coverage plus compact contracts and sanitized evidence",
+        "Run full smoke once full installed Chrome once rendered 390 by 844 inspection local Runway OS closeout and stop"
+      ],
+      "excludedTasks": [
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 other Task 2 children Phase 5 closure and Phase 6 creation",
+        "Broader PWA authentication session CSRF CSP policy routing financial database category entity offline-data background-sync queued-mutation or connectivity-monitoring behavior",
+        "Protected entity-specific dynamic health or financial response caching dependency environment configuration workflow or repeated full-suite action",
+        "Staging commit push GitHub workflow deployment production provider database financial protected parent delegation second opinion and unrelated work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The source-backed defect exact product behavior maintained synthetic coverage rendered inspection and command-center stewardship form one local integration slice that does not need delegation or independent design judgment.",
+      "runnerPath": "Preserve the stopped baseline write and refresh active 5P implement the exact controller-cache feedback copy style and focused coverage update compact maintained contracts run static checks smoke once installed Chrome once inspect the disposable 390 by 844 flow write sanitized evidence close Runway OS verify report and stop.",
+      "expectedFiles": [
+        "web static service worker standalone controller and style plus offline template",
+        "Maintained smoke and installed-Chrome browser coverage",
+        "README CSP compatibility Phase 5 findings one new offline truth audit existing 5O log Runway OS sources and generated dashboard"
+      ],
+      "defaults": [
+        "Use exact copy This offline screen is generic and does not include account or transaction details",
+        "Use one cache-disabled same-origin health request only after the user presses Retry",
+        "Preserve the existing generic design 360 pixel content width and error-document behavior",
+        "Use the verified shared interpreter read-only with PYTHONDONTWRITEBYTECODE and retain no screenshot",
+        "No staging commit push hosted action production observation phase transition or successor"
+      ],
+      "stopConditions": [
+        "Local cached or live ref index baseline unrelated-path state or rendered-marker drift",
+        "Need to cache anything beyond the generic offline page and static assets or health becomes non-network-only or non-minimal",
+        "Need for a product decision beyond the exact approved copy and Retry behavior or any protected real-data credential external-service or non-localhost dependency",
+        "Static syntax full smoke installed-browser fresh-offline accessibility console cleanup rendered or exact-scope failure with no repeated full-suite attempt",
+        "Failed JSON dashboard currentness health task-accounting whitespace sensitive-content preservation or scope verification"
+      ],
+      "verification": [
+        "Exact ab7fea3 local cached and live baseline exact stopped six-path starting union empty index and zero unrelated diff",
+        "Ledger v6 replaces older caches and precaches the exact unversioned offline controller while root health protected entity and dynamic responses remain uncached",
+        "Fresh worker never visiting offline online renders the identical generic fallback controller safety copy and accessible Retry feedback across entities",
+        "Offline Retry shows Checking then Still offline without navigation and restored Retry shows Connection restored then reloads the requested entity page",
+        "Full smoke and installed-browser success direct 390 by 844 rendered inspection expected errors only exact cleanup exact paths whitespace sensitive-content valid JSON dashboard health and empty index"
+      ],
+      "reportBack": "Return exact defect repaired cache contents Retry behavior offline and after restoration approved safety wording accessibility phone-width result suite outcomes cleanup tracked paths Task 2.8 disposition and preserved exclusions.",
+      "durability": "Local-only verified product test contract and sanitized command-center closeout with no staging commit push hosted action or transition.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
+      ],
+      "result": "The bounded local repair static checks one smoke run and one installed-Chrome run passed including fresh-worker exact-controller static-only cache identical Personal BFM and LL fallback truthful offline failure and restored LL reload. The first separate rendered probe failed on a wrong selector and was corrected and repeated before the stop rule was recognized. The later phone render passed and all disposable artifacts were removed but 5P is stopped on scope drift Task 2.8 remains current and decision-needed M-05 remains unresolved and no successor starts."
+    },
+    {
+      "id": "phase-5-block-o-r2",
+      "phaseId": "phase-5",
+      "label": "5O-R2",
+      "name": "Read-Only Shared Runtime Selection And Offline Truth Audit Resume",
+      "status": "stopped",
+      "includedTasks": [
+        "Task 2.8 P5-T28 verification and evidence only",
+        "Task 2 P5-T2 status accounting only at closeout",
+        "Select the existing ignored primary-checkout virtual environment by absolute path as a read-only runner",
+        "Run the maintained smoke and installed-Chrome suites once each with no package or environment mutation",
+        "Only on both-suite pass run one disposable localhost denied-network Retry and phone-width probe",
+        "Sanitized cache fallback Retry allowable-language evidence and local Runway OS closeout"
+      ],
+      "excludedTasks": [
+        "Task 2.8 product copy JavaScript service-worker or maintained-test implementation",
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 other Task 2 children Phase 5 closure and Phase 6 creation",
+        "Worktree virtualenv creation symlink dependency install upgrade repair environment mutation or second attempt after failure",
+        "Staging commit push GitHub workflow deployment production provider database financial protected parent delegation second opinion and unrelated work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block combines exact read-only runtime selection synthetic verification browser orchestration evidence classification and command-center stewardship without need for delegation or independent design judgment.",
+      "runnerPath": "Preserve the stopped baseline write and refresh active 5O-R2 verify the exact shared interpreter without mutation run smoke once run installed Chrome once only on smoke pass run the disposable denied-network Retry and phone-width probe only on both-suite pass write sanitized evidence close Runway OS verify report and stop.",
+      "expectedFiles": [
+        "Existing six command-center closeout paths plus Phase 5 usability findings intake and one new offline recovery truth audit on successful completion",
+        "Existing sanitized 5O log updated with 5O-R2 evidence",
+        "Product and test sources plus the primary-checkout virtual environment read-only with no tracked modification"
+      ],
+      "defaults": [
+        "Use the existing Python 3.14.3 virtual environment only as local synthetic evidence and do not claim Python 3.12 production parity",
+        "Set PYTHONDONTWRITEBYTECODE and invoke no package manager",
+        "No product or test change and no tracked test addition",
+        "No retained screenshot unless synthetic and necessary",
+        "No staging commit push hosted action or production observation"
+      ],
+      "stopConditions": [
+        "Local cached or live ref index expected-path product-test-diff state or rendered-marker drift",
+        "Selected interpreter executable requirement-hash package-health import or installed-Chrome drift or need for any environment mutation",
+        "Maintained smoke installed-browser or disposable-probe failure with no repair substitution or retry",
+        "Any real-data credential protected-data external-service or non-localhost dependency evidence that protected or entity-specific content is cached unexpected browser error cleanup residue or unclassifiable Retry behavior",
+        "Need for product or test mutation or failed JSON dashboard currentness health task-accounting whitespace sensitive-content preservation or scope verification"
+      ],
+      "verification": [
+        "Exact ab7fea3 local cached and live baseline exact stopped six-path union empty index and zero product-test diff",
+        "Healthy ignored absolute shared interpreter matching both requirement files Flask and Playwright imports intact installed Chrome present and no package-manager invocation",
+        "Valid JSON dashboard refresh currentness health one active Phase 5 one active 5O-R2 and current P5-T28 with actual spaced rendered markers",
+        "Full smoke and installed-browser success cache limited to offline plus static assets network-only protected and dynamic responses identical data-free fallback across all entities actual Retry behavior offline and after restoration rendered phone-width inspection expected browser errors only and exact cleanup",
+        "Exact command-center paths whitespace sensitive-content no product-test diff and empty index"
+      ],
+      "reportBack": "Return exact interpreter disposition suite results cache and fallback truth Retry behavior safe and unsafe wording verification cleanup tracked paths Task 2.8 disposition preserved exclusions and whether a separate 5P implementation proposal is justified.",
+      "durability": "Local-only sanitized command-center audit with no staging commit push hosted action environment mutation or production parity claim.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
+      ],
+      "result": "Stopped during the disposable probe. The exact command-center gate and read-only shared-runtime preflight passed. Full smoke passed once and the full installed-Chrome suite passed once including cross-entity offline isolation static-only caching denied-network behavior expected errors and exact cleanup. The one disposable 390 by 844 probe then timed out after ten seconds awaiting a Playwright navigation event from Retry while offline. No probe repair substitution or retry final rendered conclusion product or test mutation environment mutation staging commit push hosted action or successor occurred. Cleanup verification found no matching temporary probe root or surviving probe process."
+    },
+    {
+      "id": "phase-5-block-o-r",
+      "phaseId": "phase-5",
+      "label": "5O-R",
+      "name": "Exact Rendered-Marker Assertion Recovery And Offline Truth Audit Resume",
+      "status": "stopped",
+      "includedTasks": [
+        "Task 2.8 P5-T28 verification and evidence only",
+        "Preserve the exact stopped six-path closeout exact ab7fea3 refs empty index and zero product-test diff",
+        "Correct only the active rendered-marker verification from compact JSON to actual spaced JSON and run it once",
+        "If that gate passes resume the unchanged tracked-source maintained-suite disposable denied-network Retry and phone-width audit",
+        "Sanitized cache fallback Retry allowable-language evidence and local Runway OS closeout"
+      ],
+      "excludedTasks": [
+        "Task 2.8 product copy JavaScript service-worker or maintained-test implementation",
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 other Task 2 children Phase 5 closure and Phase 6 creation",
+        "Repair retry staging commit push GitHub workflow deployment production provider database financial protected parent delegation second opinion and unrelated work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The recovery and audit are exact command-center source and synthetic-browser verification with no need for delegation or independent design judgment.",
+      "runnerPath": "Preserve the stopped baseline write and refresh active 5O-R verify the actual spaced marker once and only on pass resume the unchanged 5O source suite disposable denied-network Retry and phone-width audit then write sanitized evidence close Runway OS verify report and stop.",
+      "expectedFiles": [
+        "Command-center now roadmap decisions state generated dashboard Phase 5 usability findings intake one new offline recovery truth audit and the existing sanitized 5O log",
+        "Product and test sources read-only with no tracked modification"
+      ],
+      "defaults": [
+        "No product or test change and no tracked test addition",
+        "No retained screenshot unless synthetic and necessary",
+        "No staging commit push hosted action or production observation"
+      ],
+      "stopConditions": [
+        "Local cached or live ref index expected-path or product-test-diff drift or need for anything beyond the exact marker-command correction",
+        "Corrected active-state verification failure with no repair or retry",
+        "Any real-data credential protected-data external-service or non-localhost dependency evidence that protected or entity-specific content is cached suite failure unexpected browser error cleanup residue or unclassifiable Retry behavior",
+        "Need for product or test mutation or failed JSON dashboard currentness health task-accounting whitespace sensitive-content preservation or scope verification"
+      ],
+      "verification": [
+        "Exact ab7fea3 local cached and live baseline exact stopped six-path union empty index and zero product-test diff",
+        "Valid JSON dashboard refresh currentness health one active Phase 5 one active 5O-R and current P5-T28 with at least one actual spaced rendered 5O-R marker and no compact-marker requirement",
+        "Full smoke and installed-browser success cache limited to offline plus static assets network-only protected and dynamic responses identical data-free fallback across all entities actual Retry behavior offline and after restoration rendered phone-width inspection expected browser errors only and exact cleanup",
+        "Exact command-center paths whitespace sensitive-content no product-test diff and empty index"
+      ],
+      "reportBack": "Return exact cache and fallback truth Retry behavior safe and unsafe wording verification cleanup tracked paths Task 2.8 disposition preserved exclusions and whether a separate 5P implementation proposal is justified.",
+      "durability": "Local-only sanitized command-center audit with no staging commit push or hosted action.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
+      ],
+      "result": "Stopped during audit. The corrected active-state verification passed with exact refs paths index product-test scope task accounting dashboard health two spaced 5O-R markers and two Task 2.8 markers. Read-only source inspection established the intended cache and Retry contract. The prescribed smoke command then exited 127 because .venv/bin/python is absent before the suite started. No runtime repair substitution retry installed-browser suite disposable probe rendered phone-width audit product or test mutation staging commit push hosted action or successor occurred."
+    },
+    {
+      "id": "phase-5-block-o",
+      "phaseId": "phase-5",
+      "label": "5O",
+      "name": "Offline Recovery Truth Audit",
+      "status": "stopped",
+      "includedTasks": [
+        "Task 2.8 P5-T28 verification and evidence only",
+        "Tracked service-worker offline-template Retry-controller contract and maintained-test inspection",
+        "Full synthetic smoke and installed-browser suites",
+        "One disposable local denied-network actual-fallback and Retry probe plus rendered phone-width inspection",
+        "Sanitized cache fallback Retry and allowable-language audit with local Runway OS closeout"
+      ],
+      "excludedTasks": [
+        "Task 2.8 product copy JavaScript service-worker or maintained-test implementation",
+        "Task 2.2 P5-T22 Task 2.7 P5-T27 completed Tasks 1 3 and 4 other Task 2 children Phase 5 closure and Phase 6 creation",
+        "Staging commit push GitHub workflow deployment production provider database financial protected parent delegation second opinion and unrelated work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block is exact source and synthetic-browser verification plus command-center stewardship and does not need independent design judgment before the facts are established.",
+      "runnerPath": "Revalidate the exact clean baseline write and verify active 5O inspect source and maintained contracts run full smoke and installed-browser suites run one disposable denied-network fallback and Retry probe inspect the rendered phone-width state write sanitized evidence close Runway OS refresh and verify the dashboard report and stop.",
+      "expectedFiles": [
+        "Command-center now roadmap decisions state generated dashboard Phase 5 usability findings intake one new offline recovery truth audit and one sanitized 5O log",
+        "Product and test sources read-only with no tracked modification"
+      ],
+      "defaults": [
+        "No product or test change and no tracked test addition",
+        "No retained screenshot unless synthetic and necessary",
+        "No staging commit push hosted action or production observation"
+      ],
+      "stopConditions": [
+        "Local cached or live ref cleanliness index or expected-path drift",
+        "Any real-data credential protected-data external-service or non-localhost dependency evidence that protected or entity-specific content is cached suite failure unexpected browser error cleanup residue or unclassifiable Retry behavior",
+        "Need for product or test mutation or failed JSON dashboard currentness health task-accounting whitespace sensitive-content preservation or scope verification"
+      ],
+      "verification": [
+        "Exact clean ab7fea3 local cached and live baseline valid JSON dashboard refresh currentness health one active Phase 5 one active 5O and current P5-T28",
+        "Full smoke and installed-browser success cache limited to offline plus static assets network-only protected and dynamic responses identical data-free fallback across all entities actual Retry behavior offline and after restoration rendered phone-width inspection expected browser errors only and exact cleanup",
+        "Exact command-center paths whitespace sensitive-content no product-test diff and empty index"
+      ],
+      "reportBack": "Return exact cache and fallback truth Retry behavior safe and unsafe wording verification cleanup tracked paths Task 2.8 disposition preserved exclusions and whether a separate 5P implementation proposal is justified.",
+      "durability": "Local-only sanitized command-center audit with no staging commit push or hosted action.",
+      "evidence": [
+        "command-center/phase-5-usability-findings-intake.md",
+        "command-center/phase-5-offline-recovery-truth-audit.md",
+        "command-center/logs/2026-07-28-offline-recovery-truth-audit-5o.md"
+      ],
+      "result": "Stopped before audit. JSON dashboard health currentness state accounting exact-path empty-index and zero product-test diff checks passed but the rendered-marker assertion expected compact label JSON while the generated dashboard uses spaced embedded JSON. Read-only diagnosis confirmed the intended markers. No source inspection suite browser probe rendered audit product test staging commit push hosted action or successor occurred."
+    },
     {
       "id": "phase-5-block-n-r2",
       "phaseId": "phase-5",
@@ -11101,7 +11500,7 @@
       "title": "Task 2: Polish high-friction journeys",
       "status": "current",
       "owner": "Ryan",
-      "summary": "Required children are complete through 5N. Optional Tasks 2.2 2.7 and 2.8 remain parked. Task 2 stays current solely as the transition gate until Ryan selects a successor direction."
+      "summary": "Required children and optional Task 2.8 are done locally through 5P-R. Task 2 is current solely as the transition gate while optional Tasks 2.2 and 2.7 remain parked."
     },
     {
       "phaseId": "phase-5",
@@ -11175,9 +11574,12 @@
       "phaseId": "phase-5",
       "taskId": "P5-T28",
       "title": "Task 2.8: Verify and improve offline recovery feedback",
-      "status": "parked",
-      "owner": "Codex",
-      "summary": "Verify service-worker cache truth retry feedback and allowable data-safety language before any offline copy change."
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Done locally through 5P-R. The separately authorized recovery accepts the unchanged green 5P smoke installed-Chrome direct-render and cleanup evidence while preserving 5P as historically stopped-scope-drift.",
+      "nextAction": null,
+      "blocker": null,
+      "result": "The exact offline controller is available from the static-only cache Retry reports accessible checking failure and restored states through one network-only health request the narrow generic-screen statement is supported and broader privacy claims remain unsupported."
     },
     {
       "phaseId": "phase-5",
@@ -11738,6 +12140,14 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-07-28",
+      "text": "Completed 5P-R and Task 2.8 locally by accepting the unchanged green 5P evidence through a separately authorized command-center-only recovery. Exact refs sixteen paths empty index frozen hashes audit log prior smoke and installed-Chrome passes later phone render cleanup lightweight syntax JSON dashboard health whitespace and sensitive-content checks passed. 5P remains historically stopped M-05 is resolved Task 2 is the sole current transition gate Tasks 2.2 and 2.7 remain parked and no successor started."
+    },
+    {
+      "time": "2026-07-28",
+      "text": "Stopped 5P on disposable rendered-probe scope drift after the bounded local offline controller and truthful Retry repair passed static checks one smoke run and one installed-Chrome run. The first separate phone-render harness failed on a wrong selector and was corrected and repeated before the stop rule was recognized. The later render passed and all disposable artifacts were removed but Task 2.8 remains current and decision-needed M-05 remains unresolved and no successor started."
+    },
     {
       "time": "2026-07-28",
       "text": "Completed 5M and Task 4 durability closeout through the containing target skip-actions commit after one exact authorized recovery. The approved two-path parent package passed health router-health JSON generated-state whitespace sensitive exact-path ancestry clean-ref and live-ref checks and is durable at 391debe28ea58349c65312eeb0987e9b516babd9. The exact twelve-path target closeout carries the local evidence package Phase 5 remains active at seventy-five percent Task 2 becomes the sole current planning task optional Tasks 2.2 2.7 and 2.8 remain parked and no successor started."
@@ -12955,12 +13365,19 @@
   ],
   "waitingScheduled": [],
   "nextMilestone": {
-    "title": "Select the next project objective",
-    "status": "planning",
-    "owner": "Ryan",
-    "target": "Choose the next objective before a separate Phase 5 transition and Phase 6 intake block is proposed."
+    "title": "Complete exact scan recovery and hosted review resume",
+    "status": "active",
+    "owner": "Codex Desktop",
+    "target": "Pass one corrected fail-closed scan then leave one exact draft PR open and unmerged after candidate and final-head Synthetic CI pass with zero deployment."
   },
   "verification": {
+    "phase5OfflineRecoveryHostedReviewRecovery": "active through 5Q-R; exact false-positive sk-token-boundary correction and unchanged ab7fea3 sixteen-path branch draft-PR candidate and final-head Synthetic CI zero-deployment resume is confirmed",
+    "phase5OfflineRecoveryHostedReview": "stopped before branch creation; activation JSON dashboard health rendered inspection exact refs sixteen-path union empty index frozen hashes lightweight syntax and whitespace passed but the sensitive scan sk-prefix detector matched ordinary ask-prefixed artifact names and no correction rerun Git GitHub workflow deployment or successor occurred",
+    "phase5OfflineRecoveryEvidenceAcceptance": "pass locally through 5P-R; exact refs sixteen paths empty index and eight frozen hashes were preserved the audit log local diff prior smoke and installed-Chrome passes later direct phone render and cleanup record agreed lightweight JavaScript and Python syntax passed and no suite browser screenshot product execution implementation edit Git hosted protected transition or successor action occurred",
+    "phase5OfflineRecoveryCloseout": "pass locally through 5P-R; 5P remains historically stopped-scope-drift Task 2.8 and M-05 are done Task 2 is current solely as the transition gate Tasks 2.2 and 2.7 remain parked Phase 5 remains active at one hundred percent required completion and no successor starts",
+    "phase5OfflineRecoveryRepair": "green evidence inside stopped 5P; static checks passed full smoke passed once full installed Chrome passed once with fresh-worker exact-controller static-only cache identical Personal BFM and LL generic fallback truthful offline failure restored LL reload expected denied-network errors and exact cleanup while the later direct 390 by 844 render passed without overflow and all disposable artifacts were removed",
+    "phase5OfflineRecoveryDisposition": "stopped on scope drift; the first separate rendered-probe harness failed on a wrong selector and was corrected and repeated before the stop rule was recognized so Task 2.8 remains current and decision-needed M-05 remains unresolved Task 2 remains the required-complete umbrella and no successor starts",
+    "phase5OfflineAuditActivation": "stopped before audit; JSON dashboard refresh health generated-currentness Phase 5 work-block current-task parked-task exact-path empty-index and zero product-test diff checks passed but the rendered marker assertion searched for compact label JSON while the generated dashboard uses spaced embedded JSON and no source suite browser probe rendered audit implementation staging commit push hosted action or successor occurred",
     "phase5RecoveryAssertion": "pass subject to containing-commit post-push proof; phaseTasks is the verified task-array schema the corrected 5N-R2 active-state assertion passed and the stopped 5N-R failure was a command error rather than command-center state corruption",
     "phase5RecoveryWhitespace": "pass subject to containing-commit post-push proof; exactly two trailing-space pairs totaling four bytes were removed from lines 3 and 4 of the existing 5N log with no other log content change",
     "phase5RecoveryBoundaries": "pass subject to containing-commit post-push proof; the same exact eight-path package was preserved 5N-R remains stopped Phase 5 stays active at one hundred percent required completion Task 2 stays current solely as the transition gate Tasks 2.2 2.7 and 2.8 stay parked and no successor or excluded action occurred",

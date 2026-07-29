@@ -8734,7 +8734,26 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
     font-size: 0.9rem;
     color: var(--standalone-text-muted);
     line-height: 1.5;
-    margin-bottom: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.offline-safety,
+.offline-status {
+    color: var(--standalone-text-muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+.offline-safety {
+    margin-bottom: 1rem;
+}
+
+.offline-status {
+    margin-bottom: 1rem;
+}
+
+.offline-status:empty {
+    display: none;
 }
 
 .offline-btn,
@@ -8765,6 +8784,11 @@ textarea.pr-modal-input { resize: vertical; min-height: 2rem; }
 .offline-btn:hover,
 .error-btn:hover {
     opacity: 0.85;
+}
+
+.offline-btn:disabled {
+    cursor: wait;
+    opacity: 0.65;
 }
 
 

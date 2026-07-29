@@ -38,7 +38,7 @@ Codex adopts the low-risk demo-fidelity diagnosis and the general “explain and
 | M-02 dashboard columns use different invisible inclusion rules | `park` | Reassess after the demo category repair. If zero-activity categories still dominate, collapse them by default while retaining a discoverable way to show them. |
 | M-03 color conveys meaning without a legend or non-color redundancy | `park` | Audit the affected charts and repeated color semantics in a later focused accessibility block; do not widen the first polish slice. |
 | M-04 no capability index or search | `park` | Treat as a broader information-architecture question, not a local polish fix. |
-| M-05 offline screen lacks a data-safety statement and visible retry feedback | `park` | First verify cache and retry behavior. Add only statements the service-worker and storage contract can prove; do not make a false blanket assurance. |
+| M-05 offline screen lacks a data-safety statement and visible retry feedback | `resolved through 5P-R` | The separately confirmed recovery accepts the unchanged green 5P evidence while preserving 5P's historical stop. The exact controller is cached, Retry feedback is truthful and accessible, and the narrow generic-screen statement is supported. Do not extend it into a blanket device, storage, synchronization, encryption, retention, production-runtime, or application-wide privacy assurance. |
 
 ## Reviewer Priorities And Design Principles
 
@@ -99,7 +99,7 @@ The remaining reviewer questions are either answered above or parked with the br
 - **Task 2.5 (`P5-T25`): Clarify Ask Opus purpose and privacy.** First freeze and verify its data-scope/retention contract, then make the purpose and truthful boundary visible.
 - **Task 2.6 (`P5-T26`): Reassess dashboard explanation and density.** After Task 2.1, reevaluate category-drift messaging, zero-activity category treatment, and non-color redundancy from fresh synthetic evidence.
 - **Task 2.7 (`P5-T27`): Resolve connections and capability discovery.** Revisit Data Sources, Connected Accounts, To Do entry points, and capability discovery as one later information-architecture slice.
-- **Task 2.8 (`P5-T28`): Verify and improve offline recovery feedback.** Check service-worker cache truth, retry state, and allowable data-safety language before any copy change.
+- **Task 2.8 (`P5-T28`): Verify and improve offline recovery feedback.** Done locally through 5P-R. Work block 5Q remains stopped before branch creation on its false-positive `sk-` scan assertion. Work block 5Q-R is active for one exact non-token-boundary correction and, only on clean no-match, the unchanged sixteen-path feature-branch and hosted-review resume. The recovery continues to accept the unchanged green smoke, installed-Chrome, direct-render, and cleanup evidence without rewriting either historical stop or making broader privacy claims.
 
 ## Recommended First Block
 

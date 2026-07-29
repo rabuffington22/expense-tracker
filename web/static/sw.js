@@ -8,13 +8,14 @@
  *   - Offline fallback: Simple branded page when nothing is available
  */
 
-const CACHE_NAME = 'the-ledger-v5';
+const CACHE_NAME = 'the-ledger-v6';
 const OFFLINE_URL = '/offline';
 const CORE_CSP_POLICY = "default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; media-src 'none'";
 
 // App shell and static assets to pre-cache on install
 const PRECACHE_URLS = [
   '/offline',
+  '/static/standalone-documents.js',
   '/static/style.css',
   '/static/htmx.min.js',
   '/static/manifest.json',
