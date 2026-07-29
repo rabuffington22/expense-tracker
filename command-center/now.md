@@ -2,19 +2,19 @@
 
 ## Active Objective
 
-Choose whether to authorize the separately gated Task 2.8 production release after exact feature-branch durability and hosted review passed.
+Choose whether to authorize the separately gated Task 2.8 production release after exact ref-semantics recovery and hosted closeout.
 
 ## Current Phase
 
-Phase 5: UX Polish, Operations, And Durable Handoff — required work remains 100% complete. Work block 5Q-R is done with Task 2.8 branch/draft-PR durability and candidate hosted verification complete; its closeout head remains subject to the automatic final-head gate recorded below. Optional Tasks 2.2 and 2.7 remain parked. Task 2 remains current solely as the transition gate and Phase 5 remains active.
+Phase 5: UX Polish, Operations, And Durable Handoff — required work remains 100% complete. Work block 5Q-R2 is done subject to the automatic recovery-head verification required by its immutable closeout. Work block 5Q-R remains stopped at final reconciliation on its invalid equality assertion. Optional Tasks 2.2 and 2.7 remain parked. Task 2 remains current solely as the transition gate and Phase 5 remains active.
 
 ## Current Work Block
 
-Work block 5Q-R — Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume — is done subject to the automatic final-head verification required by its immutable closeout. Work block 5Q remains stopped before branch creation; 5P-R remains done locally; and 5P remains historically stopped on disposable rendered-probe scope drift.
+Work block 5Q-R2 — Exact Main-Ref Semantics Recovery And Hosted Closeout — is done subject to its automatic recovery-head gate. Work block 5Q-R is stopped at final reconciliation; 5Q remains stopped before branch creation; 5P-R remains done locally; and 5P remains historically stopped on disposable rendered-probe scope drift.
 
 ## Current Task
 
-Phase 5 Task 2 (`P5-T2`) — remain current solely as the transition gate after Task 2.8 became branch/draft-PR durable and candidate-hosted-verified through 5Q-R.
+Phase 5 Task 2 (`P5-T2`) — remain current solely as the transition gate after Task 2.8 ref-semantics recovery and hosted closeout through 5Q-R2.
 
 ## Owner
 
@@ -24,9 +24,35 @@ Ryan owns the decision whether to separately confirm 5R production release or ch
 
 Decide whether to separately confirm 5R — Offline Recovery Production Release. No merge, push to `main`, deployment, production request, phase transition, or successor is active.
 
+## Confirmed Work Block 5Q-R2
+
+- Status: done, contingent on the automatic recovery-head verification for the immutable closeout commit.
+- Name: Exact Main-Ref Semantics Recovery And Hosted Closeout.
+- Include Task 2.8 (`P5-T28`) only for exact Git/ref verification-semantic recovery and acceptance of the already-passing branch, PR, and hosted evidence, plus Task 2 (`P5-T2`) status accounting only.
+- Preserve local `refs/heads/main` at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` without checkout or mutation and require it to remain an ancestor of exact cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`.
+- Preserve candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, local/remote `codex/offline-recovery-feedback`, and draft PR #92 at the exact closeout head.
+- Reconcile existing candidate run `30446979383` and closeout run `30447811416` without rerun. On pass, write one exact eight-path command-center recovery commit, non-force push the same branch, observe only its automatic Synthetic CI, and stop with PR #92 open, draft, and unmerged.
+- Exclude Task 2.2 (`P5-T22`), Task 2.7 (`P5-T27`), completed Tasks 1, 3, and 4 and every other Task 2 child; moving, updating, resetting, checking out, or deleting local `main`; product, maintained-test, README, CSP-contract, dependency, workflow, or configuration change; local product-suite or browser rerun; manual workflow action; merge; push to `main`; deployment; production health; rebase; force push; conflict resolution; protected/provider/database/financial/parent action; delegation; second opinion; Phase 5 transition; Phase 6; successor; and unrelated work.
+- Use `set -euo pipefail` plus explicit assertion handling. A trailing pass marker never substitutes for assertion results.
+- Stop without correction, retry, or expansion on ref, ancestry, commit-chain, PR, path, frozen-hash, existing-CI, staging, non-fast-forward, automatic-CI, annotation, job-order, unexpected-deployment, JSON, dashboard, health, whitespace, task-accounting, or exact-scope failure.
+- Verification: exact local-main informational ref and ancestor relation; exact cached/live remote baseline; exact candidate and closeout ancestry and path sets; unchanged implementation paths after the candidate; exact local/remote branch and PR state; existing two Synthetic CI runs with core before browser, every step successful, zero annotations, and zero deployment; exact eight-path recovery commit and remote alignment; one automatic recovery-head Synthetic CI with the same gates; final dashboard showing 5Q-R2 done, 5Q-R stopped, 5Q stopped, Task 2 current, Task 2.8 done and branch/PR durable, Tasks 2.2 and 2.7 parked, Phase 5 active, and no successor.
+- Report back: corrected ref semantics, preserved local `main`, candidate/closeout/recovery SHAs, exact paths, PR state, all three CI heads and jobs, annotations, zero-deployment proof, dashboard state, exclusions, and unmerged status.
+- Suggested next block: separately confirm 5R — Offline Recovery Production Release — only after the exact 5Q-R2 recovery head passes.
+
+## Work Block 5Q-R2 Result
+
+- The fail-closed reconciliation passed under `set -euo pipefail` with explicit assertion handling. No trailing marker substituted for a failed assertion.
+- Local `refs/heads/main` remained untouched at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` and is an ancestor of exact cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`.
+- Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684` has exact parent `ab7fea3155847209d693558a9e5a9ba39e163d7a`; closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa` has exact parent `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`; local, cached, and live feature-branch refs and PR #92 aligned at the closeout head before this recovery record.
+- The exact candidate sixteen-path set, closeout eight-path set, empty index, frozen implementation hashes, and zero implementation drift after the candidate passed.
+- Draft PR #92 remained clean, open, draft, and unmerged. Existing candidate run `30446979383` and closeout run `30447811416` each remained the only workflow for its SHA; core completed before browser, every step passed, all four jobs had zero annotations, and no Fly deployment or deployment workflow appeared.
+- This eight-path recovery closeout is the only new project change. Its commit and automatic recovery-head run are verified after the immutable record is pushed; this result is valid only if that exact head passes core before browser with every required step successful, zero annotations, zero deployment, exact local/remote feature-branch alignment, local `main` still preserved, cached/live `origin/main` unchanged, and PR #92 still clean, open, draft, and unmerged.
+- On that recovery-head pass, 5Q-R2 is done; 5Q-R and 5Q remain stopped; Task 2.8 is done and feature-branch/draft-PR durable with hosted verification; Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 remains active at 100% required completion; and no successor starts.
+- No local-main mutation, product/test/contract/workflow change, local product-suite or browser rerun, existing workflow rerun, merge, push to `main`, deployment, production health, protected/provider/database/financial/parent action, delegation, second opinion, phase transition, Phase 6, or successor occurred.
+
 ## Confirmed Work Block 5Q-R
 
-- Status: done, contingent on the automatic final-head verification for the immutable closeout commit.
+- Status: stopped at final reconciliation on the invalid local-`main` equality assertion.
 - Name: Exact Sensitive-Scan Assertion Recovery And Hosted Review Resume.
 - Include Task 2.8 (`P5-T28`) for one exact false-positive scan assertion recovery and the unchanged sixteen-path feature-branch and hosted draft-PR review resume, plus Task 2 (`P5-T2`) status accounting only.
 - Preserve stopped 5Q, local/cached/live `main` at `ab7fea3155847209d693558a9e5a9ba39e163d7a`, the exact sixteen-path union, empty real index, and the eight frozen implementation and contract hashes.
@@ -49,6 +75,7 @@ Decide whether to separately confirm 5R — Offline Recovery Production Release.
 - This eight-path closeout is the only post-candidate project change. Its commit and automatic final-head run are verified after the immutable record is pushed; this result is valid only if that exact head passes with the same job order, all steps successful, zero annotations, zero deployment, exact local/remote alignment, and the PR still draft/open/unmerged.
 - Task 2.8 remains done and is now feature-branch/draft-PR durable with candidate hosted verification. Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; 5Q remains stopped; Phase 5 remains active at 100% required completion; and no successor starts.
 - No local smoke, product-browser, screenshot, or rendered-product suite was rerun. No product, maintained-test, README, CSP-contract, workflow, merge, `main` push, deployment, production-health, protected-data, provider, database, phase-transition, successor, delegation, or second-opinion action occurred.
+- The automatic closeout-head run later passed every hosted gate, but final reconciliation found local `refs/heads/main` at older commit `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` rather than `ab7fea3155847209d693558a9e5a9ba39e163d7a`. The verification command incorrectly continued past its failed bracket assertion because it lacked fail-closed shell handling. Per the confirmed stop rule, 5Q-R is stopped despite otherwise-green evidence; no ref was moved and no repair occurred inside 5Q-R.
 
 ## Confirmed Work Block 5Q
 

@@ -87,3 +87,25 @@ The exact sixteen-path candidate is committed as `3edccc0d4b097dfdbeccf2c7cc6837
 The preferred GitHub connector lacked repository write access when asked to create the draft PR. The authenticated procedure-approved `gh` fallback created the same bounded PR without retry or expansion.
 
 The single eight-path command-center closeout is valid only if the exact automatic final-head Synthetic CI triggered by its push passes core before browser with every required step successful, zero annotations, zero deployment, exact local/remote equality, and PR #92 still open, draft, and unmerged. On that pass, 5Q-R is done, Task 2.8 is branch/draft-PR durable and hosted verified, Task 2 remains current solely as the transition gate, Tasks 2.2 and 2.7 remain parked, Phase 5 remains active at 100%, and no successor starts. Production release remains a separately confirmed 5R boundary.
+
+## 5Q-R Final Reconciliation Stop
+
+The closeout head `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa` passed automatic Synthetic CI run `30447811416`: core job `90562391058` completed before browser job `90562636115`, every required step passed, both jobs had zero annotations, no Fly deployment or deployment workflow appeared, the feature branch aligned locally and remotely, and PR #92 remained open, draft, and unmerged.
+
+The final local-ref assertion then found `refs/heads/main` at older commit `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, not remote baseline `ab7fea3155847209d693558a9e5a9ba39e163d7a`. The shell command had continued past its failed bracket assertion and printed a misleading pass marker because it lacked fail-closed handling. Although the local ref is an ancestor of the correct remote baseline and was not newly changed, 5Q-R's exact contract required equality. Work block 5Q-R therefore stops without ref mutation, repair, retry, merge, deployment, production action, transition, or successor.
+
+## 5Q-R2 Main-Ref Semantics Recovery Activation
+
+Ryan confirmed exact 5Q-R2 on 2026-07-29. The recovery treats local `main` as a preserved informational stale ancestor rather than the publication baseline: it remains exactly `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, must remain an ancestor of cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`, and may not be checked out or mutated.
+
+Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, exact feature-branch alignment, draft PR #92, and both prior automatic Synthetic CI runs remain frozen. Fail-closed reconciliation uses `set -euo pipefail` and explicit assertions. Only on complete pass may one exact eight-path command-center recovery commit be non-force pushed to the same feature branch and receive one automatic recovery-head Synthetic CI run. No implementation, suite rerun, local-main repair, existing workflow rerun, merge, deployment, production, protected, transition, successor, delegation, or second-opinion action is authorized.
+
+## 5Q-R2 Ref-Semantics Recovery Outcome
+
+The corrected fail-closed reconciliation passed. Local `refs/heads/main` remained untouched at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` and remained an ancestor of exact cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`.
+
+Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684` and closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa` retained exact ancestry. Their sixteen-path candidate and eight-path closeout sets, frozen implementation hashes, zero post-candidate implementation drift, empty index, feature-branch alignment, and clean open draft PR #92 passed.
+
+Existing automatic candidate run `30446979383` and closeout run `30447811416` each remained the only workflow for its SHA. Core completed before browser, every required step passed, all four jobs had zero annotations, and no Fly deployment or deployment workflow appeared.
+
+The exact eight-path recovery closeout is valid only if its immutable automatic recovery-head Synthetic CI passes core before browser with every required step successful, zero annotations, zero deployment, exact local/remote feature-branch equality, preserved local-main and remote-main semantics, and PR #92 still clean, open, draft, and unmerged. On that gate, 5Q-R2 is done, 5Q-R and 5Q remain stopped, Task 2.8 is branch/draft-PR durable and hosted verified, Task 2 remains current, Tasks 2.2 and 2.7 remain parked, Phase 5 remains active at 100%, and production release remains a separately confirmed 5R boundary.

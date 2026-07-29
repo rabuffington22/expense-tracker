@@ -159,3 +159,31 @@ Automatic candidate Synthetic CI run `30446979383` passed core job `90559647367`
 This eight-path closeout is the only post-candidate project change. Because its automatic hosted run cannot exist until the immutable closeout is committed and pushed, this result is valid only if that exact final head passes core before browser with every step successful, zero annotations, zero deployment, exact local/remote alignment, and PR #92 still open, draft, and unmerged.
 
 On that final-head pass, Task 2.8 remains done and becomes feature-branch/draft-PR durable with hosted verification; Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; 5Q stays historically stopped; Phase 5 remains active at 100% required completion; and no successor starts. No local product suite, merge, push to `main`, deployment, production health, provider, protected-data, database, phase transition, successor, delegation, or second-opinion action occurred. A 5R production release requires a separate Ryan confirmation.
+
+## 5Q-R Final Reconciliation Stop
+
+Automatic closeout-head Synthetic CI run `30447811416` passed core job `90562391058` before browser job `90562636115`; every required step passed, both jobs returned zero annotations, no Fly deployment or deployment workflow appeared, local and remote `codex/offline-recovery-feedback` aligned at `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, and PR #92 remained open, draft, and unmerged.
+
+Final reconciliation then found local `refs/heads/main` at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` rather than required remote baseline `ab7fea3155847209d693558a9e5a9ba39e163d7a`. The pre-closeout command had printed its trailing pass marker because failed bracket assertions were not executed under fail-closed shell handling. Local `main` was not newly moved and is an ancestor of the remote baseline, but 5Q-R explicitly required equality. Per its stop condition, 5Q-R is stopped despite otherwise-green evidence. No ref mutation, repair, retry, workflow rerun, merge, deployment, production action, phase transition, or successor occurred.
+
+## 5Q-R2 Activation
+
+Ryan confirmed the exact main-ref semantics recovery and hosted closeout on 2026-07-29. Codex Desktop recorded active 5Q-R2 before Git or GitHub action.
+
+The recovery preserves local `refs/heads/main` exactly at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` without checkout or mutation and requires it to remain an ancestor of cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`. It preserves candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, exact feature-branch alignment, open draft PR #92, and the two existing successful automatic Synthetic CI runs. Reconciliation uses `set -euo pipefail` and explicit assertions; a trailing marker cannot substitute for results.
+
+Only on complete pass may Codex write, explicitly stage, commit, and non-force push one exact eight-path command-center recovery closeout, observe only its automatic Synthetic CI, and stop unmerged. Product/test/contract/workflow changes, local product-suite reruns, existing workflow reruns, local-main mutation, merge, push to `main`, deployment, production health, protected access, phase transition, successor, delegation, and second opinion remain excluded.
+
+## 5Q-R2 Outcome
+
+Complete subject to the immutable recovery closeout commit's exact automatic hosted verification.
+
+The fail-closed reconciliation passed under `set -euo pipefail` with explicit assertion handling. Local `refs/heads/main` remained untouched at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` and remained an ancestor of cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`.
+
+Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684` retained exact parent `ab7fea3155847209d693558a9e5a9ba39e163d7a`; closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa` retained exact parent `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`. The exact candidate sixteen-path set, closeout eight-path set, frozen implementation hashes, zero implementation drift after the candidate, empty index, local/cached/live feature-branch alignment, and clean open draft PR #92 passed.
+
+Existing automatic candidate run `30446979383` and closeout run `30447811416` each remained the only workflow for its exact SHA. Core completed before browser, every required step passed, all four jobs had zero annotations, and no Fly deployment or deployment workflow appeared.
+
+This eight-path recovery closeout is the only new project change. Because its automatic hosted run cannot exist until the immutable closeout is committed and pushed, the result is valid only if that exact recovery head passes core before browser with every required step successful, zero annotations, zero deployment, exact local/remote feature-branch alignment, preserved local-main and remote-main semantics, and PR #92 still clean, open, draft, and unmerged.
+
+On that pass, 5Q-R2 is done; 5Q-R and 5Q remain stopped; Task 2.8 remains done and becomes feature-branch/draft-PR durable with hosted verification; Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 remains active at 100%; and no successor starts. No local-main mutation, product or test change, suite rerun, existing workflow rerun, merge, push to `main`, deployment, production health, protected/provider/database/financial/parent action, delegation, second opinion, transition, or successor occurred.

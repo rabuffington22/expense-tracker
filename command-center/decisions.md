@@ -2,6 +2,26 @@
 
 ## Accepted
 
+### 2026-07-29 — Close 5Q-R2 on corrected ref semantics and exact hosted evidence
+
+The fail-closed reconciliation passed under `set -euo pipefail` with explicit assertion handling. Local `refs/heads/main` remained untouched at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` and remained an ancestor of exact cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`. Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, their exact ancestry and path sets, frozen implementation hashes, local/cached/live feature-branch alignment, clean open draft PR #92, and the empty real index all passed.
+
+Automatic candidate run `30446979383` and closeout run `30447811416` each remained the only workflow for its exact SHA. Core completed before browser, every required step passed, all four jobs had zero annotations, and no Fly deployment or deployment workflow appeared.
+
+The one eight-path recovery closeout is immutable before its hosted run exists and is valid only if its exact automatic recovery-head Synthetic CI passes core before browser with every step successful, zero annotations, zero deployment, preserved local-main and remote-main semantics, exact local/remote feature-branch alignment, and PR #92 still clean, open, draft, and unmerged. On that gate, 5Q-R2 is done; 5Q-R and 5Q remain stopped; Task 2.8 is branch/draft-PR durable and hosted verified; Task 2 remains current solely as the Phase 5 transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 remains active at 100%; and no successor starts. Release and transition remain separately gated.
+
+### 2026-07-29 — Confirm 5Q-R2 exact main-ref semantics recovery and hosted closeout
+
+Ryan confirmed the exact proposed 5Q-R2 scope. Codex Desktop may first record and render active 5Q-R2; preserve local `refs/heads/main` at `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` without mutation and verify it remains an ancestor of cached/live `origin/main` `ab7fea3155847209d693558a9e5a9ba39e163d7a`; preserve candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, exact feature-branch alignment, and open draft PR #92; reconcile the two existing successful automatic Synthetic CI runs without rerun; and only on complete fail-closed pass write, commit, and non-force push one exact eight-path command-center recovery closeout, observe its automatic Synthetic CI, and stop unmerged.
+
+The recovery corrects only the invalid assumption that a stale local branch ref must equal the remote publication baseline in a feature-branch worktree. It uses `set -euo pipefail` plus explicit assertion handling and does not infer success from a trailing marker. Local `main` may not be checked out, moved, reset, updated, or deleted. Product, test, README, CSP-contract, workflow, local product-suite, manual workflow, merge, push-to-main, deployment, production-health, protected, provider, database, financial, parent, delegation, second-opinion, phase-transition, Phase 6, successor, and unrelated work remain excluded.
+
+### 2026-07-29 — Stop 5Q-R at final reconciliation on invalid local-main equality assertion
+
+Candidate `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684`, closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa`, draft PR #92, automatic candidate run `30446979383`, and automatic closeout run `30447811416` all passed their branch, ancestry, job-order, step, annotation, and zero-deployment gates. Final reconciliation nevertheless found local `refs/heads/main` at older commit `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb` instead of remote baseline `ab7fea3155847209d693558a9e5a9ba39e163d7a`.
+
+The pre-closeout shell command incorrectly printed its trailing pass marker because failed bracket assertions were not executed under fail-closed shell handling. The local ref was not newly changed and is an ancestor of the remote baseline, but 5Q-R explicitly required equality and therefore stops on its own verification contract. No repair, ref mutation, retry, merge, deployment, production action, phase transition, or successor occurred.
+
 ### 2026-07-29 — Close 5Q-R on exact draft-PR durability and hosted verification
 
 The corrected high-confidence scan ran exactly once with `(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}` and returned the defined clean-no-match result. The exact sixteen-path Task 2.8 candidate was explicitly staged and committed as `3edccc0d4b097dfdbeccf2c7cc6837c0c2319684` with parent `ab7fea3155847209d693558a9e5a9ba39e163d7a`, non-force pushed on `codex/offline-recovery-feedback`, and opened as draft PR #92 to `main`.
