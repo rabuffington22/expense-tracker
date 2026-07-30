@@ -2,7 +2,7 @@
 
 Date: 2026-07-29
 
-Status: updated through 5R-R exact offline-recovery closeout recovery; required Phase 5 work is 100% complete, Task 2.8 is released, optional Tasks 2.2 and 2.7 remain parked, and no successor phase has been invented
+Status: completed through both passing 5S-R Chrome attestations; Phase 5 is done at 100%, Task 2.8 is released, optional Tasks 2.2 and 2.7 remain parked, Phase 6 Operational Reliability, Monitoring, And Recovery Currency is active at 0%, and no Phase 6 execution block is active
 
 ## Re-entry
 
@@ -69,8 +69,8 @@ See [`operations-monitoring-matrix.md`](operations-monitoring-matrix.md).
 | Current production or demo health | Production was historically verified by the one 5R request on 2026-07-29; any later currentness claim requires a new exact observation |
 | Parked Tasks 2.2 and 2.7 | Optional and retained; explicit reopening and a new bounded proposal |
 | Task 4 target and parent closeout | Complete through 5M; no further Task 4 or parent action |
-| Phase 5 transition | Ryan must select the next objective before a separate transition and Phase 6 intake proposal |
+| Phase 5 transition | Both 5S-R Chrome attestations passed; Phase 5 is done, Phase 6 Operational Reliability, Monitoring, And Recovery Currency is active with four planning tasks, and 5S-R is done |
 
 ## Handoff Boundary
 
-Task 3.5 and Tasks 4.1-4.5 are complete through the exact 5H-R2 release evidence, Ryan's value-free 5H-BR2 Broadcast disablement and one-reload persistence attestation, the parent durability commit `391debe28ea58349c65312eeb0987e9b516babd9`, and target 5M commit `ac5361e5b2be55356538ae44b28127ce0fc19097`. Task 2.8 is released through exact 5R merge `ddc2f02f10fad85fb9936806b5fd84eda806069c`, automatic Fly Deploy run `30464960703`, and the dated one-request production-health result; 5R-R recovers its exact command-center closeout while preserving 5R's historical rendered-verification stop. Required Phase 5 work remains 100% complete; Tasks 2.2 and 2.7 remain optional parked work. Phase 5 remains active and Task 2 remains current solely as Ryan's transition gate because no successor direction exists. No successor work block is active. This handoff authorizes no sequel; current Git and hosted state override this dated document whenever a later authorized block begins.
+Task 3.5 and Tasks 4.1-4.5 are complete through the exact 5H-R2 release evidence, Ryan's value-free 5H-BR2 Broadcast disablement and one-reload persistence attestation, the parent durability commit `391debe28ea58349c65312eeb0987e9b516babd9`, and target 5M commit `ac5361e5b2be55356538ae44b28127ce0fc19097`. Task 2.8 is released through exact 5R merge `ddc2f02f10fad85fb9936806b5fd84eda806069c`, automatic Fly Deploy run `30464960703`, and the dated one-request production-health result; 5R-R is durable through closeout commit `1d149d787739495edc976bd81117abab1497f98d` while 5R retains its historical rendered-verification stop. Required Phase 5 work is complete and Tasks 2.2 and 2.7 remain optional parked work. Ryan's exact six-marker and eight-marker 5S-R Chrome attestations both passed, so Phase 5 and Task 2 are done, 5S-R is done, and Phase 6 Operational Reliability, Monitoring, And Recovery Currency is active with four planning tasks. Task 1 is current solely as the separate 6A planning gate and no Phase 6 execution is active. This handoff authorizes no sequel; current Git and hosted state override this dated document whenever a later authorized block begins.

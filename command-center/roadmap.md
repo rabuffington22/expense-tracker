@@ -5089,7 +5089,7 @@ Result: the exact ten-path 4U source set was committed as `0222d30`, fast-forwar
 
 ## Phase 5: UX Polish, Operations, And Durable Handoff
 
-Status: active with required work 100% complete through 5N; optional Task 2.8 remains current and decision-needed after 5O stopped before audit on a verification-command formatting error, Tasks 2.2 and 2.7 remain parked, and Task 2 remains the required-complete umbrella
+Status: done at 100% after both 5S-R Ryan-observed rendered checkpoints passed; Task 2.8 is released through 5R/5R-R, Tasks 2.2 and 2.7 remain parked, Task 2 is done for transition accounting, and Phase 6 Operational Reliability, Monitoring, And Recovery Currency is active
 
 Goal: make the product understandable, maintainable, and easy to re-enter after the critical repairs are complete.
 
@@ -5098,7 +5098,7 @@ Goal: make the product understandable, maintainable, and easy to re-enter after 
   - **Task 1.2: Capture the synthetic desktop, mobile, and installed-PWA usability baseline.** Status: done locally in 5A. Full synthetic smoke and the complete maintained installed-Chrome suite passed; the J1-J5 matrix, seven provisional friction clusters, strengths, limitations, sanitized artifacts, and exact cleanup are recorded in `command-center/phase-5-usability-baseline.md`.
   - **Task 1.3: Obtain an independent design and usability critique of the focused evidence packet.** Status: done locally in 5B. The verified return is preserved unchanged with its original ZIP, complete Markdown critique, manifest, three inspected synthetic annotations, and exact hashes.
   - **Task 1.4: Reconcile findings and recommend the first Task 2 polish block.** Status: done locally in 5B. Every 5A and reviewer finding is classified in `command-center/phase-5-usability-findings-intake.md`; material product and data-handling choices remain Ryan decisions.
-- **Task 2: Polish high-friction journeys without widening financial or authentication risk.** Status: required children complete through 5N; active only as the required-complete umbrella while optional Task 2.8 is current for the confirmed 5O audit and Tasks 2.2 and 2.7 remain parked.
+- **Task 2: Polish high-friction journeys without widening financial or authentication risk.** Status: done through 5S-R transition accounting; required children and optional Task 2.8 are done while Tasks 2.2 and 2.7 remain parked.
   - **Task 2.1: Repair synthetic demo fidelity.** Status: done locally through 5C. Personal/BFM use the exact maintained category domains, Personal has one debt-payoff and one savings goal, repeated seeds match, focused coverage passes, and rendered review no longer opens on orphan drift or missing goals.
   - **Task 2.2: Improve first-use and denied-state explanation.** Status: parked by Ryan until further notice together with Luxe Legacy setup and the associated 5D path. The combined Short-Term Planning empty-state action and Luxe Legacy empty/denied guidance remain unimplemented; existing Luxe Legacy isolation and fail-closed behavior stay unchanged.
   - **Task 2.3: Repair phone transaction density and entity context.** Status: done locally through 5E. Personal, BFM, and LL now use complete non-scrolling phone rows and a read-only shared mobile entity marker while preserving current fields, sort, copy, pagination, filters, HTMX, edit, exact-768/desktop table, drawer, and entity behavior.
@@ -5304,9 +5304,63 @@ Result: the corrected exact `sk-` token-boundary scan ran once and returned clea
 
 Actual disposition: stopped at final reconciliation. Closeout `c10c4a3f3ba73684c0727d2e3b4a7bbf56b1b9fa` and automatic closeout run `30447811416` passed core before browser with every step successful, zero annotations, zero deployment, exact feature-branch alignment, and PR #92 still open, draft, and unmerged. The final local-ref check then found `refs/heads/main` at older commit `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, while cached/live `origin/main` remained `ab7fea3155847209d693558a9e5a9ba39e163d7a`. Because 5Q-R incorrectly required equality and its shell command continued past failed bracket assertions without fail-closed handling, 5Q-R stops despite otherwise-green evidence. No ref mutation or repair occurred.
 
+### Confirmed Work Block 5S-R: Ryan-Observed Dashboard Render And Transition Resume
+
+Status: done after the exact first six-marker and final eight-marker Ryan-observed rendered-dashboard attestations both passed.
+
+Included: Task 2 (`P5-T2`) transition accounting only. Preserve stopped 5S; record and refresh active 5S-R; require Ryan to manually open the local dashboard in Chrome and attest that Phase 5 is active at 100%, 5S-R is active, Task 2 is current for transition accounting, ownership is Ryan and Codex Desktop, the next move requests the first rendered checkpoint, and no Phase 6 inventory is visible. Only on that exact value-free attestation, resume the original command-center-only transition, reconcile the passed 5R-R durability gates, close Phase 5 and Task 2, preserve Tasks 2.2 and 2.7 as parked, create the durable Phase 6 Operational Reliability, Monitoring, And Recovery Currency inventory, refresh and verify the final state subject to Ryan's second manual Chrome attestation, and stop before 6A execution.
+
+Excluded: Task 2.2 (`P5-T22`), Task 2.7 (`P5-T27`), Task 2.8 (`P5-T28`) release repetition, Tasks 3 (`P5-T3`) and 4 (`P5-T4`) reopening, product or maintained-test changes, workflow or dependency changes, database or authentication work, provider or protected access, production or demo observation, staging, commit, push, PR, merge, deployment, delegation, second opinion, browser automation around the blocked local-file policy, and unrelated work.
+
+Why this grouping: the two Ryan-observed Chrome renders provide the missing verification path for the already-confirmed planning-only transition. The intervening work is the unchanged command-center-only 5S scope with one outcome, one risk class, and no live or product action.
+
+Owner and recommended agent: Ryan and Codex Desktop. Codex owns source, machine state, refresh, health, task decomposition, stop enforcement, and final intake. Ryan performs only two value-free manual Chrome observations.
+
+Expected paths and surfaces: the existing 5S command-center working set, one new sanitized 5S-R log, generated `command-center/index.html`, and Ryan's active and final rendered attestations. No product, test, workflow, dependency, configuration, database, authentication, provider, protected, or external surface is expected.
+
+Defaults: Ryan reports only requested labels and statuses; no screenshots, secret values, financial data, browser automation, localhost workaround, or broader confirmation; keep the result local, unstaged, uncommitted, and unpublished.
+
+Stop conditions: either rendered attestation is missing or mismatched; Chrome shows a stale or different project dashboard; source, JSON, generated currentness, health, whitespace, task accounting, exact-scope, or zero-staging verification fails; Phase 6 decomposition needs a new product decision; parked work would reopen; or an excluded action becomes necessary.
+
+Verification and report point: preserved stopped baseline; valid active JSON; dashboard refresh/currentness/health/whitespace; exact active generated markers; Ryan's active rendered attestation; exact Phase 5 closeout and complete Phase 6 inventory; final JSON/currentness/health/whitespace; Ryan's final rendered attestation; exact command-center-only paths; zero staging; no product or external action. Return both attestations, exact transition, inventory, changed paths, verification, exclusions, and any stop.
+
+Dashboard closeout: only after both attestations pass, mark Phase 5 and Task 2 done; preserve Tasks 2.2 and 2.7 parked; mark Phase 6 active; make its first task current under Ryan as the separate 6A planning gate; mark 5S-R done; and activate no Phase 6 execution.
+
+Suggested next block: separately propose `6A — Operational Monitoring And Recovery Cadence Contract`.
+
+First rendered checkpoint result: Ryan returned the exact six-marker value-free attestation. Phase 5 was active at 100%; 5S-R was active; Task 2 was current for transition accounting; ownership was Ryan and Codex Desktop; the next move requested the first checkpoint; and no Phase 6 inventory was visible. No mismatch, screenshot, sensitive detail, or broader confirmation appeared.
+
+Final rendered checkpoint result: Ryan reported that all eight requested final markers matched. Both human-rendered checkpoints passed. Phase 5 and Task 2 are done at 100%; Tasks 2.2 and 2.7 remain parked; Phase 6 Operational Reliability, Monitoring, And Recovery Currency is active at 0%; Task 1 (`P6-T1`) is current under Ryan solely as the separate 6A planning gate; Tasks 2-4 (`P6-T2`-`P6-T4`) are planned; 5S-R is done; and no Phase 6 execution block is active.
+
+### Confirmed Work Block 5S: Phase 5 Transition And Phase 6 Operational Reliability Intake
+
+Status: stopped at active rendered-dashboard verification. Source JSON, dashboard refresh/currentness, health, whitespace, and generated markers passed; browser security policy blocked the required local rendered inspection before any transition or Phase 6 creation.
+
+Included: Task 2 (`P5-T2`) transition accounting only. Reconcile 5R-R with its passed containing-commit and zero-workflow gates; close Phase 5 at 100%; preserve optional Tasks 2.2 and 2.7 as parked; adopt Operational Reliability, Monitoring, And Recovery Currency as the Phase 6 objective; create a durable numbered Phase 6 task inventory from the documented production/demo currentness, backup/integrity/restore, dependency/runtime/toolchain, and maintenance-triage gaps; select its first task as a Ryan-owned planning gate; refresh and inspect Runway OS; and stop before any 6A execution.
+
+Excluded: Task 2.2 (`P5-T22`), Task 2.7 (`P5-T27`), Task 2.8 (`P5-T28`) release repetition, Tasks 3 (`P5-T3`) and 4 (`P5-T4`) reopening, product or maintained-test changes, workflow or dependency changes, database or authentication work, provider or protected access, production or demo observation, staging, commit, push, PR, merge, deployment, delegation, second opinion, and unrelated work.
+
+Why this grouping: truthful Phase 5 closeout, one selected successor objective, its visible task decomposition, and the next separately confirmable planning gate are one command-center transition outcome. Parked UX work and operational execution have different product, authority, and verification paths.
+
+Owner and recommended agent: Codex Desktop without delegation or second opinion. Codex owns command-center stewardship, task decomposition, generated-state currency, rendered inspection, and stop enforcement. Ryan owns the later 6A confirmation and every live or protected action.
+
+Expected paths and surfaces: `command-center/now.md`, `command-center/roadmap.md`, `command-center/decisions.md`, `command-center/state.json`, transition wording in `command-center/phase-5-release-handoff.md` if needed, one sanitized 5S log, and generated `command-center/index.html`. No product, test, workflow, dependency, configuration, database, authentication, provider, or external surface is expected.
+
+Defaults: preserve Tasks 2.2 and 2.7 as parked; make monitoring/currentness contract design the likely first Phase 6 task; keep the result local, unstaged, uncommitted, and unpublished; inspect no mutable external state.
+
+Stop conditions: release evidence contradicts the established 5R-R closeout; an exit-critical Phase 5 residual appears; transition requires reopening parked work; the Phase 6 objective cannot be decomposed without a new product decision; an excluded action becomes necessary; or JSON, generated currentness, health, rendered dashboard, whitespace, task accounting, exact-scope, or working-tree verification fails.
+
+Verification and report point: valid JSON; dashboard refresh and generated-state currentness; command-center health; rendered dashboard inspection; exactly one active phase and one current task; Phase 5 done at 100%; Tasks 2.2 and 2.7 parked; Phase 6 objective and complete numbered inventory visible; `git diff --check`; exact command-center-only paths; zero staging; no product change. Return the exact transition, Phase 6 inventory, selected first planning gate, changed paths, rendered and verification results, preserved exclusions, and any stop.
+
+Dashboard closeout: mark Phase 5 done at 100%; mark Task 2 done for transition accounting; keep Tasks 2.2 and 2.7 parked; mark Phase 6 active; make its first task current under Ryan as the separate 6A planning gate; record 5S done; and activate no Phase 6 execution block.
+
+Suggested next block: separately propose `6A — Operational Monitoring And Recovery Cadence Contract` against the durable Phase 6 task inventory.
+
+Actual disposition: stopped before transition. The active 5S source and machine state passed JSON, refresh, generated currentness, health, whitespace, and generated-marker checks. The in-app browser rejected the local dashboard file URL under browser security policy. Codex did not route through localhost, another browser surface, raw browser commands, or another workaround and did not substitute source markers for rendered proof. Phase 5 remains active at 100%; Task 2 remains current solely as the transition gate; Tasks 2.2 and 2.7 remain parked; Phase 6 was not created; and no 6A execution or excluded action occurred. Recovery requires a separately confirmed bounded block after Ryan chooses a valid rendered-evidence path.
+
 ### Confirmed Work Block 5R-R: Exact Decision-Queue Schema Recovery And Release Closeout Resume
 
-Status: done subject to the containing exact ten-path `[skip actions]` commit and zero-workflow post-push gates.
+Status: done and durable through containing exact ten-path `[skip actions]` closeout commit `1d149d787739495edc976bd81117abab1497f98d`; non-force live-main alignment and zero-workflow post-push proof passed.
 
 Included: Task 2.8 (`P5-T28`) release-closeout accounting only and Task 2 (`P5-T2`) recovery accounting only. Preserve the exact ten-path 5R closeout working set, empty index, local `refs/heads/main` `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, exact merge head and cached `origin/main` `ddc2f02f10fad85fb9936806b5fd84eda806069c`, and retained `codex/offline-recovery-feedback` `c5de027162e6e57ba720b90694d08f106851f4f5`. Revalidate live refs and existing release evidence read-only, write and render active 5R-R, replace only the invalid `decisionsNeeded` field shape with established `decision`, `status`, `whyItMatters`, and `workaround` fields, reconcile 5R as historically stopped at rendered verification, and resume the same exact ten-path closeout.
 
@@ -5330,7 +5384,7 @@ Dashboard closeout: on full pass, mark 5R-R done; retain 5R as historically stop
 
 Suggested next block: `5S — Phase 5 Transition And Next-Objective Intake` only after Ryan names the next objective.
 
-Result: the exact ten-path working set, empty index, local `main` `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, live and cached merge head `ddc2f02f10fad85fb9936806b5fd84eda806069c`, retained feature branch `c5de027162e6e57ba720b90694d08f106851f4f5`, exact merge ancestry and sixteen-path package, merged PR #92, sole successful Fly Deploy run `30464960703`, job `90620267980`, zero annotations, and existing one-request HTTP 200 `status: ok` health evidence passed. Active 5R-R rendered correctly. The recovery replaced only the invalid decision-queue fields with established `decision`, `status`, `whyItMatters`, and `workaround` fields and changed no renderer source. Final JSON, generated currentness, health, whitespace, task accounting, and rendered decision title, reason, and waiting posture passed. 5R remains historically stopped at its original rendered verification; 5R-R is done subject to the containing exact ten-path `[skip actions]` commit reaching live `main` non-force with zero workflows, checks, statuses, or deployments. Task 2.8 remains released; Task 2 is current solely as Ryan's transition gate; Tasks 2.2 and 2.7 remain parked; Phase 5 remains active at 100%; and no successor starts.
+Result: the exact ten-path working set, empty index, local `main` `7d8ce1a33814c378b89f2a9ed4d6d85dbe8b1eeb`, live and cached merge head `ddc2f02f10fad85fb9936806b5fd84eda806069c`, retained feature branch `c5de027162e6e57ba720b90694d08f106851f4f5`, exact merge ancestry and sixteen-path package, merged PR #92, sole successful Fly Deploy run `30464960703`, job `90620267980`, zero annotations, and existing one-request HTTP 200 `status: ok` health evidence passed. Active 5R-R rendered correctly. The recovery replaced only the invalid decision-queue fields with established `decision`, `status`, `whyItMatters`, and `workaround` fields and changed no renderer source. Final JSON, generated currentness, health, whitespace, task accounting, and rendered decision title, reason, and waiting posture passed. 5R remains historically stopped at its original rendered verification; 5R-R is done and durable through containing closeout commit `1d149d787739495edc976bd81117abab1497f98d`, whose non-force live-main alignment and zero workflows, checks, statuses, or deployments passed. Task 2.8 remains released; Tasks 2.2 and 2.7 remain parked; the later 5S-R transition owns Phase 5 closeout.
 
 ### Confirmed Work Block 5R: Offline Recovery Production Release
 
@@ -6315,3 +6369,336 @@ Completion report: return exact visible/collapsed before-and-after counts, wordi
 Result: Personal now keeps 17 spending-or-budgeted category rows primary and starts 15 zero-spend/no-budget rows behind an exact-count disclosure, reducing the measured category fragment from 1,018.46px to 668.63px. BFM keeps 19 rows primary and starts 10 inactive rows collapsed while its two zero-spend budgeted categories remain visible with explicit `0% of` budget text. Every primary row now exposes percentage-and-budget or `No budget` text; the existing totals, percentages, thresholds, inclusion, category definitions, drill, subcategory, Details/Compare, HTMX, authentication, CSP, PWA, responsive, and entity behavior remain unchanged. The orphan notice now uses user-facing category-list wording and a `Review and reassign` link while preserving count and once-per-session behavior. Baseline and final full smoke, complete maintained both-auth browser coverage including Enter/Space, direct disposable Personal/BFM visual inspection, Luxe Legacy regression-only rendering, syntax, JSON, dashboard, whitespace, cleanup, zero-staging, exact-scope, and preserved-file checks passed. Evidence: `command-center/logs/2026-07-26-dashboard-category-signal-density-5f.md`.
 
 Suggested next work block: after verified 5F closeout, separately decide whether to run a 5F-R durability/publication block for the accumulated verified Phase 5 product changes. Task 2.2 and 5D remain parked; Tasks 2.4-2.5 remain decision-gated; Tasks 2.7-2.8 remain separate.
+
+## Phase 6: Operational Reliability, Monitoring, And Recovery Currency
+
+Status: done at 100% required completion through verified 6E transition accounting.
+
+Goal: establish explicit, maintainable operating cadences for currentness monitoring, recovery readiness, dependency/runtime upkeep, and retained-risk triage without confusing source-defined behavior, dated external evidence, protected state, or separately authorized live action.
+
+1. **Task 1: Design the operational monitoring and currentness contract (`P6-T1`).** Status: done locally through 6A. The existing operations matrix is the canonical contract for owners, signals, intended cadences, stale thresholds, allowed observations, required evidence, escalation states, and no-remediation gates; the operator runbook carries the matching execution sequence. No external or protected observation or automation occurred.
+2. **Task 2: Define backup, integrity, restore-drill, and recovery-currency cadence (`P6-T2`).** Status: done locally through 6B. The canonical recovery contract defines daily application-consistent recovery sets with 36-hour currency, 14/8/12 retention, weekly disposable-copy integrity, quarterly isolated restore drills, monthly and event-driven review, entity isolation, sanitized evidence, fail-closed cleanup, and exact authorization rungs without claiming current protected evidence.
+3. **Task 3: Define dependency, runtime, GitHub Action pin, and toolchain review cadence (`P6-T3`).** Status: done locally through recovered 6C-R. Exact existing Python 3.14.3 was identified without installation or repair, the static checker ran once and passed both Synthetic CI and Fly Deploy contracts, and the canonical maintenance contract, matrix, and runbook are accepted locally while external currentness and all changes remain separately gated.
+4. **Task 4: Establish maintenance triage, escalation, and retained-risk governance (`P6-T4`).** Status: done locally through 6D and transition-accounted through 6E. The canonical contract defines evidence-first intake, normalized states, severity and classification routing, retained-risk records, monthly and event-driven review, no-auto-remediation, issue reconciliation, and Phase 6 exit evidence without activating repairs or live action.
+
+The four tasks require separately confirmed work blocks. Confirmed 6E authorizes only Task 4 transition accounting, Phase 6 closure, the adopted Phase 7 objective and numbered inventory, milestone correction, a first planning gate, and local command-center verification. It authorizes no Phase 7 execution, observation, protected action, repair, remediation, Git, publication, or live action.
+
+### Confirmed Work Block 6E: Phase 6 Transition And Operational Safeguards Activation Intake
+
+Status: done locally and verified for Task 4 (`P6-T4`) transition accounting only.
+
+Included: reconcile completed 6D and the stale `state.json.nextMilestone`; close Phase 6 at 100% required completion; adopt Phase 7 — Operational Safeguards Activation And Currentness Proof; create its durable numbered task inventory from the accepted monitoring, recovery, maintenance, and retained-risk contracts; select the first Phase 7 task as a Ryan-owned planning gate for a separate 7A proposal; align Runway OS; refresh the generated dashboard; and record one sanitized transition log.
+
+Excluded: Tasks 1-3 reopening; Phase 5 Tasks 2.2 and 2.7 reopening or implementation; every Phase 7 execution task; production/demo requests; GitHub, automation, provider, Plaid, database, backup, recovery, integrity, restore, cleanup, dependency, runtime, toolchain, product, test, workflow, authentication, configuration, README, Git, publication, deployment, browser, Computer Use, delegation, second opinion, external, protected, live, and unrelated actions.
+
+Defaults: preserve 55 resolved, one monitored high, and three parked medium issues; preserve P5-T22 and P5-T27 as optional parked work; close Phase 6 at 100%; create Phase 7 active at 0%; make exactly one Phase 7 task current under Ryan solely as the separate 7A planning gate; create no active Phase 7 work block; and keep changes local, unstaged, uncommitted, and unpublished.
+
+Tool route and fallback ladder: not applicable. This is non-UI local command-center work through filesystem and Node/JSON verification. Browser and Computer Use are not authorized; local CLI failure stops the block.
+
+Stop conditions: the adopted objective cannot be decomposed without another product or risk decision; a required Phase 6 blocker or contradiction appears; parked Phase 5 work would need to reopen; external, protected, implementation, remediation, publication, or Phase 7 execution becomes necessary; a user change cannot be preserved; scope expands; or links, JSON, dashboard currentness, health, whitespace, task accounting, exact scope, or zero staging fails.
+
+Verification: Phase 6 and P6-T4 are done at 100%; Phase 7 has the adopted objective and a durable numbered inventory; exactly one Phase 7 task is current only as a planning gate; no Phase 7 execution block is active; milestone and transition surfaces agree; parked tasks and issue accounting remain unchanged; local links, JSON, dashboard refresh/currentness/health, generated markers, whitespace, command-center-only scope, protected/product-input preservation, and zero staging pass.
+
+Dashboard closeout: on pass, Phase 6 and P6-T4 are done at 100%, Phase 7 is active at 0%, its first task is current under Ryan solely for 7A planning, 6E is done, and no Phase 7 execution block or live action is active. On failure, stop 6E with Phase 6 active at 100% and P6-T4 current for transition accounting.
+
+Suggested next work block: separately use the Work Block Planner to propose `7A — Public Operational Currentness Baseline` against the durable first Phase 7 task.
+
+Result: Phase 6 and P6-T4 are done at 100%; the stale milestone is corrected; Phase 7 — Operational Safeguards Activation And Currentness Proof — is active at 0% with seven durable tasks; Task 1 is current under Ryan solely as the separate 7A planning gate; Tasks 2-7 are planned; and no Phase 7 execution block is active. Issue accounting remains 55 resolved, one monitored high, and three parked medium, while P5-T22 and P5-T27 remain optional parked. JSON, links, dashboard refresh/currentness/health, generated markers, whitespace, exact task accounting, command-center-only scope, protected/product-input preservation, and zero staging pass. No product, test, external, protected, recovery, remediation, Git, publication, deployment, UI, delegation, or second-opinion action occurred.
+
+### Confirmed Work Block 6D: Maintenance Triage, Escalation, Retained-Risk, And Phase-Exit Contract
+
+Status: done locally and verified for Task 4 (`P6-T4`) only.
+
+Included: create one canonical command-center governance contract for intake sources, normalized workflow states, evidence, ownership, severity, prioritization, retained-risk records, review and expiry triggers, escalation, and no-auto-remediation boundaries; reconcile the four non-resolved issues to 55 resolved, one monitored high, and three parked medium; preserve Phase 5 Tasks 2.2 and 2.7 as optional parked work; define Phase 6 exit evidence; align the operations matrix, operator runbook, issues ledger, Runway OS sources, generated dashboard, and one sanitized 6D log; and close locally on pass.
+
+Excluded: reopening Tasks 1-3; implementing or reopening Phase 5 Tasks 2.2 and 2.7; implementing or remediating parked coverage; product, test, workflow, dependency, runtime, database, authentication, configuration, README, provider, Plaid, Fly, GitHub, automation, repair, cleanup, Git, publication, deployment, browser, Computer Use, delegation, second opinion, Phase 7, next-objective selection, and unrelated work.
+
+Defaults: review governance monthly and stale after 35 days plus event-driven review; require evidence labels before currentness claims; route security-critical and compatibility-risk evidence to Ryan-owned `decision-needed`; route unknown or stale evidence to `due` or `waiting-on-Ryan`; route maintenance-available work to `planned`; keep optional and broad residual coverage `parked`; retain recurring workflow inactivity as `high` and `monitored`; keep parked work visible but outside required phase-completion math; and permit no automatic remediation.
+
+Tool route and fallback ladder: not applicable. This is local non-UI command-center work through filesystem and Node/JSON verification. Browser and Computer Use are not authorized; local CLI failure stops the block.
+
+Stop conditions: evidence contradicts a proposed issue disposition or reveals a required unresolved Phase 6 blocker; a material decision falls outside the defaults; external, protected, repair, implementation, remediation, Phase 7, or successor work becomes necessary; a user change cannot be preserved; scope expands; or links, JSON, dashboard currentness, health, whitespace, task accounting, sensitive boundaries, exact scope, or zero staging fails.
+
+Verification: every signal class has evidence, owner, state, cadence or trigger, escalation, and a separate action gate; issue accounting is exactly 55 resolved, one monitored high, and three parked medium; the planning item acknowledges deterministic demo goals and only residual snapshot plus broad planning coverage; P5-T22 and P5-T27 remain parked and excluded from required math; Tasks 1-3 remain source-linked; Task 4 and phase-exit evidence are complete; local links, sensitive boundaries, JSON, exactly one current task, dashboard refresh/currentness/health, generated markers, whitespace, command-center-only scope, protected/product-input preservation, and zero staging pass.
+
+Dashboard closeout: on pass, mark 6D done, show Phase 6 active at 100% required completion, retain Task 4 current solely for transition and next-objective accounting, and activate no execution block or Phase 7. On failure, stop 6D, keep Task 4 current and decision-needed, leave Phase 6 at 75%, and activate no successor.
+
+Suggested next work block: only after Ryan names the next objective, separately propose `6E — Phase 6 Transition And Next-Objective Intake`.
+
+Result: [`maintenance-triage-retained-risk-governance-contract.md`](maintenance-triage-retained-risk-governance-contract.md) establishes evidence-first intake, the eight normalized states, severity and classification routing, monthly review stale after 35 days, event-driven triggers, retained-risk record minimums, no-auto-remediation, and the Phase 6 exit checklist. The issue ledger is exactly 55 resolved, one monitored high, and three parked medium; deterministic demo goals are acknowledged and only snapshots plus broad planning coverage remain parked. Phase 5 Tasks 2.2 and 2.7 remain optional parked work. The operations matrix, runbook, issues ledger, Runway OS, and sanitized 6D evidence are aligned, and all bounded local checks pass. Phase 6 is active at 100% required completion with Task 4 current only for transition accounting and no active execution block, Phase 7, or successor. No product, test, external, protected, repair, remediation, Git, publication, deployment, UI, delegation, or second-opinion action occurred.
+
+### Confirmed Work Block 6C-R: Exact Existing-Interpreter Recovery And Maintenance-Contract Closeout
+
+Status: done locally and verified for Task 3 (`P6-T3`) only.
+
+Included: preserve stopped 6C and its draft artifacts; perform bounded shell lookup in the order `python3`, then `python`; accept only the first existing executable that identifies an exact path and Python 3.9 or newer; invoke `scripts/ci_safety_check.py` exactly once through that executable; and only on pass accept the preserved maintenance contract, reconcile Runway OS, and close Task 3.
+
+Excluded: Tasks 1, 2, and 4 (`P6-T1`, `P6-T2`, `P6-T4`); installation or virtual-environment creation/repair; package installation, resolution, or inventory; mutable registry, GitHub, runner, Python-support, Chrome, Fly, Docker, advisory, installed-environment, hosted, protected, or production queries; product or container execution; dependency, lockfile, runtime, Docker/Fly, workflow, action-pin, runner, browser-tool, checker, product, test, authentication, database, protected-data, README, automation, Git, publication, deployment, delegation, second-opinion, live, and unrelated actions.
+
+Defaults: lookup `python3` before `python` and stop after the first valid candidate; record only the exact executable path and version; require Python 3.9 or newer because the checker uses that syntax; make one fresh checker invocation with no retry; and treat a pass as proof only that the tracked Synthetic CI and Fly Deploy workflows match their maintained local contracts.
+
+Stop conditions: neither candidate resolves; lookup returns a non-executable, ambiguous shim, or path that cannot identify itself; the interpreter is older than Python 3.9; metadata or checker invocation fails; expected checker pass messages are absent; tracked 6C inputs drift; repair, retry, installation, package inspection, external query, toolchain change, Task 4, or another excluded action becomes necessary; a user change cannot be preserved; or JSON, links, dashboard currentness, health, whitespace, task accounting, exact scope, or zero staging fails.
+
+Verification: record the exact interpreter path and version; require both checker pass messages from the one invocation; confirm tracked requirements, Docker/Fly inputs, workflows, checker, safety contracts, and product sources remain unchanged; validate links, JSON, sensitive-content boundaries, and exactly one current task; refresh/currentness-check the dashboard; run command-center health and `git diff --check`; and prove command-center-only changes plus zero staging.
+
+Dashboard closeout: on pass, mark 6C-R and Task 3 done, preserve 6C as the historical stopped attempt, accept the maintenance contract, set Phase 6 to 75%, make Task 4 current under Ryan solely as the separate 6D planning gate, and activate no maintenance change. On any stop, mark 6C-R stopped, keep Task 3 current and decision-needed, keep Phase 6 at 50%, and leave Task 4 planned.
+
+Suggested next work block: separately propose `6D — Maintenance Triage, Escalation, And Retained-Risk Governance` for Task 4 (`P6-T4`) only.
+
+Result: `python3` resolved to exact existing Python 3.14.3 at `/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/bin/python3.14`. Tracked checker inputs showed no Git diff. The checker was invoked exactly once through that path and returned both required Synthetic CI and Fly Deploy pass messages with status zero. The canonical maintenance contract, matrix, and runbook are accepted locally. Chrome local-file policy blocked reloading the existing dashboard tab; no retry or workaround followed, while JSON, dashboard refresh, generated currentness and markers, health, links, sensitive-content boundary, whitespace, exact task accounting, command-center-only scope, unchanged tracked inputs, and zero staging passed. No installation, virtual-environment repair, package inspection, external query, product/container execution, dependency/runtime/workflow/action/runner/tool change, Git/publication, deployment, live action, or Task 4 work occurred. Task 3 and 6C-R are done, Phase 6 is 75%, and Task 4 is current solely as the separate 6D planning gate.
+
+### Confirmed Work Block 6C: Dependency, Runtime, Action-Pin, And Toolchain Review Contract
+
+Status: stopped before required static workflow-safety proof for Task 3 (`P6-T3`).
+
+Included: create the canonical tracked-source inventory and review contract for Python and container runtime declarations, bounded runtime and browser-test requirements, GitHub workflows and immutable action pins, mutable runner images, Fly CLI and deployment inputs, Chrome/Playwright compatibility, implicit pip/Node inputs, review cadences and stale thresholds, risk classifications, evidence labels, and separate implementation/publication gates; reconcile the operations matrix and operator runbook; run the existing static workflow-safety checker once; verify the local command-center package; and close Task 3 on pass.
+
+Excluded: Tasks 1, 2, and 4 (`P6-T1`, `P6-T2`, `P6-T4`); package registries, GitHub or runner metadata, Python support, Chrome, Fly, Docker registry, or security-advisory queries; installed-environment inventory, `pip list`, package installation or resolution, container build, application execution, dependency/lockfile/Docker/Fly/workflow/action-pin/runner/runtime/tool change, Dependabot or automation, product/test/authentication/database/protected-data/README change, staging, commit, push, PR, merge, publication, delegation, second opinion, external action, and unrelated work.
+
+Defaults: refresh the tracked-source inventory monthly and after relevant source changes, stale after 35 days; perform a separately authorized authoritative external-currentness review quarterly, stale after 100 days; trigger review on security advisories, action-runtime deprecations, runner changes, runtime EOL notices, build/deployment-tool failures, or Chrome/Playwright incompatibility; classify findings as security-critical, compatibility-risk, maintenance-available, or unknown-currentness; treat version ranges, mutable image tags, and `ubuntu-latest` as drift surfaces rather than automatic defects; choose no lockfile strategy, updater, runtime upgrade, or remediation in 6C; and preserve evidence labels and Central Time.
+
+Stop conditions: tracked sources contradict the inventory; a material cadence or classification decision falls outside the defaults; external currentness or installed state is needed; a dependency, runtime, workflow, action-pin, runner, browser, Docker, Fly, or publication change becomes necessary; a user change cannot be preserved; scope expands into Task 4; or the one static workflow-safety check, links, JSON, dashboard currentness, health, whitespace, task accounting, exact scope, or zero staging fails.
+
+Verification: every tracked maintenance surface has source path, owner, declared constraint, drift type, cadence, stale threshold, evidence, classification, and next gate; tracked declarations remain distinct from authoritative external currentness; each change family has a separate verification/publication boundary; existing immutable action and workflow safety contracts remain unchanged; run the existing static safety checker once; resolve links and scan new text; validate JSON and exactly one current task; refresh/currentness-check the dashboard; run command-center health and `git diff --check`; prove command-center-only scope and zero staging; skip smoke, browser, container-build, installed-version, registry, hosted, and production checks.
+
+Dashboard closeout: on pass, mark 6C and Task 3 done, set Phase 6 to 75%, make Task 4 current under Ryan solely as the separate 6D planning gate, and activate no maintenance review or change. On failure, stop 6C and keep Task 3 current and decision-needed with a sanitized blocker.
+
+Suggested next work block: separately propose `6C-R — Exact Existing-Interpreter Recovery And Maintenance-Contract Closeout` for Task 3 (`P6-T3`) only.
+
+Stop result: the confirmed `.venv/bin/python scripts/ci_safety_check.py` command was invoked exactly once. The shell returned status 127 because `.venv/bin/python` does not exist, so the checker did not run. The draft inventory, contract, matrix, runbook, and passing preflight evidence remain preserved. No substitute interpreter, installed-environment inspection, installation, repair, retry, workflow/dependency/runtime/toolchain change, external query, publication, Task 4 work, or successor action occurred. Task 3 remains incomplete and Phase 6 remains at 50%.
+
+### Confirmed Work Block 6B: Backup, Integrity, Restore-Drill, And Recovery-Currency Contract
+
+Status: done locally and verified for Task 2 (`P6-T2`) only.
+
+Included: establish a protected-data-safe recovery contract for backup cadence and freshness, retention tiers, disposable-copy integrity checks, isolated restore drills, recovery-currency reviews and triggers, sanitized evidence, cleanup, escalation, and exact authorization gates; reconcile the operations matrix and operator runbook; verify the local command-center package; and close Task 2 on pass.
+
+Excluded: Tasks 1, 3, and 4 (`P6-T1`, `P6-T3`, `P6-T4`); databases, backups, WAL/SHM files, uploads, financial rows, `local_state/`, Fly volumes, Time Machine, protected storage, `scripts/sync_prod_to_local.sh`, backup/integrity/migration/seed/transfer/restore/recovery/cleanup/application commands, storage-provider selection or purchase, automation, product/test/workflow/dependency/configuration/authentication/README changes, staging, commit, push, PR, merge, publication, delegation, second opinion, external action, and unrelated work.
+
+Defaults: treat Personal, BFM, and LL as one scheduled recovery set while keeping storage, evidence, and restoration entity-isolated; target one application-consistent backup daily and stale after 36 hours; retain 14 daily, 8 weekly, and 12 monthly recovery points; verify integrity weekly on a separately authorized disposable copy; run an isolated disposable-`DATA_DIR` restore drill quarterly; review recovery currency monthly and after a migration, storage/topology change, backup-method change, or recovery incident; target a recovery point no older than 36 hours once implemented; make no recovery-time promise until a drill measures it; use Central Time and sanitized evidence only.
+
+Stop conditions: a material policy choice falls outside the confirmed defaults; tracked source contradicts the recovery model; current protected or external state becomes necessary; a storage mechanism, cost, automation, or protected action must be chosen; a user change cannot be preserved; scope expands beyond Task 2; or JSON, links, dashboard currentness, health, whitespace, task accounting, exact scope, or zero staging fails.
+
+Verification: require owner, cadence, freshness, retention, evidence, protection, cleanup, escalation, and next authorization gate for each contract section; distinguish policy targets from current recovery proof; make entity isolation and application-consistent SQLite/WAL handling explicit; prevent protected values from entering tracked artifacts; validate links, JSON, and exactly one current task; refresh/currentness-check the dashboard; run command-center health and `git diff --check`; prove command-center-only scope, preservation, and zero staging; skip product smoke and browser suites.
+
+Dashboard closeout: on pass, mark 6B and Task 2 done, set Phase 6 to 50%, make Task 3 current under Ryan solely as the separate 6C planning gate, leave Task 4 planned, and activate no protected work. On failure, stop 6B and keep Task 2 current and decision-needed with a sanitized blocker.
+
+Suggested next work block: separately propose `6C — Dependency, Runtime, Action-Pin, And Toolchain Review Contract` for Task 3 (`P6-T3`) only.
+
+Result: the canonical [`backup-integrity-recovery-currency-contract.md`](backup-integrity-recovery-currency-contract.md) establishes one daily application-consistent three-entity recovery set with 36-hour currency, 14 daily/8 weekly/12 monthly retention, weekly disposable-copy integrity, quarterly isolated restore drills, monthly and event-driven review, a target recovery point no older than 36 hours once implemented, no recovery-time promise until measured, entity isolation, sanitized evidence, fail-closed cleanup, and seven separate authorization rungs. The operations matrix and operator runbook are aligned. Local links, contract markers, matrix fields, boundary-aware secret scanning, JSON, dashboard currentness, health, whitespace, task accounting, exact command-center-only scope, and zero staging pass. No protected or external state was queried; no acquisition, integrity, restore, cleanup, mechanism selection, automation, implementation, publication, delegation, or successor work occurred.
+
+### Confirmed Work Block 6A: Operational Monitoring And Currentness Contract
+
+Status: done locally and verified for Task 1 (`P6-T1`) only.
+
+Included: finalize the existing operations monitoring matrix as the canonical contract for Runway OS, production and demo health, Daily Plaid Sync, the independent sync monitor, Synthetic CI, Fly Deploy, and protected provider-setting currentness; define owners, evidence labels, cadences, thresholds, escalation states, and explicit no-remediation boundaries; align the operator runbook; verify the local command-center package; and close Task 1.
+
+Excluded: Tasks 2-4 (`P6-T2`-`P6-T4`); production or demo requests; GitHub, workflow, or automation currentness checks; provider or database access; Plaid activity; monitor or automation creation or mutation; product, test, workflow, dependency, configuration, authentication, or database changes; staging, commit, push, PR, merge, deployment, delegation, second opinion, parent update, and unrelated work.
+
+Defaults: use Central Time; preserve source-verified, historical, externally unverified-current, and protected labels; define Runway OS currentness after every meaningful state change; intended production health daily and after authorized deployment with stale after 36 hours; intended demo health weekly and after authorized demo deployment with stale after eight days; retain the Daily Plaid Sync monitor's daily 7:00 AM local design, 36-hour stale threshold, and three-hour incomplete threshold; review independent-monitor currentness weekly; keep Synthetic CI and Fly Deploy exact-ref event-driven; check protected provider settings only before a relevant production claim or after a known account-setting change; and treat every alert as evidence and escalation only.
+
+Stop conditions: a material policy choice is not covered by the defaults; local sources contradict a proposed surface or signal; current external or protected state becomes necessary; implementation or monitor creation becomes necessary; scope expands into Tasks 2-4; a user change cannot be preserved; or JSON, links, dashboard currentness, health, whitespace, task accounting, exact scope, or zero staging fails.
+
+Verification: resolve every local link; require owner, signal, cadence, threshold, allowed observation, evidence, escalation, and remediation gate for every governed surface; prove no mutable external state is presented as current; scan new text for secret or protected-value leakage; validate JSON and exactly one current task; refresh and currentness-check the dashboard; run command-center health and `git diff --check`; prove command-center-only scope and zero staging.
+
+Dashboard closeout: on full pass, mark 6A and Task 1 done, set Phase 6 to 25%, make Task 2 current under Ryan solely as the separate 6B planning gate, and leave no external or live work active.
+
+Suggested next work block: separately propose `6B — Backup, Integrity, And Recovery-Currency Contract` for Task 2 (`P6-T2`) only.
+
+Result: the existing operations matrix is now the canonical currentness contract. It defines intended daily production health with a 36-hour stale threshold, weekly demo health with an eight-day stale threshold, the established Daily Plaid Sync alert thresholds, weekly review of the independent monitor itself, exact-ref event-driven CI/deploy/release evidence, protected and claim-specific provider evidence, a minimum observation record, and evidence-only escalation with no remediation authority. The operator runbook now carries the matching classification and escalation sequence. Local links, matrix fields, evidence labels, boundary-aware secret scanning, JSON, dashboard currentness, health, whitespace, task accounting, exact command-center-only scope, and zero staging pass. No external or protected state was queried and no automation, implementation, remediation, publication, or sequel occurred.
+
+## Phase 7: Operational Safeguards Activation And Currentness Proof
+
+Status: active at 0%. Task 1 remains current and decision-needed after completed decision-only 7A-F; Tasks 2-7 remain planned.
+
+Goal: convert the Phase 6 monitoring, recovery, maintenance, and retained-risk contracts into dated bounded evidence and safely activated operational safeguards without collapsing public observation, protected recovery, implementation, remediation, publication, or live action into one authorization.
+
+1. **Task 1: Establish the public and credential-free operational currentness baseline (`P7-T1`).** Status: current and decision-needed after completed decision-only 7A-F. Production health passed; demo health returned HTTP 404; the demo is accepted as stale with respect to `/health`; and the exact immutable source, clean-source method, target, command, protected action budget, health success, no-retry, and separate-rollback contract are selected. Authentication, preflight, deployment, health proof, the workflow-state read, newest-scheduled-run read, and monitor read remain unconsumed and separately gated.
+2. **Task 2: Select the recovery mechanism, target topology, and protected operating plan (`P7-T2`).** Status: planned. Decide exact storage/provider, cost, acquisition method, process/WAL boundary, entity-isolated destinations, protection, retention enforcement, rollback, automation design, evidence, and authorization gates before protected implementation.
+3. **Task 3: Implement daily application-consistent recovery acquisition and 14/8/12 retention safeguards (`P7-T3`).** Status: planned. Use the separately approved mechanism and exact protected targets; keep acquisition, retention enforcement, cleanup, automation, and publication inside explicit gates.
+4. **Task 4: Prove disposable-copy integrity verification and exact cleanup (`P7-T4`).** Status: planned. Run the first separately authorized weekly-style integrity check on isolated copies with entity-isolated evidence, denied application re-entry, and fail-closed cleanup.
+5. **Task 5: Run an isolated restore drill and measure recovery readiness (`P7-T5`).** Status: planned. Restore only to a disposable `DATA_DIR`, verify schema and application-readiness within the authorized boundary, measure time to ready-to-cut-over evidence, and make no live replacement.
+6. **Task 6: Conduct authoritative dependency, runtime, action-pin, runner, and toolchain currentness review (`P7-T6`).** Status: planned. Use separately authorized authoritative external sources, classify findings under the 6C-R contract, and stop before update, installation, workflow change, publication, or deployment.
+7. **Task 7: Reconcile operational currency, retained risk, and Phase 7 exit evidence (`P7-T7`).** Status: planned. Reconcile dated evidence, stale or protected gaps, safeguards actually activated, retained risk, required-versus-optional completion, and the next transition gate without inferring remediation or a successor.
+
+The seven tasks require separately confirmed work blocks. Confirmed 7A authorizes Task 1 only and exactly the bounded read-only observations below. It authorizes no diagnosis, remediation, Tasks 2-7, protected access, implementation, publication, deployment, or successor action.
+
+### Confirmed Work Block 7A-F — Demo Deployment Refresh Decision
+
+Status: done as decision-only at 4:10 AM CDT
+
+Included:
+
+1. Task 1 (`P7-T1`) only.
+2. Write and verify active 7A-F before contract analysis.
+3. Select immutable source commit `1d149d787739495edc976bd81117abab1497f98d` only if local `HEAD` and cached `origin/main` remain aligned, required health/demo/runtime files exist at that commit, and the worktree has no product diff.
+4. Require any later deployment to use a disposable clean snapshot derived from that exact commit rather than this dirty worktree.
+5. Select exact app `ledger-oak-demo`, config `fly.demo.toml`, existing local `flyctl v0.4.35`, and future command `flyctl deploy --app ledger-oak-demo --config fly.demo.toml --remote-only`.
+6. Define the later protected sequence as Ryan-owned exact-account Fly CLI authentication, one sanitized exact-app status preflight, one deployment attempt, and one credential-free demo `/health` request.
+7. Require the post-deployment health request to return HTTP 200, no redirect, and exact minimal `{"status":"ok"}`.
+8. Preserve Release v9 and its observed image as the known previous-release reference; do not automatically roll back or retry; require separate rollback confirmation.
+9. Preserve volume `ledger_oak_demo_data`; prohibit reseeding, database access, and data mutation.
+10. Record the exact future contract and reconcile Runway OS.
+
+Excluded:
+
+1. Tasks 2-7 (`P7-T2`-`P7-T7`).
+2. Deployment, restart, rollback, image change, hosted mutation, Fly authentication/status/release/log/config/secret/machine/database access, or another HTTP request.
+3. The three unconsumed 7A reads, creation of a clean snapshot, or invoking `flyctl` beyond local version/help inspection.
+4. Product, route, test, workflow, dependency, README, Fly-config, Docker, credential, demo-seed, volume, protected, financial, Plaid, provider, production-data, Git fetch/stage/commit/push/PR/merge/publication, delegation, second opinion, successor, and unrelated work.
+
+Owner and recommended agent: Codex Desktop for local Git/config/CLI-contract verification and Runway OS stewardship, without delegation or second opinion. Ryan owns authentication, deployment, rollback, every hosted mutation, and every successor decision.
+
+Tool route: local filesystem, local Git without fetch, and non-network Fly CLI version/help only. UI, network, authentication, and external fallback are unauthorized. A later block must use existing `flyctl` after Ryan establishes the exact owning account directly; missing or ambiguous credentials stop.
+
+Defaults: exact source commit `1d149d787739495edc976bd81117abab1497f98d`; disposable clean source derived from that commit; exact app/config/command above; existing `flyctl v0.4.35`; preserve the demo volume; do not seed; later consume exactly one preflight, one deploy attempt, and one health request; retain only sanitized evidence; stop without retry; require separately confirmed rollback; keep all command-center changes local, unstaged, uncommitted, and unpublished.
+
+Stop conditions: ref drift, a product diff, missing required route/config/runtime input, target or volume drift, absent or changed CLI/flags, inability to define a clean exact-commit snapshot, inability to preserve the exact authentication/preflight/deploy/health/rollback contract, need for an external/product/install/deploy or excluded action, an unpreservable user change, scope expansion, or local command-center verification failure.
+
+Verification: selected commit/ref/ancestry/required files; health route and exemptions; zero product diff; exact app/config/volume; local CLI version and flags; exact-commit clean-source semantics; later action counts, success response, sanitization, no-retry, and separate rollback; no external/authentication/snapshot/deploy/health/product/protected/Git-publication/delegation/second-opinion/successor action; JSON/links, exactly one current task, exactly one active block, dashboard refresh/currentness/health, generated markers, `git diff --check`, command-center-only scope, preserved user files, and zero staging.
+
+Dashboard closeout: on pass, mark 7A-F done as decision-only, keep Phase 7 at 0%, return Task 1 to Ryan as current and decision-needed, retain Tasks 2-7 as planned, leave zero active blocks, and point to a separately proposed 7A-N. On contradiction, stop 7A-F without activating a successor.
+
+Suggested next work block: `7A-N — Exact Demo Deployment Refresh And Health Proof`, separately proposed and confirmed. It may contain Ryan-owned Fly CLI authentication, one exact-app preflight, one deployment from the disposable exact-commit snapshot, and one credential-free demo health request; it includes no automatic rollback or resumed broader-currentness reads.
+
+Result: local `HEAD` and cached `origin/main` equal immutable source `1d149d787739495edc976bd81117abab1497f98d`; selected source contains the health route and exemptions, exact demo app/config/volume, and Docker/runtime inputs; there is no product diff; existing `flyctl v0.4.35` exposes `--app`, `--config`, and `--remote-only`; and an exact-commit `git archive` source excludes all current dirty and untracked work. The accepted 7A-N contract uses Ryan-owned exact-account authentication, one sanitized exact-app status preflight, one deployment attempt, and one credential-free no-redirect health request requiring HTTP 200 with exact minimal `{"status":"ok"}`. It stops without retry, preserves Release v9 only as the known previous-release reference, requires separate rollback confirmation, preserves `ledger_oak_demo_data`, and prohibits seeding, database access, and data mutation.
+
+Dashboard closeout result: 7A-F is done as decision-only, Phase 7 remains at 0%, Task 1 remains current and decision-needed under Ryan, Tasks 2-7 remain planned, and there is no active work block. No external, authentication, snapshot, deployment, health, product, protected, Git, publication, delegation, second-opinion, or successor action occurred.
+
+### Confirmed Work Block 7A-M — Exact Demo Image-Lineage Evidence Decision
+
+Status: done as decision-only at 3:49 AM CDT
+
+Included:
+
+1. Task 1 (`P7-T1`) only.
+2. Write and verify active 7A-M before evidence analysis.
+3. Reconcile the existing demo `/health` 404, current route and exemptions, exact Release v9 status/image/timestamp, and local first-route commit chronology.
+4. Use local Git history only as needed to verify that `/health` entered tracked source after the observed Release v9 boundary.
+5. If evidence remains consistent, accept `ledger-oak-demo is stale with respect to /health`, preserve full image-to-Git commit lineage as unresolved, make no broader-currentness claim, and reconcile Runway OS.
+
+Excluded:
+
+1. Tasks 2-7 (`P7-T2`-`P7-T7`).
+2. Another HTTP request, `flyctl`, API, browser, Computer Use, the three unconsumed 7A reads, or any external action.
+3. Fly authentication, logs, configuration, secrets, machines, images, console, SSH, database, repair, restart, rollback, deployment, image change, or demo seed.
+4. Product, route, test, workflow, dependency, README, deployment-file, protected-data, financial, Plaid, provider, production-data, Git fetch/stage/commit/push/PR/merge/publication, delegation, second opinion, successor, and unrelated work.
+
+Owner and recommended agent: Codex Desktop in the current task, without delegation or second opinion. Ryan retains every successor decision.
+
+Tool route and fallback ladder: not applicable. Use only local filesystem and Git evidence. Network, UI, Computer Use, and external fallback are unauthorized; local evidence failure stops the block.
+
+Stop conditions: the route predates the observed release boundary; the exact app/release evidence cannot be preserved; evidence contradicts the 404, release, image, timestamp, or chronology; the conclusion would require claiming the exact image commit; an excluded action becomes necessary; a user change cannot be preserved; scope expands; or command-center verification fails.
+
+Verification: confirm the 7A-H app/release/image/status/timestamp evidence, 7A demo 404, current route and exemptions, and exact local first-route chronology; limit the accepted claim to `/health`; preserve full image-to-Git commit lineage as unresolved; prove no external/retry/mutation/repair/deployment/product action; validate JSON/links, exactly one current task, dashboard refresh/currentness/health, generated markers, relevant diff, `git diff --check`, command-center-only scope, preserved existing files, and zero staging.
+
+Dashboard closeout: on pass, mark 7A-M done as decision-only, record `stale with respect to /health — evidence sufficient`, preserve full lineage as unresolved, keep Phase 7 at 0% and Task 1 current and decision-needed, and point to a separately proposed 7A-F. On contradiction, stop 7A-M and preserve the unresolved state.
+
+Suggested next work block: `7A-F — Demo Deployment Refresh Decision`, Task 1 only. It does not start automatically.
+
+Result: the existing evidence is consistent and sufficient for the narrow classification `ledger-oak-demo is stale with respect to /health`. The exact demo endpoint returned a non-redirecting 404; the March 3 demo snapshot and the parent of commit `1536244` lack the route; commit `1536244` first adds `/health` and the then-applicable entity-context exemption on March 27; current source keeps `/health` authentication- and entity-setup-exempt; and exact Release v9 is `Complete`, bound to the observed deployment image, and dated March 9. Full image-to-Git commit lineage remains unresolved, and no broader-currentness claim is accepted.
+
+Smallest next gate: separately propose `7A-F — Demo Deployment Refresh Decision` for Task 1 only. Do not deploy, retry `/health`, or resume broader currentness.
+
+### Confirmed Work Block 7A-H — Exact Fly Dashboard Handoff And Deployment-Lineage Observation
+
+Status: done as observation-only at 3:30 AM CDT after two of three navigation actions. The third action remained unused because no safe image-detail or source link was exposed.
+
+Included:
+
+1. Task 1 (`P7-T1`) only.
+2. Write and verify active 7A-H before opening Fly.
+3. Establish one task-owned Chrome tab for globally unique app `ledger-oak-demo`; if authentication is required, pause while Ryan signs in directly and accept only a value-free exact-account-ready attestation.
+4. Perform at most three read-only navigations: exact app page, releases/deployments view, and current release/image detail only if needed.
+5. Retain only sanitized app, release status/time/version, image reference/digest, and source/commit lineage; classify stale deployment, current-image route/runtime mismatch, exact lineage unresolved, or safe stop; and reconcile Runway OS.
+
+Excluded:
+
+1. Tasks 2-7 (`P7-T2`-`P7-T7`).
+2. Any `flyctl` or HTTP retry and the three unconsumed 7A reads.
+3. Fly logs, configuration, environment, secrets, tokens, console, SSH, billing, members, machines, IPs, volumes, databases, actor/account/organization retention, mutation, repair, restart, rollback, deployment, image change, demo seeding, financial data, Plaid, provider or protected access, product/test/workflow/dependency/README/deployment-file change, Git, publication, delegation, second opinion, successor, and unrelated work.
+
+Owner and recommended agent: Codex Desktop for orchestration, observation, sanitization, and closeout; Ryan owns direct authentication and every successor decision.
+
+Tool route and fallback ladder: structured Chrome control in one task-owned Fly tab is primary. Ryan handles authentication directly if required. If the exact page is visibly present but structured control cannot identify or read it, invoke the UI-control-fallback skill and use Computer Use only in the same verified app/account/window. Accessibility-index actions and one transient non-retained targeting screenshot are allowed; coordinates only after exact stable targeting. The authorized action remains read-only, the maximum three navigation actions never resets, successful actions are not repeated, and every action is re-read before continuing or stopping.
+
+Stop conditions: Ryan cannot safely establish the exact owning account; app/account/tab ambiguity; credentials, MFA, secrets, or excluded identifiers become visible to or requested by Codex; safe metadata cannot be isolated; the three-action budget is exhausted; an excluded action becomes necessary; evidence creates a plan-changing contradiction; a user change cannot be preserved; scope expands; or command-center verification fails.
+
+Verification: prove active 7A-H before UI work; record the value-free handoff if needed, exact app/tab, Central Time, navigation count, sanitized metadata, classification, limitations, and no-mutation result; prove no retry, sensitive retention, repair, restart, deployment, or broader currentness action; validate JSON and links, exactly one current task, dashboard refresh/currentness/health, generated markers, relevant diff, `git diff --check`, preserved existing files, and zero staging.
+
+Dashboard closeout: on completed observation, mark 7A-H done as observation-only; on an authentication, targeting, sensitivity, or verification failure, mark it stopped with the sanitized reason. In every outcome keep Phase 7 at 0%, Task 1 current and decision-needed, Tasks 2-7 planned, and no successor active.
+
+Suggested next work block: conditional—`7A-F` for confirmed stale deployment, `7A-I` for a current-image runtime investigation, or `7A-M` for unresolved lineage. None starts automatically.
+
+Result: Ryan's exact value-free account-and-app readiness attestation passed. Navigation action 1 reached the exact sign-in return path and action 2 opened Release v9; action 3 remained unused. The exact app/release surfaces showed Release v9 status `Complete`, image `registry.fly.io/ledger-oak-demo:deployment-01KK97KM2PS5M48DT1HR4YW7ZG`, and creation at March 9, 2026 12:02 UTC (7:02 AM CDT). The release page exposed no source commit and no safe image-detail link. Exact image-source lineage therefore remains unresolved under the confirmed no-age-only-inference rule, although the dated release/image evidence materially strengthens the stale-deployment hypothesis because it predates the March 27 health-route commit. No identity, credential, MFA, excluded metadata, retry, mutation, repair, restart, deployment, or broader currentness action occurred.
+
+Smallest next gate: separately plan `7A-M — Exact Demo Image-Lineage Evidence Decision` to decide whether the dated release/image evidence is sufficient for a later deployment-refresh decision or whether a new exact source-binding method should be authorized. Do not retry, repair, deploy, or resume broader currentness.
+
+### Confirmed Work Block 7A-D — Demo Deployment-Lineage Diagnosis
+
+Status: stopped on authenticated Fly metadata unavailability
+
+Included:
+
+1. Task 1 (`P7-T1`) only.
+2. Reconfirm the current `/health` route and exemptions, exact demo app/configuration and manual deployment path, commit lineage, and historical root-only evidence.
+3. Perform at most three exact read-only Fly metadata observations for `ledger-oak-demo`: status; releases with image; and image details only if still required.
+4. Retain only sanitized app, release, timestamp, status, image/digest, and source-lineage fields; clean disposable raw metadata; classify the diagnosis; and reconcile Runway OS.
+
+Excluded:
+
+1. Tasks 2-7 (`P7-T2`-`P7-T7`).
+2. Another HTTP request or continuation of the three unconsumed 7A reads.
+3. Fly logs, config, environment, secrets, actor identity, console, SSH, machine mutation, restart, deploy, rollback, image change, volume access, demo seed, database, financial, authentication, Plaid, provider, protected data, product/deployment-source change, repair, Git, publication, delegation, second opinion, and successor work.
+
+Owner and recommended agent: Codex Desktop in the current task. Ryan retains every retry, repair, restart, deployment, protected-access, currentness-resume, and successor decision.
+
+Tool route and fallback ladder: local filesystem/Git first; existing `flyctl v0.4.35` next for at most three exact metadata reads. A local failure before any outbound request may preserve that allocation for structured browser on the exact task-owned Fly app page. Any Fly response consumes the attempt; authentication, authorization, wrong-app, or service failure stops without UI workaround. If a visible exact Fly page is available but structured control fails, invoke the UI-control-fallback skill and use Computer Use only in the same verified account/app/window, with accessibility actions and one transient sanitized screenshot allowed and coordinates only after exact targeting.
+
+Stop conditions: app/account/window ambiguity; need for authentication, credentials, token entry, unsafe metadata, another HTTP request, logs, config, secrets, mutation, repair, restart, deploy, protected access, or another excluded action; exhausted budget; plan-changing source contradiction; unpreservable user changes; cleanup failure; scope expansion; or failed command-center verification.
+
+Verification: prove route/exemptions, demo/manual-deploy configuration, commit lineage, current local/cached refs, exact Fly query count, sanitized fields, classification, limitations, no-remediation, disposable cleanup, no HTTP/log/config/secret/product action, JSON/links, exactly one current task, dashboard refresh/currentness/health, generated markers, `git diff --check`, command-center-only changes, preserved user files, and zero staging.
+
+Dashboard closeout: on diagnostic pass, mark 7A-D done as diagnosis-only, keep Phase 7 at 0% and Task 1 current and decision-needed, and record the next exact gate. On safe stop, mark 7A-D stopped and retain the existing state.
+
+Suggested next work block: conditional—`7A-F` for confirmed stale deployment, `7A-I` for a current-image runtime mismatch, or `7A-M` for unresolved exact image lineage.
+
+Result: local route, exemption, demo configuration, manual deploy, commit lineage, current refs, and historical evidence passed. Demo commit `1a564e9` predates health-route commit `1536244`; current `HEAD` and cached `origin/main` `1d149d7` contain the route; historical demo evidence was root-only. The first exact Fly status observation returned an authentication-or-authorization failure and consumed the attempt. The release and conditional image observations were not performed. Disposable capture cleanup passed. No browser fallback, HTTP request, retry, credential action, log/config/secret access, mutation, repair, restart, deployment, protected action, or successor occurred.
+
+Smallest next gate after the stop: separately propose a Ryan-owned exact Fly account handoff or an already-authenticated task-owned Fly dashboard metadata observation for `ledger-oak-demo`. Do not authorize Codex credential handling, another health request, repair, restart, deployment, or continuation of broader currentness.
+
+### Confirmed Work Block 7A — Public Operational Currentness Baseline
+
+Status: stopped on the first failed observation
+
+Included:
+
+1. Task 1 (`P7-T1`) only.
+2. One credential-free request to `https://ledger-oak.fly.dev/health`.
+3. One credential-free request to `https://ledger-oak-demo.fly.dev/health`.
+4. One public query for the Daily Plaid Sync workflow identity and active state.
+5. One public query for its newest `schedule` run identifier, time, status, conclusion, and Central Time age.
+6. One read-only query for the exact `expense-tracker-daily-plaid-sync-monitor` identity, enabled state, sanitized definition summary, and newest execution time/result.
+7. Sanitized command-center evidence and local closeout.
+
+Excluded:
+
+1. Tasks 2-7 (`P7-T2`-`P7-T7`).
+2. Exact-ref Synthetic CI or Fly Deploy evidence because no exact ref is selected.
+3. Authentication, logs, workflow or automation mutation, Plaid sync, provider, database, financial, backup, recovery, protected-data, diagnosis, retry, repair, restart, deployment, product, test, Git, publication, delegation, second opinion, and unrelated work.
+
+Owner and recommended agent: Codex Desktop in the current task. Ryan retains every remediation and successor decision.
+
+Tool route and fallback ladder: health uses one credential-free CLI request per endpoint with no browser fallback. GitHub uses public API or CLI, then structured browser at the exact public workflow page, then Computer Use in the same task-owned Chrome tab only after a route failure before usable metadata, then safe stop. Automation uses the purpose-built connector, then Computer Use in the exact Codex Automations window only after connector insufficiency, then safe stop. A fallback preserves the remaining metadata-read allocation and never authorizes a second successful read, sign-in, account switch, edit, toggle, retry, or run-now action.
+
+Stop conditions: stop on the first health redirect, transport failure, non-200, or unexpected body; inactive workflow; missing, stale, unsuccessful, or over-three-hour incomplete scheduled run; missing, disabled, changed, failed, stale, or ambiguous monitor evidence; credentials, sensitive output, logs, or protected access; exhausted action budget; scope expansion; need for an excluded action; unpreservable user change; or failed local verification.
+
+Verification: record exact targets, routes, counts, Central Time, sanitized results, ages, evidence labels, threshold comparisons, limitations, and no-remediation confirmation. Require HTTP 200 and exact minimal `{"status":"ok"}` from both health endpoints; active workflow; newest scheduled run within 36 hours and healthy under the established completion threshold; exact monitor enabled, definition-matched, and recently passing within eight days. Validate JSON and links, refresh and health-check the dashboard, inspect generated markers and relevant diff, run `git diff --check`, and prove command-center-only changes plus zero staging.
+
+Dashboard closeout: on full pass, mark 7A and Task 1 done, set Phase 7 to 14%, preserve the monitored workflow-inactivity risk with refreshed evidence, make Task 2 current under Ryan solely for separate 7B planning, and activate no successor block. On any anomaly, mark 7A stopped, keep Phase 7 at 0% and Task 1 current and decision-needed, record the smallest next gate, and do not remediate.
+
+Suggested next work block on full pass: separately propose `7B — Recovery Mechanism And Protected Operating Plan Decision` for Task 2 only.
+
+Result: exactly two external reads were consumed. Production `/health` returned HTTP 200 with exact minimal `{"status":"ok"}` and no redirect at 2026-07-29 10:24 PM CDT. Demo `/health` returned HTTP 404 with a standard sanitized not-found response and no redirect at 2026-07-29 10:25 PM CDT. The fail-closed contract stopped the block before the three GitHub and automation reads. No retry, fallback, authentication, log access, diagnosis, mutation, protected action, repair, restart, deployment, or successor work occurred. Phase 7 remains at 0%; Task 1 remains current and decision-needed.
+
+Smallest next gate after the stop: use the Work Block Planner to propose a separate read-only demo-health route and deployment-configuration diagnosis. Do not repeat the consumed health request or authorize repair.

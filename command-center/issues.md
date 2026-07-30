@@ -4,7 +4,7 @@ These are known defects, risks, or rough edges. They are not active work unless 
 
 Phase 3 Task 7 is consolidated in `command-center/phase-3-findings-consolidation.md`. That catalog assigns stable IDs, explicit confidence, affected boundaries, sanitized reproductions, observed-versus-expected behavior, impacts, evidence sources, and dependency tags to the 55 Phase 3-derived entries below. The detailed acceptance checks remain authoritative in each matching issue section here.
 
-The local 4BR completion crosswalk reconciles the 55 Phase 3-derived entries to 52 resolved/durable items, two explicitly parked residual coverage items, and one planning/demo coverage item carried to Phase 5. Across this whole ledger, the four additional project issues are three resolved items and one monitored operational risk. Historical reproduction, “why not fixed,” and pre-release boundary paragraphs remain as captured evidence; each section's current `Status` line and the 4BR evidence log own present disposition.
+The local 4BR completion crosswalk originally reconciled the 55 Phase 3-derived entries to 52 resolved/durable items, two explicitly parked residual coverage items, and one planning/demo coverage item carried to Phase 5. Work block 6D reconciles the planning item after 5C's deterministic demo goals: the remaining snapshot and broad planning coverage is parked. Across this whole ledger, the four additional project issues are three resolved items and one monitored operational risk. Current accounting is 55 resolved, one monitored high, and three parked medium. Historical reproduction, “why not fixed,” and pre-release boundary paragraphs remain captured evidence; each section's current `Status` line and the 6D governance contract own present disposition.
 
 ## Cash Flow Shared Sibling Cards Can Misroute Writes Into The Active Entity
 
@@ -108,7 +108,7 @@ Work block 2B added a concise tracked `AGENTS.md` as canonical, reduced `CLAUDE.
 
 ## Planning Foundations Lack Tracked Regression And Demo Goal Evidence
 
-Status: carried-forward; selected Phase 4 boundary and defect coverage is complete, while demo-goal fidelity remains a Phase 5 review
+Status: parked; deterministic demo goals are complete through 5C, while demo snapshots and residual broad planning lifecycle and calculation coverage remain future paired work
 
 Severity: medium regression-confidence risk
 
@@ -116,28 +116,28 @@ Captured: 2026-07-18
 
 Where seen: retired `plan.md`, `scripts/smoke_test.py`, `scripts/seed_demo_data.py`, and work block 3D's 58-check temporary-database probe
 
-Revisit: Phase 4 Task 2 for remaining broad coverage; Phase 5 for demo fidelity if still useful
+Revisit: alongside a related planning change, a failing maintained check, or explicit Ryan priority
 
 Summary:
 
-The legacy Short-Term Planning plan proposed dedicated goal CRUD, snapshot, budget, payoff, entity-isolation, and cross-entity smoke cases plus seeded goals and snapshots. Work block 3D confirmed that goal CRUD/status/delete, budget and subcategory persistence, effective split accounting, three-month averages, per-payroll budgets, action items, payoff engines when supplied correct rates, and entity-local Personal/BFM account choices work against temporary synthetic data. Work block 4E added maintained all-route Luxe Legacy denial, unchanged-database, account-name non-disclosure, and Personal/BFM boundary coverage. The tracked smoke suite still lacks broad dedicated planning calculation and lifecycle cases, and demo seeding still omits goals and snapshots.
+The legacy Short-Term Planning plan proposed dedicated goal CRUD, snapshot, budget, payoff, entity-isolation, and cross-entity smoke cases plus seeded goals and snapshots. Work block 3D confirmed that goal CRUD/status/delete, budget and subcategory persistence, effective split accounting, three-month averages, per-payroll budgets, action items, payoff engines when supplied correct rates, and entity-local Personal/BFM account choices work against temporary synthetic data. Work block 4E added maintained all-route Luxe Legacy denial, unchanged-database, account-name non-disclosure, and Personal/BFM boundary coverage. Work block 5C added deterministic synthetic Personal debt-payoff and savings goals, exact current-domain fidelity, repeatability, entity isolation, and maintained focused coverage. Demo snapshots and broad dedicated planning calculation and lifecycle coverage remain.
 
 The audit treats goal CRUD, snapshot persistence, budget behavior, payoff correctness, and entity isolation as valid current expectations. It treats Short-Term Planning cross-entity account linking and the retired custom-allocation strategy as superseded: current repository rules require explicit cross-entity behavior, the live short-term UI is entity-local, and only avalanche and snowball are exposed. Personal/BFM sharing remains an explicit Long-Term Planning behavior and passed.
 
 Impact:
 
-The 3D evidence is current but ephemeral. Future changes can regress planning CRUD, projections, snapshots, budgets, payoff ordering, or entity boundaries without the maintained smoke suite detecting them. The public demo also cannot demonstrate goal progress history from its seeded state.
+The 3D broad evidence is historical and mostly ephemeral. Future changes can regress planning CRUD, projections, snapshots, budgets, payoff ordering, or entity boundaries outside the selected maintained slices. The demo now demonstrates deterministic goal cards but not snapshot-based progress history.
 
 Acceptance checks:
 
 - Tracked synthetic tests cover the passing 3D long- and short-term paths plus each separately repaired defect.
 - Personal/BFM Long-Term Planning sharing and Luxe Legacy denial are explicit route and mutation assertions.
 - Short-Term Planning goals and linked-account choices remain entity-local unless a new product decision explicitly widens them.
-- Demo goal and snapshot seeding is either added with synthetic examples or explicitly declined as unnecessary.
+- Deterministic demo goals remain covered; demo snapshot seeding is either added with synthetic examples or explicitly declined as unnecessary.
 
 Why not added now:
 
-Tracked test and demo-seed expansion were explicitly excluded from audit work block 3D and require separate implementation scope.
+The selected goal-seed slice was completed in 5C. Snapshot seeding and broad planning-suite expansion remain optional implementation work and are parked under the 6D retained-risk contract rather than blocking phase completion.
 
 ## Locked Payoff Schedules Ignore Stored Account APRs
 
