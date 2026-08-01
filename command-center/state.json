@@ -5,7 +5,7 @@
     "date": "2026-07-17",
     "sourceOfTruth": "Expense Tracker repo and GitHub",
     "mode": "Full Runway OS command center",
-    "lastUpdated": "2026-07-30 4:14 AM CDT",
+    "lastUpdated": "2026-08-01 3:53 AM CDT",
     "scaffold": {
       "product": "Runway OS",
       "contractVersion": "0.1.2",
@@ -27,78 +27,22 @@
   "phase": {
     "name": "Operational Safeguards Activation And Currentness Proof",
     "status": "active",
-    "summary": "Phase 7 is active at zero percent. Task 1 remains current and decision-needed after completed decision-only 7A-F and Tasks 2 through 7 remain planned.",
-    "progress": 0
+    "summary": "Phase 7 is active at twenty-nine percent. Tasks 1 and 2 plus Tasks 3.1 and 3.2a are done Task 3.2b is current and decision-needed and Tasks 3.2c through 7 remain planned.",
+    "progress": 29
   },
   "currentTask": {
-    "title": "Task 1: Establish the public and credential-free operational currentness baseline",
+    "title": "Task 3.2b: Protected One-Role Assumption Probe",
     "owner": "Ryan",
     "status": "current",
-    "supportingAgent": "Codex Desktop may use the Work Block Planner to propose 7A-N Exact Demo Deployment Refresh And Health Proof. Ryan owns authentication deployment rollback hosted mutation and every successor decision.",
-    "nextAction": "Use the Work Block Planner to propose 7A-N against the accepted exact source clean-source target command one-preflight one-deploy one-health no-retry and separate-rollback contract.",
-    "blocker": "Authentication deployment health rollback broader currentness the remaining 7A reads and every successor remain separately gated."
+    "supportingAgent": "Ryan owns whether to stop the S3 path or request a fresh reviewer-recovery proposal. Codex has no reviewer retry alternate route AWS inspection identity setup S3 or successor authority.",
+    "nextAction": "Decide whether to stop the S3 path or separately propose and confirm one reviewer-recovery route before any AWS readiness inspection.",
+    "blocker": "7C-S3-FP stopped on malformed reviewer output. No retry changed permission mode alternate reviewer AWS inspection setup CLI API STS S3 or successor is authorized."
   },
-  "currentWorkBlock": {
-    "id": "phase-7-block-a-f",
-    "phaseId": "phase-7",
-    "label": "7A-F",
-    "name": "Demo Deployment Refresh Decision",
-    "status": "done",
-    "progress": "Done as decision-only at 4:10 AM CDT. Exact source clean-source target command action budget success failure rollback volume and sanitization contract passed locally.",
-    "includedTasks": [
-      "Task 1 P7-T1 only",
-      "Write and verify active 7A-F before local contract analysis",
-      "Select exact immutable source commit clean-source method target app config existing Fly CLI future command protected action counts health success criteria no-retry failure rule and separate rollback boundary",
-      "Preserve the demo volume prohibit seeding database and data mutation and reconcile Runway OS"
-    ],
-    "excludedTasks": [
-      "Tasks 2 through 7 deployment restart rollback image change hosted mutation external Fly access authentication and HTTP",
-      "The three unconsumed 7A reads clean snapshot creation and flyctl use beyond local version and help",
-      "Product deployment-source protected financial Plaid provider production-data Git publication delegation second opinion successor and unrelated work"
-    ],
-    "recommendedAgent": "Codex Desktop",
-    "whyThisAgent": "The block is exact local Git configuration CLI-contract verification and Runway OS stewardship.",
-    "runnerPath": "Current Codex task using only local filesystem local Git without fetch and non-network Fly CLI version and help without delegation UI network or external fallback.",
-    "expectedFiles": [
-      "Read-only local Git tracked health route demo config Docker runtime inputs dockerignore and local Fly CLI version and help plus command-center now roadmap decisions state generated dashboard and one sanitized 7A-F log",
-      "No external hosted authentication snapshot product deployment protected or publication surface"
-    ],
-    "defaults": [
-      "Use immutable commit 1d149d787739495edc976bd81117abab1497f98d only if local HEAD and cached origin main remain aligned with required inputs and zero product diff",
-      "Require a later disposable clean exact-commit source exact app ledger-oak-demo fly.demo.toml existing flyctl v0.4.35 and remote-only deploy command",
-      "Later consume one status preflight one deployment attempt and one credential-free health request stop without retry and require separate rollback confirmation",
-      "Preserve ledger_oak_demo_data and prohibit seeding database access and data mutation",
-      "Keep all command-center changes local unstaged uncommitted and unpublished"
-    ],
-    "stopConditions": [
-      "Local HEAD and cached origin main drift a product diff exists or required route config or runtime inputs are missing",
-      "Exact target config volume local CLI version or required flags differ or exact clean-source semantics cannot be defined",
-      "The future authentication preflight deploy health no-retry or rollback boundary cannot remain exact or an external product install deployment or excluded action becomes necessary",
-      "A user change cannot be preserved scope expands or local command-center verification fails"
-    ],
-    "verification": [
-      "Confirm exact source commit local cached ref alignment required files health route exemptions zero product diff app config volume and local Fly CLI version and flags",
-      "Confirm exact-commit clean-source semantics future action counts exact health success sanitization no retry and separate rollback",
-      "Prove no external authentication snapshot deployment health product protected Git publication delegation second opinion or successor action",
-      "JSON links exactly one current task exactly one active block dashboard refresh currentness health and generated markers",
-      "Git diff check command-center-only scope protected and product inputs unchanged preserved existing files and zero staging"
-    ],
-    "nextReportPoint": "Return selected ref clean-source method exact app config command local CLI authentication handoff action counts rollback health criteria contradictions changed paths checks exclusions final state and smallest next gate.",
-    "durability": "7A-F is complete as a local deployment-contract decision and authorizes no external authentication snapshot deployment health product protected publication or successor action.",
-    "owner": "Codex Desktop",
-    "evidence": [
-      "command-center/now.md",
-      "command-center/roadmap.md",
-      "command-center/decisions.md",
-      "command-center/state.json",
-      "command-center/logs/2026-07-30-demo-deployment-refresh-decision-7a-f.md"
-    ],
-    "result": "Immutable source 1d149d787739495edc976bd81117abab1497f98d equals local HEAD and cached origin main and contains health with exemptions exact demo target and volume plus Docker runtime inputs with zero product diff. Existing flyctl v0.4.35 has the required flags. A later disposable git archive source excludes current dirty and untracked work. The accepted future sequence is Ryan-owned exact-account authentication one sanitized status preflight one deployment attempt and one non-redirecting credential-free health request requiring HTTP 200 exact minimal status ok. Failure stops without retry Release v9 is only the previous-release reference rollback is separately confirmed the volume is preserved and seed database and data mutation are prohibited. No external authentication snapshot deployment health product protected Git publication delegation second opinion or successor action occurred."
-  },
+  "currentWorkBlock": null,
   "routerHealth": {
     "status": "healthy",
     "summary": "Protected retrofit queue is clear; external worker runners are intentionally not installed.",
-    "lastChecked": "2026-07-30",
+    "lastChecked": "2026-08-01",
     "command": "node command-center/agent-router/scripts/queue-summary.js",
     "healthCommand": "node command-center/scripts/health-check.js",
     "counts": {
@@ -118,30 +62,30 @@
     "backlogDisposition": "Derived from protected retrofit queue folders during dashboard refresh."
   },
   "recommendedNextMove": {
-    "title": "Plan the exact demo deployment refresh and health proof",
+    "title": "Decide whether to recover the readiness review or stop S3",
     "status": "decision-needed",
     "owner": "Ryan",
-    "why": "7A-F selected and locally verified the immutable source clean-source target command action budget success failure rollback volume and sanitization contract.",
-    "action": "Use the Work Block Planner to separately propose 7A-N with Ryan-owned exact-account authentication one sanitized preflight one deployment attempt from the disposable exact-commit source and one credential-free health request.",
+    "why": "The current caller is root and 7C-S3-FP stopped because the exact Fable invocation returned malformed review output before AWS.",
+    "action": "Choose whether to stop the S3 path or request a fresh bounded proposal for exactly one reviewer-recovery route.",
     "source": "command-center/roadmap.md"
   },
   "decisionsNeeded": [
     {
-      "decision": "Confirm or adjust an exact demo deployment refresh and health proof block",
-      "status": "current Ryan decision",
-      "whyItMatters": "The local contract is complete but authentication preflight deployment health and every failure response are protected or live actions requiring exact separate authority.",
-      "workaround": "Keep P7-T1 current and decision-needed at zero percent and do not authenticate deploy request health roll back or resume broader currentness."
+      "decision": "Choose whether to stop the S3 path or separately recover the non-root readiness review",
+      "status": "open",
+      "whyItMatters": "The mandatory reviewer returned no usable disposition and the confirmed block excluded retry fallback or substitution.",
+      "workaround": "None. Keep Task 3.2c blocked and perform no AWS inspection or setup until a fresh reviewer-recovery block is proposed and confirmed."
     }
   ],
   "waitingOnRyan": {
-    "summary": "7A-F is done as decision-only. Ryan must confirm or adjust a separately proposed 7A-N exact demo deployment refresh and health proof block.",
+    "summary": "Task 3.2b is waiting on Ryan after 7C-S3-FP stopped before AWS on malformed Fable output.",
     "items": [
-      "Confirm or adjust a separately proposed 7A-N Exact Demo Deployment Refresh And Health Proof block."
+      "Decide whether to stop the S3 path or request a separately planned reviewer-recovery route."
     ]
   },
   "questionBoundaries": {
-    "phaseQuestions": "Phase 7 is active at zero percent with Task 1 current and decision-needed after completed decision-only 7A-F and Tasks 2 through 7 planned.",
-    "decisionQueue": "Ryan may confirm or adjust 7A-N. Authentication deployment health rollback broader currentness the remaining 7A reads and every successor remain separately gated.",
+    "phaseQuestions": "Phase 7 is active at twenty-nine percent with Tasks 1 and 2 plus Tasks 3.1 and 3.2a done Task 3.2b current and decision-needed and Tasks 3.2c through 7 planned.",
+    "decisionQueue": "7C-S3-FP stopped before AWS because the exact Fable invocation returned malformed review output. No retry alternate reviewer AWS inspection setup CLI API STS S3 Task 3.2c or successor is authorized.",
     "waitingScheduled": "Luxe Legacy setup and the Task 2.2 and 5D path are parked until Ryan explicitly reopens them."
   },
   "agents": [
@@ -212,6 +156,492 @@
     }
   ],
   "phaseWorkBlocks": [
+    {
+      "id": "phase-7-block-c-s3-fp",
+      "phaseId": "phase-7",
+      "label": "7C-S3-FP",
+      "name": "Non-Root AWS Administration Readiness And Route Packet",
+      "status": "stopped",
+      "progress": "Stopped at the mandatory review gate. The exact Fable invocation returned malformed review output and no AWS inspection started.",
+      "includedTasks": [
+        "Task 3.2b P7-T32B non-root administration prerequisite and read-only readiness slice only"
+      ],
+      "excludedTasks": [
+        "Task 3.2c P7-T32C final synthetic S3 capability proof and Tasks 3.3 through 7",
+        "Every organization or Identity Center enablement identity-source user group role policy permission-set assignment invitation email password MFA access-key service-linked-role Region or billing action",
+        "AWS CLI API CloudShell STS S3 mutation retry correction UI-control fallback publication Git and every successor"
+      ],
+      "owner": "Codex Desktop (stopped)",
+      "recommendedAgent": "Codex Desktop with direct Claude CLI claude-fable-5 max review before read-only inspection",
+      "whyThisAgent": "Codex owns the repo-backed packet structured Chrome boundary generic result Runway OS and intake while Fable independently pressure-tests the security route and Ryan retains authentication and every live setup choice.",
+      "runnerPath": "Current Codex task for repository stewardship and structured Chrome control of the exact authenticated AWS account after accepted review. Stop if structured Chrome cannot safely read the exact summary surfaces; Computer Use is not automatically authorized.",
+      "expectedFiles": [
+        "command-center/s3-non-root-administration-readiness-proposal.md one second-opinion handoff and sanitized intake and one confirmation or result log",
+        "Runway OS source and generated dashboard plus only AWS Organizations IAM Identity Center and at most one IAM account summary surface"
+      ],
+      "defaults": [
+        "Use direct Claude CLI claude-fable-5 at max effort and stop if that exact route is unavailable or materially changes scope",
+        "Read at most three AWS console summary surfaces with no CLI API named-identity policy permission billing or mutation detail",
+        "Retain only generic account Identity Center instance and route classes and no identifier or screenshot",
+        "Treat us-east-2 only as a non-binding candidate and leave organization Region identity and setup decisions to Ryan",
+        "Keep repository changes local unstaged uncommitted and unpublished"
+      ],
+      "stopConditions": [
+        "Material Fable change or unavailable exact reviewer route",
+        "Wrong unauthenticated or ambiguous AWS account or unexpected existing configuration",
+        "Need for more than three summary surfaces CLI API named identity policy permission assignment billing detail mutation retry correction or UI fallback",
+        "Identifier credential raw-provider or screenshot retention scope expansion or Runway OS verification failure"
+      ],
+      "verification": [
+        "Accepted sanitized Fable disposition and exact handoff proposal identity with no credential or identifier",
+        "At most three read-only summary surfaces generic classes only and no mutation control CLI API identity detail STS or S3",
+        "Valid JSON exactly one current task and one second-opinion or active block dashboard refresh currentness health and rendered inspection",
+        "Whitespace preserved changes and zero staging"
+      ],
+      "reportBack": "The exact Fable invocation returned MALFORMED_REVIEW_OUTPUT. One reviewer attempt ran zero AWS surfaces or calls were consumed and no mutation retry fallback or successor occurred.",
+      "nextBlock": "Ryan must decide whether to stop the S3 path or separately propose exactly one reviewer-recovery route. No successor starts automatically.",
+      "durability": "Stopped local-only at the review gate with zero AWS inspection and no organization identity Region permission CLI API STS S3 Git publication retry or successor authority.",
+      "result": "The exact claude-fable-5 max invocation exited zero but returned no required review fields and its claimed plan file did not exist. The output is MALFORMED_REVIEW_OUTPUT. No review was accepted no retry or fallback ran and zero AWS console surfaces CLI API Organizations Identity Center IAM STS or S3 actions occurred.",
+      "evidence": [
+        "command-center/s3-non-root-administration-readiness-proposal.md",
+        "command-center/logs/2026-08-01-confirmed-non-root-administration-readiness-7c-s3-fp.md",
+        "command-center/handoffs/second-opinion/2026-08-01-7c-s3-fp-non-root-readiness-review.md",
+        "command-center/logs/second-opinion/2026-08-01-7c-s3-fp-non-root-readiness-review.md",
+        "command-center/logs/2026-08-01-non-root-administration-readiness-stop-7c-s3-fp.md",
+        "command-center/roadmap.md",
+        "command-center/now.md",
+        "command-center/decisions.md"
+      ]
+    },
+    {
+      "id": "phase-7-block-c-s3-fr",
+      "phaseId": "phase-7",
+      "label": "7C-S3-FR",
+      "name": "Caller Identity Classification And Route Decision",
+      "status": "done",
+      "progress": "Done after exactly one read-only caller-identity call returned the generic AWS principal class root. Nothing was created or changed.",
+      "includedTasks": [
+        "Task 3.2b P7-T32B read-only caller identity diagnostic slice only"
+      ],
+      "excludedTasks": [
+        "Task 3.2c P7-T32C final synthetic S3 capability proof and Tasks 3.3 through 7",
+        "Every IAM read or mutation assumption attempt S3 request policy permission boundary account or additional identity read",
+        "Identifier retention production Fly workflow recovery publication Git correction retry and every successor"
+      ],
+      "owner": "Codex Desktop (completed)",
+      "recommendedAgent": "Codex Desktop with direct Claude CLI claude-fable-5 max review before protected execution",
+      "whyThisAgent": "Codex owns the repo-backed packet one-call Chrome boundary sanitized output Runway OS and intake while Fable independently audits the security contract and Ryan retains authentication and the next direction choice.",
+      "runnerPath": "Current Codex task for repo work and structured Chrome control of the exact full CloudShell page after accepted review. UI fallback may change only the control mechanism after re-establishing the same account packet authority and one remaining action.",
+      "expectedFiles": [
+        "command-center/s3-caller-identity-classification-proposal.md one sanitized classifier packet and one focused offline fixture test",
+        "one second-opinion handoff and intake one confirmation or result log Runway OS source and generated dashboard"
+      ],
+      "defaults": [
+        "Use direct Claude CLI claude-fable-5 at max effort and stop if that exact route is unavailable or materially changes scope",
+        "Use one sts:GetCallerIdentity call with AWS_MAX_ATTEMPTS one keep the ARN only in shell memory and emit a generic class only",
+        "Stop after every class including IAM user and assumed role with no retry mutation or successor",
+        "Keep repository changes local unstaged uncommitted and unpublished"
+      ],
+      "stopConditions": [
+        "Material Fable change or unavailable exact reviewer route",
+        "Wrong ambiguous or expired account that Ryan cannot re-establish directly in the exact Chrome surface",
+        "Need for more than one AWS call IAM S3 mutation additional read retry or broader diagnostic",
+        "Malformed or failed classification identifier credential or raw-error exposure user conflict scope expansion or Runway OS verification failure"
+      ],
+      "verification": [
+        "Accepted sanitized Fable disposition Bash syntax and offline class malformed provider-failure and output-sentinel fixtures",
+        "Static proof of one AWS call site one wire attempt no loop no IAM and no S3 command",
+        "One live read generic class only nothing-created cleanup and no retained identifier",
+        "Valid JSON exactly one current task and active block dashboard refresh currentness health rendered inspection whitespace preserved changes and zero staging"
+      ],
+      "reportBack": "Fable accepted the exact packet at 95 percent. The one read returned IDENTITY_CLASS root cleanup passed with nothing created and no identifier IAM mutation S3 retry or successor occurred.",
+      "nextBlock": "Ryan must decide whether to stop the S3 path or separately plan and confirm non-root administrative access. No successor starts automatically.",
+      "durability": "Done local-plus-protected with one read-only call no resource created no identifier retained and no identity setup S3 retry publication Git or successor authority.",
+      "result": "The AWS API caller class is root. Exactly one read-only sts:GetCallerIdentity call ran. Cleanup passed with nothing created. No IAM read or mutation assumption S3 identifier retention correction retry or successor occurred. Do not run a root-trusting probe.",
+      "evidence": [
+        "command-center/s3-caller-identity-classification-proposal.md",
+        "command-center/logs/2026-07-31-confirmed-caller-identity-classification-7c-s3-fr.md",
+        "command-center/handoffs/second-opinion/2026-07-31-7c-s3-fr-caller-classification-review.md",
+        "command-center/logs/second-opinion/2026-07-31-7c-s3-fr-caller-classification-review.md",
+        "command-center/s3-caller-identity-classification-cloudshell.sh",
+        "scripts/s3_caller_identity_classification_test.sh",
+        "command-center/logs/2026-07-31-caller-identity-classification-result-7c-s3-fr.md",
+        "command-center/roadmap.md",
+        "command-center/now.md",
+        "command-center/decisions.md"
+      ]
+    },
+    {
+      "id": "phase-7-block-c-s3-f",
+      "phaseId": "phase-7",
+      "label": "7C-S3-F",
+      "name": "Protected One-Role Assumption Probe",
+      "status": "stopped",
+      "progress": "Stopped fail-closed after exactly two read-only caller-identity calls because the current CloudShell caller was not an assumed-role session. Nothing was created.",
+      "includedTasks": [
+        "Task 3.2b P7-T32B Protected One-Role Assumption Probe only"
+      ],
+      "excludedTasks": [
+        "Task 3.2c P7-T32C final synthetic S3 capability proof and Tasks 3.3 through 7",
+        "Every S3 request existing IAM mutation permission or user change access key permanent credential production data Fly workflow recovery activation and publication",
+        "Raw identifiers Git staging commit push PR merge retry and every successor action"
+      ],
+      "owner": "Codex Desktop (stopped)",
+      "recommendedAgent": "Codex Desktop with Claude CLI claude-fable-5 max review before protected execution",
+      "whyThisAgent": "Codex owns the exact action envelope Chrome execution cleanup Runway OS and final intake while Fable reviews the executable packet and Ryan retains authentication and MFA.",
+      "runnerPath": "Current Codex task for repo work and structured Chrome control of the already established full AWS CloudShell page. UI fallback may change only the control mechanism after re-establishing the exact account tab command and remaining action count.",
+      "expectedFiles": [
+        "command-center/s3-one-role-assumption-probe-proposal.md and one sanitized CloudShell command packet",
+        "one second-opinion handoff and intake log one confirmation result log Runway OS source and generated dashboard"
+      ],
+      "defaults": [
+        "Use direct Claude CLI claude-fable-5 at max effort and stop if that exact route is unavailable or materially changes scope",
+        "Use the AWS account already established in full Chrome CloudShell and have Ryan complete sign-in or MFA directly if needed",
+        "Keep every account role and credential identifier only in shell memory and emit generic markers only",
+        "Use one fixed 20-second wait one assumption attempt one guarded cleanup and no retry",
+        "Keep all repository changes local unstaged uncommitted and unpublished"
+      ],
+      "stopConditions": [
+        "Material Fable change or unavailable exact reviewer route",
+        "Wrong ambiguous or expired account that Ryan cannot re-establish directly in the exact Chrome surface",
+        "Caller role same-account lookup creation assumption caller-shape deletion or absence failure",
+        "Identifier credential or raw provider-error exposure existing-resource mutation S3 additional-read retry permission or scope need",
+        "Cleanup uncertainty user-change conflict or Runway OS verification failure"
+      ],
+      "verification": [
+        "Accepted sanitized Fable disposition maintained 24-case offline matrix Bash syntax and static command-packet audit",
+        "Exact eight-call normal-path ceiling one current-role read one empty disposable role one assumption attempt and temporary caller shape",
+        "One guarded deletion verified absence generic output only and no S3 or existing-resource mutation",
+        "Valid JSON exactly one current task and active block dashboard refresh currentness health rendered inspection whitespace preserved changes and zero staging"
+      ],
+      "reportBack": "Generic result: RUN started; caller check failed because the current caller was not an assumed-role session; cleanup passed with nothing created; actions used 2; result failed.",
+      "nextBlock": "No successor is authorized. Ryan must decide whether to request a new Task 3.2b identity-route proposal or stop the S3 path.",
+      "durability": "Stopped local-plus-protected with no resource created no identifier retained and no retry successor publication or Git authority.",
+      "result": "The packet stopped at caller-not-assumed-role after two read-only sts:GetCallerIdentity calls. Cleanup passed with nothing created. No iam:GetRole role creation trust write AssumeRole temporary credential deletion S3 existing-resource mutation correction retry or successor occurred.",
+      "evidence": [
+        "command-center/s3-one-role-assumption-probe-proposal.md",
+        "command-center/logs/2026-07-31-confirmed-one-role-assumption-probe-7c-s3-f.md",
+        "command-center/handoffs/second-opinion/2026-07-31-7c-s3-f-one-role-probe-review.md",
+        "command-center/logs/second-opinion/2026-07-31-7c-s3-f-one-role-probe-review.md",
+        "command-center/s3-one-role-assumption-cloudshell.sh",
+        "command-center/logs/2026-07-31-one-role-assumption-probe-stop-7c-s3-f.md",
+        "command-center/roadmap.md",
+        "command-center/now.md",
+        "command-center/decisions.md"
+      ]
+    },
+    {
+      "id": "phase-7-block-c-s3-e",
+      "phaseId": "phase-7",
+      "label": "7C-S3-E",
+      "name": "Offline AWS Harness Isolation And Safety Proof",
+      "status": "done",
+      "progress": "Done locally at 8:44 PM CDT on 2026-07-31. The 24-case offline isolation matrix passed and no external AWS route was used.",
+      "includedTasks": [
+        "Task 3.2a P7-T32A Offline Assumption Harness Isolation And Safety Proof only"
+      ],
+      "excludedTasks": [
+        "Task 3.2b P7-T32B protected one-role AWS assumption probe and Task 3.2c P7-T32C final synthetic S3 capability proof",
+        "Tasks 3.3 through 7 plus installed AWS CLI credentials profiles config cache Chrome CloudShell IAM STS S3 production Fly recovery activation and publication",
+        "Git staging commit push PR merge and every successor action"
+      ],
+      "owner": "Codex Desktop (completed)",
+      "recommendedAgent": "Codex Desktop with Claude CLI claude-fable-5 max review before local implementation",
+      "whyThisAgent": "Codex must preserve the dirty worktree integrate harness and executable-fixture tests maintain Runway OS and prove no external route is reachable while the independent reviewer pressure-tests the repaired validation boundary.",
+      "runnerPath": "Current Codex task for local repo work only. Fable 5 max reviews the sanitized repo-backed proposal and harness. No browser or AWS runner is used.",
+      "expectedFiles": [
+        "scripts/s3_assumption_probe.sh and one focused offline executable-fixture test under scripts",
+        "command-center/s3-offline-harness-isolation-proposal.md second-opinion handoff and intake confirmation result log Runway OS source and generated dashboard"
+      ],
+      "defaults": [
+        "Use Fable 5 max for the pre-implementation second opinion and stop for Ryan on material change",
+        "Keep live execution physically absent and have the harness create and own the fresh mock root and internal executor",
+        "Enforce a cleared minimal environment on every fixture invocation with harness-owned empty AWS config files metadata disabled and PATH limited to the disposable root",
+        "Keep output sanitized and changes local unstaged uncommitted and unpublished"
+      ],
+      "stopConditions": [
+        "Material review change or any normal-PATH or outside-mock-root command resolution",
+        "Need for installed AWS CLI credentials profiles network browser Chrome CloudShell or another external surface",
+        "Live mode enabled by default sensitive output user-change conflict scope expansion or plan-changing verification failure",
+        "Runway OS refresh currentness health rendered inspection or zero-staging verification failure"
+      ],
+      "verification": [
+        "Sanitized Fable 5 max disposition Bash syntax and focused offline executable-fixture self-test",
+        "Success denial cleanup exact-mode pre-existing-root symlink prefix type relative-path real-PATH shadow unexpected-caller environment and trap-ordering matrix",
+        "Positive invocation sequence plus static proof no bare aws eval or dynamic-command execution remains",
+        "No installed AWS CLI network credential browser CloudShell IAM STS or S3 invocation",
+        "Valid JSON exactly one current task dashboard refresh currentness health rendered inspection whitespace preserved changes and zero staging"
+      ],
+      "reportBack": "The harness now owns its disposable root and executor clears every fixture environment rejects caller injection and has no live mode. All 24 cases passed.",
+      "nextBlock": "After a complete pass separately propose 7C-S3-F Protected One-Role Assumption Probe for Task 3.2b only without starting it.",
+      "durability": "Done local-only and unstaged. No installed AWS CLI browser credential IAM STS S3 publication Git or successor action occurred.",
+      "result": "All 24 offline cases passed. A first-run macOS /tmp canonicalization defect was corrected to accept only the exact /tmp or /private/tmp disposable-root shape; the two known synthetic roots were removed and no probe roots remained. No external route was used.",
+      "evidence": [
+        "command-center/s3-offline-harness-isolation-proposal.md",
+        "command-center/logs/2026-07-31-confirmed-offline-harness-isolation-7c-s3-e.md",
+        "command-center/logs/second-opinion/2026-07-31-7c-s3-e-offline-harness-isolation-review.md",
+        "command-center/logs/2026-07-31-offline-harness-isolation-7c-s3-e.md",
+        "scripts/s3_assumption_probe.sh",
+        "scripts/s3_assumption_probe_test.sh",
+        "command-center/roadmap.md",
+        "command-center/now.md",
+        "command-center/decisions.md"
+      ]
+    },
+    {
+      "id": "phase-7-block-c-s3-d",
+      "phaseId": "phase-7",
+      "label": "7C-S3-D",
+      "name": "Exact Caller Role And One-Role Assumption Probe",
+      "status": "stopped",
+      "progress": "Stopped fail-closed at 5:24 PM CDT on 2026-07-31 during local harness validation before the authorized Chrome CloudShell probe.",
+      "includedTasks": [
+        "Task 3.2 P7-T32 Synthetic S3 Capability Proof only for IAM assumption-path diagnosis"
+      ],
+      "excludedTasks": [
+        "S3 bucket object versioning Object Lock retention and four-role capability testing",
+        "Existing IAM mutation permission permission-set boundary trust-policy identity access-key or IAM-user change",
+        "Production data Fly workflow scheduler recovery implementation activation publication Git Task 3.3 and successors"
+      ],
+      "owner": "Ryan",
+      "recommendedAgent": "Codex Desktop with Claude CLI claude-fable-5 max review before AWS action",
+      "whyThisAgent": "Codex can preserve the exact browser-owned CloudShell boundary sanitize identifiers perform exact cleanup and reconcile Runway OS while the independent review pressure-tests the identity contract.",
+      "runnerPath": "Fable 5 max review completed. Local validation unexpectedly resolved to a real local AWS CLI identity and stopped before Chrome CloudShell. No retry is authorized.",
+      "expectedFiles": [
+        "command-center/s3-assumption-probe-proposal.md",
+        "A local no-secret diagnostic harness or exact guarded command",
+        "One random empty disposable IAM role during the authorized probe only"
+      ],
+      "defaults": [
+        "Read only the exact current role record and retain only its stable ARN in memory without printing it",
+        "Create one disposable role with no permissions policy trust only the current role principal and use only temporary STS credentials",
+        "Run no S3 action and keep repo changes local unstaged uncommitted and unpublished",
+        "Stop for re-confirmation if Fable 5 max materially changes the scope"
+      ],
+      "stopConditions": [
+        "Role-name ambiguity GetRole denial or unexpected account or role",
+        "Create trust assume caller-shape or cleanup failure",
+        "Identifier exposure existing-resource mutation need scope expansion protected data unexpected cost or verification failure"
+      ],
+      "verification": [
+        "Sanitized Fable 5 max disposition before AWS action",
+        "One exact current-role read one empty disposable role successful same-account assumption and caller-shape confirmation",
+        "Exact deletion and absence with no S3 identity mutation access keys permanent credentials or retained identifiers",
+        "JSON dashboard currentness health rendered inspection whitespace preserved changes and zero staging"
+      ],
+      "reportBack": "Return the accepted review the unexpected local-caller stop exactly two read-only caller checks no IAM or S3 mutation no Chrome probe and Task 3.2 decision-needed.",
+      "nextBlock": "None. Ryan may separately request a new hard-isolated diagnostic proposal or stop the S3 capability path.",
+      "durability": "7C-S3-D stopped fail-closed. Fable 5 max accepted the design at 90 percent but local mock isolation failed and the guard stopped after two read-only caller-identity checks before GetRole role creation AssumeRole S3 mutation identifier output or Chrome action.",
+      "evidence": [
+        "command-center/s3-assumption-probe-proposal.md",
+        "command-center/logs/2026-07-31-confirmed-s3-assumption-probe-7c-s3-d.md",
+        "command-center/logs/second-opinion/2026-07-31-7c-s3-d-assumption-probe-review.md",
+        "command-center/logs/2026-07-31-confirmed-s3-role-trust-retry-7c-s3-r.md",
+        "command-center/roadmap.md"
+      ],
+      "result": "Fable 5 max accepted the plan with non-material clarifications at 90 percent. Local harness validation unexpectedly resolved to a real local AWS CLI identity whose caller was not an assumed role. The guard stopped after exactly two read-only GetCallerIdentity calls. No GetRole role creation trust write AssumeRole S3 action mutation identifier output retained identifier correction retry or Chrome probe occurred; cleanup reported nothing created."
+    },
+    {
+      "id": "phase-7-block-c-s3-r",
+      "phaseId": "phase-7",
+      "label": "7C-S3-R",
+      "name": "Temporary-Role Trust Repair And S3 Proof Retry",
+      "status": "stopped",
+      "progress": "Stopped cleanly at 4:50 PM CDT on 2026-07-31. The signed-in session did not expose an exact stable IAM role ARN without inspecting an existing IAM resource. No resource was created and cleanup verification passed.",
+      "includedTasks": [
+        "Task 3.2 P7-T32 Synthetic S3 Capability Proof"
+      ],
+      "excludedTasks": [
+        "Tasks 3.3 and 3.4 plus Tasks 4 through 7",
+        "Existing IAM S3 identity permission-set boundary role bucket policy object and every production or protected resource",
+        "Fly workflow scheduler recovery implementation compliance mode publication Git deployment and successor work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block requires an exact browser-owned CloudShell preflight one bounded retry sanitized evidence fail-closed cleanup and Runway OS stewardship.",
+      "runnerPath": "Current Codex task using the already signed-in AWS Chrome session. Ryan handles any direct MFA or billing handoff.",
+      "expectedFiles": [
+        "Command-center activation and result evidence",
+        "A locally validated harness revision that derives the stable caller role in memory or stops before creation",
+        "On preflight pass only one random disposable us-east-2 bucket and four random temporary IAM roles during the proof"
+      ],
+      "defaults": [
+        "Print or retain no caller account role ARN bucket role version credential or payload value",
+        "Inspect or modify no existing IAM S3 identity permission or resource",
+        "Use one private Object Lock bucket four temporary roles STS sessions synthetic bytes and governance mode only",
+        "Keep repo changes local unstaged uncommitted and unpublished"
+      ],
+      "stopConditions": [
+        "Stable caller role cannot be derived from the current session alone or an existing resource would need inspection",
+        "Role assumption is denied again a required denial succeeds or cleanup cannot be exact",
+        "Unexpected cost permission protected data scope expansion or user-change conflict appears",
+        "Verification or command-center health fails"
+      ],
+      "verification": [
+        "Stable-principal preflight before resource creation",
+        "Uploader retention observer and restore-reader allow and deny matrix",
+        "Exact-version restore hash parity retention extend-not-shorten lock expiry and exact cleanup",
+        "Bucket roles policies versions and markers absent dashboard current health whitespace preserved changes and zero staging"
+      ],
+      "reportBack": "Return sanitized principal classification creation decision capability matrix cleanup result changed files checks and Task 3.2 disposition.",
+      "nextBlock": "On pass separately propose Task 3.3 without starting it. On stop retain Task 3.2 current and authorize no third attempt.",
+      "durability": "7C-S3-R stopped at the principal-shape gate before creation. No existing IAM resource was inspected or changed no third attempt is authorized and Task 3.2 remains current and decision-needed.",
+      "evidence": [
+        "command-center/s3-synthetic-capability-proof-retry-proposal.md",
+        "command-center/logs/2026-07-31-confirmed-s3-role-trust-retry-7c-s3-r.md",
+        "command-center/logs/2026-07-30-confirmed-s3-provider-proof-7c-s3.md",
+        "command-center/roadmap.md"
+      ]
+    },
+    {
+      "id": "phase-7-block-c-s3",
+      "phaseId": "phase-7",
+      "label": "7C-S3",
+      "name": "Synthetic S3 Capability Proof",
+      "status": "stopped",
+      "progress": "Stopped cleanly at 8:23 PM CDT. Bucket Object Lock versioning public access block and four temporary roles and policies were created but the uploader role could not be assumed. No upload or capability test ran and exact cleanup passed.",
+      "includedTasks": [
+        "Task 3.2 P7-T32 Synthetic S3 Capability Proof"
+      ],
+      "excludedTasks": [
+        "Tasks 3.3 and 3.4 plus Tasks 4 through 7",
+        "Existing AWS resources and production databases backups uploads WAL SHM financial data Fly secrets and protected content",
+        "Workflow scheduler recovery implementation compliance-mode objects activation publication commit push PR merge deploy and successor work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block requires one exact browser-owned CloudShell execution sanitized capability evidence fail-closed cleanup and Runway OS stewardship.",
+      "runnerPath": "Current Codex task using the already signed-in AWS Chrome session. Ryan handles any direct MFA or billing handoff and Codex stops on ambiguity.",
+      "expectedFiles": [
+        "Command-center planning evidence and dashboard files",
+        "One sanitized S3 capability proof harness and focused local checks",
+        "One random disposable S3 bucket and four random temporary IAM roles in us-east-2 only during the proof"
+      ],
+      "defaults": [
+        "Use us-east-2 one private bucket versioning Object Lock and governance mode",
+        "Use synthetic encrypted-looking objects four temporary IAM roles and STS sessions without permanent keys",
+        "Print no account bucket role ARN version credential or payload value and inspect no existing resource",
+        "Keep repo changes local unstaged uncommitted and unpublished"
+      ],
+      "stopConditions": [
+        "AWS account cost sign-in MFA or permission cannot remain unambiguous and Ryan-owned where required",
+        "A denied operation succeeds an existing resource must be inspected or exact cleanup cannot be proven",
+        "Production or protected data becomes necessary scope expands or a user change cannot be preserved",
+        "Verification or command-center health fails"
+      ],
+      "verification": [
+        "Uploader retention observer and restore-reader allow and deny matrix",
+        "Exact-version restore hash parity retention extend-not-shorten lock expiry and exact synthetic cleanup",
+        "Bucket roles policies object versions and delete markers all absent after cleanup",
+        "No protected data or secret retention dashboard refresh currentness health git diff check preserved user changes and zero staging"
+      ],
+      "reportBack": "Stopped at temporary-role assumption with sanitized failure and exact cleanup evidence.",
+      "nextBlock": "Separately proposed 7C-S3-R for one direct-stable-role-trust retry without changing the existing AWS identity.",
+      "durability": "7C-S3 stopped cleanly and exact cleanup passed. Task 3.2 remains current and no retry implementation activation or successor authority is active.",
+      "evidence": [
+        "command-center/s3-synthetic-capability-proof-plan.md",
+        "command-center/logs/2026-07-30-confirmed-s3-provider-proof-7c-s3.md",
+        "command-center/s3-synthetic-capability-proof-retry-proposal.md",
+        "command-center/logs/2026-07-30-local-recovery-trigger-capability-contract-7c.md",
+        "command-center/roadmap.md"
+      ]
+    },
+    {
+      "id": "phase-7-block-c",
+      "phaseId": "phase-7",
+      "label": "7C",
+      "name": "Synthetic Trigger And B2 Capability Proof",
+      "status": "stopped",
+      "progress": "Task 3.1 passed locally at 7:22 PM CDT. The unstarted Backblaze provider stage was superseded by confirmed 7C-S3 at 8:06 PM CDT and no Backblaze action occurred.",
+      "includedTasks": [
+        "Task 3.1 P7-T31 Trigger And Synthetic Provider-Capability Contract",
+        "Task 3.2 P7-T32 Synthetic B2 Capability Proof"
+      ],
+      "excludedTasks": [
+        "Tasks 3.3 and 3.4 plus Tasks 4 through 7",
+        "Production databases backups uploads WAL SHM financial data Fly secrets and protected content",
+        "Compliance-mode objects activation restore publication commit push PR merge deploy and successor work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop",
+      "whyThisAgent": "The block combines local synthetic proof exact provider capability testing fail-closed cleanup dashboard stewardship and final B2 or S3 disposition.",
+      "runnerPath": "Current Codex task after Ryan establishes the exact Backblaze account billing sign-in MFA and custody boundary and separately confirms the dedicated synthetic provider mutation.",
+      "expectedFiles": [
+        "Command-center planning evidence and dashboard files",
+        "Synthetic fixtures focused tests and disabled local trigger proof under existing repo conventions",
+        "One dedicated synthetic B2 namespace and four non-production principals only after the exact protected handoff"
+      ],
+      "defaults": [
+        "Prefer a wake-capable scheduled Machine invocation over an in-process timer subject to proof",
+        "Use synthetic encrypted SQLite fixtures governance mode and public recipient identifiers only",
+        "Create no compliance-mode object retain no secret or protected identifier and recommend S3 rather than weakening the authority model",
+        "Keep repo changes local unstaged uncommitted and unpublished"
+      ],
+      "stopConditions": [
+        "Exact Backblaze account cost namespace billing sign-in MFA or custody cannot remain unambiguous and Ryan-owned",
+        "A denied operation succeeds B2 cannot reproduce the authority split or cleanup cannot remain exact",
+        "Production or protected data becomes necessary scope expands or a user change cannot be preserved",
+        "Verification or command-center health fails"
+      ],
+      "verification": [
+        "Wake-capable trigger proof and two-recipient synthetic decrypt",
+        "Uploader retention observer and restore-reader allow and deny matrix",
+        "Complete and partial-set behavior manifest parity logical role and lock-floor separation retention extend-not-shorten and exact synthetic cleanup",
+        "No protected data or secret retention dashboard refresh currentness health git diff check preserved user changes and zero staging"
+      ],
+      "reportBack": "Return selected trigger capability matrix denied operations cleanup result cost and identity limitations B2 go revise or S3 verdict changed files checks and the next separate gate.",
+      "nextBlock": "Provider stage superseded by confirmed 7C-S3.",
+      "durability": "7C Task 3.1 evidence remains accepted. Its unstarted Backblaze provider stage is stopped and grants no provider or successor authority.",
+      "evidence": [
+        "command-center/task-3-recovery-implementation-proposal.md",
+        "command-center/recovery-architecture-decision-packet.md",
+        "command-center/recovery-trigger-provider-capability-contract.md",
+        "command-center/logs/2026-07-30-local-recovery-trigger-capability-contract-7c.md",
+        "command-center/roadmap.md"
+      ]
+    },
+    {
+      "id": "phase-7-block-b",
+      "phaseId": "phase-7",
+      "label": "7B",
+      "name": "Recovery Architecture Research And Decision Packet",
+      "status": "done",
+      "progress": "Reviewed with claude-fable-5 at max and accepted by Ryan at 5:52 PM CDT.",
+      "includedTasks": [
+        "Task 2 P7-T2 only",
+        "Tracked-source and authoritative-public recovery architecture research",
+        "One direct Fable 5 max read-only review and finding disposition",
+        "Ryan decision on seven corrected architecture points"
+      ],
+      "excludedTasks": [
+        "Provider setup purchase credentials protected data implementation acquisition retention cleanup restore publication Tasks 3 through 7 and successor work"
+      ],
+      "owner": "Codex Desktop",
+      "recommendedAgent": "Codex Desktop with one direct Claude CLI review",
+      "whyThisAgent": "Codex owned research intake command-center stewardship and finding disposition while Fable 5 supplied the independent architecture critique.",
+      "runnerPath": "Completed direct Claude CLI review with claude-fable-5 max read-only tools plan permission safe mode no session persistence and no fallback.",
+      "expectedFiles": [
+        "Recovery architecture decision packet review evidence decision log roadmap state and generated dashboard"
+      ],
+      "defaults": [
+        "Keep every provider protected implementation and successor action separately gated"
+      ],
+      "stopConditions": [
+        "Any provider protected production implementation retention restore publication or successor action became necessary"
+      ],
+      "verification": [
+        "Corrected architecture packet and explicit seven-point Ryan decision",
+        "Dashboard refresh currentness health git diff check and zero staging"
+      ],
+      "reportBack": "Return the independently reviewed architecture and stop for Ryan decision.",
+      "nextBlock": "Separately propose 7C without activating it.",
+      "durability": "Task 2 is done as an architecture decision only.",
+      "evidence": [
+        "command-center/recovery-architecture-decision-packet.md",
+        "command-center/logs/2026-07-30-recovery-architecture-decision-acceptance.md"
+      ],
+      "result": "Ryan accepted SQLite Online Backup full sets Backblaze B2 subject to synthetic proof two separately custodied age recipients logical 14 8 12 retention separate from Object Lock compliance mode after governance proof uploads excluded and separately confirmed Task 3 blocks."
+    },
     {
       "id": "phase-7-block-a-f",
       "phaseId": "phase-7",
@@ -12668,27 +13098,105 @@
       "phaseId": "phase-7",
       "taskId": "P7-T1",
       "title": "Task 1: Establish the public and credential-free operational currentness baseline",
-      "status": "current",
-      "owner": "Ryan",
-      "summary": "Bound a read-only evidence pass for production and demo health Daily Plaid Sync workflow currentness the independent monitor and only exact-ref evidence selected by a confirmed block while preserving evidence labels and stopping before diagnosis or remediation.",
-      "nextAction": "Use the Work Block Planner to separately propose 7A-N against the accepted exact deployment refresh and health proof contract.",
-      "blocker": "Authentication preflight deployment health rollback broader currentness the remaining 7A reads and every successor remain separately gated."
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Retire obsolete demo infrastructure reconcile production-relevant operational currentness and close the independent Daily Plaid Sync monitor evidence as a human-observed pass.",
+      "result": "The obsolete demo was retired and the monitor manual execution was accepted as a sanitized human-observed pass. Detailed raw task fields remain unverified and no product or protected action is inferred."
     },
     {
       "phaseId": "phase-7",
       "taskId": "P7-T2",
       "title": "Task 2: Select the recovery mechanism target topology and protected operating plan",
-      "status": "planned",
-      "owner": "Ryan",
-      "summary": "Decide exact storage or provider cost acquisition method process and WAL boundary entity-isolated destinations protection retention enforcement rollback automation design evidence and authorization gates before protected implementation."
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Research and independently review the exact recovery mechanism provider custody retention immutability trigger observer and uploads boundaries before protected implementation.",
+      "result": "Ryan accepted all seven corrected architecture decisions after one claude-fable-5 max review. No provider protected implementation or successor action occurred.",
+      "evidence": [
+        "command-center/recovery-architecture-decision-packet.md",
+        "command-center/logs/2026-07-30-recovery-architecture-decision-acceptance.md"
+      ]
     },
     {
       "phaseId": "phase-7",
       "taskId": "P7-T3",
       "title": "Task 3: Implement daily application-consistent recovery acquisition and 14 8 12 retention safeguards",
+      "status": "active",
+      "owner": "Ryan",
+      "summary": "Use the approved architecture through separately confirmed trigger provider-proof disabled-implementation and protected-activation gates. The current AWS caller is root and 7C-S3-FP stopped at its mandatory review gate before AWS.",
+      "nextAction": "Ryan decides whether to stop the S3 path or request a fresh reviewer-recovery proposal before any readiness inspection.",
+      "blocker": "Task 3.2c remains blocked. No reviewer retry alternate route AWS inspection identity setup CLI API STS S3 or successor is authorized."
+    },
+    {
+      "phaseId": "phase-7",
+      "taskId": "P7-T31",
+      "title": "Task 3.1: Trigger And Synthetic Provider-Capability Contract",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Passed locally in confirmed 7C. The future trigger is scheduled authenticated synchronous HTTPS to the existing autostarting Fly Machine and the synthetic complete partial recipient retention and offline capability-contract proofs passed.",
+      "result": "Zero network and protected-data reads. B2 requires provider proof with the writeFiles hide-by-name caveat and independent version observation.",
+      "evidence": [
+        "command-center/recovery-trigger-provider-capability-contract.md",
+        "command-center/logs/2026-07-30-local-recovery-trigger-capability-contract-7c.md"
+      ]
+    },
+    {
+      "phaseId": "phase-7",
+      "taskId": "P7-T32",
+      "title": "Task 3.2: S3 Capability Proof Sequence",
+      "status": "active",
+      "owner": "Ryan",
+      "summary": "The offline harness passed and protected diagnostics showed the current CloudShell API caller is root. 7C-S3-FP stopped before AWS because its mandatory review output was malformed.",
+      "nextAction": "Ryan decides whether to stop the S3 path or separately recover the readiness review.",
+      "blocker": "Task 3.2c is blocked. No reviewer retry alternate route AWS inspection setup CLI API STS S3 or successor is authorized."
+    },
+    {
+      "phaseId": "phase-7",
+      "taskId": "P7-T32A",
+      "title": "Task 3.2a: Offline Assumption Harness Isolation And Safety Proof",
+      "status": "done",
+      "owner": "Codex Desktop",
+      "summary": "Completed in 7C-S3-E with a harness-owned disposable root internal executor cleared fixture environment and physically absent live mode.",
+      "result": "All 24 offline isolation cases passed including hostile PATH injection environment clearing containment type symlink prefix and cleanup checks. No external route was used and no probe roots remained.",
+      "evidence": [
+        "scripts/s3_assumption_probe.sh",
+        "scripts/s3_assumption_probe_test.sh",
+        "command-center/logs/2026-07-31-offline-harness-isolation-7c-s3-e.md"
+      ]
+    },
+    {
+      "phaseId": "phase-7",
+      "taskId": "P7-T32B",
+      "title": "Task 3.2b: Protected One-Role Assumption Probe",
+      "status": "current",
+      "owner": "Ryan",
+      "summary": "7C-S3-FR classified the caller as root. 7C-S3-FP then stopped at the mandatory review gate before AWS because the exact Fable response was malformed.",
+      "nextAction": "Decide whether to stop the S3 path or request a fresh reviewer-recovery proposal.",
+      "blocker": "No Fable retry alternate reviewer AWS inspection organization identity Region permission CLI API STS S3 mutation or successor is authorized.",
+      "result": "The generic class is root. Exactly one read-only sts:GetCallerIdentity call ran. Cleanup passed with nothing created. No identifier IAM read or mutation assumption S3 correction retry or successor occurred."
+    },
+    {
+      "phaseId": "phase-7",
+      "taskId": "P7-T32C",
+      "title": "Task 3.2c: Final Synthetic S3 Capability Proof",
       "status": "planned",
       "owner": "Ryan",
-      "summary": "Use the separately approved mechanism and exact protected targets while keeping acquisition retention enforcement cleanup automation and publication inside explicit gates."
+      "summary": "After Task 3.2b passes separately decide whether to run the disposable four-role S3 capability matrix and exact cleanup."
+    },
+    {
+      "phaseId": "phase-7",
+      "taskId": "P7-T33",
+      "title": "Task 3.3: Disabled Recovery Acquisition Implementation",
+      "status": "planned",
+      "owner": "Codex Desktop",
+      "summary": "After the provider proof separately implement acquisition encryption manifest logical-role and failure behavior in disabled local mode."
+    },
+    {
+      "phaseId": "phase-7",
+      "taskId": "P7-T34",
+      "title": "Task 3.4: Protected Activation And First Current Set",
+      "status": "planned",
+      "owner": "Ryan",
+      "summary": "Under a new exact authorization establish protected identities and recipients activate the trigger and observer and verify one production recovery set using sanitized evidence only."
     },
     {
       "phaseId": "phase-7",
@@ -13205,6 +13713,102 @@
     }
   ],
   "recentActivity": [
+    {
+      "time": "2026-08-01",
+      "text": "7C-S3-FP stopped at the mandatory second-opinion gate before AWS. The exact direct Claude CLI claude-fable-5 max invocation exited zero but returned only an intent sentence and none of the required review fields; its claimed plan file did not exist. Codex classified the output as MALFORMED_REVIEW_OUTPUT and accepted no review. One reviewer invocation ran zero AWS console surfaces and zero AWS CLI API Organizations IAM Identity Center IAM STS or S3 actions occurred. No retry fallback mutation identifier retention Git or successor occurred. Task 3.2b remains current and decision-needed under Ryan."
+    },
+    {
+      "time": "2026-08-01",
+      "text": "Ryan confirmed 7C-S3-FP at 3:38 AM CDT for Task 3.2b as a non-root administration prerequisite and read-only readiness slice only. Codex Desktop must first write and verify the exact sanitized packet and route it through direct Claude CLI claude-fable-5 at max effort. On acceptance without material change only the exact authenticated AWS account Organizations and IAM Identity Center summary surfaces plus at most one IAM account summary may be read through structured Chrome. No organization or Identity Center enablement identity detail Region billing CLI API CloudShell STS S3 mutation retry UI fallback Git or successor is authorized."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "7C-S3-FR completed within the confirmed one-call boundary. The exact Fable-reviewed packet ran once in the authorized full Chrome CloudShell account and returned the generic AWS principal class root. Exactly one read-only sts:GetCallerIdentity call ran. Cleanup passed with nothing created and the result was successful. No IAM read or mutation assumption S3 identifier retention production-data access correction retry Task 3.2c Git or successor occurred. The Chrome task was closed. Codex will not design or run a root-trusting probe. Task 3.2b remains current and decision-needed under Ryan to stop the S3 path or separately plan non-root administrative access."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Fable 5 max returned ACCEPT_WITH_NON_MATERIAL_CLARIFICATIONS at 95 percent for the exact 7C-S3-FR packet and cleared it as-is. It accepted the one-call one-wire-attempt envelope anchored classification expressions in-memory ARN handling fixed generic output failure and signal behavior and nothing-created cleanup. Codex did not adopt the optional pager suggestion to preserve byte-for-byte packet identity. The no-tools reviewer claim of repo or subagent verification was not accepted as evidence; Codex independently proved the fenced handoff and executable packet are identical and reran syntax all seven offline cases and the static one-call no-loop no-IAM no-S3 audit successfully. No Chrome or AWS action has started."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Ryan confirmed 7C-S3-FR at 10:30 PM CDT for the read-only diagnostic slice of Task 3.2b only. Codex Desktop must first write and locally verify one sanitized caller classifier and route the exact packet through direct Claude CLI claude-fable-5 at max effort. On acceptance only the established full Chrome CloudShell account and exactly one read-only sts:GetCallerIdentity call are authorized. The ARN stays in shell memory and only a generic identity class may be emitted. Every IAM read or mutation assumption S3 identifier retention retry correction Task 3.2c Git and successor remains excluded. Every class stops for a separate Ryan decision."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "7C-S3-F stopped fail-closed in the authorized full Chrome CloudShell account. The current caller did not have the required STS assumed-role session shape. Exactly two read-only sts:GetCallerIdentity calls ran. Cleanup passed with nothing created and the generic result was failed. No iam:GetRole role creation trust write AssumeRole temporary credential deletion S3 existing-resource mutation identifier retention correction retry Task 3.2c or successor occurred. The Chrome task was finalized. Task 3.2b remains current and decision-needed under Ryan with no active work block."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Fable 5 max returned ACCEPT_WITH_NON_MATERIAL_CLARIFICATIONS at 90 percent for the exact 7C-S3-F CloudShell packet. It accepted the eight-site action envelope role and account parsing direct stable-role trust in-memory temporary credentials generic output one guarded deletion conjunctive NoSuchEntity absence proof and zero S3 path. Codex adopted one-attempt AWS retry settings disabled inherited xtrace added full safe-path charset validation and strengthened the disposable name to a 128-bit kernel UUID suffix. These changes add no API call retry existing-resource read or mutation output S3 action or success criterion. No Chrome or AWS action has started."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Ryan confirmed 7C-S3-F at 9:28 PM CDT for Task 3.2b only. Codex Desktop must first write and verify the block create a sanitized repo-backed CloudShell command packet and route the exact packet through Claude CLI claude-fable-5 at max effort. On acceptance only the already established full Chrome CloudShell account two current-caller reads one exact current-role read one random empty disposable role one 20-second wait one AssumeRole attempt one temporary-caller check one guarded deletion and one absence check are authorized with an eight-call normal-path ceiling and no retry. Task 3.2c S3 existing IAM mutation permissions users access keys production Fly recovery publication Git raw identifiers and every successor remain excluded."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "7C-S3-E completed locally at 8:44 PM CDT. The repaired offline-only harness creates and owns its disposable root and internal executor clears every fixture environment rejects caller root or executor injection validates before trap installation performs no AWS-shaped cleanup and contains no live mode. All 24 offline isolation cases passed including hostile PATH ambient AWS environment containment symlink prefix type mode denial unexpected-caller invocation-order and cleanup checks. A first-run macOS /tmp to /private/tmp canonicalization defect was corrected under the exact disposable-root guard; the two known synthetic roots were removed and no probe roots remained. No installed AWS CLI AWS API credentials profiles config browser Chrome CloudShell IAM STS S3 production Fly recovery publication Git Task 3.2b Task 3.2c or successor action occurred. Task 3.2b is now current and decision-needed under Ryan with no active work block."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Ryan confirmed the materially revised 7C-S3-E scope at 8:37 PM CDT for Task 3.2a only. Codex Desktop may implement and test a harness-created owned mock root internally installed executor harness-enforced cleared minimal environment validation before trap installation offline cleanup without AWS-shaped operations physically absent live mode and the expanded invocation containment environment and trap-ordering matrix. Installed AWS CLI AWS API credentials profiles config browser Chrome CloudShell IAM STS S3 production Fly recovery publication Git Tasks 3.2b and 3.2c and successors remain excluded."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Fable 5 max returned MATERIAL_CHANGE_REQUIRED at 85 percent confidence for 7C-S3-E. Caller-supplied mock-root containment could legitimize the installed AWS CLI and launcher-only environment clearing would not constrain a buggy fixture child. Revised scope requires a harness-created owned root internal executor harness-enforced minimal cleared environment validation before trap installation no AWS-shaped offline cleanup and expanded invocation containment environment and trap-ordering tests. The block stopped before harness edit or test and now awaits Ryan confirmation. No installed AWS CLI AWS API credential browser CloudShell IAM STS S3 production Fly recovery publication Git Task 3.2b Task 3.2c or successor action occurred."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Ryan confirmed 7C-S3-E at 5:42 PM CDT for Task 3.2a only. Codex Desktop must record and verify the block then run a repo-backed Claude CLI claude-fable-5 max review before local implementation. On no material change only the offline harness may be repaired and tested with explicit disposable executable fixtures inside a per-run mock root. Installed AWS CLI credentials profiles config browser Chrome CloudShell IAM STS S3 production Fly recovery publication Git Tasks 3.2b and 3.2c and successors remain excluded."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "The just-in-time planning pass decomposed Task 3.2 into Task 3.2a offline harness isolation and safety proof Task 3.2b protected one-role AWS assumption probe and Task 3.2c final synthetic S3 capability proof. Proposed 7C-S3-E includes Task 3.2a only and would use Fable 5 max review before local executable-fixture implementation. Installed AWS CLI credentials profiles config browser Chrome CloudShell IAM STS S3 production Fly recovery publication Git and successors remain excluded. The proposal awaits Ryan confirmation and no implementation or external action is active."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "7C-S3-D stopped fail-closed at 5:24 PM CDT during local harness validation. Fable 5 max had accepted the plan with non-material clarifications at 90 percent. The intended mock did not remain isolated and the child script resolved to a real local AWS CLI identity whose caller was not an assumed role. The guard stopped after exactly two read-only GetCallerIdentity calls. No GetRole role creation trust write AssumeRole S3 action mutation identifier output retained identifier correction retry or Chrome probe occurred and cleanup reported nothing created. Task 3.2 remains current and decision-needed with Ryan owning the next route."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Ryan confirmed 7C-S3-D at 5:10 PM CDT for Task 3.2 only. Codex Desktop must record and verify the block then run a repo-backed Claude CLI claude-fable-5 max review before AWS action. On no material change only the block may make one exact current-role GetRole read create one empty disposable role trusted only to that role make one AssumeRole and caller-shape check and exactly clean up. S3 existing IAM mutation access keys production recovery implementation publication Git Task 3.3 and successors remain excluded."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Ryan requested a Task 3.2 replan at 5:01 PM CDT. Proposed 7C-S3-D isolates the IAM assumption path before any S3 retry: Fable 5 max reviews the exact contract then on unchanged scope one read-only GetRole call may read the current role record one empty disposable role may trust that exact role one AssumeRole and caller-shape check may run and exact cleanup must pass. Existing IAM mutation S3 access keys production recovery implementation publication Git Task 3.3 and successors remain excluded. The proposal is not active."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "7C-S3-R stopped cleanly at 4:50 PM CDT. The signed-in CloudShell caller passed the caller-session checks but neither the session environment nor caller identity exposed an exact stable IAM role ARN. The preflight stopped before any bucket role policy object retention or capability-test creation. Cleanup verification passed with nothing created. No existing IAM resource was inspected or changed no caller identifier was retained and no third attempt Task 3.3 production publication or Git action occurred. Task 3.2 remains current and decision-needed with no active work block."
+    },
+    {
+      "time": "2026-07-31",
+      "text": "Ryan confirmed 7C-S3-R at 11:52 AM CDT for Task 3.2 only. Codex Desktop must first derive the current CloudShell session stable IAM role in memory without printing or retaining the ARN and must stop before creation if that requires inspecting an existing IAM resource. On pass only one new random private us-east-2 Object Lock bucket and four new random temporary roles may be created tested and exactly cleaned. Existing AWS resources permissions production data Fly workflow recovery implementation compliance mode publication Git Task 3.3 third attempt and successors remain excluded."
+    },
+    {
+      "time": "2026-07-30",
+      "text": "7C-S3 stopped cleanly at 8:23 PM CDT. The signed-in AWS session created the one disposable private us-east-2 Object Lock bucket public access block and four temporary roles and inline policies but could not assume the uploader role after the bounded propagation wait. No upload retention read or capability test ran. Cleanup verified absence of the bucket objects versions policies and roles. Task 3.2 remains current and 7C-S3-R is proposed only for one direct-stable-role-trust retry without changing the existing AWS identity."
+    },
+    {
+      "time": "2026-07-30",
+      "text": "Ryan confirmed 7C-S3 at 8:06 PM CDT for Task 3.2 only. The completed Task 3.1 local evidence remains accepted and the unstarted Backblaze provider stage is superseded with no Backblaze action. Codex Desktop may run and exactly clean up one random private us-east-2 S3 Object Lock bucket four random temporary IAM roles and synthetic objects only. Existing resources production data Fly scheduler workflow recovery implementation activation publication Git actions and successors remain excluded."
+    },
+    {
+      "time": "2026-07-30",
+      "text": "Task 3.1 passed locally at 7:22 PM CDT with zero network calls and zero protected-data reads. The selected future trigger is scheduled authenticated synchronous HTTPS to the existing autostarting Fly service Machine. Synthetic online backup two-recipient complete and partial-set logical 14 8 12 lock-floor and offline B2 capability proofs passed. B2 remains revise-before-provider-proof because writeFiles also permits hide-by-name. Task 3.2 is current and waiting for Ryan to establish the exact Backblaze account and billing context handle sign-in and MFA directly and confirm the bounded synthetic namespace and principal mutation."
+    },
+    {
+      "time": "2026-07-30",
+      "text": "Ryan confirmed 7C at 7:13 PM CDT for Tasks 3.1 and 3.2. The local synthetic trigger encryption manifest retention and capability-contract stage is active. Any Backblaze sign-in billing bucket namespace principal Object Lock upload or cleanup action remains blocked behind the exact Ryan-owned protected handoff."
+    },
+    {
+      "time": "2026-07-30",
+      "text": "Ryan accepted all seven reviewed recovery architecture decisions at 5:52 PM CDT and permitted a separate Task 3 proposal. Task 2 is done Phase 7 is twenty-nine percent and Task 3 is current only for proposed 7C confirmation. No provider credential Fly production protected-data implementation retention restore publication Git or successor action occurred."
+    },
+    {
+      "time": "2026-07-30",
+      "text": "Reconstructed the sanitized completed 7B decision state after the prior isolated worktree was removed between tasks before its uncommitted command-center changes were durable. Task 3 is decomposed into Tasks 3.1 through 3.4 and 7C for Tasks 3.1 and 3.2 is proposed without activation."
+    },
     {
       "time": "2026-07-30",
       "text": "Closed 7A-M as decision-only at 3:49 AM CDT. Existing demo 404 exact Release v9 image and timestamp March 3 snapshot March 27 first-route commit and current health exemptions consistently establish ledger-oak-demo is stale with respect to health. Full image-to-Git lineage remains unresolved and no broader-currentness claim is accepted. Phase 7 remains zero percent P7-T1 remains current and decision-needed and no network UI retry repair deployment product protected Git publication delegation second opinion or successor action occurred."
