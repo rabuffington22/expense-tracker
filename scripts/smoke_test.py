@@ -36,6 +36,9 @@ def _check(condition: bool, msg: str) -> None:
 
 
 def main() -> None:
+    from scripts.refund_reporting_test import run_refund_reporting_checks
+    run_refund_reporting_checks()
+
     print("=" * 60)
     print("  The Ledger — Smoke Test")
     print("=" * 60)
