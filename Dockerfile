@@ -13,6 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
+RUN test -s categories.md
 
 # Create data directory on the persistent volume mount point
 RUN mkdir -p /data
