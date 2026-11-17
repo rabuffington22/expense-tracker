@@ -11,6 +11,7 @@ statements/
 docs/
 *.png
 *.md
+!categories.md
 mockup-cashflow.html
 scripts/debug_amazon_match.py
 web/static/mockup-cashflow.html
