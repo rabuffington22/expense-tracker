@@ -48,7 +48,7 @@
 - Food [Coffee, Delivery, Groceries, Restaurants, Water Delivery]
 - HR
 - IT [AI, Hardware, Web Hosting]
-- Income [Athena Health, Insurance Incentive, Patient Payments] [exclude]
+- Income [Athena Health, Insurance Incentive, Patient Payments, Patient Refunds] [exclude]
 - Insurance [Health Insurance, Life Insurance, Malpractice Insurance]
 - Internal Transfer [exclude]
 - Marketing

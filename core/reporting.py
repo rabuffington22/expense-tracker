@@ -107,6 +107,12 @@ _EXCLUDE_SQL = exclude_sql("t.category", include_income=False)
 _EXCLUDE_SQL_NO_INCOME = exclude_sql("t.category", include_income=True)
 
 
+# Income-category debits reverse revenue (for example patient refunds).
+# Other positive receipts retain their existing treatment; transfers are still
+# removed by the category exclusion clause used alongside this predicate.
+_INCOME_SQL = "(t.amount > 0 OR t.category = 'Income')"
+
+
 # ── Query helpers ──────────────────────────────────────────────────────────────
 
 def get_monthly_totals(entity: str, start_month: str, end_month: str) -> pd.DataFrame:
@@ -249,7 +255,7 @@ def get_monthly_income(entity: str, start_month: str, end_month: str) -> pd.Data
             SUM(t.amount)              AS total_income
         FROM t
         WHERE strftime('%Y-%m', t.date) BETWEEN ? AND ?
-          AND t.amount > 0
+          AND {_INCOME_SQL}
           AND {_EXCLUDE_SQL_NO_INCOME}
         GROUP BY month
         ORDER BY month
@@ -269,7 +275,7 @@ def get_income_total(entity: str, month: str) -> float:
         SELECT COALESCE(SUM(t.amount), 0)
         FROM t
         WHERE strftime('%Y-%m', t.date) = ?
-          AND t.amount > 0
+          AND {_INCOME_SQL}
           AND {_EXCLUDE_SQL_NO_INCOME}
     """
     conn = get_connection(entity)
@@ -416,7 +422,7 @@ def get_income_vs_expenses_daterange(entity: str, start_date: str, end_date: str
             ABS(SUM(CASE WHEN t.amount < 0
                          AND {_EXCLUDE_SQL}
                          THEN t.amount ELSE 0 END)) AS expenses,
-            SUM(CASE WHEN t.amount > 0
+            SUM(CASE WHEN {_INCOME_SQL}
                      AND {_EXCLUDE_SQL_NO_INCOME}
                      THEN t.amount ELSE 0 END) AS income
         FROM t
@@ -495,8 +501,9 @@ def get_account_summary(entity: str, start_date: str, end_date: str) -> pd.DataF
         SELECT
             COALESCE(t.account, 'Unknown') AS account,
             COUNT(*) AS transactions,
-            ABS(SUM(CASE WHEN t.amount < 0 THEN t.amount ELSE 0 END)) AS total_spending,
-            SUM(CASE WHEN t.amount > 0 THEN t.amount ELSE 0 END) AS total_income,
+            ABS(SUM(CASE WHEN t.amount < 0 AND {_EXCLUDE_SQL}
+                         THEN t.amount ELSE 0 END)) AS total_spending,
+            SUM(CASE WHEN {_INCOME_SQL} THEN t.amount ELSE 0 END) AS total_income,
             SUM(t.amount) AS net
         FROM t
         WHERE t.date BETWEEN ? AND ?
