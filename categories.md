@@ -24,6 +24,7 @@
 - Laundry Service
 - Mortgage
 - Needs Review [Ask Kristine]
+- Owner Contribution [exclude]
 - Pets [Food, Health, Toys]
 - Ranch [Equipment, Insurance, Mortgage, Supplies, Utilities]
 - Retirement [Contribution, Withdrawal]
